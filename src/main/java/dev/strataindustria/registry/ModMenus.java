@@ -1,6 +1,7 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.fire.FirePitMenu;
 import dev.strataindustria.knapping.KnappingMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
@@ -13,6 +14,9 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<KnappingMenu>> KNAPPING =
             MENUS.register("knapping", () -> IMenuTypeExtension.create(KnappingMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<FirePitMenu>> FIRE_PIT =
+            MENUS.register("fire_pit", () -> IMenuTypeExtension.create((id, inventory, buf) -> new FirePitMenu(id, inventory)));
 
     private ModMenus() {}
 }

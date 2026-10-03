@@ -61,6 +61,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
         }
         dropOther(ModBlocks.LOOSE_STICK.get(), Items.STICK);
         dropOther(ModBlocks.LOOSE_FLINT.get(), Items.FLINT);
+        dropSelf(ModBlocks.FIRE_PIT.get());
     }
 
     /** One pool per grade: the ore piece of that grade, with fortune adding up to one extra. */

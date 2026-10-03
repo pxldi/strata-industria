@@ -99,5 +99,6 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         }
         tag(ModTags.Blocks.MINEABLE_WITH_KNIFE).addTag(ModTags.Blocks.FIBRE_PLANTS).addTag(BlockTags.LEAVES);
         tag(ModTags.Blocks.MINEABLE_WITH_HAMMER);
+        tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
     }
 }

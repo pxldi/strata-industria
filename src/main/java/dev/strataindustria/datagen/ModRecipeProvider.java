@@ -56,6 +56,7 @@ final class ModRecipeProvider extends RecipeProvider {
         knapping();
         fibre();
         stoneTools();
+        fire();
         planks();
         vanillaOverrides();
     }
@@ -89,6 +90,20 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('T', ModItems.TWINE.get())
                 .unlockedBy("has_twine", has(ModItems.TWINE.get()))
                 .save(output, key("fibre_cloth"));
+    }
+
+    // Spec 3.5.
+    private void fire() {
+        shapeless(RecipeCategory.TOOLS, ModItems.FIRESTARTER.get())
+                .requires(Items.STICK, 2)
+                .requires(ModItems.TWINE.get())
+                .unlockedBy("has_twine", has(ModItems.TWINE.get()))
+                .save(output, key("firestarter"));
+        shapeless(RecipeCategory.DECORATIONS, ModItems.FIRE_PIT.get())
+                .requires(Items.STICK, 4)
+                .requires(ModItems.STRAW.get())
+                .unlockedBy("has_straw", has(ModItems.STRAW.get()))
+                .save(output, key("fire_pit"));
     }
 
     // Spec 3.4: head + stick + twine.

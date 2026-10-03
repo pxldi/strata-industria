@@ -1,6 +1,7 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.fire.FirestarterItem;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -46,6 +47,11 @@ public final class ModItems {
             p -> p.tool(knapped(1.0f), ModTags.Blocks.MINEABLE_WITH_HAMMER, 2.5f, -3.2f, 0.0f));
     public static final DeferredItem<Item> STONE_PICKAXE = ITEMS.registerSimpleItem("stone_pickaxe",
             p -> p.pickaxe(knapped(2.0f), 1.0f, -2.8f));
+
+    // Fire (spec 3.5).
+    public static final DeferredItem<FirestarterItem> FIRESTARTER = ITEMS.registerItem("firestarter", FirestarterItem::new,
+            p -> p.durability(10));
+    public static final DeferredItem<BlockItem> FIRE_PIT = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_PIT);
 
     public static final Map<Rock, DeferredItem<BlockItem>> RAW_ROCK = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredItem<BlockItem>> COBBLED_ROCK = new EnumMap<>(Rock.class);

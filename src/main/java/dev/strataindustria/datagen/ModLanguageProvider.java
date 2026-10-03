@@ -2,6 +2,7 @@ package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.geology.OreGrade;
+import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.RockCategory;
@@ -57,10 +58,22 @@ final class ModLanguageProvider extends LanguageProvider {
             add(knapped + "category." + category.getSerializedName(), category.getSerializedName().replace('_', ' '));
         }
         add("container." + StrataIndustria.MOD_ID + ".knapping", "Knapping");
+        addItem(ModItems.FIRESTARTER, "Firestarter");
+        addBlock(ModBlocks.FIRE_PIT, "Fire Pit");
+        add("container." + StrataIndustria.MOD_ID + ".fire_pit", "Fire Pit");
+        for (HeatBand band : HeatBand.values()) {
+            if (band == HeatBand.NONE) continue;
+            String name = band.id().replace('_', ' ');
+            add(StrataIndustria.MOD_ID + ".heat." + band.id(), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
+        }
         String subtitles = "subtitles." + StrataIndustria.MOD_ID + ".";
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
+        add(subtitles + "firestarter.drill", "Bow drill whirs");
+        add(subtitles + "fire_pit.ignite", "Fire catches");
+        add(subtitles + "fire_pit.extinguish", "Fire goes out");
+        add(subtitles + "fire_pit.torch", "Torch lit");
 
         for (Rock rock : Rock.values()) {
             String name = title(rock.id());

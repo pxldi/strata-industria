@@ -1,6 +1,7 @@
 package dev.strataindustria;
 
 import com.mojang.logging.LogUtils;
+import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModConditions;
 import dev.strataindustria.registry.ModDataComponents;
@@ -25,6 +26,7 @@ public final class StrataIndustria {
     public StrataIndustria(IEventBus modEventBus, ModContainer modContainer) {
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
+        ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModWorldgen.register(modEventBus);
         ModDataComponents.COMPONENTS.register(modEventBus);
