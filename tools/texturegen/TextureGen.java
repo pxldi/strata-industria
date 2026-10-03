@@ -642,6 +642,77 @@ public final class TextureGen {
             }
     }
 
+    // ---------------------------------------------------------------- ground cover
+
+    /** Two crossed sticks seen from above, for the flat loose stick model. */
+    static final String[] LOOSE_STICKS = {
+            "................",
+            "..45............",
+            "..443...........",
+            "...343......5...",
+            "....342....443..",
+            ".....342..443...",
+            "......3424432...",
+            ".......34432....",
+            ".......4432.....",
+            "......443232....",
+            ".....4432.322...",
+            "....4432...322..",
+            "...4432.....32..",
+            "...332.......2..",
+            "....2...........",
+            "................",
+    };
+
+    /** A few knapped flint flakes on the ground. */
+    static final String[] LOOSE_FLINTS = {
+            "................",
+            "................",
+            "................",
+            "........5.......",
+            ".......453......",
+            "......4442......",
+            ".....44432......",
+            "....44332...4...",
+            "....3322...453..",
+            ".....2....44432.",
+            "..........33322.",
+            "...45.......2...",
+            "..4443..........",
+            ".44332..........",
+            "..222...........",
+            "................",
+    };
+
+    /** Full 16x16 art without centring, then outlined. */
+    static BufferedImage art(Ramp a, String[] rows) {
+        BufferedImage im = img();
+        for (int y = 0; y < rows.length; y++)
+            for (int x = 0; x < rows[y].length(); x++) {
+                char ch = rows[y].charAt(x);
+                if (ch >= '1' && ch <= '5') px(im, x, y, a.get(ch - '0'));
+            }
+        return outline(im);
+    }
+
+    /** Solid pebble surface for small ore indicators: mottled mineral with lit nubs and glints. */
+    static BufferedImage pebbles(Mineral m) {
+        Ramp a = m.ramp();
+        long seed = m.name().hashCode() * 31L + 7;
+        double[][] n = fractal(seed);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int i = 2 + (int) Math.round(n[y][x] * 2.4);
+                px(im, x, y, a.get(Math.max(1, Math.min(4, i))));
+            }
+        Random r = new Random(seed);
+        for (int k = 0; k < 7; k++) speck(im, r, r.nextInt(16), r.nextInt(16), a.get(5), a.get(2), 2 + r.nextInt(2));
+        if (m.metallic() && a.spec() != 0)
+            for (int k = 0; k < 3; k++) pxWrap(im, r.nextInt(16), r.nextInt(16), a.spec());
+        return im;
+    }
+
     // ---------------------------------------------------------------- output
 
     static void save(String path, BufferedImage im) throws IOException {
@@ -689,9 +760,11 @@ public final class TextureGen {
             save("item/crushed_" + n, map(m.ramp(), CRUSHED_NORMAL));
             save("item/crushed_rich_" + n, map(m.ramp(), CRUSHED_RICH));
             save("item/small_" + n, map(m.ramp(), NUGGET));
-            save("block/small_" + n, oreOverlay(m, "rich"));
+            save("block/small_" + n, pebbles(m));
         }
         save("item/flint_shard", map(FLINT, FLINT_SHARD));
+        save("block/loose_stick", art(WOOD, LOOSE_STICKS));
+        save("block/loose_flint", art(FLINT, LOOSE_FLINTS));
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");

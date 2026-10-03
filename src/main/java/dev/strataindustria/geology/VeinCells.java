@@ -22,7 +22,7 @@ public final class VeinCells {
     }
 
     /** One vein. Radii are in blocks; {@code seed} drives every per-block roll. */
-    public record Vein(VeinType type, int x, int y, int z, int radiusH, int radiusV, long seed) {
+    public record Vein(VeinType type, int x, int y, int z, int radiusH, int radiusV, long seed, int surfaceY) {
         public boolean intersects(int minX, int minZ, int maxX, int maxZ) {
             return x + radiusH >= minX && x - radiusH <= maxX && z + radiusH >= minZ && z - radiusH <= maxZ;
         }
@@ -90,7 +90,7 @@ public final class VeinCells {
                 y = -56 + (int) (Noise.unit(Noise.hash(h, 4)) * Math.max(1, max + 56 + 1));
             }
             Rock rock = sampler.rockAt(x, y, z, top);
-            Vein vein = pick(rock, x, y, z, h, false);
+            Vein vein = pick(rock, x, y, z, top, h, false);
             if (vein != null) veins.add(vein);
         }
         if (settings.spawnGuarantee() && cellX == 0 && cellZ == 0) {
@@ -100,7 +100,7 @@ public final class VeinCells {
         return List.copyOf(veins);
     }
 
-    private Vein pick(Rock rock, int x, int y, int z, long h, boolean copperOnly) {
+    private Vein pick(Rock rock, int x, int y, int z, int top, long h, boolean copperOnly) {
         List<VeinType> candidates = new ArrayList<>();
         int total = copperOnly ? 0 : settings.emptyWeight();
         for (VeinType type : types) {
@@ -116,7 +116,7 @@ public final class VeinCells {
             if (roll < 0) {
                 int rh = scale(type.shape().radiusHorizontal().sample(Noise.unit(Noise.hash(h, 6))));
                 int rv = scale(type.shape().radiusVertical().sample(Noise.unit(Noise.hash(h, 7))));
-                return new Vein(type, x, y, z, rh, rv, Noise.hash(h, 8));
+                return new Vein(type, x, y, z, rh, rv, Noise.hash(h, 8), top);
             }
         }
         return null; // the empty entry
@@ -134,10 +134,10 @@ public final class VeinCells {
         int top = surface.applyAsInt(x, z);
         for (int depth = 8; depth <= 40; depth += 8) {
             int y = top - depth;
-            Vein vein = pick(sampler.rockAt(x, y, z, top), x, y, z, Noise.hash(h, depth), true);
+            Vein vein = pick(sampler.rockAt(x, y, z, top), x, y, z, top, Noise.hash(h, depth), true);
             if (vein != null) {
                 int lift = Math.max(0, depth - vein.radiusV() - 4);
-                return new Vein(vein.type(), x, y + lift, z, vein.radiusH(), vein.radiusV(), vein.seed());
+                return new Vein(vein.type(), x, y + lift, z, vein.radiusH(), vein.radiusV(), vein.seed(), top);
             }
         }
         return null;
