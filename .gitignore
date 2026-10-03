@@ -1,0 +1,31 @@
+# Gradle
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Run directories
+run/
+runs/
+run-data/
+
+# Datagen cache
+src/generated/resources/.cache/
+
+# IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+bin/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local publishing
+repo/
