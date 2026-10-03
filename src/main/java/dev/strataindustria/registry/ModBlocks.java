@@ -77,7 +77,7 @@ public final class ModBlocks {
                 .noOcclusion()
                 .instabreak()
                 .sound(SoundType.STONE)
-                .pushReaction(PushReaction.DESTROY);
+                .pushReaction(PushReaction.POPPED);
     }
 
     public static BlockState ore(Rock rock, OreMineral mineral, OreGrade grade) {

@@ -19,7 +19,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -69,8 +69,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
         for (OreGrade grade : OreGrade.values()) {
             table.withPool(LootPool.lootPool()
                     .setRolls(ContextIntProviders.exactly(1))
-                    .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
-                            .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(OreGrade.PROPERTY, grade)))
+                    .when(MatchBlock.blockMatches(blocks, block,
+                            StatePropertiesPredicate.Builder.properties().hasProperty(OreGrade.PROPERTY, grade)))
                     .add(applyExplosionDecay(block, LootItem.lootTableItem(ModItems.orePiece(mineral, grade))
                             .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1)))));
         }
