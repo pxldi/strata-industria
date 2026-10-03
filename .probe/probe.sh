@@ -2,8 +2,9 @@
 set -u
 echo "=== JARS"
 find build ~/.gradle -name '*.jar' -path '*moddev*' 2>/dev/null | head -20
-JAR=$(find build/moddev -name 'neoforge-*.jar' ! -name '*sources*' | head -1)
-SRC=$(find build/moddev -name 'neoforge-*sources*.jar' | head -1)
+ls -la build/moddev/artifacts/
+JAR=$(ls build/moddev/artifacts/minecraft-patched-*.jar | grep -v sources | head -1)
+SRC=$(ls build/moddev/artifacts/*sources*.jar 2>/dev/null | head -1)
 echo "JAR=$JAR SRC=$SRC"
 short() { sed -E 's/\b([a-z][a-z0-9_]*\.)+([A-Z])/\2/g'; }
 if [ -f .probe/grep.txt ]; then
