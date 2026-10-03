@@ -2,6 +2,11 @@ package dev.strataindustria;
 
 import com.mojang.logging.LogUtils;
 import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.ModConditions;
+import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.registry.ModMenus;
+import dev.strataindustria.registry.ModRecipes;
+import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.ModCreativeTabs;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModWorldgen;
@@ -22,6 +27,12 @@ public final class StrataIndustria {
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
         ModWorldgen.register(modEventBus);
+        ModDataComponents.COMPONENTS.register(modEventBus);
+        ModSounds.SOUND_EVENTS.register(modEventBus);
+        ModMenus.MENUS.register(modEventBus);
+        ModRecipes.TYPES.register(modEventBus);
+        ModRecipes.SERIALIZERS.register(modEventBus);
+        ModConditions.CONDITIONS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

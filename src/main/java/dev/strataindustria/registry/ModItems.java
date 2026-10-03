@@ -9,6 +9,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ToolMaterial;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -16,6 +17,35 @@ public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(StrataIndustria.MOD_ID);
 
     public static final DeferredItem<Item> PLANT_FIBRE = ITEMS.registerSimpleItem("plant_fibre", p -> p);
+    public static final DeferredItem<Item> STRAW = ITEMS.registerSimpleItem("straw", p -> p);
+    public static final DeferredItem<Item> TWINE = ITEMS.registerSimpleItem("twine", p -> p);
+    public static final DeferredItem<Item> FIBRE_CLOTH = ITEMS.registerSimpleItem("fibre_cloth", p -> p);
+
+    // Knapped heads (tier 0-2 spec 3.2). Each carries knapped_from.
+    public static final DeferredItem<Item> STONE_AXE_HEAD = ITEMS.registerSimpleItem("stone_axe_head", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> STONE_KNIFE_BLADE = ITEMS.registerSimpleItem("stone_knife_blade", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> STONE_SHOVEL_HEAD = ITEMS.registerSimpleItem("stone_shovel_head", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> STONE_HOE_HEAD = ITEMS.registerSimpleItem("stone_hoe_head", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> STONE_HAMMER_HEAD = ITEMS.registerSimpleItem("stone_hammer_head", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> STONE_SPEAR_HEAD = ITEMS.registerSimpleItem("stone_spear_head", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> STONE_PICKAXE_HEAD = ITEMS.registerSimpleItem("stone_pickaxe_head", p -> p.stacksTo(16));
+
+    // Knapped tools (spec 3.4). Base durability 80, scaled by the rock at assembly. The stone spear is
+    // the vanilla one, assembled from a knapped head.
+    public static final int KNAPPED_DURABILITY = 80;
+    public static final int KNAPPED_SPEAR_DURABILITY = 60;
+    public static final DeferredItem<Item> STONE_AXE = ITEMS.registerSimpleItem("stone_axe",
+            p -> p.axe(knapped(2.5f), 3.0f, -3.2f));
+    public static final DeferredItem<Item> STONE_KNIFE = ITEMS.registerSimpleItem("stone_knife",
+            p -> p.tool(knapped(4.0f), ModTags.Blocks.MINEABLE_WITH_KNIFE, 1.0f, -2.0f, 0.0f));
+    public static final DeferredItem<Item> STONE_SHOVEL = ITEMS.registerSimpleItem("stone_shovel",
+            p -> p.shovel(knapped(2.5f), 1.0f, -3.0f));
+    public static final DeferredItem<Item> STONE_HOE = ITEMS.registerSimpleItem("stone_hoe",
+            p -> p.hoe(knapped(2.5f), 0.0f, -2.0f));
+    public static final DeferredItem<Item> STONE_HAMMER = ITEMS.registerSimpleItem("stone_hammer",
+            p -> p.tool(knapped(1.0f), ModTags.Blocks.MINEABLE_WITH_HAMMER, 2.5f, -3.2f, 0.0f));
+    public static final DeferredItem<Item> STONE_PICKAXE = ITEMS.registerSimpleItem("stone_pickaxe",
+            p -> p.pickaxe(knapped(2.0f), 1.0f, -2.8f));
 
     public static final Map<Rock, DeferredItem<BlockItem>> RAW_ROCK = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredItem<BlockItem>> COBBLED_ROCK = new EnumMap<>(Rock.class);
@@ -50,6 +80,11 @@ public final class ModItems {
             ORE_PIECES.put(mineral, pieces);
             CRUSHED_ORES.put(mineral, crushed);
         }
+    }
+
+    /** Knapped stone: stone mining tier, 80 base durability, repaired with loose rocks. */
+    private static ToolMaterial knapped(float speed) {
+        return new ToolMaterial(ModTags.Blocks.INCORRECT_FOR_STONE_TOOL, KNAPPED_DURABILITY, speed, 0.0f, 5, ModTags.Items.LOOSE_ROCKS);
     }
 
     public static Item orePiece(OreMineral mineral, OreGrade grade) {

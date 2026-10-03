@@ -10,12 +10,19 @@ import dev.strataindustria.registry.ModTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.ItemTagsProvider;
 
 final class ModItemTagsProvider extends ItemTagsProvider {
     ModItemTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(output, lookupProvider, StrataIndustria.MOD_ID);
+    }
+
+    private static net.minecraft.resources.ResourceKey<Item> key(Item item) {
+        return item.builtInRegistryHolder().key();
     }
 
     @Override
@@ -49,5 +56,21 @@ final class ModItemTagsProvider extends ItemTagsProvider {
                 mineralTag.add(ModItems.ORE_PIECES.get(mineral).get(grade).getKey());
             }
         }
+
+        tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.LOOSE_ROCKS).add(key(Items.FLINT));
+        tag(Tags.Items.STRINGS).add(ModItems.TWINE.getKey());
+
+        // Our tools join the vanilla tool tags, which also makes them enchantable like vanilla tools.
+        tag(ItemTags.AXES).add(ModItems.STONE_AXE.getKey());
+        tag(ItemTags.PICKAXES).add(ModItems.STONE_PICKAXE.getKey());
+        tag(ItemTags.SHOVELS).add(ModItems.STONE_SHOVEL.getKey());
+        tag(ItemTags.HOES).add(ModItems.STONE_HOE.getKey());
+        tag(ModTags.Items.AXES).addTag(ItemTags.AXES);
+        tag(ModTags.Items.KNIVES).add(ModItems.STONE_KNIFE.getKey());
+        tag(ModTags.Items.HAMMERS).add(ModItems.STONE_HAMMER.getKey());
+        tag(ModTags.Items.SAWS);
+        tag(ItemTags.DURABILITY_ENCHANTABLE).addTag(ModTags.Items.KNIVES).addTag(ModTags.Items.HAMMERS);
+        tag(ItemTags.MELEE_WEAPON_ENCHANTABLE).addTag(ModTags.Items.KNIVES).addTag(ModTags.Items.HAMMERS);
+        tag(ItemTags.SHARP_WEAPON_ENCHANTABLE).addTag(ModTags.Items.KNIVES);
     }
 }

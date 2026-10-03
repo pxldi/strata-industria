@@ -24,7 +24,7 @@ public final class TextureGen {
     static final Path OUT = Path.of("src/main/resources/assets/strataindustria/textures");
     static final Map<String, BufferedImage> PREVIEW = new LinkedHashMap<>();
     static final java.util.Set<String> HAND_MADE = java.util.Set.of(
-            "block/granite", "block/basalt", "block/limestone", "item/plant_fibre");
+            "block/granite", "block/basalt", "block/limestone", "item/plant_fibre", "item/stone_axe");
 
     // ---------------------------------------------------------------- palette (5-step ramps)
 
@@ -585,6 +585,80 @@ public final class TextureGen {
             "..3..3..",
     };
 
+    // Knapped stone heads: faceted bifaces with flake scars (alternating steps) and chipped edges.
+    static final String[] KNAPPED_AXE_HEAD = {
+            "......455...",
+            "....44544...",
+            "...4543443..",
+            "..44434343..",
+            ".4434443432.",
+            ".4343434332.",
+            "44434343432.",
+            "4343434332..",
+            ".33434332...",
+            "..333322....",
+            "...2222.....",
+    };
+    static final String[] KNAPPED_KNIFE_BLADE = {
+            "..........45",
+            ".........454",
+            "........4543",
+            ".......4443.",
+            "......4543..",
+            ".....4443...",
+            "....4543....",
+            "...4433.....",
+            "..4332......",
+            ".3322.......",
+            ".22.........",
+    };
+    static final String[] KNAPPED_SHOVEL_HEAD = {
+            "..44554..",
+            ".4545444.",
+            "444434343",
+            "434343433",
+            "443434332",
+            "343433332",
+            ".3333322.",
+            "..33222..",
+            "...222...",
+    };
+    static final String[] KNAPPED_HOE_HEAD = {
+            "...4455554..",
+            ".4445454443.",
+            "444343434332",
+            "433333333322",
+            ".2222222221.",
+    };
+    static final String[] KNAPPED_HAMMER_HEAD = {
+            "..445554..",
+            ".44545444.",
+            "4445444343",
+            "4343434333",
+            "3434343332",
+            ".33333322.",
+            "..22222...",
+    };
+    static final String[] KNAPPED_SPEAR_HEAD = {
+            "...45...",
+            "..4554..",
+            "..4543..",
+            ".445443.",
+            ".454343.",
+            "44434332",
+            ".434332.",
+            ".43332..",
+            "..3322..",
+            "...22...",
+    };
+    static final String[] KNAPPED_PICKAXE_HEAD = {
+            "...445555443..",
+            ".44543434344..",
+            "443.......344.",
+            "43.........43.",
+            "3...........3.",
+    };
+
     /** Diagonal tool: handle bottom-left to head top-right. */
     static BufferedImage tool(Ramp head, Ramp handle, Ramp lashing, String kind) {
         BufferedImage im = img();
@@ -713,11 +787,172 @@ public final class TextureGen {
         return im;
     }
 
+    // ---------------------------------------------------------------- stone age
+
+    /** A sheaf of straw, tied with a band of darker stalks across the middle. */
+    static final String[] STRAW_SHEAF = {
+            "................",
+            "..........5.....",
+            "......5..45.5...",
+            ".....45.454.4...",
+            "......4.4434....",
+            ".......44343....",
+            "........4433....",
+            ".......4433.....",
+            "......2121......",
+            ".....2121.......",
+            "....3443........",
+            "...443.43.......",
+            "..4.3..3.3......",
+            ".43.3...3.......",
+            "..3.............",
+            "................",
+    };
+
+    /** A small hank of twisted twine: two loops and a loose end. */
+    static final String[] TWINE_HANK = {
+            "................",
+            "................",
+            ".....455543.....",
+            "...4432..2344...",
+            "..443......343..",
+            "..43..4554..43..",
+            ".443.432234.432.",
+            ".43..43..34..32.",
+            ".43..432234..32.",
+            ".343..4332..332.",
+            "..343......332..",
+            "...3432..23322..",
+            ".....433322.....",
+            "..........32....",
+            "...........32...",
+            "................",
+    };
+
+    /** A square of woven fibre cloth with a frayed lower edge. */
+    static BufferedImage fibreCloth() {
+        BufferedImage im = img();
+        for (int y = 3; y < 13; y++)
+            for (int x = 2; x < 14; x++) {
+                boolean warp = ((x + y) & 1) == 0;
+                int step = warp ? 4 : 3;
+                if (y == 3) step++;
+                if (x == 13 || y == 12) step--;
+                if (((x * 7 + y * 3) % 11) == 0) step--;
+                px(im, x, y, FIBRE.get(step));
+            }
+        // Fraying threads.
+        px(im, 3, 13, FIBRE.get(2));
+        px(im, 6, 13, FIBRE.get(3));
+        px(im, 10, 13, FIBRE.get(2));
+        px(im, 12, 13, FIBRE.get(3));
+        return outline(im);
+    }
+
+    /** Knapping grid fill for flint: dark glassy surface with conchoidal ripples. */
+    static BufferedImage flintSurface() {
+        BufferedImage im = img();
+        double[][] n = fractal(97);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double ripple = Math.sin(Math.hypot(x - 4, y - 5) * 1.3) * 0.5 + 0.5;
+                int i = 1 + (int) Math.round(n[y][x] * 1.6 + ripple * 1.4);
+                px(im, x, y, FLINT.get(Math.max(1, Math.min(4, i))));
+            }
+        Random r = new Random(11);
+        for (int k = 0; k < 3; k++) px(im, r.nextInt(16), r.nextInt(16), FLINT.get(5));
+        return im;
+    }
+
+    // ---------------------------------------------------------------- GUI
+
+    static final int GUI_FACE = 0xc6c6c6, GUI_LIGHT = 0xffffff, GUI_SHADOW = 0x555555, GUI_EDGE = 0x000000;
+    static final int SLOT_FILL = 0x8b8b8b, SLOT_DARK = 0x373737;
+
+    static void fill(BufferedImage im, int x, int y, int w, int h, int rgb) {
+        for (int j = y; j < y + h; j++)
+            for (int i = x; i < x + w; i++) im.setRGB(i, j, 0xff000000 | rgb);
+    }
+
+    /** Vanilla container panel: black rim with cut corners, white top-left bevel, grey bottom-right. */
+    static void panel(BufferedImage im, int w, int h) {
+        fill(im, 0, 0, w, h, GUI_FACE);
+        for (int i = 0; i < w; i++) { im.setRGB(i, 0, 0); im.setRGB(i, h - 1, 0); }
+        for (int j = 0; j < h; j++) { im.setRGB(0, j, 0); im.setRGB(w - 1, j, 0); }
+        fill(im, 1, 1, w - 3, 2, GUI_LIGHT);
+        fill(im, 1, 1, 2, h - 3, GUI_LIGHT);
+        fill(im, 3, h - 3, w - 4, 2, GUI_SHADOW);
+        fill(im, w - 3, 3, 2, h - 4, GUI_SHADOW);
+        // Rounded corners: clear the outer corner pixels and step the rim inwards.
+        int[][] corners = {{0, 0}, {w - 1, 0}, {0, h - 1}, {w - 1, h - 1}};
+        for (int[] c : corners) im.setRGB(c[0], c[1], 0);
+        clear(im, 0, 0); clear(im, 1, 0); clear(im, 0, 1);
+        clear(im, w - 1, 0); clear(im, w - 2, 0); clear(im, w - 1, 1);
+        clear(im, 0, h - 1); clear(im, 1, h - 1); clear(im, 0, h - 2);
+        clear(im, w - 1, h - 1); clear(im, w - 2, h - 1); clear(im, w - 1, h - 2);
+        im.setRGB(1, 1, 0xff000000); im.setRGB(w - 2, 1, 0xff000000);
+        im.setRGB(1, h - 2, 0xff000000); im.setRGB(w - 2, h - 2, 0xff000000);
+        im.setRGB(2, 2, 0xff000000 | GUI_LIGHT);
+        im.setRGB(w - 3, h - 3, 0xff000000 | GUI_SHADOW);
+    }
+
+    static void clear(BufferedImage im, int x, int y) { im.setRGB(x, y, 0); }
+
+    /** A recessed well: dark top-left, white bottom-right, like a vanilla slot. */
+    static void well(BufferedImage im, int x, int y, int w, int h, int fillRgb) {
+        fill(im, x, y, w, h, fillRgb);
+        fill(im, x, y, w - 1, 1, SLOT_DARK);
+        fill(im, x, y, 1, h - 1, SLOT_DARK);
+        fill(im, x + 1, y + h - 1, w - 1, 1, GUI_LIGHT);
+        fill(im, x + w - 1, y + 1, 1, h - 1, GUI_LIGHT);
+        im.setRGB(x + w - 1, y, 0xff000000 | SLOT_FILL);
+        im.setRGB(x, y + h - 1, 0xff000000 | SLOT_FILL);
+    }
+
+    static void slot(BufferedImage im, int itemX, int itemY) {
+        well(im, itemX - 1, itemY - 1, 18, 18, SLOT_FILL);
+    }
+
+    /** The vanilla crafting arrow, pointing right. */
+    static void arrow(BufferedImage im, int x, int y) {
+        int c = 0xff000000 | SLOT_FILL;
+        for (int j = 0; j < 15; j++) {
+            int d = Math.abs(j - 7);
+            if (d <= 2) for (int i = 0; i < 15; i++) im.setRGB(x + i, y + j, c);
+            for (int i = 15; i < 22 - d; i++) im.setRGB(x + i, y + j, c);
+        }
+    }
+
+    /**
+     * Knapping screen, 176x196 on a 256x256 sheet: a 5x5 stone well at (17,18), arrow, large result
+     * slot at (134,50) and the player inventory from y 114. Positions match KnappingMenu.
+     */
+    static BufferedImage knappingGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 196);
+        // The grid well sits one pixel outside the 80x80 cell area; the floor is darker, like a work surface.
+        well(im, 16, 17, 82, 82, 0x6f6f6f);
+        arrow(im, 104, 51);
+        // Large result slot like the crafting table's.
+        well(im, 129, 45, 26, 26, SLOT_FILL);
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 114 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 172);
+        return im;
+    }
+
     // ---------------------------------------------------------------- output
 
     static void save(String path, BufferedImage im) throws IOException {
         PREVIEW.put(path, im);
         if (HAND_MADE.contains(path) && Files.exists(OUT.resolve(path + ".png"))) return;
+        File f = OUT.resolve(path + ".png").toFile();
+        f.getParentFile().mkdirs();
+        ImageIO.write(im, "png", f);
+    }
+
+    /** Writes a non-16x16 texture (GUI sheets); kept out of the item preview. */
+    static void saveRaw(String path, BufferedImage im) throws IOException {
         File f = OUT.resolve(path + ".png").toFile();
         f.getParentFile().mkdirs();
         ImageIO.write(im, "png", f);
@@ -765,6 +1000,22 @@ public final class TextureGen {
         save("item/flint_shard", map(FLINT, FLINT_SHARD));
         save("block/loose_stick", art(WOOD, LOOSE_STICKS));
         save("block/loose_flint", art(FLINT, LOOSE_FLINTS));
+
+        // Stone age (tier 0-2 spec 3).
+        save("item/straw", art(STRAW, STRAW_SHEAF));
+        save("item/twine", art(FIBRE, TWINE_HANK));
+        save("item/fibre_cloth", fibreCloth());
+        save("item/stone_axe_head", map(FLINT, KNAPPED_AXE_HEAD));
+        save("item/stone_knife_blade", map(FLINT, KNAPPED_KNIFE_BLADE));
+        save("item/stone_shovel_head", map(FLINT, KNAPPED_SHOVEL_HEAD));
+        save("item/stone_hoe_head", map(FLINT, KNAPPED_HOE_HEAD));
+        save("item/stone_hammer_head", map(FLINT, KNAPPED_HAMMER_HEAD));
+        save("item/stone_spear_head", map(FLINT, KNAPPED_SPEAR_HEAD));
+        save("item/stone_pickaxe_head", map(FLINT, KNAPPED_PICKAXE_HEAD));
+        for (String kind : List.of("axe", "knife", "shovel", "hoe", "hammer", "pickaxe"))
+            save("item/stone_" + kind, tool(FLINT, WOOD, FIBRE, kind));
+        save("gui/knapping/flint", flintSurface());
+        saveRaw("gui/knapping", knappingGui());
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");
