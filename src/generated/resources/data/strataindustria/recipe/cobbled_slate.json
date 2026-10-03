@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "R": "strataindustria:loose_slate"
+  },
+  "pattern": [
+    "RR",
+    "RR"
+  ],
+  "result": {
+    "id": "strataindustria:cobbled_slate"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/loose_basalt"
+      },
+      {
+        "model": "strataindustria:block/loose_basalt",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/loose_basalt",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/loose_basalt",
+        "y": 270
+      }
+    ]
+  }
+}

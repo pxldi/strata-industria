@@ -1,0 +1,20 @@
+{
+  "biome_bias": [
+    {
+      "biomes": "#c:is_windswept",
+      "multiplier": 3.0
+    },
+    {
+      "biomes": "#minecraft:is_taiga",
+      "multiplier": 3.0
+    },
+    {
+      "biomes": "#c:is_snowy_plains",
+      "multiplier": 3.0
+    }
+  ],
+  "bottom": "strataindustria:gabbro",
+  "middle": "strataindustria:slate",
+  "top": "strataindustria:granite",
+  "weight": 2
+}

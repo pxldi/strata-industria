@@ -1,0 +1,31 @@
+{
+  "hosts": [
+    "strataindustria:basalt",
+    "strataindustria:gabbro",
+    "strataindustria:rhyolite"
+  ],
+  "max_y": 160,
+  "min_y": -64,
+  "minerals": [
+    {
+      "mineral": "strataindustria:native_copper",
+      "weight": 100
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:basalt"
+  ],
+  "shape": {
+    "type": "strataindustria:cluster",
+    "density": 0.3,
+    "radius_horizontal": {
+      "max": 8,
+      "min": 5
+    },
+    "radius_vertical": {
+      "max": 5,
+      "min": 3
+    }
+  },
+  "weight": 30
+}

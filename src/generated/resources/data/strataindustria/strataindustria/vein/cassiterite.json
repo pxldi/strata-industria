@@ -1,0 +1,30 @@
+{
+  "hosts": [
+    "strataindustria:granite",
+    "strataindustria:rhyolite"
+  ],
+  "max_y": 160,
+  "min_y": -64,
+  "minerals": [
+    {
+      "mineral": "strataindustria:cassiterite",
+      "weight": 100
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:granite"
+  ],
+  "shape": {
+    "type": "strataindustria:cluster",
+    "density": 0.22,
+    "radius_horizontal": {
+      "max": 16,
+      "min": 10
+    },
+    "radius_vertical": {
+      "max": 8,
+      "min": 5
+    }
+  },
+  "weight": 25
+}

@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_malachite"
+      },
+      {
+        "model": "strataindustria:block/small_malachite",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_malachite",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_malachite",
+        "y": 270
+      }
+    ]
+  }
+}

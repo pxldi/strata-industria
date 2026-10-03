@@ -1,0 +1,12 @@
+{
+  "biome_bias": [
+    {
+      "biomes": "#minecraft:is_mountain",
+      "multiplier": 3.0
+    }
+  ],
+  "bottom": "strataindustria:granite",
+  "middle": "strataindustria:marble",
+  "top": "strataindustria:slate",
+  "weight": 2
+}

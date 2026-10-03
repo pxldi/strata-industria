@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_small_ore",
+  "textures": {
+    "ore": "strataindustria:block/small_cassiterite"
+  }
+}
