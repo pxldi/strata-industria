@@ -1,0 +1,17 @@
+net.minecraft.world.item.Item$Properties
+net.minecraft.world.item.ToolMaterial
+net.minecraft.world.item.equipment.ArmorMaterial
+net.minecraft.world.item.equipment.ArmorMaterials
+net.minecraft.world.item.equipment.ArmorType
+net.minecraft.world.level.block.state.BlockBehaviour$Properties
+net.minecraft.world.level.block.entity.BlockEntity
+net.minecraft.world.level.block.BaseEntityBlock
+net.minecraft.world.inventory.AbstractContainerMenu
+net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
+net.minecraft.client.gui.GuiGraphicsExtractor
+net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator
+net.minecraft.world.item.crafting.Recipe
+net.minecraft.world.item.crafting.RecipeSerializer
+net.minecraft.world.item.crafting.RecipeType
+net.minecraft.world.item.crafting.RecipeInput
+net.minecraft.world.item.crafting.Ingredient

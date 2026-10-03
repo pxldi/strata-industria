@@ -1,0 +1,6 @@
+^net/minecraft/world/item/crafting/[A-Za-z]+\.class
+^net/minecraft/world/item/component/[A-Za-z]+\.class
+^net/minecraft/world/item/[A-Z][A-Za-z]*Item\.class
+^net/minecraft/client/gui/screens/inventory/[A-Za-z]+\.class
+^net/minecraft/world/level/storage/Value
+^net/minecraft/advancements/criterion/[A-Za-z]+\.class
