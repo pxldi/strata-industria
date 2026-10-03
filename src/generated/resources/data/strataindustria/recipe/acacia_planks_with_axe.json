@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:tool_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "#minecraft:acacia_logs",
+    "#strataindustria:tools/axes"
+  ],
+  "result": {
+    "count": 2,
+    "id": "minecraft:acacia_planks"
+  },
+  "tool": "#strataindustria:tools/axes"
+}

@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
+import dev.strataindustria.geology.RockCategory;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModCreativeTabs;
 import dev.strataindustria.registry.ModItems;
@@ -29,6 +30,37 @@ final class ModLanguageProvider extends LanguageProvider {
         add(ModCreativeTabs.MAIN_TAB_TITLE, "Strata Industria");
 
         addItem(ModItems.PLANT_FIBRE, "Plant Fibre");
+        addItem(ModItems.STRAW, "Straw");
+        addItem(ModItems.TWINE, "Twine");
+        addItem(ModItems.FIBRE_CLOTH, "Fibre Cloth");
+        addItem(ModItems.STONE_AXE_HEAD, "Stone Axe Head");
+        addItem(ModItems.STONE_KNIFE_BLADE, "Stone Knife Blade");
+        addItem(ModItems.STONE_SHOVEL_HEAD, "Stone Shovel Head");
+        addItem(ModItems.STONE_HOE_HEAD, "Stone Hoe Head");
+        addItem(ModItems.STONE_HAMMER_HEAD, "Stone Hammer Head");
+        addItem(ModItems.STONE_SPEAR_HEAD, "Stone Spear Head");
+        addItem(ModItems.STONE_PICKAXE_HEAD, "Stone Pickaxe Head");
+        addItem(ModItems.STONE_AXE, "Stone Axe");
+        addItem(ModItems.STONE_KNIFE, "Stone Knife");
+        addItem(ModItems.STONE_SHOVEL, "Stone Shovel");
+        addItem(ModItems.STONE_HOE, "Stone Hoe");
+        addItem(ModItems.STONE_HAMMER, "Stone Hammer");
+        addItem(ModItems.STONE_PICKAXE, "Stone Pickaxe");
+
+        String knapped = StrataIndustria.MOD_ID + ".knapped_from.";
+        add(knapped + "rock", "Knapped from %s (%s)");
+        add(knapped + "flint", "Knapped from flint");
+        for (Rock rock : Rock.values()) {
+            add(knapped + "material." + rock.id(), rock.id().replace('_', ' '));
+        }
+        for (RockCategory category : RockCategory.values()) {
+            add(knapped + "category." + category.getSerializedName(), category.getSerializedName().replace('_', ' '));
+        }
+        add("container." + StrataIndustria.MOD_ID + ".knapping", "Knapping");
+        String subtitles = "subtitles." + StrataIndustria.MOD_ID + ".";
+        add(subtitles + "knapping.rock", "Stone chips");
+        add(subtitles + "knapping.flint", "Flint chips");
+        add(subtitles + "knapping.finish", "Stone tool knapped");
 
         for (Rock rock : Rock.values()) {
             String name = title(rock.id());

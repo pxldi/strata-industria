@@ -12,6 +12,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 
@@ -89,5 +90,14 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .addTag(ModTags.Blocks.NEEDS_BRONZE_TOOL).addTag(ModTags.Blocks.NEEDS_WROUGHT_IRON_TOOL);
         tag(BlockTags.INCORRECT_FOR_GOLD_TOOL).addTag(ModTags.Blocks.NEEDS_COPPER_TOOL)
                 .addTag(ModTags.Blocks.NEEDS_BRONZE_TOOL).addTag(ModTags.Blocks.NEEDS_WROUGHT_IRON_TOOL);
+
+        // Knives cut grass for fibre and straw, and go through leaves quickly.
+        var fibrePlants = tag(ModTags.Blocks.FIBRE_PLANTS);
+        for (Block plant : java.util.List.of(Blocks.SHORT_GRASS, Blocks.TALL_GRASS, Blocks.FERN, Blocks.LARGE_FERN,
+                Blocks.SHORT_DRY_GRASS, Blocks.TALL_DRY_GRASS, Blocks.BUSH)) {
+            fibrePlants.add(plant.builtInRegistryHolder().key());
+        }
+        tag(ModTags.Blocks.MINEABLE_WITH_KNIFE).addTag(ModTags.Blocks.FIBRE_PLANTS).addTag(BlockTags.LEAVES);
+        tag(ModTags.Blocks.MINEABLE_WITH_HAMMER);
     }
 }

@@ -1,0 +1,23 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "strataindustria:config",
+      "key": "vanilla.removeCampfire",
+      "value": false
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "#minecraft:coals",
+    "L": "#minecraft:logs_that_burn",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    " S ",
+    "SCS",
+    "LLL"
+  ],
+  "result": {
+    "id": "minecraft:campfire"
+  }
+}
