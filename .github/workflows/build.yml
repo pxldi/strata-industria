@@ -1,0 +1,47 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Run data generators
+        run: ./gradlew runData --stacktrace
+
+      - name: Check generated resources are committed
+        run: |
+          git add -N src/generated
+          if ! git diff --quiet -- src/generated; then
+            echo "::error::Generated resources are out of date. Run ./gradlew runData and commit src/generated."
+            git --no-pager diff --stat -- src/generated
+            echo "----- BEGIN GENERATED PATCH -----"
+            git --no-pager diff -- src/generated
+            echo "----- END GENERATED PATCH -----"
+            exit 1
+          fi
+
+      - name: Build
+        run: ./gradlew build --stacktrace
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mod-jar
+          path: build/libs/*.jar
+          if-no-files-found: error
