@@ -11,6 +11,16 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        group:
+          - 'net/minecraft/world/item/'
+          - 'net/minecraft/world/level/block/'
+          - 'net/minecraft/world/level/(levelgen|chunk|biome|storage)'
+          - 'net/minecraft/world/level/[^/]+$|net/minecraft/world/level/(gameevent|material|pathfinder|redstone|saveddata|timers|lighting|portal|border|entity|dimension|validation|gamerules|clock|environment|attribute)'
+          - 'net/minecraft/world/(entity|inventory|phys|damagesource|effect|food|ticks|scores|flag|attribute|[A-Z])'
+          - 'net/minecraft/client/(gui|data|renderer|resources|multiplayer|player|[A-Z])'
+          - 'net/minecraft/(data|advancements|core|resources|tags|server|network/chat|network/codec|util|commands|sounds|stats|world/level/storage/loot)'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -21,4 +31,4 @@ jobs:
       - name: Prepare
         run: ./gradlew createMinecraftArtifacts --stacktrace -q
       - name: Probe
-        run: bash .probe/probe.sh
+        run: bash .probe/dump.sh '${{ matrix.group }}'
