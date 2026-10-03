@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:knapping",
+  "ingredient": "#strataindustria:knappable",
+  "pattern": [
+    "#....",
+    "##...",
+    ".##..",
+    "..##.",
+    "...##"
+  ],
+  "result": {
+    "id": "strataindustria:stone_knife_blade"
+  }
+}

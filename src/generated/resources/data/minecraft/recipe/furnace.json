@@ -1,0 +1,21 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "strataindustria:config",
+      "key": "vanilla.gateFurnace",
+      "value": false
+    }
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": "#minecraft:stone_crafting_materials"
+  },
+  "pattern": [
+    "###",
+    "# #",
+    "###"
+  ],
+  "result": {
+    "id": "minecraft:furnace"
+  }
+}

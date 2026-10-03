@@ -38,6 +38,7 @@ public final class DataGenerators {
         // Assets
         event.createProvider(ModModelProvider::new);
         event.createProvider(ModLanguageProvider::new);
+        event.createProvider(ModSoundsProvider::new);
 
         // Data
         event.createProvider(ModBlockTagsProvider::new);
@@ -50,6 +51,7 @@ public final class DataGenerators {
                                 List.of(new LootTableProvider.SubProviderEntry(
                                         ModBlockLoot::new,
                                         LootContextParamSets.BLOCK)))),
-                Set.of(StrataIndustria.MOD_ID));
+                // "minecraft" for the conditional overrides of vanilla recipes (spec section 2).
+                Set.of(StrataIndustria.MOD_ID, "minecraft"));
     }
 }

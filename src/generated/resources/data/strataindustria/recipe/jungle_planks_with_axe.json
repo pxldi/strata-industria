@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:tool_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "#minecraft:jungle_logs",
+    "#strataindustria:tools/axes"
+  ],
+  "result": {
+    "count": 2,
+    "id": "minecraft:jungle_planks"
+  },
+  "tool": "#strataindustria:tools/axes"
+}

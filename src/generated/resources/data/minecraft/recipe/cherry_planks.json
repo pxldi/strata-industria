@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "strataindustria:config",
+      "key": "vanilla.planksNeedTools",
+      "value": false
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "#minecraft:cherry_logs"
+  ],
+  "result": {
+    "count": 4,
+    "id": "minecraft:cherry_planks"
+  }
+}
