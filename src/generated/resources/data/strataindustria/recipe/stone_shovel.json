@@ -1,0 +1,13 @@
+{
+  "type": "strataindustria:knapped_tool",
+  "base_durability": 80,
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:stone_shovel_head",
+    "minecraft:stick",
+    "strataindustria:twine"
+  ],
+  "result": {
+    "id": "strataindustria:stone_shovel"
+  }
+}

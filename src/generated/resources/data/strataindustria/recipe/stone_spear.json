@@ -1,0 +1,13 @@
+{
+  "type": "strataindustria:knapped_tool",
+  "base_durability": 60,
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:stone_spear_head",
+    "minecraft:stick",
+    "strataindustria:twine"
+  ],
+  "result": {
+    "id": "minecraft:stone_spear"
+  }
+}
