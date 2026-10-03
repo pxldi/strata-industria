@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_tennantite"
+      },
+      {
+        "model": "strataindustria:block/small_tennantite",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_tennantite",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_tennantite",
+        "y": 270
+      }
+    ]
+  }
+}

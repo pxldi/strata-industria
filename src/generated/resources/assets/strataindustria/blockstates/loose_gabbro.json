@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/loose_gabbro"
+      },
+      {
+        "model": "strataindustria:block/loose_gabbro",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/loose_gabbro",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/loose_gabbro",
+        "y": 270
+      }
+    ]
+  }
+}

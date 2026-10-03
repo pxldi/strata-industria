@@ -1,0 +1,35 @@
+{
+  "hosts": [
+    "strataindustria:shale",
+    "strataindustria:slate",
+    "strataindustria:granite"
+  ],
+  "max_y": 140,
+  "min_y": -24,
+  "minerals": [
+    {
+      "mineral": "strataindustria:tennantite",
+      "weight": 80
+    },
+    {
+      "mineral": "strataindustria:bismuthinite",
+      "weight": 20
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:shale"
+  ],
+  "shape": {
+    "type": "strataindustria:cluster",
+    "density": 0.25,
+    "radius_horizontal": {
+      "max": 12,
+      "min": 8
+    },
+    "radius_vertical": {
+      "max": 6,
+      "min": 4
+    }
+  },
+  "weight": 30
+}

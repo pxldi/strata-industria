@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "grade=normal": {
+      "model": "strataindustria:block/limestone_native_copper_ore"
+    },
+    "grade=poor": {
+      "model": "strataindustria:block/limestone_native_copper_ore_poor"
+    },
+    "grade=rich": {
+      "model": "strataindustria:block/limestone_native_copper_ore_rich"
+    }
+  }
+}

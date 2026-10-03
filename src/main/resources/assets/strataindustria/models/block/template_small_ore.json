@@ -1,0 +1,56 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "#ore"
+  },
+  "elements": [
+    {
+      "from": [4, 0, 4],
+      "to": [8, 2, 8],
+      "faces": {
+        "up":    { "uv": [4, 4, 8, 8], "texture": "#ore" },
+        "north": { "uv": [4, 6, 8, 8], "texture": "#ore" },
+        "south": { "uv": [4, 6, 8, 8], "texture": "#ore" },
+        "west":  { "uv": [4, 6, 8, 8], "texture": "#ore" },
+        "east":  { "uv": [4, 6, 8, 8], "texture": "#ore" },
+        "down":  { "uv": [4, 4, 8, 8], "texture": "#ore", "cullface": "down" }
+      }
+    },
+    {
+      "from": [9, 0, 6],
+      "to": [12, 2, 9],
+      "faces": {
+        "up":    { "uv": [9, 6, 12, 9], "texture": "#ore" },
+        "north": { "uv": [9, 10, 12, 12], "texture": "#ore" },
+        "south": { "uv": [9, 10, 12, 12], "texture": "#ore" },
+        "west":  { "uv": [6, 10, 9, 12], "texture": "#ore" },
+        "east":  { "uv": [6, 10, 9, 12], "texture": "#ore" },
+        "down":  { "uv": [9, 6, 12, 9], "texture": "#ore", "cullface": "down" }
+      }
+    },
+    {
+      "from": [6, 0, 10],
+      "to": [8, 1, 12],
+      "faces": {
+        "up":    { "uv": [6, 10, 8, 12], "texture": "#ore" },
+        "north": { "uv": [6, 12, 8, 13], "texture": "#ore" },
+        "south": { "uv": [6, 12, 8, 13], "texture": "#ore" },
+        "west":  { "uv": [10, 12, 12, 13], "texture": "#ore" },
+        "east":  { "uv": [10, 12, 12, 13], "texture": "#ore" },
+        "down":  { "uv": [6, 10, 8, 12], "texture": "#ore", "cullface": "down" }
+      }
+    },
+    {
+      "from": [5, 2, 5],
+      "to": [7, 3, 7],
+      "faces": {
+        "up":    { "uv": [5, 5, 7, 7], "texture": "#ore" },
+        "north": { "uv": [5, 3, 7, 4], "texture": "#ore" },
+        "south": { "uv": [5, 3, 7, 4], "texture": "#ore" },
+        "west":  { "uv": [5, 3, 7, 4], "texture": "#ore" },
+        "east":  { "uv": [5, 3, 7, 4], "texture": "#ore" }
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_loose_rock",
+  "textures": {
+    "rock": "strataindustria:block/basalt"
+  }
+}

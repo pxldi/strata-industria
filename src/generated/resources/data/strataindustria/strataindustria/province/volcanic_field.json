@@ -1,0 +1,20 @@
+{
+  "biome_bias": [
+    {
+      "biomes": "#minecraft:is_ocean",
+      "multiplier": 2.0
+    },
+    {
+      "biomes": "#minecraft:is_badlands",
+      "multiplier": 2.0
+    },
+    {
+      "biomes": "#minecraft:is_jungle",
+      "multiplier": 2.0
+    }
+  ],
+  "bottom": "strataindustria:gabbro",
+  "middle": "strataindustria:rhyolite",
+  "top": "strataindustria:basalt",
+  "weight": 2
+}
