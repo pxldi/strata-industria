@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    "minecraft:stick",
+    "minecraft:stick",
+    "strataindustria:twine"
+  ],
+  "result": {
+    "id": "strataindustria:firestarter"
+  }
+}
