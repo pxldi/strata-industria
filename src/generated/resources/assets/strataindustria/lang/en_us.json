@@ -1,0 +1,9 @@
+{
+  "block.strataindustria.fire_bricks": "Fire Bricks",
+  "item.strataindustria.plant_fibre": "Plant Fibre",
+  "itemGroup.strataindustria": "Strata Industria",
+  "strataindustria.configuration.section.strataindustria.common.toml": "Strata Industria Configs",
+  "strataindustria.configuration.section.strataindustria.common.toml.title": "Strata Industria Configs",
+  "strataindustria.configuration.showDebugInfo": "Show debug info",
+  "strataindustria.configuration.title": "Strata Industria Configs"
+}

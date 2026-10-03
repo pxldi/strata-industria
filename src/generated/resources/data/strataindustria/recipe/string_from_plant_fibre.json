@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:plant_fibre",
+    "strataindustria:plant_fibre",
+    "strataindustria:plant_fibre"
+  ],
+  "result": {
+    "id": "minecraft:string"
+  }
+}

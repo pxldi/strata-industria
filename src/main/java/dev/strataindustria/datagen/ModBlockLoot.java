@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
 /** Block drop tables. */
 final class ModBlockLoot {
@@ -25,7 +25,7 @@ final class ModBlockLoot {
 
     private static LootTable.Builder singleItem(ItemLike item) {
         return LootTable.lootTable().withPool(LootPool.lootPool()
-                .setRolls(ConstantValue.exactly(1.0f))
+                .setRolls(ContextIntProviders.exactly(1))
                 .add(LootItem.lootTableItem(item))
                 .when(ExplosionCondition.survivesExplosion()));
     }
