@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_cassiterite"
+      },
+      {
+        "model": "strataindustria:block/small_cassiterite",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_cassiterite",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_cassiterite",
+        "y": 270
+      }
+    ]
+  }
+}

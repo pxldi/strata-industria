@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModCreativeTabs;
 import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.registry.ModWorldgen;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -20,6 +21,7 @@ public final class StrataIndustria {
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+        ModWorldgen.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

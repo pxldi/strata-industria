@@ -1,0 +1,20 @@
+{
+  "biome_bias": [
+    {
+      "biomes": "#c:is_plains",
+      "multiplier": 2.0
+    },
+    {
+      "biomes": "#minecraft:is_forest",
+      "multiplier": 2.0
+    },
+    {
+      "biomes": "#minecraft:is_beach",
+      "multiplier": 2.0
+    }
+  ],
+  "bottom": "strataindustria:granite",
+  "middle": "strataindustria:marble",
+  "top": "strataindustria:limestone",
+  "weight": 3
+}

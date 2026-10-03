@@ -1,0 +1,20 @@
+{
+  "biome_bias": [
+    {
+      "biomes": "#c:is_swamp",
+      "multiplier": 2.0
+    },
+    {
+      "biomes": "#minecraft:is_river",
+      "multiplier": 2.0
+    },
+    {
+      "biomes": "#minecraft:is_savanna",
+      "multiplier": 2.0
+    }
+  ],
+  "bottom": "strataindustria:gabbro",
+  "middle": "strataindustria:slate",
+  "top": "strataindustria:shale",
+  "weight": 3
+}

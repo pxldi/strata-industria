@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "grade=normal": {
+      "model": "strataindustria:block/granite_tennantite_ore"
+    },
+    "grade=poor": {
+      "model": "strataindustria:block/granite_tennantite_ore_poor"
+    },
+    "grade=rich": {
+      "model": "strataindustria:block/granite_tennantite_ore_rich"
+    }
+  }
+}

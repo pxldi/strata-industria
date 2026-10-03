@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "grade=normal": {
+      "model": "strataindustria:block/marble_cassiterite_ore"
+    },
+    "grade=poor": {
+      "model": "strataindustria:block/marble_cassiterite_ore_poor"
+    },
+    "grade=rich": {
+      "model": "strataindustria:block/marble_cassiterite_ore_rich"
+    }
+  }
+}

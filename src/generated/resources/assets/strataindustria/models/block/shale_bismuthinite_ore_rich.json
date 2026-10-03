@@ -1,0 +1,7 @@
+{
+  "parent": "strataindustria:block/template_ore",
+  "textures": {
+    "ore": "strataindustria:block/ore/bismuthinite_rich",
+    "rock": "strataindustria:block/shale"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_native_copper"
+      },
+      {
+        "model": "strataindustria:block/small_native_copper",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_native_copper",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_native_copper",
+        "y": 270
+      }
+    ]
+  }
+}
