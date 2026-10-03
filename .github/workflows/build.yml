@@ -31,8 +31,9 @@ jobs:
           if ! git diff --quiet -- src/generated; then
             echo "::error::Generated resources are out of date. Run ./gradlew runData and commit src/generated."
             git --no-pager diff --stat -- src/generated
-            echo "----- BEGIN GENERATED PATCH -----"
-            git --no-pager diff -- src/generated
+            # Compact form for tools that cannot download artifacts: gzip + base64 in long lines.
+            echo "----- BEGIN GENERATED PATCH (gzip+base64) -----"
+            git --no-pager diff --binary -- src/generated | gzip -9 | base64 -w 6000
             echo "----- END GENERATED PATCH -----"
             exit 1
           fi
