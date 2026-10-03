@@ -42,6 +42,11 @@ jobs:
       - name: Build
         run: ./gradlew build --stacktrace
 
+      # Boots a dedicated game-test server: loads every registry and datapack entry, runs the game tests, exits.
+      - name: Game tests
+        timeout-minutes: 10
+        run: ./gradlew runGameTestServer --stacktrace
+
       - uses: actions/upload-artifact@v4
         with:
           name: mod-jar
