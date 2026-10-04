@@ -41,7 +41,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 /**
- * The field journal tab (spec 11): one goal per step from the first loose rock to the bronze anvil, laid out
+ * The field journal tab (spec 11): one goal per step from the first loose rock to the iron anvil, laid out
  * as a tree that branches where the work can happen in any order. Titles and hints are in the lang file. Goals show
  * no vanilla toast: the leads notebook announces them in its own words (journal leads spec).
  */
@@ -138,11 +138,9 @@ final class ModAdvancements extends AdvancementSubProvider {
                 JournalTrigger.TriggerInstance.of(Journal.TRAIL_MARKED));
         goal(bronze, "t2/prospectors_pick", ModItems.PROSPECTORS_PICKS.get(Metal.BRONZE).get(),
                 JournalTrigger.TriggerInstance.of(Journal.PROSPECT));
-        AdvancementHolder bronzeAnvil = goal(smith, "t2/bronze_anvil", ModItems.BRONZE_ANVIL.get(), AdvancementType.GOAL,
-                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.BRONZE_ANVIL.get()));
 
         // Tier 3 (spec 13): fire clay to bloomery to wrought iron.
-        AdvancementHolder fireClay = goal(bronzeAnvil, "t3/fire_clay", ModItems.FIRE_CLAY_BALL.get(), has(ModItems.FIRE_CLAY_BALL.get()));
+        AdvancementHolder fireClay = goal(smith, "t3/fire_clay", ModItems.FIRE_CLAY_BALL.get(), has(ModItems.FIRE_CLAY_BALL.get()));
         AdvancementHolder fireBrick = goal(fireClay, "t3/fire_brick", ModItems.FIRE_BRICK.get(), has(ModItems.FIRE_BRICK.get()));
         AdvancementHolder ironOre = goal(fireBrick, "t3/iron_ore", ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL),
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.IRON_ORES)));
@@ -159,7 +157,9 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(waterPower, "t3/millstone", ModItems.MILLSTONE.get(), JournalTrigger.TriggerInstance.of(Journal.MILLSTONE));
         goal(waterPower, "t3/bellows", ModItems.BELLOWS.get(), JournalTrigger.TriggerInstance.of(Journal.BELLOWS));
         goal(waterPower, "t3/saw_mill", ModItems.SAW_MILL.get(), JournalTrigger.TriggerInstance.of(Journal.SAW_MILL));
-        AdvancementHolder weld = goal(refine, "t3/weld", ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), has(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()));
+        AdvancementHolder ironAnvil = goal(refine, "t3/iron_anvil", ModItems.IRON_ANVIL.get(), AdvancementType.GOAL,
+                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.IRON_ANVIL.get()));
+        AdvancementHolder weld = goal(ironAnvil, "t3/weld", ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), has(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()));
         goal(weld, "t3/trip_hammer", ModItems.TRIP_HAMMER.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.TRIP_HAMMER));
         AdvancementHolder tramway = goal(refine, "t3/tramway", dev.strataindustria.transport.rail.RailRegistry.MINE_TUB.get(),
@@ -174,8 +174,6 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(refine, "t3/wash", ModItems.WASHING_PAN.get(), JournalTrigger.TriggerInstance.of(Journal.WASH));
         AdvancementHolder hide = goal(waterPower, "t3/hide", ModItems.RAW_HIDE.get(), has(ModItems.RAW_HIDE.get()));
         goal(hide, "t3/leather", Items.LEATHER, AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.LEATHER));
-        AdvancementHolder ironAnvil = goal(weld, "t3/iron_anvil", ModItems.WROUGHT_IRON_ANVIL.get(), AdvancementType.GOAL,
-                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.WROUGHT_IRON_ANVIL.get()));
 
         // Tier 4 spec 15.
         AdvancementHolder coal = goal(ironAnvil, "t4/coal", Items.COAL, has(Items.COAL));
@@ -187,8 +185,6 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder moltenIron = goal(refractory, "t4/molten_iron", Items.IRON_INGOT,
                 JournalTrigger.TriggerInstance.of(Journal.MOLTEN_IRON));
         AdvancementHolder steel = goal(moltenIron, "t4/steel", ModItems.ingot(Metal.STEEL), AdvancementType.GOAL, has(ModItems.ingot(Metal.STEEL)));
-        goal(steel, "t4/steel_anvil", Tier4Items.STEEL_ANVIL.get(), AdvancementType.GOAL,
-                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.STEEL_ANVIL.get()));
         goal(cokeOven, "t4/creosote", Tier4Items.TREATED_PLANKS.get(), has(Tier4Items.TREATED_PLANKS.get()));
         List<ItemLike> sphalerite = new ArrayList<>();
         sphalerite.add(ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get());
@@ -215,6 +211,13 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(boiler, "t4/heat_network", Tier4Items.COPPER_HEAT_PIPE.get(), JournalTrigger.TriggerInstance.of(Journal.HEAT_NETWORK));
         AdvancementHolder engine = goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
+        // Outposts spec 11: a locomotive raises steam, then runs a line by itself, then grows an outpost.
+        AdvancementHolder locomotive = goal(engine, "t4/locomotive", dev.strataindustria.transport.rail.RailwayRegistry.STEAM_LOCOMOTIVE.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.LOCOMOTIVE_PRESSURE));
+        AdvancementHolder railway = goal(locomotive, "t4/railway", dev.strataindustria.transport.rail.RailwayRegistry.STATION_TRACK_ITEM.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.DRIVERLESS_TRIPS));
+        goal(railway, "t4/outpost_5", dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.OUTPOST_GROWN));
         // Spec 15, goal 65: a steam hammer finishes a recipe.
         goal(engine, "t4/steam_hammer", Tier4Items.STEAM_HAMMER.get(), JournalTrigger.TriggerInstance.of(Journal.STEAM_HAMMER));
         // Spec 15, goal 69: a powered crusher finishes something.

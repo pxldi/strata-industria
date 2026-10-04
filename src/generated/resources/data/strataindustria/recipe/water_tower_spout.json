@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "E": "strataindustria:steel_plate",
+    "p": "strataindustria:steel_fluid_pipe"
+  },
+  "pattern": [
+    "E E",
+    " p "
+  ],
+  "result": {
+    "id": "strataindustria:water_tower_spout"
+  }
+}

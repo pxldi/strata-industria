@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "strataindustria:bronze_boiler",
+    "D": "strataindustria:steel_rod",
+    "E": "strataindustria:steel_plate",
+    "F": "strataindustria:firebox",
+    "g": "strataindustria:steel_gear",
+    "p": "strataindustria:pressure_gauge"
+  },
+  "pattern": [
+    "EpE",
+    "BFB",
+    "DgD"
+  ],
+  "result": {
+    "id": "strataindustria:steam_locomotive"
+  }
+}

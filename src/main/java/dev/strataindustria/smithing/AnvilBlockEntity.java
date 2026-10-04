@@ -459,9 +459,8 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         } else {
             int craft = machineCraft >= 0 ? machineCraft : Smithing.craftQuality(progress.bright(), progress.blows());
             float temperature = Heat.get(input, now);
-            int material = MetalContent.of(input.copyWithCount(1)).map(Melt::quality).orElse(0);
             ItemStack out = shape.result().copy();
-            out.set(ModDataComponents.QUALITY.get(), new Quality(material, craft));
+            out.set(ModDataComponents.QUALITY.get(), new Quality(craft));
             Heat.set(out, temperature, now);
             input.shrink(shape.count());
             if (input.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
@@ -616,11 +615,9 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         ItemStack a = input(), b = items.get(SECOND);
         ItemStack out = weldResult().orElseThrow();
         long now = server.getGameTime();
-        // Spec 4.5: material by units, the better craft part of the two, never worse for welding.
-        Melt ma = MetalContent.of(a.copyWithCount(1)).orElse(Melt.EMPTY), mb = MetalContent.of(b.copyWithCount(1)).orElse(Melt.EMPTY);
-        int material = ma.plus(mb).quality();
+        // The better craft part of the two, never worse for welding.
         int craft = Math.max(craftOf(a), craftOf(b));
-        if (!out.has(ModDataComponents.BLOOM_CONTENTS.get())) out.set(ModDataComponents.QUALITY.get(), new Quality(material, craft));
+        if (!out.has(ModDataComponents.BLOOM_CONTENTS.get())) out.set(ModDataComponents.QUALITY.get(), new Quality(craft));
         Heat.set(out, Math.max(Heat.get(a, now), Heat.get(b, now)), now);
         a.shrink(1);
         b.shrink(1);

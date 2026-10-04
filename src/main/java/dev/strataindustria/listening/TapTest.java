@@ -38,10 +38,10 @@ public final class TapTest {
         };
     }
 
-    /** Crude and rough castings carry flaws and sound it; fine ones ring. */
+    /** Rough castings carry flaws and sound it; fine ones ring. */
     public static SoundEvent forQuality(Quality quality) {
         return switch (quality.grade()) {
-            case "crude", "rough" -> ListeningSounds.TAP_THUD.get();
+            case "rough" -> ListeningSounds.TAP_THUD.get();
             case "standard" -> ListeningSounds.TAP_KNOCK.get();
             default -> ListeningSounds.TAP_RING.get();
         };

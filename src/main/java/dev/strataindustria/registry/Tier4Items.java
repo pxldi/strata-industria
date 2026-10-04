@@ -53,7 +53,6 @@ public final class Tier4Items {
     public static final DeferredItem<CastMoldItem> GEAR_MOLD = ModItems.ITEMS.registerItem("gear_mold",
             p -> new CastMoldItem(null, true, false, p), p -> p.stacksTo(16));
 
-    public static final DeferredItem<BlockItem> STEEL_ANVIL = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_ANVIL);
 
     // Spec 11.7: iron transmission.
     public static final DeferredItem<BlockItem> IRON_AXLE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_AXLE);
