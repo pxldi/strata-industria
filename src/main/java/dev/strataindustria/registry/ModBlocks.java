@@ -55,20 +55,20 @@ public final class ModBlocks {
                     .noOcclusion()
                     .noLootTable()
                     .lightLevel(state -> state.getValue(PitKilnBlock.LIT) ? 15 : 0)
-                    .pushReaction(PushReaction.BLOCK));
+                    .pushReaction(PushReaction.IMMOVEABLE));
     /** Fired clay storage jar (spec 4.3). */
     public static final DeferredBlock<LargeVesselBlock> LARGE_VESSEL = BLOCKS.registerBlock("large_vessel", LargeVesselBlock::new,
             p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
                     .strength(1.0f)
                     .sound(SoundType.DECORATED_POT)
                     .noOcclusion()
-                    .pushReaction(PushReaction.DESTROY));
+                    .pushReaction(PushReaction.POPPED));
     public static final DeferredBlock<CrucibleBlock> CRUCIBLE = BLOCKS.registerBlock("crucible", CrucibleBlock::new,
             p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
                     .strength(1.0f)
                     .sound(SoundType.DECORATED_POT)
                     .noOcclusion()
-                    .pushReaction(PushReaction.DESTROY));
+                    .pushReaction(PushReaction.POPPED));
 
     static {
         for (Rock rock : Rock.values()) {

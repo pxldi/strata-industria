@@ -61,7 +61,7 @@ public class PitKilnRenderer implements BlockEntityRenderer<PitKilnBlockEntity, 
             if (state.items[0].isEmpty()) return;
             pose.pushPose();
             pose.translate(0.5, 0.44, 0.5);
-            pose.mulPose(Axis.YP.rotationDegrees(Math.floorMod(state.seed, 4) * 90 + 45));
+            pose.rotateDegrees(Axis.YP, Math.floorMod(state.seed, 4) * 90 + 45);
             pose.scale(0.85f, 0.85f, 0.85f);
             state.items[0].submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             pose.popPose();
@@ -73,8 +73,8 @@ public class PitKilnRenderer implements BlockEntityRenderer<PitKilnBlockEntity, 
                 pose.pushPose();
                 pose.translate(SPOTS[i][0], 0.02 + layer * 0.035, SPOTS[i][1]);
                 // Each piece in a pile turns a little, so a stack reads as a stack.
-                pose.mulPose(Axis.YP.rotationDegrees(Math.floorMod(state.seed * 31 + i * 7 + layer * 13, 40) - 20 + i * 90));
-                pose.mulPose(Axis.XP.rotationDegrees(90));
+                pose.rotateDegrees(Axis.YP, Math.floorMod(state.seed * 31 + i * 7 + layer * 13, 40) - 20 + i * 90);
+                pose.rotateDegrees(Axis.XP, 90);
                 pose.scale(0.42f, 0.42f, 0.42f);
                 state.items[i].submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
                 pose.popPose();
