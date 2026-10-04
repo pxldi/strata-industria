@@ -590,23 +590,23 @@ public final class ModGameTests {
         helper.succeed();
     }
 
-    // Step-up gearbox (tier 3 spec 7.3): a crank at 16 RPM drives the millstone behind the gearbox at 32.
+    // Step-up gearbox (tier 3 spec 7.3): a crank at 16 RPM turns the axle behind the gearbox at 32.
 
     private static void stepUpGearbox(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos crankPos = helper.absolutePos(new BlockPos(4, 1, 2));
         BlockPos gearboxPos = crankPos.south();
-        BlockPos millPos = gearboxPos.south();
+        BlockPos axlePos = gearboxPos.south();
         level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.SOUTH),
                 Block.UPDATE_ALL);
         level.setBlock(gearboxPos, ModBlocks.STEP_UP_GEARBOX.get().defaultBlockState()
                 .setValue(dev.strataindustria.power.StepUpGearboxBlock.FACING, Direction.SOUTH), Block.UPDATE_ALL);
-        level.setBlock(millPos, ModBlocks.MILLSTONE.get().defaultBlockState(), Block.UPDATE_ALL);
-        MillstoneBlockEntity mill = (MillstoneBlockEntity) level.getBlockEntity(millPos);
+        level.setBlock(axlePos, ModBlocks.WOODEN_AXLE.get().defaultBlockState().setValue(AxleBlock.AXIS, Direction.Axis.Z), Block.UPDATE_ALL);
+        var axle = (dev.strataindustria.power.Kinetic) level.getBlockEntity(axlePos);
         HandCrankBlockEntity crank = (HandCrankBlockEntity) level.getBlockEntity(crankPos);
         crank.crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "miller")));
-        KineticNetworks.rebuildNow(level, millPos);
-        helper.assertValueEqual(Math.round(mill.kinetic().rpm()), 32, "millstone RPM behind a step-up gearbox");
+        KineticNetworks.rebuildNow(level, axlePos);
+        helper.assertValueEqual(Math.round(axle.kinetic().rpm()), 32, "axle RPM behind a step-up gearbox");
         helper.succeed();
     }
 
