@@ -70,6 +70,8 @@ public final class ModTags {
         public static final TagKey<Item> IRON_ORES = tag("ores/iron_any");
         /** What a bloomery burns: charcoal only (tier 3 spec 5.2). */
         public static final TagKey<Item> BLOOMERY_FUEL = tag("bloomery_fuel");
+        /** Tier 4 spec 12.1: what a blast furnace takes as flux; bloomery slag counts. */
+        public static final TagKey<Item> FLUX = tag("flux");
 
         public static TagKey<Item> rocks(RockCategory category) {
             return tag("rocks/" + category.getSerializedName());

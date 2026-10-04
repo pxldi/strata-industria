@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "strataindustria:block/refractory_casing",
+    "side": "strataindustria:block/charging_hatch_side",
+    "top": "strataindustria:block/charging_hatch_top"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,hot=false": {
+      "model": "strataindustria:block/tap_hatch",
+      "y": 90
+    },
+    "facing=east,hot=true": {
+      "model": "strataindustria:block/tap_hatch_hot",
+      "y": 90
+    },
+    "facing=north,hot=false": {
+      "model": "strataindustria:block/tap_hatch"
+    },
+    "facing=north,hot=true": {
+      "model": "strataindustria:block/tap_hatch_hot"
+    },
+    "facing=south,hot=false": {
+      "model": "strataindustria:block/tap_hatch",
+      "y": 180
+    },
+    "facing=south,hot=true": {
+      "model": "strataindustria:block/tap_hatch_hot",
+      "y": 180
+    },
+    "facing=west,hot=false": {
+      "model": "strataindustria:block/tap_hatch",
+      "y": 270
+    },
+    "facing=west,hot=true": {
+      "model": "strataindustria:block/tap_hatch_hot",
+      "y": 270
+    }
+  }
+}

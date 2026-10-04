@@ -275,6 +275,22 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- blast furnace
+    static {
+        BUILDER.comment("The blast furnace.").push("blastFurnace");
+    }
+
+    public static final ModConfigSpec.IntValue BLAST_FURNACE_TICKS_PER_INGOT = BUILDER
+            .comment("Ticks per pig iron ingot with one blower; two blowers or a blowing engine halve it.")
+            .defineInRange("ticksPerIngot", 200, 1, 72000);
+    public static final ModConfigSpec.IntValue BLAST_FURNACE_WARMUP = BUILDER
+            .comment("Ticks a cold blast furnace needs to heat its hearth.")
+            .defineInRange("warmupTicks", 1200, 0, 72000);
+
+    static {
+        BUILDER.pop();
+    }
+
     // ---------------------------------------------------------------- journal
     static {
         BUILDER.comment("The field journal.").push("journal");

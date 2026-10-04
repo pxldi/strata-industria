@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "strataindustria:refractory_casing",
+    "F": "strataindustria:firebox",
+    "G": "strataindustria:pressure_gauge"
+  },
+  "pattern": [
+    "CGC",
+    "CFC",
+    "CCC"
+  ],
+  "result": {
+    "id": "strataindustria:blast_furnace_controller"
+  }
+}

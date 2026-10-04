@@ -60,6 +60,15 @@ public final class Tier4Sounds {
     /** A drum of wet gravel sloshing round. */
     public static final DeferredHolder<SoundEvent, SoundEvent> WASHER_WASH = register("washer.wash");
 
+    /** The fan's whoosh in a blower. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOWER_RUN = register("blower.run");
+    /** The deep roar of a blast furnace's hearth. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLAST_FURNACE_ROAR = register("blast_furnace.roar");
+    /** Pig iron runs out of the tap. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLAST_FURNACE_TAP = register("blast_furnace.tap");
+    /** A multiblock is complete: a heavy clunk and a short chime. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MULTIBLOCK_FORM = register("multiblock.form");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

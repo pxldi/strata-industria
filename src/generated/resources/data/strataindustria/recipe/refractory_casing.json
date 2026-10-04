@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "strataindustria:fire_bricks",
+    "strataindustria:wrought_iron_plate",
+    "strataindustria:wrought_iron_plate"
+  ],
+  "result": {
+    "id": "strataindustria:refractory_casing"
+  }
+}
