@@ -42,6 +42,7 @@ public final class Journal {
     public static final String SAW_MILL = "saw_mill";
     public static final String TRIP_HAMMER = "trip_hammer";
     public static final String WASH = "wash";
+    public static final String LEATHER = "leather";
 
     /** Block events count for players this close: whoever lit the kiln is standing near it. */
     static final double NEARBY = 16;
@@ -57,7 +58,7 @@ public final class Journal {
             "t3/fire_clay", "t3/fire_brick", "t3/iron_ore", "t3/bloomery", "t3/bloom", "t3/refine", "t3/iron_pickaxe",
             "t3/bucket", "t3/furnace", "t3/weld",
             "t3/rotation", "t3/water_power", "t3/millstone", "t3/saw_mill", "t3/bellows", "t3/pattern",
-            "t3/trip_hammer", "t3/core_sample", "t3/wash", "t3/iron_anvil");
+            "t3/trip_hammer", "t3/core_sample", "t3/wash", "t3/hide", "t3/leather", "t3/iron_anvil");
 
     public static Identifier goal(String path) {
         return StrataIndustria.id("journal/" + path);

@@ -61,7 +61,15 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticBlockEntity>> KINETIC_TRANSMISSION =
             BLOCK_ENTITIES.register("kinetic_transmission", () -> new BlockEntityType<>(
                     (pos, state) -> new KineticBlockEntity(ModBlockEntities.KINETIC_TRANSMISSION.get(), pos, state),
-                    ModBlocks.WOODEN_AXLE.get(), ModBlocks.WOODEN_GEARBOX.get()));
+                    ModBlocks.WOODEN_AXLE.get(), ModBlocks.WOODEN_GEARBOX.get(), ModBlocks.STEP_UP_GEARBOX.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.power.PulleyBlockEntity>> PULLEY =
+            BLOCK_ENTITIES.register("pulley", () -> new BlockEntityType<>(dev.strataindustria.power.PulleyBlockEntity::new, ModBlocks.PULLEY.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.power.WindmillBearingBlockEntity>> WINDMILL_BEARING =
+            BLOCK_ENTITIES.register("windmill_bearing", () -> new BlockEntityType<>(dev.strataindustria.power.WindmillBearingBlockEntity::new,
+                    ModBlocks.WINDMILL_BEARING.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.tanning.SoakingBarrelBlockEntity>> SOAKING_BARREL =
+            BLOCK_ENTITIES.register("soaking_barrel", () -> new BlockEntityType<>(dev.strataindustria.tanning.SoakingBarrelBlockEntity::new,
+                    ModBlocks.SOAKING_BARREL.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandCrankBlockEntity>> HAND_CRANK =
             BLOCK_ENTITIES.register("hand_crank", () -> new BlockEntityType<>(HandCrankBlockEntity::new, ModBlocks.HAND_CRANK.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaterWheelBlockEntity>> WATER_WHEEL =
