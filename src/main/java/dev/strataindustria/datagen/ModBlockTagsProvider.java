@@ -208,6 +208,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(StructureContent.PIT_PROP.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());
         // Structures v2 shared blocks.
         tag(BlockTags.MINEABLE_WITH_AXE).add(SharedBlocks.CRATE.getKey()).add(SharedBlocks.ORE_CART.getKey())
                 .add(SharedBlocks.TOOL_RACK.getKey()).add(SharedBlocks.WINDLASS.getKey()).add(SharedBlocks.SLUICE_BOX.getKey())

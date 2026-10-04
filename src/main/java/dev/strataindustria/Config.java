@@ -393,6 +393,33 @@ public final class Config {
         BUILDER.pop();
     }
 
+    static {
+        BUILDER.comment("Outposts and transport (outposts spec 3 and 13).").push("outposts");
+    }
+
+    public static final ModConfigSpec.IntValue OUTPOSTS_MIN_SPACING = BUILDER
+            .comment("Blocks between two charters of any owner.")
+            .defineInRange("minSpacing", 160, 0, 4096);
+    public static final ModConfigSpec.IntValue OUTPOSTS_MAX_CHARTERS = BUILDER
+            .comment("Charters one owner can have posted.")
+            .defineInRange("maxCharters", 8, 1, 256);
+    public static final ModConfigSpec.IntValue OUTPOSTS_MAX_DISTRICT = BUILDER
+            .comment("Charters one district can hold.")
+            .defineInRange("maxDistrict", 8, 2, 256);
+    public static final ModConfigSpec.ConfigValue<java.util.List<? extends Integer>> OUTPOSTS_AREA_BY_TIER = BUILDER
+            .comment("Side in chunks of a charter's loaded square for a link of tier 3, 4, 5 and 6. Odd numbers only.")
+            .defineList("areaByTier", java.util.List.of(3, 5, 7, 9), () -> 3, o -> o instanceof Integer i && i >= 1 && i <= 15 && i % 2 == 1);
+    public static final ModConfigSpec.IntValue OUTPOSTS_MAX_CHUNKS_PER_OWNER = BUILDER
+            .comment("Chunks one owner's charters can keep loaded.")
+            .defineInRange("maxChunksPerOwner", 200, 9, 4096);
+    public static final ModConfigSpec.BooleanValue OUTPOSTS_REQUIRE_OWNER_ONLINE = BUILDER
+            .comment("Charter areas load only while one of their owners is online. Turn off to keep them loaded always.")
+            .define("requireOwnerOnline", true);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

@@ -125,6 +125,7 @@ public final class ModGameTests {
         ListeningGameTests.register(TESTS);
         MarkGameTests.register(TESTS);
         LedgerGameTests.register(TESTS);
+        OutpostGameTests.register(TESTS);
         JournalGameTests.register(TESTS);
         FloraGameTests.register(TESTS);
         StructureGameTests.register(TESTS);

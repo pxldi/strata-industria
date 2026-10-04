@@ -720,6 +720,15 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('I', ModItems.ingot(Metal.BRONZE))
                 .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
                 .save(output, key("builders_crate"));
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get())
+                .pattern(" A ")
+                .pattern(" W ")
+                .pattern(" S ")
+                .define('A', Items.PAPER)
+                .define('W', ModItems.PLATES.get(Metal.WROUGHT_IRON))
+                .define('S', Items.STICK)
+                .unlockedBy("has_wrought_iron_plate", has(ModItems.PLATES.get(Metal.WROUGHT_IRON)))
+                .save(output, key("outpost_charter"));
         shaped(RecipeCategory.REDSTONE, dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get())
                 .pattern(" R ")
                 .pattern("PRP")
