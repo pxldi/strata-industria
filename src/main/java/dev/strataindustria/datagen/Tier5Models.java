@@ -63,6 +63,8 @@ final class Tier5Models {
         machine(blockModels, itemModels, Tier5Blocks.ASSEMBLER.get(), "assembler");
         machine(blockModels, itemModels, Tier5Blocks.ELECTROLYSER.get(), "electrolyser");
         lathe(blockModels, itemModels);
+        extruder(blockModels, itemModels);
+        powerHammer(blockModels, itemModels);
         transformer(blockModels, itemModels);
         energyAdapter(blockModels, itemModels);
         generator(blockModels, itemModels, Tier5Blocks.STEAM_TURBINE.get(), "steam_turbine", false);
@@ -209,6 +211,73 @@ final class Tier5Models {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
         tieredItem(itemModels, block.asItem(), "block/" + name + "_lv_off", "block/" + name + "_mv_off");
+    }
+
+    // Spec 10.9: the extruder only exists as MV, so the LV states reuse the MV models.
+    private static void extruder(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Block block = Tier5Blocks.EXTRUDER.get();
+        PropertyDispatch.C4<MultiVariant, Direction, ElectricTier, StatusLight, Boolean> dispatch = PropertyDispatch.initial(
+                ElectricMachineBlock.FACING, ElectricMachineBlock.TIER, ElectricMachineBlock.STATUS, ElectricMachineBlock.ACTIVE);
+        for (boolean active : new boolean[] {false, true}) {
+            for (StatusLight light : StatusLight.values()) {
+                TextureMapping faces = new TextureMapping()
+                        .put(TextureSlot.FRONT, texture("extruder_front_mv" + (active ? "_active" : "")))
+                        .put(TextureSlot.SIDE, texture("casing/mv_side")).put(TextureSlot.TOP, texture("casing/mv_top"))
+                        .put(TextureSlot.BOTTOM, texture("casing/mv_bottom"));
+                Identifier model = StrataIndustria.id("block/extruder_mv" + (active ? "_active" : "") + "_" + light.getSerializedName());
+                Identifier id = light == StatusLight.OFF
+                        ? ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(model, faces, blockModels.modelOutput)
+                        : MACHINE.create(model, faces.put(STATUS, texture("overlay/status_" + light.getSerializedName())), blockModels.modelOutput);
+                MultiVariant variant = BlockModelGenerators.plainVariant(id);
+                for (ElectricTier tier : ElectricTier.values()) {
+                    dispatch.select(Direction.NORTH, tier, light, active, variant);
+                    dispatch.select(Direction.EAST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_90));
+                    dispatch.select(Direction.SOUTH, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_180));
+                    dispatch.select(Direction.WEST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_270));
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+        plainItem(itemModels, block.asItem(), StrataIndustria.id("block/extruder_mv_off"));
+    }
+
+    private static final TextureSlot FRAME = TextureSlot.create("frame"), HAMMER_MOTOR = TextureSlot.create("motor"),
+            HAMMER_MOTOR_FRONT = TextureSlot.create("motor_front"), COIL = TextureSlot.create("coil"), BASE = TextureSlot.create("base"),
+            BASE_TOP = TextureSlot.create("base_top");
+    private static final ModelTemplate POWER_HAMMER = new ModelTemplate(Optional.of(StrataIndustria.id("block/power_hammer")), Optional.empty(),
+            FRAME, HAMMER_MOTOR, HAMMER_MOTOR_FRONT, COIL, BASE, BASE_TOP, STATUS);
+
+    // Spec 10.8 and 23.2: the hand-built frame per tier, the motor front per tier and active, the lamp lit by status.
+    // The ram is drawn by the renderer and shown in the item by a second model.
+    private static void powerHammer(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Block block = Tier5Blocks.POWER_HAMMER.get();
+        PropertyDispatch.C4<MultiVariant, Direction, ElectricTier, StatusLight, Boolean> dispatch = PropertyDispatch.initial(
+                ElectricMachineBlock.FACING, ElectricMachineBlock.TIER, ElectricMachineBlock.STATUS, ElectricMachineBlock.ACTIVE);
+        for (ElectricTier tier : ElectricTier.values()) {
+            String t = tier.getSerializedName();
+            for (boolean active : new boolean[] {false, true}) {
+                for (StatusLight light : StatusLight.values()) {
+                    TextureMapping textures = new TextureMapping().put(FRAME, texture("power_hammer_frame_" + t)).put(HAMMER_MOTOR, texture("power_hammer_motor"))
+                            .put(HAMMER_MOTOR_FRONT, texture("power_hammer_motor_front_" + t + (active ? "_active" : ""))).put(COIL, texture("power_hammer_coil"))
+                            .put(BASE, texture("steam_hammer_base")).put(BASE_TOP, texture("steam_hammer_base_top"))
+                            .put(STATUS, texture("overlay/status_" + (light == StatusLight.OFF ? "off" : light.getSerializedName())));
+                    Identifier model = POWER_HAMMER.create(StrataIndustria.id("block/power_hammer_" + t + (active ? "_active" : "") + "_"
+                            + light.getSerializedName()), textures, blockModels.modelOutput);
+                    MultiVariant variant = BlockModelGenerators.plainVariant(model);
+                    dispatch.select(Direction.NORTH, tier, light, active, variant);
+                    dispatch.select(Direction.EAST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_90));
+                    dispatch.select(Direction.SOUTH, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_180));
+                    dispatch.select(Direction.WEST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_270));
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+        net.minecraft.client.renderer.item.ItemModel.Unbaked lv = ItemModelUtils.composite(ItemModelUtils.plainModel(StrataIndustria.id("block/power_hammer_lv_off")),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/power_hammer_ram")));
+        net.minecraft.client.renderer.item.ItemModel.Unbaked mv = ItemModelUtils.composite(ItemModelUtils.plainModel(StrataIndustria.id("block/power_hammer_mv_off")),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/power_hammer_ram")));
+        itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.conditional(new net.minecraft.client.renderer.item.properties.conditional.HasComponent(
+                Tier5DataComponents.MACHINE_TIER.get(), false), mv, lv));
     }
 
     // Spec 23.2: like machine(), with the rod or gear icon of the mode on the front.

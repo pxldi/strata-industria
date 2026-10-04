@@ -1,0 +1,16 @@
+{
+  "type": "strataindustria:extruding",
+  "item_results": [
+    {
+      "count": 4,
+      "id": "strataindustria:bronze_fluid_pipe"
+    }
+  ],
+  "items": [
+    {
+      "ingredient": "#strataindustria:plates/any_bronze"
+    }
+  ],
+  "mode": "pipe",
+  "ticks": 100
+}

@@ -69,6 +69,12 @@ public final class Tier5BlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MixerBlockEntity>> MIXER =
             ModBlockEntities.BLOCK_ENTITIES.register("mixer", () -> new BlockEntityType<>(MixerBlockEntity::new, Tier5Blocks.MIXER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.electric.PowerHammerBlockEntity>> POWER_HAMMER =
+            ModBlockEntities.BLOCK_ENTITIES.register("power_hammer", () -> new BlockEntityType<>(dev.strataindustria.electric.PowerHammerBlockEntity::new,
+                    Tier5Blocks.POWER_HAMMER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.electric.machine.ExtruderBlockEntity>> EXTRUDER =
+            ModBlockEntities.BLOCK_ENTITIES.register("extruder", () -> new BlockEntityType<>(dev.strataindustria.electric.machine.ExtruderBlockEntity::new,
+                    Tier5Blocks.EXTRUDER.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER =
             ModBlockEntities.BLOCK_ENTITIES.register("assembler", () -> new BlockEntityType<>(AssemblerBlockEntity::new, Tier5Blocks.ASSEMBLER.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrolyserBlockEntity>> ELECTROLYSER =

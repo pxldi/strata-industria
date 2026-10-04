@@ -3,6 +3,7 @@ package dev.strataindustria.registry;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.processing.AssemblingRecipe;
 import dev.strataindustria.processing.ElectrolysisRecipe;
+import dev.strataindustria.processing.ExtrudingRecipe;
 import dev.strataindustria.processing.MachiningRecipe;
 import dev.strataindustria.processing.MixingRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -11,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 
 /** Tier 5 recipe types, registered into the shared recipe registers. */
 public final class Tier5Recipes {
-    /** Wiremill, bender and lathe (spec 10.4 to 10.6); the extruder joins them later. */
+    /** Wiremill, bender and lathe (spec 10.4 to 10.6). */
     public static final DeferredHolder<RecipeType<?>, RecipeType<MachiningRecipe>> MACHINING =
             ModRecipes.TYPES.register("machining", () -> RecipeType.simple(StrataIndustria.id("machining")));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MachiningRecipe>> MACHINING_SERIALIZER =
@@ -32,6 +33,12 @@ public final class Tier5Recipes {
             ModRecipes.TYPES.register("assembling", () -> RecipeType.simple(StrataIndustria.id("assembling")));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AssemblingRecipe>> ASSEMBLING_SERIALIZER =
             ModRecipes.SERIALIZERS.register("assembling", () -> AssemblingRecipe.SERIALIZER);
+
+    /** The extruder (spec 10.9). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<ExtrudingRecipe>> EXTRUDING =
+            ModRecipes.TYPES.register("extruding", () -> RecipeType.simple(StrataIndustria.id("extruding")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ExtrudingRecipe>> EXTRUDING_SERIALIZER =
+            ModRecipes.SERIALIZERS.register("extruding", () -> ExtrudingRecipe.SERIALIZER);
 
     /** Loads the class so its entries join the registers before they fire. */
     public static void init() {}
