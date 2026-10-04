@@ -50,7 +50,7 @@ final class JournalLanguage {
         lead.add("t0/loose_rock", "Bare hands won't get me far. Is there anything lying around I could use?",
                 "A fist-sized rock, picked off the ground. It is a start.");
         lead.add("t0/knap", "If I strike one rock against another, could I chip out an edge?",
-                "Flake by flake, a rough head came free. Sharp enough to cut, if I am careful.");
+                "Flake by flake, a rough head came free. Sharp enough to cut, if I am careful. Limestone and shale crumble; rhyolite and flint flake clean.");
         lead.add("t0/stone_axe", "A blade is no good without something to hold it by. How do I haft it?",
                 "Lashed to a stick, the head bites into wood. My first real tool.");
         lead.add("t0/log", "The trees here would give me timber, if I had a way to fell them.",

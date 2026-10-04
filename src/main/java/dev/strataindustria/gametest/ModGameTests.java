@@ -126,6 +126,9 @@ public final class ModGameTests {
         MarkGameTests.register(TESTS);
         LedgerGameTests.register(TESTS);
         OutpostGameTests.register(TESTS);
+        BronzeGameTests.register(TESTS);
+        BellGameTests.register(TESTS);
+        CabinetGameTests.register(TESTS);
         JournalGameTests.register(TESTS);
         FloraGameTests.register(TESTS);
         StructureGameTests.register(TESTS);

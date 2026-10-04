@@ -58,6 +58,12 @@ public final class Knapping {
         return isFlint(stack) ? FLINT_OPENING_COST : ROCK_OPENING_COST;
     }
 
+    /** How the material breaks when struck, or empty for clay and wood, which do not flake. */
+    public static Optional<Grain> grainOf(ItemStack stack) {
+        if (isFlint(stack)) return Optional.of(Grain.CLEAN);
+        return rockOf(stack).map(Rock::grain);
+    }
+
     public static Optional<KnappedFrom> sourceOf(ItemStack stack) {
         if (isFlint(stack)) return Optional.of(new KnappedFrom(KnappedFrom.FLINT));
         return rockOf(stack).map(KnappedFrom::of);

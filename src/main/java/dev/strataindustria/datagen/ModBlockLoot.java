@@ -135,6 +135,21 @@ final class ModBlockLoot extends BlockLootSubProvider {
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);
         dropSelf(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.get());
         dropSelf(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.get());
+        dropSelf(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD.get());
+        // A specimen cabinet keeps its collection.
+        Block cabinet = dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET.get();
+        add(cabinet, LootTable.lootTable().withPool(applyExplosionCondition(cabinet, LootPool.lootPool()
+                .setRolls(ContextIntProviders.exactly(1))
+                .add(LootItem.lootTableItem(cabinet)
+                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                                .include(dev.strataindustria.cabinet.CabinetRegistry.HELD.get()))))));
+        // A bell keeps the tone it was cast with.
+        Block bell = dev.strataindustria.bronze.BronzeRegistry.BELL.get();
+        add(bell, LootTable.lootTable().withPool(applyExplosionCondition(bell, LootPool.lootPool()
+                .setRolls(ContextIntProviders.exactly(1))
+                .add(LootItem.lootTableItem(bell)
+                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                                .include(dev.strataindustria.bronze.BronzeRegistry.BELL_TONE.get()))))));
         tier5();
     }
 

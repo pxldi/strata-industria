@@ -59,7 +59,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.STONE_PICKAXE, "Stone Pickaxe");
 
         String knapped = StrataIndustria.MOD_ID + ".knapped_from.";
-        add(knapped + "rock", "Knapped from %s (%s)");
+        add(knapped + "rock", "Knapped from %s (%s), %s");
+        add(knapped + "grain.clean", "flakes clean");
+        add(knapped + "grain.coarse", "coarse");
+        add(knapped + "grain.crumbly", "crumbly");
         add(knapped + "flint", "Knapped from flint");
         for (Rock rock : Rock.values()) {
             add(knapped + "material." + rock.id(), rock.id().replace('_', ' '));
@@ -78,6 +81,7 @@ final class ModLanguageProvider extends LanguageProvider {
         }
         add(StrataIndustria.MOD_ID + ".knapping.repeat", "Repeat last: cut the same shape again. Costs the same material.");
         add(StrataIndustria.MOD_ID + ".knapping.repeat.unknown", "Knap a shape from this material by hand first");
+        add(StrataIndustria.MOD_ID + ".knapping.crumbled", "It crumbled");
         add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s to start");
         add("container." + StrataIndustria.MOD_ID + ".clay_forming", "Clay Forming");
         addItem(ModItems.UNFIRED_SMALL_VESSEL, "Unfired Small Vessel");
@@ -177,6 +181,11 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
         add(subtitles + "knapping.repeat", "Flakes fall quickly");
+        add(subtitles + "knapping.crumble", "Stone crumbles");
+        add(subtitles + "crucible.fumes", "Fumes hiss");
+        add(subtitles + "bell.ring", "Bell rings");
+        add(subtitles + "cabinet.set", "Specimen set down");
+        add(subtitles + "cabinet.shelf", "Shelf filled");
         add(subtitles + "firestarter.drill", "Bow drill whirs");
         add(subtitles + "fire_pit.ignite", "Fire catches");
         add(subtitles + "fire_pit.extinguish", "Fire goes out");
@@ -575,6 +584,22 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "charter.line_cut", "Line cut");
         add(subtitles + "charter.deed", "Deed written");
         addItem(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_LEDGER, "Builder's Ledger");
+        addBlock(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD, "Fume Hood");
+        addBlock(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET, "Specimen Cabinet");
+        String cab = StrataIndustria.MOD_ID + ".cabinet.";
+        add(cab + "have", "%s is already in the cabinet");
+        add(cab + "set", "%s on the shelf (%s of %s)");
+        add(cab + "full", "%s shelf full");
+        add(cab + "status", "%s of %s specimens, %s of %s shelves full");
+        add(cab + "shelf.igneous_extrusive", "Extrusive igneous");
+        add(cab + "shelf.igneous_intrusive", "Intrusive igneous");
+        add(cab + "shelf.metamorphic", "Metamorphic");
+        add(cab + "shelf.sedimentary", "Sedimentary");
+        add(cab + "shelf.minerals", "Mineral");
+        addBlock(dev.strataindustria.bronze.BronzeRegistry.BELL, "Bell");
+        addItem(dev.strataindustria.bronze.BronzeRegistry.UNFIRED_BELL_MOLD, "Unfired Bell Mold");
+        addItem(dev.strataindustria.bronze.BronzeRegistry.BELL_MOLD, "Bell Mold");
+        add(StrataIndustria.MOD_ID + ".fumes.sting", "The fumes sting. Get out of the room");
         addBlock(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE, "Builder's Crate");
         add(id + ".ledger.plan.coke_oven", "coke oven");
         add(id + ".ledger.plan.blast_furnace", "blast furnace");

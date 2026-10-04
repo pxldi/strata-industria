@@ -48,10 +48,16 @@ public class ProspectorsPickItem extends Item {
         if (!(context.getLevel() instanceof ServerLevel level)) return InteractionResult.SUCCESS;
         BlockPos centre = context.getClickedPos();
         Map<String, Integer> counts = new java.util.LinkedHashMap<>();
-        boolean rich = scan(level, centre, radius, counts);
-        Component report = report(counts);
+        // A full specimen cabinet shelf for this rock reaches further and tells whether any ore is rich.
+        boolean knowsRock = player instanceof ServerPlayer known
+                && dev.strataindustria.cabinet.Shelves.knowsRock(known, level.getBlockState(centre));
+        int reach = knowsRock ? radius + dev.strataindustria.cabinet.Shelves.REACH_BONUS : radius;
+        boolean rich = scan(level, centre, reach, counts);
+        boolean allMinerals = player instanceof ServerPlayer known
+                && dev.strataindustria.cabinet.Shelves.has(known, dev.strataindustria.cabinet.Specimens.MINERAL_SHELF);
+        Component report = report(counts, allMinerals ? 4 : 3);
         // The wrought iron pick also tells whether any of it is rich (spec 10.3).
-        if (rich && radius > RADIUS) report = Component.empty().append(report)
+        if (rich && (radius > RADIUS || knowsRock)) report = Component.empty().append(report)
                 .append(Component.translatable(StrataIndustria.MOD_ID + ".prospect.rich"));
         player.sendOverlayMessage(report);
         level.playSound(null, centre, ModSounds.PROSPECT.get(), SoundSource.PLAYERS, 0.8f, 0.9f + level.getRandom().nextFloat() * 0.2f);
@@ -102,11 +108,15 @@ public class ProspectorsPickItem extends Item {
 
     /** "Large cassiterite, traces of native copper", or "No ore nearby". */
     static Component report(Map<String, Integer> counts) {
+        return report(counts, 3);
+    }
+
+    static Component report(Map<String, Integer> counts, int most) {
         if (counts.isEmpty()) return Component.translatable(StrataIndustria.MOD_ID + ".prospect.nothing");
         List<Map.Entry<String, Integer>> found = new ArrayList<>(counts.entrySet());
         found.sort(Map.Entry.<String, Integer>comparingByValue().reversed());
         MutableComponent line = Component.empty();
-        for (int i = 0; i < Math.min(3, found.size()); i++) {
+        for (int i = 0; i < Math.min(most, found.size()); i++) {
             if (i > 0) line.append(", ");
             Component ore = Component.translatable(StrataIndustria.MOD_ID + ".ore." + found.get(i).getKey());
             // The first entry opens the sentence; the rest continue it in lower case.

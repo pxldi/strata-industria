@@ -77,6 +77,8 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private int pourTotal;
     private Melt pourSlice = Melt.EMPTY;
     private Melt poured = Melt.EMPTY;
+    /** Ticks left of white fumes over an arsenical pour (uniqueness 4.3); not saved. */
+    private int fumeTicks;
     private boolean forgeTooHot;
     private boolean carbonWaiting;
     private boolean redstoneWaiting;
@@ -137,6 +139,11 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     /** The status shown when nothing is heating the pot. */
     protected CrucibleStatus noHeatStatus() {
         return CrucibleStatus.NO_FORGE;
+    }
+
+    /** Ticks of white fumes still to rise over an arsenical pour. */
+    public int fumeTicks() {
+        return fumeTicks;
     }
 
     /** Whether a pour is still running (metal set aside and flowing into the mold). */
@@ -227,6 +234,9 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         changed |= crucible.meltInputs(level, pos);
         changed |= crucible.burnOffCarbon(level, pos);
         changed |= crucible.pour(level, pos);
+        if (crucible.fumeTicks > 0 && level instanceof net.minecraft.server.level.ServerLevel server) {
+            dev.strataindustria.bronze.Fumes.tick(server, pos, crucible.fumeTicks--);
+        }
         CrucibleStatus was = crucible.status;
         crucible.status = crucible.computeStatus(forgeBelow);
         if (crucible.status == CrucibleStatus.MOLTEN && was != CrucibleStatus.MOLTEN) {
@@ -374,7 +384,9 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         // Tier 4 spec 3: clay molds crack under metal hotter than 1300 degrees.
         if (!cast.takes(mixMeltingPoint(melt))) return Optional.of("mold_too_weak");
         Optional<Metal> result = result();
-        if (cast.isGear()) {
+        if (cast.isBell()) {
+            if (result.isEmpty() || !CastMoldItem.ringsAsBell(result.get())) return Optional.of("no_alloy");
+        } else if (cast.isGear()) {
             if (result.isEmpty() || !result.get().hasGear()) return Optional.of("no_gear");
         } else if (cast.type() == null) {
             if (result.isEmpty() && melt.units().size() < 2) return Optional.of("no_alloy");
@@ -428,6 +440,10 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         poured = Melt.EMPTY;
         if (level != null) {
             level.playSound(null, worldPosition, pourSound(), SoundSource.BLOCKS, 0.8f, 1.0f);
+            if (pourSlice.units().getOrDefault(Metal.ARSENIC, 0) > 0) {
+                fumeTicks = pourTotal / POUR_PER_TICK + dev.strataindustria.bronze.Fumes.LINGER;
+                level.playSound(null, worldPosition, dev.strataindustria.bronze.BronzeRegistry.FUMES.get(), SoundSource.BLOCKS, 0.7f, 1.0f);
+            }
         }
         setChanged();
         return true;

@@ -551,6 +551,14 @@ final class StructureData {
                         Component.translatable(collection + ".hint"), AdvancementType.TASK, false, false, true)
                 .addCriterion("collected", JournalTrigger.TriggerInstance.of(SpecimenShelfBlockEntity.COLLECTION))
                 .save(output, Journal.goal(SpecimenShelfBlockEntity.COLLECTION).toString());
+        // A full shelf in the specimen cabinet is a page as well.
+        String cabinet = "journal." + StrataIndustria.MOD_ID + ".place.cabinet";
+        Advancement.Builder.advancement()
+                .parent(root)
+                .display(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET_ITEM.get(), Component.translatable(cabinet),
+                        Component.translatable(cabinet + ".hint"), AdvancementType.TASK, false, false, true)
+                .addCriterion("filled", JournalTrigger.TriggerInstance.of(dev.strataindustria.cabinet.SpecimenCabinetBlock.JOURNAL))
+                .save(output, Journal.goal(dev.strataindustria.cabinet.SpecimenCabinetBlock.JOURNAL).toString());
     }
 
     // ---------------------------------------------------------------- assets
@@ -714,6 +722,9 @@ final class StructureData {
                     .collect(java.util.stream.Collectors.joining(" "));
             add.accept("block." + id + ".banner.pick_and_hammer." + colour, name + " Pick and Hammer");
         }
+        add.accept("journal." + id + ".place.cabinet", "Full shelf");
+        add.accept("journal." + id + ".place.cabinet.hint", "Every rock of one kind, or every mineral, in a specimen cabinet. "
+                + "My pick reaches further into rock I know.");
         add.accept("journal." + id + ".place.specimens", "Specimen collection");
         add.accept("journal." + id + ".place.specimens.hint", "Four different minerals on one specimen shelf. Cut samples turn up "
                 + "in old camps, adits and caches.");

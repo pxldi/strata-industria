@@ -1,11 +1,13 @@
 package dev.strataindustria.knapping;
 
+import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModMenus;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.registry.ModSounds;
 import java.util.Optional;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -119,10 +121,29 @@ public class KnappingMenu extends AbstractContainerMenu {
         if (id < 0 || id >= GridPattern.CELLS || cells[id] == 0 || isFinished()) return false;
         if (!start(clicker)) return false;
         cells[id] = 0;
+        Optional<Grain> grain = Knapping.grainOf(material);
+        float pitch = grain.map(Grain::strikePitch).orElse(1.0f);
         clicker.level().playSound(null, clicker.getX(), clicker.getY(), clicker.getZ(), Knapping.strikeSound(material),
-                SoundSource.PLAYERS, 0.7f, 0.85f + clicker.getRandom().nextFloat() * 0.3f);
+                SoundSource.PLAYERS, 0.7f, pitch * (0.85f + clicker.getRandom().nextFloat() * 0.3f));
+        if (grain.isPresent() && clicker.getRandom().nextFloat() < grain.get().crumbleChance()) crumble(clicker, id);
         updateResult(clicker);
         return true;
+    }
+
+    /** Crumbly stone loses a second kept cell next to the one struck. */
+    private void crumble(Player clicker, int struck) {
+        int x = struck % GridPattern.SIZE, y = struck / GridPattern.SIZE;
+        int[] next = new int[4];
+        int n = 0;
+        if (x > 0 && cells[struck - 1] != 0) next[n++] = struck - 1;
+        if (x < GridPattern.SIZE - 1 && cells[struck + 1] != 0) next[n++] = struck + 1;
+        if (y > 0 && cells[struck - GridPattern.SIZE] != 0) next[n++] = struck - GridPattern.SIZE;
+        if (y < GridPattern.SIZE - 1 && cells[struck + GridPattern.SIZE] != 0) next[n++] = struck + GridPattern.SIZE;
+        if (n == 0) return;
+        cells[next[clicker.getRandom().nextInt(n)]] = 0;
+        clicker.level().playSound(null, clicker.getX(), clicker.getY(), clicker.getZ(), ModSounds.KNAP_CRUMBLE.get(),
+                SoundSource.PLAYERS, 0.7f, 0.9f + clicker.getRandom().nextFloat() * 0.2f);
+        if (clicker instanceof ServerPlayer player) player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".knapping.crumbled"));
     }
 
     /** Takes the opening cost on the first strike. Returns false, closing the grid, if the material is gone. */
