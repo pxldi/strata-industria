@@ -43,7 +43,7 @@ public final class Tier5Blocks {
                 .strength(0.4f)
                 .sound(CABLE_SOUND)
                 .noOcclusion()
-                .pushReaction(PushReaction.DESTROY);
+                .pushReaction(PushReaction.POPPED);
     }
 
     /** Riveted steel casings: mined with a pickaxe. */
