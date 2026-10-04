@@ -63,7 +63,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.6
+        "chance": 0.4
       },
       "entries": [
         {
@@ -72,8 +72,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 12,
-              "min": 4
+              "max": 5,
+              "min": 2
             }
           },
           "name": "minecraft:apple"
@@ -84,7 +84,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.5
+        "chance": 0.4
       },
       "entries": [
         {
@@ -93,8 +93,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 12,
-              "min": 4
+              "max": 5,
+              "min": 2
             }
           },
           "name": "minecraft:bread"
@@ -231,7 +231,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.5
+        "chance": 0.25
       },
       "entries": [
         {

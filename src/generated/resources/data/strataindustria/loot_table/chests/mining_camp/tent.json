@@ -13,8 +13,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 24,
-              "min": 8
+              "max": 5,
+              "min": 2
             }
           },
           "name": "minecraft:bread"
@@ -25,8 +25,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 24,
-              "min": 8
+              "max": 5,
+              "min": 2
             }
           },
           "name": "minecraft:baked_potato"
@@ -37,8 +37,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 16,
-              "min": 6
+              "max": 5,
+              "min": 2
             }
           },
           "name": "minecraft:cooked_mutton"
@@ -58,8 +58,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 32,
-              "min": 16
+              "max": 10,
+              "min": 4
             }
           },
           "name": "minecraft:torch"
