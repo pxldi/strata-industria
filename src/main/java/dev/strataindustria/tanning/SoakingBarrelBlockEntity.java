@@ -130,6 +130,19 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
         return true;
     }
 
+    /**
+     * Tips out lye or tannin (an empty bucket on an open barrel), so leftovers too small for another
+     * batch never block the barrel. Returns what was poured away, or null if there was nothing to pour.
+     */
+    public TankFluid pourOut() {
+        if (amount <= 0 || fluid.isSame(Fluids.WATER)) return null;
+        TankFluid poured = TankFluid.of(fluid);
+        amount = 0;
+        fluid = Fluids.EMPTY;
+        sync();
+        return poured;
+    }
+
     /** Takes a bucket of water back out. */
     public boolean takeWater() {
         if (!fluid.isSame(Fluids.WATER) || amount < BUCKET) return false;

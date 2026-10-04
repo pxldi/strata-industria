@@ -38,6 +38,9 @@ final class Terrain {
         return near;
     }
 
+    /** How far above the clearing height a cut tree is taken down. */
+    static final int TREE_TOP = 24;
+
     /**
      * Moves the ground of a column from {@code natural} to {@code target}: clears ground and growth above the
      * target up to {@code clearTop}, keeps the column's own top block (grass, sand, stone) on top, and fills
@@ -53,6 +56,15 @@ final class Terrain {
             if (!chunkBB.isInside(pos)) continue;
             BlockState state = level.getBlockState(pos);
             if (isGround(state) || isGrowth(state)) level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+        }
+        // A tall tree cut at the clearing height would leave its top hanging; take the rest of the trunk
+        // and crown in this column too.
+        for (int y = clearTop + 1; y <= clearTop + TREE_TOP; y++) {
+            pos.setY(y);
+            if (!chunkBB.isInside(pos)) break;
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(BlockTags.LOGS) && !state.is(BlockTags.LEAVES)) break;
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
         }
         pos.setY(target);
         if (chunkBB.isInside(pos)) level.setBlock(pos, skin, Block.UPDATE_CLIENTS);

@@ -194,7 +194,12 @@ final class StructureData {
 
     /** A tool left behind: 10 to 30% of its durability left (structures spec 4.1, L3). */
     private static LootPoolEntry worn(ItemLike item) {
-        return new LootPoolEntry(LootItem.lootTableItem(item).apply(SetItemDamageFunction.setDamage(ContextFloatProviders.between(0.1f, 0.3f))));
+        return worn(item, 0.1f, 0.3f);
+    }
+
+    /** A worn tool with its own share of durability left; the firestarter keeps 2 to 4 lights (structures spec 4.1). */
+    private static LootPoolEntry worn(ItemLike item, float min, float max) {
+        return new LootPoolEntry(LootItem.lootTableItem(item).apply(SetItemDamageFunction.setDamage(ContextFloatProviders.between(min, max))));
     }
 
     private static LootPoolEntry notes(SurveyNotes notes) {
@@ -231,7 +236,7 @@ final class StructureData {
                     .withPool(pool(0.7f, item(ModItems.TWINE.get(), 1, 4)))
                     .withPool(pool(0.6f, item(Items.APPLE, 1, 3)))
                     .withPool(pool(0.4f, item(Items.BREAD, 1, 2)))
-                    .withPool(pool(0.8f, worn(ModItems.FIRESTARTER.get())))
+                    .withPool(pool(0.8f, worn(ModItems.FIRESTARTER.get(), 0.2f, 0.4f)))
                     .withPool(pool(0.5f, worn(ModItems.STONE_AXE.get())))
                     .withPool(pool(0.5f, worn(ModItems.STONE_SHOVEL.get())))
                     .withPool(pool(0.6f, item(ModItems.ASH.get(), 1, 4))));
