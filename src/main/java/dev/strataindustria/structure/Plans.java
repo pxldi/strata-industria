@@ -513,6 +513,40 @@ public final class Plans {
                     " llll  ",
             }));
 
+    // ---------------------------------------------------------------- 6.6 placer workings
+
+    /**
+     * The panners' bank, water to the south: a canvas lean-to with their barrel, and the heap of river
+     * gravel they never got through. The sluice runs from column 5 of the south edge into the river.
+     */
+    public static final Plan PLACER_BANK = add(Plan.of("placer_workings/bank", Kind.LEVELLED,
+            new String[] {
+                    "",
+                    " ,,,,,      ",
+                    " ,,,,, ,,,, ",
+                    "  ,,,,,,,,, ",
+                    "   ,,,,,,,, ",
+                    "    ,,,,    ",
+            },
+            new String[] {
+                    "",
+                    " PCCCP      ",
+                    " C_B_C  GG  ",
+                    "  ___  GGGG ",
+                    "",
+            },
+            new String[] {
+                    "",
+                    " PCCCP      ",
+                    " C   C      ",
+                    " CCCCC  GG  ",
+            },
+            new String[] {
+                    "",
+                    " CCCCC      ",
+                    " CCCCC      ",
+            }));
+
     private static String[] portalWalls() {
         return new String[] {
                 "#P...P#",

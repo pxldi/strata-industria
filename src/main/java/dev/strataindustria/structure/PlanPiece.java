@@ -214,6 +214,7 @@ public class PlanPiece extends StructurePiece {
             case 'B', 'b' -> Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP);
             case 'K', 'Y' -> StructureContent.CRACKED_FIRE_BRICKS.get().defaultBlockState();
             case 'S', 'Z' -> StructureContent.SLAG_HEAP.get().defaultBlockState();
+            case 'G' -> ModBlocks.PLACER_GRAVEL.get().defaultBlockState();
             case 'E' -> bed(BedPart.HEAD);
             case 'e' -> bed(BedPart.FOOT);
             case 'k' -> wood.fence();
