@@ -1870,6 +1870,29 @@
     ],
     "subtitle": "subtitles.strataindustria.steam_engine.stop"
   },
+  "steam_hammer.strike": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 0.8,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 0.75,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.4,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steam_hammer.strike"
+  },
   "ui.journal.place": {
     "sounds": [
       {
