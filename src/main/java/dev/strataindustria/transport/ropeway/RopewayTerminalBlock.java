@@ -4,6 +4,7 @@ import dev.strataindustria.power.KineticBlock;
 import dev.strataindustria.power.Kinetics;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -71,9 +72,12 @@ public class RopewayTerminalBlock extends BaseEntityBlock implements KineticBloc
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         if (RopewayTowerBlock.holdsLineGear(player)) return InteractionResult.PASS;
-        if (Kinetics.report(level, pos, player)) return InteractionResult.SUCCESS;
         if (!level.isClientSide() && level.getBlockEntity(pos) instanceof RopewayTerminalBlockEntity terminal) {
+            // An empty hand rides the line out; sneaking asks the drive how it stands.
+            if (!player.isShiftKeyDown() && terminal.hasLine() && player instanceof ServerPlayer rider) return terminal.ride(rider, pos);
+            if (Kinetics.report(level, pos, player)) return InteractionResult.SUCCESS;
             player.sendOverlayMessage(terminal.status());
+            return InteractionResult.SUCCESS;
         }
         return InteractionResult.SUCCESS;
     }

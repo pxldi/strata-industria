@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import dev.strataindustria.transport.ropeway.RopewayPath;
 import dev.strataindustria.transport.ropeway.RopewayPayloads;
+import dev.strataindustria.transport.ropeway.RopewayRegistry;
 import dev.strataindustria.transport.ropeway.RopewayReturnBlockEntity;
 import dev.strataindustria.transport.ropeway.RopewayTerminalBlockEntity;
 import dev.strataindustria.transport.ropeway.RopewayTowerBlockEntity;
@@ -50,6 +51,7 @@ public class RopewayRenderer<T extends BlockEntity> implements BlockEntityRender
     private final Supplier<ItemStack> cable = RotorRenderer.rotorStack("ropeway_cable");
     private final Supplier<ItemStack> bucket = RotorRenderer.rotorStack("ropeway_bucket");
     private final Supplier<ItemStack> wheel = RotorRenderer.rotorStack("ropeway_wheel");
+    private final Supplier<ItemStack> seat = RotorRenderer.rotorStack("ropeway_seat");
 
     public RopewayRenderer(BlockEntityRendererProvider.Context context, Role role) {
         this.itemModelResolver = context.itemModelResolver();
@@ -63,7 +65,7 @@ public class RopewayRenderer<T extends BlockEntity> implements BlockEntityRender
 
     private record Piece(Vec3 mid, Matrix4f turn, float length) {}
 
-    private record Hung(Vec3 at, float yaw, float sway, int slot) {}
+    private record Hung(Vec3 at, float yaw, float sway, int slot, boolean seat) {}
 
     @Override
     public void extractRenderState(T block, State state, float partialTick, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
@@ -92,27 +94,31 @@ public class RopewayRenderer<T extends BlockEntity> implements BlockEntityRender
         ClientRopeways.Line line = terminal == null ? null : ClientRopeways.get(terminal);
         double now = ClientRopeways.now(partialTick);
         double advance = line == null ? 0 : line.advance(now);
-        if (role != Role.TOWER && line != null) {
+        // Stations have a bull wheel; so does an angle station, which is a tower block.
+        boolean wheeled = role != Role.TOWER || block.getBlockState().is(RopewayRegistry.ANGLE_STATION.get());
+        if (wheeled && line != null) {
             state.hasWheel = true;
             state.wheelAngle = (float) Math.toDegrees(advance / RopewayPath.LATERAL);
             itemModelResolver.updateForTopItem(state.wheel, wheel.get(), ItemDisplayContext.NONE, level, null, 0);
-        } else if (role != Role.TOWER && terminal != null) {
+        } else if (wheeled && terminal != null) {
             state.hasWheel = true;
             state.wheelAngle = 0;
             itemModelResolver.updateForTopItem(state.wheel, wheel.get(), ItemDisplayContext.NONE, level, null, 0);
         }
         if (next == null) return;
-        Vec3 a = RopewayPath.anchor(pos).subtract(pos.getX(), pos.getY(), pos.getZ());
-        Vec3 b = RopewayPath.anchor(next).subtract(pos.getX(), pos.getY(), pos.getZ());
-        RopewayPath shape = new RopewayPath(List.of(a, b));
-        double length = shape.spanLength(0);
+        Vec3 origin = new Vec3(pos.getX(), pos.getY(), pos.getZ());
+        // With the whole line known the ropes follow its bends; before it arrives the span is drawn straight.
+        RopewayPath shape = line != null && span < line.path.spans() ? line.path
+                : new RopewayPath(List.of(RopewayPath.anchor(pos), RopewayPath.anchor(next)));
+        int ropeSpan = line != null && shape == line.path ? span : 0;
+        double length = shape.spanLength(ropeSpan);
         if (length < 1.0E-3) return;
         itemModelResolver.updateForTopItem(state.cable, cable.get(), ItemDisplayContext.NONE, level, null, 0);
         int pieces = Math.max(2, (int) Math.ceil(length / PIECE));
         for (int side = -1; side <= 1; side += 2) {
-            Vec3 previous = shape.rope(0, 0.0, side);
+            Vec3 previous = shape.rope(ropeSpan, 0.0, side).subtract(origin);
             for (int i = 1; i <= pieces; i++) {
-                Vec3 point = shape.rope(0, i / (double) pieces, side);
+                Vec3 point = shape.rope(ropeSpan, i / (double) pieces, side).subtract(origin);
                 Vec3 along = point.subtract(previous);
                 double piece = along.length();
                 if (piece > 1.0E-4) {
@@ -136,10 +142,11 @@ public class RopewayRenderer<T extends BlockEntity> implements BlockEntityRender
             float yaw = (float) Math.atan2(point.heading().x, point.heading().z);
             // The hanger swings a little as it goes, more the faster the rope runs.
             float sway = (float) (Math.sin(now * 0.12 + s * 0.9) * SWAY_DEGREES * Math.min(1.0, line.speed() * 8.0));
-            state.hung.add(new Hung(point.position().subtract(pos.getX(), pos.getY(), pos.getZ()), yaw, sway, slot));
+            state.hung.add(new Hung(point.position().subtract(pos.getX(), pos.getY(), pos.getZ()), yaw, view.seat() ? sway * 0.4f : sway, slot, view.seat()));
             slot++;
         }
         itemModelResolver.updateForTopItem(state.hanger, bucket.get(), ItemDisplayContext.NONE, level, null, 0);
+        itemModelResolver.updateForTopItem(state.chair, seat.get(), ItemDisplayContext.NONE, level, null, 0);
     }
 
     @Override
@@ -167,6 +174,14 @@ public class RopewayRenderer<T extends BlockEntity> implements BlockEntityRender
             pose.translate(hung.at.x, hung.at.y, hung.at.z);
             pose.rotateDegrees(Axis.YP, (float) Math.toDegrees(hung.yaw));
             pose.rotateDegrees(Axis.ZP, hung.sway);
+            if (hung.seat) {
+                // The seat is modelled at half size so it fits a block; it is drawn twice that, hanging from the rope.
+                pose.translate(0.0, -0.84, 0.0);
+                pose.scale(2.0f, 2.0f, 2.0f);
+                state.chair.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+                pose.popPose();
+                continue;
+            }
             state.hanger.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             ItemStackRenderState content = state.contents.get(hung.slot);
             if (!content.isEmpty()) {
@@ -195,6 +210,7 @@ public class RopewayRenderer<T extends BlockEntity> implements BlockEntityRender
         final ItemStackRenderState wheel = new ItemStackRenderState();
         final ItemStackRenderState cable = new ItemStackRenderState();
         final ItemStackRenderState hanger = new ItemStackRenderState();
+        final ItemStackRenderState chair = new ItemStackRenderState();
         final List<ItemStackRenderState> contents = new ArrayList<>();
         final List<Piece> pieces = new ArrayList<>();
         final List<Hung> hung = new ArrayList<>();

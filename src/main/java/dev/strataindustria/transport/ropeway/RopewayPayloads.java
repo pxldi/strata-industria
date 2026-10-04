@@ -21,10 +21,10 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 public final class RopewayPayloads {
     private RopewayPayloads() {}
 
-    /** A bucket as a client needs it: where it hangs on the rope and what is in it. */
-    public record BucketView(float offset, ItemStack stack) {
+    /** A bucket as a client needs it: where it hangs on the rope, what is in it and whether it carries a rider's seat. */
+    public record BucketView(float offset, ItemStack stack, boolean seat) {
         public static final StreamCodec<RegistryFriendlyByteBuf, BucketView> CODEC = StreamCodec.composite(
-                ByteBufCodecs.FLOAT, BucketView::offset, ItemStack.OPTIONAL_STREAM_CODEC, BucketView::stack, BucketView::new);
+                ByteBufCodecs.FLOAT, BucketView::offset, ItemStack.OPTIONAL_STREAM_CODEC, BucketView::stack, ByteBufCodecs.BOOL, BucketView::seat, BucketView::new);
     }
 
     /** The picture of one line. An empty node list means the line is gone. */

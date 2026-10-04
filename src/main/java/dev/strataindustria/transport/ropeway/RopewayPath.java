@@ -79,11 +79,28 @@ public final class RopewayPath {
         return flat < 1.0E-6 ? new Vec3(1, 0, 0) : new Vec3(-along.z / flat, 0, along.x / flat);
     }
 
+    /**
+     * The unit offset of the outbound rope from the centre line at node {@code node}: the side of the span at the ends,
+     * and at a bend the mitre of the two spans, so the ropes stay joined as they turn round an angle station.
+     */
+    public Vec3 lateral(int node) {
+        if (spans() == 0) return new Vec3(1, 0, 0);
+        if (node <= 0) return side(0);
+        if (node >= spans()) return side(spans() - 1);
+        Vec3 in = side(node - 1), out = side(node);
+        double d = 1.0 + in.dot(out);
+        return d < 0.25 ? out : in.add(out).scale(1.0 / d);
+    }
+
+    private Vec3 lateralAt(int span, double t) {
+        return lateral(span).lerp(lateral(span + 1), t);
+    }
+
     /** A point at fraction {@code t} of a span on the outbound rope ({@code side} 1) or the return rope (-1). */
     public Vec3 rope(int span, double t, int side) {
         Vec3 point = anchors[span].lerp(anchors[span + 1], t);
         double sag = 4.0 * SAG * spanLength(span) * t * (1.0 - t);
-        return point.add(side(span).scale(side * LATERAL)).add(0, -sag, 0);
+        return point.add(lateralAt(span, t).scale(side * LATERAL)).add(0, -sag, 0);
     }
 
     /** The span holding distance {@code u} along the line. */
@@ -107,10 +124,23 @@ public final class RopewayPath {
         double swing = Math.sin(Math.min(1.0, toEnd / TURN) * Math.PI / 2.0);
         Vec3 point = anchors[span].lerp(anchors[span + 1], t);
         double sag = 4.0 * SAG * len * t * (1.0 - t);
-        Vec3 position = point.add(side(span).scale((out ? 1 : -1) * LATERAL * swing)).add(0, -sag, 0);
+        Vec3 position = point.add(lateralAt(span, t).scale((out ? 1 : -1) * LATERAL * swing)).add(0, -sag, 0);
+        Vec3 heading = headingAt(span, u);
+        return new Point(position, out ? heading : heading.scale(-1), span);
+    }
+
+    private Vec3 direction(int span) {
         Vec3 along = anchors[span + 1].subtract(anchors[span]);
-        Vec3 heading = along.lengthSqr() < 1.0E-9 ? new Vec3(0, 0, 1) : along.normalize().scale(out ? 1 : -1);
-        return new Point(position, heading, span);
+        return along.lengthSqr() < 1.0E-9 ? new Vec3(0, 0, 1) : along.normalize();
+    }
+
+    /** The way the outbound rope runs at {@code u} along the line, turning gently through the last blocks before a bend. */
+    private Vec3 headingAt(int span, double u) {
+        Vec3 along = direction(span);
+        double into = u - cumulative[span], rest = cumulative[span + 1] - u;
+        if (span > 0 && into < TURN) along = direction(span - 1).lerp(along, 0.5 + 0.5 * into / TURN);
+        else if (span < spans() - 1 && rest < TURN) along = along.lerp(direction(span + 1), 0.5 - 0.5 * rest / TURN);
+        return along.lengthSqr() < 1.0E-9 ? direction(span) : along.normalize();
     }
 
     /** How far {@code point} is from the nearest part of the line. */

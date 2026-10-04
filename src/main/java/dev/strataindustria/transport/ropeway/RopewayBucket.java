@@ -2,7 +2,10 @@ package dev.strataindustria.transport.ropeway;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.UUID;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 /**
  * One bucket on a ropeway's loop. Its place is a fixed {@code offset} from the rope's advance, so every bucket moves
@@ -20,6 +23,12 @@ public final class RopewayBucket {
     public ItemStack stack;
     /** Tipped out at the return and on its way home: arriving back at the terminal completes a trip. */
     public boolean delivered;
+
+    /** The player sitting in this bucket's seat (the object, so a relog ends the ride) and the seat they sit on; neither is kept across a restart. */
+    public @Nullable ServerPlayer rider;
+    public @Nullable UUID seat;
+    /** Game time the rider boarded. */
+    public long boarded;
 
     public RopewayBucket(double offset, ItemStack stack, boolean delivered) {
         this.offset = offset;

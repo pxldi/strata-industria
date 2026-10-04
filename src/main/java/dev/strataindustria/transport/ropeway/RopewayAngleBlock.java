@@ -8,12 +8,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
@@ -22,15 +20,16 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * The return station (outposts spec 8.1): an idler wheel on the far end of the line. Buckets tip their loads into the
- * container at its back, or the one beneath. {@code FACING} points back along the line.
+ * The angle station (outposts spec 8.1): a steel tower with a wheel of its own that turns the line by up to 90 degrees.
+ * Buckets pass round it, and a chest behind or beneath it tops up the loads that pass. An empty hand rides the line
+ * home from here. {@code FACING} points back along the loading chest's side, like the return's.
  */
-public class RopewayReturnBlock extends BaseEntityBlock {
+public class RopewayAngleBlock extends RopewayTowerBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
-    private static final VoxelShape SHAPE = Block.box(0, 0, 0, 16, 15, 16);
+    private static final VoxelShape SHAPE = Block.box(0.5, 0, 0.5, 15.5, 15, 15.5);
 
-    public RopewayReturnBlock(Properties properties) {
-        super(properties);
+    public RopewayAngleBlock(Properties properties) {
+        super(properties, true);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }
 
@@ -39,7 +38,6 @@ public class RopewayReturnBlock extends BaseEntityBlock {
         builder.add(FACING);
     }
 
-    /** Placed facing the line, with its back to the container: the front looks the way the player looks back along it. */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
@@ -60,22 +58,15 @@ public class RopewayReturnBlock extends BaseEntityBlock {
         return SHAPE;
     }
 
+    /** An empty hand rides the line; sneaking asks the station how it stands. */
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (RopewayTowerBlock.holdsLineGear(player)) return InteractionResult.PASS;
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof RopewayReturnBlockEntity station) {
-            // An empty hand rides the line home; sneaking asks the station how it stands.
-            if (!player.isShiftKeyDown() && player instanceof ServerPlayer rider && station.terminal() != null
-                    && level.getBlockEntity(station.terminal()) instanceof RopewayTerminalBlockEntity terminal) {
-                return terminal.ride(rider, pos);
-            }
-            player.sendOverlayMessage(station.status());
+        if (holdsLineGear(player)) return InteractionResult.PASS;
+        if (player.isShiftKeyDown() || !(player instanceof ServerPlayer rider)) return super.useWithoutItem(state, level, pos, player, hit);
+        if (level.getBlockEntity(pos) instanceof RopewayTowerBlockEntity tower && tower.terminal() != null
+                && level.getBlockEntity(tower.terminal()) instanceof RopewayTerminalBlockEntity terminal) {
+            return terminal.ride(rider, pos);
         }
-        return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new RopewayReturnBlockEntity(pos, state);
+        return super.useWithoutItem(state, level, pos, player, hit);
     }
 }

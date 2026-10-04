@@ -5,6 +5,7 @@ import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.transport.foot.FootRegistry;
+import dev.strataindustria.transport.ropeway.RopewayAngleBlock;
 import dev.strataindustria.transport.ropeway.RopewayRegistry;
 import dev.strataindustria.transport.ropeway.RopewayReturnBlock;
 import dev.strataindustria.transport.ropeway.RopewayTerminalBlock;
@@ -37,6 +38,10 @@ final class RopewayData {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(RopewayRegistry.RETURN.get()).with(
                 PropertyDispatch.initial(RopewayReturnBlock.FACING).generate(facing ->
                         RailData.turn(BlockModelGenerators.plainVariant(StrataIndustria.id("block/ropeway_return")), facing))));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(RopewayRegistry.ANGLE_STATION.get()).with(
+                PropertyDispatch.initial(RopewayAngleBlock.FACING).generate(facing ->
+                        RailData.turn(BlockModelGenerators.plainVariant(StrataIndustria.id("block/ropeway_angle_station")), facing))));
+        blockModels.itemModelOutput.accept(RopewayRegistry.ANGLE_STATION_ITEM.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/ropeway_angle_station")));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(RopewayRegistry.WOODEN_TOWER.get(),
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/wooden_ropeway_tower"))));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(RopewayRegistry.STEEL_TOWER.get(),
@@ -55,6 +60,7 @@ final class RopewayData {
         String id = StrataIndustria.MOD_ID;
         add.accept("block." + id + ".ropeway_terminal", "Ropeway Terminal");
         add.accept("block." + id + ".ropeway_return", "Ropeway Return");
+        add.accept("block." + id + ".ropeway_angle_station", "Ropeway Angle Station");
         add.accept("block." + id + ".wooden_ropeway_tower", "Wooden Ropeway Tower");
         add.accept("block." + id + ".steel_ropeway_tower", "Steel Ropeway Tower");
         add.accept("item." + id + ".wire_rope", "Wire Rope");
@@ -71,6 +77,8 @@ final class RopewayData {
         add.accept(line + "need_rope", "Need %s wire rope for that span.");
         add.accept(line + "too_far", "That makes the line longer than %s blocks.");
         add.accept(line + "too_many", "No more than %s spans.");
+        add.accept(line + "too_sharp", "Too sharp a bend for a tower. %s degrees at most; an angle station takes more.");
+        add.accept(line + "too_sharp_angle", "Too sharp even for an angle station. %s degrees at most.");
         add.accept(line + "twice", "Already on this line.");
         add.accept(line + "taken", "That one carries another line.");
         add.accept(line + "lost", "The terminal is gone.");
@@ -91,6 +99,22 @@ final class RopewayData {
         add.accept(id + ".ropeway.return.line", "Chest or chute behind it takes the loads.");
         add.accept(id + ".ropeway.return.bare", "Not on a line.");
         add.accept(id + ".ropeway.return.backed_up", "Full. The line is waiting.");
+        String ride = id + ".ropeway.ride.";
+        add.accept(ride + "no_line", "No line to ride.");
+        add.accept(ride + "unpowered", "Drive isn't turning.");
+        add.accept(ride + "far_station", "The return station isn't loaded.");
+        add.accept(ride + "no_spare", "Hang a spare bucket in the terminal first.");
+        add.accept(ride + "no_bucket", "No empty bucket out, and none spare at the terminal to send.");
+        add.accept(ride + "waiting", "Already waiting.");
+        add.accept(ride + "waiting_out", "Stand by. A bucket goes out for you.");
+        add.accept(ride + "waiting_back", "Stand by. The next empty bucket coming home takes you.");
+        add.accept(ride + "sent", "Sent a bucket out for you.");
+        add.accept(ride + "gave_up", "Nobody came. Try again.");
+        add.accept(ride + "aboard", "Hold on. Sneak to climb out if the line stops.");
+        add.accept(ride + "off_terminal", "Off at the terminal.");
+        add.accept(ride + "off_return", "Off at the return.");
+        add.accept(ride + "off_angle", "Off at the angle station.");
+        add.accept(ride + "snapped", "The line parted.");
         add.accept(id + ".ropeway.tower.carrying", "Carrying a line.");
         add.accept(id + ".ropeway.tower.bare", "No line yet.");
 
@@ -102,10 +126,15 @@ final class RopewayData {
         add.accept(subtitles + "ropeway.rope_tie", "Rope made fast");
         add.accept(subtitles + "ropeway.line_strung", "Line strung");
         add.accept(subtitles + "ropeway.snap", "Line snaps");
+        add.accept(subtitles + "ropeway.angle_turn", "Bucket swings round the wheel");
+        add.accept(subtitles + "ropeway.seat_clip", "Seat clips on");
+        add.accept(subtitles + "ropeway.seat_release", "Seat lets go");
+        add.accept(subtitles + "ropeway.ride_wind", "Wind rushes");
+        add.accept(subtitles + "ropeway.top_up", "Bucket takes on more");
 
         String journal = "journal." + id + ".";
         add.accept(journal + "t4.ropeway", "Send Ore by Ropeway");
-        add.accept(journal + "t4.ropeway.hint", "Towers and wire rope, a drive wheel at one end, a return at the other. Hang buckets in the drive, put a chest behind each station. Sixty-four items across.");
+        add.accept(journal + "t4.ropeway.hint", "Towers and wire rope, a drive wheel at one end, a return at the other. Hang buckets in the drive, put a chest behind each station. Sixty-four items across. An empty hand on a station rides the line.");
         add.accept(journal + "t4.ropeway.lead", "Track won't go over that valley.");
         add.accept(journal + "t4.ropeway.note", "Buckets going over the valley all day now.");
     }
@@ -152,6 +181,11 @@ final class RopewayData {
                     .define('X', planks)
                     .unlockedBy("has_steel_rod", has(rod))
                     .save(output, key("ropeway_return"));
+            shapeless(RecipeCategory.TRANSPORTATION, RopewayRegistry.ANGLE_STATION_ITEM.get())
+                    .requires(RopewayRegistry.RETURN_ITEM.get())
+                    .requires(RopewayRegistry.TERMINAL_ITEM.get())
+                    .unlockedBy("has_steel_rod", has(rod))
+                    .save(output, key("ropeway_angle_station"));
             shaped(RecipeCategory.TRANSPORTATION, RopewayRegistry.WOODEN_TOWER_ITEM.get(), 2)
                     .pattern("X X")
                     .pattern("XIX")

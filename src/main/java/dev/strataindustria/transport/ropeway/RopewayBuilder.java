@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -41,6 +42,8 @@ public final class RopewayBuilder {
     public static final int MAX_SPANS = 16;
     /** Blocks of line one wire rope pays for. */
     public static final int ROPE_BLOCKS = 8;
+    /** Degrees a tower head can turn the line; an angle station takes up to a right angle. */
+    public static final double TOWER_TURN = 30.0, ANGLE_TURN = 90.0;
     /** Blocks of rise or fall allowed for each 2 across. */
     private static final double STEEP = 0.5;
 
@@ -122,6 +125,14 @@ public final class RopewayBuilder {
             say(player, "taken");
             return;
         }
+        if (pending.nodes.size() >= 2) {
+            boolean angle = level.getBlockState(from).getBlock() instanceof RopewayAngleBlock;
+            double turn = turn(pending.nodes.get(pending.nodes.size() - 2), from, pos);
+            if (turn > (angle ? ANGLE_TURN : TOWER_TURN) + 1.0E-6) {
+                say(player, angle ? "too_sharp_angle" : "too_sharp", Math.round(angle ? ANGLE_TURN : TOWER_TURN));
+                return;
+            }
+        }
         Vec3 a = RopewayPath.anchor(from), b = RopewayPath.anchor(pos);
         double length = a.distanceTo(b), flat = Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.z - a.z) * (b.z - a.z));
         boolean steel = steelEnd(level, from) && steelEnd(level, pos);
@@ -162,6 +173,14 @@ public final class RopewayBuilder {
         level.playSound(null, pos, RopewayRegistry.LINE_STRUNG.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         level.playSound(null, pending.nodes.getFirst(), RopewayRegistry.LINE_STRUNG.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         say(player, "done", Math.round(pending.length), terminal.capacity());
+    }
+
+    /** Degrees the line turns at {@code at}, coming from {@code before} and going on to {@code next}, seen from above. */
+    public static double turn(BlockPos before, BlockPos at, BlockPos next) {
+        double ax = at.getX() - before.getX(), az = at.getZ() - before.getZ(), bx = next.getX() - at.getX(), bz = next.getZ() - at.getZ();
+        double la = Math.sqrt(ax * ax + az * az), lb = Math.sqrt(bx * bx + bz * bz);
+        if (la < 1.0E-6 || lb < 1.0E-6) return 0;
+        return Math.toDegrees(Math.acos(Mth.clamp((ax * bx + az * bz) / (la * lb), -1.0, 1.0)));
     }
 
     /** Stations and steel towers take the long spans. */
