@@ -454,6 +454,32 @@ public final class TextureGen {
             return out;
         }
 
+        /** Merges the closest, least used colours until at most {@code max} remain (vanilla items stay under 12). */
+        static BufferedImage limitColours(BufferedImage in, int max) {
+            java.util.Map<Integer, Integer> count = new java.util.LinkedHashMap<>();
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) if (opaque(in, x, y)) count.merge(rgb(in, x, y), 1, Integer::sum);
+            java.util.Map<Integer, Integer> remap = new java.util.HashMap<>();
+            for (int c : count.keySet()) remap.put(c, c);
+            while (count.size() > max) {
+                long best = Long.MAX_VALUE;
+                int from = 0, to = 0;
+                for (int a : count.keySet())
+                    for (int b : count.keySet()) {
+                        if (a == b || count.get(a) > count.get(b)) continue;
+                        int dr = ((a >> 16) & 255) - ((b >> 16) & 255), dg = ((a >> 8) & 255) - ((b >> 8) & 255), db = (a & 255) - (b & 255);
+                        long d = (long) (dr * dr + dg * dg + db * db) * count.get(a);
+                        if (d < best) { best = d; from = a; to = b; }
+                    }
+                count.merge(to, count.remove(from), Integer::sum);
+                for (var e : remap.entrySet()) if (e.getValue() == from) e.setValue(to);
+            }
+            BufferedImage out = img();
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) if (opaque(in, x, y)) px(out, x, y, remap.get(rgb(in, x, y)));
+            return out;
+        }
+
         // Hand-shaped mineral clusters (ramp steps, '.' = host rock): highlight top-left, shadow and a dark
         // rim bottom-right, like vanilla ore specks.
         static final String[][] SMALL = {{"45", "32"}, {"54.", "431"}, {".5", "43", "21"}, {"45.", ".321"}};
@@ -8087,7 +8113,7 @@ public final class TextureGen {
         save("item/coke_dust", map(COKE, COKE_DUST_HEAP));
         save("item/unfired_coke_oven_brick", unfiredCokeOvenBrick());
         save("item/coke_oven_brick", cokeOvenBrickItem());
-        save("item/creosote_bucket", map(WROUGHT_IRON, CREOSOTE, CREOSOTE_BUCKET));
+        save("item/creosote_bucket", V2.limitColours(map(WROUGHT_IRON, CREOSOTE, CREOSOTE_BUCKET), 12));
         save("item/treated_stick", art(TREATED_WOOD, TREATED_STICK));
         saveRaw("gui/coke_oven", cokeOvenGui());
 
