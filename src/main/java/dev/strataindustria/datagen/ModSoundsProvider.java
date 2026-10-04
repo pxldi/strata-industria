@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.felling.FellingSounds;
 import dev.strataindustria.journal.JournalContent;
 import dev.strataindustria.grid.GridSounds;
 import dev.strataindustria.listening.ListeningSounds;
@@ -26,6 +27,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         tier5();
         grid();
         tier6();
+        felling();
         oilStill();
         shared();
         prologue();
@@ -423,6 +425,23 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(1.25f)));
         add(Tier4Sounds.MULTIBLOCK_FORM, definition().subtitle(subtitle("multiblock.form"))
                 .with(sound("minecraft:block.iron_door.close", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
+    }
+
+    /** Redesign R5: an axe in green wood, the trunk groaning, and the crash, from vanilla wood and ground samples. */
+    private void felling() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(FellingSounds.NOTCH, definition().subtitle(subtitle("felling.notch"))
+                .with(sound("minecraft:block.wood.hit", event).pitch(0.7f).volume(1.0f))
+                .with(sound("minecraft:block.wood.break", event).pitch(1.5f).volume(0.35f)));
+        add(FellingSounds.CREAK, definition().subtitle(subtitle("felling.creak"))
+                .with(sound("minecraft:block.wooden_door.open", event).pitch(0.5f).volume(0.8f))
+                .with(sound("minecraft:block.wooden_trapdoor.open", event).pitch(0.55f).volume(0.6f))
+                .with(sound("minecraft:block.azalea_leaves.break", event).pitch(0.8f).volume(0.7f)));
+        add(FellingSounds.CRASH, definition().subtitle(subtitle("felling.crash"))
+                .with(sound("minecraft:block.wood.break", event).pitch(0.5f).volume(1.0f))
+                .with(sound("minecraft:block.gravel.break", event).pitch(0.5f).volume(0.9f))
+                .with(sound("minecraft:entity.generic.explode", event).pitch(0.5f).volume(0.3f))
+                .with(sound("minecraft:block.azalea_leaves.break", event).pitch(0.6f).volume(1.0f)));
     }
 
     /** Tier 6 spec 24.6: crude oil buckets use the lava bucket sounds, pitched down and thickened. */

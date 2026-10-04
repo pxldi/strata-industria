@@ -51,6 +51,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue LOGS_NEED_AXE = BUILDER
             .comment("Logs cannot be broken without an axe.")
             .define("logsNeedAxe", true);
+    public static final ModConfigSpec.BooleanValue FELLING = BUILDER
+            .comment("Chopping the bottom log of a natural tree notches it, and the last blow fells the whole tree. Sneak to chop one log.")
+            .define("felling", true);
     public static final ModConfigSpec.BooleanValue REMOVE_WOOD_TOOLS = BUILDER
             .comment("Remove the recipes of wooden tools.")
             .define("removeWoodTools", true);

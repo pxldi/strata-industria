@@ -41,6 +41,7 @@ final class ModLanguageProvider extends LanguageProvider {
         RailwayData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
+        FellingData.lang(this::add);
         recipeViewer();
 
         addItem(ModItems.PLANT_FIBRE, "Plant Fibre");
