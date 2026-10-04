@@ -220,6 +220,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             tag(dev.strataindustria.transport.rail.RailRegistry.TRACK).add(rail.getKey());
             tag(BlockTags.MINEABLE_WITH_AXE).add(rail.getKey());
         }
+        tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.getKey())
+                .add(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey())
                 .add(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET.getKey());

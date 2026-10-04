@@ -32,8 +32,8 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 
 /** The wooden tramway (outposts and transport spec 5 and 15, chunk O3), run by {@link ModGameTests}. */
 final class RailGameTests {
-    private static final int ROW = 4;
-    private static final int RAIL_Y = 2;
+    static final int ROW = 4;
+    static final int RAIL_Y = 2;
 
     private RailGameTests() {}
 
@@ -57,12 +57,12 @@ final class RailGameTests {
 
     // ---------------------------------------------------------------- setup
 
-    private static BlockPos at(GameTestHelper helper, int x) {
+    static BlockPos at(GameTestHelper helper, int x) {
         return helper.absolutePos(new BlockPos(x, RAIL_Y, ROW));
     }
 
     @SuppressWarnings("unchecked")
-    private static void lay(GameTestHelper helper, int x, Block block) {
+    static void lay(GameTestHelper helper, int x, Block block) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = at(helper, x);
         level.setBlock(pos.below(), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
@@ -71,11 +71,11 @@ final class RailGameTests {
         level.setBlock(pos, state, Block.UPDATE_ALL);
     }
 
-    private static void layRun(GameTestHelper helper, int from, int to) {
+    static void layRun(GameTestHelper helper, int from, int to) {
         for (int x = from; x <= to; x++) lay(helper, x, RailRegistry.WOODEN_RAIL.get());
     }
 
-    private static MineTubEntity tubAt(GameTestHelper helper, double x) {
+    static MineTubEntity tubAt(GameTestHelper helper, double x) {
         MineTubEntity tub = helper.spawn(RailRegistry.MINE_TUB_ENTITY.get(), new BlockPos((int) Math.floor(x), RAIL_Y, ROW));
         tub.setPos(helper.absolutePos(new BlockPos(0, RAIL_Y, ROW)).getX() + x, tub.getY(), tub.getZ());
         return tub;
@@ -85,7 +85,7 @@ final class RailGameTests {
         return tub.getDeltaMovement().horizontalDistance();
     }
 
-    private static TubStopBlockEntity stopAt(GameTestHelper helper, int x, StopRule rule, int seconds, boolean reverse) {
+    static TubStopBlockEntity stopAt(GameTestHelper helper, int x, StopRule rule, int seconds, boolean reverse) {
         lay(helper, x, RailRegistry.TUB_STOP.get());
         BlockPos pos = at(helper, x);
         TubStopBlockEntity stop = (TubStopBlockEntity) helper.getLevel().getBlockEntity(pos);
@@ -321,7 +321,7 @@ final class RailGameTests {
 
     // ---------------------------------------------------------------- routes
 
-    private static final class Plan {
+    static final class Plan {
         final ServerLevel level;
         final RouteIndex index;
         final FakePlayer owner;

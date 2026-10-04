@@ -139,6 +139,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 dev.strataindustria.transport.rail.RailRegistry.TIPPLE_RAIL, dev.strataindustria.transport.rail.RailRegistry.RAIL_BUFFER)) {
             dropSelf(rail.get());
         }
+        dropSelf(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.get());
+        dropSelf(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.get());
         dropSelf(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.get());
         dropSelf(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD.get());
         // A specimen cabinet keeps its collection.

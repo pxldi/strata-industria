@@ -44,7 +44,15 @@ public final class RailRegistry {
     public static final DeferredBlock<RailBufferBlock> RAIL_BUFFER = ModBlocks.BLOCKS.registerBlock("rail_buffer",
             RailBufferBlock::new, p -> p.mapColor(MapColor.WOOD).noCollision().strength(1.0f).sound(SoundType.WOOD).ignitedByLava());
 
+    public static final DeferredBlock<HayRackBlock> HAY_RACK = ModBlocks.BLOCKS.registerBlock("hay_rack",
+            HayRackBlock::new, p -> p.mapColor(MapColor.WOOD).strength(0.8f).noOcclusion().sound(SoundType.WOOD).ignitedByLava());
+    public static final DeferredBlock<InclineWinchBlock> INCLINE_WINCH = ModBlocks.BLOCKS.registerBlock("incline_winch",
+            InclineWinchBlock::new, p -> p.mapColor(MapColor.WOOD).strength(2.0f).noOcclusion().sound(SoundType.WOOD).ignitedByLava());
+
     // ---------------------------------------------------------------- items
+    public static final DeferredItem<BlockItem> HAY_RACK_ITEM = ModItems.ITEMS.registerSimpleBlockItem(HAY_RACK);
+    public static final DeferredItem<BlockItem> INCLINE_WINCH_ITEM = ModItems.ITEMS.registerSimpleBlockItem(INCLINE_WINCH);
+    public static final DeferredItem<HarnessItem> HARNESS = ModItems.ITEMS.registerItem("harness", HarnessItem::new, p -> p.stacksTo(1));
     public static final DeferredItem<BlockItem> WOODEN_RAIL_ITEM = ModItems.ITEMS.registerSimpleBlockItem(WOODEN_RAIL);
     public static final DeferredItem<BlockItem> TUB_STOP_ITEM = ModItems.ITEMS.registerSimpleBlockItem(TUB_STOP);
     public static final DeferredItem<BlockItem> TIPPLE_RAIL_ITEM = ModItems.ITEMS.registerSimpleBlockItem(TIPPLE_RAIL);
@@ -56,11 +64,21 @@ public final class RailRegistry {
             ENTITY_TYPES.register("mine_tub", () -> EntityType.Builder.<MineTubEntity>of(MineTubEntity::new, MobCategory.MISC)
                     .sized(0.9f, 0.7f).clientTrackingRange(8).build(MINE_TUB_KEY));
 
+    public static final ResourceKey<EntityType<?>> PONY_KEY = ResourceKey.create(Registries.ENTITY_TYPE, StrataIndustria.id("pony"));
+    public static final DeferredHolder<EntityType<?>, EntityType<PonyEntity>> PONY_ENTITY =
+            ENTITY_TYPES.register("pony", () -> EntityType.Builder.<PonyEntity>of(PonyEntity::new, MobCategory.MISC)
+                    .sized(0.9f, 1.6f).passengerAttachments(1.44f).clientTrackingRange(8).build(PONY_KEY));
+
     public static final DeferredItem<MinecartItem> MINE_TUB = ModItems.ITEMS.registerItem("mine_tub",
             p -> new MinecartItem(MINE_TUB_ENTITY.get(), p), p -> p.stacksTo(1));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TubStopBlockEntity>> TUB_STOP_ENTITY =
             ModBlockEntities.BLOCK_ENTITIES.register("tub_stop", () -> new BlockEntityType<>(TubStopBlockEntity::new, TUB_STOP.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HayRackBlockEntity>> HAY_RACK_ENTITY =
+            ModBlockEntities.BLOCK_ENTITIES.register("hay_rack", () -> new BlockEntityType<>(HayRackBlockEntity::new, HAY_RACK.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<InclineWinchBlockEntity>> INCLINE_WINCH_ENTITY =
+            ModBlockEntities.BLOCK_ENTITIES.register("incline_winch", () -> new BlockEntityType<>(InclineWinchBlockEntity::new, INCLINE_WINCH.get()));
 
     // ---------------------------------------------------------------- sounds
     /** A tub's wheels clacking over the sleepers. */
@@ -73,6 +91,17 @@ public final class RailRegistry {
     public static final DeferredHolder<SoundEvent, SoundEvent> TIPPLE_DUMP = sound("tipple.dump");
     /** A tub running into the buffer. */
     public static final DeferredHolder<SoundEvent, SoundEvent> TUB_THUD = sound("tub.thud");
+
+    /** Buckles and brass rings: a harness goes on or comes off. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PONY_HARNESS = sound("pony.harness");
+    /** Hooves on the sleepers. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PONY_STEP = sound("pony.step");
+    /** A pony eating hay. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PONY_EAT = sound("pony.eat");
+    /** A pony that will not take the hill. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PONY_SNORT = sound("pony.snort");
+    /** A winch drum creaking under a load. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> WINCH_HAUL = sound("winch.haul");
 
     private static DeferredHolder<SoundEvent, SoundEvent> sound(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));

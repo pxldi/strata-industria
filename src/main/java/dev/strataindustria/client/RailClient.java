@@ -2,7 +2,9 @@ package dev.strataindustria.client;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.client.rail.MineTubModel;
+import dev.strataindustria.client.rail.InclineWinchRenderer;
 import dev.strataindustria.client.rail.MineTubRenderer;
+import dev.strataindustria.client.rail.PonyRenderer;
 import dev.strataindustria.client.screen.TubStopScreen;
 import dev.strataindustria.transport.rail.RailRegistry;
 import dev.strataindustria.transport.rail.StopData;
@@ -29,5 +31,7 @@ public final class RailClient {
     @SubscribeEvent
     static void renderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(RailRegistry.MINE_TUB_ENTITY.get(), MineTubRenderer::new);
+        event.registerEntityRenderer(RailRegistry.PONY_ENTITY.get(), PonyRenderer::new);
+        event.registerBlockEntityRenderer(RailRegistry.INCLINE_WINCH_ENTITY.get(), InclineWinchRenderer::new);
     }
 }

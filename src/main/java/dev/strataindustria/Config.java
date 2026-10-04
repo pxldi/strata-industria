@@ -430,6 +430,15 @@ public final class Config {
     public static final ModConfigSpec.IntValue TRANSPORT_MAX_CONSIST_T3 = BUILDER
             .comment("Tubs that can follow the lead of a wooden tramway consist.")
             .defineInRange("maxConsistT3", 4, 1, 16);
+    public static final ModConfigSpec.DoubleValue TRANSPORT_PONY_HAY_PER_TRIP = BUILDER
+            .comment("Hay bales a pony eats per round trip.")
+            .defineInRange("ponyHayPerTrip", 0.5, 0.0, 16.0);
+    public static final ModConfigSpec.IntValue TRANSPORT_WINCH_REACH = BUILDER
+            .comment("Track blocks an incline winch hauls.")
+            .defineInRange("winchReach", 32, 4, 128);
+    public static final ModConfigSpec.IntValue TRANSPORT_MAX_TICKETED_CONSISTS = BUILDER
+            .comment("Driverless consists one owner can have moving at once. Each keeps nine chunks loaded around it.")
+            .defineInRange("maxTicketedConsists", 4, 1, 32);
 
     static {
         BUILDER.pop();
