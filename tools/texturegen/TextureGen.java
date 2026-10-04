@@ -5471,7 +5471,74 @@ public final class TextureGen {
         return im;
     }
 
+    // Tier 4 spec 11.7: iron transmission, drawn over the wooden parts' layouts in wrought iron and brass.
+
+    /** Forged iron axle: a round bar shaded across its width, with two brass collars. */
+    static BufferedImage ironAxleSide() {
+        double[][] n = fractal(8301);
+        BufferedImage im = img();
+        int[] shade = {4, 4, 4, 4, 4, 4, 5, 4, 4, 3, 3, 2, 2, 2, 2, 2};
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = shade[x];
+                if (n[y][x] < 0.25 && step > 2) step--;
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        for (int b0 : new int[] {2, 12}) {
+            for (int x = 0; x < 16; x++) {
+                int step = Math.min(5, shade[x] + (x == 6 ? 0 : 0));
+                px(im, x, b0, BRASS.get(Math.min(5, step + 1)));
+                px(im, x, b0 + 1, BRASS.get(step));
+                px(im, x, b0 + 2, WROUGHT_IRON.get(1));
+            }
+        }
+        px(im, 6, 7, WROUGHT_IRON.spec());
+        return im;
+    }
+
+    /** Iron axle end: a dark bar end with a bright chamfer and a centre punch. */
+    static BufferedImage ironAxleEnd() {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                int step = d > 2.4 ? (x + y < 15 ? 4 : 2) : 3;
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        px(im, 7, 7, WROUGHT_IRON.get(1));
+        px(im, 8, 8, WROUGHT_IRON.get(4));
+        return im;
+    }
+
+    /**
+     * Recolours a wooden gearbox face into iron: boards and frame become wrought iron plate, and the cog
+     * showing through the window within {@code gearRadius} of the centre becomes brass.
+     */
+    static BufferedImage ironise(BufferedImage wood, double gearRadius) {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int c = rgb(wood, x, y) & 0xffffff;
+                boolean inGear = Math.hypot(x - 7.5, y - 7.5) <= gearRadius;
+                int out = c;
+                for (int i = 1; i <= 5; i++) {
+                    if (c == (WOOD.get(i) & 0xffffff)) out = inGear ? BRASS.get(i) : WROUGHT_IRON.get(i);
+                    else if (c == (DARK_WOOD.get(i) & 0xffffff)) out = inGear ? PIG_IRON.get(i) : WROUGHT_IRON.get(Math.max(1, i - 1));
+                    else if (c == (WROUGHT_IRON.get(i) & 0xffffff) && inGear) out = BRASS.get(i);
+                }
+                px(im, x, y, out);
+            }
+        return im;
+    }
+
     static void tier4() throws IOException {
+        // Spec 11.7: iron transmission.
+        save("block/iron_axle", ironAxleSide());
+        save("block/iron_axle_end", ironAxleEnd());
+        save("block/iron_gearbox", ironise(gearboxFace(), 6.1));
+        save("block/iron_step_up_gearbox_front", ironise(stepUpFront(), 5.7));
+        save("block/iron_step_up_gearbox_back", ironise(stepUpBack(), 6.6));
+        save("block/iron_step_up_gearbox_side", ironise(stepUpSide(), 0));
         // Spec 4.4 and 14.4: zinc calcines and the steel anvil.
         save("item/poor_zinc_calcine", map(CALCINE, SCORCH, CALCINE_POOR));
         save("item/zinc_calcine", map(CALCINE, SCORCH, CALCINE_NORMAL));

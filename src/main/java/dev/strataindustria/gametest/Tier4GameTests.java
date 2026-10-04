@@ -9,6 +9,13 @@ import dev.strataindustria.forge.ForgeBlockEntity;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.power.AxleBlock;
+import dev.strataindustria.power.HandCrankBlock;
+import dev.strataindustria.power.HandCrankBlockEntity;
+import dev.strataindustria.power.Kinetic;
+import dev.strataindustria.power.KineticNetworks;
+import dev.strataindustria.power.KineticState;
+import dev.strataindustria.power.StepUpGearboxBlock;
 import dev.strataindustria.machine.BellowsBlockEntity;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Alloy;
@@ -44,6 +51,7 @@ final class Tier4GameTests {
         tests.put("tier4_coke_oven", Tier4GameTests::cokeOven);
         tests.put("tier4_crucible_steel", Tier4GameTests::crucibleSteel);
         tests.put("tier4_zinc_and_brass", Tier4GameTests::zincAndBrass);
+        tests.put("tier4_iron_transmission", Tier4GameTests::ironTransmission);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -228,6 +236,36 @@ final class Tier4GameTests {
         crucible.setItem(0, new ItemStack(Items.COPPER_INGOT, 2));
         heat(level, forgePos, forge, cruciblePos, crucible, () -> crucible.getItem(0).isEmpty() && crucible.isMolten());
         helper.assertValueEqual(crucible.result().orElse(null), Metal.BRASS, "105 zinc + 200 copper");
+        helper.succeed();
+    }
+
+    // Spec 11.7 and 23: three iron step-up gearboxes take a 16 RPM crank to 128 RPM on an iron axle;
+    // a wooden axle in the same place stops with "Overspeed".
+    private static void ironTransmission(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos crankPos = helper.absolutePos(new BlockPos(4, 1, 1));
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.SOUTH),
+                Block.UPDATE_ALL);
+        BlockPos pos = crankPos;
+        for (int i = 0; i < 3; i++) {
+            pos = pos.south();
+            level.setBlock(pos, Tier4Blocks.IRON_STEP_UP_GEARBOX.get().defaultBlockState().setValue(StepUpGearboxBlock.FACING, Direction.SOUTH),
+                    Block.UPDATE_ALL);
+        }
+        BlockPos axlePos = pos.south();
+        level.setBlock(axlePos, Tier4Blocks.IRON_AXLE.get().defaultBlockState().setValue(AxleBlock.AXIS, Direction.Axis.Z), Block.UPDATE_ALL);
+        HandCrankBlockEntity crank = (HandCrankBlockEntity) level.getBlockEntity(crankPos);
+        crank.crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "engineer")));
+        KineticNetworks.rebuildNow(level, axlePos);
+        Kinetic axle = (Kinetic) level.getBlockEntity(axlePos);
+        helper.assertValueEqual(Math.round(axle.kinetic().rpm()), 128, "iron axle RPM behind three iron step-up gearboxes");
+        helper.assertValueEqual(axle.kinetic().status(), KineticState.Status.RUNNING, "iron axle status");
+
+        level.setBlock(axlePos, ModBlocks.WOODEN_AXLE.get().defaultBlockState().setValue(AxleBlock.AXIS, Direction.Axis.Z), Block.UPDATE_ALL);
+        crank.crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "engineer")));
+        KineticNetworks.rebuildNow(level, axlePos);
+        Kinetic wooden = (Kinetic) level.getBlockEntity(axlePos);
+        helper.assertValueEqual(wooden.kinetic().status(), KineticState.Status.OVERSPEED, "a wooden axle at 128 RPM");
         helper.succeed();
     }
 

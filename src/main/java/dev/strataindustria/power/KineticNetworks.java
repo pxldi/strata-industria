@@ -132,11 +132,11 @@ public final class KineticNetworks {
         if (turningSources < 2) limiter = null;
         // Wooden parts cannot take more than 64 RPM (spec 7.1): the part of the network turning faster than
         // that stops, and the rest keeps running. Fastest a wooden part may turn: config
-        // kinetics.woodenSpeedLimit; iron axles raise it in tier 4.
+        // kinetics.woodenSpeedLimit; iron parts take up to 256 RPM (tier 4 spec 11.7).
         Set<BlockPos> overspeed = new HashSet<>();
         if (turningSources > 0) {
             for (var entry : members.entrySet()) {
-                if (base * ratios.get(entry.getKey()) > dev.strataindustria.Config.KINETIC_WOODEN_SPEED_LIMIT.getAsInt() + 0.01f) {
+                if (base * ratios.get(entry.getKey()) > entry.getValue().speedLimit() + 0.01f) {
                     overspeed.add(entry.getKey());
                 }
             }

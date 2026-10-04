@@ -419,6 +419,31 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_steel_double_ingot", has(steelDouble))
                 .save(output, key("steel_anvil"));
 
+        // Spec 11.7: iron transmission for speeds past the wooden 64 RPM.
+        Item ironRod = ModItems.WROUGHT_IRON_ROD.get(), ironAxle = Tier4Items.IRON_AXLE.get(), brassGear = ModItems.GEARS.get(Metal.BRASS).get();
+        shaped(RecipeCategory.REDSTONE, ironAxle, 4)
+                .pattern("R")
+                .pattern("R")
+                .pattern("R")
+                .define('R', ironRod)
+                .unlockedBy("has_wrought_iron_rod", has(ironRod))
+                .save(output, key("iron_axle"));
+        shaped(RecipeCategory.REDSTONE, Tier4Items.IRON_GEARBOX.get())
+                .pattern("PGP")
+                .pattern("GAG")
+                .pattern("PGP")
+                .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .define('G', brassGear)
+                .define('A', ironAxle)
+                .unlockedBy("has_iron_axle", has(ironAxle))
+                .save(output, key("iron_gearbox"));
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.IRON_STEP_UP_GEARBOX.get())
+                .requires(Tier4Items.IRON_GEARBOX.get())
+                .requires(brassGear, 2)
+                .requires(ModItems.RODS.get(Metal.STEEL).get())
+                .unlockedBy("has_iron_gearbox", has(Tier4Items.IRON_GEARBOX.get()))
+                .save(output, key("iron_step_up_gearbox"));
+
         Item coke = Tier4Items.COKE.get();
         shaped(RecipeCategory.MISC, Tier4Items.COKE_BLOCK.get())
                 .pattern("CCC")

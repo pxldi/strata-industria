@@ -2,6 +2,7 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.ceramics.RefractoryCrucibleBlock;
 import dev.strataindustria.coking.CokeOvenBlock;
+import dev.strataindustria.power.IronTransmission;
 import dev.strataindustria.smithing.AnvilBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
@@ -59,6 +60,22 @@ public final class Tier4Blocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .pushReaction(PushReaction.IMMOVEABLE));
+
+    // Spec 11.7: iron transmission, good to 256 RPM.
+    public static final DeferredBlock<IronTransmission.Axle> IRON_AXLE = ModBlocks.BLOCKS.registerBlock("iron_axle", IronTransmission.Axle::new,
+            p -> iron(p).noOcclusion());
+    public static final DeferredBlock<IronTransmission.Gearbox> IRON_GEARBOX = ModBlocks.BLOCKS.registerBlock("iron_gearbox",
+            IronTransmission.Gearbox::new, Tier4Blocks::iron);
+    public static final DeferredBlock<IronTransmission.StepUpGearbox> IRON_STEP_UP_GEARBOX = ModBlocks.BLOCKS.registerBlock("iron_step_up_gearbox",
+            IronTransmission.StepUpGearbox::new, Tier4Blocks::iron);
+
+    /** Wrought iron machine parts: mined with a pickaxe, they ring like iron. */
+    private static Block.Properties iron(Block.Properties p) {
+        return p.mapColor(MapColor.METAL)
+                .strength(3.5f, 6.0f)
+                .requiresCorrectToolForDrops()
+                .sound(SoundType.METAL);
+    }
 
     private static Block.Properties cokeOven(Block.Properties p) {
         return p.mapColor(MapColor.TERRACOTTA_BROWN)

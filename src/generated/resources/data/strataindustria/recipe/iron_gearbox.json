@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "G": "strataindustria:brass_gear",
+    "P": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "PGP",
+    "GAG",
+    "PGP"
+  ],
+  "result": {
+    "id": "strataindustria:iron_gearbox"
+  }
+}

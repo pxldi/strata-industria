@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:iron_gearbox",
+    "strataindustria:brass_gear",
+    "strataindustria:brass_gear",
+    "strataindustria:steel_rod"
+  ],
+  "result": {
+    "id": "strataindustria:iron_step_up_gearbox"
+  }
+}

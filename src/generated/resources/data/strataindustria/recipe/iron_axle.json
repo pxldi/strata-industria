@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "R": "strataindustria:wrought_iron_rod"
+  },
+  "pattern": [
+    "R",
+    "R",
+    "R"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:iron_axle"
+  }
+}

@@ -55,6 +55,11 @@ public final class Tier4Items {
 
     public static final DeferredItem<BlockItem> STEEL_ANVIL = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_ANVIL);
 
+    // Spec 11.7: iron transmission.
+    public static final DeferredItem<BlockItem> IRON_AXLE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_AXLE);
+    public static final DeferredItem<BlockItem> IRON_GEARBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_GEARBOX);
+    public static final DeferredItem<BlockItem> IRON_STEP_UP_GEARBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_STEP_UP_GEARBOX);
+
     // Spec 4.4 and 5.3: roasted sphalerite, by grade, and the small piece from a surface indicator.
     public static final Map<OreGrade, DeferredItem<Item>> ZINC_CALCINES = new EnumMap<>(OreGrade.class);
     public static final DeferredItem<Item> SMALL_ZINC_CALCINE = ModItems.ITEMS.registerSimpleItem("small_zinc_calcine");

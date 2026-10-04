@@ -24,6 +24,14 @@ public interface Kinetic {
         return 1.0f;
     }
 
+    /**
+     * Fastest this part may turn before it stops with "Overspeed": the wooden limit (tier 3 spec 7.1)
+     * unless the part is iron (tier 4 spec 11.7).
+     */
+    default int speedLimit() {
+        return dev.strataindustria.Config.KINETIC_WOODEN_SPEED_LIMIT.getAsInt();
+    }
+
     /** Kinetic blocks this one is joined to other than through its faces, such as by a belt. */
     default List<BlockPos> links() {
         return List.of();

@@ -86,6 +86,11 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(ModBlockEntities.WINDMILL_BEARING.get(), dev.strataindustria.client.render.WindmillRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SOAKING_BARREL.get(), dev.strataindustria.client.render.SoakingBarrelRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.PULLEY.get(), dev.strataindustria.client.render.PulleyRenderer::new);
+        // Tier 4 spec 11.7: iron axles turn like the wooden ones.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.IRON_TRANSMISSION.get(), context -> new RotorRenderer<>(context,
+                "iron_axle", state -> state.hasProperty(AxleBlock.AXIS)
+                        ? Direction.fromAxisAndDirection(state.getValue(AxleBlock.AXIS), Direction.AxisDirection.POSITIVE)
+                        : null, 0));
     }
 
     private static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {
