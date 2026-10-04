@@ -1657,6 +1657,63 @@
     ],
     "subtitle": "subtitles.strataindustria.boiler.vent"
   },
+  "branch.bare": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.hit",
+        "pitch": 0.8,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.branch.bare"
+  },
+  "branch.shake": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 1.3,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.grass.step",
+        "pitch": 1.1,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.step",
+        "pitch": 1.2,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.branch.shake"
+  },
+  "branch.snap": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.break",
+        "pitch": 1.5,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "block.bamboo.break",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.break",
+        "pitch": 0.9,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.branch.snap"
+  },
   "brick_kiln.done": {
     "sounds": [
       {
