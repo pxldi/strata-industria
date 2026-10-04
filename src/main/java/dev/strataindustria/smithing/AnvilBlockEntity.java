@@ -1,5 +1,6 @@
 package dev.strataindustria.smithing;
 
+import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.Heat;
 import dev.strataindustria.material.Metal;
@@ -164,6 +165,10 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         }
         progress = progress.hit(type);
         input.set(ModDataComponents.SMITHING_PROGRESS.get(), progress);
+        // Tier 3 spec 9.2: iron loses heat to every blow, so careless work means a trip back to the forge.
+        if (metalOf(input).map(m -> m.tier() >= 3).orElse(false)) {
+            Heat.set(input, Heat.get(input, server) - Config.SMITHING_HIT_COOLING.get(), server.getGameTime());
+        }
         hammer(player).hurtAndBreak(1, server, player,
                 broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
 

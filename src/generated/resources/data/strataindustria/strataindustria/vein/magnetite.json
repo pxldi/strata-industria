@@ -1,0 +1,35 @@
+{
+  "hosts": [
+    "strataindustria:gabbro",
+    "strataindustria:basalt",
+    "strataindustria:marble"
+  ],
+  "max_y": 100,
+  "min_y": -64,
+  "minerals": [
+    {
+      "mineral": "strataindustria:magnetite",
+      "weight": 90
+    },
+    {
+      "mineral": "strataindustria:native_copper",
+      "weight": 10
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:gabbro"
+  ],
+  "shape": {
+    "type": "strataindustria:cluster",
+    "density": 0.3,
+    "radius_horizontal": {
+      "max": 10,
+      "min": 6
+    },
+    "radius_vertical": {
+      "max": 6,
+      "min": 4
+    }
+  },
+  "weight": 20
+}

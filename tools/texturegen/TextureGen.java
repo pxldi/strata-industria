@@ -1997,7 +1997,7 @@ public final class TextureGen {
 
     /** Metal items that go in the forge: ingots, nuggets, plates, cast heads and blades, the tongs jaw. */
     static final java.util.regex.Pattern HEATABLE =
-            java.util.regex.Pattern.compile("(?!stone_|unfired_).*(_ingot|_nugget|(?<!chest)_plate|_head|_blade)|tongs_jaw");
+            java.util.regex.Pattern.compile("(?!stone_|unfired_).*(_ingot|_nugget|(?<!chest)_plate|_head|_blade|_rod)|tongs_jaw");
 
     /**
      * A pale copy of each heatable item: its shading kept as light greys so the heat tint reads as glowing
@@ -2032,6 +2032,667 @@ public final class TextureGen {
             if (nx < 0 || ny < 0 || nx > 15 || ny > 15 || im.getRGB(nx, ny) >>> 24 == 0) return true;
         }
         return false;
+    }
+
+    // ---------------------------------------------------------------- tier 3: iron (spec 20)
+
+    // New ramps (spec 20.1).
+    static final Ramp WROUGHT_IRON = ramp(0xdcd8cf, 0x2a2b30, 0x45464c, 0x6a6a6c, 0x8e8c88, 0xb4b0a8);
+    static final Ramp GOLD = ramp(0xfcf0bc, 0x4a3010, 0x8a5e18, 0xc08a26, 0xe2b440, 0xf4d878);
+    static final Ramp HEMATITE = ramp(0, 0x2a1416, 0x4a2020, 0x6e3226, 0x8e4a34, 0xae6a4c);
+    static final Ramp MAGNETITE = ramp(0x9aa0aa, 0x141620, 0x20232c, 0x32353e, 0x4a4e58, 0x686c76);
+    static final Ramp LIMONITE = ramp(0, 0x3a2410, 0x5a3a16, 0x80561e, 0xa6762c, 0xc69a48);
+    static final Ramp FIRE_CLAY = ramp(0, 0x5e5a50, 0x7a7466, 0x9c9480, 0xbcb49c, 0xd6ceb4);
+    static final Ramp FIRE_BRICK = ramp(0, 0x6a5434, 0x8c7044, 0xae9058, 0xc8ac72, 0xe0c890);
+    static final Ramp LIGNITE = ramp(0, 0x1a1410, 0x2a2018, 0x3c2e22, 0x52402e, 0x6a543c);
+    // Earths for the tier 3 ground blocks, built per SG 3 (low contrast, cool darks, warm lights).
+    static final Ramp MUD = ramp(0, 0x1a1818, 0x29241f, 0x383028, 0x483d32, 0x5c4e40);
+    static final Ramp SAND = ramp(0, 0x8a7656, 0xa69068, 0xc0aa7c, 0xd4c092, 0xe6d6ac);
+
+    static final List<Mineral> T3_MINERALS = List.of(
+            new Mineral("hematite", HEMATITE, false),
+            new Mineral("magnetite", MAGNETITE, true),
+            new Mineral("native_gold", GOLD, true),
+            new Mineral("limonite", LIMONITE, false));
+
+    /** Heat band (SG 6), dark red to white, for the lit bloomery door. */
+    static final int[] HEAT_BAND = {0x6e1e14, 0xa0281a, 0xd23a1e, 0xf07a22, 0xf8c23a, 0xfff4d0};
+
+    /**
+     * Stamps a small pattern: digits are ramp steps, 's' is the specular colour when {@code spec}
+     * is set and step {@code fallback} otherwise, '.' is left alone.
+     */
+    static void stamp(BufferedImage im, Ramp a, String[] rows, int x0, int y0, boolean spec, int fallback) {
+        for (int y = 0; y < rows.length; y++)
+            for (int x = 0; x < rows[y].length(); x++) {
+                char ch = rows[y].charAt(x);
+                if (ch >= '1' && ch <= '5') px(im, x0 + x, y0 + y, a.get(ch - '0'));
+                else if (ch == 's') px(im, x0 + x, y0 + y, spec && a.spec() != 0 ? a.spec() : a.get(fallback));
+            }
+    }
+
+    /**
+     * An ore overlay built from per-mineral piece shapes (tiny, small, large). Grade by count and
+     * size (SG 7): poor 3 mostly tiny, normal 5 with one large, rich 8 with three large. The first
+     * piece gets the single specular pixel of a metallic mineral.
+     */
+    static BufferedImage pieceOverlay(Mineral m, String grade, String[][] shapes, int fallback) {
+        Random r = new Random((m.name() + "/" + grade).hashCode() * 131L);
+        int[] kinds = switch (grade) {
+            case "poor" -> new int[] {1, 0, 0};
+            case "normal" -> new int[] {2, 1, 1, 1, 0};
+            default -> new int[] {2, 2, 2, 1, 1, 1, 0, 0};
+        };
+        // Random placement with spacing; start over until every piece fits.
+        for (int trial = 0; trial < 500; trial++) {
+            BufferedImage im = placePieces(m, r, kinds, shapes, fallback, trial < 250 ? 2 : 1);
+            if (im != null) return im;
+        }
+        throw new IllegalStateException("could not place " + m.name() + " " + grade);
+    }
+
+    static BufferedImage placePieces(Mineral m, Random r, int[] kinds, String[][] shapes, int fallback, int gap) {
+        BufferedImage im = img();
+        List<int[]> placed = new ArrayList<>();
+        int i = 0;
+        for (int attempts = 0; i < kinds.length && attempts < 400; attempts++) {
+            String[] s = shapes[kinds[i]];
+            int w = s[0].length(), h = s.length;
+            int x = 1 + r.nextInt(15 - w), y = 1 + r.nextInt(15 - h);
+            boolean clash = false;
+            for (int[] q : placed)
+                if (x < q[0] + q[2] + gap && q[0] < x + w + gap && y < q[1] + q[3] + gap && q[1] < y + h + gap) clash = true;
+            if (clash) continue;
+            placed.add(new int[] {x, y, w, h});
+            stamp(im, m.ramp(), s, x, y, m.metallic() && i == 0, fallback);
+            i++;
+        }
+        return i < kinds.length ? null : im;
+    }
+
+    /** Hematite: flat red-brown lenses lying along the bedding, matte. */
+    static final String[][] HEMATITE_LENSES = {
+            {"443", ".32"},
+            {"4443.", ".3322"},
+            {".4543..", "4443332", "..2221."},
+    };
+    /** Magnetite: small blocky black crystals lit on their top-left faces. */
+    static final String[][] MAGNETITE_CRYSTALS = {
+            {"s3", "31"},
+            {"s43", "431", "311"},
+            {"5443", "4s32", "4321", "3211"},
+    };
+    /** Native gold: thin bright wires and flakes, a few pixels each. */
+    static final String[][] GOLD_WIRES = {
+            {"54", ".3"},
+            {"..s", ".43", "43."},
+            {"...45", "..s3.", ".434.", "43.3."},
+    };
+
+    /** Soft lumpy soil in the fire clay ramp, with a couple of dark rootlets. */
+    static BufferedImage fireClayBlock() {
+        double[][] a = noise(2020, 4), b = noise(2021, 2);
+        double[][] n = new double[16][16];
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) n[y][x] = a[y][x] * 0.6 + b[y][x] * 0.4;
+        double lo = quantile(n, 0.22), hi = quantile(n, 0.8);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, FIRE_CLAY.get(n[y][x] < lo ? 2 : n[y][x] < hi ? 3 : 4));
+        Random r = new Random(2020);
+        // Rounded clods, lit cap and shaded underside, spaced so they stay separate lumps.
+        String[][] clods = {{".44.", "4433", ".322"}, {"45.", "432", ".2."}, {".445.", "44333", ".3322"}};
+        List<int[]> placed = new ArrayList<>();
+        for (int attempts = 0; placed.size() < 7 && attempts < 500; attempts++) {
+            int x = r.nextInt(16), y = r.nextInt(16);
+            boolean clash = false;
+            for (int[] q : placed) {
+                int dx = Math.abs(Math.floorMod(q[0] - x + 8, 16) - 8), dy = Math.abs(Math.floorMod(q[1] - y + 8, 16) - 8);
+                if (dx < 6 && dy < 5) clash = true;
+            }
+            if (clash) continue;
+            placed.add(new int[] {x, y});
+            String[] c = clods[placed.size() % clods.length];
+            for (int j = 0; j < c.length; j++)
+                for (int i = 0; i < c[j].length(); i++)
+                    if (c[j].charAt(i) != '.') pxWrap(im, x + i, y + j, FIRE_CLAY.get(c[j].charAt(i) - '0'));
+        }
+        // Rootlets: two thin curling lines of step 1 fading to step 2.
+        int[][][] roots = {{{0, 0}, {1, 0}, {2, 1}, {3, 1}, {4, 1}, {5, 2}}, {{0, 0}, {0, 1}, {1, 2}, {1, 3}, {2, 3}}};
+        for (int k = 0; k < roots.length; k++) {
+            int x = r.nextInt(16), y = r.nextInt(16);
+            for (int i = 0; i < roots[k].length; i++)
+                pxWrap(im, x + roots[k][i][0], y + roots[k][i][1], FIRE_CLAY.get(i >= roots[k].length - 2 ? 2 : 1));
+        }
+        return im;
+    }
+
+    /** The value below which the given fraction of the tile's samples fall. */
+    static double quantile(double[][] n, double q) {
+        double[] all = new double[256];
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) all[y * 16 + x] = n[y][x];
+        java.util.Arrays.sort(all);
+        return all[(int) Math.min(255, Math.round(q * 255))];
+    }
+
+    /** Vertical joint positions per course for the fire brick bond (bricks 4-5 px, staggered). */
+    static final int[][] FIRE_BRICK_JOINTS = {{2, 7, 12}, {4, 10, 15}, {1, 7, 12}, {4, 9, 15}};
+
+    /** Pale fire bricks, four courses of small bricks, thin dark mortar (spec 20.2). */
+    static BufferedImage fireBricks() {
+        BufferedImage im = img();
+        Random r = new Random(3131);
+        for (int c = 0; c < 4; c++) {
+            int[] j = FIRE_BRICK_JOINTS[c];
+            for (int b = 0; b < j.length; b++) {
+                int start = j[b] + 1, w = Math.floorMod(j[(b + 1) % j.length] - start, 16);
+                int tone = r.nextInt(3) == 0 ? -1 : 0;
+                int fleck = r.nextInt(4) == 0 ? 1 + r.nextInt(Math.max(1, w - 2)) : -1;
+                for (int row = 0; row < 3; row++)
+                    for (int i = 0; i < w; i++) {
+                        int step = row == 0 ? 5 : 4;
+                        if (i == w - 1 || (row == 2 && i == w - 2)) step = row == 0 ? 4 : 3;
+                        step += tone;
+                        if (row == 1 && i == fleck) step = 3;
+                        pxWrap(im, start + i, c * 4 + row, FIRE_BRICK.get(Math.max(2, step)));
+                    }
+                for (int y = 0; y < 4; y++) pxWrap(im, j[b], c * 4 + y, FIRE_BRICK.get(1));
+            }
+            for (int x = 0; x < 16; x++) px(im, x, c * 4 + 3, FIRE_BRICK.get(1));
+        }
+        return im;
+    }
+
+    /** Lignite: sedimentary beds in the lignite ramp, broken partings, woody fibre streaks, no specular. */
+    static BufferedImage ligniteSeam() {
+        Random r = new Random(6464);
+        int[] beds = new int[16];
+        int tone = 3, y = 0;
+        while (y < 16) {
+            int h = 3 + r.nextInt(3);
+            for (int i = 0; i < h && y < 16; i++, y++) beds[y] = tone;
+            tone = tone == 3 ? (r.nextBoolean() ? 4 : 2) : 3;
+        }
+        double[][] n = fractal(6464);
+        double lo = quantile(n, 0.15), hi = quantile(n, 0.85);
+        BufferedImage im = img();
+        for (y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int s = beds[y] + (n[y][x] > hi ? 1 : n[y][x] < lo ? -1 : 0);
+                px(im, x, y, LIGNITE.get(Math.max(2, Math.min(4, s))));
+            }
+        for (y = 0; y < 16; y++) {
+            if (beds[y] == beds[Math.floorMod(y - 1, 16)]) continue;
+            int x = r.nextInt(16), len = 4 + r.nextInt(5);
+            for (int i = 0; i < len; i++) pxWrap(im, x + i, y, LIGNITE.get(1));
+            int x2 = x + len + 3 + r.nextInt(3);
+            for (int i = 0; i < 2; i++) pxWrap(im, x2 + i, y, LIGNITE.get(2));
+        }
+        // Woody streaks: thin step 4 fibres with a darker tail, only on the darker beds.
+        int placed = 0;
+        for (int attempts = 0; placed < 4 && attempts < 200; attempts++) {
+            int x = r.nextInt(16), yy = r.nextInt(16), len = 3 + r.nextInt(4);
+            if (beds[yy] > 3 || rgb(im, x, yy) == LIGNITE.get(1)) continue;
+            for (int i = 0; i < len; i++) pxWrap(im, x + i, yy, LIGNITE.get(i == len - 1 ? 3 : 4));
+            placed++;
+        }
+        return im;
+    }
+
+    /** Dark wet mud: soft patches, puddled dark spots and a few wet sheen highlights. */
+    static BufferedImage mud() {
+        double[][] n = fractal(7272);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, MUD.get(n[y][x] < 0.32 ? 1 : n[y][x] < 0.6 ? 2 : 3));
+        Random r = new Random(7272);
+        for (int k = 0; k < 5; k++) speck(im, r, r.nextInt(16), r.nextInt(16), MUD.get(4), MUD.get(2), 3);
+        for (int k = 0; k < 3; k++) {
+            int x = r.nextInt(16), y = r.nextInt(16);
+            pxWrap(im, x, y, MUD.get(5));
+            pxWrap(im, x + 1, y, MUD.get(4));
+            pxWrap(im, x, y + 1, MUD.get(1));
+        }
+        return im;
+    }
+
+    /** A pebble lit from the top-left with a shadow pixel row under it. */
+    static void pebble(BufferedImage im, Ramp p, int x, int y, int w, int h, boolean shine) {
+        for (int j = 0; j < h; j++)
+            for (int i = 0; i < w; i++) {
+                int step = (i == 0 || j == 0) ? 4 : 3;
+                if (i == w - 1 || j == h - 1) step = (i == 0 || j == 0) ? 3 : 2;
+                if (i == 0 && j == 0 && shine) step = 5;
+                pxWrap(im, x + i, y + j, p.get(step));
+            }
+        for (int i = 1; i <= w; i++) pxWrap(im, x + i, y + h, p.get(1));
+    }
+
+    /** Gold glints: single step 5 pixels of the gold ramp, each on a shaded pixel so it reads. */
+    static void glints(BufferedImage im, Ramp ground, long seed, int count) {
+        Random r = new Random(seed);
+        List<int[]> placed = new ArrayList<>();
+        while (placed.size() < count) {
+            int x = 1 + r.nextInt(14), y = 1 + r.nextInt(14);
+            boolean clash = false;
+            for (int[] q : placed) if (Math.abs(q[0] - x) < 5 && Math.abs(q[1] - y) < 5) clash = true;
+            if (clash) continue;
+            placed.add(new int[] {x, y});
+            px(im, x, y, GOLD.get(5));
+            px(im, x + 1, y, ground.get(2));
+            px(im, x, y + 1, ground.get(2));
+            px(im, x - 1, y, ground.get(3));
+        }
+    }
+
+    /** Gravel: small rounded stones of mixed rock on a jittered grid, dark gaps, lit top-left. */
+    static BufferedImage placerGravel() {
+        Random r = new Random(8181);
+        int cells = 4;
+        double pitch = 16.0 / cells;
+        double[][] centre = new double[cells * cells][2];
+        Ramp[] ramps = new Ramp[cells * cells];
+        int[] base = new int[cells * cells];
+        Ramp[] pool = {FIELD_STONE, FIELD_STONE, FIELD_STONE, GRANITE, FLINT, FIELD_STONE};
+        for (int i = 0; i < centre.length; i++) {
+            centre[i][0] = (i % cells + 0.25 + r.nextDouble() * 0.5) * pitch;
+            centre[i][1] = (i / cells + 0.25 + r.nextDouble() * 0.5) * pitch;
+            ramps[i] = pool[r.nextInt(pool.length)];
+            base[i] = 3 + (r.nextInt(3) == 0 ? 1 : 0);
+        }
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int best = 0;
+                double bd = 1e9, sd = 1e9, bdx = 0, bdy = 0;
+                for (int i = 0; i < centre.length; i++)
+                    for (int ox = -16; ox <= 16; ox += 16)
+                        for (int oy = -16; oy <= 16; oy += 16) {
+                            double dx = x + 0.5 - centre[i][0] - ox, dy = y + 0.5 - centre[i][1] - oy;
+                            double d = Math.sqrt(dx * dx + dy * dy);
+                            if (d < bd) { sd = bd; bd = d; best = i; bdx = dx; bdy = dy; }
+                            else if (d < sd) sd = d;
+                        }
+                if (sd - bd < 0.6) { px(im, x, y, FIELD_STONE.get(bdx + bdy > 0 ? 1 : 2)); continue; }
+                double rel = bdx + bdy;
+                int step = base[best] + (rel < -1.2 ? 1 : rel > 1.0 ? -1 : 0);
+                if (rel < -2.4 && base[best] == 4) step = 5;
+                px(im, x, y, ramps[best].get(Math.max(1, Math.min(5, step))));
+            }
+        glints(im, FIELD_STONE, 8182, 3);
+        return im;
+    }
+
+    static BufferedImage placerSand() {
+        double[][] n = fractal(9191);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, SAND.get(n[y][x] < 0.42 ? 3 : 4));
+        Random r = new Random(9191);
+        for (int k = 0; k < 8; k++) speck(im, r, r.nextInt(16), r.nextInt(16), SAND.get(5), SAND.get(4), 2);
+        for (int k = 0; k < 8; k++) speck(im, r, r.nextInt(16), r.nextInt(16), SAND.get(3), SAND.get(2), 2);
+        glints(im, SAND, 9192, 3);
+        return im;
+    }
+
+    /**
+     * Bloomery door: a riveted copper plate set into the fire brick face, a dark slot across it.
+     * 'm' mortar, 'b' brick, digits copper, 'r' rivet, 'k'/'K' slot (glows when lit), 'l' lower lip.
+     */
+    static final String[] BLOOMERY_DOOR = {
+            "mmmmmmmmmm",
+            "m54444443m",
+            "m4r3343r2m",
+            "m43333332m",
+            "m43343332m",
+            "m4kkkkkk2m",
+            "m4KKKKKK2m",
+            "m4llllll2m",
+            "m43334332m",
+            "m4r3333r2m",
+            "m32222221m",
+            "mmmmmmmmmm",
+    };
+
+    /** {@code frame} -1 is the unlit face; 0-3 are the flickering lit frames. */
+    static BufferedImage bloomeryFront(int frame) {
+        BufferedImage im = fireBricks();
+        int x0 = 3, y0 = 4;
+        int[] bright = {0, 1, 2, 1};
+        Random r = new Random(5000 + frame);
+        for (int y = 0; y < BLOOMERY_DOOR.length; y++)
+            for (int x = 0; x < BLOOMERY_DOOR[y].length(); x++) {
+                char ch = BLOOMERY_DOOR[y].charAt(x);
+                int c;
+                if (ch == 'm') c = FIRE_BRICK.get(1);
+                else if (ch >= '1' && ch <= '5') c = COPPER.get(ch - '0');
+                else if (ch == 'r') c = COPPER.get(5);
+                else if (ch == 'l') c = frame < 0 ? COPPER.get(4) : (x % 3 == (frame & 1) ? COPPER.spec() : COPPER.get(5));
+                else if (ch == 'k' || ch == 'K') {
+                    if (frame < 0) c = CHARCOAL.get(ch == 'k' ? 1 : 2);
+                    else {
+                        int i = (ch == 'k' ? 1 : 2) + bright[frame] + r.nextInt(2);
+                        if (x == 2 || x == 7) i--;
+                        c = HEAT_BAND[Math.max(0, Math.min(5, i))];
+                    }
+                } else continue;
+                px(im, x0 + x, y0 + y, c);
+            }
+        // When lit, heat leaks round the bottom of the door.
+        if (frame >= 0)
+            for (int x = 4; x <= 11; x++)
+                px(im, x, 15, HEAT_BAND[(x + frame) % 4 == 0 ? Math.min(2, 1 + bright[frame] / 2) : bright[frame] > 0 ? 1 : 0]);
+        return im;
+    }
+
+    static BufferedImage bloomeryFrontLit() {
+        BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(bloomeryFront(f), 0, f * 16, null);
+        return strip;
+    }
+
+    /** Hammer marks: clusters of small dents, shadowed top-left and lit bottom-right. */
+    static void hammerMarks(BufferedImage im, Random r, Ramp a, int dark, int light, int clusters, int x0, int y0, int x1, int y1) {
+        int[][] offs = {{0, 0}, {3, 1}, {1, 3}, {4, -1}};
+        for (int k = 0; k < clusters; k++) {
+            // Spread the clusters over the area: one per band, alternating sides.
+            int bw = Math.max(1, (x1 - x0 - 4) / 2), bh = Math.max(1, (y1 - y0 - 4) / clusters);
+            int cx = x0 + (k % 2) * bw + r.nextInt(bw), cy = y0 + k * bh + r.nextInt(bh);
+            int n = 2 + r.nextInt(2);
+            for (int i = 0; i < n; i++) {
+                int x = cx + offs[i][0], y = cy + offs[i][1];
+                px(im, x + 1, y, a.get(dark));
+                px(im, x, y + 1, a.get(dark));
+                px(im, x + 1, y + 1, a.get(light));
+            }
+        }
+    }
+
+    /** Wrought iron anvil body: forged iron, hammer-mark clusters, a dark scale edge. */
+    static BufferedImage wroughtAnvilBody() {
+        double[][] n = fractal(5454), e = noise(5455, 4);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.58 ? 4 : n[y][x] < 0.3 ? 2 : 3;
+                int d = Math.min(Math.min(x, y), Math.min(15 - x, 15 - y));
+                if (d == 0) step = e[y][x] > 0.5 ? 1 : 2;
+                else if (d == 1 && e[y][x] > 0.6) step = 2;
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        hammerMarks(im, new Random(5454), WROUGHT_IRON, 2, 4, 4, 2, 2, 14, 14);
+        return im;
+    }
+
+    /** Wrought iron anvil face (visible columns 3-12): worked bright centre, hammer marks, scaled rim. */
+    static BufferedImage wroughtAnvilTop() {
+        double[][] n = fractal(5656), e = noise(5657, 4);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step;
+                boolean rim = x <= 3 || x >= 12 || y == 0 || y == 15;
+                boolean inner = x == 4 || x == 11 || y == 1 || y == 14;
+                if (rim) step = e[y][x] > 0.55 ? 1 : 2;
+                else if (inner) step = e[y][x] > 0.5 ? 2 : 3;
+                else {
+                    double d = Math.abs(x - 7.5) / 4 + Math.abs(y - 7.5) / 14;
+                    step = d < 0.6 ? 4 : 3;
+                    if (n[y][x] > 0.64 && d < 0.9) step = 5;
+                    else if (n[y][x] < 0.3) step--;
+                }
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        // Single dents spread along the working face.
+        int[][] dents = {{5, 2}, {8, 4}, {6, 7}, {9, 10}, {5, 11}, {8, 13}};
+        for (int[] d : dents) {
+            px(im, d[0] + 1, d[1], WROUGHT_IRON.get(3));
+            px(im, d[0], d[1] + 1, WROUGHT_IRON.get(3));
+            px(im, d[0] + 1, d[1] + 1, WROUGHT_IRON.get(5));
+        }
+        px(im, 6, 6, WROUGHT_IRON.spec());
+        return im;
+    }
+
+    // Items.
+
+    static final String[] FIRE_CLAY_BALL = {
+            "....4554....",
+            "..44555443..",
+            ".4455444433.",
+            ".4454444333.",
+            "444444443332",
+            "444443333322",
+            ".4433333322.",
+            ".3333332221.",
+            "..22222211..",
+    };
+    static final String[] GROG_CHIPS = {
+            "..5.........",
+            ".453....5...",
+            "4432...453..",
+            "3221..44332.",
+            "......32221.",
+            ".45.........",
+            "4443...45...",
+            "33321.4433..",
+            ".221.443332.",
+            "....3322221.",
+    };
+    /** A slimmer brick than the clay brick: same top-left lighting, five rows. */
+    static final String[] FIRE_BRICK_ITEM = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "....4555555554..",
+            "...455555555443.",
+            "..4444444444332.",
+            "..3333333333221.",
+            "...222222222111.",
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+    };
+    static final String[] LIGNITE_LUMP = {
+            "...44554....",
+            "..4455443...",
+            ".445444433..",
+            ".4222222332.",
+            "44544444332.",
+            "433333333321",
+            ".4222223221.",
+            ".333333221..",
+            "..222211....",
+    };
+    /** Raw bloom: spongy iron, digits wrought iron, a/b slag pockets in the lignite ramp. */
+    static final String[] RAW_BLOOM = {
+            "...4554.4...",
+            "..44a45s4a3.",
+            ".4544bb4433.",
+            ".44a4443a332",
+            "4544443b3332",
+            "44ab43333b32",
+            "4443a333a321",
+            ".33333ab3321",
+            ".3a3b333221.",
+            "..2223322a..",
+            "...2211.....",
+    };
+    /** Bloomery slag: glassy dark lump (slag ramp) with a rust streak (c/d hematite). */
+    static final String[] BLOOMERY_SLAG = {
+            "....4553....",
+            "..44554332..",
+            ".4454433d32.",
+            ".443433dc221",
+            "44333dc32221",
+            "4335cd232211",
+            ".332c3222211",
+            "..22222211..",
+            "...1111.....",
+    };
+    static final String[] FLUX_HEAP = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            ".......45.......",
+            ".....44543......",
+            "....45444353....",
+            "...4544533432...",
+            "..445434353322..",
+            "..44533333522...",
+            "...333322221....",
+            ".....2222.......",
+            "................",
+            "................",
+    };
+    static final String[] SMITHING_PATTERN = {
+            "................",
+            "................",
+            "...34444444443..",
+            "..2455555555542.",
+            "..1322222222231.",
+            "....45555554....",
+            "....54444443....",
+            "....54444443....",
+            "....54444443....",
+            "....54444443....",
+            "....44444442....",
+            "...34444444443..",
+            "..2455555555542.",
+            "..1322222222231.",
+            "................",
+            "................",
+    };
+    static final String[] SMITHING_PATTERN_RECORDED = {
+            "................",
+            "................",
+            "...34444444443..",
+            "..2455555555542.",
+            "..1322222222231.",
+            "....45555554....",
+            "....5ccc4cc3....",
+            "....54444443....",
+            "....5cc4ccc3....",
+            "....54444443....",
+            "....4bbbb442....",
+            "...34444444443..",
+            "..2455555555542.",
+            "..1322222222231.",
+            "................",
+            "................",
+    };
+
+    // New shared shapes (spec 20.4).
+    static final String[] ROD = {
+            "..........45",
+            ".........453",
+            "........4s2.",
+            ".......442..",
+            "......452...",
+            ".....442....",
+            "....452.....",
+            "...442......",
+            "..432.......",
+            ".332........",
+            "321.........",
+            "21..........",
+    };
+    static final String[] DOUBLE_INGOT = {
+            "...45555s5..",
+            "..4444444445",
+            ".44444444443",
+            "333333333332",
+            "212221222121",
+            "344444444432",
+            "333333333332",
+            "233333333321",
+            ".2222222221.",
+    };
+
+    static void tier3() throws IOException {
+        // Blocks (spec 20.2).
+        save("block/fire_clay", fireClayBlock());
+        save("block/fire_bricks", fireBricks());
+        save("block/lignite_seam", ligniteSeam());
+        Mineral bogLimonite = new Mineral("bog_limonite", LIMONITE, false);
+        for (String grade : List.of("poor", "normal", "rich"))
+            save("block/bog_iron_" + grade, composite(mud(), oreOverlay(bogLimonite, grade)));
+        save("block/placer_gravel", placerGravel());
+        save("block/placer_sand", placerSand());
+        for (String grade : List.of("poor", "normal", "rich")) {
+            save("block/ore/hematite_" + grade, pieceOverlay(T3_MINERALS.get(0), grade, HEMATITE_LENSES, 5));
+            save("block/ore/magnetite_" + grade, pieceOverlay(T3_MINERALS.get(1), grade, MAGNETITE_CRYSTALS, 5));
+            save("block/ore/native_gold_" + grade, pieceOverlay(T3_MINERALS.get(2), grade, GOLD_WIRES, 5));
+        }
+        save("block/bloomery_front", bloomeryFront(-1));
+        saveRaw("block/bloomery_front_lit", bloomeryFrontLit());
+        Files.writeString(OUT.resolve("block/bloomery_front_lit.png.mcmeta"), "{\"animation\":{\"frametime\":3}}\n");
+        save("block/wrought_iron_anvil", wroughtAnvilBody());
+        save("block/wrought_iron_anvil_top", wroughtAnvilTop());
+
+        // Ore items and small ores for the four new minerals.
+        for (Mineral m : T3_MINERALS) {
+            String n = m.name();
+            save("item/poor_" + n, map(m.ramp(), ORE_SMALL));
+            save("item/" + n, map(m.ramp(), ORE_NORMAL));
+            save("item/rich_" + n, map(m.ramp(), ORE_RICH));
+            save("item/crushed_poor_" + n, map(m.ramp(), CRUSHED_SMALL));
+            save("item/crushed_" + n, map(m.ramp(), CRUSHED_NORMAL));
+            save("item/crushed_rich_" + n, map(m.ramp(), CRUSHED_RICH));
+            save("item/small_" + n, map(m.ramp(), NUGGET));
+            save("block/small_" + n, pebbles(m));
+        }
+
+        // Materials (spec 20.4).
+        save("item/fire_clay_ball", map(FIRE_CLAY, FIRE_CLAY_BALL));
+        save("item/grog", map(CERAMIC, GROG_CHIPS));
+        save("item/unfired_fire_brick", art(FIRE_CLAY, FIRE_BRICK_ITEM));
+        save("item/fire_brick", art(FIRE_BRICK, FIRE_BRICK_ITEM));
+        save("item/lignite", map(LIGNITE, LIGNITE_LUMP));
+        save("item/raw_bloom", map(WROUGHT_IRON, LIGNITE, RAW_BLOOM));
+        save("item/bloomery_slag", map(SLAG, HEMATITE, BLOOMERY_SLAG));
+        save("item/flux", art(MARBLE, FLUX_HEAP));
+        save("item/smithing_pattern", art(SMITHING_PATTERN, PAPER, CHARCOAL, FIBRE));
+        save("item/smithing_pattern_recorded", art(SMITHING_PATTERN_RECORDED, PAPER, CHARCOAL, FIBRE));
+
+        // Wrought iron and gold forms (both keep vanilla ingots and nuggets).
+        java.util.Map<String, String[]> heads = new java.util.LinkedHashMap<>();
+        heads.put("pickaxe_head", PICKAXE_HEAD);
+        heads.put("axe_head", AXE_HEAD);
+        heads.put("shovel_head", SHOVEL_HEAD);
+        heads.put("hoe_head", HOE_HEAD);
+        heads.put("knife_blade", KNIFE_BLADE);
+        heads.put("hammer_head", HAMMER_HEAD);
+        heads.put("saw_blade", SAW_BLADE);
+        heads.put("sword_blade", SWORD_BLADE);
+        heads.put("prospectors_pick_head", PROSPECTOR_HEAD);
+        save("item/wrought_iron_plate", map(WROUGHT_IRON, PLATE));
+        save("item/wrought_iron_rod", map(WROUGHT_IRON, ROD));
+        save("item/wrought_iron_double_ingot", map(WROUGHT_IRON, DOUBLE_INGOT));
+        for (var head : heads.entrySet()) save("item/wrought_iron_" + head.getKey(), map(WROUGHT_IRON, head.getValue()));
+        for (String kind : List.of("knife", "hammer", "saw", "prospectors_pick"))
+            save("item/wrought_iron_" + kind, tool(WROUGHT_IRON, WOOD, null, kind));
+        save("item/gold_plate", map(GOLD, PLATE));
+        for (String head : List.of("pickaxe_head", "axe_head", "shovel_head", "hoe_head", "sword_blade"))
+            save("item/gold_" + head, map(GOLD, heads.get(head)));
+
+        saveRaw("gui/bloomery", bloomeryGui());
+    }
+
+    /** Bloomery status screen, 176x90: temperature gauge on the left, progress bar along the bottom, no slots. */
+    static BufferedImage bloomeryGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 90);
+        well(im, 10, 18, 12, 62, 0x2a2a2a);
+        well(im, 34, 70, 132, 10, 0x2a2a2a);
+        return im;
     }
 
     // ---------------------------------------------------------------- output
@@ -2212,6 +2873,8 @@ public final class TextureGen {
         save("block/quern_top", quernFace(5252, false));
         save("block/quern_runner", quernFace(5353, true));
         save("item/quernstone", art(GRANITE, QUERNSTONE_ITEM));
+
+        tier3();
 
         // Glow layers for hot metal: written last, from the finished item textures.
         glowLayers();

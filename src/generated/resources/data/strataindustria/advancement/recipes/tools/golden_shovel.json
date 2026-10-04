@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gold_shovel_head": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:gold_shovel_head"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:golden_shovel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gold_shovel_head"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:golden_shovel"
+    ]
+  }
+}

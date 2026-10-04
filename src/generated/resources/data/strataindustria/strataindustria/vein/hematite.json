@@ -1,0 +1,30 @@
+{
+  "hosts": [
+    "strataindustria:shale",
+    "strataindustria:slate"
+  ],
+  "max_y": 120,
+  "min_y": -32,
+  "minerals": [
+    {
+      "mineral": "strataindustria:hematite",
+      "weight": 100
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:shale"
+  ],
+  "shape": {
+    "type": "strataindustria:layer",
+    "density": 0.35,
+    "radius_horizontal": {
+      "max": 20,
+      "min": 12
+    },
+    "radius_vertical": {
+      "max": 3,
+      "min": 1
+    }
+  },
+  "weight": 30
+}

@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_limonite"
+      },
+      {
+        "model": "strataindustria:block/small_limonite",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_limonite",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_limonite",
+        "y": 270
+      }
+    ]
+  }
+}

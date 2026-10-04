@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "strataindustria:block/fire_bricks",
+    "side": "strataindustria:block/fire_bricks",
+    "top": "strataindustria:block/fire_bricks"
+  }
+}

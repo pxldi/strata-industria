@@ -50,8 +50,8 @@ public record GroundCoverFeature() implements Feature {
         int depth = Config.INDICATOR_DEPTH.get();
         double density = Config.INDICATOR_DENSITY.get();
         for (VeinCells.Vein vein : ctx.veins().around(minX + 8, minZ + 8)) {
-            if (!vein.type().indicators()) continue;
-            if (vein.y() + vein.radiusV() < vein.surfaceY() - depth) continue;
+            if (!vein.type().indicators() || !vein.type().placesOre()) continue;
+            if (vein.y() + vein.verticalReach() < vein.surfaceY() - depth) continue;
             int reach = vein.radiusH() + 4;
             if (!vein.intersects(minX - 4, minZ - 4, minX + 19, minZ + 19)) continue;
             int count = (int) Math.round(Math.clamp(vein.estimatedOreBlocks() / 40.0, 3, 12) * density);

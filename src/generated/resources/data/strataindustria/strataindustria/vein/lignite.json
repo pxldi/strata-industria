@@ -1,0 +1,29 @@
+{
+  "block": "strataindustria:lignite_seam",
+  "hosts": [
+    "strataindustria:shale",
+    "strataindustria:limestone",
+    "strataindustria:slate"
+  ],
+  "indicators": false,
+  "max_depth": 40,
+  "max_y": 140,
+  "min_y": 20,
+  "pass": "sediment",
+  "preferred_hosts": [
+    "strataindustria:shale"
+  ],
+  "shape": {
+    "type": "strataindustria:layer",
+    "density": 0.6,
+    "radius_horizontal": {
+      "max": 24,
+      "min": 14
+    },
+    "radius_vertical": {
+      "max": 2,
+      "min": 1
+    }
+  },
+  "weight": 25
+}

@@ -1,0 +1,23 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/wrought_iron_knife_blade"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/wrought_iron_knife_blade_glowing",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -1
+        },
+        {
+          "type": "strataindustria:heat_glow"
+        }
+      ]
+    },
+    "property": "strataindustria:glowing"
+  }
+}

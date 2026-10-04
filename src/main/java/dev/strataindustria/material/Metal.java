@@ -19,7 +19,11 @@ public enum Metal implements StringRepresentable {
     BRONZE(950, 2, 0xC5933C, Forms.TOOL_METAL, false),
     ARSENICAL_BRONZE(1010, 2, 0xB07A50, Forms.TOOL_METAL, false),
     BISMUTH_BRONZE(985, 2, 0xB48A6A, Forms.TOOL_METAL, false),
-    SLAG_METAL(1000, 0, 0x6E625A, Forms.INGOT_ONLY, false);
+    SLAG_METAL(1000, 0, 0x6E625A, Forms.INGOT_ONLY, false),
+    /** Tier 3. Its ingot and nugget are the vanilla iron items; it never melts in tier 3. */
+    WROUGHT_IRON(1538, 3, 0x6A6A6C, Forms.TOOL_METAL, true),
+    /** Gold works like copper: it melts, casts and smiths on a stone anvil. */
+    GOLD(1064, 1, 0xC08A26, Forms.TOOL_METAL, true);
 
     public static final Codec<Metal> CODEC = StringRepresentable.fromEnum(Metal::values);
     public static final StreamCodec<ByteBuf, Metal> STREAM_CODEC =
@@ -67,7 +71,7 @@ public enum Metal implements StringRepresentable {
         return colour;
     }
 
-    /** True for copper, whose ingot and nugget are the vanilla items. */
+    /** True for copper, wrought iron and gold, whose ingot and nugget are the vanilla items. */
     public boolean isVanilla() {
         return vanilla;
     }
@@ -87,6 +91,27 @@ public enum Metal implements StringRepresentable {
 
     public boolean isBronze() {
         return this == BRONZE || this == ARSENICAL_BRONZE || this == BISMUTH_BRONZE;
+    }
+
+    /** The bronzes and wrought iron get a prospector's pick. */
+    public boolean hasProspectorsPick() {
+        return isBronze() || this == WROUGHT_IRON;
+    }
+
+    /** Which heads and tools this metal makes. Gold makes only the five vanilla golden tools. */
+    public java.util.List<dev.strataindustria.ceramics.MoldType> toolTypes() {
+        if (!isToolMetal()) return java.util.List.of();
+        if (this == GOLD) {
+            return java.util.List.of(dev.strataindustria.ceramics.MoldType.PICKAXE_HEAD, dev.strataindustria.ceramics.MoldType.AXE_HEAD,
+                    dev.strataindustria.ceramics.MoldType.SHOVEL_HEAD, dev.strataindustria.ceramics.MoldType.HOE_HEAD,
+                    dev.strataindustria.ceramics.MoldType.SWORD_BLADE);
+        }
+        return java.util.List.of(dev.strataindustria.ceramics.MoldType.values());
+    }
+
+    /** Whether any furnace of tier 3 gets hot enough to melt it (spec 4.1: iron does not). */
+    public boolean meltsInCrucible() {
+        return this != WROUGHT_IRON;
     }
 
     @Override

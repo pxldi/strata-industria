@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:gold_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:gold_chestplate_from_plates"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_plate"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:gold_chestplate_from_plates"
+    ]
+  }
+}

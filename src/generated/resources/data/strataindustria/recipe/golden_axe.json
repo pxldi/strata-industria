@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:gold_axe_head",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "minecraft:golden_axe"
+  }
+}
