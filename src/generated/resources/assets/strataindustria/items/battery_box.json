@@ -1,6 +1,15 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "strataindustria:block/battery_box_lv_0"
+    "type": "minecraft:condition",
+    "component": "strataindustria:machine_tier",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "strataindustria:block/battery_box_lv_0"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "strataindustria:block/battery_box_mv_0"
+    },
+    "property": "minecraft:has_component"
   }
 }

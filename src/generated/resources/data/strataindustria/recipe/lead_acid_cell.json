@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:sulfuric_acid_bucket",
+    "Q": "strataindustria:lead_plate",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    " W ",
+    "QAQ",
+    " Q "
+  ],
+  "result": {
+    "id": "strataindustria:lead_acid_cell"
+  }
+}

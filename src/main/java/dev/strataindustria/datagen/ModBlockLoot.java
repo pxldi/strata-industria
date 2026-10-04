@@ -10,7 +10,10 @@ import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.Tier5Blocks;
 import dev.strataindustria.registry.Tier5DataComponents;
+import dev.strataindustria.power.ElectricTier;
 import java.util.Set;
+import net.minecraft.world.level.storage.loot.entries.UniformContainerBase;
+import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -207,17 +210,30 @@ final class ModBlockLoot extends BlockLootSubProvider {
 
     /** Tier 5: cables, the dynamo and the hull drop themselves; a battery box keeps its charge (spec 7.4). */
     private void tier5() {
-        for (var block : java.util.List.of(Tier5Blocks.LV_CABLE, Tier5Blocks.MV_CABLE, Tier5Blocks.KINETIC_DYNAMO, Tier5Blocks.LV_MACHINE_HULL, Tier5Blocks.TREE_TAP,
-                Tier5Blocks.ELECTRIC_FURNACE, Tier5Blocks.MACERATOR, Tier5Blocks.WIREMILL, Tier5Blocks.BENDER, Tier5Blocks.LATHE, Tier5Blocks.MIXER, Tier5Blocks.ELECTROLYSER, Tier5Blocks.STEAM_TURBINE, Tier5Blocks.COMBUSTION_GENERATOR)) {
+        for (var block : java.util.List.of(Tier5Blocks.LV_CABLE, Tier5Blocks.MV_CABLE, Tier5Blocks.KINETIC_DYNAMO, Tier5Blocks.LV_MACHINE_HULL, Tier5Blocks.TREE_TAP)) {
             dropSelf(block.get());
+        }
+        // Spec 9.5: an upgraded machine drops with machine_tier = mv so it places back as MV.
+        for (var holder : Tier5Blocks.upgradable()) {
+            Block block = holder.get();
+            if (block == Tier5Blocks.BATTERY_BOX.get()) continue;
+            add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
+                    .setRolls(ContextIntProviders.exactly(1))
+                    .add(upgradedDrop(block, LootItem.lootTableItem(block))))));
         }
         Block box = Tier5Blocks.BATTERY_BOX.get();
         add(box, LootTable.lootTable().withPool(applyExplosionCondition(box, LootPool.lootPool()
                 .setRolls(ContextIntProviders.exactly(1))
-                .add(LootItem.lootTableItem(box)
+                .add(upgradedDrop(box, LootItem.lootTableItem(box)
                         .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                                 .include(DataComponents.CUSTOM_NAME)
-                                .include(Tier5DataComponents.ENERGY.get()))))));
+                                .include(Tier5DataComponents.ENERGY.get())))))));
+    }
+
+    private UniformContainerBase.Builder<?> upgradedDrop(Block block, UniformContainerBase.Builder<?> drop) {
+        return drop.apply(SetComponentsFunction.setComponent(Tier5DataComponents.MACHINE_TIER.get(), ElectricTier.MV)
+                .when(MatchBlock.blockMatches(blocks, block, StatePropertiesPredicate.Builder.properties()
+                        .hasProperty(ElectricTier.PROPERTY, ElectricTier.MV))));
     }
 
     @Override

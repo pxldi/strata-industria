@@ -24,6 +24,8 @@ public final class Tier5Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_POWER_ON = register("block.machine.power_on");
     /** A relay clack and a falling whine when a machine loses power. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_POWER_OFF = register("block.machine.power_off");
+    /** Spec 23.6: the casing panels swap for aluminium: screws, a clunk and a rising hum. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_UPGRADE = register("block.machine.upgrade");
     /** Two soft descending beeps as a machine runs short of power. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_LOW_POWER = register("block.machine.low_power");
     /** The electric furnace's low even hum with a soft crackle. */

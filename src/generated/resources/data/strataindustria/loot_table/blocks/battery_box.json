@@ -8,14 +8,29 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:copy_components",
-            "include": [
-              "minecraft:custom_name",
-              "strataindustria:energy"
-            ],
-            "source": "block_entity"
-          },
+          "modifier": [
+            {
+              "type": "minecraft:copy_components",
+              "include": [
+                "minecraft:custom_name",
+                "strataindustria:energy"
+              ],
+              "source": "block_entity"
+            },
+            {
+              "type": "minecraft:set_components",
+              "components": {
+                "strataindustria:machine_tier": "mv"
+              },
+              "condition": {
+                "type": "minecraft:match_block",
+                "blocks": "strataindustria:battery_box",
+                "state": {
+                  "tier": "mv"
+                }
+              }
+            }
+          ],
           "name": "strataindustria:battery_box"
         }
       ],

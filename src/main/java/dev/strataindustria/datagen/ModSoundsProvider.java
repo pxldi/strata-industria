@@ -431,6 +431,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier5Sounds.MACHINE_POWER_ON, definition().subtitle(subtitle("block.machine.power_on"))
                 .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.6f))
                 .with(sound("minecraft:block.beacon.activate", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));
+        add(Tier5Sounds.MACHINE_UPGRADE, definition().subtitle(subtitle("block.machine.upgrade"))
+                .with(sound("minecraft:block.smithing_table.use", SoundDefinition.SoundType.EVENT).pitch(1.1f))
+                .with(sound("minecraft:block.chain.place", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.6f))
+                .with(sound("minecraft:block.beacon.power_select", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.3f)));
         add(Tier5Sounds.MACHINE_POWER_OFF, definition().subtitle(subtitle("block.machine.power_off"))
                 .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.6f))
                 .with(sound("minecraft:block.beacon.deactivate", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));

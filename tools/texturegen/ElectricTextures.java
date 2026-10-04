@@ -813,6 +813,41 @@ public final class ElectricTextures {
         return out;
     }
 
+    /** Spec 9.4: a squat dark lead cell with two copper terminals, 12x11. */
+    static String[] cellRows() {
+        return new String[]{
+                "..ed....ed..",
+                "..cb....cb..",
+                "455555555552",
+                "433333333332",
+                "432222222221",
+                "433333333332",
+                "433333333332",
+                "433333333332",
+                "432222222221",
+                "322222222221",
+                ".1111111111.",
+        };
+    }
+
+    /** Spec 23.7: an aluminium panel with two copper stripes and a circuit clipped to it, 12x12. */
+    static String[] upgradeKitRows() {
+        return new String[]{
+                "455555555552",
+                "433333333332",
+                "4333iiiiii32",
+                "4333ihhmhj32",
+                "4333ihmhhj32",
+                "4333ihhhmj32",
+                "4333jjjjjj32",
+                "433333333332",
+                "4dddddddddd2",
+                "433333333332",
+                "4cccccccccc2",
+                "322222222221",
+        };
+    }
+
     static void redAlloy() throws IOException {
         save("item/red_alloy_ingot", TextureGen.map(RED_ALLOY, TextureGen.INGOT));
         save("item/red_alloy_nugget", TextureGen.map(RED_ALLOY, TextureGen.NUGGET));
@@ -822,6 +857,8 @@ public final class ElectricTextures {
         save("item/circuit_board", grid(BOARD, CIRCUIT_BOARD));
         save("item/basic_circuit", grid(CIRCUIT, CIRCUIT_BOARD, RED_ALLOY, COPPER, RELAY));
         save("item/electric_motor", grid(motorRows(), STEEL, COPPER));
+        save("item/lead_acid_cell", grid(cellRows(), LEAD, COPPER));
+        save("item/mv_upgrade_kit", grid(upgradeKitRows(), ALUMINIUM, COPPER, CIRCUIT_BOARD, RED_ALLOY));
     }
 
     // ---------------------------------------------------------------- machines (fronts, GUIs, sprites)

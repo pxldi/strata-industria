@@ -49,6 +49,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         generators();
         shapingMachines();
         chemistry();
+        storage();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -284,6 +285,38 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .save(output, key("combustion_generator"));
     }
 
+
+    // Spec 9.4, 9.5 and 7.4: the cell, the battery box and the MV upgrade kit.
+    private void storage() {
+        Item plate = Tier5Items.LEAD_PLATE.get();
+        Item cell = Tier5Items.LEAD_ACID_CELL.get();
+        shaped(RecipeCategory.REDSTONE, cell)
+                .pattern(" W ")
+                .pattern("QAQ")
+                .pattern(" Q ")
+                .define('Q', plate)
+                .define('A', Tier5Items.SULFURIC_ACID_BUCKET.get())
+                .define('W', Tier5Items.COPPER_WIRE.get())
+                .unlockedBy("has_sulfuric_acid_bucket", has(Tier5Items.SULFURIC_ACID_BUCKET.get()))
+                .save(output, key("lead_acid_cell"));
+        shaped(RecipeCategory.REDSTONE, Tier5Items.BATTERY_BOX.get())
+                .pattern("QCQ")
+                .pattern("EHE")
+                .pattern("QEQ")
+                .define('Q', plate)
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('E', cell)
+                .define('H', Tier5Items.LV_MACHINE_HULL.get())
+                .unlockedBy("has_lead_acid_cell", has(cell))
+                .save(output, key("battery_box"));
+        shapeless(RecipeCategory.REDSTONE, Tier5Items.MV_UPGRADE_KIT.get())
+                .requires(ModItems.PLATES.get(Metal.ALUMINIUM).get(), 2)
+                .requires(Tier5Items.BASIC_CIRCUIT.get(), 2)
+                .requires(Tier5Items.MV_CABLE.get())
+                .requires(Tier5Items.ELECTRIC_MOTOR.get())
+                .unlockedBy("has_aluminium_plate", has(ModItems.PLATES.get(Metal.ALUMINIUM).get()))
+                .save(output, key("mv_upgrade_kit"));
+    }
 
     // Spec 11.1 to 11.4: the mixer and electrolyser, the acid and the aluminium chain. H hull, C basic circuit.
     private void chemistry() {

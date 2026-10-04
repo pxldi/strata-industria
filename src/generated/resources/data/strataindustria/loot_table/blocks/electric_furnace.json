@@ -8,6 +8,19 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:machine_tier": "mv"
+            },
+            "condition": {
+              "type": "minecraft:match_block",
+              "blocks": "strataindustria:electric_furnace",
+              "state": {
+                "tier": "mv"
+              }
+            }
+          },
           "name": "strataindustria:electric_furnace"
         }
       ],
