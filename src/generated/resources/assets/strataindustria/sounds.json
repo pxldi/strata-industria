@@ -1052,12 +1052,12 @@
   "item.survey_notes.found": {
     "sounds": [
       {
-        "name": "block/note_block/chime",
+        "name": "note/icechime",
         "pitch": 0.8,
         "volume": 0.35
       },
       {
-        "name": "item/book/page_turn1",
+        "name": "item/book/open_flip1",
         "pitch": 1.1,
         "volume": 0.6
       }
@@ -1700,17 +1700,17 @@
   "ui.journal.place": {
     "sounds": [
       {
-        "name": "item/book/page_turn1",
+        "name": "item/book/open_flip1",
         "pitch": 0.9,
         "volume": 0.7
       },
       {
-        "name": "item/book/page_turn2",
+        "name": "item/book/open_flip2",
         "pitch": 0.9,
         "volume": 0.7
       },
       {
-        "name": "item/book/page_turn3",
+        "name": "item/book/open_flip3",
         "pitch": 0.9,
         "volume": 0.7
       }

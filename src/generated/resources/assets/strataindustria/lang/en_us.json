@@ -1014,7 +1014,7 @@
   "strataindustria.bloomery.bloom_units": "%s units of iron",
   "strataindustria.bloomery.busy": "Not while it burns or holds a bloom",
   "strataindustria.bloomery.charge": "Ore %s/%s, charcoal %s/%s",
-  "strataindustria.bloomery.draught": "Chimney %s, bellows %s: %s °C",
+  "strataindustria.bloomery.draught": "Flue %s, bellows %s: %s °C",
   "strataindustria.bloomery.full": "The bloomery is full",
   "strataindustria.bloomery.hint": "Bricks around and under the chamber.",
   "strataindustria.bloomery.lignite": "Lignite burns too cool for a bloomery",

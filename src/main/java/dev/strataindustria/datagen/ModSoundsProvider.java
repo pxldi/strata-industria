@@ -185,10 +185,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 3; i++) unfold.with(sound("minecraft:item/book/open_flip" + i).pitch(1.25f).volume(0.7f));
         add(StructureContent.SURVEY_NOTES_OPEN, unfold);
         add(StructureContent.SURVEY_NOTES_FOUND, definition().subtitle(subtitle("survey_notes.found"))
-                .with(sound("minecraft:block/note_block/chime").pitch(0.8f).volume(0.35f))
-                .with(sound("minecraft:item/book/page_turn1").pitch(1.1f).volume(0.6f)));
+                .with(sound("minecraft:note/icechime").pitch(0.8f).volume(0.35f))
+                .with(sound("minecraft:item/book/open_flip1").pitch(1.1f).volume(0.6f)));
         SoundDefinition place = definition().subtitle(subtitle("journal.place"));
-        for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/page_turn" + i).pitch(0.9f).volume(0.7f));
+        for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/open_flip" + i).pitch(0.9f).volume(0.7f));
         add(StructureContent.JOURNAL_PLACE, place);
 
         // Ruins: heat-cracked brick crumbling, and slag that crunches like gravel with a glassy clink.

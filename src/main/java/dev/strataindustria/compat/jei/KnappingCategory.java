@@ -74,7 +74,8 @@ public class KnappingCategory extends StrataCategory<RecipeHolder<KnappingRecipe
             if (cx > 0 && !kept(mask, cell - 1)) g.fill(x, y, x + 1, y + CELL, 0x30FFFFFF);
         }
         if (recipe.mirror() && GridPattern.mirror(mask) != mask) {
-            centred(g, RecipeText.key("knapping.mirror"), INPUT_X + 8, INPUT_Y + 24, TEXT_FAINT);
+            // Below the arrow and clear of the 52 px grid.
+            centred(g, RecipeText.key("knapping.mirror"), 104, GRID - 10, TEXT_FAINT);
         }
     }
 
