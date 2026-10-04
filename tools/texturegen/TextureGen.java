@@ -1250,6 +1250,78 @@ public final class TextureGen {
         return im;
     }
 
+    // ---------------------------------------------------------------- charcoal pit (spec 4.4)
+
+    /** A log pile end-on: four by four log ends, bark rim, pale wood with a ring and a dark heart. */
+    static BufferedImage logPileSide() {
+        BufferedImage im = img();
+        Random r = new Random(4040);
+        for (int ly = 0; ly < 4; ly++)
+            for (int lx = 0; lx < 4; lx++) {
+                int ox = lx * 4 + ((ly % 2 == 1) ? 2 : 0), oy = ly * 4;
+                for (int y = 0; y < 4; y++)
+                    for (int x = 0; x < 4; x++) {
+                        boolean corner = (x == 0 || x == 3) && (y == 0 || y == 3);
+                        int c;
+                        if (corner) c = WOOD.get(1);
+                        else if (x == 0 || y == 0) c = WOOD.get(3);
+                        else if (x == 3 || y == 3) c = WOOD.get(2);
+                        else c = (x == 2 && y == 2) ? WOOD.get(3) : WOOD.get(r.nextInt(4) == 0 ? 4 : 5);
+                        pxWrap(im, ox + x, oy + y, c);
+                    }
+            }
+        return im;
+    }
+
+    /** The pile's top: logs lying side by side, bark with lengthwise grain. */
+    static BufferedImage logPileTop() {
+        BufferedImage im = img();
+        Random r = new Random(4141);
+        for (int y = 0; y < 16; y++) {
+            int row = y % 4;
+            for (int x = 0; x < 16; x++) {
+                int step = row == 0 ? 4 : row == 3 ? 1 : 3;
+                if (row != 0 && row != 3 && r.nextInt(6) == 0) step = 2;
+                px(im, x, y, WOOD.get(step));
+            }
+        }
+        return im;
+    }
+
+    /** Burnt-out pile: charcoal lumps with lit facets, grey ash in the gaps. */
+    static BufferedImage charcoalPile() {
+        double[][] n = fractal(5050);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double v = n[y][x];
+                int c = v < 0.24 ? ASH.get(2) : CHARCOAL.get(v > 0.58 ? 3 : 2);
+                px(im, x, y, c);
+            }
+        Random r = new Random(5050);
+        for (int k = 0; k < 9; k++) speck(im, r, r.nextInt(16), r.nextInt(16), CHARCOAL.get(5), CHARCOAL.get(1), 2 + r.nextInt(2));
+        return im;
+    }
+
+    static final String[] ASH_HEAP = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            ".......45.......",
+            ".....44443......",
+            "....4544433.....",
+            "...454443332....",
+            "..44443433322...",
+            "..4443333322....",
+            "...333322221....",
+            ".....2222.......",
+            "................",
+            "................",
+    };
+
     // ---------------------------------------------------------------- GUI
 
     static final int GUI_FACE = 0xc6c6c6, GUI_LIGHT = 0xffffff, GUI_SHADOW = 0x555555, GUI_EDGE = 0x000000;
@@ -1475,6 +1547,12 @@ public final class TextureGen {
         save("block/pit_kiln_thatch", thatch());
         save("block/pit_kiln_embers", emberBed(1717));
         saveRaw("gui/small_vessel", smallVesselGui());
+
+        // Charcoal (spec 4.4).
+        save("block/log_pile_side", logPileSide());
+        save("block/log_pile_top", logPileTop());
+        save("block/charcoal_pile", charcoalPile());
+        save("item/ash", art(ASH, ASH_HEAP));
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");

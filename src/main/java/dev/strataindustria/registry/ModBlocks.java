@@ -4,6 +4,8 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.block.GroundCoverBlock;
 import dev.strataindustria.block.OreBlock;
 import dev.strataindustria.ceramics.CrucibleBlock;
+import dev.strataindustria.charcoal.CharcoalPileBlock;
+import dev.strataindustria.charcoal.LogPileBlock;
 import dev.strataindustria.ceramics.LargeVesselBlock;
 import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.fire.FirePitBlock;
@@ -69,6 +71,20 @@ public final class ModBlocks {
                     .sound(SoundType.DECORATED_POT)
                     .noOcclusion()
                     .pushReaction(PushReaction.POPPED));
+
+    /** Logs stacked for a charcoal pit (spec 4.4). */
+    public static final DeferredBlock<LogPileBlock> LOG_PILE = BLOCKS.registerBlock("log_pile", LogPileBlock::new,
+            p -> p.mapColor(MapColor.WOOD)
+                    .strength(1.5f)
+                    .sound(SoundType.WOOD)
+                    .noLootTable()
+                    .lightLevel(state -> state.getValue(LogPileBlock.LIT) ? 8 : 0)
+                    .pushReaction(PushReaction.IMMOVEABLE));
+    public static final DeferredBlock<CharcoalPileBlock> CHARCOAL_PILE = BLOCKS.registerBlock("charcoal_pile", CharcoalPileBlock::new,
+            p -> p.mapColor(MapColor.COLOR_BLACK)
+                    .strength(0.8f)
+                    .sound(SoundType.GRAVEL)
+                    .requiresCorrectToolForDrops());
 
     static {
         for (Rock rock : Rock.values()) {
