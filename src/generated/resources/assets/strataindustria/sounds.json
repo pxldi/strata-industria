@@ -990,6 +990,23 @@
     ],
     "subtitle": "subtitles.strataindustria.heat.sear"
   },
+  "heat_pipe.tick": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.copper.step",
+        "pitch": 1.5,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 1.7,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.heat_pipe.tick"
+  },
   "hide.scrape": {
     "sounds": [
       {

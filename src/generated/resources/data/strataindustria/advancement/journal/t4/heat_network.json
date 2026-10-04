@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t4/boiler",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "heat_network"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.heat_network.hint"
+    },
+    "icon": {
+      "id": "strataindustria:copper_heat_pipe"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.heat_network"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

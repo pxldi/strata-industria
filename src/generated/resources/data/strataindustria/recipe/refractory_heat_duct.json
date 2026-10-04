@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "strataindustria:fire_brick",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "BPB"
+  ],
+  "result": {
+    "count": 2,
+    "id": "strataindustria:refractory_heat_duct"
+  }
+}

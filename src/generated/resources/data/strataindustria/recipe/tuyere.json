@@ -3,7 +3,7 @@
   "ingredients": [
     "strataindustria:refractory_casing",
     "strataindustria:bronze_fluid_pipe",
-    "strataindustria:copper_plate"
+    "strataindustria:copper_heat_pipe"
   ],
   "result": {
     "id": "strataindustria:tuyere"
