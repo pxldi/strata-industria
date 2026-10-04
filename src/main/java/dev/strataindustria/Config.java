@@ -305,6 +305,18 @@ public final class Config {
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Tree taps and rubber.").push("rubber");
+    }
+
+    public static final ModConfigSpec.IntValue RUBBER_TAP_TICKS_PER_MB = BUILDER
+            .comment("Ticks a tree tap takes for each step of the tappable data map's amount (1 mB for jungle logs).")
+            .defineInRange("tapTicksPerMb", 10, 1, 1200);
+    public static final ModConfigSpec.IntValue RUBBER_MAX_TAPS_PER_TREE = BUILDER
+            .comment("Most taps that draw from one tree; the earliest placed draw first.")
+            .defineInRange("maxTapsPerTree", 4, 1, 64);
+
+    static {
+        BUILDER.pop();
     }
 
     static final ModConfigSpec SPEC = BUILDER.build();

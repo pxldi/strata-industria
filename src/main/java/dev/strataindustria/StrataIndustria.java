@@ -47,6 +47,7 @@ public final class StrataIndustria {
         dev.strataindustria.registry.Tier5BlockEntities.init();
         dev.strataindustria.registry.Tier5Sounds.init();
         dev.strataindustria.registry.Tier5DataComponents.init();
+        dev.strataindustria.registry.Tier5Fluids.init();
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);

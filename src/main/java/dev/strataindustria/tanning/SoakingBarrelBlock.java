@@ -54,25 +54,28 @@ public class SoakingBarrelBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hit) {
-        boolean water = stack.is(Items.WATER_BUCKET);
-        if (!water && !stack.is(Items.BUCKET)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        // Tier 5 spec 5.2: latex is carried in buckets like water.
+        net.minecraft.world.level.material.Fluid carried = stack.is(Items.WATER_BUCKET) ? net.minecraft.world.level.material.Fluids.WATER
+                : stack.is(dev.strataindustria.registry.Tier5Items.LATEX_BUCKET.get()) ? dev.strataindustria.registry.Tier5Fluids.LATEX.get() : null;
+        if (carried == null && !stack.is(Items.BUCKET)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!(level.getBlockEntity(pos) instanceof SoakingBarrelBlockEntity barrel)) return InteractionResult.PASS;
         if (state.getValue(SEALED)) {
             if (!level.isClientSide()) player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".soaking_barrel.lid_on"));
             return InteractionResult.SUCCESS;
         }
-        if (water) {
-            if (!barrel.addWater(SoakingBarrelBlockEntity.BUCKET, true)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (carried != null) {
+            if (barrel.fill(carried, SoakingBarrelBlockEntity.BUCKET, true) < SoakingBarrelBlockEntity.BUCKET) return InteractionResult.TRY_WITH_EMPTY_HAND;
             if (!level.isClientSide()) {
-                barrel.addWater(SoakingBarrelBlockEntity.BUCKET, false);
+                barrel.fill(carried, SoakingBarrelBlockEntity.BUCKET, false);
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
                 level.playSound(null, pos, ModSounds.SOAKING_BARREL_FILL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
                 level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
             }
             return InteractionResult.SUCCESS;
         }
-        // An empty bucket takes water back out. Lye and tannin cannot be carried, so they are tipped away.
-        if (!barrel.takeWater()) {
+        // An empty bucket takes water or latex back out. Lye and tannin cannot be carried, so they are tipped away.
+        ItemStack taken = level.isClientSide() ? ItemStack.EMPTY : barrel.takeBucket();
+        if (level.isClientSide() ? !barrel.fluid().isSame(net.minecraft.world.level.material.Fluids.WATER) : taken.isEmpty()) {
             if (level.isClientSide()) return barrel.amount() > 0 && !barrel.fluid().isSame(net.minecraft.world.level.material.Fluids.WATER)
                     ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
             SoakingBarrelBlockEntity.TankFluid poured = barrel.pourOut();
@@ -84,7 +87,7 @@ public class SoakingBarrelBlock extends BaseEntityBlock {
             return InteractionResult.SUCCESS;
         }
         if (!level.isClientSide()) {
-            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET)));
+            player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, taken));
             level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0f, 1.0f);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
         }

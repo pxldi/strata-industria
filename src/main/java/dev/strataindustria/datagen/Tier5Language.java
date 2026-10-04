@@ -2,6 +2,7 @@ package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.power.ElectricStatus;
+import dev.strataindustria.rubber.TreeTapBlockEntity;
 import java.util.function.BiConsumer;
 
 /** English names and messages for tier 5 (electric). */
@@ -18,6 +19,9 @@ final class Tier5Language {
         lang.accept(item + "raw_rubber", "Raw Rubber");
         lang.accept(item + "compounded_rubber", "Compounded Rubber");
         lang.accept(item + "rubber", "Rubber");
+        lang.accept(item + "latex_bucket", "Latex Bucket");
+        lang.accept("fluid_type." + id + ".latex", "Latex");
+        lang.accept(block + "tree_tap", "Tree Tap");
         lang.accept(block + "lv_cable", "LV Cable");
         lang.accept(block + "mv_cable", "MV Cable");
         lang.accept(block + "kinetic_dynamo", "Kinetic Dynamo");
@@ -45,10 +49,19 @@ final class Tier5Language {
         lang.accept(ElectricStatus.TOO_LARGE.key(), "Network too large");
         lang.accept(id + ".battery_box.charge", "%s battery: %s / %s J");
 
+        // Spec 5.1: the tap's cup and why it is not dripping.
+        lang.accept(id + ".tree_tap.cup", "%s: %s / %s mB");
+        lang.accept(TreeTapBlockEntity.Status.NO_TREE.key(), "No living tree");
+        lang.accept(TreeTapBlockEntity.Status.TAPPED_OUT.key(), "This tree is tapped out");
+        lang.accept(TreeTapBlockEntity.Status.WORKING.key(), "Dripping");
+        lang.accept(id + ".soaking_barrel.fluid.latex", "Latex");
+
         String subtitles = "subtitles." + id + ".";
         lang.accept(subtitles + "electric.overvoltage", "Electricity cracks");
         lang.accept(subtitles + "electric.spark", "Cable sparks");
         lang.accept(subtitles + "kinetic_dynamo.run", "Dynamo whirs");
         lang.accept(subtitles + "battery_box.charge", "Battery hums");
+        lang.accept(subtitles + "block.tree_tap.place", "Tree tap knocked in");
+        lang.accept(subtitles + "block.tree_tap.drip", "Latex drips");
     }
 }

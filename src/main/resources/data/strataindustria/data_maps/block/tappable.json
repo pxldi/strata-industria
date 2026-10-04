@@ -1,0 +1,8 @@
+{
+  "values": {
+    "minecraft:jungle_log": {
+      "fluid": "strataindustria:latex",
+      "amount": 1
+    }
+  }
+}

@@ -6,7 +6,10 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Items;
+import dev.strataindustria.registry.Tier5Fluids;
 import dev.strataindustria.registry.Tier5Items;
+import dev.strataindustria.tanning.BarrelRecipe;
+import dev.strataindustria.tanning.FluidAmount;
 import dev.strataindustria.roasting.RoastingRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
 import dev.strataindustria.smithing.Rule;
@@ -23,6 +26,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.material.Fluids;
 
 /** Tier 5 (electric) recipes. {@link ModRecipeProvider} runs it, so tier 5 stays out of the shared provider. */
 final class Tier5RecipeProvider extends RecipeProvider {
@@ -56,8 +60,23 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .save(output, key("magnet"));
     }
 
-    // Spec 5.3: raw rubber compounded with sulfur, then vulcanised at 140 °C.
+    // Spec 5.1 to 5.3: the tap, latex set in a barrel, raw rubber compounded with sulfur, then vulcanised at 140 °C.
     private void rubber() {
+        Item bowl = Items.BOWL;
+        shapeless(RecipeCategory.MISC, Tier5Items.TREE_TAP.get())
+                .requires(ModItems.PLATES.get(Metal.COPPER).get())
+                .requires(Items.STICK)
+                .requires(bowl)
+                .unlockedBy("has_copper_plate", has(ModItems.PLATES.get(Metal.COPPER).get()))
+                .save(output, key("tree_tap"));
+        output.accept(key("barrel/coagulating_latex"), new BarrelRecipe(Optional.empty(), 1,
+                Optional.of(new FluidAmount(Tier5Fluids.LATEX.get(), 1000)),
+                Optional.of(new ItemStackTemplate(Tier5Items.RAW_RUBBER.get(), 4)), Optional.empty(), 1200), null);
+        // The slow fallback for a world without jungle: 32 dandelions and 4 buckets of water make one bucket of latex.
+        output.accept(key("barrel/dandelion_latex"), new BarrelRecipe(Optional.of(Ingredient.of(Items.DANDELION)), 8,
+                Optional.of(new FluidAmount(Fluids.WATER, 1000)), Optional.empty(),
+                Optional.of(new FluidAmount(Tier5Fluids.LATEX.get(), 250)), 2400), null);
+
         Item raw = Tier5Items.RAW_RUBBER.get();
         shapeless(RecipeCategory.MISC, Tier5Items.COMPOUNDED_RUBBER.get(), 4)
                 .requires(raw, 4)

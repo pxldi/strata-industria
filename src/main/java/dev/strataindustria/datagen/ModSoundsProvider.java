@@ -315,6 +315,13 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.4f))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.35f))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.35f)));
+        add(Tier5Sounds.TREE_TAP_PLACE, definition().subtitle(subtitle("block.tree_tap.place"))
+                .with(sound("minecraft:block.wood.place", SoundDefinition.SoundType.EVENT).pitch(1.3f))
+                .with(sound("minecraft:block.copper.place", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.6f)));
+        add(Tier5Sounds.TREE_TAP_DRIP, definition().subtitle(subtitle("block.tree_tap.drip"))
+                .with(sound("minecraft:block.pointed_dripstone.drip_water", SoundDefinition.SoundType.EVENT).pitch(0.7f))
+                .with(sound("minecraft:block.pointed_dripstone.drip_water", SoundDefinition.SoundType.EVENT).pitch(0.62f).volume(0.9f))
+                .with(sound("minecraft:block.pointed_dripstone.drip_water_into_cauldron", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.7f)));
         add(Tier5Sounds.BATTERY_BOX_CHARGE, definition().subtitle(subtitle("battery_box.charge"))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.15f))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.12f)));

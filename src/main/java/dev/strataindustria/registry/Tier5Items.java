@@ -23,6 +23,11 @@ public final class Tier5Items {
     public static final DeferredItem<Item> COMPOUNDED_RUBBER = ModItems.ITEMS.registerSimpleItem("compounded_rubber");
     public static final DeferredItem<Item> RUBBER = ModItems.ITEMS.registerSimpleItem("rubber");
 
+    /** Spec 5.2: a bucket of latex from a full tap cup or a barrel; the bucket comes back when it is poured. */
+    public static final DeferredItem<Item> LATEX_BUCKET = ModItems.ITEMS.registerSimpleItem("latex_bucket",
+            p -> p.stacksTo(1).craftRemainder(net.minecraft.world.item.Items.BUCKET));
+    public static final DeferredItem<BlockItem> TREE_TAP = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.TREE_TAP);
+
     public static final DeferredItem<BlockItem> LV_CABLE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_CABLE);
     public static final DeferredItem<BlockItem> MV_CABLE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MV_CABLE);
     public static final DeferredItem<BlockItem> KINETIC_DYNAMO = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.KINETIC_DYNAMO);

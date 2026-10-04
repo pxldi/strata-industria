@@ -4,10 +4,13 @@ import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.power.ElectricTier;
+import dev.strataindustria.rubber.TreeTapBlock;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
 /** Tier 5 (electric) blocks, kept apart from the earlier tiers' blocks. */
@@ -18,6 +21,18 @@ public final class Tier5Blocks {
     /** Spec 23.6: electric machines ring like metal, with the heavier netherite knock when hit. */
     public static final SoundType MACHINE_SOUND = new SoundType(1.0f, 1.0f, SoundType.METAL.getBreakSound(), SoundType.METAL.getStepSound(),
             SoundType.METAL.getPlaceSound(), SoundType.NETHERITE_BLOCK.getHitSound(), SoundType.METAL.getFallSound());
+
+    /** Spec 23.6: the tap knocks in like wood with a metal tick; otherwise it sounds like the copper it is. */
+    public static final SoundType TREE_TAP_SOUND = new DeferredSoundType(1.0f, 1.0f, () -> SoundEvents.COPPER_BREAK,
+            () -> SoundEvents.COPPER_STEP, Tier5Sounds.TREE_TAP_PLACE, () -> SoundEvents.COPPER_HIT, () -> SoundEvents.COPPER_FALL);
+
+    // Spec 5.1: the tree tap.
+    public static final DeferredBlock<TreeTapBlock> TREE_TAP = ModBlocks.BLOCKS.registerBlock("tree_tap", TreeTapBlock::new,
+            p -> p.mapColor(MapColor.COLOR_ORANGE)
+                    .strength(0.8f)
+                    .sound(TREE_TAP_SOUND)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.POPPED));
 
     // Spec 8.1: rubber-insulated copper cables.
     public static final DeferredBlock<CableBlock> LV_CABLE = ModBlocks.BLOCKS.registerBlock("lv_cable", p -> new CableBlock(ElectricTier.LV, p),

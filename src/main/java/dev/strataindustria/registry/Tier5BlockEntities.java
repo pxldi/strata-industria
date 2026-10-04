@@ -3,6 +3,7 @@ package dev.strataindustria.registry;
 import dev.strataindustria.electric.BatteryBoxBlockEntity;
 import dev.strataindustria.electric.CableBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
+import dev.strataindustria.rubber.TreeTapBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -18,6 +19,10 @@ public final class Tier5BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryBoxBlockEntity>> BATTERY_BOX =
             ModBlockEntities.BLOCK_ENTITIES.register("battery_box", () -> new BlockEntityType<>(BatteryBoxBlockEntity::new,
                     Tier5Blocks.BATTERY_BOX.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TreeTapBlockEntity>> TREE_TAP =
+            ModBlockEntities.BLOCK_ENTITIES.register("tree_tap", () -> new BlockEntityType<>(TreeTapBlockEntity::new,
+                    Tier5Blocks.TREE_TAP.get()));
 
     public static void init() {}
 

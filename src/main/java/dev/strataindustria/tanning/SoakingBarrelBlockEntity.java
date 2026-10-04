@@ -54,13 +54,14 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
 
     /** The fluids the screen knows how to draw, by index; 0 is an empty tank. */
     public enum TankFluid {
-        NONE, WATER, LYE, TANNIN, OTHER;
+        NONE, WATER, LYE, TANNIN, OTHER, LATEX;
 
         public static TankFluid of(Fluid fluid) {
             if (fluid == Fluids.EMPTY) return NONE;
             if (fluid.isSame(Fluids.WATER)) return WATER;
             if (fluid.isSame(ModFluids.LYE.get())) return LYE;
             if (fluid.isSame(ModFluids.TANNIN.get())) return TANNIN;
+            if (fluid.isSame(dev.strataindustria.registry.Tier5Fluids.LATEX.get())) return LATEX;
             return OTHER;
         }
 
@@ -128,6 +129,33 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
             sync();
         }
         return true;
+    }
+
+    /**
+     * Adds up to {@code mb} of a fluid poured or dripped in (tier 5 spec 5.1: a tree tap above an open
+     * barrel), and returns how much fit. A tank holding a different fluid takes none.
+     */
+    public int fill(Fluid in, int mb, boolean simulate) {
+        if (in == Fluids.EMPTY || (amount > 0 && !fluid.isSame(in))) return 0;
+        int moved = Math.max(0, Math.min(mb, CAPACITY - amount));
+        if (moved > 0 && !simulate) {
+            fluid = in;
+            amount += moved;
+            sync();
+        }
+        return moved;
+    }
+
+    /** Takes a bucket of a fluid that can be carried (water or latex) back out, or returns EMPTY. */
+    public ItemStack takeBucket() {
+        net.minecraft.world.item.Item bucket = fluid.isSame(Fluids.WATER) ? net.minecraft.world.item.Items.WATER_BUCKET
+                : fluid.isSame(dev.strataindustria.registry.Tier5Fluids.LATEX.get()) ? dev.strataindustria.registry.Tier5Items.LATEX_BUCKET.get()
+                : null;
+        if (bucket == null || amount < BUCKET) return ItemStack.EMPTY;
+        amount -= BUCKET;
+        if (amount == 0) fluid = Fluids.EMPTY;
+        sync();
+        return new ItemStack(bucket);
     }
 
     /**
