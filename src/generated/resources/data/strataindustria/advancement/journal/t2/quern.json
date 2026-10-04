@@ -20,7 +20,19 @@
               "strataindustria:crushed_rich_cassiterite",
               "strataindustria:crushed_poor_bismuthinite",
               "strataindustria:crushed_bismuthinite",
-              "strataindustria:crushed_rich_bismuthinite"
+              "strataindustria:crushed_rich_bismuthinite",
+              "strataindustria:crushed_poor_limonite",
+              "strataindustria:crushed_limonite",
+              "strataindustria:crushed_rich_limonite",
+              "strataindustria:crushed_poor_hematite",
+              "strataindustria:crushed_hematite",
+              "strataindustria:crushed_rich_hematite",
+              "strataindustria:crushed_poor_magnetite",
+              "strataindustria:crushed_magnetite",
+              "strataindustria:crushed_rich_magnetite",
+              "strataindustria:crushed_poor_native_gold",
+              "strataindustria:crushed_native_gold",
+              "strataindustria:crushed_rich_native_gold"
             ]
           }
         ]

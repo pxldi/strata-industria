@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:wrought_iron_axe_head",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "minecraft:iron_axe"
+  }
+}

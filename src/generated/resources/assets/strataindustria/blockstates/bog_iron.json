@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "grade=normal": {
+      "model": "strataindustria:block/bog_iron"
+    },
+    "grade=poor": {
+      "model": "strataindustria:block/bog_iron_poor"
+    },
+    "grade=rich": {
+      "model": "strataindustria:block/bog_iron_rich"
+    }
+  }
+}

@@ -1,5 +1,9 @@
 {
   "values": [
+    "strataindustria:bog_iron",
+    "strataindustria:fire_clay",
+    "strataindustria:placer_gravel",
+    "strataindustria:placer_sand",
     "strataindustria:pit_kiln",
     "strataindustria:charcoal_pile"
   ]

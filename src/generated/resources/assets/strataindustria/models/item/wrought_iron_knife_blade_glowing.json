@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/wrought_iron_knife_blade",
+    "layer1": "strataindustria:item/glow/wrought_iron_knife_blade"
+  }
+}

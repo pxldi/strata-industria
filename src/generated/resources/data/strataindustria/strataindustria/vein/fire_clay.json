@@ -1,0 +1,30 @@
+{
+  "block": "strataindustria:fire_clay",
+  "hosts": [
+    "strataindustria:shale",
+    "strataindustria:slate",
+    "strataindustria:limestone",
+    "strataindustria:granite"
+  ],
+  "indicators": false,
+  "max_depth": 40,
+  "max_y": 140,
+  "min_y": 30,
+  "pass": "sediment",
+  "preferred_hosts": [
+    "strataindustria:shale"
+  ],
+  "shape": {
+    "type": "strataindustria:layer",
+    "density": 0.8,
+    "radius_horizontal": {
+      "max": 16,
+      "min": 10
+    },
+    "radius_vertical": {
+      "max": 2,
+      "min": 1
+    }
+  },
+  "weight": 25
+}

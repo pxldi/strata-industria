@@ -1,0 +1,21 @@
+{
+  "values": [
+    "strataindustria:limestone_hematite_ore",
+    "strataindustria:limestone_magnetite_ore",
+    "strataindustria:shale_hematite_ore",
+    "strataindustria:shale_magnetite_ore",
+    "strataindustria:slate_hematite_ore",
+    "strataindustria:slate_magnetite_ore",
+    "strataindustria:marble_hematite_ore",
+    "strataindustria:marble_magnetite_ore",
+    "strataindustria:granite_hematite_ore",
+    "strataindustria:granite_magnetite_ore",
+    "strataindustria:gabbro_hematite_ore",
+    "strataindustria:gabbro_magnetite_ore",
+    "strataindustria:basalt_hematite_ore",
+    "strataindustria:basalt_magnetite_ore",
+    "strataindustria:rhyolite_hematite_ore",
+    "strataindustria:rhyolite_magnetite_ore",
+    "strataindustria:bog_iron"
+  ]
+}

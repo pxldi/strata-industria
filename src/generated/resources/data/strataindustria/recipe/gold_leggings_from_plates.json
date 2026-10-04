@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:metal_armour",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:leather",
+    "P": "strataindustria:gold_plate"
+  },
+  "pattern": [
+    "PCP",
+    "P P"
+  ],
+  "result": {
+    "id": "minecraft:golden_leggings"
+  }
+}

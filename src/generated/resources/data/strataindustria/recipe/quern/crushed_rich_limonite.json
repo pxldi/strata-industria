@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "strataindustria:rich_limonite",
+  "result": {
+    "id": "strataindustria:crushed_rich_limonite"
+  }
+}
