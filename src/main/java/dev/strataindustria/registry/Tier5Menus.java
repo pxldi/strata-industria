@@ -20,6 +20,10 @@ public final class Tier5Menus {
     public static final DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> ELECTROLYSER = chemical(ChemicalMachineLayout.ELECTROLYSER);
 
     public static final DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> ASSEMBLER = chemical(ChemicalMachineLayout.ASSEMBLER);
+    public static final DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> EXTRUDER = chemical(ChemicalMachineLayout.EXTRUDER);
+
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.electric.PowerHammerMenu>> POWER_HAMMER =
+            ModMenus.MENUS.register("power_hammer", () -> IMenuTypeExtension.create(dev.strataindustria.electric.PowerHammerMenu::new));
 
     private static DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> chemical(ChemicalMachineLayout layout) {
         return ModMenus.MENUS.register(layout.id(), () -> IMenuTypeExtension.create((id, inventory, buf) ->

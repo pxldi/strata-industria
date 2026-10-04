@@ -2,6 +2,7 @@ package dev.strataindustria.survey;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.client.SurveyClient;
+import dev.strataindustria.structure.Ledgers;
 import dev.strataindustria.structure.StructureContent;
 import java.util.List;
 import java.util.function.Consumer;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A prospector's notes on a deposit they found (structures spec 5). Right-click to read them; carry them
@@ -34,6 +36,17 @@ public class SurveyNotesItem extends Item {
 
     public static SurveyNotes notes(ItemStack stack) {
         return stack.getOrDefault(StructureContent.SURVEY.get(), SurveyNotes.looking());
+    }
+
+    /** The ledger text key of a handwritten page, or null for prospector's notes. */
+    public static @Nullable String ledger(ItemStack stack) {
+        return stack.get(StructureContent.LEDGER.get());
+    }
+
+    @Override
+    public Component getName(ItemStack stack) {
+        return ledger(stack) == null ? super.getName(stack)
+                : Component.translatable("item." + StrataIndustria.MOD_ID + ".survey_notes.ledger");
     }
 
     @Override
@@ -78,10 +91,12 @@ public class SurveyNotesItem extends Item {
             TooltipFlag flag) {
         SurveyNotes notes = notes(stack);
         String prefix = "item." + StrataIndustria.MOD_ID + ".survey_notes.";
-        if (notes.entry().isPresent()) {
+        String ledger = ledger(stack);
+        if (ledger != null) {
+            tooltip.accept(Ledgers.place(ledger).copy().withStyle(ChatFormatting.GRAY));
+        } else if (notes.entry().isPresent()) {
             SurveyNotes.Entry entry = notes.entry().get();
-            tooltip.accept(Component.translatable(prefix + "on", SurveyText.mineralName(entry.mineral()))
-                    .withStyle(ChatFormatting.GRAY));
+            tooltip.accept(SurveyText.mineralName(entry.mineral()).copy().withStyle(ChatFormatting.GRAY));
             if (notes.found()) tooltip.accept(Component.translatable(prefix + "found").withStyle(ChatFormatting.DARK_GREEN));
         } else if (notes.targets().isEmpty()) {
             tooltip.accept(Component.translatable(prefix + "blank").withStyle(ChatFormatting.GRAY));

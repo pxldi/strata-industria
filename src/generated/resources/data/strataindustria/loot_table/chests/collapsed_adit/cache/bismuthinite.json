@@ -13,8 +13,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 6,
-              "min": 2
+              "max": 24,
+              "min": 8
             }
           },
           "name": "minecraft:torch"
@@ -34,8 +34,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 5,
-              "min": 2
+              "max": 12,
+              "min": 6
             }
           },
           "name": "strataindustria:poor_bismuthinite"
@@ -55,8 +55,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 4,
-              "min": 1
+              "max": 10,
+              "min": 4
             }
           },
           "name": "minecraft:copper_nugget"
@@ -67,7 +67,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.3
+        "chance": 0.4
       },
       "entries": [
         {
@@ -76,8 +76,8 @@
             "type": "minecraft:set_damage",
             "damage": {
               "type": "minecraft:uniform",
-              "max": 0.3,
-              "min": 0.1
+              "max": 0.8,
+              "min": 0.25
             }
           },
           "name": "strataindustria:stone_pickaxe"
@@ -111,6 +111,53 @@
       "rolls": 1
     },
     {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:ledger": "collapsed_adit.2"
+            }
+          },
+          "name": "strataindustria:survey_notes"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.6
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "strataindustria:collapsed_adit_pottery_sherd"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.5
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:mineral": "bismuthinite"
+            }
+          },
+          "name": "strataindustria:mineral_specimen"
+        }
+      ],
+      "rolls": 1
+    },
+    {
       "condition": {
         "type": "minecraft:random_chance",
         "chance": 0.5
@@ -122,11 +169,111 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 2,
-              "min": 1
+              "max": 16,
+              "min": 8
             }
           },
           "name": "minecraft:bread"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.5
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 3,
+              "min": 1
+            }
+          },
+          "name": "minecraft:emerald"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.2
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:unbreaking": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:protection": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:feather_falling": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:sharpness": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:efficiency": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
         }
       ],
       "rolls": 1

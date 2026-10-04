@@ -212,7 +212,7 @@ final class JournalLanguage {
                 + "stop that.");
         lang.accept(observe + "coal", "Black stone that burns. Too dirty for iron as it is, but baked in a closed oven it "
                 + "might come out clean.");
-        lang.accept(observe + "survey_notes", "Someone else's notes, folded small. Whoever wrote them knew where to dig.");
+        lang.accept(observe + "survey_notes", "Someone's field notes on an ore deposit.");
         lang.accept(observe + "overstress", "The shaft groaned and stopped. I asked more of it than its power can give; "
                 + "fewer machines, or more power.");
         lang.accept(observe + "too_hard", "The %s is too hard for the pick in my hand. %s");

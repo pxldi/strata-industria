@@ -7,6 +7,7 @@ import dev.strataindustria.survey.SurveyNotes;
 import dev.strataindustria.survey.SurveyNotesItem;
 import dev.strataindustria.survey.SurveyText;
 import dev.strataindustria.survey.Surveyor;
+import dev.strataindustria.structure.Ledgers;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -57,8 +58,16 @@ public class SurveyNotesScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         super.extractRenderState(g, mouseX, mouseY, partialTick);
         g.blit(RenderPipelines.GUI_TEXTURED, PAGE, left, top, 0, 0, WIDTH, HEIGHT, 256, 256);
-        g.centeredText(font, title, left + WIDTH / 2, top + 8, INK);
+        String ledger = SurveyNotesItem.ledger(stack);
+        g.centeredText(font, ledger != null ? Component.translatable("item." + StrataIndustria.MOD_ID + ".survey_notes.ledger") : title,
+                left + WIDTH / 2, top + 8, INK);
 
+        if (ledger != null) {
+            // A handwritten page: the place it came from, then what the writer put down.
+            g.centeredText(font, Ledgers.place(ledger), left + WIDTH / 2, top + 24, FADED_INK);
+            wrapped(g, Ledgers.text(ledger), left + 14, top + 40, WIDTH - 28, INK);
+            return;
+        }
         SurveyNotes notes = SurveyNotesItem.notes(stack);
         if (notes.entry().isEmpty()) {
             String key = notes.targets().isEmpty() ? "blank" : "unread";
@@ -77,7 +86,8 @@ public class SurveyNotesScreen extends Screen {
         if (mineral != null) g.item(new ItemStack(ModItems.SMALL_ORES.get(mineral).get()), nameX, top + 19);
         g.text(font, name, nameX + 18, top + 23, INK, false);
 
-        // Compass: the arrow points toward the deposit relative to where the reader faces.
+        // Compass: the arrow points toward the deposit relative to where the reader faces. Once the reader
+        // has been to the deposit it shows a tick instead, and the bearing is no longer needed.
         double dx = entry.pos().getX() + 0.5 - player.getX(), dz = entry.pos().getZ() + 0.5 - player.getZ();
         int sprite;
         if (notes.found()) {
@@ -90,24 +100,16 @@ public class SurveyNotesScreen extends Screen {
         g.blit(RenderPipelines.GUI_TEXTURED, ARROWS, left + ROSE_X + ROSE_SIZE / 2 - 8, top + ROSE_Y + ROSE_SIZE / 2 - 8,
                 sprite * 16, 0, 16, 16, 160, 16);
 
+        // The field note, one fact per line: bearing, then host rock and depth.
         List<Component> lines = new ArrayList<>();
-        if (notes.found()) {
-            lines.add(Component.translatable("item." + StrataIndustria.MOD_ID + ".survey_notes.found"));
-        } else {
-            lines.add(SurveyText.direction(dx, dz));
-            lines.add(SurveyText.distance(dx, dz));
-        }
-        lines.add(SurveyText.depth(entry.depth()));
-        lines.add(SurveyText.host(entry.host()));
-        lines.add(SurveyText.size(entry.size()));
-        Component tool = SurveyText.toolHint(entry.mineral());
-        if (tool != null) lines.add(tool);
+        if (!notes.found()) lines.add(SurveyText.bearing(dx, dz));
+        lines.add(SurveyText.where(entry.host(), entry.depth()));
         int y = top + ROSE_Y;
         for (Component line : lines) {
             y = wrapped(g, line, left + TEXT_X, y, TEXT_WIDTH, INK) + 2;
         }
 
-        // The writer's own words, below the compass.
+        // The writer's own remark, below the compass.
         int handY = Math.max(y + 2, top + ROSE_Y + ROSE_SIZE + 4);
         List<FormattedCharSequence> hand = font.split(
                 SurveyText.hand(entry.mineral(), entry.hand()).copy().withStyle(ChatFormatting.ITALIC), WIDTH - 28);

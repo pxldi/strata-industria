@@ -1,0 +1,16 @@
+{
+  "type": "strataindustria:extruding",
+  "item_results": [
+    {
+      "count": 4,
+      "id": "strataindustria:copper_fluid_pipe"
+    }
+  ],
+  "items": [
+    {
+      "ingredient": "strataindustria:copper_plate"
+    }
+  ],
+  "mode": "pipe",
+  "ticks": 100
+}

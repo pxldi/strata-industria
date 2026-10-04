@@ -6,22 +6,16 @@ import dev.strataindustria.client.screen.SurveyNotesScreen;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.survey.SurveyNotes;
 import dev.strataindustria.survey.SurveyNotesItem;
-import dev.strataindustria.survey.SurveyText;
 import dev.strataindustria.survey.Surveyor;
-import java.util.List;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jspecify.annotations.Nullable;
 
-/** Client half of the survey notes: the screen, the live bearing in the tooltip and the mineral swatch. */
+/** Client half of the survey notes: the screen and the mineral swatches. */
 public final class SurveyClient {
     private SurveyClient() {}
 
@@ -29,20 +23,25 @@ public final class SurveyClient {
         Minecraft.getInstance().gui.setScreen(new SurveyNotesScreen(stack));
     }
 
-    /** "North-east, about 250 blocks" under the mineral line, worked out from where the reader stands. */
-    static void onTooltip(ItemTooltipEvent event) {
-        if (!(event.getItemStack().getItem() instanceof SurveyNotesItem)) return;
-        Player player = event.getEntity();
-        SurveyNotes notes = SurveyNotesItem.notes(event.getItemStack());
-        if (player == null || notes.found() || notes.entry().isEmpty()) return;
-        SurveyNotes.Entry entry = notes.entry().get();
-        List<Component> lines = event.getToolTip();
-        lines.add(Math.min(2, lines.size()), SurveyText.bearing(entry.pos().getX() + 0.5 - player.getX(),
-                entry.pos().getZ() + 0.5 - player.getZ()).copy().withStyle(ChatFormatting.GRAY));
-    }
-
     static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {
         event.register(StrataIndustria.id("survey_mineral"), MineralTint.CODEC);
+        event.register(StrataIndustria.id("specimen_mineral"), SpecimenTint.CODEC);
+    }
+
+    /** Tints the facet layer of a mineral specimen in its mineral's colour. */
+    public record SpecimenTint() implements ItemTintSource {
+        public static final MapCodec<SpecimenTint> CODEC = MapCodec.unit(new SpecimenTint());
+
+        @Override
+        public int calculate(ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity owner) {
+            String mineral = dev.strataindustria.structure.MineralSpecimenItem.mineral(stack);
+            return 0xFF000000 | colour(mineral == null ? "" : mineral);
+        }
+
+        @Override
+        public MapCodec<SpecimenTint> type() {
+            return CODEC;
+        }
     }
 
     /** Tints the swatch on the notes icon in the colour of the mineral they describe. */

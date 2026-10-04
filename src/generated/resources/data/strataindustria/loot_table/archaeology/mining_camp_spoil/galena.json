@@ -30,8 +30,19 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:miner_pottery_sherd",
+          "name": "strataindustria:mining_camp_pottery_sherd",
           "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:ledger": "mining_camp.1"
+            }
+          },
+          "name": "strataindustria:survey_notes",
+          "weight": 3
         },
         {
           "type": "minecraft:item",

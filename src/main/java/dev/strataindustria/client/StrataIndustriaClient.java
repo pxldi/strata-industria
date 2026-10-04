@@ -47,7 +47,6 @@ public final class StrataIndustriaClient {
         modBus.addListener(StrataIndustriaClient::registerTints);
         modBus.addListener(StrataIndustriaClient::registerItemProperties);
         modBus.addListener(SurveyClient::registerTints);
-        NeoForge.EVENT_BUS.addListener(SurveyClient::onTooltip);
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
@@ -84,6 +83,8 @@ public final class StrataIndustriaClient {
         event.register(dev.strataindustria.registry.Tier5Menus.BENDER.get(), dev.strataindustria.client.screen.ElectricMachineScreen::new);
         event.register(dev.strataindustria.registry.Tier5Menus.LATHE.get(), dev.strataindustria.client.screen.ElectricMachineScreen::new);
         event.register(dev.strataindustria.registry.Tier5Menus.ASSEMBLER.get(), dev.strataindustria.client.screen.ChemicalMachineScreen::new);
+        event.register(dev.strataindustria.registry.Tier5Menus.POWER_HAMMER.get(), dev.strataindustria.client.screen.PowerHammerScreen::new);
+        event.register(dev.strataindustria.registry.Tier5Menus.EXTRUDER.get(), dev.strataindustria.client.screen.ChemicalMachineScreen::new);
         event.register(dev.strataindustria.registry.Tier5Menus.MIXER.get(), dev.strataindustria.client.screen.ChemicalMachineScreen::new);
         event.register(dev.strataindustria.registry.Tier5Menus.ELECTROLYSER.get(), dev.strataindustria.client.screen.ChemicalMachineScreen::new);
     }
@@ -91,6 +92,8 @@ public final class StrataIndustriaClient {
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
         event.registerBlockEntityRenderer(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_BE.get(), dev.strataindustria.client.render.CastingTableRenderer::new);
+        event.registerBlockEntityRenderer(dev.strataindustria.structure.StructureContent.SPECIMEN_SHELF_ENTITY.get(),
+                dev.strataindustria.client.render.SpecimenShelfRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANVIL.get(), AnvilRenderer::new);
         // Tier 3 spec 7: rotors spin at their network's speed.
@@ -132,6 +135,8 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.FLUID_TANK.get(),
                 dev.strataindustria.client.render.FluidTankRenderer::new);
         // Tier 4 spec 21.4: the steam hammer's ram drops with each blow.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.POWER_HAMMER.get(),
+                dev.strataindustria.client.render.PowerHammerRenderer::new);
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.STEAM_HAMMER.get(),
                 dev.strataindustria.client.render.SteamHammerRenderer::new);
         // Tier 4 spec 13.4: the inserter's arm swings between its source and target.
