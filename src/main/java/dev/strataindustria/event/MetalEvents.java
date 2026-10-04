@@ -1,6 +1,8 @@
 package dev.strataindustria.event;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.geology.OreGrade;
+import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.metal.CastMoldItem;
 import dev.strataindustria.metal.Melt;
 import dev.strataindustria.metal.Quality;
@@ -36,8 +38,23 @@ public final class MetalEvents {
         } else if (stack.is(ModItems.SMITHING_PATTERN.get())) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".pattern.blank").withStyle(ChatFormatting.DARK_GRAY));
         }
+        if (isSulfide(stack)) {
+            event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".ore.sulfide").withStyle(ChatFormatting.DARK_GRAY));
+        }
         if (stack.has(ModDataComponents.SLAG.get())) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".metal.slag_note").withStyle(ChatFormatting.DARK_GRAY));
         }
+    }
+
+    /** Tier 4 spec 4.4: sulfide ore pieces never melt; they say so instead. */
+    private static boolean isSulfide(ItemStack stack) {
+        for (OreMineral mineral : OreMineral.withPieces()) {
+            if (!mineral.isSulfide()) continue;
+            if (stack.is(ModItems.SMALL_ORES.get(mineral).get())) return true;
+            for (OreGrade grade : OreGrade.values()) {
+                if (stack.is(ModItems.orePiece(mineral, grade)) || stack.is(ModItems.crushedOre(mineral, grade))) return true;
+            }
+        }
+        return false;
     }
 }

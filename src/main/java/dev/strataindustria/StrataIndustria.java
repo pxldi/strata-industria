@@ -19,6 +19,7 @@ import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.registry.Tier4Menus;
+import dev.strataindustria.registry.Tier4Recipes;
 import dev.strataindustria.registry.Tier4Sounds;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
@@ -40,6 +41,7 @@ public final class StrataIndustria {
         Tier4BlockEntities.init();
         Tier4Menus.init();
         Tier4Sounds.init();
+        Tier4Recipes.init();
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);

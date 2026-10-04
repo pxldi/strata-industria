@@ -283,6 +283,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "coke_oven.done", "Coke settles");
         add(subtitles + "creosote.fill", "Creosote glugs");
         add(subtitles + "crucible.carbon_burn", "Carbon burns off");
+        add(subtitles + "crucible.calcine_reduce", "Calcine reduces");
+        add(subtitles + "roasting.sizzle", "Ore roasts");
+        add(subtitles + "roasting.done", "Calcine crumbles");
 
         // Spec 6: refractory ceramics and steel in the crucible.
         addItem(Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE, "Unfired Refractory Crucible");
@@ -296,7 +299,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add("container." + id + ".refractory_crucible", "Refractory Crucible");
         String status = id + ".crucible.status.";
         add(status + "at_limit", "Crucible at its limit (%s °C)");
-        add(status + "carbon_waiting", "Carbon needs molten iron");
+        add(status + "carbon_waiting", "Carbon needs molten iron or calcine");
+        add(status + "calcine_short", "Calcine needs more carbon");
         add(status + "carbon_burned", "Excess carbon burned off");
         String problem = id + ".crucible.problem.";
         add(problem + "mold_too_weak", "This mold cannot take metal this hot; use a refractory mold");
@@ -304,6 +308,14 @@ final class ModLanguageProvider extends LanguageProvider {
         String config = id + ".configuration.";
         add(config + "clayMaxTemperature", "Clay crucible limit (°C)");
         add(config + "refractoryMoldBreak", "Refractory mold break chance");
+        // Spec 4.4, 5.3 and 14.4: zinc calcine, its gas, and the steel anvil.
+        addItem(Tier4Items.ZINC_CALCINES.get(dev.strataindustria.geology.OreGrade.POOR), "Poor Zinc Calcine");
+        addItem(Tier4Items.ZINC_CALCINES.get(dev.strataindustria.geology.OreGrade.NORMAL), "Zinc Calcine");
+        addItem(Tier4Items.ZINC_CALCINES.get(dev.strataindustria.geology.OreGrade.RICH), "Rich Zinc Calcine");
+        addItem(Tier4Items.SMALL_ZINC_CALCINE, "Small Zinc Calcine");
+        add("fluid_type." + id + ".sulfur_dioxide", "Sulfur Dioxide");
+        addBlock(Tier4Blocks.STEEL_ANVIL, "Steel Anvil");
+        add(id + ".ore.sulfide", "Sulfide ore: roast it in a forge before melting");
     }
 
     private void ironAge() {
@@ -481,6 +493,14 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.steel.hint", "Stir coke or charcoal dust into molten iron, one dust to five ingots, and cast it in a refractory mold.");
         add(journal + "t4.sphalerite", "Zinc Blende");
         add(journal + "t4.sphalerite.hint", "Find sphalerite. Zinc is the key to brass.");
+        add(journal + "t4.roast", "Roasted Ore");
+        add(journal + "t4.roast.hint", "Zinc ore must be roasted before it will melt. A hot forge will do.");
+        add(journal + "t4.brass", "Brass");
+        add(journal + "t4.brass.hint", "Melt calcine with copper and a little carbon dust. Two parts copper to one of zinc.");
+        add(journal + "t4.solder", "Solder");
+        add(journal + "t4.solder.hint", "Galena melts like tin ore. Alloy its lead with tin.");
+        add(journal + "t4.steel_anvil", "Steel Anvil");
+        add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }
 
     /** Spec 9: anvils, the smithing screen, and tongs. */

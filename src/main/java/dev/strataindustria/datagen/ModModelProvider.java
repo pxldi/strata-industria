@@ -479,6 +479,11 @@ final class ModModelProvider extends ModelProvider {
         castMold(itemModels, Tier4Items.REFRACTORY_INGOT_MOLD.get());
         castMold(itemModels, Tier4Items.REFRACTORY_GEAR_MOLD.get());
         castMold(itemModels, Tier4Items.GEAR_MOLD.get());
+
+        // Spec 4.4 and 14.4: zinc calcines, and the steel anvil in the shared anvil model.
+        for (var calcine : Tier4Items.ZINC_CALCINES.values()) flatItem(itemModels, calcine.get());
+        flatItem(itemModels, Tier4Items.SMALL_ZINC_CALCINE.get());
+        metalAnvil(blockModels, itemModels, Tier4Blocks.STEEL_ANVIL.get(), Tier4Items.STEEL_ANVIL.get(), "steel_anvil");
     }
 
     /**

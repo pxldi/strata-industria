@@ -214,6 +214,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.CREOSOTE_FILL, definition().subtitle(subtitle("creosote.fill"))
                 .with(sound("minecraft:item.bucket.fill_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
                 .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f)));
+        // Spec 21: ore roasting hisses and fizzes; the finished calcine settles with a dry crumble.
+        add(Tier4Sounds.ROASTING_SIZZLE, definition().subtitle(subtitle("roasting.sizzle"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.3f))
+                .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.4f)));
+        add(Tier4Sounds.ROASTING_DONE, definition().subtitle(subtitle("roasting.done"))
+                .with(sound("minecraft:block.suspicious_gravel.break", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.7f))
+                .with(sound("minecraft:block.tuff.break", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.6f)));
+        // Calcine giving up its zinc: a bubbling, gassy hiss.
+        add(Tier4Sounds.CALCINE_REDUCE, definition().subtitle(subtitle("crucible.calcine_reduce"))
+                .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.5f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.3f)));
     }
 
     private static String subtitle(String name) {

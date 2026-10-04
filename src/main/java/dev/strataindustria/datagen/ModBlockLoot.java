@@ -111,7 +111,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.PLACER_SAND.get());
         // Tier 4 spec 5.
         for (var block : java.util.List.of(Tier4Blocks.COKE_OVEN_BRICKS, Tier4Blocks.COKE_OVEN_DOOR, Tier4Blocks.COKE_BLOCK,
-                Tier4Blocks.TREATED_PLANKS, Tier4Blocks.TREATED_STAIRS, Tier4Blocks.TREATED_FENCE)) {
+                Tier4Blocks.TREATED_PLANKS, Tier4Blocks.TREATED_STAIRS, Tier4Blocks.TREATED_FENCE, Tier4Blocks.STEEL_ANVIL)) {
             dropSelf(block.get());
         }
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);

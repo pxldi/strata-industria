@@ -58,6 +58,11 @@ public class ForgeMenu extends AbstractContainerMenu {
         return data.get(ForgeBlockEntity.DATA_TEMPERATURE);
     }
 
+    /** How far the item in heating slot {@code i} has roasted, 0 to 100. */
+    public int roastPercent(int i) {
+        return data.get(ForgeBlockEntity.DATA_ROAST + i);
+    }
+
     public float burnFraction() {
         int total = data.get(ForgeBlockEntity.DATA_BURN_TOTAL);
         return total <= 0 ? 0 : Math.min(1, data.get(ForgeBlockEntity.DATA_BURN_LEFT) / (float) total);

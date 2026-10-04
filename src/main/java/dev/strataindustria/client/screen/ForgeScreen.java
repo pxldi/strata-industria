@@ -16,7 +16,7 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Forge: four heating slots, each with a strip under it in its item's heat colour; flames over the
- * fuel; the forge's own gauge on the right, 0 to 1750 °C.
+ * fuel; the forge's own gauge on the right, 0 to 1750 °C. Ore roasting in a slot shows a rising tint.
  */
 public class ForgeScreen extends AbstractContainerScreen<ForgeMenu> {
     private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/forge.png");
@@ -59,6 +59,14 @@ public class ForgeScreen extends AbstractContainerScreen<ForgeMenu> {
             HeatBand band = HeatBand.of(heat);
             int x = leftPos + ForgeMenu.HEAT_X + i * 18, y = topPos + STRIP_Y;
             if (band != HeatBand.NONE) g.fill(x, y, x + 16, y + STRIP_H, 0xFF000000 | band.colour());
+            // Roasting (tier 4 spec 5.3): a pale sulfur tint rises over the piece as it turns to calcine.
+            int roast = menu.roastPercent(i);
+            if (roast > 0) {
+                int h = Math.max(1, Math.round(16 * roast / 100f));
+                int top = topPos + ForgeMenu.HEAT_Y + 16 - h;
+                g.fill(x, top, x + 16, topPos + ForgeMenu.HEAT_Y + 16, 0x58E2D46E);
+                g.fill(x, top, x + 16, top + 1, 0xA0F0E49A);
+            }
             // At its limit an item sits just under its melting point; a pulsing edge warns of it.
             if (ForgeLimits.atLimit(stack, heat) && (now / 10) % 2 == 0) {
                 g.fill(x - 1, topPos + ForgeMenu.HEAT_Y - 1, x + 17, topPos + ForgeMenu.HEAT_Y, 0xFFF8C23A);

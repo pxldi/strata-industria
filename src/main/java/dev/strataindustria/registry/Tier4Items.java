@@ -1,6 +1,9 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.metal.CastMoldItem;
+import java.util.EnumMap;
+import java.util.Map;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -33,7 +36,6 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> TREATED_FENCE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.TREATED_FENCE);
     public static final DeferredItem<Item> TREATED_STICK = ModItems.ITEMS.registerSimpleItem("treated_stick");
 
-    /** Loads the class so its items join the register before it fires. */
     // Spec 6.1: refractory ceramics, and the clay gear mold.
     public static final DeferredItem<Item> UNFIRED_REFRACTORY_CRUCIBLE = ModItems.ITEMS.registerSimpleItem("unfired_refractory_crucible",
             p -> p.stacksTo(1));
@@ -51,6 +53,23 @@ public final class Tier4Items {
     public static final DeferredItem<CastMoldItem> GEAR_MOLD = ModItems.ITEMS.registerItem("gear_mold",
             p -> new CastMoldItem(null, true, false, p), p -> p.stacksTo(16));
 
+    public static final DeferredItem<BlockItem> STEEL_ANVIL = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_ANVIL);
+
+    // Spec 4.4 and 5.3: roasted sphalerite, by grade, and the small piece from a surface indicator.
+    public static final Map<OreGrade, DeferredItem<Item>> ZINC_CALCINES = new EnumMap<>(OreGrade.class);
+    public static final DeferredItem<Item> SMALL_ZINC_CALCINE = ModItems.ITEMS.registerSimpleItem("small_zinc_calcine");
+
+    static {
+        for (OreGrade grade : OreGrade.values()) {
+            ZINC_CALCINES.put(grade, ModItems.ITEMS.registerSimpleItem(grade.prefix() + "zinc_calcine"));
+        }
+    }
+
+    public static Item zincCalcine(OreGrade grade) {
+        return ZINC_CALCINES.get(grade).get();
+    }
+
+    /** Loads the class so its items join the register before it fires. */
     public static void init() {}
 
     private Tier4Items() {}
