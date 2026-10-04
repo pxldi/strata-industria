@@ -1,0 +1,16 @@
+{
+  "type": "strataindustria:metal_armour",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:leather",
+    "P": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "P P",
+    "PCP",
+    " P "
+  ],
+  "result": {
+    "id": "minecraft:iron_chestplate"
+  }
+}

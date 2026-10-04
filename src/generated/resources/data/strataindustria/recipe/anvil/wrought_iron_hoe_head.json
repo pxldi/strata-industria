@@ -1,0 +1,22 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 65,
+  "ingredient": "minecraft:iron_ingot",
+  "result": {
+    "id": "strataindustria:wrought_iron_hoe_head"
+  },
+  "rules": [
+    {
+      "hit": "punch",
+      "where": "last"
+    },
+    {
+      "hit": "hit",
+      "where": "not_last"
+    },
+    {
+      "hit": "bend",
+      "where": "not_last"
+    }
+  ]
+}

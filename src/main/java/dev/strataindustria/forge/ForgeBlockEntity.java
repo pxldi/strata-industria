@@ -3,6 +3,7 @@ package dev.strataindustria.forge;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.Heat;
 import dev.strataindustria.registry.ModBlockEntities;
+import dev.strataindustria.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
@@ -42,6 +43,8 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
     private NonNullList<ItemStack> items = NonNullList.withSize(1 + HEAT_SLOTS, ItemStack.EMPTY);
     private int burnLeft;
     private int burnTotal;
+    /** How hot the fuel now burning can drive the forge; lignite burns cooler than charcoal. */
+    private float burnCap = MAX_TEMPERATURE;
     private float temperature = Heat.AMBIENT;
 
     private final ContainerData data = new ContainerData() {
@@ -79,7 +82,13 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
     public static int burnTicks(ItemStack stack) {
         if (stack.is(Items.CHARCOAL)) return 2400;
         if (stack.is(Items.COAL)) return 3200;
+        if (stack.is(ModItems.LIGNITE.get())) return 1600;
         return 0;
+    }
+
+    /** The hottest a fuel can drive the forge: lignite stalls at 1200 °C, below iron welding heat. */
+    public static float maxTemperature(ItemStack stack) {
+        return stack.is(ModItems.LIGNITE.get()) ? 1200.0f : MAX_TEMPERATURE;
     }
 
     public static boolean isFuel(ItemStack stack) {
@@ -96,8 +105,11 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
                 lit = false;
             }
         }
-        if (lit) forge.temperature = Math.min(MAX_TEMPERATURE, forge.temperature + HEAT_PER_TICK);
-        else forge.temperature = Math.max(Heat.AMBIENT, forge.temperature - COOL_PER_TICK);
+        if (lit && forge.temperature < forge.burnCap) {
+            forge.temperature = Math.min(forge.burnCap, forge.temperature + HEAT_PER_TICK);
+        } else if (lit) {
+            forge.temperature = Math.max(forge.burnCap, forge.temperature - COOL_PER_TICK);
+        } else forge.temperature = Math.max(Heat.AMBIENT, forge.temperature - COOL_PER_TICK);
 
         boolean glow = forge.temperature >= GLOW_FROM;
         if (state.getValue(ForgeBlock.HOT) != glow) {
@@ -127,6 +139,7 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
         int ticks = burnTicks(fuel);
         if (ticks <= 0) return false;
         burnLeft = burnTotal = ticks;
+        burnCap = maxTemperature(fuel);
         fuel.shrink(1);
         setChanged();
         return true;
@@ -187,6 +200,7 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
         ContainerHelper.loadAllItems(input, items);
         burnLeft = input.getIntOr("burn_left", 0);
         burnTotal = input.getIntOr("burn_total", 0);
+        burnCap = input.getFloatOr("burn_cap", MAX_TEMPERATURE);
         temperature = input.getFloatOr("temperature", Heat.AMBIENT);
     }
 
@@ -196,6 +210,7 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
         ContainerHelper.saveAllItems(output, items);
         output.putInt("burn_left", burnLeft);
         output.putInt("burn_total", burnTotal);
+        output.putFloat("burn_cap", burnCap);
         output.putFloat("temperature", temperature);
     }
 }

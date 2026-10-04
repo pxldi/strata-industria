@@ -9,7 +9,9 @@
               "strataindustria:copper_plate",
               "strataindustria:bronze_plate",
               "strataindustria:arsenical_bronze_plate",
-              "strataindustria:bismuth_bronze_plate"
+              "strataindustria:bismuth_bronze_plate",
+              "strataindustria:wrought_iron_plate",
+              "strataindustria:gold_plate"
             ]
           }
         ]

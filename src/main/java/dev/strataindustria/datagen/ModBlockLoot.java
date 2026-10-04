@@ -57,7 +57,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
             dropSelf(ModBlocks.COBBLED_ROCK.get(rock).get());
             dropSelf(ModBlocks.LOOSE_ROCK.get(rock).get());
 
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 oreDrops(ModBlocks.ORES.get(rock).get(mineral).get(), mineral, fortune);
             }
         }
@@ -83,6 +83,21 @@ final class ModBlockLoot extends BlockLootSubProvider {
                             .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))))));
         }
         dropSelf(ModBlocks.BRONZE_ANVIL.get());
+
+        // Tier 3 spec 3 and 4.
+        oreDrops(ModBlocks.BOG_IRON.get(), OreMineral.LIMONITE, fortune);
+        add(ModBlocks.FIRE_CLAY.get(), block -> createSingleItemTableWithSilkTouch(block, ModItems.FIRE_CLAY_BALL.get(),
+                ContextIntProviders.exactly(4)));
+        add(ModBlocks.LIGNITE_SEAM.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,
+                LootItem.lootTableItem(ModItems.LIGNITE.get())
+                        .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))
+                        .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1)))));
+        dropSelf(ModBlocks.FIRE_BRICKS.get());
+        add(ModBlocks.FIRE_BRICK_SLAB.get(), this::createSlabItemTable);
+        dropSelf(ModBlocks.FIRE_BRICK_STAIRS.get());
+        dropSelf(ModBlocks.FIRE_BRICK_WALL.get());
+        dropSelf(ModBlocks.PLACER_GRAVEL.get());
+        dropSelf(ModBlocks.PLACER_SAND.get());
     }
 
     /** The crucible keeps its pieces, its melt and its heat when picked up, like a shulker box. */

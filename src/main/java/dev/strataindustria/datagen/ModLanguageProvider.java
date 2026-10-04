@@ -140,7 +140,7 @@ final class ModLanguageProvider extends LanguageProvider {
             addBlock(ModBlocks.RAW_ROCK.get(rock), "Raw " + name);
             addBlock(ModBlocks.COBBLED_ROCK.get(rock), "Cobbled " + name);
             addBlock(ModBlocks.LOOSE_ROCK.get(rock), "Loose " + name);
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 addBlock(ModBlocks.ORES.get(rock).get(mineral), name + " " + title(mineral.id()) + " Ore");
             }
         }
@@ -153,6 +153,7 @@ final class ModLanguageProvider extends LanguageProvider {
                 addItem(ModItems.CRUSHED_ORES.get(mineral).get(grade), "Crushed " + graded);
             }
         }
+        ironAge();
         addBlock(ModBlocks.LOOSE_STICK, "Loose Stick");
         addBlock(ModBlocks.LOOSE_FLINT, "Loose Flint");
 
@@ -191,10 +192,45 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "toolMoldBreak", "Tool mold break chance");
         add(config + "smithing", "Smithing");
         add(config + "randomTargets", "Random targets per world");
+        add(config + "removeFurnaceCharcoal", "Remove furnace charcoal");
+        add(config + "removeOreSmelting", "Remove ore smelting");
+        add(config + "removeBlastFurnace", "Remove blast furnace recipe");
+        add(config + "replaceIronGear", "Replace iron gear recipes");
+        add(config + "replaceGoldGear", "Replace gold gear recipes");
+        add(config + "golemDropsNuggets", "Iron golems drop nuggets");
+        add(config + "hitCooling", "Cooling per hit on iron");
         add(config + "heat", "Item Heat");
         add(config + "burnPlayer", "Hot items burn bare hands");
         add(config + "journal", "Field Journal");
         add(config + "giveOnJoin", "Give a journal on first join");
+    }
+
+    /** Tier 3 spec 3 and 4: fire clay, the new deposits, and the wrought iron name for vanilla iron. */
+    private void ironAge() {
+        String id = StrataIndustria.MOD_ID;
+        addItem(ModItems.FIRE_CLAY_BALL, "Fire Clay Ball");
+        addItem(ModItems.GROG, "Grog");
+        addItem(ModItems.UNFIRED_FIRE_BRICK, "Unfired Fire Brick");
+        addItem(ModItems.FIRE_BRICK, "Fire Brick");
+        addBlock(ModBlocks.FIRE_CLAY, "Fire Clay");
+        addBlock(ModBlocks.FIRE_BRICKS, "Fire Bricks");
+        addBlock(ModBlocks.FIRE_BRICK_SLAB, "Fire Brick Slab");
+        addBlock(ModBlocks.FIRE_BRICK_STAIRS, "Fire Brick Stairs");
+        addBlock(ModBlocks.FIRE_BRICK_WALL, "Fire Brick Wall");
+        addItem(ModItems.LIGNITE, "Lignite");
+        addBlock(ModBlocks.LIGNITE_SEAM, "Lignite Seam");
+        addBlock(ModBlocks.BOG_IRON, "Bog Iron");
+        addBlock(ModBlocks.PLACER_GRAVEL, "Placer Gravel");
+        addBlock(ModBlocks.PLACER_SAND, "Placer Sand");
+        addItem(ModItems.WROUGHT_IRON_ROD, "Wrought Iron Rod");
+        addItem(ModItems.WROUGHT_IRON_DOUBLE_INGOT, "Wrought Iron Double Ingot");
+        // Spec 2: the vanilla iron ingot and nugget are wrought iron.
+        add("item.minecraft.iron_ingot", "Wrought Iron Ingot");
+        add("item.minecraft.iron_nugget", "Wrought Iron Nugget");
+        add(id + ".ore.lignite_seam", "lignite");
+        add(id + ".ore.fire_clay", "fire clay");
+        add(id + ".prospect.rich", ", rich ore nearby");
+        add(id + ".crucible.no_iron", "Iron does not melt this hot");
     }
 
     /** Spec 11: the field journal's goals and hints. */
@@ -321,7 +357,7 @@ final class ModLanguageProvider extends LanguageProvider {
                 addItem(ModItems.PROSPECTOR_HEADS.get(metal), name + " Prospector's Pick Head");
                 addItem(ModItems.PROSPECTORS_PICKS.get(metal), name + " Prospector's Pick");
             }
-            for (MoldType type : MoldType.values()) {
+            for (MoldType type : metal.toolTypes()) {
                 addItem(ModItems.HEADS.get(metal).get(type), name + " " + title(type.id()));
                 var tool = ModItems.TOOLS.get(metal).get(type);
                 if (tool instanceof net.neoforged.neoforge.registries.DeferredItem<?> item) {

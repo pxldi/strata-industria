@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "strataindustria:magnetite",
+  "result": {
+    "id": "strataindustria:crushed_magnetite"
+  }
+}

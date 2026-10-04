@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_grog": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:grog"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:fire_clay_ball_from_grog"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_grog"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:fire_clay_ball_from_grog"
+    ]
+  }
+}

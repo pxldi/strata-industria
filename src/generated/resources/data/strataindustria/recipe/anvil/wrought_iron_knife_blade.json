@@ -1,0 +1,22 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 95,
+  "ingredient": "minecraft:iron_ingot",
+  "result": {
+    "id": "strataindustria:wrought_iron_knife_blade"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "draw",
+      "where": "second_last"
+    },
+    {
+      "hit": "draw",
+      "where": "third_last"
+    }
+  ]
+}
