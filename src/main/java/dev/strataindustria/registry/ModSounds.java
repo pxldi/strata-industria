@@ -88,6 +88,9 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> BELLOWS_PUMP = register("bellows.pump");
     public static final DeferredHolder<SoundEvent, SoundEvent> SAW_MILL_SAW = register("saw_mill.saw");
     public static final DeferredHolder<SoundEvent, SoundEvent> SAW_MILL_BLADE_BREAK = register("saw_mill.blade_break");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLER_DRILL = register("core_sampler.drill");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLER_DONE = register("core_sampler.done");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLE_OPEN = register("core_sample.open");
 
     /** Pages of the field journal turning. */
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");

@@ -362,6 +362,10 @@ final class ModModelProvider extends ModelProvider {
                 ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer")),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer_arm"))));
         flatItem(itemModels, ModItems.BARK.get());
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.CORE_SAMPLER.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/core_sampler"))));
+        itemModels.itemModelOutput.accept(ModItems.CORE_SAMPLER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/core_sampler")));
+        flatItem(itemModels, ModItems.CORE_SAMPLE.get());
     }
 
     /** Metal anvils turn like a vanilla anvil; the model JSON is hand-written on the vanilla anvil template. */

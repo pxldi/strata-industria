@@ -63,7 +63,7 @@ public class ProspectorsPickItem extends Item {
     }
 
     /** What a block counts as when sounded out: an ore mineral's id or a deposit's name, or null. */
-    static String deposit(BlockState state) {
+    public static String deposit(BlockState state) {
         if (state.getBlock() instanceof OreBlock ore) return ore.mineral().id();
         if (state.is(ModTags.Blocks.PROSPECTABLE)) return state.getBlock().builtInRegistryHolder().key().identifier().getPath();
         return null;

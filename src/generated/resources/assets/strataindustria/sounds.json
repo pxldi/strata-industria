@@ -218,6 +218,44 @@
     ],
     "subtitle": "subtitles.strataindustria.clay.shape"
   },
+  "core_sample.open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.core_sample.open"
+  },
+  "core_sampler.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bell",
+        "pitch": 0.7,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.core_sampler.done"
+  },
+  "core_sampler.drill": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.hit",
+        "pitch": 0.6,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 1.4,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.core_sampler.drill"
+  },
   "crucible.melt": {
     "sounds": [
       {

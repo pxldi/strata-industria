@@ -496,6 +496,17 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('G', gear)
                 .unlockedBy("has_wooden_gear", has(gear))
                 .save(output, key("trip_hammer"));
+        // Spec 8.5: the core sampler.
+        shaped(RecipeCategory.TOOLS, ModItems.CORE_SAMPLER.get())
+                .pattern("PAP")
+                .pattern("RGR")
+                .pattern(" R ")
+                .define('P', ItemTags.PLANKS)
+                .define('A', axle)
+                .define('R', rod)
+                .define('G', gear)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("core_sampler"));
 
         Item bark = ModItems.BARK.get();
         saw("oak_planks", ItemTags.OAK_LOGS, Items.OAK_PLANKS, bark);

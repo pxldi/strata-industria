@@ -58,6 +58,7 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.MILLSTONE.get(), MillstoneScreen::new);
         event.register(ModMenus.SAW_MILL.get(), SawMillScreen::new);
         event.register(ModMenus.TRIP_HAMMER.get(), TripHammerScreen::new);
+        event.register(ModMenus.CORE_SAMPLER.get(), dev.strataindustria.client.screen.CoreSamplerScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
