@@ -15,6 +15,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 
 /** Tier 6 (industrial) recipes. {@link ModRecipeProvider} runs it, so tier 6 stays out of the shared provider. */
@@ -26,6 +27,7 @@ final class Tier6RecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes() {
         oilStill();
+        oilField();
     }
 
     // Spec 5.5: 1000 mB crude gives 200 naphtha, 300 diesel and 400 heavy oil; the other 100 mB vents.
@@ -43,6 +45,36 @@ final class Tier6RecipeProvider extends RecipeProvider {
         output.accept(key("oil_still/crude_oil"), new OilStillRecipe(new FluidAmount(Tier6Fluids.CRUDE_OIL.source().get(), 1000),
                 List.of(new FluidAmount(Tier6Fluids.NAPHTHA.source().get(), 200), new FluidAmount(Tier6Fluids.DIESEL.source().get(), 300),
                         new FluidAmount(Tier6Fluids.HEAVY_OIL.source().get(), 400)), 100, 1200, 400), null);
+    }
+
+    // Spec 5.2 to 5.4: the survey charge, the wellhead and the pump jack.
+    private void oilField() {
+        shapeless(RecipeCategory.MISC, Tier6Items.SEISMIC_CHARGE.get(), 2)
+                .requires(Items.GUNPOWDER, 2)
+                .requires(Items.PAPER)
+                .requires(Items.CLAY_BALL)
+                .unlockedBy("has_gunpowder", has(Items.GUNPOWDER))
+                .save(output, key("seismic_charge"));
+        shaped(RecipeCategory.DECORATIONS, Tier6Items.WELLHEAD.get())
+                .pattern("PVP")
+                .pattern(" F ")
+                .pattern("PFP")
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('V', Tier4Items.VALVE.get())
+                .define('F', Tier4Items.STEEL_FLUID_PIPE.get())
+                .unlockedBy("has_valve", has(Tier4Items.VALVE.get()))
+                .save(output, key("wellhead"));
+        shaped(RecipeCategory.DECORATIONS, Tier6Items.PUMP_JACK.get())
+                .pattern("PRP")
+                .pattern("GFG")
+                .pattern("PAP")
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('R', ModItems.RODS.get(Metal.STEEL).get())
+                .define('G', ModItems.GEARS.get(Metal.STEEL).get())
+                .define('F', Tier4Items.STEEL_FLUID_PIPE.get())
+                .define('A', Tier4Items.IRON_AXLE.get())
+                .unlockedBy("has_wellhead", has(Tier6Items.WELLHEAD.get()))
+                .save(output, key("pump_jack"));
     }
 
     private static ResourceKey<Recipe<?>> key(String path) {

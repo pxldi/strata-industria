@@ -71,6 +71,7 @@ public final class StrataIndustriaClient {
         event.register(dev.strataindustria.registry.Tier4Menus.KILN.get(), dev.strataindustria.client.screen.KilnScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.ROASTER.get(), dev.strataindustria.client.screen.RoasterScreen::new);
         event.register(dev.strataindustria.registry.Tier6Menus.OIL_STILL.get(), dev.strataindustria.client.screen.OilStillScreen::new);
+        event.register(dev.strataindustria.registry.Tier6Menus.WELLHEAD.get(), dev.strataindustria.client.screen.WellheadScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.SMELTER.get(), dev.strataindustria.client.screen.SmelterScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.STEAM_HAMMER.get(), dev.strataindustria.client.screen.SteamHammerScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.BRONZE_BOILER.get(), dev.strataindustria.client.screen.BoilerScreen::new);
@@ -138,6 +139,9 @@ public final class StrataIndustriaClient {
         // Tier 4 spec 21.4: the blower's fan turns behind its grille.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.BLOWER.get(), context -> new RotorRenderer<>(context,
                 "blower_fan", state -> state.getValue(dev.strataindustria.ironworks.BlowerBlock.FACING), 0));
+        // Tier 6 spec 5.4: the pump jack's post, nodding beam and rod.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier6BlockEntities.PUMP_JACK.get(),
+                dev.strataindustria.client.render.PumpJackRenderer::new);
         // Tier 5 spec 11.2: wrench-set output ports on the electrolyser.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.ELECTROLYSER.get(),
                 dev.strataindustria.client.render.PortRenderer::new);

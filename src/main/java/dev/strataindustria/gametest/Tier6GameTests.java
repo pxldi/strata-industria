@@ -2,6 +2,8 @@ package dev.strataindustria.gametest;
 
 import dev.strataindustria.oil.OilReservoir;
 import dev.strataindustria.oil.OilStillBlockEntity;
+import dev.strataindustria.oil.PumpJackBlock;
+import dev.strataindustria.oil.PumpJackBlockEntity;
 import dev.strataindustria.oil.OilReservoirData;
 import dev.strataindustria.oil.SeepFeature;
 import dev.strataindustria.registry.Tier6Blocks;
@@ -43,6 +45,11 @@ final class Tier6GameTests {
         tests.put("tier6_oil_still", Tier6GameTests::oilStill);
         tests.put("tier6_oil_still_full_tank", Tier6GameTests::oilStillFullTank);
         tests.put("tier6_liquid_fuels", Tier6GameTests::liquidFuels);
+        tests.put("tier6_seismic_charge", Tier6GameTests::seismicCharge);
+        tests.put("tier6_seismic_survey", Tier6GameTests::seismicSurvey);
+        tests.put("tier6_wellhead_drilling", Tier6GameTests::wellheadDrilling);
+        tests.put("tier6_wellhead_remembers_bore", Tier6GameTests::wellheadRemembersBore);
+        tests.put("tier6_pump_jack", Tier6GameTests::pumpJack);
     }
 
     /** A site with a fixed chance and flat ground at Y 40; seeps allowed only west of x = 0. */
@@ -290,6 +297,220 @@ final class Tier6GameTests {
         helper.assertTrue(heavy.huPerMb() == 24 && heavy.huPerTick() == 40 && heavy.maxTemperature() == 1500, "heavy oil burn values");
         var gas = dev.strataindustria.power.LiquidFuel.burnOf(Tier6Fluids.REFINERY_GAS.source().get());
         helper.assertTrue(gas.huPerMb() == 24 && gas.huPerTick() == 60 && gas.maxTemperature() == 1700, "refinery gas burn values");
+        helper.succeed();
+    }
+
+    /** A reservoir of one chunk in an unused cell, its top {@code below} blocks under the wellhead of the test. */
+    private static OilReservoir testReservoir(GameTestHelper helper, int cell, int below, long capacity) {
+        BlockPos floor = helper.absolutePos(BlockPos.ZERO);
+        return new OilReservoir(cell, cell, cell * 8 + 0.5, cell * 8 + 0.5, 1.0, 1.0, List.of(new ChunkPos(cell * 8, cell * 8)), floor.getY() + 1 - below,
+                capacity, List.of());
+    }
+
+    // Spec 5.2: a charge lights with flint and steel, burns a fuse, thumps, breaks nothing, and an ore scanner within
+    // 32 blocks records the survey while one at 40 blocks does not. On a part block it fizzles.
+    private static void seismicCharge(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(2, 1, 2)), charge = ground.above(), neighbour = ground.east();
+        level.setBlock(ground, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(neighbour, Blocks.OAK_PLANKS.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(charge, Tier6Blocks.SEISMIC_CHARGE.get().defaultBlockState(), Block.UPDATE_ALL);
+        var block = Tier6Blocks.SEISMIC_CHARGE.get();
+        helper.assertTrue(block.canIgnite(level, charge, level.getBlockState(charge)), "an unlit charge can be lit");
+        helper.assertTrue(block.ignite(level, charge, level.getBlockState(charge)), "it lights on solid ground");
+        helper.assertTrue(level.getBlockState(charge).getValue(dev.strataindustria.oil.SeismicChargeBlock.LIT), "lit");
+        helper.assertTrue(!block.ignite(level, charge, level.getBlockState(charge)), "not lit twice");
+
+        var near = helper.makeMockServerPlayerInLevel();
+        var far = helper.makeMockServerPlayerInLevel();
+        near.setPos(charge.getX() + 0.5 + 20, charge.getY(), charge.getZ() + 0.5);
+        far.setPos(charge.getX() + 0.5 + 40, charge.getY(), charge.getZ() + 0.5);
+        near.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(dev.strataindustria.registry.Tier5Items.ORE_SCANNER.get()));
+        far.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, new ItemStack(dev.strataindustria.registry.Tier5Items.ORE_SCANNER.get()));
+        helper.runAfterDelay(dev.strataindustria.oil.SeismicChargeBlock.FUSE_TICKS + 5, () -> {
+            helper.assertTrue(level.getBlockState(charge).isAir(), "the charge is spent");
+            helper.assertTrue(level.getBlockState(ground).is(Blocks.STONE) && level.getBlockState(neighbour).is(Blocks.OAK_PLANKS), "it breaks no block");
+            helper.assertTrue(near.getMainHandItem().has(dev.strataindustria.registry.Tier6DataComponents.SEISMIC_RESULT.get()), "the scanner at 20 blocks recorded");
+            helper.assertTrue(!far.getMainHandItem().has(dev.strataindustria.registry.Tier6DataComponents.SEISMIC_RESULT.get()), "the scanner at 40 blocks did not");
+
+            BlockPos slab = helper.absolutePos(new BlockPos(5, 1, 2));
+            level.setBlock(slab, Blocks.STONE_SLAB.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(slab.above(), Tier6Blocks.SEISMIC_CHARGE.get().defaultBlockState(), Block.UPDATE_ALL);
+            helper.assertTrue(!block.ignite(level, slab.above(), level.getBlockState(slab.above())), "a charge on a slab fizzles");
+            helper.assertTrue(!level.getBlockState(slab.above()).getValue(dev.strataindustria.oil.SeismicChargeBlock.LIT), "and stays unlit");
+            helper.succeed();
+        });
+    }
+
+    // Spec 5.2: the survey lists each reservoir in the 5 x 5 chunks once, with the tiles it covers, the edges it goes on
+    // past, its size class and top, and what is left only once a well has struck it.
+    private static void seismicSurvey(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int cell = 9101;
+        // A footprint two chunks wide that starts west of the area and runs on to the east of it.
+        OilReservoir wide = new OilReservoir(cell, cell, 0, 0, 5, 1, List.of(new ChunkPos(-4, 0), new ChunkPos(-3, 0), new ChunkPos(-2, 0),
+                new ChunkPos(-1, 0), new ChunkPos(0, 0), new ChunkPos(1, 0), new ChunkPos(2, 0), new ChunkPos(3, 0), new ChunkPos(4, 0)), -30,
+                7_000_000L, List.of());
+        OilReservoirData data = new OilReservoirData();
+        BlockPos charge = new BlockPos(8, 70, 8);
+        var survey = dev.strataindustria.oil.SeismicSurvey.build(charge, chunk -> chunk.z() == 0 && chunk.x() >= -4 && chunk.x() <= 4
+                ? Optional.of(wide) : Optional.empty(), data);
+        helper.assertValueEqual(survey.side(), 5, "5 x 5 chunks");
+        helper.assertValueEqual(survey.chunkX(), -2, "origin chunk x");
+        helper.assertValueEqual(survey.hits().size(), 1, "one reservoir, listed once");
+        var hit = survey.hits().get(0);
+        helper.assertValueEqual(hit.sizeClass(), OilReservoir.SizeClass.LARGE, "7 000 000 mB is large");
+        helper.assertValueEqual(hit.topY(), -30, "top");
+        helper.assertValueEqual(hit.remaining(), -1, "untapped: nothing known about what is left");
+        for (int column = 0; column < 5; column++) {
+            helper.assertTrue(hit.covers(5, column, 2) && !hit.covers(5, column, 1), "the middle row is covered at column " + column);
+        }
+        helper.assertValueEqual(hit.edges(), dev.strataindustria.oil.SeismicSurvey.EAST | dev.strataindustria.oil.SeismicSurvey.WEST,
+                "it goes on past the east and west edges");
+        data.setBore(wide, 0, 0, 10, true);
+        data.drain(wide, 3_500_000L);
+        var tapped = dev.strataindustria.oil.SeismicSurvey.build(charge, chunk -> chunk.z() == 0 ? Optional.of(wide) : Optional.empty(), data);
+        helper.assertValueEqual(tapped.hits().get(0).remaining(), 50, "half left once a well has struck it");
+        var codec = dev.strataindustria.oil.SeismicSurvey.CODEC.encodeStart(com.mojang.serialization.JsonOps.INSTANCE, tapped).getOrThrow();
+        helper.assertValueEqual(dev.strataindustria.oil.SeismicSurvey.CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, codec).getOrThrow(), tapped,
+                "the survey survives saving");
+        helper.assertValueEqual(dev.strataindustria.oil.SeismicSurvey.build(charge, chunk -> Optional.empty(), data).hits().size(), 0, "no reservoirs found");
+        helper.succeed();
+    }
+
+    private static dev.strataindustria.oil.WellheadBlockEntity placeWellhead(GameTestHelper helper, BlockPos relative, OilReservoir reservoir) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(relative);
+        level.setBlock(pos, Tier6Blocks.WELLHEAD.get().defaultBlockState(), Block.UPDATE_ALL);
+        var well = (dev.strataindustria.oil.WellheadBlockEntity) level.getBlockEntity(pos);
+        well.setReservoir(reservoir);
+        return well;
+    }
+
+    private static void drillTicks(ServerLevel level, dev.strataindustria.oil.WellheadBlockEntity well, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            dev.strataindustria.oil.WellheadBlockEntity.serverTick(level, well.getBlockPos(), level.getBlockState(well.getBlockPos()), well);
+        }
+    }
+
+    // Spec 5.3: a wellhead over no reservoir says so; one over a reservoir 8 blocks down needs rotation and casing, eats one
+    // pipe per 4 blocks, takes 40 ticks a block at 16 RPM, and a second wellhead within 8 blocks refuses to drill.
+    private static void wellheadDrilling(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos barePos = helper.absolutePos(new BlockPos(6, 1, 6));
+        level.setBlock(barePos, Tier6Blocks.WELLHEAD.get().defaultBlockState(), Block.UPDATE_ALL);
+        var bare = (dev.strataindustria.oil.WellheadBlockEntity) level.getBlockEntity(barePos);
+        bare.setReservoir(null);
+        drillTicks(level, bare, 1);
+        helper.assertValueEqual(bare.status(), dev.strataindustria.oil.WellheadBlockEntity.Status.NO_RESERVOIR, "no reservoir below");
+
+        OilReservoir reservoir = testReservoir(helper, 9102, 8, 4_000_000L);
+        var well = placeWellhead(helper, new BlockPos(2, 1, 2), reservoir);
+        drillTicks(level, well, 1);
+        helper.assertValueEqual(well.status(), dev.strataindustria.oil.WellheadBlockEntity.Status.NOT_TURNING, "waits for rotation");
+        well.kinetic().force(8);
+        drillTicks(level, well, 1);
+        helper.assertValueEqual(well.status(), dev.strataindustria.oil.WellheadBlockEntity.Status.TOO_SLOW, "8 RPM is too slow");
+        well.kinetic().force(16);
+        drillTicks(level, well, 1);
+        helper.assertValueEqual(well.status(), dev.strataindustria.oil.WellheadBlockEntity.Status.NEEDS_CASING, "casing first");
+
+        var pipes = new ItemStack(dev.strataindustria.registry.Tier4Items.STEEL_FLUID_PIPE.get(), 2);
+        well.setCasing(pipes);
+        drillTicks(level, well, 319);
+        helper.assertValueEqual(well.bored(), 7, "7 of 8 blocks after 319 ticks at 16 RPM");
+        helper.assertValueEqual(pipes.getCount(), 0, "both lengths of casing are down");
+        helper.assertTrue(!well.drilled(), "not through yet");
+        drillTicks(level, well, 2);
+        helper.assertTrue(well.drilled(), "struck oil after 320 ticks");
+        helper.assertValueEqual(well.gushing(), dev.strataindustria.oil.WellheadBlockEntity.GUSH_TICKS - 1, "it gushes for 100 ticks");
+        helper.assertTrue(level.getBlockState(well.getBlockPos()).getValue(dev.strataindustria.oil.WellheadBlock.DRILLED), "the block shows it");
+
+        var second = placeWellhead(helper, new BlockPos(6, 1, 2), reservoir);
+        second.kinetic().force(16);
+        drillTicks(level, second, 1);
+        helper.assertValueEqual(second.status(), dev.strataindustria.oil.WellheadBlockEntity.Status.TOO_CLOSE, "4 blocks from the first well");
+        helper.succeed();
+    }
+
+    // Spec 5.3: putting a drilled wellhead back on the same column keeps the bore and costs no casing.
+    private static void wellheadRemembersBore(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        OilReservoir reservoir = testReservoir(helper, 9103, 4, 4_000_000L);
+        var well = placeWellhead(helper, new BlockPos(2, 1, 2), reservoir);
+        well.kinetic().force(16);
+        well.setCasing(new ItemStack(dev.strataindustria.registry.Tier4Items.STEEL_FLUID_PIPE.get(), 1));
+        drillTicks(level, well, 200);
+        helper.assertTrue(well.drilled(), "drilled 4 blocks with one length of casing");
+        BlockPos pos = well.getBlockPos();
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        var again = placeWellhead(helper, new BlockPos(2, 1, 2), reservoir);
+        drillTicks(level, again, 2);
+        helper.assertTrue(again.drilled() && level.getBlockState(pos).getValue(dev.strataindustria.oil.WellheadBlock.DRILLED),
+                "the new wellhead is already drilled");
+        helper.succeed();
+    }
+
+    // Spec 5.3 and 5.4: a full reservoir flows 4 mB/t by itself and needs a pump jack below 80%; a jack at 32 RPM lifts
+    // 16 mB/t down to half full, 10 mB/t at a quarter and 4 mB/t when empty, and only what the outlet takes leaves the reservoir.
+    private static void pumpJack(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        helper.assertTrue(PumpJackBlockEntity.rate(32, 1.0) == 16.0f, "16 mB/t at 32 RPM");
+        helper.assertTrue(PumpJackBlockEntity.rate(32, 0.5) == 16.0f, "still 16 at half full");
+        helper.assertTrue(Math.abs(PumpJackBlockEntity.rate(32, 0.25) - 10.0f) < 0.01f, "10 mB/t at a quarter");
+        helper.assertTrue(Math.abs(PumpJackBlockEntity.rate(32, 0.0) - 4.0f) < 0.01f, "4 mB/t when empty");
+        helper.assertTrue(PumpJackBlockEntity.rate(200, 1.0) == PumpJackBlockEntity.rate(64, 1.0), "it holds at 64 RPM");
+
+        OilReservoir reservoir = testReservoir(helper, 9104, 0, 1_000_000L);
+        // Up in the open, above the roof of the test box, where the beam has room.
+        helper.setBlock(new BlockPos(2, 39, 2), Blocks.STONE);
+        helper.setBlock(new BlockPos(3, 39, 2), Blocks.STONE);
+        var well = placeWellhead(helper, new BlockPos(2, 40, 2), reservoir);
+        BlockPos wellPos = well.getBlockPos();
+        level.setBlock(wellPos, level.getBlockState(wellPos).setValue(dev.strataindustria.oil.WellheadBlock.DRILLED, true), Block.UPDATE_ALL);
+        OilReservoirData data = OilReservoirData.get(level);
+        data.setBore(reservoir, wellPos.getX(), wellPos.getZ(), 0, true);
+        BlockPos stillPos = wellPos.east();
+        level.setBlock(stillPos, Tier6Blocks.OIL_STILL.get().defaultBlockState(), Block.UPDATE_ALL);
+        var still = (OilStillBlockEntity) level.getBlockEntity(stillPos);
+        drillTicks(level, well, 10);
+        helper.assertValueEqual(still.amount(0), 40, "a full reservoir flows 4 mB/t with no pump " + well.status());
+        helper.assertValueEqual(data.remaining(reservoir), 1_000_000L - 40, "and is drawn down by what flowed");
+        data.drain(reservoir, 250_000L);
+        drillTicks(level, well, 1);
+        helper.assertValueEqual(well.status(), dev.strataindustria.oil.WellheadBlockEntity.Status.LOW_PRESSURE, "below 80% it needs a pump jack");
+        helper.assertValueEqual(still.amount(0), 40, "and gives nothing more");
+
+        BlockPos jackPos = wellPos.above();
+        helper.assertTrue(PumpJackBlock.onDrilledWellhead(level, jackPos), "a drilled wellhead takes a pump jack");
+        helper.assertTrue(PumpJackBlock.roomFor(level, jackPos, net.minecraft.core.Direction.NORTH), "with room for the beam");
+        level.setBlock(jackPos.above(2), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        helper.assertTrue(!PumpJackBlock.roomFor(level, jackPos, net.minecraft.core.Direction.NORTH), "not with a block in the way");
+        level.setBlock(jackPos.above(2), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(jackPos, Tier6Blocks.PUMP_JACK.get().defaultBlockState(), Block.UPDATE_ALL);
+        var jack = (PumpJackBlockEntity) level.getBlockEntity(jackPos);
+        jack.kinetic().force(32);
+        still.setTank(0, Tier6Fluids.CRUDE_OIL.source().get(), 0);
+        for (int i = 0; i < 10; i++) {
+            PumpJackBlockEntity.serverTick(level, jackPos, level.getBlockState(jackPos), jack);
+            drillTicks(level, well, 1);
+        }
+        helper.assertValueEqual(still.amount(0), 160, "a jack at 32 RPM lifts 16 mB/t");
+        helper.assertValueEqual(well.status(), dev.strataindustria.oil.WellheadBlockEntity.Status.PUMPING, "the wellhead says so");
+        helper.assertValueEqual(jack.status(), PumpJackBlockEntity.Status.PUMPING, "so does the jack");
+        helper.assertTrue(level.getBlockState(jackPos).getValue(PumpJackBlock.RUNNING), "the beam moves");
+        // A full outlet takes nothing and the reservoir is not drawn down.
+        still.setTank(0, Tier6Fluids.CRUDE_OIL.source().get(), 4000);
+        long before = data.remaining(reservoir);
+        for (int i = 0; i < 5; i++) PumpJackBlockEntity.serverTick(level, jackPos, level.getBlockState(jackPos), jack);
+        helper.assertValueEqual(data.remaining(reservoir), before, "nothing lifted into a full outlet");
+        helper.assertValueEqual(jack.status(), PumpJackBlockEntity.Status.NO_OUTLET, "the jack reports it");
+        // An empty reservoir is a stripper well.
+        data.drain(reservoir, Long.MAX_VALUE);
+        still.setTank(0, Tier6Fluids.CRUDE_OIL.source().get(), 0);
+        for (int i = 0; i < 100; i++) PumpJackBlockEntity.serverTick(level, jackPos, level.getBlockState(jackPos), jack);
+        helper.assertTrue(Math.abs(still.amount(0) - 400) <= 4, "an empty reservoir still gives 4 mB/t, got " + still.amount(0));
+        helper.assertValueEqual(jack.status(), PumpJackBlockEntity.Status.STRIPPER, "stripper well");
         helper.succeed();
     }
 }

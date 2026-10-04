@@ -27,6 +27,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         grid();
         tier6();
         oilStill();
+        oilField();
         shared();
         prologue();
         patterns();
@@ -414,6 +415,34 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.bubble_column.bubble_pop", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
                 .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f))
                 .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.3f)));
+    }
+
+    /** Tier 6 spec 24.6: the oil field, heard from far off. */
+    private void oilField() {
+        add(Tier6Sounds.SEISMIC_FUSE, definition().subtitle(subtitle("block.seismic_charge.fuse"))
+                .with(sound("minecraft:entity.tnt.primed", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.4f)));
+        add(Tier6Sounds.SEISMIC_THUMP, definition().subtitle(subtitle("block.seismic_charge.thump"))
+                .with(sound("minecraft:entity.generic.explode", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.5f).attenuationDistance(64))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f).attenuationDistance(64)));
+        add(Tier6Sounds.ORE_SCANNER_ECHO, definition().subtitle(subtitle("item.ore_scanner.echo"))
+                .with(sound("minecraft:block.note_block.bit", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.8f))
+                .with(sound("minecraft:block.note_block.bit", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.7f))
+                .with(sound("minecraft:block.note_block.bit", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f)));
+        add(Tier6Sounds.WELLHEAD_DRILL, definition().subtitle(subtitle("block.wellhead.drill"))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.6f).attenuationDistance(48))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.9f).attenuationDistance(48)));
+        add(Tier6Sounds.WELLHEAD_CASING, definition().subtitle(subtitle("block.wellhead.casing"))
+                .with(sound("minecraft:block.chain.place", SoundDefinition.SoundType.EVENT).pitch(0.7f))
+                .with(sound("minecraft:block.anvil.place", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.4f)));
+        add(Tier6Sounds.WELLHEAD_GUSHER, definition().subtitle(subtitle("block.wellhead.gusher"))
+                .with(sound("minecraft:block.bubble_column.whirlpool_ambient", SoundDefinition.SoundType.EVENT).pitch(0.6f).attenuationDistance(48))
+                .with(sound("minecraft:entity.generic.splash", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.7f).attenuationDistance(48)));
+        add(Tier6Sounds.WELLHEAD_FLOW, definition().subtitle(subtitle("block.wellhead.flow"))
+                .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.5f))
+                .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(0.45f).volume(0.4f)));
+        add(Tier6Sounds.PUMP_JACK_STROKE, definition().subtitle(subtitle("block.pump_jack.stroke"))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.5f).attenuationDistance(48))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.5f).attenuationDistance(48)));
     }
 
     /** Tier 6 spec 24.6: the still's thick bubbling in a copper pot and the gas that is let go. */

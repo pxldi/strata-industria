@@ -1,0 +1,212 @@
+{
+  "textures": {
+    "beam": "strataindustria:block/pump_jack_beam",
+    "particle": "strataindustria:block/pump_jack_beam"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        4
+      ],
+      "to": [
+        4,
+        16,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            9,
+            0,
+            11.25,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "south": {
+          "uv": [
+            0.75,
+            0,
+            3,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "east": {
+          "uv": [
+            3,
+            0,
+            9,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "west": {
+          "uv": [
+            3,
+            0,
+            9,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "up": {
+          "uv": [
+            0.75,
+            4,
+            3,
+            12
+          ],
+          "texture": "#beam"
+        },
+        "down": {
+          "uv": [
+            0.75,
+            4,
+            3,
+            12
+          ],
+          "texture": "#beam"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        0,
+        4
+      ],
+      "to": [
+        15,
+        16,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.75,
+            0,
+            3,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "south": {
+          "uv": [
+            9,
+            0,
+            11.25,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "east": {
+          "uv": [
+            3,
+            0,
+            9,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "west": {
+          "uv": [
+            3,
+            0,
+            9,
+            16
+          ],
+          "texture": "#beam"
+        },
+        "up": {
+          "uv": [
+            9,
+            4,
+            11.25,
+            12
+          ],
+          "texture": "#beam"
+        },
+        "down": {
+          "uv": [
+            9,
+            4,
+            11.25,
+            12
+          ],
+          "texture": "#beam"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        6,
+        7
+      ],
+      "to": [
+        12,
+        8,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            8,
+            9,
+            10
+          ],
+          "texture": "#beam"
+        },
+        "south": {
+          "uv": [
+            3,
+            8,
+            9,
+            10
+          ],
+          "texture": "#beam"
+        },
+        "east": {
+          "uv": [
+            5.25,
+            8,
+            6.75,
+            10
+          ],
+          "texture": "#beam"
+        },
+        "west": {
+          "uv": [
+            5.25,
+            8,
+            6.75,
+            10
+          ],
+          "texture": "#beam"
+        },
+        "up": {
+          "uv": [
+            3,
+            7,
+            9,
+            9
+          ],
+          "texture": "#beam"
+        },
+        "down": {
+          "uv": [
+            3,
+            7,
+            9,
+            9
+          ],
+          "texture": "#beam"
+        }
+      }
+    }
+  ]
+}

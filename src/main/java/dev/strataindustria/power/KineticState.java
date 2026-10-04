@@ -57,6 +57,11 @@ public final class KineticState {
         return rpm > 0;
     }
 
+    /** For game tests: pretends the network turns at this speed until the next time it is solved. */
+    public void force(float rpm) {
+        set(rpm, rpm > 0 ? Status.RUNNING : Status.IDLE, 0, 0, null);
+    }
+
     /** Sets the new state and reports whether anything a client draws or reads changed. */
     boolean set(float rpm, Status status, int load, int capacity, @Nullable BlockPos limiter) {
         boolean changed = this.rpm != rpm || this.status != status || this.load != load || this.capacity != capacity

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "F": "strataindustria:steel_fluid_pipe",
+    "G": "strataindustria:steel_gear",
+    "P": "strataindustria:steel_plate",
+    "R": "strataindustria:steel_rod"
+  },
+  "pattern": [
+    "PRP",
+    "GFG",
+    "PAP"
+  ],
+  "result": {
+    "id": "strataindustria:pump_jack"
+  }
+}

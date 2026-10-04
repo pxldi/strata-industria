@@ -200,6 +200,38 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- oil
+    static {
+        BUILDER.comment("Oil fields.").push("oil");
+    }
+
+    public static final ModConfigSpec.IntValue OIL_MIN_WELL_SPACING = BUILDER
+            .comment("Fewest blocks between two wells of one reservoir.")
+            .defineInRange("minWellSpacing", 8, 1, 64);
+    public static final ModConfigSpec.BooleanValue OIL_GUSHER_PLACES_OIL = BUILDER
+            .comment("A gusher spills a few crude oil source blocks around the wellhead.")
+            .define("gusherPlacesOil", false);
+
+    static {
+        BUILDER.pop();
+    }
+
+    // ---------------------------------------------------------------- seismic
+    static {
+        BUILDER.comment("Seismic surveys.").push("seismic");
+    }
+
+    public static final ModConfigSpec.IntValue SEISMIC_LISTEN_RANGE = BUILDER
+            .comment("How far from a seismic charge an ore scanner in hand records the survey, in blocks.")
+            .defineInRange("listenRange", 32, 4, 128);
+    public static final ModConfigSpec.IntValue SEISMIC_CHUNK_RADIUS = BUILDER
+            .comment("Chunks each way from the charge that a survey covers (2 is 5 x 5 chunks, 3 is the most).")
+            .defineInRange("chunkRadius", 2, 1, 3);
+
+    static {
+        BUILDER.pop();
+    }
+
     // ---------------------------------------------------------------- bloomery
     static {
         BUILDER.comment("The bloomery.").push("bloomery");

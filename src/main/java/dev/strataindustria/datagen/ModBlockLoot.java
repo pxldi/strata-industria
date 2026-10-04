@@ -138,6 +138,9 @@ final class ModBlockLoot extends BlockLootSubProvider {
         }
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);
         dropSelf(dev.strataindustria.registry.Tier6Blocks.OIL_STILL.get());
+        dropSelf(dev.strataindustria.registry.Tier6Blocks.SEISMIC_CHARGE.get());
+        dropSelf(dev.strataindustria.registry.Tier6Blocks.WELLHEAD.get());
+        dropSelf(dev.strataindustria.registry.Tier6Blocks.PUMP_JACK.get());
         dropSelf(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.get());
         FootData.loot(this::add, blocks);
         for (var rail : java.util.List.of(dev.strataindustria.transport.rail.RailRegistry.WOODEN_RAIL, dev.strataindustria.transport.rail.RailRegistry.TUB_STOP,
