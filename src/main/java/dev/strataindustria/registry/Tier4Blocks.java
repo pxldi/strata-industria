@@ -124,6 +124,12 @@ public final class Tier4Blocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .sound(HEAVY_METAL));
+    public static final DeferredBlock<dev.strataindustria.steam.SteamHammerBlock> STEAM_HAMMER = ModBlocks.BLOCKS.registerBlock("steam_hammer",
+            dev.strataindustria.steam.SteamHammerBlock::new, p -> p.mapColor(MapColor.METAL)
+                    .strength(5.0f, 1200.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(HEAVY_METAL));
 
     // Spec 11.2: ore processing on a shaft.
     public static final DeferredBlock<dev.strataindustria.processing.ProcessingBlock<dev.strataindustria.processing.CrusherBlockEntity>> CRUSHER =

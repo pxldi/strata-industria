@@ -46,6 +46,7 @@ public final class Journal {
     public static final String MOLTEN_IRON = "molten_iron";
     public static final String BOILER = "boiler";
     public static final String STEAM_ENGINE = "steam_engine";
+    public static final String STEAM_HAMMER = "steam_hammer";
     public static final String CRUSHER = "crusher";
     public static final String BLAST_FURNACE = "blast_furnace";
     public static final String CONVERTER = "converter";

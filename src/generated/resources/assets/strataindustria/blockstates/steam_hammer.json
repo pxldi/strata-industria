@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,powered=false": {
+      "model": "strataindustria:block/steam_hammer",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "strataindustria:block/steam_hammer",
+      "y": 90
+    },
+    "facing=north,powered=false": {
+      "model": "strataindustria:block/steam_hammer"
+    },
+    "facing=north,powered=true": {
+      "model": "strataindustria:block/steam_hammer"
+    },
+    "facing=south,powered=false": {
+      "model": "strataindustria:block/steam_hammer",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "strataindustria:block/steam_hammer",
+      "y": 180
+    },
+    "facing=west,powered=false": {
+      "model": "strataindustria:block/steam_hammer",
+      "y": 270
+    },
+    "facing=west,powered=true": {
+      "model": "strataindustria:block/steam_hammer",
+      "y": 270
+    }
+  }
+}

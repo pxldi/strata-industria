@@ -179,6 +179,8 @@ final class JournalLanguage {
                 "Heat ran down the pipe from the firebox and warmed a boiler two rooms away.");
         lead.add("t4/steam_engine", "Steam pushes hard. Could it turn a shaft faster than any river?",
                 "The engine hisses and the shaft spins. Steam power at last.");
+        lead.add("t4/steam_hammer", "A pattern replays my hand's work. Could steam swing the hammer and keep the iron hot as well?",
+                "The steam hammer thunders away at steel and never lets it cool. A hundred plates without lifting a hand.");
         lead.add("t4/crusher", "Steam is strong enough to crush rock. Could it break ore finer than a millstone?",
                 "The crusher eats ore and spits out grit, often with a little extra besides.");
         lead.add("t4/blast_furnace", "Crucibles melt iron a little at a time. Could a whole tower of it run at once?",

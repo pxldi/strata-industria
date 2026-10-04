@@ -65,21 +65,36 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         }
     }
 
-    private NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.withSize(slotCount(), ItemStack.EMPTY);
     /** Previews of what the workpiece can become, shown as buttons in the screen. Not saved. */
     private final SimpleContainer plans = new SimpleContainer(MAX_PLANS);
     private final List<RecipeHolder<AnvilRecipe>> candidates = new ArrayList<>();
     private ItemStack candidatesFor = ItemStack.EMPTY;
 
     public AnvilBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ANVIL.get(), pos, state);
+        this(ModBlockEntities.ANVIL.get(), pos, state);
+    }
+
+    /** For machines with an anvil built in, such as the steam hammer. */
+    protected AnvilBlockEntity(net.minecraft.world.level.block.entity.BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    /** How many slots it has; machines built around an anvil add their own after {@link #SLOTS}. Must be a constant. */
+    protected int slotCount() {
+        return SLOTS;
     }
 
     public SimpleContainer plans() {
         return plans;
     }
 
-    private int tier() {
+    /** How high the working face sits in the block, where the sparks fly from. */
+    protected double faceHeight() {
+        return 1.0;
+    }
+
+    protected int tier() {
         return getBlockState().getBlock() instanceof AnvilBlock anvil ? anvil.tier() : 2;
     }
 
@@ -230,7 +245,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
 
         float pitch = 0.9f + (type.delta() < 0 ? -type.delta() : type.delta()) * -0.012f + server.getRandom().nextFloat() * 0.1f;
         server.playSound(null, worldPosition, hitSound(input), SoundSource.BLOCKS, 0.7f, pitch + 0.3f);
-        server.sendParticles(ParticleTypes.SMALL_FLAME, worldPosition.getX() + 0.5, worldPosition.getY() + 1.02, worldPosition.getZ() + 0.5,
+        server.sendParticles(ParticleTypes.SMALL_FLAME, worldPosition.getX() + 0.5, worldPosition.getY() + faceHeight() + 0.02, worldPosition.getZ() + 0.5,
                 3 + server.getRandom().nextInt(3), 0.12, 0.0, 0.12, 0.04);
 
         int target = Smithing.target(server, recipe.id(), recipe.value());
@@ -265,7 +280,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         items.set(OUTPUT, out);
         recordPattern(server, recipe, progress, target, craft, out);
         server.playSound(null, worldPosition, ModSounds.SMITH_DONE.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
-        server.sendParticles(ParticleTypes.LAVA, worldPosition.getX() + 0.5, worldPosition.getY() + 1.05, worldPosition.getZ() + 0.5,
+        server.sendParticles(ParticleTypes.LAVA, worldPosition.getX() + 0.5, worldPosition.getY() + faceHeight() + 0.05, worldPosition.getZ() + 0.5,
                 4, 0.15, 0.0, 0.15, 0.0);
     }
 
@@ -445,7 +460,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     public int getContainerSize() {
-        return SLOTS;
+        return slotCount();
     }
 
     @Override
@@ -471,7 +486,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+        items = NonNullList.withSize(slotCount(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(input, items);
         candidatesFor = ItemStack.EMPTY;
     }

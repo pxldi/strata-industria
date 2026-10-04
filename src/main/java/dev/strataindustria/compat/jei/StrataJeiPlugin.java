@@ -96,7 +96,7 @@ public final class StrataJeiPlugin implements IModPlugin {
         Item[] anvils = BuiltInRegistries.ITEM.stream()
                 .filter(i -> i instanceof BlockItem block && block.getBlock() instanceof AnvilBlock).toArray(Item[]::new);
         registration.addCraftingStation(JeiTypes.ANVIL, anvils);
-        registration.addCraftingStation(JeiTypes.ANVIL, ModItems.TRIP_HAMMER.get());
+        registration.addCraftingStation(JeiTypes.ANVIL, ModItems.TRIP_HAMMER.get(), Tier4Items.STEAM_HAMMER.get());
         registration.addCraftingStation(JeiTypes.WELDING, anvils);
         registration.addCraftingStation(JeiTypes.BLOOMERY, ModItems.BLOOMERY.get(), ModItems.BELLOWS.get());
         registration.addCraftingStation(JeiTypes.SAWING, ModItems.SAW_MILL.get());

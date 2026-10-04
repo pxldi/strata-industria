@@ -190,6 +190,8 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(boiler, "t4/heat_network", Tier4Items.COPPER_HEAT_PIPE.get(), JournalTrigger.TriggerInstance.of(Journal.HEAT_NETWORK));
         AdvancementHolder engine = goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
+        // Spec 15, goal 65: a steam hammer finishes a recipe.
+        goal(engine, "t4/steam_hammer", Tier4Items.STEAM_HAMMER.get(), JournalTrigger.TriggerInstance.of(Journal.STEAM_HAMMER));
         // Spec 15, goal 69: a powered crusher finishes something.
         goal(engine, "t4/crusher", Tier4Items.CRUSHER.get(), JournalTrigger.TriggerInstance.of(Journal.CRUSHER));
         // Spec 15, goal 66: a blast furnace taps pig iron.
