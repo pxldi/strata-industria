@@ -1,5 +1,6 @@
 package dev.strataindustria.datagen;
 
+import dev.strataindustria.block.BoulderBlock;
 import dev.strataindustria.charcoal.CharcoalPileBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
@@ -48,20 +49,14 @@ final class ModBlockLoot extends BlockLootSubProvider {
 
         for (Rock rock : Rock.values()) {
             Block raw = ModBlocks.RAW_ROCK.get(rock).get();
-            var loose = ModItems.LOOSE_ROCK.get(rock).get();
-            // Raw rock breaks into one or two loose rocks; silk touch keeps the block.
-            add(raw, LootTable.lootTable()
-                    .withPool(LootPool.lootPool()
-                            .setRolls(ContextIntProviders.exactly(1))
-                            .add(LootItem.lootTableItem(raw).when(hasSilkTouch())
-                                    .otherwise(applyExplosionDecay(raw, LootItem.lootTableItem(loose)))))
-                    .withPool(LootPool.lootPool()
-                            .setRolls(ContextIntProviders.exactly(1))
-                            .when(doesNotHaveSilkTouch())
-                            .add(applyExplosionDecay(raw, LootItem.lootTableItem(loose)))
-                            .when(LootItemRandomChanceCondition.randomChance(0.5f))));
+            var cobbledItem = ModItems.COBBLED_ROCK.get(rock).get();
+            // Mined rock gives its cobbled block like vanilla stone; silk touch keeps the raw block. Shards come from boulders.
+            add(raw, LootTable.lootTable().withPool(LootPool.lootPool()
+                    .setRolls(ContextIntProviders.exactly(1))
+                    .add(LootItem.lootTableItem(raw).when(hasSilkTouch())
+                            .otherwise(applyExplosionDecay(raw, LootItem.lootTableItem(cobbledItem))))));
             dropSelf(ModBlocks.COBBLED_ROCK.get(rock).get());
-            dropSelf(ModBlocks.LOOSE_ROCK.get(rock).get());
+            boulderLoot(rock);
 
             for (OreMineral mineral : OreMineral.inRockValues()) {
                 oreDrops(ModBlocks.ORES.get(rock).get(mineral).get(), mineral, fortune);
@@ -73,24 +68,20 @@ final class ModBlockLoot extends BlockLootSubProvider {
             if (mineral.hasPieces()) dropSelf(ModBlocks.SMALL_ORES.get(mineral).get());
             else dropOther(ModBlocks.SMALL_ORES.get(mineral).get(), plainDrop(mineral));
         }
-        dropOther(ModBlocks.LOOSE_STICK.get(), Items.STICK);
         dev.strataindustria.flora.FloraBlocks.PLANTS.values().forEach(plant -> dropSelf(plant.get()));
-        dropOther(ModBlocks.LOOSE_FLINT.get(), Items.FLINT);
         dropSelf(ModBlocks.FIRE_PIT.get());
-        // The pit kiln drops what it holds itself and has no loot table.
-        add(ModBlocks.LARGE_VESSEL.get(), createShulkerBoxDrop(ModBlocks.LARGE_VESSEL.get()));
         crucible();
         charcoalPile();
         dropSelf(ModBlocks.FORGE.get());
         dropSelf(ModBlocks.QUERN.get());
         dropSelf(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.get());
         dropSelf(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.get());
-        // Spec 9.1: a stone anvil cannot be picked up and breaks back into two loose rocks.
+        // Spec 9.1: a stone anvil cannot be picked up and breaks back into two rock shards.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
             Block anvil = entry.getValue().get();
             add(anvil, LootTable.lootTable().withPool(applyExplosionCondition(anvil, LootPool.lootPool()
                     .setRolls(ContextIntProviders.exactly(1))
-                    .add(LootItem.lootTableItem(ModItems.LOOSE_ROCK.get(entry.getKey()).get())
+                    .add(LootItem.lootTableItem(ModItems.ROCK_SHARD.get(entry.getKey()).get())
                             .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))))));
         }
         dropSelf(ModBlocks.IRON_ANVIL.get());
@@ -137,6 +128,9 @@ final class ModBlockLoot extends BlockLootSubProvider {
         }
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);
         dropSelf(dev.strataindustria.registry.Tier6Blocks.OIL_STILL.get());
+        dropSelf(dev.strataindustria.registry.Tier6Blocks.SEISMIC_CHARGE.get());
+        dropSelf(dev.strataindustria.registry.Tier6Blocks.WELLHEAD.get());
+        dropSelf(dev.strataindustria.registry.Tier6Blocks.PUMP_JACK.get());
         dropSelf(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.get());
         FootData.loot(this::add, blocks);
         for (var rail : java.util.List.of(dev.strataindustria.transport.rail.RailRegistry.WOODEN_RAIL, dev.strataindustria.transport.rail.RailRegistry.TUB_STOP,
@@ -148,6 +142,10 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 dev.strataindustria.transport.rail.RailwayRegistry.WATER_TOWER_BASE, dev.strataindustria.transport.rail.RailwayRegistry.WATER_TOWER_SPOUT,
                 dev.strataindustria.transport.rail.RailwayRegistry.COAL_STAGE)) {
             dropSelf(rail.get());
+        }
+        for (var block : java.util.List.of(dev.strataindustria.transport.ropeway.RopewayRegistry.TERMINAL, dev.strataindustria.transport.ropeway.RopewayRegistry.RETURN,
+                dev.strataindustria.transport.ropeway.RopewayRegistry.WOODEN_TOWER, dev.strataindustria.transport.ropeway.RopewayRegistry.STEEL_TOWER)) {
+            dropSelf(block.get());
         }
         dropSelf(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.get());
         dropSelf(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.get());
@@ -190,6 +188,26 @@ final class ModBlockLoot extends BlockLootSubProvider {
     }
 
     /** Spec 4.4: the pile's state says how much charcoal and ash the burn left. The log pile drops its own logs. */
+    /** A boulder broken with a tool still gives shards, two to a size; the flint in a flinty one comes out too. */
+    private void boulderLoot(Rock rock) {
+        Block block = ModBlocks.BOULDER.get(rock).get();
+        LootTable.Builder table = LootTable.lootTable();
+        for (int size = 1; size <= 3; size++) {
+            table.withPool(LootPool.lootPool()
+                    .setRolls(ContextIntProviders.exactly(1))
+                    .when(MatchBlock.blockMatches(blocks, block,
+                            StatePropertiesPredicate.Builder.properties().hasProperty(BoulderBlock.SIZE, size)))
+                    .add(LootItem.lootTableItem(ModItems.ROCK_SHARD.get(rock).get())
+                            .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2 * size)))));
+        }
+        table.withPool(LootPool.lootPool()
+                .setRolls(ContextIntProviders.exactly(1))
+                .when(MatchBlock.blockMatches(blocks, block,
+                        StatePropertiesPredicate.Builder.properties().hasProperty(BoulderBlock.FLINTY, true)))
+                .add(LootItem.lootTableItem(Items.FLINT)));
+        add(block, table);
+    }
+
     private void charcoalPile() {
         Block block = ModBlocks.CHARCOAL_PILE.get();
         LootTable.Builder table = LootTable.lootTable();

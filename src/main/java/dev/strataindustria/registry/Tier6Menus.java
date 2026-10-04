@@ -1,6 +1,7 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.oil.OilStillMenu;
+import dev.strataindustria.oil.WellheadMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -9,6 +10,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 public final class Tier6Menus {
     public static final DeferredHolder<MenuType<?>, MenuType<OilStillMenu>> OIL_STILL =
             ModMenus.MENUS.register("oil_still", () -> IMenuTypeExtension.create(OilStillMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<WellheadMenu>> WELLHEAD =
+            ModMenus.MENUS.register("wellhead", () -> IMenuTypeExtension.create(WellheadMenu::new));
 
     public static void init() {}
 

@@ -62,6 +62,24 @@ final class PreviewExport {
                 write(level, Path.of(dir, name + ".json"), name, new BoundingBox(minX - PAD, groundY - 2, minZ - PAD, minX + plan.width() + PAD,
                         groundY + 20, minZ + plan.depth() + PAD));
             }
+            if (only == null || "boulders".matches(only)) {
+                // Every size and crack stage side by side, plain and with flint nodules: granite, basalt, then limestone.
+                int bx = origin.getX() + 60, bz = origin.getZ() + 60;
+                BoundingBox area = new BoundingBox(bx - 4, groundY - 6, bz - 4, bx + 24, groundY + 8, bz + 10);
+                ground(level, area, groundY, false);
+                dev.strataindustria.geology.Rock[] rocks = {dev.strataindustria.geology.Rock.GRANITE, dev.strataindustria.geology.Rock.BASALT,
+                        dev.strataindustria.geology.Rock.LIMESTONE};
+                for (int row = 0; row < rocks.length; row++) {
+                    for (int size = 1; size <= 3; size++) {
+                        for (int cracks = 0; cracks <= 2; cracks++) {
+                            BlockPos at = new BlockPos(bx + ((size - 1) * 3 + cracks) * 2, groundY + 1, bz + row * 3);
+                            level.setBlock(at, dev.strataindustria.registry.ModBlocks.BOULDER.get(rocks[row]).get().with(size, row == 2, Direction.NORTH)
+                                    .setValue(dev.strataindustria.block.BoulderBlock.CRACKS, cracks), Block.UPDATE_CLIENTS);
+                        }
+                    }
+                }
+                write(level, Path.of(dir, "boulders.json"), "boulders", new BoundingBox(bx - 2, groundY - 2, bz - 2, bx + 20, groundY + 5, bz + 8));
+            }
             if (only == null || "collapsed_adit".matches(only)) {
                 BlockPos portal = new BlockPos(origin.getX() + 40, groundY, origin.getZ() + 40);
                 BoundingBox area = new BoundingBox(portal.getX() - 14, groundY - 8, portal.getZ() - 6, portal.getX() + 14, groundY + 24, portal.getZ() + 26);

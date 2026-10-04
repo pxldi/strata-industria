@@ -70,18 +70,14 @@ final class ModRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes() {
         for (Rock rock : Rock.values()) {
-            var loose = ModItems.LOOSE_ROCK.get(rock).get();
+            var shard = ModItems.ROCK_SHARD.get(rock).get();
             var cobbled = ModItems.COBBLED_ROCK.get(rock).get();
             shaped(RecipeCategory.BUILDING_BLOCKS, cobbled)
                     .pattern("RR")
                     .pattern("RR")
-                    .define('R', loose)
-                    .unlockedBy("has_loose_rock", has(loose))
+                    .define('R', shard)
+                    .unlockedBy("has_rock_shard", has(shard))
                     .save(output, key("cobbled_" + rock.id()));
-            shapeless(RecipeCategory.MISC, loose, 4)
-                    .requires(cobbled)
-                    .unlockedBy("has_cobbled_rock", has(cobbled))
-                    .save(output, key("loose_" + rock.id() + "_from_cobbled"));
         }
 
         knapping();
@@ -106,6 +102,7 @@ final class ModRecipeProvider extends RecipeProvider {
         new FootData.Recipes(recipeContext, advancementContext).buildRecipes();
         new RailData.Recipes(recipeContext, advancementContext).buildRecipes();
         new RailwayData.Recipes(recipeContext, advancementContext).buildRecipes();
+        new RopewayData.Recipes(recipeContext, advancementContext).buildRecipes();
         vanillaOverrides();
     }
 
@@ -121,16 +118,14 @@ final class ModRecipeProvider extends RecipeProvider {
         knap(ModItems.STONE_HAMMER_HEAD.get(), "#####", "#####", "..#..", ".....", ".....");
         knap(ModItems.STONE_SPEAR_HEAD.get(), "..#..", ".###.", ".###.", "..#..", "..#..");
         knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
-        // Spec 10.1: a round stone with a hole, worth four loose rocks.
+        // Spec 10.1: a round stone with a hole, worth four rock shards.
         int quernstone = GridPattern.parse(List.of(".###.", "#####", "##.##", "#####", ".###.")).getOrThrow();
-        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, 6, quernstone,
+        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.ROCK_SHARDS), 4, 6, quernstone,
                 new ItemStackTemplate(ModItems.QUERNSTONE.get())), null);
     }
 
     // Spec 4.1: the same strikes, worked in five clay balls.
     private void clayForming() {
-        form(ModItems.UNFIRED_SMALL_VESSEL.get(), 1, ".....", ".###.", "#####", "#####", ".###.");
-        form(ModItems.UNFIRED_LARGE_VESSEL.get(), 1, ".###.", "#####", "#####", "#####", ".###.");
         form(ModItems.UNFIRED_CRUCIBLE.get(), 1, "##.##", "#...#", "#...#", "#...#", "#####");
         form(ModItems.UNFIRED_INGOT_MOLD.get(), 1, ".....", "#####", "#...#", "#####", ".....");
         form(ModItems.UNFIRED_BRICK.get(), 4, "##.##", "##.##", ".....", "##.##", "##.##");
@@ -878,8 +873,8 @@ final class ModRecipeProvider extends RecipeProvider {
 
         // Spec 9.4: flux from the quern, welding, and the iron anvil.
         grind("flux_from_sand", Ingredient.of(Items.SAND), ModItems.FLUX.get(), 2);
-        grind("flux_from_limestone", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
-        grind("flux_from_marble", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
+        grind("flux_from_limestone", Ingredient.of(ModItems.ROCK_SHARD.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
+        grind("flux_from_marble", Ingredient.of(ModItems.ROCK_SHARD.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
         output.accept(key("welding/wrought_iron_double_ingot"), new WeldingRecipe(Ingredient.of(Items.IRON_INGOT),
                 Ingredient.of(Items.IRON_INGOT), new ItemStackTemplate(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get())), null);
         // Two anvils: the iron anvil is built straight from ingots, so it needs no welding to get started. It
@@ -1198,7 +1193,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 WashingRecipe.DEFAULT_TICKS), null);
     }
 
-    /** Tier 3 spec 12.1: the soaking barrel, its four soaks, and scraping limed hides with a knife. */
+    /** Tier 3 spec 12.1: the soaking barrel, tannin from bark and the one soak that turns a raw hide into leather. */
     private void tanning() {
         shaped(RecipeCategory.MISC, ModItems.SOAKING_BARREL.get())
                 .pattern("P P")
@@ -1208,21 +1203,10 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_raw_hide", has(ModItems.RAW_HIDE.get()))
                 .save(output, key("soaking_barrel"));
         FluidAmount water = new FluidAmount(Fluids.WATER, 1000);
-        soak("lye", Optional.of(Ingredient.of(ModItems.ASH.get())), 2, water,
-                Optional.empty(), Optional.of(new FluidAmount(ModFluids.LYE.get(), 1000)), 600);
         soak("tannin", Optional.of(Ingredient.of(ModItems.BARK.get())), 4, water,
                 Optional.empty(), Optional.of(new FluidAmount(ModFluids.TANNIN.get(), 1000)), 2400);
-        soak("limed_hide", Optional.of(Ingredient.of(ModItems.RAW_HIDE.get())), 1, new FluidAmount(ModFluids.LYE.get(), 250),
-                Optional.of(new ItemStackTemplate(ModItems.LIMED_HIDE.get())), Optional.empty(), 4000);
-        soak("leather", Optional.of(Ingredient.of(ModItems.SCRAPED_HIDE.get())), 1, new FluidAmount(ModFluids.TANNIN.get(), 250),
-                Optional.of(new ItemStackTemplate(Items.LEATHER, 2)), Optional.empty(), 8000);
-        Ingredient knife = tag(ModTags.Items.KNIVES);
-        var scraping = new ToolShapelessRecipe(new Recipe.CommonInfo(true),
-                new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
-                new ItemStackTemplate(ModItems.SCRAPED_HIDE.get()),
-                List.of(Ingredient.of(ModItems.LIMED_HIDE.get()), knife),
-                knife);
-        save(key("scraped_hide"), scraping, RecipeCategory.MISC, "has_limed_hide", has(ModItems.LIMED_HIDE.get()));
+        soak("leather", Optional.of(Ingredient.of(ModItems.RAW_HIDE.get())), 1, new FluidAmount(ModFluids.TANNIN.get(), 250),
+                Optional.of(new ItemStackTemplate(Items.LEATHER, 2)), Optional.empty(), 6000);
     }
 
     private void soak(String path, Optional<Ingredient> input, int count, FluidAmount fluid, Optional<ItemStackTemplate> result,

@@ -58,11 +58,11 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         }
         tag(Tags.Items.STONES).addTag(ModTags.Items.ROCKS);
 
-        var looseRocks = tag(ModTags.Items.LOOSE_ROCKS);
+        var shards = tag(ModTags.Items.ROCK_SHARDS);
         var cobbled = tag(Tags.Items.COBBLESTONES);
         var ores = tag(Tags.Items.ORES);
         for (Rock rock : Rock.values()) {
-            looseRocks.add(ModItems.LOOSE_ROCK.get(rock).getKey());
+            shards.add(ModItems.ROCK_SHARD.get(rock).getKey());
             cobbled.add(ModItems.COBBLED_ROCK.get(rock).getKey());
             for (OreMineral mineral : OreMineral.inRockValues()) {
                 ores.add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
@@ -103,16 +103,12 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         // Tier 4 spec 12.1: blast furnace flux; bloomery slag still carries its limestone.
         tag(dev.strataindustria.registry.ModTags.Items.FLUX).add(ModItems.FLUX.getKey()).add(ModItems.BLOOMERY_SLAG.getKey());
 
-        tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.LOOSE_ROCKS).add(key(Items.FLINT));
+        tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.ROCK_SHARDS).add(key(Items.FLINT));
         tag(Tags.Items.STRINGS).add(ModItems.CORD.getKey());
 
         tag(dev.strataindustria.registry.Tier5Tags.TREATED_WOOD).add(dev.strataindustria.registry.Tier5Items.TREATED_LOG.getKey());
-        var large = tag(ModTags.Items.PIT_KILN_LARGE);
-        for (var item : java.util.List.of(ModItems.UNFIRED_SMALL_VESSEL, ModItems.UNFIRED_LARGE_VESSEL, ModItems.UNFIRED_CRUCIBLE,
-                Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE)) {
-            large.add(item.getKey());
-        }
-        var fireable = tag(ModTags.Items.PIT_KILN_FIREABLE).addTag(ModTags.Items.PIT_KILN_LARGE)
+        var fireable = tag(ModTags.Items.FIREABLE)
+                .add(ModItems.UNFIRED_CRUCIBLE.getKey()).add(Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE.getKey())
                 .add(ModItems.UNFIRED_INGOT_MOLD.getKey()).add(ModItems.UNFIRED_BRICK.getKey())
                 .add(ModItems.UNFIRED_FIRE_BRICK.getKey()).add(Tier4Items.UNFIRED_COKE_OVEN_BRICK.getKey())
                 .add(Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.getKey()).add(Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.getKey())

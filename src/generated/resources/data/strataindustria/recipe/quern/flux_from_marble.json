@@ -1,6 +1,6 @@
 {
   "type": "strataindustria:quern",
-  "ingredient": "strataindustria:loose_marble",
+  "ingredient": "strataindustria:marble_shard",
   "result": {
     "count": 4,
     "id": "strataindustria:flux"

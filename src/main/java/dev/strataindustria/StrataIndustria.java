@@ -58,6 +58,7 @@ public final class StrataIndustria {
         dev.strataindustria.registry.Tier5Menus.init();
         dev.strataindustria.registry.Tier5Sounds.init();
         dev.strataindustria.registry.Tier5DataComponents.init();
+        dev.strataindustria.registry.Tier6DataComponents.init();
         dev.strataindustria.registry.Tier5Fluids.init();
         dev.strataindustria.registry.Tier5Recipes.init();
         dev.strataindustria.logistics.Tier5Logistics.init();
@@ -84,6 +85,7 @@ public final class StrataIndustria {
         dev.strataindustria.transport.rail.RailRegistry.register(modEventBus);
         dev.strataindustria.transport.rail.RailwayRegistry.init();
         dev.strataindustria.transport.rail.RailwayRegistry.register(modEventBus);
+        dev.strataindustria.transport.ropeway.RopewayRegistry.init();
         dev.strataindustria.bronze.BronzeRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.register(modEventBus);

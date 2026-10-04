@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": "strataindustria:wrought_iron_rod",
+    "X": "strataindustria:treated_planks"
+  },
+  "pattern": [
+    "X X",
+    "XIX",
+    "X X"
+  ],
+  "result": {
+    "count": 2,
+    "id": "strataindustria:wooden_ropeway_tower"
+  }
+}

@@ -12,13 +12,13 @@ import dev.strataindustria.bloomery.BloomeryBlock;
 import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.smithing.AnvilBlock;
 import dev.strataindustria.StrataIndustria;
+import net.minecraft.resources.Identifier;
+import dev.strataindustria.block.BoulderBlock;
 import dev.strataindustria.block.GroundCoverBlock;
 import dev.strataindustria.block.OreBlock;
 import dev.strataindustria.ceramics.CrucibleBlock;
 import dev.strataindustria.charcoal.CharcoalPileBlock;
 import dev.strataindustria.charcoal.LogPileBlock;
-import dev.strataindustria.ceramics.LargeVesselBlock;
-import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
@@ -48,16 +48,17 @@ public final class ModBlocks {
     /** Stone anvils dressed from raw igneous rock (spec 9.1); only igneous rocks have one. */
     public static final Map<Rock, DeferredBlock<AnvilBlock>> STONE_ANVILS = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredBlock<Block>> COBBLED_ROCK = new EnumMap<>(Rock.class);
-    public static final Map<Rock, DeferredBlock<GroundCoverBlock>> LOOSE_ROCK = new EnumMap<>(Rock.class);
     /** Ore blocks for every (rock, mineral) pair; the grade is a blockstate. */
     public static final Map<Rock, Map<OreMineral, DeferredBlock<OreBlock>>> ORES = new EnumMap<>(Rock.class);
     /** Surface indicators placed above veins. */
     public static final Map<OreMineral, DeferredBlock<GroundCoverBlock>> SMALL_ORES = new EnumMap<>(OreMineral.class);
 
-    public static final DeferredBlock<GroundCoverBlock> LOOSE_STICK = BLOCKS.registerBlock("loose_stick",
-            p -> new GroundCoverBlock(Block.box(1, 0, 1, 15, 1, 15), p), ModBlocks::groundCover);
-    public static final DeferredBlock<GroundCoverBlock> LOOSE_FLINT = BLOCKS.registerBlock("loose_flint",
-            p -> new GroundCoverBlock(Block.box(4, 0, 4, 12, 1, 12), p), ModBlocks::groundCover);
+    /** Weathered boulders of each rock (redesign R1): split by hand into rock shards. */
+    public static final Map<Rock, DeferredBlock<BoulderBlock>> BOULDER = new EnumMap<>(Rock.class);
+    static {
+        BLOCKS.addAlias(StrataIndustria.id("loose_stick"), Identifier.withDefaultNamespace("air"));
+        BLOCKS.addAlias(StrataIndustria.id("loose_flint"), Identifier.withDefaultNamespace("air"));
+    }
 
     /** Tier 0 fire (spec 3.5). Light 15 while lit. */
     public static final DeferredBlock<FirePitBlock> FIRE_PIT = BLOCKS.registerBlock("fire_pit", FirePitBlock::new,
@@ -68,22 +69,6 @@ public final class ModBlocks {
                     .lightLevel(state -> state.getValue(FirePitBlock.LIT) ? 15 : 0)
                     .pushReaction(PushReaction.POPPED));
 
-    /** Clay pieces under straw and logs (spec 4.2). Light 15 while burning. */
-    public static final DeferredBlock<PitKilnBlock> PIT_KILN = BLOCKS.registerBlock("pit_kiln", PitKilnBlock::new,
-            p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
-                    .strength(0.6f)
-                    .sound(SoundType.GRASS)
-                    .noOcclusion()
-                    .noLootTable()
-                    .lightLevel(state -> state.getValue(PitKilnBlock.LIT) ? 15 : 0)
-                    .pushReaction(PushReaction.IMMOVEABLE));
-    /** Fired clay storage jar (spec 4.3). */
-    public static final DeferredBlock<LargeVesselBlock> LARGE_VESSEL = BLOCKS.registerBlock("large_vessel", LargeVesselBlock::new,
-            p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
-                    .strength(1.0f)
-                    .sound(SoundType.DECORATED_POT)
-                    .noOcclusion()
-                    .pushReaction(PushReaction.POPPED));
     public static final DeferredBlock<CrucibleBlock> CRUCIBLE = BLOCKS.registerBlock("crucible", CrucibleBlock::new,
             p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
                     .strength(1.0f)
@@ -242,9 +227,15 @@ public final class ModBlocks {
                     .strength(rock.hardness() + 0.4f, rock.hardness() * 4)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.STONE)));
-            LOOSE_ROCK.put(rock, BLOCKS.registerBlock("loose_" + rock.id(),
-                    p -> new GroundCoverBlock(Block.box(4, 0, 4, 12, 2, 12), p),
-                    p -> groundCover(p).mapColor(rock.mapColor()).sound(SoundType.STONE)));
+            BOULDER.put(rock, BLOCKS.registerBlock(rock.id() + "_boulder",
+                    p -> new BoulderBlock(rock, p),
+                    p -> p.mapColor(rock.mapColor())
+                            .instrument(NoteBlockInstrument.BASEDRUM)
+                            .strength(2.5f, 6.0f)
+                            .noOcclusion()
+                            .sound(SoundType.STONE)));
+            // Rocks, sticks and flint no longer lie about on their own blocks (redesign R1); old ones turn to air.
+            BLOCKS.addAlias(StrataIndustria.id("loose_" + rock.id()), Identifier.withDefaultNamespace("air"));
 
             Map<OreMineral, DeferredBlock<OreBlock>> ores = new EnumMap<>(OreMineral.class);
             for (OreMineral mineral : OreMineral.inRockValues()) {

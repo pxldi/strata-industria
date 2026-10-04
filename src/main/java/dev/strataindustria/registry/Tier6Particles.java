@@ -18,5 +18,9 @@ public final class Tier6Particles {
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> LANDING_OIL = PARTICLES.register("landing_oil",
             () -> new SimpleParticleType(false));
 
+    /** Spec 24.7: what a gusher throws up, black spray that arcs and falls around the wellhead. */
+    public static final DeferredHolder<ParticleType<?>, SimpleParticleType> OIL_SPRAY = PARTICLES.register("oil_spray",
+            () -> new SimpleParticleType(false));
+
     private Tier6Particles() {}
 }

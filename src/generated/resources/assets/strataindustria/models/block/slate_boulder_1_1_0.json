@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_boulder_1_1_0",
+  "textures": {
+    "rock": "strataindustria:block/slate"
+  }
+}

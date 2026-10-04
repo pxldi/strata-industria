@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t1/clay_forming",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "pottery_fired"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t1.fired_pottery.hint"
+    },
+    "icon": {
+      "id": "strataindustria:crucible"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t1.fired_pottery"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

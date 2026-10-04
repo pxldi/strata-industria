@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_loose_rock": {
+    "has_rock_shard": {
       "conditions": {
         "items": [
           {
-            "items": "strataindustria:loose_basalt"
+            "items": "strataindustria:basalt_shard"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_loose_rock"
+      "has_rock_shard"
     ]
   ],
   "rewards": {

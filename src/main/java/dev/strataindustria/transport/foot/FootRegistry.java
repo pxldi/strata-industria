@@ -94,9 +94,9 @@ public final class FootRegistry {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }
 
-    /** The loose rock item that stacks into a cairn of this rock. */
-    public static Supplier<? extends Item> looseRock(Rock rock) {
-        return ModItems.LOOSE_ROCK.get(rock);
+    /** The rock shard item that stacks into a cairn of this rock. */
+    public static Supplier<? extends Item> rockShard(Rock rock) {
+        return ModItems.ROCK_SHARD.get(rock);
     }
 
     public static void init() {}

@@ -344,9 +344,11 @@ final class Tier5GameTests {
         Melt batch = meltOf(Items.COPPER_INGOT, 2).plus(meltOf(Items.REDSTONE, 8));
         helper.assertValueEqual(batch.total(), 400, "units in 2 copper ingots and 8 redstone");
         helper.assertValueEqual(Alloy.resultOf(batch).orElse(null), Metal.RED_ALLOY, "2 copper + 8 redstone");
+        helper.assertValueEqual(Alloy.resultOf(meltOf(Items.COPPER_INGOT, 1).plus(meltOf(Items.REDSTONE, 4))).orElse(null),
+                Metal.RED_ALLOY, "1 copper + 4 redstone");
         helper.assertValueEqual(Alloy.resultOf(meltOf(ModItems.ingot(Metal.RED_ALLOY), 2)).orElse(null), Metal.RED_ALLOY, "red alloy remelt");
-        helper.assertTrue(Alloy.resultOf(meltOf(Items.COPPER_INGOT, 4).plus(meltOf(Items.REDSTONE, 4))).isEmpty(),
-                "80% copper is outside the red alloy range");
+        helper.assertTrue(Alloy.resultOf(meltOf(Items.COPPER_INGOT, 3).plus(meltOf(Items.REDSTONE, 4))).isEmpty(),
+                "3 copper to 1 redstone ingot is no red alloy");
         helper.assertTrue(Alloy.resultOf(meltOf(Items.REDSTONE, 4)).isEmpty(), "redstone alone is no metal");
 
         ServerLevel level = helper.getLevel();

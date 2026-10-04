@@ -29,7 +29,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         // Tier 5: casings need a pickaxe; cables come off by hand.
         tag(dev.strataindustria.rubber.Tappable.TAG).add(net.minecraft.world.level.block.Blocks.JUNGLE_LOG.builtInRegistryHolder().key());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_DYNAMO.getKey())
-                .add(dev.strataindustria.registry.Tier6Blocks.OIL_STILL.getKey())
+                .add(dev.strataindustria.registry.Tier6Blocks.OIL_STILL.getKey()).add(dev.strataindustria.registry.Tier6Blocks.WELLHEAD.getKey())
+                .add(dev.strataindustria.registry.Tier6Blocks.PUMP_JACK.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.BATTERY_BOX.getKey()).add(dev.strataindustria.registry.Tier5Blocks.LV_MACHINE_HULL.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_FURNACE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.MACERATOR.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.WIREMILL.getKey()).add(dev.strataindustria.registry.Tier5Blocks.BENDER.getKey())
@@ -75,13 +76,14 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             tag(stoneLike).addTag(ModTags.Blocks.ROCKS);
         }
 
-        var looseRocks = tag(ModTags.Blocks.LOOSE_ROCKS);
+        var boulders = tag(ModTags.Blocks.BOULDERS);
         var cobbled = tag(Tags.Blocks.COBBLESTONES);
         var pickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
         var ores = tag(Tags.Blocks.ORES);
         var needsCopper = tag(ModTags.Blocks.NEEDS_COPPER_TOOL);
         for (Rock rock : Rock.values()) {
-            looseRocks.add(ModBlocks.LOOSE_ROCK.get(rock).getKey());
+            boulders.add(ModBlocks.BOULDER.get(rock).getKey());
+            pickaxe.add(ModBlocks.BOULDER.get(rock).getKey());
             cobbled.add(ModBlocks.COBBLED_ROCK.get(rock).getKey());
             pickaxe.add(ModBlocks.COBBLED_ROCK.get(rock).getKey());
             for (OreMineral mineral : OreMineral.inRockValues()) {
@@ -201,13 +203,13 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         }
         tag(ModTags.Blocks.MINEABLE_WITH_HAMMER);
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LARGE_VESSEL.getKey()).add(ModBlocks.CRUCIBLE.getKey())
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.CRUCIBLE.getKey())
                 .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey())
                 .add(ModBlocks.IRON_ANVIL.getKey())
                 .add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.getKey())
                 .add(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.getKey());
         for (var anvil : ModBlocks.STONE_ANVILS.values()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(anvil.getKey());
-        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.PIT_KILN.getKey()).add(ModBlocks.CHARCOAL_PILE.getKey());
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.CHARCOAL_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(StructureContent.PIT_PROP.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey());
@@ -235,6 +237,13 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.getKey())
                 .add(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());
+        // Ropeway (outposts spec 8): wooden towers are timber, the rest is steel.
+        tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.ropeway.RopewayRegistry.WOODEN_TOWER.getKey());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.ropeway.RopewayRegistry.TERMINAL.getKey())
+                .add(dev.strataindustria.transport.ropeway.RopewayRegistry.RETURN.getKey())
+                .add(dev.strataindustria.transport.ropeway.RopewayRegistry.STEEL_TOWER.getKey());
+        tag(dev.strataindustria.transport.ropeway.RopewayRegistry.TOWER_BASE).addTag(BlockTags.FENCES).addTag(BlockTags.WALLS).addTag(BlockTags.LOGS)
+                .add(dev.strataindustria.registry.Tier5Blocks.UTILITY_POLE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey())
                 .add(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET.getKey());
         // Structures v2 shared blocks.

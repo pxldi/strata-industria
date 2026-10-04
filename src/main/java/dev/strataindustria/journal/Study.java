@@ -42,8 +42,8 @@ public final class Study {
     static final Map<String, Predicate<BlockState>> SUBJECTS = new LinkedHashMap<>();
 
     static {
-        SUBJECTS.put("t0/loose_rock", state -> state.is(ModTags.Blocks.LOOSE_ROCKS));
-        SUBJECTS.put("t0/knap", state -> state.is(ModTags.Blocks.LOOSE_ROCKS));
+        SUBJECTS.put("t0/boulder", state -> state.is(ModTags.Blocks.BOULDERS));
+        SUBJECTS.put("t0/knap", state -> state.is(ModTags.Blocks.BOULDERS));
         SUBJECTS.put("t0/twine", state -> state.is(BlockTags.LEAVES));
         SUBJECTS.put("t0/log", state -> state.is(BlockTags.LOGS));
         SUBJECTS.put("t0/stone_axe", state -> state.is(BlockTags.LOGS));
@@ -80,6 +80,7 @@ public final class Study {
         args.add(blockKey);
         BlockEntity be = player.level().getBlockEntity(pos);
         Rock rock = RockLookup.rawRock(state);
+        if (rock == null && state.getBlock() instanceof dev.strataindustria.block.BoulderBlock boulder) rock = boulder.rock();
         if (state.getBlock() instanceof OreBlock ore) {
             key = KEY + "ore";
             args.add(toolKey(ore.mineral(), state));
@@ -160,6 +161,7 @@ public final class Study {
     }
 
     private static Item icon(BlockState state) {
+        if (state.getBlock() instanceof dev.strataindustria.block.BoulderBlock boulder) return boulder.shard();
         Item item = state.getBlock().asItem();
         return item == Items.AIR ? Items.PAPER : item;
     }

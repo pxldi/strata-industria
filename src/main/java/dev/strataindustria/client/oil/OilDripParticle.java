@@ -16,7 +16,7 @@ import net.minecraft.util.RandomSource;
  * oil ramp. Uses the vanilla drip sprites, tinted.
  */
 public final class OilDripParticle extends DripParticle {
-    private enum Stage { HANG, FALL, LAND }
+    private enum Stage { HANG, FALL, LAND, SPRAY }
 
     /** Crude oil ramp step 3 and 4 (spec 24.1), as tints. */
     private static final float[] HANG = {0x30 / 255f, 0x28 / 255f, 0x28 / 255f};
@@ -42,6 +42,16 @@ public final class OilDripParticle extends DripParticle {
                 lifetime = (int) (128.0 / (random.nextFloat() * 0.8 + 0.2));
                 setColor(FALL[0], FALL[1], FALL[2]);
             }
+            case SPRAY -> {
+                // Thrown up off a gusher: fast, then arcs over and rains down around the head.
+                gravity = 0.035f;
+                lifetime = 60 + random.nextInt(30);
+                xd = (random.nextDouble() - 0.5) * 0.16;
+                zd = (random.nextDouble() - 0.5) * 0.16;
+                yd = 0.5 + random.nextDouble() * 0.25;
+                quadSize *= 1.2f;
+                setColor(FALL[0], FALL[1], FALL[2]);
+            }
         }
     }
 
@@ -60,7 +70,7 @@ public final class OilDripParticle extends DripParticle {
                 yd *= 0.02;
                 zd *= 0.02;
             }
-            case FALL -> {
+            case FALL, SPRAY -> {
                 if (onGround) {
                     remove();
                     level.addParticle(Tier6Particles.LANDING_OIL.get(), x, y, z, 0, 0, 0);
@@ -76,6 +86,10 @@ public final class OilDripParticle extends DripParticle {
 
     public static ParticleProvider<SimpleParticleType> fall(SpriteSet sprites) {
         return (type, level, x, y, z, xa, ya, za, random) -> new OilDripParticle(level, x, y, z, Stage.FALL, sprites.get(random), random);
+    }
+
+    public static ParticleProvider<SimpleParticleType> spray(SpriteSet sprites) {
+        return (type, level, x, y, z, xa, ya, za, random) -> new OilDripParticle(level, x, y, z, Stage.SPRAY, sprites.get(random), random);
     }
 
     public static ParticleProvider<SimpleParticleType> land(SpriteSet sprites) {

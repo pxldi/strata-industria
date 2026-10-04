@@ -54,10 +54,10 @@ final class JournalGameTests {
     // A lead opens when its parent is done and closes with its own goal; its children open in turn.
     private static void leadLifecycle(GameTestHelper helper) {
         ServerPlayer player = player(helper);
-        helper.assertTrue(lead(helper, player, "t0/loose_rock").open(), "the first lead is open from the start");
+        helper.assertTrue(lead(helper, player, "t0/boulder").open(), "the first lead is open from the start");
         helper.assertTrue(lead(helper, player, "t0/knap").openedSeq() < 0, "a lead under an unfinished goal is not open yet");
-        award(player, "t0/loose_rock");
-        helper.assertTrue(lead(helper, player, "t0/loose_rock").closed(), "the lead closed with its goal");
+        award(player, "t0/boulder");
+        helper.assertTrue(lead(helper, player, "t0/boulder").closed(), "the lead closed with its goal");
         helper.assertTrue(lead(helper, player, "t0/knap").open(), "the next lead opened");
         helper.assertTrue(lead(helper, player, "t1/nugget").open(), "a sibling branch opened too");
         helper.assertTrue(!lead(helper, player, "t0/knap").hinted(), "a fresh lead has no hint yet");

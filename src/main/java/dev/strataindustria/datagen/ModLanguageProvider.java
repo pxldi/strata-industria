@@ -39,6 +39,7 @@ final class ModLanguageProvider extends LanguageProvider {
         FootData.lang(this::add);
         RailData.lang(this::add);
         RailwayData.lang(this::add);
+        RopewayData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
         FellingData.lang(this::add);
@@ -86,14 +87,11 @@ final class ModLanguageProvider extends LanguageProvider {
         add(StrataIndustria.MOD_ID + ".shaping.progress", "%s  %s/%s");
         add(StrataIndustria.MOD_ID + ".shaping.done", "%s");
         add(StrataIndustria.MOD_ID + ".shaping.nothing", "Nothing to make from %s");
+        add(StrataIndustria.MOD_ID + ".boulder.hint", "Hit it with your hand or a shard. Hold use to keep striking.");
         add(StrataIndustria.MOD_ID + ".shaping.hint", "Sneak + use (or scroll) picks the shape. Use strikes, hold to keep striking.");
-        addItem(ModItems.UNFIRED_SMALL_VESSEL, "Unfired Small Vessel");
-        addItem(ModItems.UNFIRED_LARGE_VESSEL, "Unfired Large Vessel");
         addItem(ModItems.UNFIRED_CRUCIBLE, "Unfired Crucible");
         addItem(ModItems.UNFIRED_INGOT_MOLD, "Unfired Ingot Mold");
         addItem(ModItems.UNFIRED_BRICK, "Unfired Brick");
-        addItem(ModItems.SMALL_VESSEL, "Small Vessel");
-        addBlock(ModBlocks.LARGE_VESSEL, "Large Vessel");
         addBlock(ModBlocks.CRUCIBLE, "Crucible");
         addItem(ModItems.INGOT_MOLD, "Ingot Mold");
         for (MoldType type : MoldType.values()) {
@@ -101,9 +99,6 @@ final class ModLanguageProvider extends LanguageProvider {
             addItem(ModItems.UNFIRED_MOLDS.get(type), "Unfired " + name + " Mold");
             addItem(ModItems.MOLDS.get(type), name + " Mold");
         }
-        add("container." + StrataIndustria.MOD_ID + ".small_vessel", "Small Vessel");
-        add("container." + StrataIndustria.MOD_ID + ".large_vessel", "Large Vessel");
-        addBlock(ModBlocks.PIT_KILN, "Pit Kiln");
         addBlock(ModBlocks.LOG_PILE, "Log Pile");
         addBlock(ModBlocks.CHARCOAL_PILE, "Charcoal Pile");
         addItem(ModItems.ASH, "Ash");
@@ -114,18 +109,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.QUERNSTONE, "Quernstone");
         add("container." + StrataIndustria.MOD_ID + ".forge", "Forge");
         metals();
-        String kiln = StrataIndustria.MOD_ID + ".pit_kiln.";
-        add(kiln + "burning", "The kiln is already burning");
-        add(kiln + "needs_straw", "The kiln needs 8 straw on top first");
-        add(kiln + "needs_logs", "The kiln needs 8 logs on the straw first");
-        add(kiln + "needs_walls", "The kiln needs solid blocks on all four sides");
-        add(kiln + "needs_air", "The kiln needs open air above it");
-        add(kiln + "rain", "Rain would put the fire straight out");
 
         String subtitles = "subtitles." + StrataIndustria.MOD_ID + ".";
         add(subtitles + "clay.shape", "Clay squelches");
         add(subtitles + "clay.finish", "Clay piece formed");
-        add(subtitles + "pit_kiln.straw", "Straw laid");
         add(subtitles + "pit_kiln.log", "Log stacked");
         add(subtitles + "pit_kiln.fired", "Kiln burns out");
         add(subtitles + "heat.quench", "Hot metal hisses");
@@ -179,7 +166,6 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "soaking_barrel.open", "Barrel lid scrapes open");
         add(subtitles + "soaking_barrel.fill", "Water splashes into barrel");
         add(subtitles + "soaking_barrel.done", "Barrel soak finishes");
-        add(subtitles + "hide.scrape", "Knife scrapes hide");
         add(subtitles + "washing_pan.swirl", "Pan swirls");
         add(subtitles + "washing_pan.find", "Something glints");
         add(subtitles + "anvil.weld_fail", "Weld refused");
@@ -188,6 +174,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "crucible.pour", "Molten metal pours");
         add(subtitles + "mold.knock", "Cast knocked out");
         add(subtitles + "mold.break", "Mold cracks");
+        add(subtitles + "boulder.strike", "Boulder knocked");
+        add(subtitles + "boulder.crack", "Boulder cracks");
+        add(subtitles + "boulder.split", "Boulder splits");
+        add(subtitles + "boulder.shards", "Shards clatter");
         add(subtitles + "branch.shake", "Branch creaks");
         add(subtitles + "branch.snap", "Branch snaps");
         add(subtitles + "branch.bare", "Dry leaves rustle");
@@ -217,12 +207,15 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "fire_pit.ignite", "Fire catches");
         add(subtitles + "fire_pit.extinguish", "Fire goes out");
         add(subtitles + "fire_pit.torch", "Torch lit");
+        add(subtitles + "fire_pit.set", "Clay set by the fire");
+        add(subtitles + "fire_pit.ring", "Pottery rings");
 
         for (Rock rock : Rock.values()) {
             String name = title(rock.id());
             addBlock(ModBlocks.RAW_ROCK.get(rock), "Raw " + name);
             addBlock(ModBlocks.COBBLED_ROCK.get(rock), "Cobbled " + name);
-            addBlock(ModBlocks.LOOSE_ROCK.get(rock), "Loose " + name);
+            addBlock(ModBlocks.BOULDER.get(rock), name + " Boulder");
+            addItem(ModItems.ROCK_SHARD.get(rock), name + " Shard");
             for (OreMineral mineral : OreMineral.inRockValues()) {
                 addBlock(ModBlocks.ORES.get(rock).get(mineral), name + " " + title(mineral.id()) + " Ore");
             }
@@ -240,8 +233,6 @@ final class ModLanguageProvider extends LanguageProvider {
         }
         ironAge();
         tier4();
-        addBlock(ModBlocks.LOOSE_STICK, "Loose Stick");
-        addBlock(ModBlocks.LOOSE_FLINT, "Loose Flint");
 
         String config = StrataIndustria.MOD_ID + ".configuration.";
         add(config + "title", "Strata Industria Configs");
@@ -267,7 +258,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "replaceCopperGear", "Replace copper gear recipes");
         add(config + "branchSnapping", "Snap branches off trees");
         add(config + "gravelFlintChance", "More flint from gravel");
-        add(config + "kiln", "Pit Kiln");
+        add(config + "kiln", "Firing");
         add(config + "burnTicks", "Burn time (ticks)");
         add(config + "charcoal", "Charcoal Pit");
         add(config + "perLog", "Charcoal per log");
@@ -794,10 +785,10 @@ final class ModLanguageProvider extends LanguageProvider {
         String journal = "journal." + StrataIndustria.MOD_ID + ".";
         add(journal + "root", "Field Journal");
         add(journal + "root.hint", "Every goal of the field journal at a glance. Switch this tab on in the config to open it from the journal.");
-        add(journal + "t0.loose_rock", "A Rock to Start With");
-        add(journal + "t0.loose_rock.hint", "Pick up a loose rock lying on the ground.");
+        add(journal + "t0.boulder", "Boulder");
+        add(journal + "t0.boulder.hint", "Hit a boulder with your bare hand until it splits, then pick up a shard.");
         add(journal + "t0.knap", "First Edge");
-        add(journal + "t0.knap.hint", "Hold two loose rocks or one flint and use it to strike. Sneak and use picks which head. A few blows and it breaks free.");
+        add(journal + "t0.knap.hint", "Hold two rock shards or one flint and use it to strike. Sneak and use picks which head. A few blows and it breaks free.");
         add(journal + "t0.stone_axe", "Stone Axe");
         add(journal + "t0.stone_axe.hint", "Bind a knapped axe head to a stick with cord.");
         add(journal + "t0.log", "Timber");
@@ -812,16 +803,16 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.clay.hint", "Gather five clay balls. Look along riverbanks and in swamps.");
         add(journal + "t1.clay_forming", "Shaped by Hand");
         add(journal + "t1.clay_forming.hint", "Hold five clay balls and use them. Sneak and use picks what to form; strike a few times and it is done.");
-        add(journal + "t1.pit_kiln", "Fired Pottery");
-        add(journal + "t1.pit_kiln.hint", "Sneak and place unfired clay on the floor of a one-block pit, add 8 straw and 8 logs, then light it and let it burn out.");
+        add(journal + "t1.fired_pottery", "Fired Pottery");
+        add(journal + "t1.fired_pottery.hint", "Set an unfired piece on the stones beside a lit fire pit. Charcoal or logs burn hot enough. Wait until it rings.");
         add(journal + "t1.charcoal", "Charcoal Burner");
         add(journal + "t1.charcoal.hint", "Sneak and place logs into a pile, light it, cover every face with soil or stone, then dig out the charcoal.");
         add(journal + "t1.forge", "The Forge");
         add(journal + "t1.forge.hint", "Build a forge. It burns charcoal far hotter than a fire pit.");
         add(journal + "t1.nugget", "Signs in the Soil");
         add(journal + "t1.nugget.hint", "Find a small ore on the surface. A vein lies somewhere below it.");
-        add(journal + "t1.crucible", "Vessel and Mold");
-        add(journal + "t1.crucible.hint", "Fire a crucible and an ingot mold in the pit kiln.");
+        add(journal + "t1.crucible", "Crucible and Mold");
+        add(journal + "t1.crucible.hint", "Fire a crucible and an ingot mold on the fire pit.");
         add(journal + "t2.melt", "Molten");
         add(journal + "t2.melt.hint", "Set a crucible on top of a lit forge and melt ore in it.");
         add(journal + "t2.copper_ingot", "First Metal");
@@ -831,9 +822,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.alloy_metal", "Tin, Bismuth or Arsenic");
         add(journal + "t2.alloy_metal.hint", "Mine cassiterite, bismuthinite or tennantite ore.");
         add(journal + "t2.quern", "Ground Fine");
-        add(journal + "t2.quern.hint", "Knap a quernstone from four loose rocks and stack two under a stick for a quern. Put ore in and keep turning it; crushed ore melts down to more metal.");
+        add(journal + "t2.quern.hint", "Knap a quernstone from four rock shards and stack two under a stick for a quern. Put ore in and keep turning it; crushed ore melts down to more metal.");
         add(journal + "t2.bronze", "Bronze Age");
-        add(journal + "t2.bronze.hint", "Melt copper with tin, bismuth or arsenic in the right shares and cast a bronze ingot.");
+        add(journal + "t2.bronze.hint", "Melt 3 parts copper with 1 part tin, or copper with bismuth or arsenic, and cast a bronze ingot.");
         add(journal + "t2.stone_anvil", "Dressed Stone");
         add(journal + "t2.stone_anvil.hint", "Sneak and strike the top of raw igneous rock with a hammer to dress it into an anvil for copper and bronze.");
         add(journal + "t2.smith", "Hammer Work");
@@ -848,7 +839,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.fire_clay.hint", "Bronze cannot melt iron. You will need a bloomery, and it is built of fire bricks. "
                 + "Dig fire clay from the pale beds near the surface in shale and slate.");
         add(journal + "t3.fire_brick", "Fire Brick");
-        add(journal + "t3.fire_brick.hint", "Form fire clay into bricks and fire them in a pit kiln.");
+        add(journal + "t3.fire_brick.hint", "Form fire clay into bricks and fire them on the fire pit.");
         add(journal + "t3.iron_ore", "Iron Ore");
         add(journal + "t3.iron_ore.hint", "Iron hides in shale and slate, under swamps, and deep in dark igneous rock. "
                 + "Your prospector's pick can find it.");
@@ -895,7 +886,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.hide", "Raw Hide");
         add(journal + "t3.hide.hint", "Animals give raw hides now. Leather has to be tanned.");
         add(journal + "t3.leather", "Tanned Leather");
-        add(journal + "t3.leather.hint", "Soak hides in lye, scrape them with a knife, then soak them in tannin in a sealed barrel.");
+        add(journal + "t3.leather.hint", "Soak raw hides in tannin from bark, in a sealed barrel.");
         add(journal + "t3.iron_anvil", "Iron Anvil");
         add(journal + "t3.iron_anvil.hint", "Build an iron anvil from seven iron ingots. Stone anvils cannot work iron or steel.");
         add(journal + "t4.coal", "Black Rock");
@@ -1053,8 +1044,6 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.LEATHER_BELT, "Leather Belt");
         addBlock(ModBlocks.SOAKING_BARREL, "Soaking Barrel");
         addItem(ModItems.RAW_HIDE, "Raw Hide");
-        addItem(ModItems.LIMED_HIDE, "Limed Hide");
-        addItem(ModItems.SCRAPED_HIDE, "Scraped Hide");
         add("fluid_type." + id + ".lye", "Lye");
         add("fluid_type." + id + ".tannin", "Tannin");
         add("container." + id + ".soaking_barrel", "Soaking Barrel");
@@ -1192,6 +1181,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".crucible.pour", "Pour");
         // The alloy name (%1$s) is left out to fit the line; the status line names it once it forms.
         add(id + ".crucible.hint", "Needs %2$s-%3$s%% %4$s, has %5$s%%");
+        add(id + ".crucible.hint_parts", "%1$s %2$s: add %3$s %4$s");
         String problem = id + ".crucible.problem.";
         add(problem + "no_mold", "Put an empty mold in the mold slot");
         add(problem + "pouring", "Already pouring");
@@ -1243,7 +1233,7 @@ final class ModLanguageProvider extends LanguageProvider {
         String k = dev.strataindustria.compat.recipeview.RecipeText.KEY;
         add(k + "category.knapping", "Knapping");
         add(k + "category.clay_forming", "Clay Forming");
-        add(k + "category.pit_kiln", "Pit Kiln");
+        add(k + "category.firing", "Firing");
         add(k + "category.charcoal_pit", "Charcoal Pit");
         add(k + "category.quern", "Grinding");
         add(k + "category.alloying", "Crucible Alloying");
@@ -1290,9 +1280,11 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "washing.sluice_only", "in a sluice");
         add(k + "knapping.blows", "%s blows");
         add(k + "knapping.pick", "Sneak + use picks the shape");
-        add(k + "pit_kiln.fuel", "Under straw and logs");
+        add(k + "firing.fuel", "Beside a fire of 450 \u00b0C or more");
         add(k + "charcoal_pit.cover", "Covered on every side");
         add(k + "alloying.share", "%s %s\u2013%s%%");
+        add(k + "alloying.parts", "%s %s to %s %s");
+        add(k + "alloying.parts_any", "Ingots, nuggets or ore, any multiple");
         add(k + "crucible.refractory", "Refractory crucible only");
         add(k + "casting.units", "%s units");
         add(k + "bloomery.per_level", "Per chimney level");

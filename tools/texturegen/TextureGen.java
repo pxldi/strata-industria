@@ -654,14 +654,6 @@ public final class TextureGen {
             "43332222221",
             ".222211111.",
     };
-    static final String[] LOOSE_ROCK = {
-            "....4455..",
-            "..4444443.",
-            ".444433332",
-            "4443333322",
-            "3333332221",
-            ".22222211.",
-    };
     static final String[] FLINT_SHARD = {
             ".......45",
             "......453",
@@ -937,46 +929,6 @@ public final class TextureGen {
     }
 
     // ---------------------------------------------------------------- ground cover
-
-    /** Two crossed sticks seen from above, for the flat loose stick model. */
-    static final String[] LOOSE_STICKS = {
-            "................",
-            "..45............",
-            "..443...........",
-            "...343......5...",
-            "....342....443..",
-            ".....342..443...",
-            "......3424432...",
-            ".......34432....",
-            ".......4432.....",
-            "......443232....",
-            ".....4432.322...",
-            "....4432...322..",
-            "...4432.....32..",
-            "...332.......2..",
-            "....2...........",
-            "................",
-    };
-
-    /** A few knapped flint flakes on the ground. */
-    static final String[] LOOSE_FLINTS = {
-            "................",
-            "................",
-            "................",
-            "........5.......",
-            ".......453......",
-            "......4442......",
-            ".....44432......",
-            "....44332...4...",
-            "....3322...453..",
-            ".....2....44432.",
-            "..........33322.",
-            "...45.......2...",
-            "..4443..........",
-            ".44332..........",
-            "..222...........",
-            "................",
-    };
 
     /** A small book: woven straw covers, a twine-stitched spine and a twine tie, page edges at the side. */
     static final String[] FIELD_JOURNAL = {
@@ -1269,46 +1221,6 @@ public final class TextureGen {
             "................",
     };
 
-    /** A small round-bellied pot with a short neck. */
-    static final String[] SMALL_VESSEL_ITEM = {
-            "................",
-            "................",
-            "................",
-            "......4553......",
-            "......1221......",
-            ".......43.......",
-            ".....444332.....",
-            "....45444332....",
-            "...4544443332...",
-            "...4444433322...",
-            "...4444333222...",
-            "...4433332221...",
-            "....33332221....",
-            ".....322221.....",
-            "................",
-            "................",
-    };
-
-    /** A tall storage jar: wide shoulders, a cord band, a narrow mouth. */
-    static final String[] LARGE_VESSEL_ITEM = {
-            "................",
-            ".....4555553....",
-            ".....1222221....",
-            "......44332.....",
-            "....444443332...",
-            "...45444443332..",
-            "...32323232322..",
-            "...44444433322..",
-            "...44444333222..",
-            "...44443333222..",
-            "...44433332221..",
-            "....433332221...",
-            "....333322221...",
-            ".....3322211....",
-            "......22111.....",
-            "................",
-    };
-
     /** A rounded brick, lit from the top-left. */
     static final String[] BRICK_ITEM = {
             "................",
@@ -1435,47 +1347,6 @@ public final class TextureGen {
                 pxWrap(im, x + i, y + 1, CLAY.get(2));
             }
         }
-        return im;
-    }
-
-    /**
-     * Pit-fired ceramic for vessel walls: coil lines every three rows and darker fire clouds where
-     * the logs lay against the pot.
-     */
-    static BufferedImage ceramicWall(long seed, boolean band) {
-        double[][] n = V2.grain(seed);
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.84 ? 4 : 3;
-                if (y % 3 == 2 && (x + y) % 7 != 0) step = Math.min(step, 3) - (n[y][x] < 0.4 ? 1 : 0);
-                // Fire clouds towards the base.
-                if (y > 9 && n[(y + 5) % 16][(x + 3) % 16] > 0.6) step = 2;
-                px(im, x, y, CERAMIC.get(Math.max(1, step)));
-            }
-        if (band) {
-            // A cord-impressed band under the shoulder: slanted ticks.
-            for (int x = 0; x < 16; x++) {
-                px(im, x, 5, CERAMIC.get(x % 3 == 0 ? 2 : 4));
-                px(im, x, 6, CERAMIC.get((x + 1) % 3 == 0 ? 2 : 3));
-            }
-        }
-        return im;
-    }
-
-    /** The vessel's top: shoulder ring, lit rim, dark mouth. */
-    static BufferedImage vesselTop() {
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                double d = Math.max(Math.abs(x - 7.5), Math.abs(y - 7.5));
-                int c;
-                if (d < 2) c = CHARCOAL.get(1);
-                else if (d < 2.6) c = CERAMIC.get(2);
-                else if (d < 4) c = (x < 8 || y < 8) ? CERAMIC.get(5) : CERAMIC.get(4);
-                else c = CERAMIC.get(n2(x, y) ? 4 : 3);
-                px(im, x, y, c);
-            }
         return im;
     }
 
@@ -1779,32 +1650,6 @@ public final class TextureGen {
         BufferedImage im = ceramicPlain(9393, 1, 2);
         Random r = new Random(9393);
         for (int k = 0; k < 4; k++) speck(im, r, r.nextInt(16), r.nextInt(16), SLAG.get(4), SLAG.get(2), 2);
-        return im;
-    }
-
-    /** Thatch: overlapping straw strands laid at a slight slant, tiling in both directions. */
-    static BufferedImage thatch() {
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) px(im, x, y, STRAW.get(y % 4 == 3 ? 2 : 3));
-        Random r = new Random(2468);
-        for (int k = 0; k < 26; k++) {
-            int x = r.nextInt(16), y = r.nextInt(16), len = 3 + r.nextInt(4);
-            int light = r.nextInt(3) == 0 ? 5 : 4;
-            for (int i = 0; i < len; i++) pxWrap(im, x + i, y + i / 3, STRAW.get(i == 0 ? light : 4));
-            pxWrap(im, x + len, y + len / 3 + 1, STRAW.get(2));
-        }
-        return im;
-    }
-
-    /** Small vessel screen, 176x133: four slots in a row, inventory from y 51. */
-    static BufferedImage smallVesselGui() {
-        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        panel(im, 176, 133);
-        for (int i = 0; i < 4; i++) slot(im, 53 + i * 18, 20);
-        for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 51 + row * 18);
-        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 109);
         return im;
     }
 
@@ -4848,8 +4693,6 @@ public final class TextureGen {
         save("item/pulley", pulleyItem());
         save("item/leather_belt", leatherBeltItem());
         save("item/raw_hide", hideItem(0));
-        save("item/limed_hide", hideItem(1));
-        save("item/scraped_hide", hideItem(2));
         save("block/soaking_barrel_side", barrelSide());
         save("block/soaking_barrel_top_open", barrelTopOpen());
         save("block/soaking_barrel_inner", barrelInner());
@@ -7994,7 +7837,6 @@ public final class TextureGen {
         for (Rock rock : ROCKS) {
             save("block/" + rock.name(), rock(rock));
             save("block/cobbled_" + rock.name(), cobbled(rock));
-            save("item/loose_" + rock.name(), map(rock.ramp(), LOOSE_ROCK));
         }
         for (Mineral m : MINERALS) {
             for (String grade : List.of("poor", "normal", "rich"))
@@ -8010,10 +7852,6 @@ public final class TextureGen {
             save("block/small_" + n, pebbles(m));
         }
         save("item/flint_shard", map(V2.FLINT_V2, FLINT_SHARD));
-        itemsV2 = false;
-        save("block/loose_stick", art(WOOD, LOOSE_STICKS));
-        save("block/loose_flint", art(FLINT, LOOSE_FLINTS));
-        itemsV2 = true;
 
         // Stone age (tier 0-2 spec 3).
         save("item/straw", art(V2.STRAW_V2, STRAW_SHEAF));
@@ -8046,8 +7884,7 @@ public final class TextureGen {
         itemsV2 = false;
         save("gui/knapping/clay", claySurface());
         itemsV2 = true;
-        for (var piece : List.of(java.util.Map.entry("small_vessel", SMALL_VESSEL_ITEM), java.util.Map.entry("large_vessel", LARGE_VESSEL_ITEM),
-                java.util.Map.entry("crucible", CRUCIBLE_ITEM), java.util.Map.entry("ingot_mold", INGOT_MOLD_ITEM))) {
+        for (var piece : List.of(java.util.Map.entry("crucible", CRUCIBLE_ITEM), java.util.Map.entry("ingot_mold", INGOT_MOLD_ITEM))) {
             save("item/unfired_" + piece.getKey(), art(V2.CLAY_V2, piece.getValue()));
             save("item/" + piece.getKey(), art(V2.CERAMIC_V2, piece.getValue()));
         }
@@ -8059,16 +7896,10 @@ public final class TextureGen {
             save("item/" + cavity.getKey() + "_mold_filled", filledMold(V2.CERAMIC_V2, cavity.getValue()));
         }
         itemsV2 = false;
-        save("block/large_vessel_side", ceramicWall(6161, true));
-        save("block/large_vessel_top", vesselTop());
-        save("block/large_vessel_bottom", ceramicPlain(6262, 2, 3));
         save("block/crucible_side", crucibleSide());
         save("block/crucible_top", crucibleTop());
         save("block/crucible_inside", crucibleInside());
         save("block/crucible_bottom", ceramicPlain(7373, 2, 3));
-        save("block/pit_kiln_thatch", thatch());
-        save("block/pit_kiln_embers", emberBed(1717));
-        saveRaw("gui/small_vessel", smallVesselGui());
 
         // Charcoal (spec 4.4).
         save("block/log_pile_side", logPileSide());

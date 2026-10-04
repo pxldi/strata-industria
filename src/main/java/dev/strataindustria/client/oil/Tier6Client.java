@@ -32,5 +32,6 @@ public final class Tier6Client {
         event.registerSpriteSet(Tier6Particles.DRIPPING_OIL.get(), OilDripParticle::hang);
         event.registerSpriteSet(Tier6Particles.FALLING_OIL.get(), OilDripParticle::fall);
         event.registerSpriteSet(Tier6Particles.LANDING_OIL.get(), OilDripParticle::land);
+        event.registerSpriteSet(Tier6Particles.OIL_SPRAY.get(), OilDripParticle::spray);
     }
 }

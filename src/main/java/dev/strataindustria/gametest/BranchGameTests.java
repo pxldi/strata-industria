@@ -16,6 +16,10 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 
 /** Snapping branches off trees (redesign R2), run by {@link ModGameTests}. */
 final class BranchGameTests {
+    /** Persistent leaves: with no log near, ordinary ones can decay and vanish mid-test. */
+    private static final net.minecraft.world.level.block.state.BlockState PERSISTENT_OAK = Blocks.OAK_LEAVES.defaultBlockState()
+            .setValue(net.minecraft.world.level.block.LeavesBlock.PERSISTENT, true);
+
     private BranchGameTests() {}
 
     static void register(Map<String, Consumer<GameTestHelper>> tests) {
@@ -31,7 +35,7 @@ final class BranchGameTests {
     private static void snap(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
-        level.setBlock(pos, Blocks.OAK_LEAVES.defaultBlockState(), 3);
+        level.setBlock(pos, PERSISTENT_OAK, 3);
         FakePlayer player = player(level);
         player.setPos(pos.getX() + 0.5, pos.getY() - 1, pos.getZ() + 2.5);
         helper.assertTrue(!Branches.shake(level, player, pos), "the first shake only bends it");
@@ -59,8 +63,8 @@ final class BranchGameTests {
     private static void bareAfterSnap(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(2, 2, 2));
-        level.setBlock(pos, Blocks.OAK_LEAVES.defaultBlockState(), 3);
-        level.setBlock(pos.east(), Blocks.OAK_LEAVES.defaultBlockState(), 3);
+        level.setBlock(pos, PERSISTENT_OAK, 3);
+        level.setBlock(pos.east(), PERSISTENT_OAK, 3);
         FakePlayer player = player(level);
         helper.runAfterDelay(1, () -> {
             Branches.shake(level, player, pos);

@@ -416,7 +416,7 @@ public class AditPiece extends StructurePiece {
                 level.setBlock(pos, Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP), Block.UPDATE_CLIENTS);
                 RandomizableContainer.setBlockEntityLootTable(level, random, pos, CampLoot.barrel("adit/cache", mineral));
             } else if (Weathering.chance(pos, seed, 0.75)) {
-                level.setBlock(pos, ModBlocks.LOOSE_ROCK.get(rock).get().defaultBlockState(), Block.UPDATE_CLIENTS);
+                level.setBlock(pos, ModBlocks.BOULDER.get(rock).get().with(1, false, Direction.Plane.HORIZONTAL.getRandomDirection(random)), Block.UPDATE_CLIENTS);
             }
         }
     }

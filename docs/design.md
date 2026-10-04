@@ -77,8 +77,8 @@ Tiers 0 to 2 are the first playable slice. Tiers 3 and 4 are the second mileston
 **Goal:** survive the first night without wood tools from a crafting table.
 
 - Wood tools are removed. Logs cannot be punched; you need a stone axe.
-- **Knapping**: right-click flint or a loose rock with another rock to open a 5x5 knapping grid. Shape it into axe heads, knife blades, shovel heads, hammer heads, spear heads.
-- **Loose items in the world**: loose rocks, sticks and flint generate on the surface. Rock type matches the stone below, so you learn geology from the first minute.
+- **Knapping**: strike flint or a rock shard in the world to shape it into axe heads, knife blades, shovel heads, hammer heads, spear heads.
+- **Boulders in the world**: weathered boulders of the local rock stand on the surface. Hit one with a bare hand: cracks open, it splits and rock shards hop out. Rock type matches the stone below, so you learn geology from the first minute.
 - **Plant fibre** from tall grass, twisted into string by hand.
 - Tools: stone knife, axe, shovel, hammer, spear. Low durability, quick to make.
 - **Flint strike**: strike flint on a rock over the fire pit to light it. Campfire cooks food and can heat small items.
@@ -91,11 +91,10 @@ Exit condition: having a campfire, stone tools and a stash of clay.
 **Goal:** control heat.
 
 - **Clay forming**: a knapping-like grid with clay to shape vessels, crucibles, ingot molds, tool-head molds, bricks.
-- **Pit kiln**: place unfired pottery on the ground, cover with straw and logs, light it. Takes a few in-game hours. Simple, visible, satisfying.
+- **Firing**: stand unfired pottery on the hearth beside a hot fire pit (up to four pieces). It glows and rings when done.
 - **Charcoal pit**: stack logs, cover with dirt, light. Yields charcoal by volume. First "multiblock" in spirit, no GUI.
-- **Storage vessel**: early storage with a small inventory, also preserves food better.
 - **Forge (basic)**: a small charcoal-fired hearth that heats items to working temperature. Introduces the temperature system and the temperature colour on item tooltips.
-- **Prospecting I**: by hand, look at loose surface rocks and ore nuggets ("surface indicators") that hint at veins below.
+- **Prospecting I**: by hand, look at boulders and ore nuggets ("surface indicators") that hint at veins below.
 
 Exit condition: fired crucible, ingot molds, a forge, and found surface copper.
 
@@ -105,7 +104,7 @@ Exit condition: fired crucible, ingot molds, a forge, and found surface copper.
 
 - **Ore mining** with stone pickaxe is slow; native copper and malachite are minable by stone tools, tin (cassiterite) needs copper tools.
 - **Smelting** in a crucible over the forge. You put ore pieces in by "units" (not whole ingots), watch the melt percentage and composition in the crucible GUI.
-- **Alloying** happens by ratio in the crucible: bronze is 88 to 92% copper, 8 to 12% tin. Wrong ratio gives the wrong alloy or a failed melt. Arsenical bronze and bismuth bronze exist as regional alternatives so geology matters.
+- **Alloying** happens by ratio in the crucible: bronze is 3 parts copper to 1 part tin, in ingots, nuggets or ore, any multiple. Wrong ratio gives the wrong alloy or a failed melt. Arsenical bronze and bismuth bronze exist as regional alternatives so geology matters.
 - **Casting**: pour molten metal into ceramic molds for ingots or tool heads. Fired molds last; a break chance can be set in the config.
 - **Anvil smithing**: a stone anvil first, then a copper/bronze anvil. Smithing is a short, rule-based minigame: each recipe has a target and you choose hits (light, medium, hard, draw, upset, bend, punch, shrink). Matching the last three hits to the rule finishes it. Precision raises the item's quality. It is quick for experienced players and a learning moment for new ones.
 - **Bronze tools and armour**: a real step up.

@@ -66,9 +66,9 @@ final class ModAdvancements extends AdvancementSubProvider {
         StructureData.places(output, root);
 
         // Tier 0: stone
-        AdvancementHolder looseRock = goal(root, "t0/loose_rock", ModItems.LOOSE_ROCK.values().iterator().next().get(),
-                InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.LOOSE_ROCKS)));
-        AdvancementHolder knap = goal(looseRock, "t0/knap", ModItems.STONE_AXE_HEAD.get(), JournalTrigger.TriggerInstance.of(Journal.KNAP));
+        AdvancementHolder boulder = goal(root, "t0/boulder", ModItems.ROCK_SHARD.values().iterator().next().get(),
+                InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.ROCK_SHARDS)));
+        AdvancementHolder knap = goal(boulder, "t0/knap", ModItems.STONE_AXE_HEAD.get(), JournalTrigger.TriggerInstance.of(Journal.KNAP));
         AdvancementHolder stoneAxe = goal(knap, "t0/stone_axe", ModItems.STONE_AXE.get(), has(ModItems.STONE_AXE.get()));
         AdvancementHolder log = goal(stoneAxe, "t0/log", Items.OAK_LOG,
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ItemTags.LOGS)));
@@ -79,14 +79,14 @@ final class ModAdvancements extends AdvancementSubProvider {
                 ItemPredicate.Builder.item().of(items, Items.CLAY_BALL).withCount(MinMaxBounds.Ints.atLeast(5))));
 
         // Tier 1: fire and clay
-        AdvancementHolder forming = goal(clay, "t1/clay_forming", ModItems.UNFIRED_SMALL_VESSEL.get(),
+        AdvancementHolder forming = goal(clay, "t1/clay_forming", ModItems.UNFIRED_CRUCIBLE.get(),
                 JournalTrigger.TriggerInstance.of(Journal.CLAY_FORMING));
-        AdvancementHolder kiln = goal(forming, "t1/pit_kiln", ModItems.SMALL_VESSEL.get(),
-                JournalTrigger.TriggerInstance.of(Journal.PIT_KILN_FIRED));
+        AdvancementHolder kiln = goal(forming, "t1/fired_pottery", ModItems.CRUCIBLE.get(),
+                JournalTrigger.TriggerInstance.of(Journal.POTTERY_FIRED));
         AdvancementHolder charcoal = goal(fire, "t1/charcoal", Items.CHARCOAL, has(Items.CHARCOAL));
         AdvancementHolder forge = goal(charcoal, "t1/forge", ModItems.FORGE.get(),
                 ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.FORGE.get()));
-        goal(looseRock, "t1/nugget", ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get(),
+        goal(boulder, "t1/nugget", ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get(),
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.SMALL_ORES)));
         AdvancementHolder crucible = goal(kiln, "t1/crucible", ModItems.CRUCIBLE.get(),
                 InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.CRUCIBLE.get(), ModItems.INGOT_MOLD.get()));
@@ -218,6 +218,9 @@ final class ModAdvancements extends AdvancementSubProvider {
                 JournalTrigger.TriggerInstance.of(Journal.DRIVERLESS_TRIPS));
         goal(railway, "t4/outpost_5", dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.OUTPOST_GROWN));
+        // Outposts spec 11: sixty-four items over a valley by ropeway.
+        goal(engine, "t4/ropeway", dev.strataindustria.transport.ropeway.RopewayRegistry.BUCKET.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.ROPEWAY_DELIVERED));
         // Spec 15, goal 65: a steam hammer finishes a recipe.
         goal(engine, "t4/steam_hammer", Tier4Items.STEAM_HAMMER.get(), JournalTrigger.TriggerInstance.of(Journal.STEAM_HAMMER));
         // Spec 15, goal 69: a powered crusher finishes something.

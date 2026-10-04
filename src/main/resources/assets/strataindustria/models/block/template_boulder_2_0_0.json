@@ -1,0 +1,111 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "#rock"
+  },
+  "elements": [
+    {
+      "from": [1.0, 0, 1.0],
+      "to": [15.0, 5.0, 14.0],
+      "faces": {
+        "up": {
+          "uv": [1, 1, 15, 14],
+          "texture": "#rock"
+        },
+        "north": {
+          "uv": [1, 11, 15, 16],
+          "texture": "#rock"
+        },
+        "south": {
+          "uv": [1, 11, 15, 16],
+          "texture": "#rock"
+        },
+        "west": {
+          "uv": [1, 11, 14, 16],
+          "texture": "#rock"
+        },
+        "east": {
+          "uv": [1, 11, 14, 16],
+          "texture": "#rock"
+        },
+        "down": {
+          "uv": [1, 1, 15, 14],
+          "texture": "#rock",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [3.0, 5.0, 3.0],
+      "to": [13.0, 9.0, 12.0],
+      "faces": {
+        "up": {
+          "uv": [3, 3, 13, 12],
+          "texture": "#rock"
+        },
+        "north": {
+          "uv": [3, 7, 13, 11],
+          "texture": "#rock"
+        },
+        "south": {
+          "uv": [3, 7, 13, 11],
+          "texture": "#rock"
+        },
+        "west": {
+          "uv": [3, 7, 12, 11],
+          "texture": "#rock"
+        },
+        "east": {
+          "uv": [3, 7, 12, 11],
+          "texture": "#rock"
+        },
+        "down": {
+          "uv": [3, 3, 13, 12],
+          "texture": "#rock",
+          "cullface": "down"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [8, 0, 8]
+      }
+    },
+    {
+      "from": [10.0, 0, 10.0],
+      "to": [15.0, 3.0, 15.0],
+      "faces": {
+        "up": {
+          "uv": [10, 10, 15, 15],
+          "texture": "#rock"
+        },
+        "north": {
+          "uv": [10, 13, 15, 16],
+          "texture": "#rock"
+        },
+        "south": {
+          "uv": [10, 13, 15, 16],
+          "texture": "#rock"
+        },
+        "west": {
+          "uv": [10, 13, 15, 16],
+          "texture": "#rock"
+        },
+        "east": {
+          "uv": [10, 13, 15, 16],
+          "texture": "#rock"
+        },
+        "down": {
+          "uv": [10, 10, 15, 15],
+          "texture": "#rock",
+          "cullface": "down"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [8, 0, 8]
+      }
+    }
+  ]
+}

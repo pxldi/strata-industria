@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "F": "strataindustria:steel_fluid_pipe",
+    "P": "strataindustria:steel_plate",
+    "V": "strataindustria:valve"
+  },
+  "pattern": [
+    "PVP",
+    " F ",
+    "PFP"
+  ],
+  "result": {
+    "id": "strataindustria:wellhead"
+  }
+}

@@ -69,6 +69,11 @@ final class RailwayGameTests {
         return wagon;
     }
 
+    /** Clears vehicles that wandered in from a neighbouring test cell, so a coupling only ever sees the test's own. */
+    private static void strays(GameTestHelper helper) {
+        for (MineTubEntity stray : helper.getLevel().getEntitiesOfClass(MineTubEntity.class, helper.getBounds().inflate(4))) stray.discard();
+    }
+
     private static double flat(MineTubEntity vehicle) {
         return vehicle.getDeltaMovement().horizontalDistance();
     }
@@ -186,6 +191,7 @@ final class RailwayGameTests {
     // Wagons of every kind couple behind a tub and are drawn along with it; a coupled wagon can be uncoupled again.
     private static void wagonsCouple(GameTestHelper helper) {
         run(helper, 0, 8);
+        strays(helper);
         MineTubEntity lead = RailGameTests.tubAt(helper, 4.5);
         OreWagonEntity ore = wagonAt(helper, RailwayRegistry.ORE_WAGON_ENTITY.get(), 3.25);
         TankWagonEntity tank = wagonAt(helper, RailwayRegistry.TANK_WAGON_ENTITY.get(), 2.0);
@@ -195,7 +201,7 @@ final class RailwayGameTests {
         var r2 = tank.couple();
         helper.assertTrue(r2 == MineTubEntity.Coupling.OK, "tank wagon couples, " + r2 + " tank x " + tank.getX());
         var r3 = flat.couple();
-        helper.assertTrue(r3 == MineTubEntity.Coupling.OK, "flat wagon couples, " + r3 + " flat x " + flat.getX() + " tank x " + tank.getX() + " y " + flat.getY() + "/" + tank.getY());
+        helper.assertTrue(r3 == MineTubEntity.Coupling.OK, "flat wagon couples, " + r3 + " near " + helper.getLevel().getEntitiesOfClass(MineTubEntity.class, flat.getBoundingBox().inflate(6)).stream().map(t -> t.getType().toShortString() + "@" + t.getX() + (t.follower() != null ? "+f" : "")).toList() + " flat x " + flat.getX() + " tank x " + tank.getX() + " y " + flat.getY() + "/" + tank.getY());
         helper.assertValueEqual(lead.consist().size(), 4, "one consist of four");
         double start = flat.getX();
         for (int t = 1; t <= 15; t++) helper.runAfterDelay(t, () -> lead.setDeltaMovement(0.15, 0, 0));

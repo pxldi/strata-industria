@@ -9,7 +9,7 @@
             "type": "minecraft:random_chance",
             "chance": 0.2
           },
-          "name": "strataindustria:loose_granite"
+          "name": "strataindustria:granite_shard"
         }
       ],
       "rolls": 1

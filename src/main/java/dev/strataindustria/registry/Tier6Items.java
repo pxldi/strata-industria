@@ -29,6 +29,11 @@ public final class Tier6Items {
     /** Spec 5.5: the oil still. */
     public static final DeferredItem<BlockItem> OIL_STILL = ModItems.ITEMS.registerSimpleBlockItem(Tier6Blocks.OIL_STILL);
 
+    /** Spec 5.2 to 5.4: the oil field. */
+    public static final DeferredItem<BlockItem> SEISMIC_CHARGE = ModItems.ITEMS.registerSimpleBlockItem(Tier6Blocks.SEISMIC_CHARGE);
+    public static final DeferredItem<BlockItem> WELLHEAD = ModItems.ITEMS.registerSimpleBlockItem(Tier6Blocks.WELLHEAD);
+    public static final DeferredItem<BlockItem> PUMP_JACK = ModItems.ITEMS.registerSimpleBlockItem(Tier6Blocks.PUMP_JACK);
+
     /** Plain items with a flat item model and a texture of the same name. */
     public static List<DeferredItem<? extends Item>> flatItems() {
         return List.of(CRUDE_OIL_BUCKET, NAPHTHA_BUCKET, DIESEL_BUCKET, HEAVY_OIL_BUCKET, BITUMEN, POLYETHYLENE_PELLET,

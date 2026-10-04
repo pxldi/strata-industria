@@ -1084,6 +1084,25 @@
     ],
     "subtitle": "subtitles.strataindustria.block.power_hammer.strike"
   },
+  "block.pump_jack.stroke": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.piston.contract",
+        "pitch": 0.6,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.piston.extend",
+        "pitch": 0.55,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.pump_jack.stroke"
+  },
   "block.rubble.break": {
     "sounds": [
       {
@@ -1116,6 +1135,36 @@
       }
     ],
     "subtitle": "subtitles.block.generic.footsteps"
+  },
+  "block.seismic_charge.fuse": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.tnt.primed",
+        "pitch": 1.4,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.seismic_charge.fuse"
+  },
+  "block.seismic_charge.thump": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 64,
+        "name": "entity.generic.explode",
+        "pitch": 0.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 64,
+        "name": "block.piston.extend",
+        "pitch": 0.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.seismic_charge.thump"
   },
   "block.slag_heap.break": {
     "sounds": [
@@ -1340,6 +1389,75 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.tree_tap.place"
+  },
+  "block.wellhead.casing": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 0.6,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.casing"
+  },
+  "block.wellhead.drill": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.grindstone.use",
+        "pitch": 0.6
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.grindstone.use",
+        "pitch": 0.55,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.drill"
+  },
+  "block.wellhead.flow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "pitch": 0.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "pitch": 0.45,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.flow"
+  },
+  "block.wellhead.gusher": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.bubble_column.whirlpool_ambient",
+        "pitch": 0.6
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "entity.generic.splash",
+        "pitch": 0.7,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.gusher"
   },
   "block.windlass.creak": {
     "sounds": [
@@ -1656,6 +1774,85 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.boiler.vent"
+  },
+  "boulder.crack": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 1.3,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.basalt.break",
+        "pitch": 1.5,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.crack"
+  },
+  "boulder.shards": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 1.5,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 1.5,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 1.5,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel4",
+        "pitch": 1.5,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.shards"
+  },
+  "boulder.split": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.deepslate_bricks.break",
+        "pitch": 0.7,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.split"
+  },
+  "boulder.strike": {
+    "sounds": [
+      {
+        "name": "dig/stone1",
+        "pitch": 0.8
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 0.8
+      },
+      {
+        "name": "dig/stone3",
+        "pitch": 0.8
+      },
+      {
+        "name": "dig/stone4",
+        "pitch": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.strike"
   },
   "branch.bare": {
     "sounds": [
@@ -2475,6 +2672,38 @@
     ],
     "subtitle": "subtitles.strataindustria.fire_pit.ignite"
   },
+  "fire_pit.ring": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.2
+      },
+      {
+        "type": "event",
+        "name": "block.decorated_pot.insert",
+        "pitch": 1.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fire_pit.ring"
+  },
+  "fire_pit.set": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.decorated_pot.place",
+        "pitch": 1.1
+      },
+      {
+        "type": "event",
+        "name": "block.gravel.place",
+        "pitch": 1.3,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fire_pit.set"
+  },
   "fire_pit.torch": {
     "sounds": [
       {
@@ -2818,16 +3047,6 @@
     ],
     "subtitle": "subtitles.strataindustria.heat_pipe.tick"
   },
-  "hide.scrape": {
-    "sounds": [
-      {
-        "type": "event",
-        "name": "entity.sheep.shear",
-        "pitch": 1.2
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.hide.scrape"
-  },
   "item.bucket.empty_crude_oil": {
     "sounds": [
       {
@@ -2876,6 +3095,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.item.ore_scanner.done"
+  },
+  "item.ore_scanner.echo": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bit",
+        "pitch": 0.7,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.bit",
+        "pitch": 0.6,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.bit",
+        "pitch": 0.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.item.ore_scanner.echo"
   },
   "item.ore_scanner.scan": {
     "sounds": [
@@ -3632,35 +3874,6 @@
     ],
     "subtitle": "subtitles.strataindustria.pit_kiln.log"
   },
-  "pit_kiln.straw": {
-    "sounds": [
-      {
-        "name": "step/grass1",
-        "pitch": 0.9
-      },
-      {
-        "name": "step/grass2",
-        "pitch": 0.9
-      },
-      {
-        "name": "step/grass3",
-        "pitch": 0.9
-      },
-      {
-        "name": "step/grass4",
-        "pitch": 0.9
-      },
-      {
-        "name": "step/grass5",
-        "pitch": 0.9
-      },
-      {
-        "name": "step/grass6",
-        "pitch": 0.9
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.pit_kiln.straw"
-  },
   "pony.eat": {
     "sounds": [
       {
@@ -3970,6 +4183,173 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.rope.hang"
+  },
+  "ropeway.bucket_hang": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.1,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 1.2,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.fill",
+        "pitch": 1.6,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ropeway.bucket_hang"
+  },
+  "ropeway.bucket_tip": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/gravel4",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.9,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.empty",
+        "pitch": 1.5,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ropeway.bucket_tip"
+  },
+  "ropeway.drive": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.55,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.open",
+        "pitch": 0.6,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ropeway.drive"
+  },
+  "ropeway.line_strung": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bell",
+        "pitch": 1.6,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "item.lead.tied",
+        "pitch": 0.8,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ropeway.line_strung"
+  },
+  "ropeway.rope_tie": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.lead.tied",
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 0.9,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ropeway.rope_tie"
+  },
+  "ropeway.sheave": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 1.5,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 1.2,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.4,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ropeway.sheave"
+  },
+  "ropeway.snap": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.lead.break",
+        "pitch": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.tripwire.detach",
+        "pitch": 0.5,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.chain.break",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ropeway.snap"
   },
   "saw_mill.blade_break": {
     "sounds": [
