@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": "strataindustria:wooden_axle",
+    "G": "strataindustria:wooden_gear",
+    "P": "#minecraft:planks",
+    "R": "strataindustria:wrought_iron_rod"
+  },
+  "pattern": [
+    "PAP",
+    "RGR",
+    " R "
+  ],
+  "result": {
+    "id": "strataindustria:core_sampler"
+  }
+}

@@ -47,6 +47,8 @@ public final class ModMenus {
             MENUS.register("saw_mill", () -> IMenuTypeExtension.create(SawMillMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<TripHammerMenu>> TRIP_HAMMER =
             MENUS.register("trip_hammer", () -> IMenuTypeExtension.create(TripHammerMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.machine.CoreSamplerMenu>> CORE_SAMPLER =
+            MENUS.register("core_sampler", () -> IMenuTypeExtension.create(dev.strataindustria.machine.CoreSamplerMenu::new));
 
     private ModMenus() {}
 }

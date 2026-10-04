@@ -3767,6 +3767,299 @@ public final class TextureGen {
         saveRaw("gui/core_sampler", coreSamplerGui());
     }
 
+    // ---------------------------------------------------------------- tier 3: washing (spec 20.2, 20.4, 20.5)
+
+    // Clear stream water, built per SG 3: inky blue darks, pale cyan-grey lights; the specular is the sheen.
+    static final Ramp WATER = ramp(0xe2eef0, 0x1c2434, 0x27384c, 0x37526a, 0x557890, 0x8cb0c0);
+
+    /**
+     * The washed form of a crushed pile (spec 20.4): same silhouette, and every lit grain (a 4-connected
+     * cluster of steps 4, 5 and specular) gains one more lit pixel next to it. The water sheen is added by the caller.
+     */
+    static String[] washedPile(String[] crushed) {
+        int h = crushed.length, w = crushed[0].length();
+        char[][] g = new char[h][];
+        for (int y = 0; y < h; y++) g[y] = crushed[y].toCharArray();
+        boolean[][] seen = new boolean[h][w];
+        java.util.function.BiPredicate<Integer, Integer> lit = (x, y) ->
+                x >= 0 && y >= 0 && y < h && x < w && (g[y][x] == '4' || g[y][x] == '5' || g[y][x] == 's');
+        List<int[]> raise = new ArrayList<>();
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++) {
+                if (seen[y][x] || !lit.test(x, y)) continue;
+                List<int[]> cluster = new ArrayList<>();
+                java.util.ArrayDeque<int[]> q = new java.util.ArrayDeque<>();
+                q.add(new int[] {x, y});
+                seen[y][x] = true;
+                while (!q.isEmpty()) {
+                    int[] p = q.poll();
+                    cluster.add(p);
+                    int[][] d = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+                    for (int[] e : d) {
+                        int nx = p[0] + e[0], ny = p[1] + e[1];
+                        if (lit.test(nx, ny) && !seen[ny][nx]) { seen[ny][nx] = true; q.add(new int[] {nx, ny}); }
+                    }
+                }
+                cluster.sort((a, b) -> a[1] != b[1] ? a[1] - b[1] : a[0] - b[0]);
+                // The grain's top surface grows: right of a lit pixel first, then below it.
+                search:
+                for (int[] p : cluster)
+                    for (int[] e : new int[][] {{1, 0}, {0, 1}}) {
+                        int nx = p[0] + e[0], ny = p[1] + e[1];
+                        if (nx < w && ny < h && (g[ny][nx] == '3' || g[ny][nx] == '2')) { raise.add(new int[] {nx, ny}); break search; }
+                    }
+            }
+        for (int[] p : raise) g[p[1]][p[0]] = '4';
+        String[] out = new String[h];
+        for (int y = 0; y < h; y++) out[y] = new String(g[y]);
+        return out;
+    }
+
+    /**
+     * Draws a washed pile and puts the single water-sheen highlight on it (map coordinates): a near-white
+     * glint with a pale trailing pixel, like light on the film of water left on the grains.
+     */
+    static BufferedImage washedItem(Ramp a, String[] rows, int sx, int sy) {
+        BufferedImage im = map(a, rows);
+        int left = (16 - rows[0].length()) / 2, top = (16 - rows.length) / 2;
+        px(im, left + sx, top + sy, WATER.spec());
+        if (rows[sy].charAt(sx + 1) != '.') px(im, left + sx + 1, top + sy, WATER.get(5));
+        return im;
+    }
+
+    /**
+     * Washing pan, seen from above at an angle: a shallow copper dish (lit rim top-left, the concave
+     * floor lit on its lower-right wall), its outer wall showing below the rim, and a stick handle
+     * riveted into a tang at the lower left. {@code loaded} fills the bowl with wet gravel.
+     */
+    static BufferedImage washingPan(boolean loaded) {
+        BufferedImage im = img();
+        double cx = 8.6, cy = 6.5, rx = 5.5, ry = 3.7;
+        boolean[][] dish = new boolean[16][16], bowl = new boolean[16][16];
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double nx = (x + 0.5 - cx) / rx, ny = (y + 0.5 - cy) / ry;
+                dish[y][x] = nx * nx + ny * ny <= 1.0;
+                double ix = (x + 0.5 - cx) / (rx - 1.25), iy = (y + 0.5 - cy - 0.15) / (ry - 1.1);
+                bowl[y][x] = ix * ix + iy * iy <= 1.0;
+            }
+        // Handle first, so the pan's outer wall overlaps its end: a 2 px stick running down-left.
+        int[][] stick = {{5, 10}, {4, 11}, {3, 12}, {2, 13}};
+        for (int[] p : stick) {
+            px(im, p[0], p[1], WOOD.get(4));
+            px(im, p[0] + 1, p[1], WOOD.get(3));
+            px(im, p[0] + 1, p[1] + 1, WOOD.get(2));
+        }
+        px(im, 2, 14, WOOD.get(2)); px(im, 3, 14, CLEAR);
+        im.setRGB(3, 14, 0);
+        px(im, 3, 12, WOOD.get(5));
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                // Outer wall: the band of the dish shifted down one pixel.
+                if (!dish[y][x] && y > 0 && dish[y - 1][x]) px(im, x, y, COPPER.get(x < cx - 1 ? 2 : 1));
+                if (!dish[y][x]) continue;
+                int step;
+                if (!bowl[y][x]) step = y + 0.5 < cy ? (x + 0.5 < cx + 1 ? 5 : 4) : (x + 0.5 < cx - 2 ? 4 : x + 0.5 < cx + 2 ? 3 : 2); // rim
+                else if (!bowl[y - 1][x]) step = 1;        // far wall in the shadow of the rim
+                else if (!bowl[y + 1][x]) step = 4;        // near wall faces the light
+                else if (!bowl[y][x - 1]) step = 2;        // left wall, shaded
+                else if (!bowl[y][x + 1]) step = 4;        // right wall, lit
+                else step = 3;
+                px(im, x, y, COPPER.get(step));
+            }
+        px(im, 6, 3, COPPER.spec());
+        if (!loaded) {
+            // A polished scour on the floor where the gravel swirls.
+            px(im, 9, 7, COPPER.get(4)); px(im, 10, 7, COPPER.get(4));
+        } else {
+            // Wet gravel heaped to the rim: dark grey stones, lit tops, a film of water round the near edge.
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    if (!bowl[y][x]) continue;
+                    int step = !bowl[y - 1][x] ? 1 : !bowl[y + 1][x] ? 0 : 2;
+                    px(im, x, y, step == 0 ? WATER.get(3) : FIELD_STONE.get(step));
+                }
+            int[][] stones = {{5, 6, 2}, {7, 5, 2}, {10, 5, 2}, {12, 6, 1}, {8, 7, 2}, {11, 7, 1}, {6, 8, 1}};
+            for (int[] st : stones) {
+                int x0 = st[0], y0 = st[1], w = st[2];
+                for (int i = 0; i < w; i++) {
+                    if (bowl[y0][x0 + i]) px(im, x0 + i, y0, FIELD_STONE.get(i == 0 ? 4 : 3));
+                    if (bowl[y0 + 1][x0 + i] && bowl[y0 + 2][x0 + i]) px(im, x0 + i, y0 + 1, FIELD_STONE.get(i == 0 ? 3 : 1));
+                }
+            }
+            px(im, 9, 6, FIELD_STONE.get(1));
+            px(im, 7, 5, FIELD_STONE.get(5));
+            px(im, 10, 7, GOLD.get(5)); px(im, 10, 8, GOLD.get(2));
+            px(im, 7, 8, WATER.spec()); px(im, 8, 8, WATER.get(5));
+        }
+        return outline(im);
+    }
+
+    /**
+     * Sluice boards: four horizontal planks, lit top edges, dark seams, a butt joint with treenails per board,
+     * and a damp lower edge where the trough sweats water (the model shows rows 8-15 on its outer walls).
+     */
+    static BufferedImage sluicePlanks() {
+        BufferedImage im = img();
+        Random r = new Random(9701);
+        grain(im, WOOD, r, 0, 0, 16, 16, 3, false);
+        int[] joints = {10, 3, 12, 6};
+        for (int b = 0; b < 4; b++) {
+            int y0 = b * 4;
+            for (int x = 0; x < 16; x++) {
+                px(im, x, y0, WOOD.get(x % 6 == 2 ? 5 : 4));
+                px(im, x, y0 + 3, WOOD.get(r.nextInt(5) == 0 ? 2 : 1));
+            }
+            int j = joints[b];
+            px(im, j, y0 + 1, WOOD.get(1)); px(im, j, y0 + 2, WOOD.get(1));
+            px(im, j + 1, y0 + 1, WOOD.get(4)); px(im, j + 1, y0 + 2, WOOD.get(3));
+            px(im, Math.floorMod(j - 2, 16), y0 + 1, WOOD.get(5)); px(im, Math.floorMod(j - 2, 16), y0 + 2, WOOD.get(2));
+            px(im, Math.floorMod(j + 3, 16), y0 + 1, WOOD.get(5)); px(im, Math.floorMod(j + 3, 16), y0 + 2, WOOD.get(2));
+        }
+        // Damp bottom board: the wood darkens towards the water line.
+        for (int x = 0; x < 16; x++) {
+            if ((x * 7) % 5 < 2) px(im, x, 14, WET_WOOD.get(3));
+            px(im, x, 15, WET_WOOD.get((x * 3) % 7 == 0 ? 2 : 1));
+        }
+        return im;
+    }
+
+    /**
+     * Sluice bed, seen from above with north (the outlet) at the top: wet lengthwise boards, and riffle bars
+     * across at rows 3, 7 and 11 (the model's bars sample these rows). Behind each bar (upstream, the row
+     * below it) heavy dark sand is trapped with a gold fleck; in front of each bar the water scours a shadow.
+     */
+    static BufferedImage sluiceBed() {
+        BufferedImage im = img();
+        Random r = new Random(9702);
+        grain(im, WET_WOOD, r, 0, 0, 16, 16, 4, true);
+        for (int y = 0; y < 16; y++)
+            for (int sx : new int[] {2, 6, 10, 14}) px(im, sx, y, WET_WOOD.get((y * 5 + sx) % 7 == 0 ? 2 : 1));
+        int[] gold = {9, 4, 12};
+        int[] bars = {3, 7, 11};
+        for (int i = 0; i < 3; i++) {
+            int z = bars[i];
+            for (int x = 0; x < 16; x++) {
+                px(im, x, z, WOOD.get(x % 5 == 1 ? 5 : 4));
+                px(im, x, z - 1, WET_WOOD.get(x % 6 == 4 ? 2 : 1));
+            }
+            // Trapped heavy sand: a dark bank against the bar with lit grain tops, thinning out upstream.
+            Random sr = new Random(9710 + i);
+            int x = 0;
+            while (x < 16) {
+                int run = 2 + sr.nextInt(3);
+                boolean black = sr.nextInt(4) == 0;
+                for (int k = 0; k < run && x < 16; k++, x++) {
+                    Ramp a = black ? MAGNETITE : FIELD_STONE;
+                    px(im, x, z + 1, a.get(k == 0 ? 3 : 2));
+                    if (k == 0 && sr.nextInt(2) == 0) px(im, x, z + 2, FIELD_STONE.get(2));
+                }
+            }
+            px(im, gold[i], z + 1, GOLD.get(5));
+            px(im, gold[i] + 1, z + 1, GOLD.get(3));
+        }
+        return im;
+    }
+
+    /**
+     * Running water for the sluice's water plane: 16 frames, coloured like vanilla default water (#3F76E4)
+     * so it needs no tint, partial alpha (SG 2 allows it for fluids). Streaks drift one pixel per frame
+     * towards row 0 (north, the outlet), so the strip loops seamlessly; foam flecks flicker just downstream
+     * of the riffle bars (rows 3, 7, 11 of the bed).
+     */
+    static BufferedImage sluiceWater() {
+        int frames = 16;
+        int base = 0x3f76e4, dark = 0x3466cc, light = 0x6a96ec, streak = 0x9ebff4, foam = 0xdce8f8;
+        BufferedImage im = new BufferedImage(16, 16 * frames, BufferedImage.TYPE_INT_ARGB);
+        double[][] n = fractal(9720);
+        // Streaks: column, start row, length, bright.
+        int[][] streaks = {{3, 1, 4, 1}, {6, 9, 3, 0}, {8, 4, 5, 1}, {11, 12, 4, 0}, {12, 2, 3, 1}, {4, 13, 3, 0}, {9, 14, 2, 0}};
+        int[][] flecks = {{4, 2}, {9, 2}, {12, 2}, {3, 6}, {7, 6}, {11, 6}, {5, 10}, {10, 10}, {13, 10}};
+        for (int f = 0; f < frames; f++) {
+            int oy = f * 16;
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    double v = n[Math.floorMod(y + f, 16)][x];
+                    int c = v < 0.34 ? dark : v > 0.70 ? light : base;
+                    im.setRGB(x, oy + y, (c == dark ? 0xbc : c == light ? 0xbe : 0xb4) << 24 | c);
+                }
+            for (int[] st : streaks)
+                for (int k = 0; k < st[2]; k++) {
+                    int y = Math.floorMod(st[1] + k - f, 16);
+                    int c = st[3] == 1 && k == 0 ? streak : light;
+                    im.setRGB(st[0], oy + y, (c == streak ? 0xc8 : 0xbe) << 24 | c);
+                }
+            for (int i = 0; i < flecks.length; i++) {
+                int[] fl = flecks[i];
+                int phase = (f + i * 5) % 8;
+                if (phase < 3) im.setRGB(fl[0], oy + fl[1], 0xd8 << 24 | foam);
+                if (phase == 1) im.setRGB(fl[0] + 1, oy + fl[1], 0xc8 << 24 | streak);
+                if (phase == 2) im.setRGB(fl[0], oy + fl[1] - 1, 0xc8 << 24 | streak);
+            }
+        }
+        return im;
+    }
+
+    /** Sluice: a row of four buffer slots (frames at x 53/71/89/107, y 35; items at +1), status line at y 62, player inventory at y 84. */
+    static BufferedImage sluiceGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        for (int i = 0; i < 4; i++) slot(im, 54 + i * 18, 36); // frame top-left at 53 + 18i, 35
+        inventory(im);
+        return im;
+    }
+
+    /**
+     * Core sample viewer, 220x172: a dark recessed well for the core strip (outer x 12, y 18, 20x132; the screen
+     * paints 64 rows of 2 px from x 13, y 20 in the 18 px wide interior) with engraved depth ticks every 16 px
+     * at x 8-11, and an inset paper sheet for the readout at x 40, y 18, 168x144.
+     */
+    static BufferedImage coreSampleGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 220, 172);
+        well(im, 12, 18, 20, 132, 0x2a2a2a);
+        for (int k = 0; k <= 8; k++) {
+            int y = 20 + k * 16;
+            int x0 = k % 2 == 0 ? 8 : 9; // every other tick a pixel shorter, so the 32-block marks read
+            fill(im, x0, y, 12 - x0, 1, GUI_SHADOW);
+            fill(im, x0, y + 1, 12 - x0, 1, GUI_LIGHT);
+        }
+        // Paper: a 1 px recess, then fibrous sheet in the top paper steps, low contrast for dark grey text.
+        well(im, 40, 18, 168, 144, PAPER.get(5));
+        Random r = new Random(9730);
+        double[][] n = fractal(9731);
+        for (int y = 19; y < 161; y++)
+            for (int x = 41; x < 207; x++)
+                if (n[y % 16][x % 16] < 0.3 && (x * 3 + y * 7) % 5 == 0) px(im, x, y, PAPER.get(4));
+        for (int i = 0; i < 90; i++) {
+            int x = 42 + r.nextInt(160), y = 20 + r.nextInt(138), len = 2 + r.nextInt(3);
+            for (int k = 0; k < len; k++) px(im, x + k, y, PAPER.get(4));
+        }
+        // Inner shadow under the top and left edges of the recess.
+        fill(im, 41, 19, 166, 1, PAPER.get(4));
+        fill(im, 41, 19, 1, 142, PAPER.get(4));
+        return im;
+    }
+
+    static void washing() throws IOException {
+        List<Mineral> all = new ArrayList<>(MINERALS);
+        all.addAll(T3_MINERALS);
+        String[] poor = washedPile(CRUSHED_SMALL), normal = washedPile(CRUSHED_NORMAL), rich = washedPile(CRUSHED_RICH);
+        for (Mineral m : all) {
+            String n = m.name();
+            save("item/washed_poor_" + n, washedItem(m.ramp(), poor, 6, 2));
+            save("item/washed_" + n, washedItem(m.ramp(), normal, 7, 3));
+            save("item/washed_rich_" + n, washedItem(m.ramp(), rich, 6, 3));
+        }
+        save("item/washing_pan", washingPan(false));
+        save("item/washing_pan_loaded", washingPan(true));
+        save("block/sluice_planks", sluicePlanks());
+        save("block/sluice_bed", sluiceBed());
+        saveAnimated("block/sluice_water", sluiceWater(), 2);
+        saveRaw("gui/sluice", sluiceGui());
+        saveRaw("gui/core_sample", coreSampleGui());
+    }
+
     // ---------------------------------------------------------------- output
 
     static void save(String path, BufferedImage im) throws IOException {
@@ -3949,6 +4242,7 @@ public final class TextureGen {
         tier3();
         kinetics();
         machines();
+        washing();
 
         // Glow layers for hot metal: written last, from the finished item textures.
         glowLayers();

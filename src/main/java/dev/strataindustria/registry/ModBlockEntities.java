@@ -73,6 +73,9 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SawMillBlockEntity>> SAW_MILL =
             BLOCK_ENTITIES.register("saw_mill", () -> new BlockEntityType<>(SawMillBlockEntity::new, ModBlocks.SAW_MILL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.machine.CoreSamplerBlockEntity>> CORE_SAMPLER =
+            BLOCK_ENTITIES.register("core_sampler", () -> new BlockEntityType<>(dev.strataindustria.machine.CoreSamplerBlockEntity::new,
+                    ModBlocks.CORE_SAMPLER.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TripHammerBlockEntity>> TRIP_HAMMER =
             BLOCK_ENTITIES.register("trip_hammer", () -> new BlockEntityType<>(TripHammerBlockEntity::new, ModBlocks.TRIP_HAMMER.get()));
 
