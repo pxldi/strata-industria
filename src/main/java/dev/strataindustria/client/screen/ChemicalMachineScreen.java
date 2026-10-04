@@ -9,6 +9,7 @@ import dev.strataindustria.power.StatusLight;
 import java.util.Map;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -120,7 +121,7 @@ public class ChemicalMachineScreen extends AbstractContainerScreen<ChemicalMachi
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() == 0 && overEject(event.x(), event.y()) && minecraft.gameMode != null) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && overEject(event.x(), event.y()) && minecraft.gameMode != null) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, ChemicalMachineMenu.BUTTON_EJECT);
             minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
                     net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0f));

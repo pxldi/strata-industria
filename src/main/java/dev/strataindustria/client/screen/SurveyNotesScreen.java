@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.ItemStack;
@@ -107,9 +108,20 @@ public class SurveyNotesScreen extends Screen {
         }
 
         // The writer's own words, below the compass.
-        int handY = Math.max(y + 4, top + ROSE_Y + ROSE_SIZE + 8);
-        wrapped(g, SurveyText.hand(entry.mineral(), entry.hand()).copy().withStyle(ChatFormatting.ITALIC), left + 14, handY,
-                WIDTH - 28, FADED_INK);
+        int handY = Math.max(y + 2, top + ROSE_Y + ROSE_SIZE + 4);
+        List<FormattedCharSequence> hand = font.split(
+                SurveyText.hand(entry.mineral(), entry.hand()).copy().withStyle(ChatFormatting.ITALIC), WIDTH - 28);
+        int room = Math.max(1, (top + HEIGHT - 10 - handY) / font.lineHeight);
+        if (hand.size() > room) {
+            // Never run off the page: the last line that fits is cut short and ends in an ellipsis.
+            hand = new ArrayList<>(hand.subList(0, room));
+            FormattedCharSequence last = hand.get(room - 1);
+            hand.set(room - 1, FormattedCharSequence.composite(last, FormattedCharSequence.forward("...", Style.EMPTY)));
+        }
+        for (FormattedCharSequence line : hand) {
+            g.text(font, line, left + 14, handY, FADED_INK, false);
+            handY += font.lineHeight;
+        }
     }
 
     /** Draws word-wrapped text and returns the y below it. */
