@@ -53,15 +53,14 @@ public final class ElectricTextures {
     static BufferedImage casing(TextureGen.Ramp r, int base, long seed) {
         BufferedImage im = TextureGen.img();
         fill(im, 0, 0, 15, 15, c(r, base));
-        Random rnd = new Random(seed);
-        for (int i = 0; i < 6; i++) {
-            int len = 3 + rnd.nextInt(3), x = 2 + rnd.nextInt(9), y = 2 + rnd.nextInt(12);
-            for (int k = 0; k < len; k++) TextureGen.px(im, x + k, y, c(r, base + 1));
-        }
-        for (int i = 0; i < 3; i++) {
-            int len = 3 + rnd.nextInt(2), x = 2 + rnd.nextInt(9), y = 2 + rnd.nextInt(12);
-            for (int k = 0; k < len; k++) TextureGen.px(im, x + k, y, c(r, base - 1));
-        }
+        // Per-pixel grain, vanilla style: a rank-normalised field picks lighter and darker steps by share.
+        double[][] g = TextureGen.V2.grain(seed);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double v = g[y][x];
+                int step = v > 0.93 ? base + 2 : v > 0.74 ? base + 1 : v < 0.07 ? base - 2 : v < 0.26 ? base - 1 : base;
+                TextureGen.px(im, x, y, c(r, step));
+            }
         for (int i = 0; i < 16; i++) {
             TextureGen.px(im, i, 0, c(r, base + 1));
             TextureGen.px(im, 0, i, c(r, base + 1));
@@ -2911,6 +2910,7 @@ public final class ElectricTextures {
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
+        TextureGen.itemsV2 = true;
         casings();
         batteries();
         cables();
