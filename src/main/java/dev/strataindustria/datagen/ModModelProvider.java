@@ -218,6 +218,13 @@ final class ModModelProvider extends ModelProvider {
             }
             if (!metal.isToolMetal()) continue;
             flatItem(itemModels, ModItems.PLATES.get(metal).get());
+            if (!metal.isVanilla()) {
+                for (var piece : ModItems.ARMOUR.get(metal).values()) flatItem(itemModels, piece.get());
+            }
+            if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
+                flatItem(itemModels, ModItems.PROSPECTOR_HEADS.get(metal).get());
+                itemModels.generateFlatItem(ModItems.PROSPECTORS_PICKS.get(metal).get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+            }
             for (MoldType type : MoldType.values()) {
                 flatItem(itemModels, ModItems.head(metal, type));
                 if (ModItems.TOOLS.get(metal).get(type) instanceof net.neoforged.neoforge.registries.DeferredItem<?> tool) {

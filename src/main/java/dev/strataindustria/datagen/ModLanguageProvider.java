@@ -115,6 +115,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "crucible.melt", "Metal melts");
         add(subtitles + "quern.grind", "Quern grinds");
         add(subtitles + "anvil.hit", "Hammer rings");
+        add(subtitles + "prospect", "Pick taps rock");
         add(subtitles + "anvil.done", "Piece finished");
         add(subtitles + "anvil.dress", "Stone dressed");
         add(subtitles + "quern.load", "Quern loaded");
@@ -237,6 +238,15 @@ final class ModLanguageProvider extends LanguageProvider {
             }
             if (!metal.isToolMetal()) continue;
             addItem(ModItems.PLATES.get(metal), name + " Plate");
+            if (!metal.isVanilla()) {
+                for (var piece : ModItems.ARMOUR.get(metal).entrySet()) {
+                    add(piece.getValue().get(), name + " " + title(piece.getKey().getName()));
+                }
+            }
+            if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
+                addItem(ModItems.PROSPECTOR_HEADS.get(metal), name + " Prospector's Pick Head");
+                addItem(ModItems.PROSPECTORS_PICKS.get(metal), name + " Prospector's Pick");
+            }
             for (MoldType type : MoldType.values()) {
                 addItem(ModItems.HEADS.get(metal).get(type), name + " " + title(type.id()));
                 var tool = ModItems.TOOLS.get(metal).get(type);
@@ -266,6 +276,15 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".mold.contents", "Holds %s (%s units)");
         add(id + ".mold.still_molten", "The metal is still molten. Let it cool first");
         add(id + ".mold.broke", "The mold cracked apart");
+        String prospect = id + ".prospect.";
+        add(prospect + "nothing", "No ore nearby");
+        String[][] sizes = {{"traces", "Traces of %s", "traces of %s"}, {"small", "Small %s", "small %s"},
+                {"medium", "Medium %s", "medium %s"}, {"large", "Large %s", "large %s"}, {"very_large", "Very large %s", "very large %s"}};
+        for (String[] size : sizes) {
+            add(prospect + size[0], size[1]);
+            add(prospect + size[0] + ".more", size[2]);
+        }
+        for (OreMineral mineral : OreMineral.values()) add(id + ".ore." + mineral.id(), mineral.id().replace('_', ' '));
         add(id + ".metal.slag_note", "Remelts to most of the metal that went in");
         for (String grade : new String[] {"crude", "rough", "standard", "fine", "masterwork"}) {
             add(id + ".quality." + grade, title(grade) + " quality");

@@ -1326,6 +1326,138 @@ public final class TextureGen {
         return map(BRONZE, WOOD, TONGS_ITEM);
     }
 
+    // ---------------------------------------------------------------- armour (spec 8.4)
+
+    /**
+     * Fills a face of an armour layer with overlapping plates: bands three pixels tall, lit along
+     * their top edge, with seams that step over band to band and a rivet now and then.
+     */
+    static void plates(BufferedImage im, Ramp a, int x0, int y0, int w, int h, int fromRow, int toRow, long seed) {
+        Random r = new Random(seed);
+        for (int y = Math.max(0, fromRow); y < Math.min(h, toRow); y++) {
+            int band = (y - fromRow) / 3, inBand = (y - fromRow) % 3;
+            for (int x = 0; x < w; x++) {
+                int step = inBand == 0 ? 4 : inBand == 1 ? 3 : 2;
+                if ((x + band * 2) % 4 == 3) step = Math.max(1, step - 1);
+                if (inBand == 0 && x == w - 1) step = 3;
+                int c = a.get(step);
+                if (inBand == 1 && (x + band * 2) % 4 == 1 && r.nextInt(3) == 0) c = a.spec() != 0 ? a.spec() : a.get(5);
+                im.setRGB(x0 + x, y0 + y, 0xff000000 | c);
+            }
+        }
+    }
+
+    /** Fibre cloth padding peeking out under the plates. */
+    static void padding(BufferedImage im, int x0, int y0, int w, int fromRow, int toRow) {
+        for (int y = fromRow; y < toRow; y++)
+            for (int x = 0; x < w; x++) im.setRGB(x0 + x, y0 + y, 0xff000000 | FIBRE.get(((x + y) & 1) == 0 ? 3 : 2));
+    }
+
+    /** The helmet, chestplate and boots layer (64 x 32, vanilla humanoid layout). */
+    static BufferedImage armourLayer(Ramp a) {
+        BufferedImage im = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
+        // Helmet: top, then right, front, left and back of the head.
+        plates(im, a, 8, 0, 8, 8, 0, 8, 1);
+        for (int f = 0; f < 4; f++) plates(im, a, f * 8, 8, 8, 8, 0, 6, 2 + f);
+        // Cheek guards at the front corners, and a nose guard over an open face.
+        for (int f = 0; f < 4; f++) {
+            int x0 = f * 8;
+            for (int y = 14; y < 16; y++)
+                for (int x = 0; x < 8; x++) {
+                    boolean guard = f == 1 ? (x < 2 || x > 5) : f == 3 ? false : (f == 0 ? x > 4 : x < 3);
+                    if (guard) im.setRGB(x0 + x, y, 0xff000000 | a.get(y == 14 ? 3 : 2));
+                }
+        }
+        for (int y = 12; y < 15; y++) im.setRGB(11, y, 0xff000000 | a.get(y == 12 ? 4 : 3));
+        for (int y = 12; y < 15; y++) im.setRGB(12, y, 0xff000000 | a.get(2));
+        for (int y = 12; y < 14; y++)
+            for (int x = 8; x < 16; x++) if (x < 10 || x > 13) im.setRGB(x, y, 0xff000000 | a.get(3));
+        // Chestplate: body top, then right, front, left and back; the bottom rows are padding.
+        plates(im, a, 20, 16, 8, 4, 0, 4, 7);
+        int[][] body = {{16, 4}, {20, 8}, {28, 4}, {32, 8}};
+        for (int[] face : body) {
+            plates(im, a, face[0], 20, face[1], 12, 0, 10, face[0]);
+            padding(im, face[0], 20, face[1], 10, 12);
+        }
+        // Pauldrons on the arms.
+        plates(im, a, 44, 16, 4, 4, 0, 4, 9);
+        for (int f = 0; f < 4; f++) {
+            plates(im, a, 40 + f * 4, 20, 4, 12, 0, 5, 10 + f);
+            padding(im, 40 + f * 4, 20, 4, 5, 6);
+        }
+        // Boots: the lower legs, with a cloth cuff.
+        for (int f = 0; f < 4; f++) {
+            padding(im, f * 4, 20, 4, 6, 7);
+            plates(im, a, f * 4, 20, 4, 12, 7, 12, 20 + f);
+        }
+        plates(im, a, 8, 16, 4, 4, 0, 4, 24);
+        return im;
+    }
+
+    /** The leggings layer: a belt over the hips and plated thighs. */
+    static BufferedImage leggingsLayer(Ramp a) {
+        BufferedImage im = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
+        int[][] body = {{16, 4}, {20, 8}, {28, 4}, {32, 8}};
+        for (int[] face : body) {
+            padding(im, face[0], 20, face[1], 8, 10);
+            for (int x = 0; x < face[1]; x++) {
+                im.setRGB(face[0] + x, 30, 0xff000000 | a.get(4));
+                im.setRGB(face[0] + x, 31, 0xff000000 | a.get(2));
+            }
+        }
+        im.setRGB(23, 30, 0xff000000 | (a.spec() != 0 ? a.spec() : a.get(5)));
+        for (int f = 0; f < 4; f++) {
+            plates(im, a, f * 4, 20, 4, 12, 0, 9, 30 + f);
+            padding(im, f * 4, 20, 4, 9, 10);
+        }
+        plates(im, a, 4, 16, 4, 4, 0, 4, 34);
+        return im;
+    }
+
+    static final String[] HELMET_ITEM = {
+            "................",
+            "................",
+            "................",
+            "....44455544....",
+            "...4444444443...",
+            "..443333333332..",
+            "..43........32..",
+            "..43........32..",
+            "..432......332..",
+            "...3........2...",
+            "................",
+    };
+    static final String[] CHESTPLATE_ITEM = {
+            "..445....544...",
+            ".4444455444433.",
+            ".4444444444433.",
+            "..34444444433..",
+            "...444444443...",
+            "...333333332...",
+            "...444444443...",
+            "...333333332...",
+            "...ccccccccb...",
+            "...cbcbcbcbb...",
+    };
+    static final String[] LEGGINGS_ITEM = {
+            "..cccccccccb..",
+            "..4444554443..",
+            "..4433..3332..",
+            "..443....332..",
+            "..333....222..",
+            "..443....332..",
+            "..333....222..",
+            "..cbc....cbb..",
+    };
+    static final String[] BOOTS_ITEM = {
+            "..cbc....cbc...",
+            "..443....443...",
+            "..443....443...",
+            "..4433...44433.",
+            ".44333..443332.",
+            ".33222..332221.",
+    };
+
     /** Quern stone side: dressed granite with horizontal tooling marks and a worn top edge. */
     static BufferedImage quernSide() {
         double[][] n = fractal(5151);
@@ -1975,6 +2107,18 @@ public final class TextureGen {
             }
         }
         save("item/slag_metal_ingot", map(SLAG, INGOT));
+        for (Metal metal : METALS) {
+            String n = metal.name();
+            if (!n.contains("bronze")) continue;
+            saveRaw("entity/equipment/humanoid/" + n, armourLayer(metal.ramp()));
+            saveRaw("entity/equipment/humanoid_leggings/" + n, leggingsLayer(metal.ramp()));
+            save("item/" + n + "_helmet", map(metal.ramp(), FIBRE, HELMET_ITEM));
+            save("item/" + n + "_chestplate", map(metal.ramp(), FIBRE, CHESTPLATE_ITEM));
+            save("item/" + n + "_leggings", map(metal.ramp(), FIBRE, LEGGINGS_ITEM));
+            save("item/" + n + "_boots", map(metal.ramp(), FIBRE, BOOTS_ITEM));
+            save("item/" + n + "_prospectors_pick_head", map(metal.ramp(), PROSPECTOR_HEAD));
+            save("item/" + n + "_prospectors_pick", tool(metal.ramp(), WOOD, null, "prospectors_pick"));
+        }
         saveRaw("gui/crucible", crucibleGui());
 
         saveRaw("gui/anvil", anvilGui());

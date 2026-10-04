@@ -83,6 +83,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition dress = definition().subtitle(subtitle("anvil.dress"));
         for (int i = 1; i <= 4; i++) dress.with(sound("minecraft:dig/stone" + i).pitch(0.7f));
         add(ModSounds.ANVIL_DRESS, dress);
+        add(ModSounds.PROSPECT, stone("prospect", 1.9f, 0.6f));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

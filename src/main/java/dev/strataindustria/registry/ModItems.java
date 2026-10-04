@@ -13,6 +13,9 @@ import dev.strataindustria.item.GroundCoverItem;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.CastMoldItem;
 import dev.strataindustria.metal.ModToolMaterials;
+import dev.strataindustria.metal.ModArmorMaterials;
+import dev.strataindustria.item.ProspectorsPickItem;
+import net.minecraft.world.item.equipment.ArmorType;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -93,6 +96,12 @@ public final class ModItems {
     /** Cast heads and blades, by metal and the mold that casts them. */
     public static final Map<Metal, Map<MoldType, DeferredItem<Item>>> HEADS = new EnumMap<>(Metal.class);
     public static final Map<Metal, Map<MoldType, Supplier<Item>>> TOOLS = new EnumMap<>(Metal.class);
+    private static final ArmorType[] ARMOUR_TYPES = {ArmorType.HELMET, ArmorType.CHESTPLATE, ArmorType.LEGGINGS, ArmorType.BOOTS};
+    /** Armour by metal and piece (spec 8.4); copper's is vanilla. */
+    public static final Map<Metal, Map<ArmorType, Supplier<Item>>> ARMOUR = new EnumMap<>(Metal.class);
+    /** Prospector's picks and their heads, bronzes only (spec 10.2). */
+    public static final Map<Metal, DeferredItem<Item>> PROSPECTOR_HEADS = new EnumMap<>(Metal.class);
+    public static final Map<Metal, DeferredItem<ProspectorsPickItem>> PROSPECTORS_PICKS = new EnumMap<>(Metal.class);
     public static final Map<MoldType, DeferredItem<Item>> UNFIRED_MOLDS = new EnumMap<>(MoldType.class);
     public static final Map<MoldType, DeferredItem<CastMoldItem>> MOLDS = new EnumMap<>(MoldType.class);
 
@@ -126,6 +135,26 @@ public final class ModItems {
                 else tools.put(type, ITEMS.registerSimpleItem(metal.id() + "_" + type.tool(), p -> metalTool(p, metal, type)));
             }
             HEADS.put(metal, heads);
+            Map<ArmorType, Supplier<Item>> armour = new EnumMap<>(ArmorType.class);
+            for (ArmorType type : ARMOUR_TYPES) {
+                if (metal.isVanilla()) {
+                    Item vanilla = vanillaCopperArmour(type);
+                    armour.put(type, () -> vanilla);
+                } else {
+                    armour.put(type, ITEMS.registerSimpleItem(metal.id() + "_" + type.getName(),
+                            p -> p.humanoidArmor(ModArmorMaterials.of(metal), type)));
+                }
+            }
+            ARMOUR.put(metal, armour);
+            if (metal.isBronze()) {
+                PROSPECTOR_HEADS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_prospectors_pick_head", p -> p.stacksTo(16)));
+                ToolMaterial material = ModToolMaterials.of(metal);
+                // Mines like a pickaxe, but slowly: it is for listening to the rock, not breaking it.
+                ToolMaterial slow = new ToolMaterial(material.incorrectBlocksForDrops(), material.durability(), 3.0f,
+                        material.attackDamageBonus(), material.enchantmentValue(), material.repairItems());
+                PROSPECTORS_PICKS.put(metal, ITEMS.registerItem(metal.id() + "_prospectors_pick", ProspectorsPickItem::new,
+                        p -> p.pickaxe(slow, 1.0f, -2.8f)));
+            }
             TOOLS.put(metal, tools);
         }
         for (MoldType type : MoldType.values()) {
@@ -155,6 +184,19 @@ public final class ModItems {
             ORE_PIECES.put(mineral, pieces);
             CRUSHED_ORES.put(mineral, crushed);
         }
+    }
+
+    public static ArmorType[] armourTypes() {
+        return ARMOUR_TYPES.clone();
+    }
+
+    private static Item vanillaCopperArmour(ArmorType type) {
+        return switch (type) {
+            case HELMET -> Items.COPPER_HELMET;
+            case CHESTPLATE -> Items.COPPER_CHESTPLATE;
+            case LEGGINGS -> Items.COPPER_LEGGINGS;
+            default -> Items.COPPER_BOOTS;
+        };
     }
 
     private static Item vanillaCopperTool(MoldType type) {

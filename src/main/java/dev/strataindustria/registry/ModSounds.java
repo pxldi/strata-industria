@@ -49,6 +49,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_DONE = register("anvil.done");
     /** Raw rock dressed into a stone anvil. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_DRESS = register("anvil.dress");
+    /** A prospector's pick tapping the rock. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> PROSPECT = register("prospect");
     /** Charcoal catching in the forge. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_IGNITE = register("forge.ignite");
 

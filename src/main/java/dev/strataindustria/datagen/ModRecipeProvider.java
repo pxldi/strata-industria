@@ -241,6 +241,16 @@ final class ModRecipeProvider extends RecipeProvider {
                     rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.THIRD_LAST));
             anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 80,
                     rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+            if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
+                Item head = ModItems.PROSPECTOR_HEADS.get(metal).get();
+                anvil(m + "_prospectors_pick_head", ingot, 1, head, 90,
+                        rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+                Item pick = ModItems.PROSPECTORS_PICKS.get(metal).get();
+                save(key(name(pick)), new MetalToolRecipe(new Recipe.CommonInfo(true),
+                        new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.EQUIPMENT, ""), new ItemStackTemplate(pick),
+                        List.of(Ingredient.of(head), Ingredient.of(Items.STICK))), RecipeCategory.TOOLS, "has_" + name(head), has(head));
+            }
+            armour(metal);
         }
         shaped(RecipeCategory.DECORATIONS, ModItems.BRONZE_ANVIL.get())
                 .pattern("PPP")
@@ -255,6 +265,23 @@ final class ModRecipeProvider extends RecipeProvider {
                 .requires(Items.STICK, 2)
                 .unlockedBy("has_tongs_jaw", has(ModItems.TONGS_JAW.get()))
                 .save(output, key("tongs"));
+    }
+
+    // Spec 8.4: armour from plates over fibre cloth, 14 plates a set.
+    private void armour(Metal metal) {
+        Item plate = ModItems.PLATES.get(metal).get();
+        Item cloth = ModItems.FIBRE_CLOTH.get();
+        var pieces = ModItems.ARMOUR.get(metal);
+        // Shapes from the spec table: helmet, chestplate, leggings, boots.
+        String[][] shapes = {{"PPP", " C "}, {"P P", "PCP", " P "}, {"PCP", "P P"}, {"PCP"}};
+        var types = ModItems.armourTypes();
+        for (int i = 0; i < types.length; i++) {
+            Item piece = pieces.get(types[i]).get();
+            var builder = shaped(RecipeCategory.COMBAT, piece).define('P', plate).define('C', cloth);
+            for (String row : shapes[i]) builder.pattern(row);
+            String path = metal.isVanilla() ? metal.id() + "_" + types[i].getName() + "_from_plates" : name(piece);
+            builder.unlockedBy("has_plate", has(plate)).save(output, key(path));
+        }
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {
@@ -365,6 +392,18 @@ final class ModRecipeProvider extends RecipeProvider {
         RecipeOutput stoneTools = whenOff("vanilla.removeStoneTools");
         vanillaToolSet(stoneTools, ItemTags.STONE_TOOL_MATERIALS, "has_cobblestone",
                 Items.STONE_PICKAXE, Items.STONE_AXE, Items.STONE_SHOVEL, Items.STONE_HOE, Items.STONE_SWORD, Items.STONE_SPEAR);
+
+        // Copper armour comes from plates while the switch is on.
+        RecipeOutput copperArmour = whenOff("vanilla.replaceCopperGear");
+        Criterion<?> hasCopper = has(ItemTags.COPPER_TOOL_MATERIALS);
+        shaped(RecipeCategory.COMBAT, Items.COPPER_HELMET).define('X', Items.COPPER_INGOT).pattern("XXX").pattern("X X")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_HELMET));
+        shaped(RecipeCategory.COMBAT, Items.COPPER_CHESTPLATE).define('X', Items.COPPER_INGOT).pattern("X X").pattern("XXX").pattern("XXX")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_CHESTPLATE));
+        shaped(RecipeCategory.COMBAT, Items.COPPER_LEGGINGS).define('X', Items.COPPER_INGOT).pattern("XXX").pattern("X X").pattern("X X")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_LEGGINGS));
+        shaped(RecipeCategory.COMBAT, Items.COPPER_BOOTS).define('X', Items.COPPER_INGOT).pattern("X X").pattern("X X")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_BOOTS));
 
         // Copper tools come from cast heads; the copper spear has no mold and keeps its recipe.
         // Armour is handled with the plates.
