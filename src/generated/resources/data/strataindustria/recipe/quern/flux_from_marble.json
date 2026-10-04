@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "strataindustria:loose_marble",
+  "result": {
+    "count": 4,
+    "id": "strataindustria:flux"
+  }
+}

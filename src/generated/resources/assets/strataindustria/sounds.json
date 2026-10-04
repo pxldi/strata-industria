@@ -40,6 +40,31 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.hit"
   },
+  "anvil.weld": {
+    "sounds": [
+      {
+        "name": "random/anvil_use",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "name": "random/anvil_land",
+        "pitch": 1.1,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.weld"
+  },
+  "anvil.weld_fail": {
+    "sounds": [
+      {
+        "name": "random/click",
+        "pitch": 0.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.weld_fail"
+  },
   "bloomery.charge": {
     "sounds": [
       {

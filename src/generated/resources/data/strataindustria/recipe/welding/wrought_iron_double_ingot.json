@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:welding",
+  "first": "minecraft:iron_ingot",
+  "result": {
+    "id": "strataindustria:wrought_iron_double_ingot"
+  },
+  "second": "minecraft:iron_ingot"
+}
