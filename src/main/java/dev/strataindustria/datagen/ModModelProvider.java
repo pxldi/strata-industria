@@ -18,6 +18,8 @@ import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.registry.Tier4Blocks;
+import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.smithing.AnvilBlock;
 import java.util.Optional;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -127,7 +129,7 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(ModItems.FORGE.get(), ItemModelUtils.plainModel(forge));
 
         metals(itemModels);
-        tier4(itemModels);
+        tier4(blockModels, itemModels);
         ironAge(blockModels, itemModels);
         kinetics(blockModels, itemModels);
         windAndBelts(blockModels, itemModels);
@@ -431,12 +433,40 @@ final class ModModelProvider extends ModelProvider {
     }
 
     // Tier 4 spec 4.6 and 21.4: materials.
-    private static void tier4(ItemModelGenerators itemModels) {
+    private static void tier4(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         heatable(itemModels, ModItems.STEEL_DOUBLE_INGOT.get());
-        for (var item : java.util.List.of(dev.strataindustria.registry.Tier4Items.SULFUR, dev.strataindustria.registry.Tier4Items.SULFUR_DUST,
-                dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST)) {
+        for (var item : java.util.List.of(Tier4Items.SULFUR, Tier4Items.SULFUR_DUST, Tier4Items.CHARCOAL_DUST, Tier4Items.COKE,
+                Tier4Items.COKE_DUST, Tier4Items.UNFIRED_COKE_OVEN_BRICK, Tier4Items.COKE_OVEN_BRICK, Tier4Items.CREOSOTE_BUCKET,
+                Tier4Items.TREATED_STICK)) {
             flatItem(itemModels, item.get());
         }
+        blockModels.createTrivialCube(Tier4Blocks.COKE_OVEN_BRICKS.get());
+        blockModels.createTrivialCube(Tier4Blocks.COKE_BLOCK.get());
+
+        // Spec 5.1: the door on a brick body; the lit door glows through its peephole and seams.
+        Block door = Tier4Blocks.COKE_OVEN_DOOR.get();
+        TextureMapping cold = new TextureMapping().put(TextureSlot.FRONT, blockTexture("coke_oven_door"))
+                .put(TextureSlot.SIDE, blockTexture("coke_oven_bricks")).put(TextureSlot.TOP, blockTexture("coke_oven_bricks"));
+        TextureMapping hot = cold.copyAndUpdate(TextureSlot.FRONT, blockTexture("coke_oven_door_lit"));
+        var coldModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(door, cold, blockModels.modelOutput));
+        var hotModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(door, "_lit", hot, blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> doorState =
+                PropertyDispatch.initial(dev.strataindustria.coking.CokeOvenBlock.FACING, dev.strataindustria.coking.CokeOvenBlock.LIT);
+        for (boolean lit : new boolean[] {false, true}) {
+            var base = lit ? hotModel : coldModel;
+            doorState.select(net.minecraft.core.Direction.NORTH, lit, base);
+            doorState.select(net.minecraft.core.Direction.EAST, lit, base.with(BlockModelGenerators.Y_ROT_90));
+            doorState.select(net.minecraft.core.Direction.SOUTH, lit, base.with(BlockModelGenerators.Y_ROT_180));
+            doorState.select(net.minecraft.core.Direction.WEST, lit, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(door).with(doorState));
+
+        BlockFamily treated = new BlockFamily.Builder(Tier4Blocks.TREATED_PLANKS.get())
+                .slab(Tier4Blocks.TREATED_SLAB.get())
+                .stairs(Tier4Blocks.TREATED_STAIRS.get())
+                .fence(Tier4Blocks.TREATED_FENCE.get())
+                .getFamily();
+        blockModels.family(Tier4Blocks.TREATED_PLANKS.get()).generateFor(treated);
     }
 
     /**

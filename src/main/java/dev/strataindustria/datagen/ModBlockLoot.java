@@ -7,6 +7,7 @@ import dev.strataindustria.geology.Rock;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.registry.Tier4Blocks;
 import java.util.Set;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
@@ -108,6 +109,12 @@ final class ModBlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.FIRE_BRICK_WALL.get());
         dropSelf(ModBlocks.PLACER_GRAVEL.get());
         dropSelf(ModBlocks.PLACER_SAND.get());
+        // Tier 4 spec 5.
+        for (var block : java.util.List.of(Tier4Blocks.COKE_OVEN_BRICKS, Tier4Blocks.COKE_OVEN_DOOR, Tier4Blocks.COKE_BLOCK,
+                Tier4Blocks.TREATED_PLANKS, Tier4Blocks.TREATED_STAIRS, Tier4Blocks.TREATED_FENCE)) {
+            dropSelf(block.get());
+        }
+        add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);
     }
 
     /** The crucible keeps its pieces, its melt and its heat when picked up, like a shulker box. */

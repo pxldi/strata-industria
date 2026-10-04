@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/iron_anvil",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:coal"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.coal.hint"
+    },
+    "icon": {
+      "id": "minecraft:coal"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.coal"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

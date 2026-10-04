@@ -4999,6 +4999,336 @@ public final class TextureGen {
         return out;
     }
 
+    // Coke oven ramps (spec 21.1).
+    static final Ramp COKE = ramp(0, 0x18181c, 0x2a2a30, 0x3e3e46, 0x56565e, 0x727078);
+    static final Ramp COKE_OVEN_BRICK = ramp(0, 0x3e2a24, 0x583a30, 0x74503e, 0x906850, 0xa88466);
+    static final Ramp TREATED_WOOD = ramp(0, 0x24180e, 0x3a2616, 0x52361e, 0x6a4a2a, 0x82603a);
+    static final Ramp CREOSOTE = ramp(0, 0x140c08, 0x24160c, 0x382212, 0x4c301a, 0x624024);
+
+    /** Vertical joints per course of the large coke oven bricks: three courses, bricks 7-9 px long. */
+    static final int[][] COKE_OVEN_JOINTS = {{3, 11}, {7, 15}, {0, 8}};
+    static final int[] COKE_OVEN_COURSE_TOP = {0, 5, 10}, COKE_OVEN_COURSE_H = {5, 5, 6};
+
+    /**
+     * Large dark-red refractory bricks in three courses, thick dark mortar, the top edge of every brick
+     * sooted (steps 1-2) where smoke has crept out of the joints (spec 21.2).
+     */
+    static BufferedImage cokeOvenBricks() {
+        BufferedImage im = img();
+        Random r = new Random(5151);
+        for (int c = 0; c < 3; c++) {
+            int top = COKE_OVEN_COURSE_TOP[c], h = COKE_OVEN_COURSE_H[c] - 1;
+            int[] j = COKE_OVEN_JOINTS[c];
+            for (int b = 0; b < j.length; b++) {
+                int start = j[b] + 1, w = Math.floorMod(j[(b + 1) % j.length] - start, 16);
+                int tone = r.nextInt(3) == 0 ? -1 : 0;
+                for (int row = 0; row < h; row++)
+                    for (int i = 0; i < w; i++) {
+                        int step = 4 + tone;
+                        if (row == h - 1 || i == w - 1) step = 3 + tone;          // shaded bottom and right edges
+                        if (row == 1 && i == 0) step = 5 + tone;                  // lit corner below the soot
+                        if (r.nextInt(7) == 0) step--;                             // pitting
+                        // Soot: the top row is always dark, the second row patchily so.
+                        if (row == 0) step = r.nextInt(4) == 0 ? 1 : 2;
+                        else if (row == 1 && r.nextInt(3) == 0) step = 2;
+                        pxWrap(im, start + i, top + row, COKE_OVEN_BRICK.get(clampStep(step)));
+                    }
+                for (int y = 0; y <= h; y++) pxWrap(im, j[b], top + y, COKE.get(1));
+            }
+            for (int x = 0; x < 16; x++) px(im, x, top + h, COKE.get(1));
+        }
+        return im;
+    }
+
+    /**
+     * The coke oven door, 10x14 on the brick face: a riveted wrought iron leaf with a strap across it,
+     * a latch and a peephole. 'g' is the seam round the leaf, 'p' the peephole's rim, 'P' the hole.
+     */
+    static final String[] COKE_OVEN_DOOR = {
+            "gggggggggg",
+            "g54444443g",
+            "g4r3333r2g",
+            "g433pp332g",
+            "g43pPPp32g",
+            "g43pPPp32g",
+            "g433pp332g",
+            "g22222221g",
+            "g45555543g",
+            "g4r3333r2g",
+            "g4333hh32g",
+            "g4r3333r2g",
+            "g32222221g",
+            "gggggggggg",
+    };
+
+    /** {@code frame} -1 is the cold door; 0-3 are the lit frames with the charge glowing through. */
+    static BufferedImage cokeOvenDoor(int frame) {
+        BufferedImage im = cokeOvenBricks();
+        int x0 = 3, y0 = 1;
+        int[] bright = {1, 2, 1, 0};
+        Random r = new Random(6100 + frame);
+        for (int y = 0; y < COKE_OVEN_DOOR.length; y++)
+            for (int x = 0; x < COKE_OVEN_DOOR[y].length(); x++) {
+                char ch = COKE_OVEN_DOOR[y].charAt(x);
+                int c;
+                if (ch >= '1' && ch <= '5') c = WROUGHT_IRON.get(ch - '0');
+                else if (ch == 'r' || ch == 'h') c = WROUGHT_IRON.get(5);
+                else if (ch == 'p') c = WROUGHT_IRON.get(1);
+                else if (ch == 'P') c = frame < 0 ? 0x0e0c0c : HEAT_BAND[Math.min(4, 2 + bright[frame] / 2 + r.nextInt(2))];
+                else if (ch == 'g') {
+                    // A thin glow leaks round the leaf, brightest along the bottom where the heat sits.
+                    boolean bottom = y == COKE_OVEN_DOOR.length - 1;
+                    if (frame < 0 || (!bottom && r.nextInt(3) != 0)) c = COKE.get(1);
+                    else c = HEAT_BAND[Math.min(2, (bottom ? 1 : 0) + (r.nextInt(3) < bright[frame] ? 1 : 0))];
+                } else continue;
+                px(im, x0 + x, y0 + y, c);
+            }
+        // Rivet shadows and the latch's shadow.
+        for (int y = 0; y < COKE_OVEN_DOOR.length; y++)
+            for (int x = 0; x < COKE_OVEN_DOOR[y].length(); x++)
+                if (COKE_OVEN_DOOR[y].charAt(x) == 'r' || COKE_OVEN_DOOR[y].charAt(x) == 'h') {
+                    char below = COKE_OVEN_DOOR[y + 1].charAt(x);
+                    if (below >= '1' && below <= '5') px(im, x0 + x, y0 + y + 1, WROUGHT_IRON.get(1));
+                }
+        return im;
+    }
+
+    static BufferedImage cokeOvenDoorLit() {
+        BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(cokeOvenDoor(f), 0, f * 16, null);
+        return strip;
+    }
+
+    /**
+     * Coke block: fused grey-black chunks (a tiling Voronoi of 9 cells), dark cracks between them, each chunk
+     * lit on its upper-left, and pale pores (steps 4-5) that make it read as coke rather than coal.
+     */
+    static BufferedImage cokeBlock() {
+        Random r = new Random(7272);
+        int n = 9;
+        double[][] pts = new double[n][2];
+        for (double[] p : pts) { p[0] = r.nextDouble() * 16; p[1] = r.nextDouble() * 16; }
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double best = 1e9, second = 1e9;
+                double bdx = 0, bdy = 0;
+                for (double[] p : pts)
+                    for (int ox = -16; ox <= 16; ox += 16)
+                        for (int oy = -16; oy <= 16; oy += 16) {
+                            double dx = x + 0.5 - (p[0] + ox), dy = y + 0.5 - (p[1] + oy);
+                            double d = Math.sqrt(dx * dx + dy * dy);
+                            if (d < best) { second = best; best = d; bdx = dx; bdy = dy; }
+                            else if (d < second) second = d;
+                        }
+                int step;
+                if (second - best < 0.9) step = 1;
+                else {
+                    double light = -(bdx + bdy) / Math.max(best, 0.01);
+                    step = light > 0.5 ? 4 : light < -0.5 ? 2 : 3;
+                }
+                px(im, x, y, COKE.get(step));
+            }
+        // Pores: a pale lip with a dark hole tucked under it.
+        for (int i = 0; i < 18; i++) {
+            int x = r.nextInt(16), y = r.nextInt(16);
+            if ((im.getRGB(x, y) & 0xffffff) == COKE.get(1)) continue;
+            pxWrap(im, x, y, COKE.get(r.nextInt(3) == 0 ? 5 : 4));
+            pxWrap(im, x + 1, y + 1, COKE.get(1));
+        }
+        return im;
+    }
+
+    /** A rounded, porous lump of coke: duller and lighter than coal, pocked with pores. */
+    static BufferedImage cokeLump() {
+        double[][] n = fractal(7373);
+        BufferedImage im = img();
+        double cx = 7.5, cy = 8.5, rx = 6.2, ry = 5.2;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = (x - cx) / rx, dy = (y - cy) / ry, d = Math.sqrt(dx * dx + dy * dy);
+                if (d > 0.82 + n[y][x] * 0.3) continue;
+                double light = -(dx + dy) / Math.max(d, 0.2);
+                int step = light > 0.6 && d > 0.35 ? 4 : light < -0.6 && d > 0.55 ? 2 : 3;
+                if (d < 0.35) step = 3;
+                px(im, x, y, COKE.get(step));
+            }
+        // Pores: a dark pit with its lit far wall below-right.
+        int[][] pores = {{5, 6}, {9, 5}, {7, 9}, {11, 8}, {4, 10}, {9, 11}};
+        for (int[] p : pores) {
+            if (!opaque(im, p[0], p[1]) || !opaque(im, p[0] + 1, p[1] + 1)) continue;
+            px(im, p[0], p[1], COKE.get(1));
+            px(im, p[0] + 1, p[1] + 1, COKE.get(5));
+        }
+        return outline(im);
+    }
+
+    /** The dust heap with pale grit through it, so coke dust reads lighter than charcoal dust. */
+    static final String[] COKE_DUST_HEAP = {
+            "....45.....",
+            "...4554....",
+            "..454453...",
+            ".45443532..",
+            "4444353422.",
+            "43533322521",
+            ".222521111.",
+    };
+
+    /** A large brick, heavier than the fire brick: six rows, the same top-left light. */
+    static final String[] COKE_OVEN_BRICK_ITEM = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "...45555555554..",
+            "..4555555555443.",
+            ".44444444444332.",
+            ".44444444444332.",
+            ".33333333333221.",
+            "..2222222222111.",
+            "................",
+    };
+
+    /** The unfired brick: pale fire clay with grains of the sand mixed into it. */
+    static BufferedImage unfiredCokeOvenBrick() {
+        BufferedImage im = art(FIRE_CLAY, COKE_OVEN_BRICK_ITEM);
+        int[][] grains = {{4, 6}, {9, 7}, {6, 8}, {12, 8}, {3, 9}, {10, 9}, {7, 10}};
+        for (int[] g : grains) px(im, g[0], g[1], SAND.get(4));
+        return im;
+    }
+
+    /** A fired brick, sooted along its top like the bricks in the wall. */
+    static BufferedImage cokeOvenBrickItem() {
+        String[] rows = COKE_OVEN_BRICK_ITEM.clone();
+        rows[5] = "...44344443444..";
+        return art(COKE_OVEN_BRICK, rows);
+    }
+
+    /** An iron bucket with dark creosote inside: digits are wrought iron, letters creosote. */
+    static final String[] CREOSOTE_BUCKET = {
+            "................",
+            ".....222222.....",
+            "....2......2....",
+            "...4555555554...",
+            "..45ccddccbc54..",
+            "..4bbbcbbbbb43..",
+            "..355444444432..",
+            "...4554444332...",
+            "...4544443322...",
+            "....44443322....",
+            "....43333221....",
+            ".....322211.....",
+    };
+
+    static final String[] TREATED_STICK = {
+            "................",
+            "............45..",
+            "...........443..",
+            "..........442...",
+            ".........342....",
+            "........342.....",
+            ".......342......",
+            "......342.......",
+            ".....342........",
+            "....342.........",
+            "...342..........",
+            "..332...........",
+            "..21............",
+            "................",
+    };
+
+    /**
+     * Treated planks: four boards of dark, creosote-soaked wood, a lit top row and dark seam per board, a butt
+     * joint in each, and one oily step-4 sheen per board (spec 21.2).
+     */
+    static BufferedImage treatedPlanks() {
+        BufferedImage im = img();
+        Random r = new Random(8484);
+        int[] joints = {11, 4, 13, 7};
+        for (int b = 0; b < 4; b++) {
+            int y0 = b * 4;
+            for (int row = 0; row < 3; row++) {
+                int x = 0;
+                while (x < 16) {
+                    int run = 2 + r.nextInt(5);
+                    int step = row == 0 ? 3 : (r.nextInt(3) == 0 ? 3 : 2);
+                    if (row == 2 && r.nextInt(3) == 0) step = 1;      // latewood streaks low on the board
+                    for (int k = 0; k < run && x < 16; k++, x++) px(im, x, y0 + row, TREATED_WOOD.get(step));
+                }
+            }
+            for (int x = 0; x < 16; x++) px(im, x, y0 + 3, TREATED_WOOD.get(1));
+            int j = joints[b];
+            for (int row = 0; row < 3; row++) {
+                px(im, j, y0 + row, TREATED_WOOD.get(1));
+                px(im, (j + 1) % 16, y0 + row, TREATED_WOOD.get(row == 0 ? 4 : 3));
+            }
+            // The oily sheen: a short bright run on the upper half of the board, clear of the joint.
+            int sx = Math.floorMod(j + 3 + r.nextInt(4), 16);
+            for (int k = 0; k < 3; k++) if (Math.floorMod(sx + k, 16) != j) px(im, Math.floorMod(sx + k, 16), y0 + 1, TREATED_WOOD.get(4));
+        }
+        return im;
+    }
+
+    /**
+     * Coke oven screen, 176x166. Input (34,26) and output (94,26) slot frames with the flame between them at
+     * (63,27) 14x14, creosote tank well (129,16) 18x54 with ticks at every 4000 mB, bucket in (152,17) and
+     * out (152,53) with an arrow between. Status lines at y 50 and 60 over x 8-130. Sprites: creosote fill
+     * strip 16x52 at u 176, v 0; lit flame 14x14 at u 192, v 0.
+     */
+    static BufferedImage cokeOvenGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        slot(im, 34, 26);
+        slot(im, 94, 26);
+        slot(im, 152, 17);
+        slot(im, 152, 53);
+        ghost(im, 152, 17, edgeRows(BUCKET_SHAPE));
+        well(im, 129, 16, 18, 54, 0x2a2a2a);
+        for (int i = 1; i <= 3; i++) {
+            int y = 16 + 1 + 52 - i * 13;
+            fill(im, 125, y, 4, 1, GUI_SHADOW);
+            fill(im, 125, y + 1, 4, 1, GUI_LIGHT);
+        }
+        // Down arrow from the bucket in to the bucket out.
+        for (int j = 0; j < 9; j++) {
+            int half = j < 5 ? 1 : 8 - j;
+            for (int i = -half; i <= half; i++) im.setRGB(159 + i, 36 + j, 0xff000000 | SLOT_FILL);
+        }
+        // Unlit flame, and its lit sprite.
+        for (int y = 0; y < 14; y++)
+            for (int x = 0; x < 14; x++)
+                if (FLAME_SILHOUETTE[y].charAt(x) == '#') {
+                    im.setRGB(63 + x, 27 + y, 0xff000000 | SLOT_FILL);
+                    int band = y < 4 ? 4 : y < 8 ? 3 : y < 11 ? 2 : 1;
+                    im.setRGB(192 + x, y, 0xff000000 | HEAT_BAND[band]);
+                }
+        inventory(im);
+        int[] creosote = {CREOSOTE.get(1), CREOSOTE.get(2), CREOSOTE.get(3), CREOSOTE.get(4), CREOSOTE.get(5)};
+        fillStrip(im, 176, creosote, 0xff);
+        return im;
+    }
+
+    /** A bucket silhouette for the coke oven's empty bucket slot. */
+    static final String[] BUCKET_SHAPE = {
+            "................",
+            "................",
+            "................",
+            "...##########...",
+            "..############..",
+            "..############..",
+            "..############..",
+            "...##########...",
+            "...##########...",
+            "....########....",
+            "....########....",
+            ".....######.....",
+            "................",
+            "................",
+            "................",
+            "................",
+    };
+
     static void tier4() throws IOException {
         // Ores (worldgen spec 14.2 and 14.3).
         for (String grade : List.of("poor", "normal", "rich")) {
@@ -5067,6 +5397,20 @@ public final class TextureGen {
         save("item/sulfur", map(SULFUR, SULFUR_LUMP));
         save("item/sulfur_dust", map(SULFUR, DUST_HEAP));
         save("item/charcoal_dust", map(CHARCOAL, DUST_HEAP));
+
+        // Coke oven, coke and creosote (spec 21.2 and 21.4).
+        save("block/coke_oven_bricks", cokeOvenBricks());
+        save("block/coke_oven_door", cokeOvenDoor(-1));
+        saveAnimated("block/coke_oven_door_lit", cokeOvenDoorLit(), 3);
+        save("block/coke_block", cokeBlock());
+        save("block/treated_planks", treatedPlanks());
+        save("item/coke", cokeLump());
+        save("item/coke_dust", map(COKE, COKE_DUST_HEAP));
+        save("item/unfired_coke_oven_brick", unfiredCokeOvenBrick());
+        save("item/coke_oven_brick", cokeOvenBrickItem());
+        save("item/creosote_bucket", map(WROUGHT_IRON, CREOSOTE, CREOSOTE_BUCKET));
+        save("item/treated_stick", art(TREATED_WOOD, TREATED_STICK));
+        saveRaw("gui/coke_oven", cokeOvenGui());
     }
 
     static void save(String path, BufferedImage im) throws IOException {

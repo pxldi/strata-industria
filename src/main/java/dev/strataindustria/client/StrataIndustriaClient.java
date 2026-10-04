@@ -64,6 +64,7 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.CORE_SAMPLER.get(), dev.strataindustria.client.screen.CoreSamplerScreen::new);
         event.register(ModMenus.SLUICE.get(), dev.strataindustria.client.screen.SluiceScreen::new);
         event.register(ModMenus.SOAKING_BARREL.get(), dev.strataindustria.client.screen.SoakingBarrelScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.COKE_OVEN.get(), dev.strataindustria.client.screen.CokeOvenScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

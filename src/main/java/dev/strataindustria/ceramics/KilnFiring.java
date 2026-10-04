@@ -22,6 +22,7 @@ public final class KilnFiring {
             map.put(ModItems.UNFIRED_INGOT_MOLD.get(), ModItems.INGOT_MOLD.get());
             map.put(ModItems.UNFIRED_BRICK.get(), Items.BRICK);
             map.put(ModItems.UNFIRED_FIRE_BRICK.get(), ModItems.FIRE_BRICK.get());
+            map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_COKE_OVEN_BRICK.get(), dev.strataindustria.registry.Tier4Items.COKE_OVEN_BRICK.get());
             for (MoldType type : MoldType.values()) {
                 map.put(ModItems.UNFIRED_MOLDS.get(type).get(), ModItems.MOLDS.get(type).get());
             }

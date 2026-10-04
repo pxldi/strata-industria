@@ -29,6 +29,8 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
     public static final int HEAT_SLOTS = 4;
     public static final int FUEL_STACK = 16;
     public static final float MAX_TEMPERATURE = 1350.0f;
+    /** Coke drives the forge to 1450 °C, 1600 °C with a bellows: hot enough to melt iron. */
+    public static final float COKE_TEMPERATURE = 1450.0f;
     static final float HEAT_PER_TICK = 8.0f / 20;
     /** Extra degrees a bellows adds over what the fuel can reach. */
     public static final float BELLOWS_BONUS = 150.0f;
@@ -85,11 +87,14 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
         if (stack.is(Items.CHARCOAL)) return 2400;
         if (stack.is(Items.COAL)) return 3200;
         if (stack.is(ModItems.LIGNITE.get())) return 1600;
+        // Tier 4 spec 3: coke burns long and hot enough for iron and steel.
+        if (stack.is(dev.strataindustria.registry.Tier4Items.COKE.get())) return 3000;
         return 0;
     }
 
     /** The hottest a fuel can drive the forge: lignite stalls at 1200 °C, below iron welding heat. */
     public static float maxTemperature(ItemStack stack) {
+        if (stack.is(dev.strataindustria.registry.Tier4Items.COKE.get())) return COKE_TEMPERATURE;
         return stack.is(ModItems.LIGNITE.get()) ? 1200.0f : MAX_TEMPERATURE;
     }
 

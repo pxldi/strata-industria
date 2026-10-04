@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "strataindustria:block/coke_oven_door",
+    "side": "strataindustria:block/coke_oven_bricks",
+    "top": "strataindustria:block/coke_oven_bricks"
+  }
+}

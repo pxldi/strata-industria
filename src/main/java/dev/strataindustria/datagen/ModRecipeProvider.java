@@ -27,6 +27,7 @@ import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.smithing.WeldingRecipe;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.washing.WashingRecipe;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,7 @@ final class ModRecipeProvider extends RecipeProvider {
         quern();
         smithing();
         ironAge();
+        tier4();
         vanillaOverrides();
     }
 
@@ -358,6 +360,83 @@ final class ModRecipeProvider extends RecipeProvider {
 
 
     // Tier 3 spec 3: fire clay, fire bricks and the fire brick furnace.
+    /** Tier 4 spec 4.6 and 5: coke, the coke oven and treated wood. */
+    private void tier4() {
+        Item fireClay = ModItems.FIRE_CLAY_BALL.get();
+        shapeless(RecipeCategory.MISC, Tier4Items.UNFIRED_COKE_OVEN_BRICK.get(), 4)
+                .requires(fireClay, 2)
+                .requires(Items.SAND)
+                .unlockedBy("has_fire_clay_ball", has(fireClay))
+                .save(output, key("unfired_coke_oven_brick"));
+        Item ovenBrick = Tier4Items.COKE_OVEN_BRICK.get();
+        shaped(RecipeCategory.BUILDING_BLOCKS, Tier4Items.COKE_OVEN_BRICKS.get())
+                .pattern("BB")
+                .pattern("BB")
+                .define('B', ovenBrick)
+                .unlockedBy("has_coke_oven_brick", has(ovenBrick))
+                .save(output, key("coke_oven_bricks"));
+        Item ironPlate = ModItems.PLATES.get(Metal.WROUGHT_IRON).get();
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.COKE_OVEN_DOOR.get())
+                .pattern("BIB")
+                .pattern("I I")
+                .pattern("BIB")
+                .define('B', ovenBrick)
+                .define('I', ironPlate)
+                .unlockedBy("has_coke_oven_brick", has(ovenBrick))
+                .save(output, key("coke_oven_door"));
+
+        Item coke = Tier4Items.COKE.get();
+        shaped(RecipeCategory.MISC, Tier4Items.COKE_BLOCK.get())
+                .pattern("CCC")
+                .pattern("CCC")
+                .pattern("CCC")
+                .define('C', coke)
+                .unlockedBy("has_coke", has(coke))
+                .save(output, key("coke_block"));
+        shapeless(RecipeCategory.MISC, coke, 9)
+                .requires(Tier4Items.COKE_BLOCK.get())
+                .unlockedBy("has_coke_block", has(Tier4Items.COKE_BLOCK.get()))
+                .save(output, key("coke_from_block"));
+        grind("coke_dust", Ingredient.of(coke), Tier4Items.COKE_DUST.get(), 2);
+
+        // Spec 5.2: creosote soaks eight planks; the bucket comes back.
+        Item creosote = Tier4Items.CREOSOTE_BUCKET.get();
+        shaped(RecipeCategory.BUILDING_BLOCKS, Tier4Items.TREATED_PLANKS.get(), 8)
+                .pattern("PPP")
+                .pattern("PCP")
+                .pattern("PPP")
+                .define('P', ItemTags.PLANKS)
+                .define('C', creosote)
+                .unlockedBy("has_creosote_bucket", has(creosote))
+                .save(output, key("treated_planks"));
+        Item treated = Tier4Items.TREATED_PLANKS.get();
+        shaped(RecipeCategory.MISC, Tier4Items.TREATED_STICK.get(), 4)
+                .pattern("P")
+                .pattern("P")
+                .define('P', treated)
+                .unlockedBy("has_treated_planks", has(treated))
+                .save(output, key("treated_stick"));
+        shaped(RecipeCategory.BUILDING_BLOCKS, Tier4Items.TREATED_SLAB.get(), 6)
+                .pattern("PPP")
+                .define('P', treated)
+                .unlockedBy("has_treated_planks", has(treated))
+                .save(output, key("treated_slab"));
+        shaped(RecipeCategory.BUILDING_BLOCKS, Tier4Items.TREATED_STAIRS.get(), 4)
+                .pattern("P  ")
+                .pattern("PP ")
+                .pattern("PPP")
+                .define('P', treated)
+                .unlockedBy("has_treated_planks", has(treated))
+                .save(output, key("treated_stairs"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.TREATED_FENCE.get(), 3)
+                .pattern("PSP")
+                .pattern("PSP")
+                .define('P', treated)
+                .define('S', Tier4Items.TREATED_STICK.get())
+                .unlockedBy("has_treated_planks", has(treated))
+                .save(output, key("treated_fence"));
+    }
+
     private void ironAge() {
         int brick = GridPattern.parse(List.of("##.##", "##.##", ".....", "##.##", "##.##")).getOrThrow();
         output.accept(key("clay_forming/unfired_fire_brick"), new KnappingRecipe(Ingredient.of(ModItems.FIRE_CLAY_BALL.get()),

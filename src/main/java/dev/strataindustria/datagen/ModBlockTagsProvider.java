@@ -6,6 +6,7 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.RockCategory;
 import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.ModTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
@@ -97,6 +98,14 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.STAIRS).add(ModBlocks.FIRE_BRICK_STAIRS.getKey());
         tag(BlockTags.WALLS).add(ModBlocks.FIRE_BRICK_WALL.getKey());
         tag(ModTags.Blocks.REFRACTORY).add(ModBlocks.FIRE_BRICKS.getKey());
+        // Tier 4 spec 5.
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(Tier4Blocks.COKE_OVEN_BRICKS.getKey()).add(Tier4Blocks.COKE_OVEN_DOOR.getKey())
+                .add(Tier4Blocks.COKE_BLOCK.getKey());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(Tier4Blocks.TREATED_PLANKS.getKey()).add(Tier4Blocks.TREATED_SLAB.getKey())
+                .add(Tier4Blocks.TREATED_STAIRS.getKey()).add(Tier4Blocks.TREATED_FENCE.getKey());
+        tag(BlockTags.WOODEN_SLABS).add(Tier4Blocks.TREATED_SLAB.getKey());
+        tag(BlockTags.WOODEN_STAIRS).add(Tier4Blocks.TREATED_STAIRS.getKey());
+        tag(BlockTags.WOODEN_FENCES).add(Tier4Blocks.TREATED_FENCE.getKey());
         tag(ModTags.Blocks.PROSPECTABLE).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
                 .add(ModBlocks.BOG_IRON.getKey());
 

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "strataindustria:block/treated_planks",
+    "side": "strataindustria:block/treated_planks",
+    "top": "strataindustria:block/treated_planks"
+  }
+}
