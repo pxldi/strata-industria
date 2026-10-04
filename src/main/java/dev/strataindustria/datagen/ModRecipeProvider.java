@@ -493,7 +493,6 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('S', solder)
                 .unlockedBy("has_solder_ingot", has(solder))
                 .save(output, key("bronze_fluid_pipe"));
-        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get();
         shaped(RecipeCategory.REDSTONE, Tier4Items.STEEL_FLUID_PIPE.get(), 4)
                 .pattern("PPP")
                 .define('P', steelPlate)

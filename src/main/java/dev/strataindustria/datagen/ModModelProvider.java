@@ -557,9 +557,9 @@ final class ModModelProvider extends ModelProvider {
         for (var pipe : java.util.List.of(Tier4Blocks.COPPER_HEAT_PIPE, Tier4Blocks.REFRACTORY_HEAT_DUCT)) {
             String name = pipe.getId().getPath();
             MultiPartGenerator parts = MultiPartGenerator.multiPart(pipe.get());
-            for (boolean hot : new boolean[] {false, true}) {
-                String suffix = hot ? "_hot" : "";
-                parts.with(BlockModelGenerators.condition().term(dev.strataindustria.heat.HeatPipeBlock.HOT, hot),
+            for (boolean glowing : new boolean[] {false, true}) {
+                String suffix = glowing ? "_hot" : "";
+                parts.with(BlockModelGenerators.condition().term(dev.strataindustria.heat.HeatPipeBlock.HOT, glowing),
                         BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_core" + suffix)));
                 var arm = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_arm" + suffix));
                 var props = dev.strataindustria.heat.HeatPipeBlock.PROPERTIES;
@@ -571,7 +571,7 @@ final class ModModelProvider extends ModelProvider {
                         net.minecraft.core.Direction.UP, arm.with(BlockModelGenerators.X_ROT_270),
                         net.minecraft.core.Direction.DOWN, arm.with(BlockModelGenerators.X_ROT_90));
                 for (var side : net.minecraft.core.Direction.values()) {
-                    parts.with(BlockModelGenerators.condition().term(props.get(side), true).term(dev.strataindustria.heat.HeatPipeBlock.HOT, hot),
+                    parts.with(BlockModelGenerators.condition().term(props.get(side), true).term(dev.strataindustria.heat.HeatPipeBlock.HOT, glowing),
                             turned.get(side));
                 }
             }
