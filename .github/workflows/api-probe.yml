@@ -14,60 +14,29 @@ jobs:
           distribution: 'temurin'
       - uses: gradle/actions/setup-gradle@v4
       - name: Minecraft artifacts
-        run: ./gradlew createMinecraftArtifacts --stacktrace || true
-      - name: Locate jars
+        run: ./gradlew createMinecraftArtifacts || true
+      - name: Decompile
         run: |
           set +e
-          M=build/tmp/createMinecraftArtifacts/nfrt_artifact_manifest.properties
-          cat $M | head -20
-          find build -name "*.jar" | head -40
-          for j in $(find build ~/.gradle/caches -name "*.jar" 2>/dev/null | grep -iE "minecraft|neoforge|nfrt|moddev"); do
-            n=$(unzip -l "$j" 2>/dev/null | grep -cE "levelgen/structure/Structure\.(java|class)")
-            [ "$n" != "0" ] && echo "HAS $n $j"
-          done
-      - name: Dump sources
-        run: |
-          set +e
-          SRC=$(for j in $(find build ~/.gradle/caches -name "*.jar" 2>/dev/null); do unzip -l "$j" 2>/dev/null | grep -q "levelgen/structure/Structure.java" && echo $j && break; done)
-          echo "SRC=$SRC"
-          CLS=$(for j in $(find build ~/.gradle/caches -name "*.jar" 2>/dev/null); do unzip -l "$j" 2>/dev/null | grep -q "levelgen/structure/Structure.class" && echo $j && break; done)
-          echo "CLS=$CLS"
-          echo "CLS=$CLS" >> $GITHUB_ENV
-          [ -z "$SRC" ] && exit 0
-          mkdir -p /tmp/src && cd /tmp/src && unzip -q -o "$SRC"
-          echo "===== LIST structure"; find net/minecraft/world/level/levelgen/structure -name "*.java" | sort
-          full() { for f in "$@"; do echo "===== FILE $f"; cat "$f"; done; }
-          sigs() { for f in "$@"; do echo "===== SIGS $f"; grep -nE "^\s*(public|protected|abstract|static|record|class|interface|enum|private static final)" "$f"; done; }
-          S=net/minecraft/world/level/levelgen/structure
-          full $S/Structure.java $S/TemplateStructurePiece.java $S/structures/JigsawStructure.java $S/StructureType.java $S/StructurePieceType.java $S/StructureSet.java
-          full $S/placement/RandomSpreadStructurePlacement.java $S/placement/StructurePlacementType.java
-          sigs $S/placement/StructurePlacement.java $S/StructurePiece.java $S/BoundingBox.java $S/pools/JigsawPlacement.java $S/pools/StructurePoolElement.java $S/pools/SinglePoolElement.java $S/pools/StructureTemplatePool.java $S/templatesystem/StructureTemplate.java $S/templatesystem/StructurePlaceSettings.java $S/templatesystem/StructureTemplateManager.java $S/StructureStart.java $S/PoolElementStructurePiece.java $S/pieces/StructurePiecesBuilder.java $S/pieces/StructurePieceSerializationContext.java
-          full $S/templatesystem/StructureProcessor.java $S/templatesystem/StructureProcessorType.java $S/templatesystem/RuleProcessor.java $S/templatesystem/ProcessorRule.java $S/templatesystem/BlockRotProcessor.java $S/templatesystem/ProtectedBlockProcessor.java $S/templatesystem/RandomBlockMatchTest.java $S/templatesystem/StructureProcessorList.java $S/templatesystem/BlockIgnoreProcessor.java
-          full net/minecraft/data/worldgen/ProcessorLists.java | head -150
-          full net/minecraft/data/worldgen/Pools.java
-          sigs net/minecraft/data/worldgen/Structures.java net/minecraft/data/worldgen/StructureSets.java
-          sed -n 1,140p net/minecraft/data/worldgen/Structures.java
-          sed -n 1,120p net/minecraft/data/worldgen/StructureSets.java
-          full net/minecraft/data/worldgen/TrailRuinsStructurePools.java 2>/dev/null | head -120
-          full net/minecraft/world/level/storage/loot/functions/LootItemConditionalFunction.java net/minecraft/world/level/storage/loot/functions/SetItemDamageFunction.java net/minecraft/world/level/storage/loot/functions/LootItemFunctionType.java
-          sigs net/minecraft/world/level/storage/loot/functions/LootItemFunctions.java net/minecraft/world/level/storage/loot/LootContext.java net/minecraft/world/level/storage/loot/parameters/LootContextParams.java
-          sigs net/minecraft/world/level/block/entity/BrushableBlockEntity.java net/minecraft/world/RandomizableContainer.java net/minecraft/nbt/NbtIo.java net/minecraft/data/DataProvider.java net/minecraft/data/CachedOutput.java net/minecraft/data/PackOutput.java
-          full net/minecraft/data/structures/SnbtToNbt.java
-          sigs net/minecraft/advancements/criterion/LocationPredicate.java net/minecraft/advancements/critereon/LocationPredicate.java
-          sigs net/minecraft/data/loot/packs/VanillaChestLoot.java | head -40
-          sed -n 1,80p net/minecraft/data/loot/packs/VanillaChestLoot.java
-          sigs net/minecraft/data/tags/StructureTagsProvider.java net/minecraft/data/tags/KeyTagProvider.java net/minecraft/data/tags/TagsProvider.java
-          ls net/minecraft/data/tags/
-          sigs net/minecraft/world/level/levelgen/structure/structures/MineshaftPieces.java | head -60
-          sed -n 1,200p $S/structures/MineshaftPieces.java
-      - name: Javap fallback
-        run: |
-          set +e
-          [ -z "$CLS" ] && exit 0
-          for c in levelgen.structure.Structure levelgen.structure.Structure\$GenerationContext levelgen.structure.Structure\$StructureSettings levelgen.structure.Structure\$GenerationStub levelgen.structure.StructurePiece levelgen.structure.StructureType levelgen.structure.StructurePieceType levelgen.structure.StructureSet levelgen.structure.BoundingBox levelgen.structure.placement.RandomSpreadStructurePlacement levelgen.structure.placement.StructurePlacement levelgen.structure.placement.ConcentricRingsStructurePlacement levelgen.structure.pieces.StructurePiecesBuilder levelgen.structure.pieces.StructurePieceSerializationContext levelgen.structure.TerrainAdjustment levelgen.structure.StructureSpawnOverride; do
-            echo "===== $c"; javap -p -cp "$CLS" net.minecraft.world.level.$c
-          done
-          for c in net.minecraft.world.RandomizableContainer net.minecraft.world.level.block.entity.BrushableBlockEntity net.minecraft.client.gui.screens.Screen net.minecraft.world.level.storage.loot.functions.SetComponentsFunction net.minecraft.data.worldgen.StructureSets net.minecraft.data.worldgen.Structures net.minecraft.world.level.levelgen.structure.structures.MineshaftPieces\$MineShaftCorridor; do
-            echo "===== $c"; javap -p -cp "$CLS" $c
-          done
-          unzip -l "$CLS" | grep -E "LocationPredicate|StructureTagsProvider|loot/functions/SetComponents" 
+          JAR=$GITHUB_WORKSPACE/build/moddev/artifacts/minecraft-patched-26.3.0.23-beta.jar
+          curl -sSL -o /tmp/vf.jar https://repo1.maven.org/maven2/org/vineflower/vineflower/1.11.1/vineflower-1.11.1.jar
+          mkdir -p /tmp/cls /tmp/out && cd /tmp/cls
+          P=net/minecraft/world/level/levelgen/structure
+          unzip -q -o $JAR "$P/Structure.class" "$P/Structure\$*" "$P/StructureType*" "$P/StructurePiece.class" "$P/StructurePiece\$*" "$P/StructurePieceType*" "$P/StructureSet*" "$P/ScatteredFeaturePiece*" "$P/TerrainAdjustment*" "$P/StructureSpawnOverride*" "$P/BoundingBox.class" \
+            "$P/structures/SwampHutPiece*" "$P/structures/SwampHutStructure*" "$P/structures/DesertPyramidStructure*" "$P/structures/IglooStructure*" \
+            "$P/placement/RandomSpreadStructurePlacement*" "$P/placement/ConcentricRingsStructurePlacement*" "$P/placement/StructurePlacement.class" "$P/placement/StructurePlacement\$*" \
+            "$P/pieces/StructurePieceSerializationContext*" "$P/pieces/StructurePiecesBuilder*" \
+            "net/minecraft/data/worldgen/Structures.class" "net/minecraft/data/worldgen/StructureSets.class" \
+            "net/minecraft/world/RandomizableContainer*" \
+            "net/minecraft/advancements/predicates/LocationPredicate*" "net/minecraft/advancements/triggers/PlayerTrigger*" \
+            "net/minecraft/world/level/storage/loot/functions/SetComponentsFunction*" "net/minecraft/world/level/storage/loot/functions/SetItemDamageFunction*" \
+            "net/minecraft/client/gui/screens/Screen.class" "net/minecraft/client/gui/screens/inventory/BookViewScreen.class" \
+            "net/minecraft/client/color/item/ItemTintSource*" "net/minecraft/client/color/item/ItemTintSources*" "net/minecraft/client/color/item/Constant*" \
+            "net/minecraft/world/level/block/CarpetBlock.class" "net/minecraft/world/level/block/RotatedPillarBlock.class" \
+            "net/minecraft/data/loot/LootTableSubProvider.class" "net/minecraft/data/loot/packs/VanillaChestLoot.class" \
+            "net/minecraft/world/level/storage/loot/BuiltInLootTables.class" 2>&1 | tail -3
+          find . -name "*.class" | wc -l
+          java -jar /tmp/vf.jar -din=0 -rbr=1 -dgs=1 -log=WARN /tmp/cls /tmp/out > /dev/null 2>&1
+          cd /tmp/out
+          find . -name "*.java" | sort
+          for f in $(find . -name "*.java" | sort); do echo "######## $f"; cat "$f"; done
