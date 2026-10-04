@@ -684,6 +684,145 @@ public final class ElectricTextures {
         ImageIO.write(im, "png", f);
     }
 
+    // ---------------------------------------------------------------- red alloy and components
+
+    /** Cold crimson metal; darker than the SG 6 heat bands (cherry red #d23a1e) so it never reads as hot. */
+    static final TextureGen.Ramp RED_ALLOY = TextureGen.ramp(0xe8a08a, 0x3a1420, 0x5e1c26, 0x8a2a2e, 0xae4038, 0xcc6450);
+    static final TextureGen.Ramp CIRCUIT_BOARD = TextureGen.ramp(0, 0x2a2410, 0x40381a, 0x5a4e26, 0x766634, 0x928046);
+    /** Relay casing: near-black with a cool tint. */
+    static final TextureGen.Ramp RELAY = TextureGen.ramp(0, 0x101216, 0x1a1d22, 0x272b32, 0x383d46, 0x4c525c);
+
+    /**
+     * Pixel map over several ramps: digits 1-5 = ramps[0], a-e = ramps[1], f-j = ramps[2], k-o = ramps[3];
+     * 's' = specular of ramps[0]; '.' transparent. The 1 px outline is added afterwards.
+     */
+    static BufferedImage grid(String[] rows, TextureGen.Ramp... ramps) {
+        BufferedImage im = TextureGen.img();
+        int top = (16 - rows.length) / 2;
+        for (int y = 0; y < rows.length; y++) {
+            String row = rows[y];
+            int left = (16 - row.length()) / 2;
+            for (int x = 0; x < row.length(); x++) {
+                char ch = row.charAt(x);
+                int col;
+                if (ch >= '1' && ch <= '5') col = ramps[0].get(ch - '0');
+                else if (ch >= 'a' && ch <= 'o') col = ramps[1 + (ch - 'a') / 5].get((ch - 'a') % 5 + 1);
+                else if (ch == 's') col = ramps[0].spec() != 0 ? ramps[0].spec() : ramps[0].get(5);
+                else continue;
+                TextureGen.px(im, left + x, top + y, col);
+            }
+        }
+        return TextureGen.outline(im);
+    }
+
+    /** Steel plate 12x9 with three drilled holes growing from 1 px to 3 px. */
+    static String[] drawPlateRows() {
+        String[] base = {
+                ".4555555s55.",
+                "444444444443",
+                "444444444443",
+                "433333333332",
+                "433333333332",
+                "433333333332",
+                "433333333332",
+                "322222222221",
+                ".1111111111.",
+        };
+        char[][] g = new char[base.length][];
+        for (int i = 0; i < base.length; i++) g[i] = base[i].toCharArray();
+        int[][] holes = {{2, 4, 1}, {4, 3, 2}, {7, 3, 3}}; // {x, y, size}, centred on row 4
+        for (int[] h : holes) {
+            for (int dy = 0; dy < h[2]; dy++)
+                for (int dx = 0; dx < h[2]; dx++) g[h[1] + dy][h[0] + dx] = '1';
+            if (h[2] >= 2) // lit lower-right rim (light from top-left)
+                for (int k = 0; k <= h[2]; k++) {
+                    g[h[1] + h[2]][h[0] + k] = '4';
+                    if (k < h[2]) g[h[1] + k][h[0] + h[2]] = '4';
+                }
+        }
+        String[] out = new String[g.length];
+        for (int i = 0; i < g.length; i++) out[i] = new String(g[i]);
+        return out;
+    }
+
+    static final String[] BOARD = {
+            "544444444443",
+            "431333333132",
+            "433333333332",
+            "433143314332",
+            "433333333332",
+            "433314331332",
+            "433333333332",
+            "433143314332",
+            "433333333332",
+            "433314331332",
+            "431333333132",
+            "322222222221",
+    };
+
+    // Board 1-5, red alloy a-e, copper f-j, relay k-o: red traces joining a copper coil and a black relay.
+    static final String[] CIRCUIT = {
+            "544444444443",
+            "431333333132",
+            "433dddddd332",
+            "43ijih33d332",
+            "43hgfg3mnnm2",
+            "43ihih3mllk2",
+            "43ggff3mllk2",
+            "433d333lkkk2",
+            "43edddddde32",
+            "43333d333332",
+            "43133dddd132",
+            "322222222221",
+    };
+
+    static String[] motorRows() {
+        // 13 wide: body x0..7, copper winding end x8..10, shaft x11..12 (upper right).
+        int[] bodyStep = {5, 4, 4, 3, 3, 3, 2, 2, 1};
+        int n = bodyStep.length + 1;
+        char[][] g = new char[n][13];
+        for (char[] r : g) java.util.Arrays.fill(r, '.');
+        for (int y = 0; y < bodyStep.length; y++) {
+            for (int x = 0; x < 8; x++) {
+                int step = bodyStep[y];
+                if (x == 0) step = Math.min(5, step + 1);
+                if (x == 7) step = Math.max(1, step - 1);
+                if (x == 2 || x == 5) step = Math.max(1, step - 1);                      // rib groove
+                if ((x == 3 || x == 6) && y > 0 && y < 8) step = Math.min(5, step + 1);  // rib lit edge
+                g[y + 1][x] = (char) ('0' + step);
+            }
+        }
+        for (int x = 1; x <= 6; x++) g[0][x] = (x == 1 ? '4' : '3');
+        g[0][3] = 's';
+        // copper windings, vertical turns alternating bright and dark
+        char[] wind = {'d', 'b', 'c'};
+        for (int y = 2; y <= 9; y++)
+            for (int x = 8; x <= 10; x++) {
+                char ch = wind[x - 8];
+                if (y == 2 || y == 3) ch = (char) Math.min('e', ch + 1);
+                if (y >= 8) ch = (char) Math.max('a', ch - 1);
+                if (y % 2 == 0 && x == 9) ch = (char) Math.min('e', ch + 1);
+                g[y][x] = ch;
+            }
+        // steel shaft sticking out of the upper right of the end
+        g[3][11] = '5'; g[3][12] = 's';
+        g[4][11] = '3'; g[4][12] = '4';
+        String[] out = new String[n];
+        for (int i = 0; i < n; i++) out[i] = new String(g[i]);
+        return out;
+    }
+
+    static void redAlloy() throws IOException {
+        save("item/red_alloy_ingot", TextureGen.map(RED_ALLOY, TextureGen.INGOT));
+        save("item/red_alloy_nugget", TextureGen.map(RED_ALLOY, TextureGen.NUGGET));
+        save("item/red_alloy_rod", TextureGen.map(RED_ALLOY, TextureGen.ROD));
+        save("item/red_alloy_wire", TextureGen.map(RED_ALLOY, WIRE));
+        save("item/draw_plate", grid(drawPlateRows(), STEEL));
+        save("item/circuit_board", grid(BOARD, CIRCUIT_BOARD));
+        save("item/basic_circuit", grid(CIRCUIT, CIRCUIT_BOARD, RED_ALLOY, COPPER, RELAY));
+        save("item/electric_motor", grid(motorRows(), STEEL, COPPER));
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -693,6 +832,7 @@ public final class ElectricTextures {
         dynamo();
         items();
         rubber();
+        redAlloy();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");
     }

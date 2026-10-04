@@ -78,6 +78,23 @@ public class ConverterMenu extends AbstractContainerMenu {
         return Math.min(1.0f, data.get(ConverterBlockEntity.DATA_PROGRESS) / 1000.0f);
     }
 
+    /** How many heat inlets the converter has; the preheat line shows only with one. */
+    public int inlets() {
+        return data.get(ConverterBlockEntity.DATA_INLETS);
+    }
+
+    public int hotTemperature() {
+        return data.get(ConverterBlockEntity.DATA_HOT_TEMPERATURE);
+    }
+
+    public int hotHeat() {
+        return data.get(ConverterBlockEntity.DATA_HOT_HEAT);
+    }
+
+    public int hotLimit() {
+        return data.get(ConverterBlockEntity.DATA_HOT_LIMIT);
+    }
+
     public float flame() {
         return Math.min(1.0f, data.get(ConverterBlockEntity.DATA_FLAME) / 1000.0f);
     }

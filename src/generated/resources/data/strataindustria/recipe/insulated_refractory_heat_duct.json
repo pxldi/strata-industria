@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:refractory_heat_duct",
+    "strataindustria:slag_wool"
+  ],
+  "result": {
+    "id": "strataindustria:insulated_refractory_heat_duct"
+  }
+}

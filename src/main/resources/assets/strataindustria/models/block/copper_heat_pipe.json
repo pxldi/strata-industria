@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/heat_pipe_straight",
+  "textures": {
+    "pipe": "strataindustria:block/copper_heat_pipe"
+  }
+}

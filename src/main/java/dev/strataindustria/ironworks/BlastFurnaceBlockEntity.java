@@ -2,6 +2,10 @@ package dev.strataindustria.ironworks;
 
 import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.heat.HeatInletBlockEntity;
+import dev.strataindustria.heat.HeatIntake;
+import dev.strataindustria.heat.HeatPipeBlock;
+import dev.strataindustria.heat.InletHost;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Melt;
@@ -45,20 +49,25 @@ import org.jspecify.annotations.Nullable;
  * value, fuel and flux. With air on a tuyere the hearth heats for {@code warmupTicks}, then every
  * {@code ticksPerIngot} (halved with two blowers' worth of air) it taps one pig iron ingot for 100 iron
  * units, half a coke (or a charcoal) and half a flux, with half a slag on the side. A stopped furnace
- * stays hot for 30 seconds, then cools.
+ * stays hot for 30 seconds, then cools. Hot blast, 40 HU/t at 800 °C or more through a heat inlet,
+ * halves the coke to a quarter an ingot.
  */
-public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements FurnaceHost {
+public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements FurnaceHost, InletHost {
     public static final int ORE = 0, FUEL = 1, FLUX = 2, PIG_IRON = 3, SLAG = 4, SLOTS = 5;
     public static final int MAX_IRON = 1600;
     /** Fuel is counted in quarters of a coke: coke is 4, charcoal 2, and an ingot burns 2. */
-    public static final int MAX_FUEL = 32 * 4, COKE_FUEL = 4, CHARCOAL_FUEL = 2, COKE_BLOCK_FUEL = 9 * COKE_FUEL, FUEL_PER_INGOT = 2;
+    public static final int MAX_FUEL = 32 * 4, COKE_FUEL = 4, CHARCOAL_FUEL = 2, COKE_BLOCK_FUEL = 9 * COKE_FUEL, FUEL_PER_INGOT = 2,
+            FUEL_PER_HOT_INGOT = 1;
+    /** Hot blast (spec 8.3 and 12.1). */
+    public static final int HOT_BLAST_TEMPERATURE = 800, HOT_BLAST_HEAT = 40;
     /** Flux in halves: one flux item is 2, an ingot takes 1. */
     public static final int MAX_FLUX = 32 * 2, FLUX_ITEM = 2, FLUX_PER_INGOT = 1;
     public static final int IRON_PER_INGOT = MetalContent.INGOT_UNITS;
     /** How long a stopped furnace keeps its heat before it starts to cool. */
     public static final int STAYS_HOT = 600;
     public static final int DATA_IRON = 0, DATA_FUEL = 1, DATA_FLUX = 2, DATA_WARMTH = 3, DATA_PROGRESS = 4, DATA_STATUS = 5,
-            DATA_PROBLEM = 6, DATA_WHERE = 7, DATA_AIR = 8, DATA_COUNT = 9;
+            DATA_PROBLEM = 6, DATA_WHERE = 7, DATA_AIR = 8, DATA_INLETS = 9, DATA_HOT_TEMPERATURE = 10, DATA_HOT_HEAT = 11,
+            DATA_HOT_LIMIT = 12, DATA_COUNT = 13;
 
     public enum Status {
         INCOMPLETE, NO_AIR, NEEDS_FUEL, HEATING, NEEDS_IRON, NEEDS_FLUX, OUTPUT_FULL, RUNNING;
@@ -100,6 +109,10 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
     private boolean checked;
     private Status status = Status.INCOMPLETE;
     private BlastFurnaceStructure.Result structure = BlastFurnaceStructure.INCOMPLETE;
+    private final HeatIntake hotBlast = new HeatIntake(HOT_BLAST_TEMPERATURE, HOT_BLAST_HEAT);
+    /** How much of this ingot's run had hot blast, in ticks with a full supply, and how long it has run. */
+    private float hotTicks;
+    private int runTicks;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -114,6 +127,10 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
                 case DATA_PROBLEM -> structure.problem().ordinal();
                 case DATA_WHERE -> structure.complete() ? 0 : BlastFurnaceStructure.where(worldPosition, facing(), structure.at(), BlastFurnaceStructure.HEIGHT);
                 case DATA_AIR -> air;
+                case DATA_INLETS -> structure.inlets().size();
+                case DATA_HOT_TEMPERATURE -> Math.round(hotBlast.temperature());
+                case DATA_HOT_HEAT -> hotBlast.heat();
+                case DATA_HOT_LIMIT -> hotBlast.limit();
                 default -> 0;
             };
         }
@@ -198,12 +215,15 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         if (structure.complete()) {
             claim(structure.tap());
             claim(structure.hatch());
+            for (BlockPos inlet : structure.inlets()) claim(inlet);
         }
         return structure;
     }
 
     private void claim(BlockPos pos) {
-        if (level != null && level.getBlockEntity(pos) instanceof FurnaceHatchBlockEntity hatch) hatch.claim(worldPosition);
+        if (level == null) return;
+        if (level.getBlockEntity(pos) instanceof FurnaceHatchBlockEntity hatch) hatch.claim(worldPosition);
+        if (level.getBlockEntity(pos) instanceof HeatInletBlockEntity inlet) inlet.claim(worldPosition);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlastFurnaceBlockEntity furnace) {
@@ -219,6 +239,7 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
             furnace.built = complete;
             furnace.setChanged();
         }
+        furnace.hotBlast.roll();
         boolean changed = complete && furnace.absorb();
         Status before = furnace.status;
         furnace.status = furnace.work(level, pos);
@@ -246,7 +267,7 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
             return Status.INCOMPLETE;
         }
         air = AirBlast.into(level, structure.tuyeres());
-        Status stopped = air <= 0 ? Status.NO_AIR : fuel < FUEL_PER_INGOT ? Status.NEEDS_FUEL : null;
+        Status stopped = air <= 0 ? Status.NO_AIR : fuel < fuelPerIngot() ? Status.NEEDS_FUEL : null;
         if (stopped != null) {
             cool();
             return stopped;
@@ -260,6 +281,8 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         // With air and fuel the hearth keeps its heat even while it waits for burden or room.
         if (stopped != null) return stopped;
         progress += air;
+        runTicks++;
+        hotTicks += hotBlast.share();
         if (progress < ticksPerIngot()) return Status.RUNNING;
         progress = 0;
         tapIngot((ServerLevel) level);
@@ -295,7 +318,10 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         int material = ingot.has(ModDataComponents.QUALITY.get()) ? ingot.get(ModDataComponents.QUALITY.get()).material() : 0;
         iron -= IRON_PER_INGOT;
         ironQuality = iron <= 0 ? 0 : ironQuality - material * IRON_PER_INGOT;
-        fuel -= FUEL_PER_INGOT;
+        // An ingot blown hot for at least half its run takes the hot blast's quarter of a coke.
+        fuel -= runTicks > 0 && hotTicks * 2 >= runTicks ? FUEL_PER_HOT_INGOT : FUEL_PER_INGOT;
+        hotTicks = 0;
+        runTicks = 0;
         flux -= FLUX_PER_INGOT;
         insert(PIG_IRON, ingot);
         if (++slagHalves >= 2) {
@@ -314,6 +340,11 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         ItemStack out = items.get(slot);
         if (out.isEmpty()) items.set(slot, made);
         else out.grow(made.getCount());
+    }
+
+    /** Fuel the next ingot needs: a quarter of a coke with hot blast coming in, half without. */
+    private int fuelPerIngot() {
+        return hotBlast.share() >= 0.5f ? FUEL_PER_HOT_INGOT : FUEL_PER_INGOT;
     }
 
     private static int warmup() {
@@ -350,6 +381,34 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
     public void heatUp() {
         warmth = warmup();
         idle = 0;
+    }
+
+    // ------------------------------------------------------------------ hot blast
+
+    @Override
+    public boolean usesInlet(BlockPos inlet) {
+        return structure.complete() && structure.inlets().contains(inlet);
+    }
+
+    @Override
+    public int heatDemand(float temperature) {
+        // A hot hearth with air on it draws, so a last quarter of a coke still makes an ingot on hot blast.
+        return hotBlast.demand(temperature, structure.complete() && air > 0 && warmth >= warmup());
+    }
+
+    @Override
+    public int offerHeat(float temperature, int heat) {
+        return hotBlast.offer(temperature, heat);
+    }
+
+    @Override
+    public void heatRoute(int pipes, @Nullable HeatPipeBlock limitedBy) {
+        hotBlast.route(limitedBy);
+    }
+
+    /** HU of hot blast that came in last tick. */
+    public int hotBlast() {
+        return hotBlast.heat();
     }
 
     // ------------------------------------------------------------------ FurnaceHost
@@ -429,6 +488,8 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         warmth = in.getIntOr("warmth", 0);
         idle = in.getIntOr("idle", STAYS_HOT);
         built = in.getIntOr("built", 0) != 0;
+        hotTicks = in.getFloatOr("hot_ticks", 0);
+        runTicks = in.getIntOr("run_ticks", 0);
     }
 
     @Override
@@ -444,6 +505,8 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         out.putInt("warmth", warmth);
         out.putInt("idle", idle);
         out.putInt("built", built ? 1 : 0);
+        out.putFloat("hot_ticks", hotTicks);
+        out.putInt("run_ticks", runTicks);
     }
 
     @Override

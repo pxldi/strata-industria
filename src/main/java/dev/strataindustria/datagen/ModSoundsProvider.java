@@ -187,10 +187,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 3; i++) unfold.with(sound("minecraft:item/book/open_flip" + i).pitch(1.25f).volume(0.7f));
         add(StructureContent.SURVEY_NOTES_OPEN, unfold);
         add(StructureContent.SURVEY_NOTES_FOUND, definition().subtitle(subtitle("survey_notes.found"))
-                .with(sound("minecraft:block/note_block/chime").pitch(0.8f).volume(0.35f))
-                .with(sound("minecraft:item/book/page_turn1").pitch(1.1f).volume(0.6f)));
+                .with(sound("minecraft:note/icechime").pitch(0.8f).volume(0.35f))
+                .with(sound("minecraft:item/book/open_flip1").pitch(1.1f).volume(0.6f)));
         SoundDefinition place = definition().subtitle(subtitle("journal.place"));
-        for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/page_turn" + i).pitch(0.9f).volume(0.7f));
+        for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/open_flip" + i).pitch(0.9f).volume(0.7f));
         add(StructureContent.JOURNAL_PLACE, place);
 
         // Ruins: heat-cracked brick crumbling, and slag that crunches like gravel with a glassy clink.
@@ -240,6 +240,15 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 3; i++) burn.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.85f).volume(0.8f));
         burn.with(sound("minecraft:fire/fire").pitch(0.7f).volume(0.4f));
         add(Tier4Sounds.FIREBOX_BURN, burn);
+        SoundDefinition kilnWork = definition().subtitle(subtitle("kiln.work"));
+        for (int i = 1; i <= 3; i++) kilnWork.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.7f).volume(0.6f));
+        add(Tier4Sounds.KILN_WORK, kilnWork);
+        add(Tier4Sounds.KILN_DONE, definition().subtitle(subtitle("kiln.done"))
+                .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
+        add(Tier4Sounds.HEAT_PIPE_TICK, definition().subtitle(subtitle("heat_pipe.tick"))
+                .with(sound("minecraft:block.copper.step", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.25f)));
         add(Tier4Sounds.FLUID_PIPE_REFUSE, definition().subtitle(subtitle("fluid_pipe.refuse"))
                 .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.3f)));

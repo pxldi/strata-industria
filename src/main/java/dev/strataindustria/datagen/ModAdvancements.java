@@ -186,6 +186,8 @@ final class ModAdvancements extends AdvancementSubProvider {
                 .requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR)
                 .save(output, Journal.goal("t4/pipe").toString());
         AdvancementHolder boiler = goal(pipe, "t4/boiler", Tier4Items.BRONZE_BOILER.get(), JournalTrigger.TriggerInstance.of(Journal.BOILER));
+        // Spec 15, goal 68: heat reaches a consumer over 4 or more pipe blocks.
+        goal(boiler, "t4/heat_network", Tier4Items.COPPER_HEAT_PIPE.get(), JournalTrigger.TriggerInstance.of(Journal.HEAT_NETWORK));
         AdvancementHolder engine = goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
         // Spec 15, goal 69: a powered crusher finishes something.

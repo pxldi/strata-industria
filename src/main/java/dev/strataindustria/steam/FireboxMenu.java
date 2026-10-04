@@ -67,6 +67,11 @@ public class FireboxMenu extends AbstractContainerMenu {
         return data.get(FireboxBlockEntity.DATA_TAKEN);
     }
 
+    /** Whether a blower blows into it. */
+    public boolean blown() {
+        return data.get(FireboxBlockEntity.DATA_BLOWN) != 0;
+    }
+
     public FireboxBlockEntity.Status status() {
         int s = data.get(FireboxBlockEntity.DATA_STATUS);
         var values = FireboxBlockEntity.Status.values();

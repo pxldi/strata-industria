@@ -49,6 +49,7 @@ public final class Journal {
     public static final String CRUSHER = "crusher";
     public static final String BLAST_FURNACE = "blast_furnace";
     public static final String CONVERTER = "converter";
+    public static final String HEAT_NETWORK = "heat_network";
 
     /** Block events count for players this close: whoever lit the kiln is standing near it. */
     static final double NEARBY = 16;

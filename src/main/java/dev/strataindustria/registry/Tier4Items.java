@@ -82,6 +82,18 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> CONVERTER_CONTROLLER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CONVERTER_CONTROLLER);
     public static final DeferredItem<BlockItem> BLOWER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BLOWER);
     public static final DeferredItem<Item> SLAG = ModItems.ITEMS.registerSimpleItem("slag");
+    // Spec 8.2 and 8.4: heat pipes and the heat inlet.
+    public static final DeferredItem<BlockItem> COPPER_HEAT_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.COPPER_HEAT_PIPE);
+    public static final DeferredItem<BlockItem> REFRACTORY_HEAT_DUCT = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.REFRACTORY_HEAT_DUCT);
+    public static final DeferredItem<BlockItem> HEAT_INLET = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.HEAT_INLET);
+    public static final DeferredItem<BlockItem> INSULATED_COPPER_HEAT_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.INSULATED_COPPER_HEAT_PIPE);
+    public static final DeferredItem<BlockItem> INSULATED_REFRACTORY_HEAT_DUCT =
+            ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT);
+    // Spec 8.6 and 4.6: the kiln, and the slag wool it makes for pipe insulation.
+    public static final DeferredItem<BlockItem> KILN = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.KILN);
+    // Spec 8.5: the roaster.
+    public static final DeferredItem<BlockItem> ROASTER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.ROASTER);
+    public static final DeferredItem<Item> SLAG_WOOL = ModItems.ITEMS.registerSimpleItem("slag_wool");
     /** Spec 4.6: ground slag, a fertiliser worth two bone meal. */
     public static final DeferredItem<dev.strataindustria.ironworks.SlagDustItem> SLAG_DUST = ModItems.ITEMS.registerItem("slag_dust",
             dev.strataindustria.ironworks.SlagDustItem::new);

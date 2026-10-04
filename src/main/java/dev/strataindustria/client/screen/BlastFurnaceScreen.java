@@ -70,6 +70,10 @@ public class BlastFurnaceScreen extends AbstractContainerScreen<BlastFurnaceMenu
             Component spot = Component.translatable(KEY + "spot." + menu.problemSpot());
             Component what = Component.translatable(problem.key(), menu.problemLayer(), spot);
             g.text(font, what, imageWidth / 2 - font.width(what) / 2, STATUS_Y + 10, 0xFF707070, false);
+        } else if (menu.inlets() > 0) {
+            int need = BlastFurnaceBlockEntity.HOT_BLAST_TEMPERATURE;
+            Component hot = HeatLine.line("hot_blast", need, menu.hotTemperature(), menu.hotHeat(), menu.hotLimit());
+            g.text(font, hot, imageWidth / 2 - font.width(hot) / 2, STATUS_Y + 10, HeatLine.colour(need, menu.hotTemperature()), false);
         }
     }
 
@@ -77,6 +81,9 @@ public class BlastFurnaceScreen extends AbstractContainerScreen<BlastFurnaceMenu
     protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractTooltip(g, mouseX, mouseY);
         int x = mouseX - leftPos, y = mouseY - topPos;
+        if (menu.inlets() > 0 && y >= STATUS_Y + 9 && y < STATUS_Y + 19 && x >= 8 && x < imageWidth - 8) {
+            g.setTooltipForNextFrame(HeatLine.tooltip(BlastFurnaceBlockEntity.HOT_BLAST_TEMPERATURE, menu.hotTemperature(), menu.hotLimit()), mouseX, mouseY);
+        }
         if (x >= GAUGE_X && x < GAUGE_X + GAUGE_W) {
             for (int i = 0; i < 3; i++) {
                 if (y < GAUGE_Y[i] - 1 || y > GAUGE_Y[i] + GAUGE_H) continue;

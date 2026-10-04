@@ -12,6 +12,7 @@ import dev.strataindustria.steam.FireboxBlock;
 import dev.strataindustria.steam.MechanicalPumpBlock;
 import dev.strataindustria.steam.SteamEngineBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -162,6 +163,36 @@ public final class Tier4Blocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .sound(HEAVY_METAL));
+
+    // Spec 8.2 and 8.4: heat pipes, which glow while they carry heat, and the inlet that takes it into a multiblock.
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> COPPER_HEAT_PIPE = ModBlocks.BLOCKS.registerBlock("copper_heat_pipe",
+            p -> new dev.strataindustria.heat.HeatPipeBlock(1000, 10.0f, 0.01f, p),
+            p -> pipe(p, MapColor.COLOR_ORANGE, SoundType.COPPER).lightLevel(Tier4Blocks::heatGlow));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> REFRACTORY_HEAT_DUCT = ModBlocks.BLOCKS.registerBlock(
+            "refractory_heat_duct", p -> new dev.strataindustria.heat.HeatPipeBlock(1800, 5.0f, 0.005f, p),
+            p -> pipe(p, MapColor.COLOR_ORANGE, FIRE_BRICK_SOUND).lightLevel(Tier4Blocks::heatGlow));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> INSULATED_COPPER_HEAT_PIPE = ModBlocks.BLOCKS.registerBlock(
+            "insulated_copper_heat_pipe", p -> new dev.strataindustria.heat.HeatPipeBlock(1000, 5.0f, 0.005f, p),
+            p -> pipe(p, MapColor.COLOR_LIGHT_GRAY, SoundType.WOOL));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> INSULATED_REFRACTORY_HEAT_DUCT = ModBlocks.BLOCKS.registerBlock(
+            "insulated_refractory_heat_duct", p -> new dev.strataindustria.heat.HeatPipeBlock(1800, 2.5f, 0.0025f, p),
+            p -> pipe(p, MapColor.COLOR_LIGHT_GRAY, SoundType.WOOL));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatInletBlock> HEAT_INLET = ModBlocks.BLOCKS.registerBlock("heat_inlet",
+            dev.strataindustria.heat.HeatInletBlock::new, Tier4Blocks::refractory);
+
+    // Spec 8.6: the kiln.
+    public static final DeferredBlock<dev.strataindustria.ceramics.KilnBlock> KILN = ModBlocks.BLOCKS.registerBlock("kiln",
+            dev.strataindustria.ceramics.KilnBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ceramics.KilnBlock.LIT) ? 10 : 0));
+
+    // Spec 8.5: the roaster.
+    public static final DeferredBlock<dev.strataindustria.roasting.RoasterBlock> ROASTER = ModBlocks.BLOCKS.registerBlock("roaster",
+            dev.strataindustria.roasting.RoasterBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.roasting.RoasterBlock.LIT) ? 8 : 0));
+
+    private static int heatGlow(BlockState state) {
+        return state.getValue(dev.strataindustria.heat.HeatPipeBlock.HOT) ? 6 : 0;
+    }
 
     /** Fire brick held in iron: as tough as the bricks, with their sound. */
     private static Block.Properties refractory(Block.Properties p) {

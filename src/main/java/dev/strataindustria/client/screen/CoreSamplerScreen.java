@@ -6,6 +6,7 @@ import dev.strataindustria.machine.CoreSamplerMenu;
 import dev.strataindustria.power.Kinetic;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -34,7 +35,7 @@ public class CoreSamplerScreen extends AbstractContainerScreen<CoreSamplerMenu> 
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() == 0 && minecraft.gameMode != null && overButton(event.x(), event.y())) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && minecraft.gameMode != null && overButton(event.x(), event.y())) {
             if (menu.canDrill()) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, CoreSamplerBlockEntity.DRILL_BUTTON);
                 if (minecraft.player != null) minecraft.player.playSound(SoundEvents.UI_BUTTON_CLICK.value(), 0.4f, 1.0f);

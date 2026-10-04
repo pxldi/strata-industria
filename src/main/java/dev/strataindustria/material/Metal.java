@@ -34,7 +34,12 @@ public enum Metal implements StringRepresentable {
     BRASS(930, 3, 0xA8862E, Forms.PARTS, false),
     SOLDER(190, 3, 0x737A7C, Forms.INGOT_ONLY, false),
     /** Exists only dissolved in a melt, like arsenic. */
-    CARBON(0, 0, 0x2A2A2A, Forms.NONE, false);
+    CARBON(0, 0, 0x2A2A2A, Forms.NONE, false),
+    // Tier 5 spec 4.1.
+    /** Copper and redstone: wire for circuits, never a tool. Its rod and wire are tier 5 items. */
+    RED_ALLOY(1000, 2, 0x8A2A2E, Forms.STORAGE, false),
+    /** Exists only dissolved in molten copper, like carbon in iron. */
+    REDSTONE(0, 0, 0x862A24, Forms.NONE, false);
 
     public static final Codec<Metal> CODEC = StringRepresentable.fromEnum(Metal::values);
     public static final StreamCodec<ByteBuf, Metal> STREAM_CODEC =
@@ -143,7 +148,7 @@ public enum Metal implements StringRepresentable {
 
     /** Metals that only exist dissolved in a melt and never pour on their own: arsenic and carbon. */
     public boolean dissolvedOnly() {
-        return this == ARSENIC || this == CARBON;
+        return this == ARSENIC || this == CARBON || this == REDSTONE;
     }
 
     @Override
