@@ -536,10 +536,11 @@ final class ModLanguageProvider extends LanguageProvider {
         add(barrel + "open", "Sneak and use to seal the lid");
         add(barrel + "no_recipe", "Nothing here soaks into anything");
         add(barrel + "needs_more", "Needs %s more to use up the tank");
-        add(barrel + "needs_fluid", "Not enough fluid in the tank");
+        add(barrel + "needs_fluid", "Not enough fluid; an empty bucket tips it out");
         add(barrel + "output_full", "Take out what is done");
         add(barrel + "working", "Soaking: %s%%");
         add(barrel + "lid_on", "Take the lid off first (sneak and use)");
+        add(barrel + "poured_out", "%s tipped out of the barrel");
         add(barrel + "tank", "%s: %s / %s mB");
         add(barrel + "tank_empty", "Empty");
         add(barrel + "fluid.none", "Empty");

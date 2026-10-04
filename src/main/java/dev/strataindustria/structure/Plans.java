@@ -214,7 +214,7 @@ public final class Plans {
                     "Ce__C",
                     "C___C",
                     "C___C",
-                    "C P C",
+                    "C   C",
             },
             new String[] {
                     " CPC ",
@@ -222,7 +222,7 @@ public final class Plans {
                     " C C ",
                     " C C ",
                     " C C ",
-                    " CPC ",
+                    " C C ",
             },
             new String[] {
                     "  |  ", "  |  ", "  |  ", "  |  ", "  |  ", "  |  ",
@@ -367,7 +367,6 @@ public final class Plans {
                     "",
                     "   g   ",
                     "  gg#  ",
-                    "   g   ",
             }));
 
     /** A timbered adit mouth cut into a hillside; the tunnel continues south from the last row. */

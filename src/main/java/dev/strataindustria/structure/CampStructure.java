@@ -423,7 +423,8 @@ public class CampStructure extends Structure {
                 if (k < 1) continue;
                 // The bank's south edge is the last dry block before the water.
                 int ex = x + d.getStepX() * (k - 1), ez = z + d.getStepZ() * (k - 1);
-                return placerBank(site, ex, ez, d, random);
+                Optional<GenerationStub> bank = placerBank(site, ex, ez, d, random);
+                if (bank.isPresent()) return bank;
             }
         }
         return Optional.empty();

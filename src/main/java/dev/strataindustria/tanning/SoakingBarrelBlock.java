@@ -71,8 +71,18 @@ public class SoakingBarrelBlock extends BaseEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
-        // An empty bucket takes water back out; lye and tannin stay in the barrel.
-        if (!barrel.takeWater()) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        // An empty bucket takes water back out. Lye and tannin cannot be carried, so they are tipped away.
+        if (!barrel.takeWater()) {
+            if (level.isClientSide()) return barrel.amount() > 0 && !barrel.fluid().isSame(net.minecraft.world.level.material.Fluids.WATER)
+                    ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
+            SoakingBarrelBlockEntity.TankFluid poured = barrel.pourOut();
+            if (poured == null) return InteractionResult.TRY_WITH_EMPTY_HAND;
+            player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".soaking_barrel.poured_out",
+                    Component.translatable(poured.key())));
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0f, 0.9f);
+            level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+            return InteractionResult.SUCCESS;
+        }
         if (!level.isClientSide()) {
             player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.WATER_BUCKET)));
             level.playSound(null, pos, net.minecraft.sounds.SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0f, 1.0f);
