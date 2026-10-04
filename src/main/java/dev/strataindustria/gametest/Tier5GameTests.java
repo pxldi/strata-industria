@@ -408,7 +408,8 @@ final class Tier5GameTests {
         return done;
     }
 
-    // Spec 10.3 and 24: an ore piece gives a second crushed piece 25% of the time over 1000 trials (within 3%).
+    // Spec 10.3 and 24: an ore piece gives a second crushed piece 25% of the time: the chance itself is checked exactly, and
+    // 1000 trials with a fixed seed land within 3% (seeded, so the test never flakes).
     private static void maceratorSecondPiece(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         Item galena = BuiltInRegistries.ITEM.getValue(StrataIndustria.id("galena"));
@@ -416,10 +417,14 @@ final class Tier5GameTests {
         var recipe = CrushingRecipe.recipeFor(level, new ItemStack(galena));
         helper.assertTrue(recipe.isPresent(), "galena has a crushing recipe");
         Processing processing = MaceratorBlockEntity.maceration(recipe.get().value());
+        double chance = processing.chances().stream().filter(c -> ItemStack.isSameItemSameComponents(c.item().create(), new ItemStack(crushed)))
+                .mapToDouble(dev.strataindustria.washing.WashingRecipe.Chance::chance).max().orElse(0);
+        helper.assertTrue(Math.abs(chance - 0.25) < 1e-9, "the second piece chance is 25%, got " + chance);
+        net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(20261004L);
         int seconds = 0;
         for (int trial = 0; trial < 1000; trial++) {
             int pieces = 0;
-            for (ItemStack out : processing.roll(level.getRandom())) if (out.is(crushed)) pieces += out.getCount();
+            for (ItemStack out : processing.roll(random)) if (out.is(crushed)) pieces += out.getCount();
             helper.assertTrue(pieces == 1 || pieces == 2, "one or two crushed pieces, got " + pieces);
             if (pieces == 2) seconds++;
         }
