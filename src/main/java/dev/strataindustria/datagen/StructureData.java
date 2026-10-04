@@ -209,7 +209,7 @@ final class StructureData {
         return worn(item, 0.25f, 0.8f);
     }
 
-    /** A worn tool with its own share of durability left; the firestarter keeps 2 to 4 lights (structures spec 4.1). */
+    /** A worn tool with its own share of durability left. */
     private static LootPoolEntry worn(ItemLike item, float min, float max) {
         StructureLoot.tool(item, min, max);
         return new LootPoolEntry(LootItem.lootTableItem(item).apply(SetItemDamageFunction.setDamage(ContextFloatProviders.between(min, max))));
@@ -299,7 +299,7 @@ final class StructureData {
                     .withPool(pool(0.4f, item(Items.APPLE, 2, 5)))
                     .withPool(pool(0.4f, item(Items.BREAD, 2, 5)))
                     .withPool(pool(0.5f, item(Items.SPRUCE_LOG, 16, 32)))
-                    .withPool(pool(0.8f, worn(ModItems.FIRESTARTER.get(), 0.2f, 0.4f)))
+                    .withPool(pool(0.8f, item(Items.FLINT, 1, 3)))
                     .withPool(pool(0.5f, worn(ModItems.STONE_AXE.get())))
                     .withPool(pool(0.5f, worn(ModItems.STONE_SHOVEL.get())))
                     .withPool(pool(0.6f, item(ModItems.ASH.get(), 2, 8)))

@@ -1,7 +1,6 @@
 package dev.strataindustria.ceramics;
 
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.fire.FirestarterItem;
 import dev.strataindustria.fire.Ignitable;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModBlocks;
@@ -135,7 +134,7 @@ public class PitKilnBlock extends BaseEntityBlock implements Ignitable {
             return InteractionResult.SUCCESS;
         }
 
-        boolean lighter = stack.getItem() instanceof FirestarterItem || stack.is(Items.TORCH)
+        boolean lighter = stack.is(Items.TORCH)
                 || stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE);
         if (lighter) {
             Optional<String> problem = problem(level, pos, state);
@@ -145,8 +144,6 @@ public class PitKilnBlock extends BaseEntityBlock implements Ignitable {
                 }
                 return InteractionResult.FAIL;
             }
-            // The firestarter lights it through its own held use.
-            if (stack.getItem() instanceof FirestarterItem) return InteractionResult.PASS;
             if (!level.isClientSide() && ignite(level, pos, state)) {
                 if (stack.is(Items.FLINT_AND_STEEL)) stack.hurtAndBreak(1, player, hand);
                 else if (stack.is(Items.FIRE_CHARGE)) stack.consume(1, player);

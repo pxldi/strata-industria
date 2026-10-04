@@ -1221,39 +1221,6 @@ public final class TextureGen {
         return im;
     }
 
-    /** A hand drill: spindle stood on a hearth board, a twine wrap, a charred notch. */
-    static final String[] FIRESTARTER = {
-            "................",
-            "................",
-            ".......45.......",
-            ".......43.......",
-            ".......43.......",
-            "......ab3a......",
-            "......bad3......",
-            ".......ab.......",
-            ".......43.......",
-            ".......43.......",
-            ".......32.......",
-            "..444553x5554...",
-            "..33333223333...",
-            "..22222222222...",
-            "................",
-            "................",
-    };
-
-    static BufferedImage firestarter() {
-        String[] rows = FIRESTARTER.clone();
-        BufferedImage im = img();
-        for (int y = 0; y < rows.length; y++)
-            for (int x = 0; x < rows[y].length(); x++) {
-                char ch = rows[y].charAt(x);
-                if (ch >= '1' && ch <= '5') px(im, x, y, WOOD.get(ch - '0'));
-                else if (ch >= 'a' && ch <= 'e') px(im, x, y, STRAW.get(ch - 'a' + 2));
-                else if (ch == 'x') px(im, x, y, CHARCOAL.get(1));
-            }
-        return outline(im);
-    }
-
     // ---------------------------------------------------------------- clay and ceramics (spec 4)
     // Unfired and fired pieces share each silhouette and swap only the ramp (style guide 5).
 
@@ -8162,7 +8129,6 @@ public final class TextureGen {
         save("block/fire_pit_ash", ashBed());
         save("block/fire_pit_embers", emberBed());
         itemsV2 = true;
-        save("item/firestarter", firestarter());
         itemsV2 = false;
         saveRaw("gui/fire_pit", firePitGui());
         itemsV2 = true;
