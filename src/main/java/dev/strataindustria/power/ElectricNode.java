@@ -1,5 +1,7 @@
 package dev.strataindustria.power;
 
+import java.util.List;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -25,6 +27,14 @@ public interface ElectricNode {
 
     default ElectricNode port(int index) {
         return this;
+    }
+
+    /**
+     * Blocks this node is joined to by an overhead span (tier 5 spec 8.4), in addition to the faces it touches.
+     * A span only counts when the other end lists this block back.
+     */
+    default List<BlockPos> spans() {
+        return List.of();
     }
 
     /** Whether the block this node belongs to has been removed from the world. */

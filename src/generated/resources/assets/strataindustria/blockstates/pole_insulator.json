@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "strataindustria:block/pole_insulator",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "strataindustria:block/pole_insulator",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/pole_insulator",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "strataindustria:block/pole_insulator",
+      "x": 270
+    },
+    "facing=up": {
+      "model": "strataindustria:block/pole_insulator"
+    },
+    "facing=west": {
+      "model": "strataindustria:block/pole_insulator",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

@@ -24,6 +24,18 @@ public final class ElectricNetwork {
 
     private record Member<T extends ElectricNode>(PortKey pos, T node) {}
 
+    /** One direction of an overhead span between two insulators. */
+    record Link(PortKey from, PortKey to) {}
+
+    /** J/t an overhead span carries, and what it loses per block of its length (spec 6.2 and 8.4). */
+    public static final int SPAN_CAPACITY = 1024;
+    public static final double SPAN_LOSS_PER_BLOCK = 0.0001;
+
+    /** Loss of a span between two insulators: 0.01% per block of straight-line length. */
+    public static double spanLoss(BlockPos a, BlockPos b) {
+        return Math.sqrt(a.distSqr(b)) * SPAN_LOSS_PER_BLOCK;
+    }
+
     private final Set<PortKey> keys;
     private final Set<BlockPos> members;
     private final List<Member<ElectricSource>> generators = new ArrayList<>();
@@ -34,19 +46,21 @@ public final class ElectricNetwork {
     private final Map<PortKey, Report> reports = new HashMap<>();
     private final @Nullable ElectricTier tier;
     private final @Nullable ElectricTier weakestCable;
+    private final double capacity;
     private final @Nullable BlockPos overvoltageCable;
     private final boolean tooLarge;
 
     private double supply, demand, delivered, stored, storageCapacity;
     private boolean capped, wasOvervoltage;
 
-    ElectricNetwork(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, boolean tooLarge) {
+    ElectricNetwork(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, Map<Link, Double> spans, boolean tooLarge) {
         this.keys = Collections.unmodifiableSet(nodes.keySet());
         Set<BlockPos> positions = new java.util.LinkedHashSet<>();
         for (PortKey key : nodes.keySet()) positions.add(key.pos());
         this.members = Collections.unmodifiableSet(positions);
         this.tooLarge = tooLarge;
         ElectricTier top = null, weakest = null;
+        double weakestCapacity = Double.MAX_VALUE;
         for (var entry : nodes.entrySet()) {
             PortKey pos = entry.getKey();
             ElectricNode node = entry.getValue();
@@ -60,12 +74,14 @@ public final class ElectricNetwork {
             if (node instanceof ElectricConductor cable && (weakest == null || cable.cableTier().ordinal() < weakest.ordinal())) {
                 weakest = cable.cableTier();
             }
+            if (node instanceof ElectricConductor cable) weakestCapacity = Math.min(weakestCapacity, cable.capacity());
             if (entry.getValue() instanceof ElectricSource source && (top == null || source.tier().ordinal() > top.ordinal())) {
                 top = source.tier();
             }
         }
         this.tier = top;
         this.weakestCable = weakest;
+        this.capacity = spans.isEmpty() ? weakestCapacity : Math.min(weakestCapacity, SPAN_CAPACITY);
         PortKey fault = null;
         if (top != null) {
             for (var entry : nodes.entrySet()) {
@@ -80,14 +96,15 @@ public final class ElectricNetwork {
         List<PortKey> allSources = new ArrayList<>();
         generators.forEach(m -> allSources.add(m.pos()));
         storages.forEach(m -> allSources.add(m.pos()));
-        Map<PortKey, Double> fromAny = pathLosses(nodes, edges, allSources);
+        Map<PortKey, Double> fromAny = pathLosses(nodes, edges, spans, allSources);
         for (var m : consumers) losses.put(m.pos(), fromAny.getOrDefault(m.pos(), 1.0));
-        Map<PortKey, Double> fromGenerators = pathLosses(nodes, edges, generators.stream().map(Member::pos).toList());
+        Map<PortKey, Double> fromGenerators = pathLosses(nodes, edges, spans, generators.stream().map(Member::pos).toList());
         for (var m : storages) losses.put(m.pos(), fromGenerators.getOrDefault(m.pos(), 1.0));
     }
 
     /** Sum of loss rates along the cheapest path from any of {@code starts} to every block (one Dijkstra, spec 6.6). */
-    private static Map<PortKey, Double> pathLosses(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, List<PortKey> starts) {
+    private static Map<PortKey, Double> pathLosses(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, Map<Link, Double> spans,
+            List<PortKey> starts) {
         Map<PortKey, Double> best = new HashMap<>();
         record Step(PortKey pos, double loss) {}
         PriorityQueue<Step> queue = new PriorityQueue<>((a, b) -> Double.compare(a.loss(), b.loss()));
@@ -99,7 +116,8 @@ public final class ElectricNetwork {
             Step step = queue.poll();
             if (step.loss() > best.getOrDefault(step.pos(), Double.MAX_VALUE)) continue;
             for (PortKey next : edges.getOrDefault(step.pos(), List.of())) {
-                double cost = nodes.get(next) instanceof ElectricConductor cable ? cable.cableTier().cableLoss() : 0.0;
+                Double span = spans.get(new Link(step.pos(), next));
+                double cost = span != null ? span : nodes.get(next) instanceof ElectricConductor cable ? cable.blockLoss() : 0.0;
                 double loss = step.loss() + cost;
                 if (loss < best.getOrDefault(next, Double.MAX_VALUE)) {
                     best.put(next, loss);
@@ -175,8 +193,7 @@ public final class ElectricNetwork {
                 served.add(m);
             }
         }
-        double capacity = weakestCable == null ? Double.MAX_VALUE : weakestCable.cableCapacity();
-        ElectricShare.Result result = ElectricShare.share(generation, storageOut, storageRoom, demand, capacity);
+        ElectricShare.Result result = ElectricShare.share(generation, storageOut, storageRoom, demand, this.capacity);
         supply = generation + storageOut;
         capped = result.capped();
         delivered = result.generated() + result.discharged();
@@ -263,6 +280,16 @@ public final class ElectricNetwork {
 
     public @Nullable ElectricTier weakestCable() {
         return weakestCable;
+    }
+
+    /** J/t the least capable cable, pole or span on the network carries. */
+    public double capacity() {
+        return capacity;
+    }
+
+    /** Whether a span (rather than a cable of the weakest tier) is what limits the network. */
+    public boolean limitedByLine() {
+        return weakestCable == null || capacity != weakestCable.cableCapacity();
     }
 
     public @Nullable BlockPos overvoltageCable() {

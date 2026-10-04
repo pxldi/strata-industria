@@ -1,0 +1,19 @@
+{
+  "type": "strataindustria:assembling",
+  "item_results": [
+    {
+      "count": 4,
+      "id": "strataindustria:acsr_conductor"
+    }
+  ],
+  "items": [
+    {
+      "count": 6,
+      "ingredient": "strataindustria:aluminium_wire"
+    },
+    {
+      "ingredient": "strataindustria:steel_wire"
+    }
+  ],
+  "ticks": 200
+}

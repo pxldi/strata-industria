@@ -28,6 +28,7 @@ public final class KilnFiring {
             map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.get(), dev.strataindustria.registry.Tier4Items.REFRACTORY_INGOT_MOLD.get());
             map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.get(), dev.strataindustria.registry.Tier4Items.REFRACTORY_GEAR_MOLD.get());
             map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_GEAR_MOLD.get(), dev.strataindustria.registry.Tier4Items.GEAR_MOLD.get());
+            map.put(dev.strataindustria.registry.Tier5Items.UNFIRED_INSULATOR.get(), dev.strataindustria.registry.Tier5Items.CERAMIC_INSULATOR.get());
             for (MoldType type : MoldType.values()) {
                 map.put(ModItems.UNFIRED_MOLDS.get(type).get(), ModItems.MOLDS.get(type).get());
             }

@@ -538,6 +538,36 @@
     ],
     "subtitle": "subtitles.strataindustria.pit_prop.creak"
   },
+  "block.pole_insulator.connect": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.fishing_bobber.throw",
+        "pitch": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.5,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.pole_insulator.connect"
+  },
+  "block.pole_insulator.disconnect": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.leash_knot.break"
+      },
+      {
+        "type": "event",
+        "name": "entity.leash_knot.break",
+        "pitch": 0.85
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.pole_insulator.disconnect"
+  },
   "block.slag_heap.break": {
     "sounds": [
       {

@@ -152,6 +152,7 @@ public final class ElectricNetworks {
         int max = Config.ELECTRIC_MAX_NETWORK.get();
         Map<PortKey, ElectricNode> nodes = new LinkedHashMap<>();
         Map<PortKey, List<PortKey>> edges = new HashMap<>();
+        Map<ElectricNetwork.Link, Double> spans = new HashMap<>();
         nodes.put(start, first);
         ArrayDeque<PortKey> queue = new ArrayDeque<>();
         queue.add(start);
@@ -177,13 +178,29 @@ public final class ElectricNetworks {
                 nodes.put(nextKey, neighbour);
                 queue.add(nextKey);
             }
+            // Overhead spans (spec 8.4) join two insulators that list each other, whatever lies between them.
+            for (BlockPos far : node.spans()) {
+                if (!level.isLoaded(far) || !(level.getBlockEntity(far) instanceof ElectricNode farBlock) || !farBlock.spans().contains(key.pos())) continue;
+                PortKey farKey = new PortKey(far, 0);
+                double loss = ElectricNetwork.spanLoss(key.pos(), far);
+                spans.put(new ElectricNetwork.Link(key, farKey), loss);
+                spans.put(new ElectricNetwork.Link(farKey, key), loss);
+                edges.computeIfAbsent(key, k -> new ArrayList<>()).add(farKey);
+                if (nodes.containsKey(farKey)) continue;
+                if (nodes.size() >= max) {
+                    tooLarge = true;
+                    continue;
+                }
+                nodes.put(farKey, farBlock);
+                queue.add(farKey);
+            }
         }
         done.addAll(nodes.keySet());
         for (PortKey key : nodes.keySet()) {
             ElectricNetwork old = grid.byPos.get(key);
             if (old != null) grid.drop(old);
         }
-        ElectricNetwork network = new ElectricNetwork(nodes, edges, tooLarge);
+        ElectricNetwork network = new ElectricNetwork(nodes, edges, spans, tooLarge);
         grid.networks.add(network);
         for (PortKey key : nodes.keySet()) grid.byPos.put(key, network);
     }
@@ -223,8 +240,10 @@ public final class ElectricNetworks {
                     percent(network.worstLoss()), joules(network.stored()), joules(network.storageCapacity()));
         }
         if (network.capped() && network.weakestCable() != null) {
-            line.append(Component.literal(" · ")).append(Component.translatable(prefix + "limited_by", network.weakestCable().label(),
-                    network.weakestCable().cableCapacity()).withStyle(ChatFormatting.GOLD));
+            line.append(Component.literal(" · ")).append((network.limitedByLine()
+                    ? Component.translatable(prefix + "limited_by_line", Math.round(network.capacity()))
+                    : Component.translatable(prefix + "limited_by", network.weakestCable().label(), network.weakestCable().cableCapacity()))
+                    .withStyle(ChatFormatting.GOLD));
         }
         return line;
     }

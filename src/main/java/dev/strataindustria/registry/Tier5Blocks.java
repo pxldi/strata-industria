@@ -50,6 +50,21 @@ public final class Tier5Blocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.POPPED));
 
+    /** Spec 23.6: treated wood sounds like wood, a little lower. */
+    public static final SoundType TREATED_WOOD_SOUND = new SoundType(1.0f, 0.9f, SoundType.WOOD.getBreakSound(), SoundType.WOOD.getStepSound(),
+            SoundType.WOOD.getPlaceSound(), SoundType.WOOD.getHitSound(), SoundType.WOOD.getFallSound());
+
+    // Spec 5.4 and 8.3: creosote-soaked logs, the poles cut from them and the insulators on the poles.
+    public static final DeferredBlock<net.minecraft.world.level.block.RotatedPillarBlock> TREATED_LOG = ModBlocks.BLOCKS.registerBlock("treated_log",
+            net.minecraft.world.level.block.RotatedPillarBlock::new,
+            p -> p.mapColor(MapColor.COLOR_BROWN).strength(2.0f).sound(TREATED_WOOD_SOUND));
+    public static final DeferredBlock<dev.strataindustria.electric.UtilityPoleBlock> UTILITY_POLE = ModBlocks.BLOCKS.registerBlock("utility_pole",
+            dev.strataindustria.electric.UtilityPoleBlock::new,
+            p -> p.mapColor(MapColor.COLOR_BROWN).strength(2.0f).sound(TREATED_WOOD_SOUND).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.electric.PoleInsulatorBlock> POLE_INSULATOR = ModBlocks.BLOCKS.registerBlock("pole_insulator",
+            dev.strataindustria.electric.PoleInsulatorBlock::new,
+            p -> p.mapColor(MapColor.COLOR_ORANGE).strength(0.8f).sound(SoundType.DECORATED_POT).noOcclusion().pushReaction(PushReaction.POPPED));
+
     // Spec 8.1: rubber-insulated copper cables.
     public static final DeferredBlock<CableBlock> LV_CABLE = ModBlocks.BLOCKS.registerBlock("lv_cable", p -> new CableBlock(ElectricTier.LV, p),
             Tier5Blocks::cable);

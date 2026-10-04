@@ -54,7 +54,7 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
 
     /** The fluids the screen knows how to draw, by index; 0 is an empty tank. */
     public enum TankFluid {
-        NONE, WATER, LYE, TANNIN, OTHER, LATEX;
+        NONE, WATER, LYE, TANNIN, OTHER, LATEX, CREOSOTE;
 
         public static TankFluid of(Fluid fluid) {
             if (fluid == Fluids.EMPTY) return NONE;
@@ -62,6 +62,7 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
             if (fluid.isSame(ModFluids.LYE.get())) return LYE;
             if (fluid.isSame(ModFluids.TANNIN.get())) return TANNIN;
             if (fluid.isSame(dev.strataindustria.registry.Tier5Fluids.LATEX.get())) return LATEX;
+            if (fluid.isSame(dev.strataindustria.registry.Tier4Fluids.CREOSOTE.get())) return CREOSOTE;
             return OTHER;
         }
 
@@ -150,6 +151,7 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
     public ItemStack takeBucket() {
         net.minecraft.world.item.Item bucket = fluid.isSame(Fluids.WATER) ? net.minecraft.world.item.Items.WATER_BUCKET
                 : fluid.isSame(dev.strataindustria.registry.Tier5Fluids.LATEX.get()) ? dev.strataindustria.registry.Tier5Items.LATEX_BUCKET.get()
+                : fluid.isSame(dev.strataindustria.registry.Tier4Fluids.CREOSOTE.get()) ? dev.strataindustria.registry.Tier4Items.CREOSOTE_BUCKET.get()
                 : null;
         if (bucket == null || amount < BUCKET) return ItemStack.EMPTY;
         amount -= BUCKET;

@@ -56,7 +56,8 @@ public class SoakingBarrelBlock extends BaseEntityBlock {
                                           InteractionHand hand, BlockHitResult hit) {
         // Tier 5 spec 5.2: latex is carried in buckets like water.
         net.minecraft.world.level.material.Fluid carried = stack.is(Items.WATER_BUCKET) ? net.minecraft.world.level.material.Fluids.WATER
-                : stack.is(dev.strataindustria.registry.Tier5Items.LATEX_BUCKET.get()) ? dev.strataindustria.registry.Tier5Fluids.LATEX.get() : null;
+                : stack.is(dev.strataindustria.registry.Tier5Items.LATEX_BUCKET.get()) ? dev.strataindustria.registry.Tier5Fluids.LATEX.get()
+                : stack.is(dev.strataindustria.registry.Tier4Items.CREOSOTE_BUCKET.get()) ? dev.strataindustria.registry.Tier4Fluids.CREOSOTE.get() : null;
         if (carried == null && !stack.is(Items.BUCKET)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (!(level.getBlockEntity(pos) instanceof SoakingBarrelBlockEntity barrel)) return InteractionResult.PASS;
         if (state.getValue(SEALED)) {

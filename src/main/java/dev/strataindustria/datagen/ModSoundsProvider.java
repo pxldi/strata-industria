@@ -436,6 +436,12 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.pointed_dripstone.drip_water", SoundDefinition.SoundType.EVENT).pitch(0.7f))
                 .with(sound("minecraft:block.pointed_dripstone.drip_water", SoundDefinition.SoundType.EVENT).pitch(0.62f).volume(0.9f))
                 .with(sound("minecraft:block.pointed_dripstone.drip_water_into_cauldron", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.7f)));
+        add(Tier5Sounds.POLE_INSULATOR_CONNECT, definition().subtitle(subtitle("block.pole_insulator.connect"))
+                .with(sound("minecraft:entity.fishing_bobber.throw", SoundDefinition.SoundType.EVENT).pitch(0.6f))
+                .with(sound("minecraft:block.chain.place", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.7f)));
+        add(Tier5Sounds.POLE_INSULATOR_DISCONNECT, definition().subtitle(subtitle("block.pole_insulator.disconnect"))
+                .with(sound("minecraft:entity.leash_knot.break", SoundDefinition.SoundType.EVENT))
+                .with(sound("minecraft:entity.leash_knot.break", SoundDefinition.SoundType.EVENT).pitch(0.85f)));
         add(Tier5Sounds.MACHINE_POWER_ON, definition().subtitle(subtitle("block.machine.power_on"))
                 .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.6f))
                 .with(sound("minecraft:block.beacon.activate", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));

@@ -337,6 +337,9 @@ public final class Config {
     public static final ModConfigSpec.IntValue ELECTRIC_FE_INPUT_MAX = BUILDER
             .comment("Most J/t an energy adapter accepts as FE from outside. 0 forbids FE input.")
             .defineInRange("feInputMax", 32, 0, 512);
+    public static final ModConfigSpec.IntValue ELECTRIC_MAX_SPAN = BUILDER
+            .comment("Longest overhead span between two pole insulators, in blocks.")
+            .defineInRange("maxSpan", 24, 4, 64);
 
     static {
         BUILDER.pop();

@@ -1,5 +1,7 @@
 {
   "values": [
+    "strataindustria:treated_log",
+    "strataindustria:utility_pole",
     "strataindustria:wooden_axle",
     "strataindustria:wooden_gearbox",
     "strataindustria:hand_crank",

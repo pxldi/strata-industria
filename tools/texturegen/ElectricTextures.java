@@ -1929,6 +1929,199 @@ public final class ElectricTextures {
         return im;
     }
 
+    // ---------------------------------------------------------------- overhead lines (poles, insulators, ACSR)
+
+    static final TextureGen.Ramp GLAZED_INSULATOR = TextureGen.ramp(0xe0b48a, 0x2e1a12, 0x4a2a1a, 0x6e3e24, 0x925632, 0xb27448);
+    static final TextureGen.Ramp TREATED = TextureGen.TREATED_WOOD;
+    static final TextureGen.Ramp CREOSOTE = TextureGen.CREOSOTE;
+
+    /** Deterministic hash in 0..15 for grain noise; callers pass wrapped coordinates so tiles stay seamless. */
+    static int hh(int x, int y, int seed) {
+        int h = x * 374761393 + y * 668265263 + seed * 1274126177;
+        h = (h ^ (h >>> 13)) * 1103515245;
+        return (h ^ (h >>> 16)) & 15;
+    }
+
+    /** Glossy treated wood with vertical grain over w x 16 px at x0; left lit, tiles in y (and in x when w = 16). */
+    static void treatedGrain(BufferedImage im, int x0, int w, int[] tone, int seed) {
+        for (int x = 0; x < w; x++)
+            for (int y = 0; y < 16; y++) {
+                int t = tone[x];
+                int run = hh(x, ((y + x * 5) & 15) >> 2, seed);
+                if (run < 3) t--; else if (run > 12) t++;
+                if (hh(x, y, seed + 7) == 0) t--;
+                int col = t <= 0 ? c(CREOSOTE, 3 + t) : c(TREATED, t);
+                TextureGen.px(im, x0 + x, y, col);
+            }
+    }
+
+    static BufferedImage treatedLogSide() {
+        BufferedImage im = TextureGen.img();
+        int[] tone = {3, 3, 4, 3, 2, 0, 3, 4, 4, 3, 2, 0, 3, 3, 4, 3};
+        treatedGrain(im, 0, 16, tone, 11);
+        // glossy streaks: lit runs on the highlight columns
+        int[][] gloss = {{2, 1}, {2, 2}, {2, 3}, {2, 8}, {2, 9}, {8, 12}, {8, 13}, {8, 14}, {9, 5}, {9, 6}, {14, 10}, {14, 11}};
+        for (int[] g : gloss) TextureGen.px(im, g[0], g[1], c(TREATED, 5));
+        // creosote weeping down the grooves
+        int[][] drip = {{5, 2}, {5, 3}, {5, 4}, {5, 5}, {5, 11}, {5, 12}, {11, 6}, {11, 7}, {11, 8}, {11, 14}, {11, 15}, {11, 0}};
+        for (int[] d : drip) TextureGen.px(im, d[0], d[1], c(CREOSOTE, 1));
+        return im;
+    }
+
+    /** Rings soaked dark to the core; creosote ramp for the darkest rings, glossy treated edge. */
+    static BufferedImage treatedLogTop() {
+        BufferedImage im = TextureGen.img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x - 7.5, dy = y - 7.5;
+                double d = Math.sqrt(dx * dx + dy * dy);
+                int col;
+                if (Math.max(Math.abs(dx), Math.abs(dy)) > 6.9) {
+                    col = (x == 0 || y == 0) ? c(TREATED, 4) : (x == 15 || y == 15) ? c(TREATED, 2) : c(TREATED, 3);
+                } else if (d < 1.6) col = c(CREOSOTE, 1);
+                else if (d < 2.8) col = c(CREOSOTE, 3);
+                else if (d < 3.6) col = c(CREOSOTE, 2);
+                else if (d < 4.6) col = c(TREATED, 3);
+                else if (d < 5.4) col = c(CREOSOTE, 3);
+                else if (d < 6.4) col = c(TREATED, 3);
+                else col = c(TREATED, 2);
+                // a touch of light on the upper-left rings
+                if (d > 3.6 && d < 6.4 && dx + dy < -4 && (x + y) % 2 == 0 && col == c(TREATED, 3)) col = c(TREATED, 4);
+                TextureGen.px(im, x, y, col);
+            }
+        // radial check from the core
+        int[][] crack = {{9, 6}, {10, 5}, {11, 5}, {12, 4}};
+        for (int[] k : crack) TextureGen.px(im, k[0], k[1], c(CREOSOTE, 1));
+        return im;
+    }
+
+    static void ringsEnd(BufferedImage im, int x0, int y0) {
+        for (int y = 0; y < 6; y++)
+            for (int x = 0; x < 6; x++) {
+                double dx = x - 2.5, dy = y - 2.5, d = Math.sqrt(dx * dx + dy * dy);
+                int col;
+                if (Math.max(Math.abs(dx), Math.abs(dy)) > 2.4) col = (x == 0 || y == 0) ? c(TREATED, 4) : c(TREATED, 2);
+                else if (d < 1.0) col = c(CREOSOTE, 1);
+                else if (d < 1.9) col = c(CREOSOTE, 3);
+                else col = c(TREATED, 3);
+                TextureGen.px(im, x0 + x, y0 + y, col);
+            }
+    }
+
+    static BufferedImage utilityPole() {
+        BufferedImage im = TextureGen.img();
+        int[] tone = {4, 3, 3, 2, 2, 2};
+        treatedGrain(im, 0, 6, tone, 23);
+        for (int y : new int[]{3, 11}) {
+            TextureGen.px(im, 1, y, c(STEEL, 5));
+            TextureGen.px(im, 2, y, c(STEEL, 4));
+            TextureGen.px(im, 1, y + 1, c(TREATED, 1));
+            TextureGen.px(im, 2, y + 1, c(TREATED, 1));
+        }
+        ringsEnd(im, 6, 0);
+        return im;
+    }
+
+    static BufferedImage poleInsulator() {
+        BufferedImage im = TextureGen.img();
+        // glaze 8x8: stacked bell bands, lit top-left, one specular pixel on the lit rim
+        int[] band = {5, 4, 3, 2, 4, 3, 2, 1};
+        for (int y = 0; y < 8; y++)
+            for (int x = 0; x < 8; x++) {
+                int t = band[y] + (x <= 1 ? 1 : x >= 6 ? -1 : 0);
+                if (x == 0 && y > 0 && y % 4 != 0) t = band[y];
+                TextureGen.px(im, x, y, c(GLAZED_INSULATOR, t));
+            }
+        TextureGen.px(im, 1, 4, GLAZED_INSULATOR.spec());
+        // steel 8x8 at x 8: brushed pin and plate
+        int[] cols = {4, 5, 4, 3, 3, 3, 2, 1};
+        for (int y = 0; y < 8; y++)
+            for (int x = 0; x < 8; x++) {
+                int t = cols[x] + (hh(x, y, 5) < 4 ? 1 : hh(x, y, 5) > 12 ? -1 : 0);
+                if (y == 0) t = Math.max(t, 4);
+                if (y == 7) t = Math.min(t, 2);
+                TextureGen.px(im, 8 + x, y, c(STEEL, t));
+            }
+        TextureGen.px(im, 9, 3, c(STEEL, 5));
+        TextureGen.px(im, 10, 4, c(STEEL, 1));
+        TextureGen.px(im, 13, 3, c(STEEL, 5));
+        TextureGen.px(im, 14, 4, c(STEEL, 1));
+        return im;
+    }
+
+    /** Stacked bell: stub on top, three discs growing downward. Same rows for unfired (clay) and fired (glaze). */
+    static String[] insulatorRows() {
+        return new String[]{
+                ".....54.....",
+                ".....43.....",
+                "...554432...",
+                "...332221...",
+                "..55443322..",
+                "..33222111..",
+                "s54444333322",
+                "443333222211",
+                "332222221111",
+        };
+    }
+
+    /** Coil of twisted aluminium wire (diagonal turns) wound on a dark steel core whose ends show. */
+    static String[] acsrRows() {
+        String[] rows = new String[10];
+        for (int y = 0; y < 10; y++) {
+            StringBuilder sb = new StringBuilder();
+            for (int x = 0; x < 12; x++) {
+                if ((y == 0 || y == 9) && (x < 2 || x > 9)) { sb.append('.'); continue; }
+                if ((y == 1 || y == 8) && (x == 0 || x == 11)) { sb.append('.'); continue; }
+                if (x == 0) { sb.append('d'); continue; }
+                if (x == 11) { sb.append('b'); continue; }
+                int t = (x + y) % 4;
+                int k = t == 0 ? 5 : t == 1 ? 4 : t == 2 ? 3 : 0;
+                if (y >= 7) k = k == 0 ? 0 : k - 2;
+                else if (y >= 5) k = k == 0 ? 0 : k - 1;
+                if (k <= 0) sb.append(y >= 7 ? 'a' : 'b'); else sb.append((char) ('0' + k));
+            }
+            rows[y] = sb.toString();
+        }
+        return rows;
+    }
+
+    static BufferedImage acsrLine() {
+        BufferedImage im = TextureGen.img();
+        int[] step = {4, 3, 2, 3};
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) TextureGen.px(im, x, y, c(ALUMINIUM, step[(x + y) & 3]));
+        return im;
+    }
+
+    /** Creosote fill strip of the soaking barrel GUI (u 176, v 76, 16x52); same pattern as TextureGen.fillStrip. */
+    static void creosoteGuiStrip() throws IOException {
+        File f = TextureGen.OUT.resolve("gui/soaking_barrel.png").toFile();
+        BufferedImage im = ImageIO.read(f);
+        int[] c = {c(CREOSOTE, 1), c(CREOSOTE, 2), c(CREOSOTE, 3), c(CREOSOTE, 4), c(CREOSOTE, 5)};
+        for (int y = 0; y < 52; y++)
+            for (int x = 0; x < 16; x++) {
+                int k = 2;
+                if (x % 5 == 1 || x % 7 == 4) k = 3;
+                if (x % 6 == 3) k = 1;
+                if ((x + y * 2) % 11 == 0) k = Math.min(4, k + 1);
+                if (x == 0 || x == 15) k = 1;
+                im.setRGB(176 + x, 76 + y, 0xff000000 | c[k]);
+            }
+        ImageIO.write(im, "png", f);
+    }
+
+    static void overheadLines() throws IOException {
+        save("block/treated_log_side", treatedLogSide());
+        save("block/treated_log_top", treatedLogTop());
+        save("block/utility_pole", utilityPole());
+        save("block/pole_insulator", poleInsulator());
+        save("item/unfired_insulator", grid(insulatorRows(), TextureGen.CLAY));
+        save("item/ceramic_insulator", grid(insulatorRows(), GLAZED_INSULATOR));
+        save("item/acsr_conductor", grid(acsrRows(), ALUMINIUM, STEEL));
+        save("block/acsr_line", acsrLine());
+        creosoteGuiStrip();
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -1943,6 +2136,7 @@ public final class ElectricTextures {
         transformerAndAdapter();
         generators();
         chemistry();
+        overheadLines();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");
     }
