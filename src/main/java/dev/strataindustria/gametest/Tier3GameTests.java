@@ -50,7 +50,7 @@ final class Tier3GameTests {
         tests.put("trip_hammer", Tier3GameTests::tripHammer);
     }
 
-    // Bloomery (tier 3 spec 5): a three-level chimney with no bellows burns at 1250 °C, which makes
+    // Bloomery (tier 3 spec 5): a two-level chimney with no bellows burns at 1200 °C, which makes
     // blooms at the low yield; the slag comes out with the last bloom.
 
     private static void bloomeryRun(GameTestHelper helper) {
@@ -59,7 +59,7 @@ final class Tier3GameTests {
         BlockPos chamber = controller.south();
         BlockState bricks = ModBlocks.FIRE_BRICKS.get().defaultBlockState();
         level.setBlock(chamber.below(), bricks, Block.UPDATE_ALL);
-        for (int y = 0; y <= 3; y++) {
+        for (int y = 0; y <= 2; y++) {
             for (Direction side : Direction.Plane.HORIZONTAL) {
                 if (y == 0 && side == Direction.NORTH) continue;
                 level.setBlock(chamber.above(y).relative(side), bricks, Block.UPDATE_ALL);
@@ -71,7 +71,7 @@ final class Tier3GameTests {
         var structure = bloomery.checkStructure();
         helper.assertTrue(structure.complete(), "the bloomery should be complete, problem " + structure.problem() + " at "
                 + structure.at());
-        helper.assertValueEqual(structure.chimney(), 3, "chimney levels");
+        helper.assertValueEqual(structure.chimney(), 2, "chimney levels");
 
         ItemStack ore = new ItemStack(ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL), 16);
         int unitsEach = MetalContent.of(ore.copyWithCount(1)).orElseThrow().units().getOrDefault(Metal.WROUGHT_IRON, 0);
@@ -109,7 +109,8 @@ final class Tier3GameTests {
         helper.succeed();
     }
 
-    // Trip hammer (tier 3 spec 8.4): turned by a hand crank, it replays a recorded copper plate pattern
+    // Trip hammer (tier 3 spec 8.4): turned by two hand cranks (one alone is 64 SU, the hammer needs
+    // 128 at 16 RPM), it replays a recorded copper plate pattern
     // on a hot ingot from its own slot and drops the plate into the chest under the anvil.
 
     private static void tripHammer(GameTestHelper helper) {
@@ -122,6 +123,9 @@ final class Tier3GameTests {
         level.setBlock(hammerPos, ModBlocks.TRIP_HAMMER.get().defaultBlockState().setValue(TripHammerBlock.FACING, Direction.NORTH),
                 Block.UPDATE_ALL);
         level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.NORTH),
+                Block.UPDATE_ALL);
+        BlockPos topCrankPos = hammerPos.above();
+        level.setBlock(topCrankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.DOWN),
                 Block.UPDATE_ALL);
         TripHammerBlockEntity hammer = (TripHammerBlockEntity) level.getBlockEntity(hammerPos);
 
@@ -144,7 +148,9 @@ final class Tier3GameTests {
         TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
         helper.assertValueEqual(hammer.status(), TripHammerBlockEntity.Status.NOT_TURNING, "status before cranking");
 
-        ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith")));
+        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
+        ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(smith);
+        ((HandCrankBlockEntity) level.getBlockEntity(topCrankPos)).crank(smith);
         KineticNetworks.rebuildNow(level, hammerPos);
         for (int tick = 0; tick < (hits.size() + 2) * 12; tick++) {
             TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
