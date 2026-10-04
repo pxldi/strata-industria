@@ -55,7 +55,7 @@ The unique hooks, in one sentence each:
 
 | Tier | Name | Key unlock | Power | Core materials |
 |---|---|---|---|---|
-| 0 | Stone | Knapping, firestarter, primitive tools | Muscle | Flint, stone, sticks, fibre |
+| 0 | Stone | Knapping, flint-strike fire, primitive tools | Muscle | Flint, stone, sticks, fibre |
 | 1 | Fire and Clay | Pottery, pit kiln, charcoal, crucible | Fire | Clay, charcoal, fired ceramics |
 | 2 | Copper and Bronze | Smelting and casting, anvil smithing | Fire | Copper, tin, bronze, (arsenical bronze) |
 | 3 | Iron | Bloomery, wrought iron, water wheel | Water, wind (mechanical) | Wrought iron, leather, lumber |
@@ -81,7 +81,7 @@ Tiers 0 to 2 are the first playable slice. Tiers 3 and 4 are the second mileston
 - **Loose items in the world**: loose rocks, sticks and flint generate on the surface. Rock type matches the stone below, so you learn geology from the first minute.
 - **Plant fibre** from tall grass, twisted into string by hand.
 - Tools: stone knife, axe, shovel, hammer, spear. Low durability, quick to make.
-- **Firestarter**: bow drill to light a campfire. Campfire cooks food and can heat small items.
+- **Flint strike**: strike flint on a rock over the fire pit to light it. Campfire cooks food and can heat small items.
 - Crafting table requires a stone axe and sawn planks (axe-chopped planks are 2 per log instead of 4).
 
 Exit condition: having a campfire, stone tools and a stash of clay.
@@ -322,7 +322,7 @@ Package name suggestion: `dev.strataindustria` (neutral, no personal names).
 | Milestone | Scope | Done when |
 |---|---|---|
 | M0 Skeleton | Project builds, runs client and server, datagen works, one test block and item, CI green | `./gradlew build runData` clean in CI |
-| M1 First playable (tiers 0 to 2) | Loose rocks and sticks, knapping, fibre, stone tools, campfire and firestarter, clay forming, pit kiln, charcoal pit, forge with heat, crucible smelting and alloying, casting, stone and bronze anvil smithing, bronze tools and armour, surface indicators and prospector's pick, journal with tier 0 to 2 goals. World-gen: 6 to 8 rock types and copper, tin and bismuth veins. | A new player can go from spawn to a full bronze kit without a wiki in 3 to 5 hours |
+| M1 First playable (tiers 0 to 2) | Loose rocks and sticks, knapping, fibre, stone tools, campfire and flint-strike fire, clay forming, pit kiln, charcoal pit, forge with heat, crucible smelting and alloying, casting, stone and bronze anvil smithing, bronze tools and armour, surface indicators and prospector's pick, journal with tier 0 to 2 goals. World-gen: 6 to 8 rock types and copper, tin and bismuth veins. | A new player can go from spawn to a full bronze kit without a wiki in 3 to 5 hours |
 | M2 Iron and mechanical (tier 3) | Bloomery, bloom refining, water wheel and windmill, shafts and gearboxes, mechanical quern, saw mill, trip hammer, bellows, sluice | Playtest pass on M1 + M2 |
 | M3 Steel and steam (tier 4) | Blast furnace, coke oven, boilers, steam engines, heat pipes, fluids, conveyors, ore processing II | |
 | M4+ | Electric and beyond | |

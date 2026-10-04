@@ -1,6 +1,5 @@
 package dev.strataindustria.forge;
 
-import dev.strataindustria.fire.FirestarterItem;
 import dev.strataindustria.fire.Ignitable;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModSounds;
@@ -66,7 +65,6 @@ public class ForgeBlock extends BaseEntityBlock implements Ignitable {
             }
             return InteractionResult.SUCCESS;
         }
-        if (stack.getItem() instanceof FirestarterItem && Ignitable.mayIgnite(level, pos, state)) return InteractionResult.PASS;
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 

@@ -53,10 +53,15 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 
-        // Fire: wood friction for the drill, then vanilla fire samples.
-        SoundDefinition drill = definition().subtitle(subtitle("firestarter.drill"));
-        for (int i = 1; i <= 4; i++) drill.with(sound("minecraft:step/wood" + i).pitch(1.6f).volume(0.5f));
-        add(ModSounds.FIRESTARTER_DRILL, drill);
+        // Fire: flint on rock is a sharp stone click over a bright chime (the code raises the pitch with each
+        // strike), the catch a soft rush of air over the first crackle.
+        SoundDefinition strike = definition().subtitle(subtitle("flint.strike"));
+        for (int i = 1; i <= 4; i++) strike.with(sound("minecraft:step/stone" + i).pitch(1.7f).volume(0.7f));
+        strike.with(sound("minecraft:block.amethyst_block.hit", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.45f));
+        add(ModSounds.FLINT_STRIKE, strike);
+        add(ModSounds.FLINT_CATCH, definition().subtitle(subtitle("flint.catch"))
+                .with(sound("minecraft:fire/ignite").pitch(0.8f))
+                .with(sound("minecraft:fire/fire").pitch(1.3f).volume(0.7f)));
         add(ModSounds.FIRE_PIT_IGNITE, definition().subtitle(subtitle("fire_pit.ignite"))
                 .with(sound("minecraft:fire/ignite").pitch(0.9f))
                 .with(sound("minecraft:fire/fire").pitch(1.2f).volume(0.6f)));

@@ -91,11 +91,11 @@ final class StructureLoot {
         if (current == null) return;
         Item key = item.asItem();
         boolean stone = key == ModItems.STONE_AXE.get() || key == ModItems.STONE_SHOVEL.get() || key == ModItems.STONE_PICKAXE.get()
-                || key == ModItems.STONE_KNIFE.get() || key == ModItems.STONE_HAMMER.get() || key == ModItems.FIRESTARTER.get()
+                || key == ModItems.STONE_KNIFE.get() || key == ModItems.STONE_HAMMER.get()
                 // The panners' relic (structures v2 section 3): a hand tool, no better than stone.
                 || key == ModItems.WASHING_PAN.get();
         if (!stone) current.fail("tool " + key + " is not a stone tool");
-        if (key != ModItems.FIRESTARTER.get() && (minLeft < 0.25f || maxLeft > 0.8f)) {
+        if ((minLeft < 0.25f || maxLeft > 0.8f)) {
             current.fail("tool " + key + " keeps " + minLeft + " to " + maxLeft + " of its durability, rule is 25 to 80 percent");
         }
     }

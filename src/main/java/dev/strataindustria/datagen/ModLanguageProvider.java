@@ -74,7 +74,6 @@ final class ModLanguageProvider extends LanguageProvider {
         for (RockCategory category : RockCategory.values()) {
             add(knapped + "category." + category.getSerializedName(), category.getSerializedName().replace('_', ' '));
         }
-        addItem(ModItems.FIRESTARTER, "Firestarter");
         addBlock(ModBlocks.FIRE_PIT, "Fire Pit");
         add("container." + StrataIndustria.MOD_ID + ".fire_pit", "Fire Pit");
         for (HeatBand band : HeatBand.values()) {
@@ -82,6 +81,7 @@ final class ModLanguageProvider extends LanguageProvider {
             String name = band.id().replace('_', ' ');
             add(StrataIndustria.MOD_ID + ".heat." + band.id(), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
         }
+        add(StrataIndustria.MOD_ID + ".flint_strike.need_rock", "Hold a rock in your other hand to strike the flint on");
         add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s for this shape");
         add(StrataIndustria.MOD_ID + ".shaping.shape", "%s: %s blows, uses %s %s");
         add(StrataIndustria.MOD_ID + ".shaping.progress", "%s  %s/%s");
@@ -199,7 +199,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "bell.ring", "Bell rings");
         add(subtitles + "cabinet.set", "Specimen set down");
         add(subtitles + "cabinet.shelf", "Shelf filled");
-        add(subtitles + "firestarter.drill", "Bow drill whirs");
+        add(subtitles + "flint.strike", "Flint strikes rock");
+        add(subtitles + "flint.catch", "Tinder catches");
         add(subtitles + "fire_pit.ignite", "Fire catches");
         add(subtitles + "fire_pit.extinguish", "Fire goes out");
         add(subtitles + "fire_pit.torch", "Torch lit");
@@ -793,7 +794,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.twine", "Twisted Fibre");
         add(journal + "t0.twine.hint", "Cut grass with a knapped knife blade for plant fibre, then twist two fibres into twine.");
         add(journal + "t0.fire", "Firelight");
-        add(journal + "t0.fire.hint", "Build a fire pit from sticks and straw, put fuel in, and hold a firestarter on it.");
+        add(journal + "t0.fire.hint", "Build a fire pit from sticks and straw, put fuel in, and strike flint on a rock over it.");
         add(journal + "t0.clay", "Riverbank Clay");
         add(journal + "t0.clay.hint", "Gather five clay balls. Look along riverbanks and in swamps.");
         add(journal + "t1.clay_forming", "Shaped by Hand");
