@@ -20,7 +20,7 @@ public final class Ledgers {
         PAGES.put("prospector_camp", 2);
         PAGES.put("mining_camp", 2);
         PAGES.put("collapsed_adit", 2);
-        PAGES.put("ruined_bloomery", 2);
+        PAGES.put("ruined_bloomery", 3);
         PAGES.put("placer_workings", 2);
     }
 

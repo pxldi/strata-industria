@@ -330,6 +330,30 @@
     ],
     "subtitle": "subtitles.strataindustria.cracked_fire_bricks.break"
   },
+  "block.cracked_fire_bricks.settle": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.decorated_pot.hit",
+        "pitch": 1.4,
+        "volume": 0.6,
+        "weight": 2
+      },
+      {
+        "type": "event",
+        "name": "block.calcite.hit",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.gravel.fall",
+        "pitch": 0.8,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.cracked_fire_bricks.settle"
+  },
   "block.cracked_rock.break": {
     "sounds": [
       {

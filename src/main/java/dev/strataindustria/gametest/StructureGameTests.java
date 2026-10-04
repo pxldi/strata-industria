@@ -5,6 +5,7 @@ import dev.strataindustria.structure.AditPiece;
 import dev.strataindustria.structure.Plan;
 import dev.strataindustria.structure.PlanPiece;
 import dev.strataindustria.structure.Plans;
+import dev.strataindustria.structure.StructureContent;
 import dev.strataindustria.structure.SluicePiece;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ final class StructureGameTests {
         tests.put("structure_bunkhouse_cache", StructureGameTests::bunkhouseCache);
         tests.put("structure_clearing_cache", StructureGameTests::clearingCache);
         tests.put("structure_prospector_trench", StructureGameTests::prospectorTrench);
+        tests.put("structure_bloomery_works", StructureGameTests::bloomeryWorks);
     }
 
     private static void plansInForest(GameTestHelper helper) {
@@ -135,6 +137,35 @@ final class StructureGameTests {
             dev.strataindustria.structure.PuzzleLock.blockPlaced(level, step.pos());
         }
         helper.assertTrue(!level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED), "rocks in order did not open the crate");
+        helper.succeed();
+    }
+
+    /** The cache crate lies under beams and stays shut until the three bricks missing from the stack are set back. */
+    private static void bloomeryWorks(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        Plan plan = Plans.BLOOMERY_WORKS;
+        int minX = origin.getX() + PAD, minZ = origin.getZ() + PAD;
+        BoundingBox area = new BoundingBox(minX - PAD, groundY - 8, minZ - PAD, minX + plan.width() + PAD, groundY + 40, minZ + plan.depth() + PAD);
+        forest(level, area, groundY, minX, minZ, plan.width(), plan.depth());
+        build(level, new PlanPiece(plan, Rotation.NONE, minX, minZ, groundY, OreMineral.HEMATITE, PlanPiece.Wood.OAK, 11L), area);
+        BlockPos crate = new BlockPos(minX + 5, groundY, minZ + 6);
+        helper.assertTrue(level.getBlockState(crate).is(dev.strataindustria.structure.SharedBlocks.CRATE.get()), "cache crate missing");
+        helper.assertTrue(level.getBlockState(crate.above()).is(Blocks.STRIPPED_DARK_OAK_LOG), "no beam over the cache");
+        helper.assertTrue(level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED), "cache crate is not locked");
+        var lock = ((dev.strataindustria.structure.CrateBlockEntity) level.getBlockEntity(crate)).puzzle();
+        helper.assertTrue(lock != null && lock.steps().size() == 3, "no brick puzzle on the crate");
+        for (var step : lock.steps()) helper.assertTrue(level.getBlockState(step.pos()).isAir(), "stack has no gap at " + step.pos());
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 2, groundY + 1, minZ + 7))
+                .is(dev.strataindustria.structure.SharedBlocks.CRATE.get()), "workshop crate missing");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 17, groundY + 1, minZ + 13)).getBlock() instanceof net.minecraft.world.level.block.StandingSignBlock,
+                "grave sign missing");
+        for (var step : lock.steps()) {
+            level.setBlock(step.pos(), StructureContent.CRACKED_FIRE_BRICKS.get().defaultBlockState(), 3);
+            dev.strataindustria.structure.PuzzleLock.blockPlaced(level, step.pos());
+        }
+        helper.assertTrue(!level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED), "bricks in place did not open the crate");
         helper.succeed();
     }
 

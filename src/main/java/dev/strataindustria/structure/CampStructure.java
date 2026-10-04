@@ -365,7 +365,7 @@ public class CampStructure extends Structure {
         int dist = 24 + random.nextInt(33);
         int x = vein.x() + (int) Math.round(away[0] * dist), z = vein.z() + (int) Math.round(away[1] * dist);
         Direction toVein = cardinal(-away[0], -away[1]);
-        Plan plan = Plans.BLOOMERY_STUMP;
+        Plan plan = Plans.BLOOMERY_WORKS;
         Rotation rotation = facing(toVein);
         int minX = x - plan.width() / 2, minZ = z - plan.depth() / 2;
         OptionalInt ground = site.level(minX, minZ, minX + plan.width() - 1, minZ + plan.depth() - 1, 3);
@@ -373,14 +373,14 @@ public class CampStructure extends Structure {
 
         OreMineral mineral = mainMineral(vein, BLOOMERY_MINERALS);
         PlanPiece.Wood wood = site.wood(x, ground.getAsInt(), z);
-        PlanPiece stump = new PlanPiece(plan, rotation, minX, minZ, ground.getAsInt(), mineral, wood, random.nextLong());
+        PlanPiece works = new PlanPiece(plan, rotation, minX, minZ, ground.getAsInt(), mineral, wood, random.nextLong());
 
         // The charcoal was burned off to one side of the stack, most of the time.
         PlanPiece scar = null;
         if (random.nextInt(10) < 7) {
             Direction side = random.nextBoolean() ? toVein.getClockWise() : toVein.getCounterClockWise();
             Plan scarPlan = Plans.CHARCOAL_SCAR;
-            int along = plan.width() / 2 + 3 + scarPlan.width() / 2;
+            int along = Math.max(plan.width(), plan.depth()) / 2 + 3 + scarPlan.width() / 2;
             int sx = x + side.getStepX() * along - scarPlan.width() / 2, sz = z + side.getStepZ() * along - scarPlan.depth() / 2;
             if (!site.wet(sx + scarPlan.width() / 2, sz + scarPlan.depth() / 2)) {
                 scar = new PlanPiece(scarPlan, Rotation.NONE, sx, sz, site.surface(sx + scarPlan.width() / 2, sz + scarPlan.depth() / 2),
@@ -390,7 +390,7 @@ public class CampStructure extends Structure {
 
         PlanPiece charcoalScar = scar;
         return Optional.of(new GenerationStub(new BlockPos(x, ground.getAsInt(), z), builder -> {
-            builder.addPiece(stump);
+            builder.addPiece(works);
             if (charcoalScar != null) builder.addPiece(charcoalScar);
         }));
     }

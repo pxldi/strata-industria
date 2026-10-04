@@ -334,17 +334,23 @@ final class StructureData {
                     .withPool(pool(0.6f, item(Items.EMERALD, 2, 5)))
                     .withPool(book(context, 0.25f)));
 
-            // Ruined bloomery (H = 2): a taste of iron, too little to work, and where the smiths found theirs.
-            add(CampLoot.BLOOMERY_CACHE, () -> LootTable.lootTable()
+            // Ruined bloomery (H = 2): the workshop crate holds the three bricks of the stack and what the smith left;
+            // the cache under the beams holds the best of it.
+            add(CampLoot.BLOOMERY_WORKSHOP, () -> LootTable.lootTable()
+                    .withPool(pool(1, item(StructureContent.CRACKED_FIRE_BRICKS_ITEM.get(), 3, 3)))
                     .withPool(pool(1, notes(BLOOMERY_NOTES)))
+                    .withPool(pool(1, ledger("ruined_bloomery", 1)))
+                    .withPool(pool(0.9f, item(Items.CHARCOAL, 8, 24)))
+                    .withPool(pool(0.7f, item(ModItems.ASH.get(), 2, 8)))
+                    .withPool(pool(0.7f, item(ModItems.INGOTS.get(Metal.COPPER).get(), 1, 2)))
+                    .withPool(pool(0.6f, item(Items.IRON_NUGGET, 1, 3)))
+                    .withPool(pool(0.6f, worn(ModItems.STONE_HAMMER.get()))));
+            add(CampLoot.BLOOMERY_CACHE, () -> LootTable.lootTable()
+                    .withPool(pool(1, ledger("ruined_bloomery", 3)))
                     .withPool(pool(1, ledger("ruined_bloomery", 2)))
-                    .withPool(pool(0.8f, item(Items.CHARCOAL, 8, 16)))
-                    .withPool(pool(0.6f, item(ModItems.ASH.get(), 2, 8)))
-                    .withPool(pool(0.5f, item(Items.IRON_NUGGET, 1, 3)))
-                    .withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 4, 10)))
                     .withPool(pool(0.35f, new LootPoolEntry(LootItem.lootTableItem(StructureContent.SMITH_TRIM_TEMPLATE.get()))))
                     .withPool(pool(0.6f, sherd("ruined_bloomery")))
-                    .withPool(pool(0.5f, specimen(OreMineral.HEMATITE)))
+                    .withPool(pool(1, specimen(OreMineral.HEMATITE)))
                     .withPool(pool(0.5f, item(Items.EMERALD, 1, 3)))
                     .withPool(book(context, 0.2f)));
 
@@ -700,6 +706,7 @@ final class StructureData {
         add.accept(subtitles + "survey_notes.found", "Deposit found");
         add.accept(subtitles + "journal.place", "Journal page written");
         add.accept(subtitles + "cracked_fire_bricks.break", "Brick crumbles");
+        add.accept(subtitles + "cracked_fire_bricks.settle", "Bricks tick");
         add.accept(subtitles + "slag_heap.break", "Slag crunches");
 
         String place = "journal." + id + ".place";
@@ -722,7 +729,8 @@ final class StructureData {
         add.accept(place + ".ruined_bloomery", "Ruined bloomery");
         add.accept(place + ".ruined_bloomery.hint", "A chimney of pale bricks, cracked by heat, and heaps of glassy slag. Smiths "
                 + "once made iron here: not by melting it, but by baking ore with charcoal in a tall brick stack. These bricks "
-                + "were made from a special pale clay. The slag still holds a little iron.");
+                + "were made from a special pale clay. The slag still holds a little iron. Three bricks are missing from the "
+                + "stack. The roof fell on something. Move the beams.");
         add.accept(place + ".placer_workings", "Placer workings");
         add.accept(place + ".placer_workings.hint", "Panners washed river gravel here and left a heap they never finished. "
                 + "Heavy grains settle when gravel is swirled in water; the light stuff washes away. Look for glints in river "
@@ -771,8 +779,9 @@ final class StructureData {
                     "Roof came down Tuesday. Nobody hurt. The props at the far end still hold, we think. Not going back in.",
                     "Followed the vein from the portal and it dips. Props every three steps. Bring plenty of timber."};
             case "ruined_bloomery" -> new String[] {
-                    "Fire bricks crack after a few burns. The pale clay holds longest. Slag is mostly iron still, don't throw it out.",
-                    "Bloom came out small again. Too little charcoal, too much hurry. Don't open it before the glow is gone."};
+                    "Fire bricks crack after a few burns. The pale clay holds longest. Stack lost three, spares are in the crate. Slag is mostly iron still, don't throw it out.",
+                    "Bloom came out small again. Too little charcoal, too much hurry. Don't open it before the glow is gone.",
+                    "Stack plan. Pale bricks only, three to a side, the door on the front and the chimney on top. Slag collects at the bottom."};
             case "placer_workings" -> new String[] {
                     "River gravel, three pans a day. Gold is heavy and sits at the bottom. Tip slow and the light stuff goes over the edge.",
                     "Water rose and took half the trough. Will rebuild when it drops."};

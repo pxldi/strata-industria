@@ -1,0 +1,160 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 3
+          },
+          "name": "strataindustria:cracked_fire_bricks"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:survey": {
+                "targets": [
+                  "fire_clay",
+                  "hematite",
+                  "magnetite"
+                ]
+              }
+            }
+          },
+          "name": "strataindustria:survey_notes"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:ledger": "ruined_bloomery.1"
+            }
+          },
+          "name": "strataindustria:survey_notes"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.9
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 24,
+              "min": 8
+            }
+          },
+          "name": "minecraft:charcoal"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.7
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 8,
+              "min": 2
+            }
+          },
+          "name": "strataindustria:ash"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.7
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 2,
+              "min": 1
+            }
+          },
+          "name": "minecraft:copper_ingot"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.6
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 3,
+              "min": 1
+            }
+          },
+          "name": "minecraft:iron_nugget"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.6
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_damage",
+            "damage": {
+              "type": "minecraft:uniform",
+              "max": 0.8,
+              "min": 0.25
+            }
+          },
+          "name": "strataindustria:stone_hammer"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:chests/ruined_bloomery/workshop"
+}
