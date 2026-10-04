@@ -1,0 +1,18 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "exclusion_zone": {
+      "chunk_count": 5,
+      "other_set": "minecraft:villages"
+    },
+    "salt": 145287613,
+    "separation": 3,
+    "spacing": 10
+  },
+  "structures": [
+    {
+      "structure": "strataindustria:placer_workings",
+      "weight": 1
+    }
+  ]
+}
