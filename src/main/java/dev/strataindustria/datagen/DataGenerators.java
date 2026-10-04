@@ -48,6 +48,7 @@ public final class DataGenerators {
         // Data
         event.createProvider(ModBlockTagsProvider::new);
         event.createProvider(ModItemTagsProvider::new);
+        event.createProvider(Tier6Data.FluidTags::new);
         event.createProvider(StructureData.BiomeTagProvider::new);
         event.createReloadableRegistryObjects(
                 new RegistrySetBuilder()

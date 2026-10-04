@@ -113,6 +113,7 @@ public final class ModGameTests {
         Tier3GameTests.register(TESTS);
         Tier4GameTests.register(TESTS);
         Tier5GameTests.register(TESTS);
+        Tier6GameTests.register(TESTS);
     }
 
     private ModGameTests() {}

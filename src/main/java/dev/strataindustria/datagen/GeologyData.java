@@ -127,6 +127,7 @@ final class GeologyData {
         ctx.register(ModWorldgen.CLAY_PATCHES, ClayPatchFeature.INSTANCE);
         ctx.register(ModWorldgen.BOG_IRON, BogIronFeature.INSTANCE);
         ctx.register(ModWorldgen.PLACERS, PlacerFeature.INSTANCE);
+        Tier6Data.features(ctx);
     }
 
     static void placedFeatures(BootstrapContext<PlacedFeature> ctx) {
@@ -136,6 +137,7 @@ final class GeologyData {
         ctx.register(ModWorldgen.GROUND_COVER_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.GROUND_COVER), List.of()));
         ctx.register(ModWorldgen.CLAY_PATCHES_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.CLAY_PATCHES), List.of()));
         ctx.register(ModWorldgen.BOG_IRON_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.BOG_IRON), List.of()));
+        Tier6Data.placedFeatures(ctx);
         ctx.register(ModWorldgen.PLACERS_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.PLACERS), List.of()));
     }
 
@@ -144,6 +146,7 @@ final class GeologyData {
         HolderGetter<PlacedFeature> placed = ctx.lookup(Registries.PLACED_FEATURE);
         HolderSet<Biome> overworld = biomes.getOrThrow(BiomeTags.IS_OVERWORLD);
 
+        Tier6Data.biomeModifiers(ctx);
         add(ctx, ModWorldgen.ADD_STRATA, overworld, placed, ModWorldgen.STRATA_PLACED, GenerationStep.Decoration.RAW_GENERATION);
         add(ctx, ModWorldgen.ADD_CLAY_PATCHES, overworld, placed, ModWorldgen.CLAY_PATCHES_PLACED, GenerationStep.Decoration.LAKES);
         add(ctx, ModWorldgen.ADD_BOG_IRON, overworld, placed, ModWorldgen.BOG_IRON_PLACED, GenerationStep.Decoration.LAKES);

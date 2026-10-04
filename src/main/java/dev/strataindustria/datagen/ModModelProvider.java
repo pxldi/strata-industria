@@ -69,6 +69,7 @@ final class ModModelProvider extends ModelProvider {
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         Tier5Models.register(blockModels, itemModels);
+        tier6(blockModels, itemModels);
         for (Rock rock : Rock.values()) {
             blockModels.createTrivialCube(ModBlocks.RAW_ROCK.get(rock).get());
             blockModels.createTrivialCube(ModBlocks.COBBLED_ROCK.get(rock).get());
@@ -686,6 +687,12 @@ final class ModModelProvider extends ModelProvider {
         flatItem(itemModels, ModItems.RAW_HIDE.get());
         flatItem(itemModels, ModItems.LIMED_HIDE.get());
         flatItem(itemModels, ModItems.SCRAPED_HIDE.get());
+    }
+
+    /** Tier 6: crude oil in the world, the oil buckets, bitumen, plastics and synthetic rubber. */
+    private static void tier6(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        blockModels.createAirLikeBlock(dev.strataindustria.registry.Tier6Blocks.CRUDE_OIL.get(), blockTexture("fluid/crude_oil_still"));
+        for (var item : dev.strataindustria.registry.Tier6Items.flatItems()) flatItem(itemModels, item.get());
     }
 
     private static void flatItem(ItemModelGenerators itemModels, Item item) {

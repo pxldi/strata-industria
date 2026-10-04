@@ -10,6 +10,8 @@ import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.registry.Tier6Items;
+import dev.strataindustria.registry.Tier6Tags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -34,6 +36,11 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(common("wires/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_WIRE.getKey());
         tag(common("rods/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_ROD.getKey());
         tag(common("plates/lead")).add(dev.strataindustria.registry.Tier5Items.LEAD_PLATE.getKey());
+        // Tier 6 spec 17.6: plastics and synthetic rubber.
+        tag(Tier6Tags.Items.C_POLYETHYLENE).add(Tier6Items.POLYETHYLENE_PELLET.getKey()).add(Tier6Items.POLYETHYLENE_SHEET.getKey());
+        tag(Tier6Tags.Items.C_PVC).add(Tier6Items.PVC_PELLET.getKey()).add(Tier6Items.PVC_SHEET.getKey());
+        tag(Tier6Tags.Items.PLASTICS).addTag(Tier6Tags.Items.C_POLYETHYLENE).addTag(Tier6Tags.Items.C_PVC);
+        tag(Tier6Tags.Items.C_RUBBERS).add(Tier6Items.SYNTHETIC_RUBBER.getKey());
         for (RockCategory category : RockCategory.values()) {
             var categoryTag = tag(ModTags.Items.rocks(category));
             for (Rock rock : Rock.values()) {
