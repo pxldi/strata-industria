@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "X": "strataindustria:treated_planks",
+    "p": "strataindustria:steel_fluid_pipe"
+  },
+  "pattern": [
+    "XXX",
+    "XpX",
+    "X X"
+  ],
+  "result": {
+    "id": "strataindustria:water_tower_base"
+  }
+}

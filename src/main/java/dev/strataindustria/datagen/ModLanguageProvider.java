@@ -568,6 +568,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".outposts.outline_none", "This charter loads nothing right now.");
         add(id + ".outposts.kind.tramway", "tramway");
         add(id + ".outposts.kind.railway", "railway");
+        add(id + ".outposts.kind.railway_mixed", "railway (wooden sections)");
         add(id + ".outposts.kind.ropeway", "ropeway");
         add(id + ".outposts.kind.tram", "tram line");
         add(id + ".outposts.kind.power", "power line");

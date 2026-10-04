@@ -333,6 +333,11 @@ public class MineTubEntity extends AbstractMinecartContainer {
         return holdPos;
     }
 
+    /** The stop this vehicle has just left and will not be taken by again until it is clear of it. */
+    protected final @Nullable BlockPos ignoredStop() {
+        return ignoreStop;
+    }
+
     /** True while this vehicle is pressed against a rail buffer. */
     protected final boolean atBuffer() {
         return thudded;
@@ -371,6 +376,52 @@ public class MineTubEntity extends AbstractMinecartContainer {
         holdPos = null;
         ignoreStop = stop.immutable();
         setDeltaMovement(push.x, 0, push.z);
+    }
+
+    // ---------------------------------------------------------------- walking the line
+
+    /** How far into its block a self-propelled vehicle goes before it is stopped at the end of the line. */
+    private static final double NEAR_EDGE = 0.2;
+
+    /** Whether the track climbs on the way the vehicle is going. */
+    protected boolean uphill(BlockPos rail, Vec3 heading) {
+        BlockState state = level().getBlockState(rail);
+        if (!(state.getBlock() instanceof BaseRailBlock block)) return false;
+        Direction up = switch (state.getValue(block.getShapeProperty())) {
+            case ASCENDING_EAST -> Direction.EAST;
+            case ASCENDING_WEST -> Direction.WEST;
+            case ASCENDING_NORTH -> Direction.NORTH;
+            case ASCENDING_SOUTH -> Direction.SOUTH;
+            default -> null;
+        };
+        return up != null && heading.x * up.getStepX() + heading.z * up.getStepZ() > 0.1;
+    }
+
+    /** True when the track ends ahead: no rail where the vehicle is headed, in a loaded chunk. */
+    protected boolean deadEnd(BlockPos rail, Vec3 heading) {
+        BlockState state = level().getBlockState(rail);
+        if (!(state.getBlock() instanceof BaseRailBlock block)) return false;
+        Vec3 ahead = null;
+        double best = 0.1;
+        for (Vec3i exit : new Vec3i[] {
+                AbstractMinecart.exits(state.getValue(block.getShapeProperty())).getFirst(),
+                AbstractMinecart.exits(state.getValue(block.getShapeProperty())).getSecond()}) {
+            double dot = exit.getX() * heading.x + exit.getZ() * heading.z;
+            if (dot > best) {
+                best = dot;
+                ahead = new Vec3(exit.getX(), exit.getY(), exit.getZ());
+            }
+        }
+        if (ahead == null) return false;
+        BlockPos next = rail.offset((int) ahead.x, (int) ahead.y, (int) ahead.z);
+        if (!level().hasChunkAt(next)) return false;
+        return !(BaseRailBlock.isRail(level(), next) || BaseRailBlock.isRail(level(), next.below()) || BaseRailBlock.isRail(level(), next.above()));
+    }
+
+    /** Whether the vehicle is far enough into its block, going the way it heads, to be stopped before the edge. */
+    protected boolean nearEdge(BlockPos rail, Vec3 heading) {
+        double offset = (getX() - (rail.getX() + 0.5)) * heading.x + (getZ() - (rail.getZ() + 0.5)) * heading.z;
+        return offset > NEAR_EDGE;
     }
 
     // ---------------------------------------------------------------- buffer
@@ -592,13 +643,18 @@ public class MineTubEntity extends AbstractMinecartContainer {
         MineTubEntity front = findFront();
         if (front == null) return Coupling.NONE;
         int length = front.consist().size() + consist().size();
-        if (length - 1 > Config.TRANSPORT_MAX_CONSIST_T3.getAsInt()) return Coupling.TOO_LONG;
+        if (length - 1 > maxConsist(front.head())) return Coupling.TOO_LONG;
         front.followerId = getUUID();
         leaderId = front.getUUID();
         front.entityData.set(DATA_COUPLED, true);
         entityData.set(DATA_COUPLED, true);
         trace.lose();
         return Coupling.OK;
+    }
+
+    /** Vehicles that may follow {@code lead}: a locomotive pulls more than a pony. */
+    private static int maxConsist(MineTubEntity lead) {
+        return lead instanceof SteamLocomotiveEntity ? Config.TRANSPORT_MAX_CONSIST_T4.getAsInt() : Config.TRANSPORT_MAX_CONSIST_T3.getAsInt();
     }
 
     protected void tryCouple(ServerPlayer player) {
@@ -610,8 +666,8 @@ public class MineTubEntity extends AbstractMinecartContainer {
             case OK -> Component.translatable(StrataIndustria.MOD_ID + ".tub.coupled");
             case NONE -> Component.translatable(StrataIndustria.MOD_ID + ".tub.none");
             case FOLLOWING -> Component.translatable(StrataIndustria.MOD_ID + ".tub.following");
-            case TOO_LONG -> Component.translatable(StrataIndustria.MOD_ID + ".tub.too_long", Config.TRANSPORT_MAX_CONSIST_T3.getAsInt());
-            case LEADS -> Component.translatable(StrataIndustria.MOD_ID + ".pony.leads");
+            case TOO_LONG -> Component.translatable(StrataIndustria.MOD_ID + ".tub.too_long", maxConsist(findFront() == null ? this : findFront().head()));
+            case LEADS -> Component.translatable(StrataIndustria.MOD_ID + (this instanceof PonyEntity ? ".pony.leads" : ".locomotive.leads"));
         });
     }
 

@@ -17,7 +17,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
-/** The tub stop screen's two packets: the server opens it with the stop's settings, the client sends new ones back. */
+/** The tub stop screen's two packets and the locomotive whistle key: the server opens the screen with the stop's settings, the client sends new ones back. */
 @EventBusSubscriber(modid = StrataIndustria.MOD_ID)
 public final class RailPayloads {
     private static final double REACH = 10;
@@ -45,6 +45,17 @@ public final class RailPayloads {
         }
     }
 
+    /** The whistle key pressed on a client, by a rider of a locomotive. */
+    public record Whistle() implements CustomPacketPayload {
+        public static final Type<Whistle> TYPE = new Type<>(StrataIndustria.id("locomotive_whistle"));
+        public static final StreamCodec<RegistryFriendlyByteBuf, Whistle> CODEC = StreamCodec.unit(new Whistle());
+
+        @Override
+        public Type<Whistle> type() {
+            return TYPE;
+        }
+    }
+
     /** Opens the screen; the station line names the charter whose area the stop is in, if any. */
     public static void openStop(ServerPlayer player, ServerLevel level, TubStopBlockEntity stop) {
         Charter charter = TramwayRoutes.stationCharter(RouteIndex.get(level), stop.getBlockPos());
@@ -56,6 +67,9 @@ public final class RailPayloads {
         var registrar = event.registrar("1");
         registrar.playToClient(OpenStop.TYPE, OpenStop.CODEC, (payload, context) ->
                 context.enqueueWork(() -> dev.strataindustria.client.RailClient.openStop(payload.data(), payload.station())));
+        registrar.playToServer(Whistle.TYPE, Whistle.CODEC, (payload, context) -> context.enqueueWork(() -> {
+            if (context.player() instanceof ServerPlayer player && player.getVehicle() instanceof SteamLocomotiveEntity loco) loco.whistleBy(player.level(), player);
+        }));
         registrar.playToServer(UpdateStop.TYPE, UpdateStop.CODEC, (payload, context) -> context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) update(player, payload.data());
         }));

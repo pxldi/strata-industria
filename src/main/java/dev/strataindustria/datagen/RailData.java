@@ -169,7 +169,7 @@ final class RailData {
         add.accept(id + ".tub.coupled", "Coupled.");
         add.accept(id + ".tub.none", "No free tub within reach.");
         add.accept(id + ".tub.following", "That tub is already coupled to one ahead.");
-        add.accept(id + ".tub.too_long", "Only %s tubs follow the first.");
+        add.accept(id + ".tub.too_long", "Only %s follow the first.");
         add.accept(id + ".outposts.vanilla_rails", "Line not proven: vanilla rails at %s.");
 
         add.accept(id + ".stop.name", "Stop name");

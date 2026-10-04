@@ -211,6 +211,13 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(boiler, "t4/heat_network", Tier4Items.COPPER_HEAT_PIPE.get(), JournalTrigger.TriggerInstance.of(Journal.HEAT_NETWORK));
         AdvancementHolder engine = goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
+        // Outposts spec 11: a locomotive raises steam, then runs a line by itself, then grows an outpost.
+        AdvancementHolder locomotive = goal(engine, "t4/locomotive", dev.strataindustria.transport.rail.RailwayRegistry.STEAM_LOCOMOTIVE.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.LOCOMOTIVE_PRESSURE));
+        AdvancementHolder railway = goal(locomotive, "t4/railway", dev.strataindustria.transport.rail.RailwayRegistry.STATION_TRACK_ITEM.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.DRIVERLESS_TRIPS));
+        goal(railway, "t4/outpost_5", dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.OUTPOST_GROWN));
         // Spec 15, goal 65: a steam hammer finishes a recipe.
         goal(engine, "t4/steam_hammer", Tier4Items.STEAM_HAMMER.get(), JournalTrigger.TriggerInstance.of(Journal.STEAM_HAMMER));
         // Spec 15, goal 69: a powered crusher finishes something.
