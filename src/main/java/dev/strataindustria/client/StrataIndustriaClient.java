@@ -70,6 +70,7 @@ public final class StrataIndustriaClient {
         event.register(dev.strataindustria.registry.Tier4Menus.FIREBOX.get(), dev.strataindustria.client.screen.FireboxScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.KILN.get(), dev.strataindustria.client.screen.KilnScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.ROASTER.get(), dev.strataindustria.client.screen.RoasterScreen::new);
+        event.register(dev.strataindustria.registry.Tier6Menus.OIL_STILL.get(), dev.strataindustria.client.screen.OilStillScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.SMELTER.get(), dev.strataindustria.client.screen.SmelterScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.STEAM_HAMMER.get(), dev.strataindustria.client.screen.SteamHammerScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.BRONZE_BOILER.get(), dev.strataindustria.client.screen.BoilerScreen::new);

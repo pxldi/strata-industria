@@ -67,6 +67,9 @@ public final class StrataIndustria {
         Tier6Blocks.init();
         Tier6Items.init();
         Tier6Sounds.init();
+        dev.strataindustria.registry.Tier6BlockEntities.init();
+        dev.strataindustria.registry.Tier6Menus.init();
+        dev.strataindustria.registry.Tier6Recipes.init();
         dev.strataindustria.registry.PrologueRegistry.init();
         dev.strataindustria.registry.PatternRegistry.init();
         dev.strataindustria.mark.MarkRegistry.init();

@@ -68,7 +68,8 @@ public final class StrataJeiPlugin implements IModPlugin {
                 new ChemicalCategory<>(JeiTypes.MIXING, "mixing", Tier5Items.MIXER.get(), gui, 66),
                 new ChemicalCategory<>(JeiTypes.ELECTROLYSIS, "electrolysis", Tier5Items.ELECTROLYSER.get(), gui, 66),
                 new ChemicalCategory<>(JeiTypes.ASSEMBLING, "assembling", Tier5Items.ASSEMBLER.get(), gui, 84),
-                new ChemicalCategory<>(JeiTypes.EXTRUDING, "extruding", Tier5Items.EXTRUDER.get(), gui, 66));
+                new ChemicalCategory<>(JeiTypes.EXTRUDING, "extruding", Tier5Items.EXTRUDER.get(), gui, 66),
+                new OilStillCategory(gui));
     }
 
     @Override
@@ -90,6 +91,7 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addRecipes(JeiTypes.ELECTROLYSIS, ClientRecipes.byType(Tier5Recipes.ELECTROLYSIS.get()));
         registration.addRecipes(JeiTypes.ASSEMBLING, ClientRecipes.byType(Tier5Recipes.ASSEMBLING.get()));
         registration.addRecipes(JeiTypes.EXTRUDING, ClientRecipes.byType(Tier5Recipes.EXTRUDING.get()));
+        registration.addRecipes(JeiTypes.OIL_STILL, ClientRecipes.byType(dev.strataindustria.registry.Tier6Recipes.OIL_STILL.get()));
 
         registration.addRecipes(JeiTypes.PIT_KILN, Processes.kilnFiring());
         registration.addRecipes(JeiTypes.CHARCOAL_PIT, Processes.charcoalPit());
@@ -123,6 +125,7 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addCraftingStation(JeiTypes.ELECTROLYSIS, Tier5Items.ELECTROLYSER.get());
         registration.addCraftingStation(JeiTypes.ASSEMBLING, Tier5Items.ASSEMBLER.get());
         registration.addCraftingStation(JeiTypes.EXTRUDING, Tier5Items.EXTRUDER.get());
+        registration.addCraftingStation(JeiTypes.OIL_STILL, dev.strataindustria.registry.Tier6Items.OIL_STILL.get());
         registration.addCraftingStation(JeiTypes.COKING, Tier4Items.COKE_OVEN_DOOR.get());
         registration.addCraftingStation(JeiTypes.FIREBOX_FUEL, Tier4Items.FIREBOX.get());
         // The fire pit cooks vanilla campfire recipes.

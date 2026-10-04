@@ -1,0 +1,24 @@
+{
+  "type": "strataindustria:oil_still",
+  "input": {
+    "amount": 1000,
+    "fluid": "strataindustria:crude_oil"
+  },
+  "min_temperature": 400,
+  "results": [
+    {
+      "amount": 200,
+      "fluid": "strataindustria:naphtha"
+    },
+    {
+      "amount": 300,
+      "fluid": "strataindustria:diesel"
+    },
+    {
+      "amount": 400,
+      "fluid": "strataindustria:heavy_oil"
+    }
+  ],
+  "ticks": 1200,
+  "vented": 100
+}
