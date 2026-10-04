@@ -3,7 +3,7 @@ package dev.strataindustria.event;
 import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,18 +26,18 @@ public final class IronAgeEvents {
     @SubscribeEvent
     static void onModifyComponents(ModifyDefaultComponentsEvent event) {
         for (Item tool : new Item[] {Items.IRON_PICKAXE, Items.IRON_AXE, Items.IRON_SHOVEL, Items.IRON_HOE, Items.IRON_SWORD}) {
-            event.modify(tool, patch -> patch.set(DataComponents.MAX_DAMAGE, WROUGHT_IRON_TOOL_DURABILITY));
+            event.modify(tool, (patch, context) -> patch.set(DataComponents.MAX_DAMAGE, WROUGHT_IRON_TOOL_DURABILITY));
         }
-        event.modify(Items.IRON_HELMET, patch -> patch.set(DataComponents.MAX_DAMAGE, 11 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
-        event.modify(Items.IRON_CHESTPLATE, patch -> patch.set(DataComponents.MAX_DAMAGE, 16 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
-        event.modify(Items.IRON_LEGGINGS, patch -> patch.set(DataComponents.MAX_DAMAGE, 15 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
-        event.modify(Items.IRON_BOOTS, patch -> patch.set(DataComponents.MAX_DAMAGE, 13 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
+        event.modify(Items.IRON_HELMET, (patch, context) -> patch.set(DataComponents.MAX_DAMAGE, 11 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
+        event.modify(Items.IRON_CHESTPLATE, (patch, context) -> patch.set(DataComponents.MAX_DAMAGE, 16 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
+        event.modify(Items.IRON_LEGGINGS, (patch, context) -> patch.set(DataComponents.MAX_DAMAGE, 15 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
+        event.modify(Items.IRON_BOOTS, (patch, context) -> patch.set(DataComponents.MAX_DAMAGE, 13 * WROUGHT_IRON_ARMOUR_MULTIPLIER));
     }
 
     /** Spec 2: iron golems drop 2 to 4 nuggets, so iron farms do not skip the bloomery. */
     @SubscribeEvent
     static void onLivingDrops(LivingDropsEvent event) {
-        if (event.getEntity().getType() != EntityType.IRON_GOLEM || !Config.GOLEM_DROPS_NUGGETS.getAsBoolean()) return;
+        if (!BuiltInRegistries.ENTITY_TYPE.getKey(event.getEntity().getType()).getPath().equals("iron_golem") || !Config.GOLEM_DROPS_NUGGETS.getAsBoolean()) return;
         boolean hadIron = event.getDrops().removeIf(drop -> drop.getItem().is(Items.IRON_INGOT));
         if (!hadIron) return;
         var golem = event.getEntity();

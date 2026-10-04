@@ -71,8 +71,6 @@ final class ModItemTagsProvider extends ItemTagsProvider {
 
         // Tier 3.
         tag(ModTags.Items.BLOOMERY_FUEL).add(key(Items.CHARCOAL));
-        tag(ItemTags.SLABS).add(ModItems.FIRE_BRICK_SLAB.getKey());
-        tag(ItemTags.STAIRS).add(ModItems.FIRE_BRICK_STAIRS.getKey());
         tag(ItemTags.WALLS).add(ModItems.FIRE_BRICK_WALL.getKey());
 
         tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.LOOSE_ROCKS).add(key(Items.FLINT));

@@ -29,6 +29,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.RecipeUnlockAdvancementBuilder;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.world.item.crafting.CookingBookCategory;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -531,7 +532,7 @@ final class ModRecipeProvider extends RecipeProvider {
         vanillaArmour(goldGear, Items.GOLD_INGOT, "has_gold_ingot",
                 Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS);
 
-        SimpleCookingRecipeBuilder.smelting(tag(ItemTags.LOGS_THAT_BURN), RecipeCategory.MISC, Items.CHARCOAL, 0.15f, 200)
+        SimpleCookingRecipeBuilder.smelting(tag(ItemTags.LOGS_THAT_BURN), RecipeCategory.MISC, CookingBookCategory.MISC, Items.CHARCOAL, 0.15f, 200)
                 .unlockedBy("has_log", has(ItemTags.LOGS_THAT_BURN))
                 .save(whenOff("vanilla.removeFurnaceCharcoal"), vanillaKey(Items.CHARCOAL));
 
@@ -595,12 +596,12 @@ final class ModRecipeProvider extends RecipeProvider {
     /** The vanilla smelting and blasting recipes of one metal's ores and raw item, under their vanilla ids. */
     private void vanillaOreSmelting(RecipeOutput out, Item result, float experience, Item... inputs) {
         for (Item input : inputs) {
-            SimpleCookingRecipeBuilder.smelting(Ingredient.of(input), RecipeCategory.MISC, result, experience, 200)
+            SimpleCookingRecipeBuilder.smelting(Ingredient.of(input), RecipeCategory.MISC, CookingBookCategory.MISC, result, experience, 200)
                     .group(name(result))
                     .unlockedBy("has_" + name(input), has(input))
                     .save(out, ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace(
                             name(result) + "_from_smelting_" + name(input))));
-            SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, result, experience, 100)
+            SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, CookingBookCategory.MISC, result, experience, 100)
                     .group(name(result))
                     .unlockedBy("has_" + name(input), has(input))
                     .save(out, ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace(
