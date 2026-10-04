@@ -48,6 +48,8 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 public class PlanPiece extends StructurePiece {
     /** Width of the ring around a levelled plan that blends its ground into the land around it. */
     static final int MARGIN = 2;
+    /** Trees within this many blocks of the build are taken down whole. */
+    static final int TREE_PAD = 2;
     /** How far above a building trees and terrain are cleared. */
     static final int HEADROOM = 8;
 
@@ -104,7 +106,7 @@ public class PlanPiece extends StructurePiece {
     }
 
     /** Footprint size after turning: x span, then z span. */
-    static int[] size(Plan plan, Rotation rotation) {
+    public static int[] size(Plan plan, Rotation rotation) {
         boolean quarter = rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.COUNTERCLOCKWISE_90;
         return quarter ? new int[] {plan.depth(), plan.width()} : new int[] {plan.width(), plan.depth()};
     }
@@ -144,6 +146,7 @@ public class PlanPiece extends StructurePiece {
             BoundingBox chunkBB, ChunkPos chunkPos, BlockPos referencePos) {
         LocalRock rock = LocalRock.at(level, (boundingBox.minX() + boundingBox.maxX()) / 2,
                 (boundingBox.minZ() + boundingBox.maxZ()) / 2, groundY);
+        clearTrees(level, chunkBB);
         if (plan.kind() == Plan.Kind.LEVELLED) level(level, chunkBB);
         int base = Plans.base(plan);
         // Fences are joined to their neighbours once the chunk's blocks are in.
@@ -169,6 +172,27 @@ public class PlanPiece extends StructurePiece {
         for (BlockPos fence : fences) {
             level.setBlock(fence, Block.updateFromNeighbourShapes(level.getBlockState(fence), level, fence), Block.UPDATE_CLIENTS);
         }
+    }
+
+    /** Takes down whole trees within two blocks of the footprint and its levelled ring, before anything is built. */
+    private void clearTrees(WorldGenLevel level, BoundingBox chunkBB) {
+        int[] size = size(plan, rotation);
+        int pad = (plan.kind() == Plan.Kind.LEVELLED ? MARGIN : 0) + TREE_PAD;
+        int base = Plans.base(plan);
+        // Stripped logs are never natural; the chopping block is a plain log that belongs to the plan.
+        java.util.Set<Long> chopping = new java.util.HashSet<>();
+        for (int pz = 0; pz < plan.depth(); pz++) {
+            for (int px = 0; px < plan.width(); px++) {
+                for (int layer = 0; layer < plan.height(); layer++) {
+                    if (plan.at(px, layer, pz) == 'o') chopping.add(BlockPos.asLong(worldX(px, pz), 0, worldZ(px, pz)));
+                }
+            }
+        }
+        TreeClearing.clear(level, chunkBB, minX - pad, minZ - pad, minX + size[0] - 1 + pad, minZ + size[1] - 1 + pad,
+                groundY - base - 2, groundY + plan.height() - base + HEADROOM, pos -> {
+                    var key = net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
+                    return key.getPath().startsWith("stripped_") || chopping.contains(BlockPos.asLong(pos.getX(), 0, pos.getZ()));
+                });
     }
 
     /** Flattens the footprint to the ground height and blends a ring around it toward the land. */

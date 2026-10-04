@@ -574,6 +574,11 @@ public final class Plans {
         return Plan.of("path/" + length, Kind.TERRAIN, rows);
     }
 
+    /** Every drawn plan, for tests that go through all of them. */
+    public static java.util.Collection<Plan> all() {
+        return java.util.Collections.unmodifiableCollection(PLANS.values());
+    }
+
     public static Plan get(String id) {
         if (id.startsWith("path/")) return path(Integer.parseInt(id.substring(5)));
         Plan plan = PLANS.get(id);

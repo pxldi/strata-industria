@@ -77,6 +77,9 @@ public class SluicePiece extends StructurePiece {
             BoundingBox chunkBB, ChunkPos chunkPos, BlockPos referencePos) {
         BlockPos head = new BlockPos(headX, headY, headZ);
         Direction left = direction.getClockWise(), right = direction.getCounterClockWise();
+        BoundingBox span = boundingBox;
+        TreeClearing.clear(level, chunkBB, span.minX() - PlanPiece.TREE_PAD, span.minZ() - PlanPiece.TREE_PAD,
+                span.maxX() + PlanPiece.TREE_PAD, span.maxZ() + PlanPiece.TREE_PAD, headY - 2, headY + 6, pos -> false);
 
         // A board across the head keeps the water from running back onto the bank.
         BlockPos back = head.relative(direction, -1).above();
