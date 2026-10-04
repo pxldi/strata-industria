@@ -44,7 +44,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
         // Hand-drawn wire wastes a quarter of the ingot: 3 wires of 25 units.
         anvil("copper_wire", copper, Tier5Items.COPPER_WIRE.get(), 3, 90,
-                rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
         anvil("lead_plate", ModItems.ingot(Metal.LEAD), Tier5Items.LEAD_PLATE.get(), 1, 60,
                 rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
 
