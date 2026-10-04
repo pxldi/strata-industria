@@ -40,7 +40,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
             addSlot(new Slot(container, i, GRID_X + (i % 3) * 18, GRID_Y + (i / 3) * 18) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return CrucibleBlockEntity.accepts(stack);
+                    return CrucibleBlockEntity.accepts(stack, refractory());
                 }
 
                 @Override
@@ -94,6 +94,18 @@ public class CrucibleMenu extends AbstractContainerMenu {
         return data.get(CrucibleBlockEntity.DATA_POUR);
     }
 
+    public int capacity() {
+        return data.get(CrucibleBlockEntity.DATA_CAPACITY);
+    }
+
+    public int maxTemperature() {
+        return data.get(CrucibleBlockEntity.DATA_MAX_TEMPERATURE);
+    }
+
+    public boolean refractory() {
+        return data.get(CrucibleBlockEntity.DATA_REFRACTORY) != 0;
+    }
+
     public int slotProgress(int slot) {
         return data.get(CrucibleBlockEntity.DATA_SLOT_PROGRESS + slot);
     }
@@ -118,7 +130,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(stack, CONTAINER_SLOTS, slots.size(), true)) return ItemStack.EMPTY;
         } else if (stack.getItem() instanceof CastMoldItem) {
             if (!moveItemStackTo(stack, CrucibleBlockEntity.MOLD_SLOT, CrucibleBlockEntity.MOLD_SLOT + 1, false)) return ItemStack.EMPTY;
-        } else if (!CrucibleBlockEntity.accepts(stack) || !moveItemStackTo(stack, 0, CrucibleBlockEntity.INPUT_SLOTS, false)) {
+        } else if (!CrucibleBlockEntity.accepts(stack, refractory()) || !moveItemStackTo(stack, 0, CrucibleBlockEntity.INPUT_SLOTS, false)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);

@@ -157,6 +157,9 @@ public final class Config {
     public static final ModConfigSpec.IntValue CRUCIBLE_CAPACITY = BUILDER
             .comment("Metal units a crucible holds (100 units is one ingot).")
             .defineInRange("capacity", 400, 100, 4000);
+    public static final ModConfigSpec.IntValue CLAY_CRUCIBLE_MAX = BUILDER
+            .comment("Hottest a clay crucible gets, in degrees; above this it holds steady (tier 4 spec 3).")
+            .defineInRange("clayMaxTemperature", 1400, 1000, 2000);
 
     static {
         BUILDER.pop();
@@ -169,6 +172,9 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue TOOL_MOLD_BREAK = BUILDER
             .comment("Chance a tool mold breaks when the cast part is taken out.")
             .defineInRange("toolMoldBreak", 0.10, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue REFRACTORY_MOLD_BREAK = BUILDER
+            .comment("Chance a refractory mold breaks when the casting is taken out.")
+            .defineInRange("refractoryMoldBreak", 0.03, 0.0, 1.0);
 
     static {
         BUILDER.pop();

@@ -9,7 +9,11 @@ import dev.strataindustria.journal.Journal;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModSounds;
+import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.registry.Tier4BlockEntities;
+import dev.strataindustria.registry.Tier4Sounds;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -23,9 +27,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -48,7 +54,15 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     public static final int DATA_POUR = 3;
     public static final int DATA_SLOT_PROGRESS = 4;
     public static final int DATA_UNITS = DATA_SLOT_PROGRESS + INPUT_SLOTS;
-    public static final int DATA_COUNT = DATA_UNITS + Metal.values().length;
+    public static final int DATA_CAPACITY = DATA_UNITS + Metal.values().length;
+    public static final int DATA_MAX_TEMPERATURE = DATA_CAPACITY + 1;
+    public static final int DATA_REFRACTORY = DATA_CAPACITY + 2;
+    public static final int DATA_COUNT = DATA_CAPACITY + 3;
+    /** Tier 4 spec 6.1: the refractory crucible's pot and heat rating. */
+    public static final int REFRACTORY_CAPACITY = 600;
+    public static final int REFRACTORY_MAX_TEMPERATURE = 1700;
+    /** How long the screen shows that spare carbon burned off. */
+    static final int BURN_OFF_TICKS = 100;
 
     private NonNullList<ItemStack> items = NonNullList.withSize(INPUT_SLOTS + 1, ItemStack.EMPTY);
     private final float[] progress = new float[INPUT_SLOTS];
@@ -60,6 +74,9 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private int pourLeft;
     private int pourTotal;
     private Melt poured = Melt.EMPTY;
+    private boolean forgeTooHot;
+    private boolean carbonWaiting;
+    private int burnedOff;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -69,7 +86,10 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
             if (index == DATA_MELTING) return meltingPercent;
             if (index == DATA_POUR) return pourTotal == 0 ? 0 : Math.round(100 * (1 - pourLeft / (float) pourTotal));
             if (index < DATA_UNITS) return Math.round(progress[index - DATA_SLOT_PROGRESS]);
-            if (index < DATA_COUNT) return melt.units().getOrDefault(Metal.values()[index - DATA_UNITS], 0);
+            if (index < DATA_CAPACITY) return melt.units().getOrDefault(Metal.values()[index - DATA_UNITS], 0);
+            if (index == DATA_CAPACITY) return capacityOf();
+            if (index == DATA_MAX_TEMPERATURE) return maxTemperature();
+            if (index == DATA_REFRACTORY) return refractory() ? 1 : 0;
             return 0;
         }
 
@@ -83,11 +103,29 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     };
 
     public CrucibleBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.CRUCIBLE.get(), pos, state);
+        this(ModBlockEntities.CRUCIBLE.get(), pos, state);
     }
 
+    public CrucibleBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    /** The clay crucible's capacity. */
     public static int capacity() {
         return Config.CRUCIBLE_CAPACITY.getAsInt();
+    }
+
+    public boolean refractory() {
+        return getType() == Tier4BlockEntities.REFRACTORY_CRUCIBLE.get();
+    }
+
+    public int capacityOf() {
+        return refractory() ? REFRACTORY_CAPACITY : capacity();
+    }
+
+    /** Tier 4 spec 3 and 6.1: the clay pot holds at 1400 degrees, the refractory one at 1700. */
+    public int maxTemperature() {
+        return refractory() ? REFRACTORY_MAX_TEMPERATURE : Config.CLAY_CRUCIBLE_MAX.getAsInt();
     }
 
     public Melt melt() {
@@ -127,24 +165,29 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         int each = MetalContent.of(stack).map(Melt::total).orElse(0);
         if (each <= 0) return 0;
         int replaced = MetalContent.of(replacing).map(Melt::total).orElse(0) * replacing.getCount();
-        int free = capacity() - melt.total() - pendingUnits() - pourLeft + replaced;
+        int free = capacityOf() - melt.total() - pendingUnits() - pourLeft + replaced;
         return Math.max(0, free / each);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CrucibleBlockEntity crucible) {
         boolean forgeBelow = level.getBlockEntity(pos.below()) instanceof ForgeBlockEntity;
         float target = level.getBlockEntity(pos.below()) instanceof ForgeBlockEntity forge ? forge.temperature() : Heat.AMBIENT;
+        int max = crucible.maxTemperature();
+        crucible.forgeTooHot = target > max;
+        target = Math.min(target, max);
         float rate = forgeBelow ? FORGE_RATE : Heat.AMBIENT_RATE;
         float before = crucible.temperature;
         crucible.temperature = (float) (target + (crucible.temperature - target) * Math.exp(-rate / 20.0));
 
         boolean changed = Math.abs(crucible.temperature - before) > 0.01f;
         changed |= crucible.meltInputs(level, pos);
+        changed |= crucible.burnOffCarbon(level, pos);
         changed |= crucible.pour(level, pos);
         CrucibleStatus was = crucible.status;
         crucible.status = crucible.computeStatus(forgeBelow);
         if (crucible.status == CrucibleStatus.MOLTEN && was != CrucibleStatus.MOLTEN) {
             Journal.awardNear(level, pos, Journal.CRUCIBLE_MOLTEN);
+            if (crucible.melt.units().containsKey(Metal.WROUGHT_IRON)) Journal.awardNear(level, pos, Journal.MOLTEN_IRON);
         }
         if (changed) setChanged(level, pos, state);
     }
@@ -152,6 +195,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private boolean meltInputs(Level level, BlockPos pos) {
         boolean changed = false;
         int melting = 0, sum = 0;
+        carbonWaiting = false;
         for (int i = 0; i < INPUT_SLOTS; i++) {
             ItemStack stack = items.get(i);
             Optional<Melt> content = MetalContent.of(stack);
@@ -160,6 +204,15 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
                 continue;
             }
             int point = mixMeltingPoint(content.get());
+            if (isCarbon(content.get())) {
+                // Tier 4 spec 4.2: carbon dust dissolves only into molten iron.
+                if (!melt.units().containsKey(Metal.WROUGHT_IRON) || !isMolten()) {
+                    progress[i] = 0;
+                    carbonWaiting = true;
+                    continue;
+                }
+                point = mixMeltingPoint(melt);
+            }
             if (temperature < point) continue;
             progress[i] += (float) Math.pow(2, (temperature - point) / 200.0);
             melting++;
@@ -177,10 +230,36 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         return changed || melting > 0;
     }
 
+    private static boolean isCarbon(Melt content) {
+        return content.units().size() == 1 && content.units().containsKey(Metal.CARBON);
+    }
+
+    /** Tier 4 spec 4.2: carbon with no iron to hold it burns off once the rest is molten. */
+    private boolean burnOffCarbon(Level level, BlockPos pos) {
+        if (burnedOff > 0) burnedOff--;
+        if (!melt.units().containsKey(Metal.CARBON) || melt.units().containsKey(Metal.WROUGHT_IRON)) return false;
+        if (meltingPercent > 0 || !isMolten()) return false;
+        java.util.Map<Metal, Integer> left = new java.util.EnumMap<>(melt.units());
+        int carbon = left.remove(Metal.CARBON);
+        int total = melt.total();
+        melt = new Melt(left, total == 0 ? 0 : Math.round(melt.qualityUnits() * (float) (total - carbon) / total));
+        burnedOff = BURN_OFF_TICKS;
+        level.playSound(null, pos, Tier4Sounds.CARBON_BURN.get(), SoundSource.BLOCKS, 0.6f, 0.9f + level.getRandom().nextFloat() * 0.2f);
+        return true;
+    }
+
     private CrucibleStatus computeStatus(boolean forgeBelow) {
         if (meltingPercent > 0) return CrucibleStatus.MELTING;
-        if (!melt.isEmpty()) return isMolten() ? CrucibleStatus.MOLTEN : CrucibleStatus.SOLID;
+        if (burnedOff > 0 && isMolten()) return CrucibleStatus.CARBON_BURNED;
+        boolean atLimit = forgeTooHot && temperature >= maxTemperature() - 5;
+        if (!melt.isEmpty()) {
+            if (isMolten()) return CrucibleStatus.MOLTEN;
+            if (carbonWaiting && !melt.units().containsKey(Metal.WROUGHT_IRON)) return CrucibleStatus.CARBON_WAITING;
+            return atLimit ? CrucibleStatus.AT_LIMIT : CrucibleStatus.SOLID;
+        }
+        if (carbonWaiting) return CrucibleStatus.CARBON_WAITING;
         if (!forgeBelow) return CrucibleStatus.NO_FORGE;
+        if (atLimit) return CrucibleStatus.AT_LIMIT;
         return temperature > Heat.AMBIENT + 10 ? CrucibleStatus.HEATING : CrucibleStatus.COLD;
     }
 
@@ -193,8 +272,12 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         if (pourLeft > 0) return Optional.of("pouring");
         if (!isMolten()) return Optional.of("not_molten");
         if (melt.total() < cast.units()) return Optional.of("not_enough");
+        // Tier 4 spec 3: clay molds crack under metal hotter than 1300 degrees.
+        if (!cast.takes(mixMeltingPoint(melt))) return Optional.of("mold_too_weak");
         Optional<Metal> result = result();
-        if (cast.type() == null) {
+        if (cast.isGear()) {
+            if (result.isEmpty() || !result.get().hasGear()) return Optional.of("no_gear");
+        } else if (cast.type() == null) {
             if (result.isEmpty() && melt.units().size() < 2) return Optional.of("no_alloy");
             if (result.isPresent() && !result.get().hasIngot()) return Optional.of("no_alloy");
         } else if (result.isEmpty() || !result.get().isToolMetal()) {
@@ -259,12 +342,27 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         if (slot == MOLD_SLOT) return stack.getItem() instanceof CastMoldItem;
-        return accepts(stack) && roomFor(stack, items.get(slot)) >= stack.getCount();
+        return accepts(stack, refractory()) && roomFor(stack, items.get(slot)) >= stack.getCount();
     }
 
     /** Anything with metal, except iron, which no tier 3 fire can melt (tier 3 spec 4.1). */
     public static boolean accepts(ItemStack stack) {
-        return MetalContent.of(stack).map(melt -> melt.units().keySet().stream().allMatch(Metal::meltsInCrucible)).orElse(false);
+        return accepts(stack, false);
+    }
+
+    /**
+     * What a crucible takes. Only the refractory crucible takes iron and steel (tier 4 spec 3), and no
+     * crucible takes iron ore: that goes to a bloomery or a blast furnace.
+     */
+    public static boolean accepts(ItemStack stack, boolean refractory) {
+        if (isIronOre(stack)) return false;
+        return MetalContent.of(stack).map(melt -> melt.units().keySet().stream()
+                .allMatch(metal -> metal.meltsInCrucible() || refractory && metal.meltingPoint() <= REFRACTORY_MAX_TEMPERATURE)).orElse(false);
+    }
+
+    public static boolean isIronOre(ItemStack stack) {
+        return stack.is(ModTags.Items.IRON_ORES) || stack.is(Items.RAW_IRON) || stack.is(ModItems.BLOOMERY_SLAG.get())
+                || stack.has(ModDataComponents.BLOOM_CONTENTS.get());
     }
 
     @Override
@@ -284,7 +382,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     protected Component getDefaultName() {
-        return Component.translatable("container." + StrataIndustria.MOD_ID + ".crucible");
+        return Component.translatable("container." + StrataIndustria.MOD_ID + (refractory() ? ".refractory_crucible" : ".crucible"));
     }
 
     @Override

@@ -16,14 +16,14 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * Forge: four heating slots, each with a strip under it in its item's heat colour; flames over the
- * fuel; the forge's own gauge on the right, 0 to 1500 °C.
+ * fuel; the forge's own gauge on the right, 0 to 1750 °C.
  */
 public class ForgeScreen extends AbstractContainerScreen<ForgeMenu> {
     private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/forge.png");
     private static final Identifier FLAME = Identifier.withDefaultNamespace("container/furnace/lit_progress");
 
     public static final int GAUGE_X = 151, GAUGE_Y = 17, GAUGE_W = 10, GAUGE_H = 58;
-    public static final float GAUGE_MAX = 1500.0f;
+    public static final float GAUGE_MAX = 1750.0f;
     public static final int FLAME_X = 81, FLAME_Y = 40;
     /** Strip under each heating slot. */
     public static final int STRIP_Y = 36, STRIP_H = 2;

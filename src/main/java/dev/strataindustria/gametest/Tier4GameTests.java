@@ -1,18 +1,28 @@
 package dev.strataindustria.gametest;
 
+import com.mojang.authlib.GameProfile;
 import dev.strataindustria.coking.CokeOvenBlock;
 import dev.strataindustria.coking.CokeOvenBlockEntity;
 import dev.strataindustria.coking.CokeOvenStructure;
+import dev.strataindustria.forge.ForgeBlock;
+import dev.strataindustria.forge.ForgeBlockEntity;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
+import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.machine.BellowsBlockEntity;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Alloy;
+import dev.strataindustria.metal.CastMoldItem;
+import dev.strataindustria.metal.CrucibleBlockEntity;
 import dev.strataindustria.metal.Melt;
 import dev.strataindustria.metal.MetalContent;
+import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.Tier4Items;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -22,6 +32,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.util.FakePlayer;
 
 /** Tier 4 (steel and steam) tests, run by {@link ModGameTests}. */
 final class Tier4GameTests {
@@ -30,6 +42,7 @@ final class Tier4GameTests {
     static void register(Map<String, Consumer<GameTestHelper>> tests) {
         tests.put("tier4_alloy_rules", Tier4GameTests::alloyRules);
         tests.put("tier4_coke_oven", Tier4GameTests::cokeOven);
+        tests.put("tier4_crucible_steel", Tier4GameTests::crucibleSteel);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -106,6 +119,63 @@ final class Tier4GameTests {
         helper.assertValueEqual(oven.creosote(), CokeOvenBlockEntity.CAPACITY, "a full tank");
         helper.assertValueEqual(oven.status(), CokeOvenBlockEntity.Status.TANK_FULL, "status with a full tank");
         helper.assertValueEqual(oven.getItem(CokeOvenBlockEntity.INPUT).getCount(), 1, "the last coal waits");
+        helper.succeed();
+    }
+
+    // Spec 3, 4.2 and 6: only the refractory crucible takes iron, no crucible takes iron ore, clay molds
+    // refuse steel, and five iron ingots with one coke dust melt on a blown coke forge into steel.
+    private static void crucibleSteel(GameTestHelper helper) {
+        ItemStack iron = new ItemStack(Items.IRON_INGOT);
+        helper.assertTrue(!CrucibleBlockEntity.accepts(iron, false), "a clay crucible should refuse iron");
+        helper.assertTrue(CrucibleBlockEntity.accepts(iron, true), "a refractory crucible should take iron");
+        ItemStack ore = new ItemStack(ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL));
+        helper.assertTrue(!CrucibleBlockEntity.accepts(ore, true), "no crucible should take iron ore");
+        helper.assertTrue(CrucibleBlockEntity.accepts(new ItemStack(Tier4Items.COKE_DUST.get()), false), "coke dust goes in any crucible");
+        helper.assertTrue(!Tier4Items.GEAR_MOLD.get().takes(Metal.STEEL.meltingPoint()), "a clay mold should refuse steel");
+        helper.assertTrue(Tier4Items.GEAR_MOLD.get().takes(Metal.BRASS.meltingPoint()), "a clay mold takes brass");
+
+        ServerLevel level = helper.getLevel();
+        BlockPos forgePos = helper.absolutePos(new BlockPos(4, 1, 4));
+        BlockPos cruciblePos = forgePos.above();
+        BlockPos bellowsPos = forgePos.west();
+        level.setBlock(forgePos, ModBlocks.FORGE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(cruciblePos, Tier4Blocks.REFRACTORY_CRUCIBLE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(bellowsPos, ModBlocks.BELLOWS.get().defaultBlockState().setValue(BellowsBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        ForgeBlockEntity forge = (ForgeBlockEntity) level.getBlockEntity(forgePos);
+        CrucibleBlockEntity crucible = (CrucibleBlockEntity) level.getBlockEntity(cruciblePos);
+        BellowsBlockEntity bellows = (BellowsBlockEntity) level.getBlockEntity(bellowsPos);
+        helper.assertTrue(crucible.refractory(), "the block entity should be a refractory crucible");
+        helper.assertValueEqual(crucible.capacityOf(), CrucibleBlockEntity.REFRACTORY_CAPACITY, "refractory capacity");
+
+        forge.setItem(ForgeBlockEntity.FUEL_SLOT, new ItemStack(Tier4Items.COKE.get(), 16));
+        BlockState forgeState = level.getBlockState(forgePos);
+        helper.assertTrue(((ForgeBlock) forgeState.getBlock()).ignite(level, forgePos, forgeState), "the forge should light");
+        crucible.setItem(0, new ItemStack(Items.IRON_INGOT, 5));
+        crucible.setItem(1, new ItemStack(Tier4Items.COKE_DUST.get()));
+        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
+        for (int tick = 0; tick < 20000; tick++) {
+            bellows.pump(smith);
+            BellowsBlockEntity.serverTick(level, bellowsPos, level.getBlockState(bellowsPos), bellows);
+            ForgeBlockEntity.serverTick(level, forgePos, level.getBlockState(forgePos), forge);
+            CrucibleBlockEntity.serverTick(level, cruciblePos, level.getBlockState(cruciblePos), crucible);
+            if (crucible.getItem(0).isEmpty() && crucible.getItem(1).isEmpty() && crucible.isMolten()) break;
+        }
+        helper.assertTrue(forge.temperature() > 1538, "a blown coke forge should pass 1538 °C, got " + forge.temperature());
+        helper.assertTrue(crucible.getItem(1).isEmpty(), "the coke dust should dissolve into the molten iron");
+        helper.assertValueEqual(crucible.melt().total(), 505, "units of iron and carbon");
+        helper.assertValueEqual(crucible.result().orElse(null), Metal.STEEL, "melt result");
+
+        crucible.setItem(CrucibleBlockEntity.MOLD_SLOT, new ItemStack(Tier4Items.GEAR_MOLD.get()));
+        helper.assertValueEqual(crucible.pourProblem().orElse(""), "mold_too_weak", "steel into a clay mold");
+        crucible.setItem(CrucibleBlockEntity.MOLD_SLOT, new ItemStack(Tier4Items.REFRACTORY_INGOT_MOLD.get()));
+        helper.assertTrue(crucible.startPour(), "steel should pour into a refractory mold, problem: " + crucible.pourProblem().orElse(""));
+        for (int tick = 0; tick < 40; tick++) {
+            ForgeBlockEntity.serverTick(level, forgePos, level.getBlockState(forgePos), forge);
+            CrucibleBlockEntity.serverTick(level, cruciblePos, level.getBlockState(cruciblePos), crucible);
+        }
+        Melt cast = crucible.getItem(CrucibleBlockEntity.MOLD_SLOT).get(ModDataComponents.CAST_CONTENTS.get());
+        helper.assertTrue(cast != null && cast.total() == 100, "the mold should hold 100 units, got " + cast);
+        helper.assertValueEqual(CastMoldItem.castMetal(cast), Metal.STEEL, "cast metal");
         helper.succeed();
     }
 

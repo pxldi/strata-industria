@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.metal.CastMoldItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -33,6 +34,23 @@ public final class Tier4Items {
     public static final DeferredItem<Item> TREATED_STICK = ModItems.ITEMS.registerSimpleItem("treated_stick");
 
     /** Loads the class so its items join the register before it fires. */
+    // Spec 6.1: refractory ceramics, and the clay gear mold.
+    public static final DeferredItem<Item> UNFIRED_REFRACTORY_CRUCIBLE = ModItems.ITEMS.registerSimpleItem("unfired_refractory_crucible",
+            p -> p.stacksTo(1));
+    public static final DeferredItem<BlockItem> REFRACTORY_CRUCIBLE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.REFRACTORY_CRUCIBLE,
+            p -> p.stacksTo(1));
+    public static final DeferredItem<Item> UNFIRED_REFRACTORY_INGOT_MOLD = ModItems.ITEMS.registerSimpleItem("unfired_refractory_ingot_mold",
+            p -> p.stacksTo(16));
+    public static final DeferredItem<CastMoldItem> REFRACTORY_INGOT_MOLD = ModItems.ITEMS.registerItem("refractory_ingot_mold",
+            p -> new CastMoldItem(null, false, true, p), p -> p.stacksTo(16));
+    public static final DeferredItem<Item> UNFIRED_REFRACTORY_GEAR_MOLD = ModItems.ITEMS.registerSimpleItem("unfired_refractory_gear_mold",
+            p -> p.stacksTo(16));
+    public static final DeferredItem<CastMoldItem> REFRACTORY_GEAR_MOLD = ModItems.ITEMS.registerItem("refractory_gear_mold",
+            p -> new CastMoldItem(null, true, true, p), p -> p.stacksTo(16));
+    public static final DeferredItem<Item> UNFIRED_GEAR_MOLD = ModItems.ITEMS.registerSimpleItem("unfired_gear_mold", p -> p.stacksTo(16));
+    public static final DeferredItem<CastMoldItem> GEAR_MOLD = ModItems.ITEMS.registerItem("gear_mold",
+            p -> new CastMoldItem(null, true, false, p), p -> p.stacksTo(16));
+
     public static void init() {}
 
     private Tier4Items() {}

@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.ceramics.RefractoryCrucibleBlock;
 import dev.strataindustria.coking.CokeOvenBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
@@ -8,6 +9,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 
 /** Tier 4 (steel and steam) blocks, kept apart from the earlier tiers' blocks. */
@@ -31,6 +33,14 @@ public final class Tier4Blocks {
             .strength(4.0f, 6.0f)
             .requiresCorrectToolForDrops()
             .sound(COKE_SOUND));
+
+    // Spec 6.1: the refractory crucible, rated to 1700 degrees; it melts iron.
+    public static final DeferredBlock<RefractoryCrucibleBlock> REFRACTORY_CRUCIBLE = ModBlocks.BLOCKS.registerBlock("refractory_crucible",
+            RefractoryCrucibleBlock::new, p -> p.mapColor(MapColor.SAND)
+                    .strength(1.5f)
+                    .sound(SoundType.DECORATED_POT)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.POPPED));
 
     // Spec 4.6: creosote-treated wood, which never rots.
     public static final DeferredBlock<Block> TREATED_PLANKS = ModBlocks.BLOCKS.registerSimpleBlock("treated_planks", Tier4Blocks::treated);

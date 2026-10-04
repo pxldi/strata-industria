@@ -282,6 +282,28 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "coke_oven.working", "Coke oven smoulders");
         add(subtitles + "coke_oven.done", "Coke settles");
         add(subtitles + "creosote.fill", "Creosote glugs");
+        add(subtitles + "crucible.carbon_burn", "Carbon burns off");
+
+        // Spec 6: refractory ceramics and steel in the crucible.
+        addItem(Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE, "Unfired Refractory Crucible");
+        addBlock(Tier4Blocks.REFRACTORY_CRUCIBLE, "Refractory Crucible");
+        addItem(Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD, "Unfired Refractory Ingot Mold");
+        addItem(Tier4Items.REFRACTORY_INGOT_MOLD, "Refractory Ingot Mold");
+        addItem(Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD, "Unfired Refractory Gear Mold");
+        addItem(Tier4Items.REFRACTORY_GEAR_MOLD, "Refractory Gear Mold");
+        addItem(Tier4Items.UNFIRED_GEAR_MOLD, "Unfired Gear Mold");
+        addItem(Tier4Items.GEAR_MOLD, "Gear Mold");
+        add("container." + id + ".refractory_crucible", "Refractory Crucible");
+        String status = id + ".crucible.status.";
+        add(status + "at_limit", "Crucible at its limit (%s °C)");
+        add(status + "carbon_waiting", "Carbon needs molten iron");
+        add(status + "carbon_burned", "Excess carbon burned off");
+        String problem = id + ".crucible.problem.";
+        add(problem + "mold_too_weak", "This mold cannot take metal this hot; use a refractory mold");
+        add(problem + "no_gear", "That metal does not make gears");
+        String config = id + ".configuration.";
+        add(config + "clayMaxTemperature", "Clay crucible limit (°C)");
+        add(config + "refractoryMoldBreak", "Refractory mold break chance");
     }
 
     private void ironAge() {
@@ -451,6 +473,12 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.coke.hint", "Bake coal in the coke oven. Coke burns hot enough to melt steel.");
         add(journal + "t4.creosote", "Creosote");
         add(journal + "t4.creosote.hint", "Draw the creosote from the oven into a bucket and treat planks with it.");
+        add(journal + "t4.refractory_crucible", "Refractory Crucible");
+        add(journal + "t4.refractory_crucible.hint", "Form a crucible from fire clay and fire it. It stands the heat of melting iron.");
+        add(journal + "t4.molten_iron", "Molten Iron");
+        add(journal + "t4.molten_iron.hint", "Melt iron in a refractory crucible on a forge burning coke, with bellows.");
+        add(journal + "t4.steel", "Crucible Steel");
+        add(journal + "t4.steel.hint", "Stir coke or charcoal dust into molten iron, one dust to five ingots, and cast it in a refractory mold.");
         add(journal + "t4.sphalerite", "Zinc Blende");
         add(journal + "t4.sphalerite.hint", "Find sphalerite. Zinc is the key to brass.");
     }

@@ -26,7 +26,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/crucible.png");
     public static final int BAR_X = 66, BAR_Y = 18, BAR_W = 8, BAR_H = 52;
     public static final int GAUGE_X = 160, GAUGE_Y = 18, GAUGE_W = 8, GAUGE_H = 52;
-    public static final float GAUGE_MAX = 1500.0f;
+    public static final float GAUGE_MAX = 1750.0f;
     public static final int TEXT_X = 80, TEXT_Y = 18;
     public static final int STATUS_Y = 98;
     public static final int POUR_X = 28, POUR_Y = 78;
@@ -49,7 +49,8 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     @Override
     protected void containerTick() {
         super.containerTick();
-        if (pour != null) pour.active = menu.status() == CrucibleStatus.MOLTEN && menu.pourPercent() == 0;
+        CrucibleStatus status = menu.status();
+        if (pour != null) pour.active = (status == CrucibleStatus.MOLTEN || status == CrucibleStatus.CARBON_BURNED) && menu.pourPercent() == 0;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
 
         // Contents bar: each metal stacked in its own colour, scaled to capacity.
         Melt melt = menu.melt();
-        int capacity = CrucibleBlockEntity.capacity();
+        int capacity = Math.max(1, menu.capacity());
         int bottom = topPos + BAR_Y + BAR_H;
         for (Metal metal : Metal.values()) {
             int u = melt.units().getOrDefault(metal, 0);
@@ -97,7 +98,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
         super.extractLabels(g, mouseX, mouseY);
         Melt melt = menu.melt();
         int y = TEXT_Y;
-        g.text(font, Component.literal(melt.total() + " / " + CrucibleBlockEntity.capacity()), TEXT_X, y, 0xFF404040, false);
+        g.text(font, Component.literal(melt.total() + " / " + menu.capacity()), TEXT_X, y, 0xFF404040, false);
         for (Metal metal : Metal.values()) {
             int u = melt.units().getOrDefault(metal, 0);
             if (u <= 0) continue;
@@ -116,6 +117,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
         CrucibleStatus status = menu.status();
         return switch (status) {
             case MELTING -> Component.translatable(status.key(), menu.meltingPercent());
+            case AT_LIMIT -> Component.translatable(status.key(), menu.maxTemperature());
             case MOLTEN -> Alloy.resultOf(melt)
                     .map(m -> Component.translatable(status.key(), Component.translatable(StrataIndustria.MOD_ID + ".metal." + m.id())))
                     .orElse(Component.translatable(StrataIndustria.MOD_ID + ".crucible.status.molten_unknown"));
@@ -131,9 +133,16 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
         Alloy alloy = closest.get();
         return Component.translatable(StrataIndustria.MOD_ID + ".crucible.hint",
                 Component.translatable(StrataIndustria.MOD_ID + ".metal." + alloy.result().id()),
-                Math.round(alloy.addedMin() * 100), Math.round(alloy.addedMax() * 100),
+                percent(alloy.addedMin()), percent(alloy.addedMax()),
                 Component.translatable(StrataIndustria.MOD_ID + ".metal." + alloy.added().id()),
-                Math.round(melt.share(alloy.added()) * 100));
+                percent(melt.share(alloy.added())));
+    }
+
+    /** Whole percent, or one decimal below 10% so carbon in steel (0.5 to 2%) reads properly. */
+    static String percent(float share) {
+        float p = share * 100;
+        if (p >= 10 || Math.abs(p - Math.round(p)) < 0.05f) return Integer.toString(Math.round(p));
+        return String.format(Locale.ROOT, "%.1f", p);
     }
 
     private static int darker(int rgb) {
