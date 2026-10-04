@@ -31,6 +31,13 @@ public final class Tier5Sounds {
     /** The macerator's metallic grinding with grit. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MACERATOR_GRIND = register("block.macerator.grind");
 
+    /** Spec 23.6: wire squeal through a die and a spool rattling. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> WIREMILL_DRAW = register("block.wiremill.draw");
+    /** Spec 23.6: roller squeeze and metal flex. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BENDER_PRESS = register("block.bender.press");
+    /** Spec 23.6: a whirring spindle with a cutting hiss. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> LATHE_CUT = register("block.lathe.cut");
+
     /** Spec 23.6: a rising jet whine over a steam rush; pitch and volume follow the spin. */
     public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_TURBINE_RUN = register("block.steam_turbine.run");
     /** A long falling whine when the steam is cut. */

@@ -41,6 +41,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         components();
         electric();
         generators();
+        shapingMachines();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -195,6 +196,56 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .define('M', Tier5Items.ELECTRIC_MOTOR.get())
                 .unlockedBy("has_lv_machine_hull", has(hull))
                 .save(output, key("macerator"));
+    }
+
+    // Spec 10.4 to 10.6: the wiremill, bender and lathe and what they make. H hull, C basic circuit, M electric motor.
+    private void shapingMachines() {
+        shapingMachine(Tier5Items.WIREMILL.get(), "wiremill", Tier5Items.DRAW_PLATE.get());
+        shapingMachine(Tier5Items.BENDER.get(), "bender", ModItems.RODS.get(Metal.STEEL).get());
+        shapingMachine(Tier5Items.LATHE.get(), "lathe", ModItems.head(Metal.STEEL, dev.strataindustria.ceramics.MoldType.KNIFE_BLADE));
+
+        // Wiremill: one more wire from an ingot than the anvil gets (2 rods, 4 wires).
+        machining("wiremill", null, Tier5Items.COPPER_ROD.get(), Tier5Items.COPPER_WIRE.get(), 2);
+        machining("wiremill", null, Tier5Items.RED_ALLOY_ROD.get(), Tier5Items.RED_ALLOY_WIRE.get(), 2);
+
+        // Bender: an ingot makes a plate, a double ingot two.
+        for (Metal metal : Metal.values()) {
+            if (metal.hasPlate()) machining("bender", null, ModItems.ingot(metal), ModItems.PLATES.get(metal).get(), 1);
+        }
+        machining("bender", null, ModItems.ingot(Metal.LEAD), Tier5Items.LEAD_PLATE.get(), 1);
+        machining("bender", null, ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), ModItems.PLATES.get(Metal.WROUGHT_IRON).get(), 2);
+        machining("bender", null, ModItems.STEEL_DOUBLE_INGOT.get(), ModItems.PLATES.get(Metal.STEEL).get(), 2);
+
+        // Lathe, rod mode: an ingot makes two rods. Gear mode: an ingot makes a gear.
+        machining("lathe", "rod", ModItems.ingot(Metal.COPPER), Tier5Items.COPPER_ROD.get(), 2);
+        machining("lathe", "rod", ModItems.ingot(Metal.RED_ALLOY), Tier5Items.RED_ALLOY_ROD.get(), 2);
+        machining("lathe", "rod", ModItems.ingot(Metal.WROUGHT_IRON), ModItems.WROUGHT_IRON_ROD.get(), 2);
+        for (Metal metal : Metal.values()) {
+            if (metal.hasRod()) machining("lathe", "rod", ModItems.ingot(metal), ModItems.RODS.get(metal).get(), 2);
+            if (metal.hasGear()) machining("lathe", "gear", ModItems.ingot(metal), ModItems.GEARS.get(metal).get(), 1);
+        }
+    }
+
+    /** `.X.` / `CHM` / `.X.`: X is the machine's working part. */
+    private void shapingMachine(Item result, String name, Item part) {
+        Item hull = Tier5Items.LV_MACHINE_HULL.get();
+        shaped(RecipeCategory.REDSTONE, result)
+                .pattern(" X ")
+                .pattern("CHM")
+                .pattern(" X ")
+                .define('X', part)
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('H', hull)
+                .define('M', Tier5Items.ELECTRIC_MOTOR.get())
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key(name));
+    }
+
+    private void machining(String machine, String mode, Item input, Item result, int count) {
+        String path = "machining/" + machine + (mode == null ? "" : "_" + mode) + "/" + net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(result).getPath()
+                + "_from_" + net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(input).getPath();
+        output.accept(key(path), new dev.strataindustria.processing.MachiningRecipe(machine, Optional.ofNullable(mode), Ingredient.of(input),
+                new ItemStackTemplate(result, count)), null);
     }
 
     // Spec 7.2 and 7.3: P steel plate, H hull, B brass gear, R steel rod, F bronze fluid pipe, G steel gear, C basic circuit.

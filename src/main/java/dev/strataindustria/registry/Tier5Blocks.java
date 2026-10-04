@@ -8,7 +8,11 @@ import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
+import dev.strataindustria.electric.machine.BenderBlockEntity;
+import dev.strataindustria.electric.machine.LatheBlock;
+import dev.strataindustria.electric.machine.LatheBlockEntity;
 import dev.strataindustria.electric.machine.MaceratorBlockEntity;
+import dev.strataindustria.electric.machine.WiremillBlockEntity;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.rubber.TreeTapBlock;
 import net.minecraft.sounds.SoundEvents;
@@ -73,6 +77,13 @@ public final class Tier5Blocks {
     public static final DeferredBlock<ElectricMachineBlock<MaceratorBlockEntity>> MACERATOR = ModBlocks.BLOCKS.registerBlock(
             "macerator", p -> new ElectricMachineBlock<>(Tier5BlockEntities.MACERATOR, MaceratorBlockEntity::new, p),
             Tier5Blocks::machine);
+    // Spec 10.4 to 10.6: the shaping machines.
+    public static final DeferredBlock<ElectricMachineBlock<WiremillBlockEntity>> WIREMILL = ModBlocks.BLOCKS.registerBlock(
+            "wiremill", p -> new ElectricMachineBlock<>(Tier5BlockEntities.WIREMILL, WiremillBlockEntity::new, p), Tier5Blocks::machine);
+    public static final DeferredBlock<ElectricMachineBlock<BenderBlockEntity>> BENDER = ModBlocks.BLOCKS.registerBlock(
+            "bender", p -> new ElectricMachineBlock<>(Tier5BlockEntities.BENDER, BenderBlockEntity::new, p), Tier5Blocks::machine);
+    public static final DeferredBlock<LatheBlock> LATHE = ModBlocks.BLOCKS.registerBlock(
+            "lathe", p -> new LatheBlock(Tier5BlockEntities.LATHE, LatheBlockEntity::new, p), Tier5Blocks::machine);
 
     private static Block.Properties cable(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BLACK)

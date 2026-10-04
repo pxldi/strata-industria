@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
  * and outputs, the power bar, the status line and the auto-eject toggle (button 0).
  */
 public class ElectricMachineMenu extends AbstractContainerMenu {
-    public static final int BUTTON_EJECT = 0;
+    public static final int BUTTON_EJECT = 0, BUTTON_MODE = 1;
 
     private final ElectricMachineLayout layout;
     private final ElectricTier tier;
@@ -73,6 +73,9 @@ public class ElectricMachineMenu extends AbstractContainerMenu {
         return switch (layout) {
             case ELECTRIC_FURNACE -> Tier5Menus.ELECTRIC_FURNACE.get();
             case MACERATOR -> Tier5Menus.MACERATOR.get();
+            case WIREMILL -> Tier5Menus.WIREMILL.get();
+            case BENDER -> Tier5Menus.BENDER.get();
+            case LATHE -> Tier5Menus.LATHE.get();
         };
     }
 
@@ -117,10 +120,19 @@ public class ElectricMachineMenu extends AbstractContainerMenu {
         return data.get(ElectricMachineLayout.EJECT) != 0;
     }
 
+    /** The mode button's setting, 0 or 1. */
+    public int mode() {
+        return data.get(ElectricMachineLayout.MODE);
+    }
+
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (id == BUTTON_EJECT && container instanceof ElectricMachineBlockEntity machine) {
             machine.toggleAutoEject();
+            return true;
+        }
+        if (id == BUTTON_MODE && layout.hasMode() && container instanceof ElectricMachineBlockEntity machine) {
+            machine.toggleMode();
             return true;
         }
         return false;

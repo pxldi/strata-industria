@@ -1,0 +1,9 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "strataindustria:bismuth_bronze_ingot",
+  "machine": "lathe",
+  "mode": "gear",
+  "result": {
+    "id": "strataindustria:bismuth_bronze_gear"
+  }
+}

@@ -79,6 +79,9 @@ public final class StrataIndustriaClient {
         event.register(dev.strataindustria.registry.Tier4Menus.CONVERTER.get(), dev.strataindustria.client.screen.ConverterScreen::new);
         event.register(dev.strataindustria.registry.Tier5Menus.ELECTRIC_FURNACE.get(), dev.strataindustria.client.screen.ElectricMachineScreen::new);
         event.register(dev.strataindustria.registry.Tier5Menus.MACERATOR.get(), dev.strataindustria.client.screen.ElectricMachineScreen::new);
+        event.register(dev.strataindustria.registry.Tier5Menus.WIREMILL.get(), dev.strataindustria.client.screen.ElectricMachineScreen::new);
+        event.register(dev.strataindustria.registry.Tier5Menus.BENDER.get(), dev.strataindustria.client.screen.ElectricMachineScreen::new);
+        event.register(dev.strataindustria.registry.Tier5Menus.LATHE.get(), dev.strataindustria.client.screen.ElectricMachineScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

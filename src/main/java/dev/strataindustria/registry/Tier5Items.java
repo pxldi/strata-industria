@@ -47,6 +47,9 @@ public final class Tier5Items {
     public static final DeferredItem<BlockItem> LV_MACHINE_HULL = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_MACHINE_HULL);
     public static final DeferredItem<BlockItem> ELECTRIC_FURNACE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTRIC_FURNACE);
     public static final DeferredItem<BlockItem> MACERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MACERATOR);
+    public static final DeferredItem<BlockItem> WIREMILL = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.WIREMILL);
+    public static final DeferredItem<BlockItem> BENDER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.BENDER);
+    public static final DeferredItem<BlockItem> LATHE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LATHE);
 
     public static final DeferredItem<BlockItem> STEAM_TURBINE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.STEAM_TURBINE);
     public static final DeferredItem<BlockItem> COMBUSTION_GENERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.COMBUSTION_GENERATOR);

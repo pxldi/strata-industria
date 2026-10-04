@@ -1,0 +1,9 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "strataindustria:arsenical_bronze_ingot",
+  "machine": "lathe",
+  "mode": "gear",
+  "result": {
+    "id": "strataindustria:arsenical_bronze_gear"
+  }
+}

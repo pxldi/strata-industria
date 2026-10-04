@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "strataindustria:arsenical_bronze_ingot",
+  "machine": "bender",
+  "result": {
+    "id": "strataindustria:arsenical_bronze_plate"
+  }
+}

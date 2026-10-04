@@ -22,6 +22,7 @@ public class ElectricMachineScreen extends AbstractContainerScreen<ElectricMachi
     private static final Identifier ARROW = Identifier.withDefaultNamespace("container/furnace/burn_progress");
     private static final Identifier BAR_RUN = sprite("power_bar_run"), BAR_LOW = sprite("power_bar_low"), BAR_STOPPED = sprite("power_bar_stopped");
     private static final Identifier EJECT_OFF = sprite("eject_off"), EJECT_ON = sprite("eject_on"), EJECT_HIGHLIGHTED = sprite("eject_highlighted");
+    private static final Identifier MODE_ROD = sprite("lathe_rod"), MODE_GEAR = sprite("lathe_gear");
     public static final int BADGE_W = 15, BADGE_H = 9;
     private final Identifier background;
 
@@ -51,6 +52,11 @@ public class ElectricMachineScreen extends AbstractContainerScreen<ElectricMachi
         int size = ElectricMachineLayout.EJECT_SIZE;
         g.blitSprite(RenderPipelines.GUI_TEXTURED, menu.autoEject() ? EJECT_ON : EJECT_OFF, ex, ey, size, size);
         if (overEject(mouseX, mouseY)) g.blitSprite(RenderPipelines.GUI_TEXTURED, EJECT_HIGHLIGHTED, ex, ey, size, size);
+        if (menu.layout().hasMode()) {
+            int mx = leftPos + ElectricMachineLayout.MODE_X, my = topPos + ElectricMachineLayout.MODE_Y;
+            g.blitSprite(RenderPipelines.GUI_TEXTURED, menu.mode() == 0 ? MODE_ROD : MODE_GEAR, mx, my, size, size);
+            if (overMode(mouseX, mouseY)) g.blitSprite(RenderPipelines.GUI_TEXTURED, EJECT_HIGHLIGHTED, mx, my, size, size);
+        }
     }
 
     /** Spec 6.5: the bar's height is the buffer, its colour the supply. */
@@ -71,6 +77,12 @@ public class ElectricMachineScreen extends AbstractContainerScreen<ElectricMachi
         return x >= 0 && x < ElectricMachineLayout.EJECT_SIZE && y >= 0 && y < ElectricMachineLayout.EJECT_SIZE;
     }
 
+    private boolean overMode(double mouseX, double mouseY) {
+        if (!menu.layout().hasMode()) return false;
+        double x = mouseX - leftPos - ElectricMachineLayout.MODE_X, y = mouseY - topPos - ElectricMachineLayout.MODE_Y;
+        return x >= 0 && x < ElectricMachineLayout.EJECT_SIZE && y >= 0 && y < ElectricMachineLayout.EJECT_SIZE;
+    }
+
     private boolean overBar(int mouseX, int mouseY) {
         int x = mouseX - leftPos - ElectricMachineLayout.BAR_X, y = mouseY - topPos - ElectricMachineLayout.BAR_Y;
         return x >= 0 && x < ElectricMachineLayout.BAR_W && y >= 0 && y < ElectricMachineLayout.BAR_H;
@@ -78,6 +90,12 @@ public class ElectricMachineScreen extends AbstractContainerScreen<ElectricMachi
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (event.button() == 0 && overMode(event.x(), event.y()) && minecraft.gameMode != null) {
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, ElectricMachineMenu.BUTTON_MODE);
+            minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                    net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0f));
+            return true;
+        }
         if (event.button() == 0 && overEject(event.x(), event.y()) && minecraft.gameMode != null) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, ElectricMachineMenu.BUTTON_EJECT);
             minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
@@ -93,6 +111,8 @@ public class ElectricMachineScreen extends AbstractContainerScreen<ElectricMachi
         String prefix = StrataIndustria.MOD_ID + ".electric_machine.";
         if (overBar(mouseX, mouseY)) {
             g.setTooltipForNextFrame(Component.translatable(prefix + "buffer", Math.round(menu.buffer() * 100)), mouseX, mouseY);
+        } else if (overMode(mouseX, mouseY)) {
+            g.setTooltipForNextFrame(Component.translatable(prefix + (menu.mode() == 0 ? "mode_rod" : "mode_gear")), mouseX, mouseY);
         } else if (overEject(mouseX, mouseY)) {
             g.setTooltipForNextFrame(Component.translatable(prefix + (menu.autoEject() ? "eject_on" : "eject_off")), mouseX, mouseY);
         }

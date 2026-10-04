@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "strataindustria:block/casing/lv_bottom",
+    "front": "strataindustria:block/lathe_front_lv_active",
+    "side": "strataindustria:block/casing/lv_side",
+    "top": "strataindustria:block/casing/lv_top"
+  }
+}

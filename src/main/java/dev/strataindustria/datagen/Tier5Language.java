@@ -37,6 +37,9 @@ final class Tier5Language {
         lang.accept(block + "lv_machine_hull", "LV Machine Hull");
         lang.accept(block + "electric_furnace", "Electric Furnace");
         lang.accept(block + "macerator", "Macerator");
+        lang.accept(block + "wiremill", "Wiremill");
+        lang.accept(block + "bender", "Bender");
+        lang.accept(block + "lathe", "Lathe");
         lang.accept(block + "steam_turbine", "Steam Turbine");
         lang.accept(block + "combustion_generator", "Combustion Generator");
         String turbine = id + ".steam_turbine.", combustion = id + ".combustion_generator.";
@@ -59,6 +62,8 @@ final class Tier5Language {
         lang.accept(machine + "buffer", "Buffer: %s%%");
         lang.accept(machine + "eject_on", "Auto-eject on: outputs go into the block behind");
         lang.accept(machine + "eject_off", "Auto-eject off");
+        lang.accept(machine + "mode_rod", "Mode: rods (one ingot makes two)");
+        lang.accept(machine + "mode_gear", "Mode: gears (one ingot makes one)");
 
         // Spec 6.5: diagnostics and status lines.
         String electric = id + ".electric.";
@@ -100,6 +105,9 @@ final class Tier5Language {
         lang.accept(subtitles + "block.machine.low_power", "Machine beeps");
         lang.accept(subtitles + "block.electric_furnace.run", "Electric furnace hums");
         lang.accept(subtitles + "block.macerator.grind", "Macerator grinds");
+        lang.accept(subtitles + "block.wiremill.draw", "Wiremill draws wire");
+        lang.accept(subtitles + "block.bender.press", "Bender presses");
+        lang.accept(subtitles + "block.lathe.cut", "Lathe cuts");
         lang.accept(subtitles + "block.steam_turbine.run", "Steam turbine whines");
         lang.accept(subtitles + "block.steam_turbine.spin_down", "Steam turbine spins down");
         lang.accept(subtitles + "block.combustion_generator.ignite", "Combustion generator coughs");

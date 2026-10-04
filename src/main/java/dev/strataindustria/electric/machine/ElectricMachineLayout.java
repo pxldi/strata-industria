@@ -9,7 +9,10 @@ import dev.strataindustria.power.ElectricTier;
  */
 public enum ElectricMachineLayout {
     ELECTRIC_FURNACE("electric_furnace", 1),
-    MACERATOR("macerator", 3);
+    MACERATOR("macerator", 3),
+    WIREMILL("wiremill", 1),
+    BENDER("bender", 1),
+    LATHE("lathe", 1);
 
     public static final int MAX_LANES = 2;
     public static final int WIDTH = 176, HEIGHT = 176, INVENTORY_Y = 94, STATUS_Y = 74;
@@ -17,6 +20,8 @@ public enum ElectricMachineLayout {
     /** The power bar's well, the auto-eject button and the tier badge. */
     public static final int BAR_X = 17, BAR_Y = 18, BAR_W = 8, BAR_H = 52;
     public static final int EJECT_X = 154, EJECT_Y = 56, EJECT_SIZE = 14;
+    /** The mode button of a machine that has one (the lathe), above the eject button. */
+    public static final int MODE_X = 154, MODE_Y = 38;
 
     private final String name;
     private final int outputs;
@@ -28,6 +33,11 @@ public enum ElectricMachineLayout {
 
     public String id() {
         return name;
+    }
+
+    /** Whether the screen has a mode button (menu button 1). */
+    public boolean hasMode() {
+        return this == LATHE;
     }
 
     /** Outputs per lane. */
@@ -61,6 +71,7 @@ public enum ElectricMachineLayout {
         return tier == ElectricTier.MV ? name + "_mv" : name;
     }
 
-    /** Container data: one progress value per lane, then status, power percent, buffer percent, auto-eject. */
-    public static final int STATUS = MAX_LANES, POWER = MAX_LANES + 1, BUFFER = MAX_LANES + 2, EJECT = MAX_LANES + 3, DATA_COUNT = MAX_LANES + 4;
+    /** Container data: one progress value per lane, then status, power percent, buffer percent, auto-eject, mode. */
+    public static final int STATUS = MAX_LANES, POWER = MAX_LANES + 1, BUFFER = MAX_LANES + 2, EJECT = MAX_LANES + 3, MODE = MAX_LANES + 4,
+            DATA_COUNT = MAX_LANES + 5;
 }

@@ -139,6 +139,29 @@
     ],
     "subtitle": "subtitles.strataindustria.blast_furnace.tap"
   },
+  "block.bender.press": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.6,
+        "volume": 0.25
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.5,
+        "volume": 0.22
+      },
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 0.8,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.bender.press"
+  },
   "block.combustion_generator.ignite": {
     "sounds": [
       {
@@ -251,6 +274,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.inserter.swing"
+  },
+  "block.lathe.cut": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.axe.strip",
+        "pitch": 1.6,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "item.axe.strip",
+        "pitch": 1.5,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "item.axe.strip",
+        "pitch": 1.7,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.lathe.cut"
   },
   "block.macerator.grind": {
     "sounds": [
@@ -454,6 +500,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.tree_tap.place"
+  },
+  "block.wiremill.draw": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 1.4,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 1.55,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 1.3,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wiremill.draw"
   },
   "bloomery.charge": {
     "sounds": [
