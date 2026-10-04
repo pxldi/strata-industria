@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t4/pipe",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "boiler"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.boiler.hint"
+    },
+    "icon": {
+      "id": "strataindustria:bronze_boiler"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.boiler"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

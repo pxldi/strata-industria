@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "PPP"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:steel_fluid_pipe"
+  }
+}
