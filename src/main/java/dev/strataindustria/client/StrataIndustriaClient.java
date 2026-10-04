@@ -47,7 +47,6 @@ public final class StrataIndustriaClient {
         modBus.addListener(StrataIndustriaClient::registerTints);
         modBus.addListener(StrataIndustriaClient::registerItemProperties);
         modBus.addListener(SurveyClient::registerTints);
-        NeoForge.EVENT_BUS.addListener(SurveyClient::onTooltip);
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
@@ -89,6 +88,8 @@ public final class StrataIndustriaClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
+        event.registerBlockEntityRenderer(dev.strataindustria.structure.StructureContent.SPECIMEN_SHELF_ENTITY.get(),
+                dev.strataindustria.client.render.SpecimenShelfRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANVIL.get(), AnvilRenderer::new);
         // Tier 3 spec 7: rotors spin at their network's speed.

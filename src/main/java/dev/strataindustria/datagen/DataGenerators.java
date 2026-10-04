@@ -37,7 +37,10 @@ public final class DataGenerators {
                         .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GeologyData::biomeModifiers)
                         .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap)
                         .add(Registries.STRUCTURE, StructureData::structures)
-                        .add(Registries.STRUCTURE_SET, StructureData::structureSets),
+                        .add(Registries.STRUCTURE_SET, StructureData::structureSets)
+                        .add(Registries.DECORATED_POT_PATTERN, StructureData::potPatterns)
+                        .add(Registries.TRIM_PATTERN, StructureData::trimPatterns)
+                        .add(Registries.BANNER_PATTERN, StructureData::bannerPatterns),
                 Set.of(StrataIndustria.MOD_ID));
 
         // Assets
@@ -50,6 +53,7 @@ public final class DataGenerators {
         event.createProvider(ModItemTagsProvider::new);
         event.createProvider(Tier6Data.FluidTags::new);
         event.createProvider(StructureData.BiomeTagProvider::new);
+        event.createProvider(StructureData.BannerPatternTagProvider::new);
         event.createReloadableRegistryObjects(
                 new RegistrySetBuilder()
                         .add(Registries.ADVANCEMENT, new AdvancementProvider(List.of(ModAdvancements::new)))
