@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.bloomery.BloomeryMenu;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.SmallVesselMenu;
 import dev.strataindustria.fire.FirePitMenu;
@@ -32,6 +33,9 @@ public final class ModMenus {
             MENUS.register("anvil", () -> IMenuTypeExtension.create((id, inventory, buf) -> new AnvilMenu(id, inventory)));
     public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> CRUCIBLE =
             MENUS.register("crucible", () -> IMenuTypeExtension.create((id, inventory, buf) -> new CrucibleMenu(id, inventory)));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<BloomeryMenu>> BLOOMERY =
+            MENUS.register("bloomery", () -> IMenuTypeExtension.create(BloomeryMenu::new));
 
     private ModMenus() {}
 }

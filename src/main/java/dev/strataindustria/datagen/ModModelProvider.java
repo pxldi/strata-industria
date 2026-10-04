@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.bloomery.BloomeryBlock;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.client.HeatGlow;
@@ -268,6 +269,29 @@ final class ModModelProvider extends ModelProvider {
                 ModItems.LIGNITE)) {
             flatItem(itemModels, item.get());
         }
+        flatItem(itemModels, ModItems.BLOOMERY_SLAG.get());
+        heatable(itemModels, ModItems.RAW_BLOOM.get());
+
+        // Spec 5.1: the controller is a fire brick block with the door on its front; the door glows when lit.
+        Block bloomery = ModBlocks.BLOOMERY.get();
+        TextureMapping cold = new TextureMapping().put(TextureSlot.FRONT, blockTexture("bloomery_front"))
+                .put(TextureSlot.SIDE, blockTexture("fire_bricks")).put(TextureSlot.TOP, blockTexture("fire_bricks"));
+        TextureMapping hot = cold.copyAndUpdate(TextureSlot.FRONT, blockTexture("bloomery_front_lit"));
+        var coldModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(bloomery, cold, blockModels.modelOutput));
+        var hotModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(bloomery, "_lit", hot,
+                blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> bloomeryState =
+                PropertyDispatch.initial(BloomeryBlock.FACING, BloomeryBlock.LIT);
+        for (boolean lit : new boolean[] {false, true}) {
+            var base = lit ? hotModel : coldModel;
+            bloomeryState.select(net.minecraft.core.Direction.NORTH, lit, base);
+            bloomeryState.select(net.minecraft.core.Direction.EAST, lit, base.with(BlockModelGenerators.Y_ROT_90));
+            bloomeryState.select(net.minecraft.core.Direction.SOUTH, lit, base.with(BlockModelGenerators.Y_ROT_180));
+            bloomeryState.select(net.minecraft.core.Direction.WEST, lit, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(bloomery).with(bloomeryState));
+        itemModels.itemModelOutput.accept(ModItems.BLOOMERY.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bloomery")));
+
         heatable(itemModels, ModItems.WROUGHT_IRON_ROD.get());
         heatable(itemModels, ModItems.WROUGHT_IRON_DOUBLE_INGOT.get());
     }

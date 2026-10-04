@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/refine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.bucket.hint"
+    },
+    "icon": {
+      "id": "minecraft:bucket"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.bucket"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

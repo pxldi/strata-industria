@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t2/bronze_anvil",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:fire_clay_ball"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.fire_clay.hint"
+    },
+    "icon": {
+      "id": "strataindustria:fire_clay_ball"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.fire_clay"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

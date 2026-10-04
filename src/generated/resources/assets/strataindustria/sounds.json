@@ -40,6 +40,99 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.hit"
   },
+  "bloomery.charge": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 0.9,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bloomery.charge"
+  },
+  "bloomery.done": {
+    "sounds": [
+      {
+        "name": "liquid/lavapop",
+        "pitch": 0.6
+      },
+      {
+        "name": "random/fizz",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bloomery.done"
+  },
+  "bloomery.extract": {
+    "sounds": [
+      {
+        "name": "random/anvil_land",
+        "pitch": 0.7,
+        "volume": 0.4
+      },
+      {
+        "name": "random/anvil_land",
+        "pitch": 0.7,
+        "volume": 0.4
+      },
+      {
+        "name": "random/anvil_land",
+        "pitch": 0.7,
+        "volume": 0.4
+      },
+      {
+        "name": "random/fizz",
+        "pitch": 1.2,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bloomery.extract"
+  },
+  "bloomery.light": {
+    "sounds": [
+      {
+        "name": "mob/ghast/fireball4",
+        "pitch": 0.8,
+        "volume": 0.6
+      },
+      {
+        "name": "fire/ignite",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bloomery.light"
+  },
+  "bloomery.roar": {
+    "sounds": [
+      {
+        "name": "fire/fire",
+        "pitch": 0.6,
+        "volume": 0.9
+      },
+      {
+        "name": "block/furnace/fire_crackle1",
+        "pitch": 0.6,
+        "volume": 0.8
+      },
+      {
+        "name": "block/furnace/fire_crackle2",
+        "pitch": 0.6,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bloomery.roar"
+  },
   "clay.finish": {
     "sounds": [
       {
@@ -536,5 +629,45 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.quern.load"
+  },
+  "raw_bloom.hit": {
+    "sounds": [
+      {
+        "name": "random/anvil_use",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "random/anvil_use",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "random/anvil_use",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "random/anvil_use",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "liquid/lavapop",
+        "pitch": 1.4,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.raw_bloom.hit"
+  },
+  "wrought_iron.hit": {
+    "sounds": [
+      {
+        "name": "random/anvil_use",
+        "pitch": 0.85,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.wrought_iron.hit"
   }
 }

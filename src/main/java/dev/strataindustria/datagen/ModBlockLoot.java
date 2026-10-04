@@ -93,6 +93,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
                         .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))
                         .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1)))));
         dropSelf(ModBlocks.FIRE_BRICKS.get());
+        dropSelf(ModBlocks.BLOOMERY.get());
         add(ModBlocks.FIRE_BRICK_SLAB.get(), this::createSlabItemTable);
         dropSelf(ModBlocks.FIRE_BRICK_STAIRS.get());
         dropSelf(ModBlocks.FIRE_BRICK_WALL.get());
