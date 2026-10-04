@@ -44,7 +44,7 @@ public class BloomeryScreen extends AbstractContainerScreen<BloomeryMenu> {
             g.fill(gx, bottom - filled, gx + 2, bottom, 0x30FFFFFF);
         }
         // A notch at 1200 °C, the least a bloom needs, and at 1300 °C, full yield.
-        for (float mark : new float[] {BloomeryBlockEntity.MIN_TEMPERATURE, BloomeryBlockEntity.FULL_YIELD_TEMPERATURE}) {
+        for (float mark : new float[] {BloomeryBlockEntity.minTemperature(), BloomeryBlockEntity.fullYieldTemperature()}) {
             int y = bottom - Math.round(mark / GAUGE_MAX * GAUGE_H);
             g.fill(gx - 1, y, gx + GAUGE_W + 1, y + 1, 0xFF2A2420);
         }

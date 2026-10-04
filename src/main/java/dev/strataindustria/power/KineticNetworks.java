@@ -31,8 +31,6 @@ import org.jspecify.annotations.Nullable;
 @EventBusSubscriber(modid = StrataIndustria.MOD_ID)
 public final class KineticNetworks {
     private static final Map<ResourceKey<Level>, Set<BlockPos>> DIRTY = new HashMap<>();
-    /** Fastest a wooden part may turn (spec 7.1); iron axles raise it in tier 4. */
-    public static final float WOODEN_SPEED_LIMIT = 64.0f;
 
     private KineticNetworks() {}
 
@@ -142,7 +140,8 @@ public final class KineticNetworks {
         boolean overspeed = false;
         if (turningSources > 0) {
             for (var entry : members.entrySet()) {
-                if (base * ratios.get(entry.getKey()) > WOODEN_SPEED_LIMIT + 0.01f) overspeed = true;
+                // Fastest a wooden part may turn (spec 7.1, config kinetics.woodenSpeedLimit); iron axles raise it in tier 4.
+                if (base * ratios.get(entry.getKey()) > dev.strataindustria.Config.KINETIC_WOODEN_SPEED_LIMIT.getAsInt() + 0.01f) overspeed = true;
             }
         }
 
