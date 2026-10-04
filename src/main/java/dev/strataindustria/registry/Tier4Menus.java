@@ -20,6 +20,8 @@ public final class Tier4Menus {
             ModMenus.MENUS.register("roaster", () -> IMenuTypeExtension.create(dev.strataindustria.roasting.RoasterMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.metal.SmelterMenu>> SMELTER =
             ModMenus.MENUS.register("smelter", () -> IMenuTypeExtension.create(dev.strataindustria.metal.SmelterMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.steam.SteamHammerMenu>> STEAM_HAMMER =
+            ModMenus.MENUS.register("steam_hammer", () -> IMenuTypeExtension.create(dev.strataindustria.steam.SteamHammerMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<BoilerMenu>> BRONZE_BOILER =
             ModMenus.MENUS.register("bronze_boiler", () -> IMenuTypeExtension.create(BoilerMenu::new));
 

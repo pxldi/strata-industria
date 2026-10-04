@@ -57,6 +57,8 @@ public final class Tier4Sounds {
 
     /** A stroke of the steam engine: a chuff with a piston knock. */
     public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_ENGINE_CHUFF = register("steam_engine.chuff");
+    /** Spec 21.7: the steam hammer's hiss and heavy ringing blow. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_HAMMER_STRIKE = register("steam_hammer.strike");
     /** The engine takes steam and its flywheel whirs up. */
     public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_ENGINE_START = register("steam_engine.start");
     /** The engine runs out of steam and winds down. */

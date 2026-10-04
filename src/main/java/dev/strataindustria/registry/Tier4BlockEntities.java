@@ -70,6 +70,9 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.metal.SmelterBlockEntity>> SMELTER =
             ModBlockEntities.BLOCK_ENTITIES.register("smelter", () -> new BlockEntityType<>(dev.strataindustria.metal.SmelterBlockEntity::new,
                     Tier4Blocks.SMELTER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.steam.SteamHammerBlockEntity>> STEAM_HAMMER =
+            ModBlockEntities.BLOCK_ENTITIES.register("steam_hammer", () -> new BlockEntityType<>(dev.strataindustria.steam.SteamHammerBlockEntity::new,
+                    Tier4Blocks.STEAM_HAMMER.get()));
     // Spec 8.4: the heat inlet's link to its multiblock.
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.heat.HeatInletBlockEntity>> HEAT_INLET =
             ModBlockEntities.BLOCK_ENTITIES.register("heat_inlet", () -> new BlockEntityType<>(dev.strataindustria.heat.HeatInletBlockEntity::new,

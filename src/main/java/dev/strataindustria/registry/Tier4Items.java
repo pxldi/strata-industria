@@ -69,6 +69,7 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> PRESSURE_GAUGE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.PRESSURE_GAUGE);
     public static final DeferredItem<BlockItem> MECHANICAL_PUMP = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.MECHANICAL_PUMP);
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEAM_ENGINE);
+    public static final DeferredItem<BlockItem> STEAM_HAMMER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEAM_HAMMER);
     public static final DeferredItem<BlockItem> CRUSHER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CRUSHER);
     public static final DeferredItem<BlockItem> WASHER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.WASHER);
     public static final DeferredItem<BlockItem> IRON_STEP_UP_GEARBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_STEP_UP_GEARBOX);

@@ -81,6 +81,7 @@ final class Tier4GameTests {
         tests.put("tier4_kiln", Tier4GameTests::kiln);
         tests.put("tier4_roaster", Tier4GameTests::roaster);
         tests.put("tier4_smelter", Tier4GameTests::smelter);
+        tests.put("tier4_steam_hammer", Tier4GameTests::steamHammer);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -971,6 +972,90 @@ final class Tier4GameTests {
         helper.assertTrue(smelter.melt().isEmpty(), "the pot is empty");
         helper.assertTrue(smelter.getItem(out).getCount() == 2, "the castings stack though they came out at different heats");
         helper.succeed();
+    }
+
+    // Steam hammer (spec 10.5 and acceptance 23): over a coke firebox it heats two cold steel ingots itself,
+    // waits for steam, then replays a plate pattern at one blow per 5 ticks at 2 bar and per 10 at 1.5 bar.
+    // The plates come out with the pattern's full craft part, and the pieces never leave the hammer.
+
+    private static void steamHammer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(4, 1, 4)), hammerPos = fireboxPos.above();
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(hammerPos, Tier4Blocks.STEAM_HAMMER.get().defaultBlockState()
+                .setValue(dev.strataindustria.steam.SteamHammerBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        var hammer = (dev.strataindustria.steam.SteamHammerBlockEntity) level.getBlockEntity(hammerPos);
+
+        ItemStack ingot = new ItemStack(ModItems.ingot(Metal.STEEL));
+        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get();
+        var plate = level.recipeAccess().recipeMap()
+                .getRecipesFor(dev.strataindustria.registry.ModRecipes.ANVIL.get(), new net.minecraft.world.item.crafting.SingleRecipeInput(ingot), level)
+                .filter(r -> r.value().result().create().is(steelPlate))
+                .findFirst().orElseThrow(() -> helper.assertionException("no steel plate recipe"));
+        int target = dev.strataindustria.smithing.Smithing.target(level, plate.id(), plate.value());
+        java.util.List<dev.strataindustria.smithing.HitType> hits = ModGameTests.solve(target, plate.value().rules());
+        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable");
+        int craft = dev.strataindustria.smithing.Smithing.craftQuality(hits.size(),
+                dev.strataindustria.smithing.Smithing.minHits(target, plate.value().rules()));
+        ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
+        helper.assertTrue(!hammer.canPlaceItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern),
+                "a blank pattern does not go in");
+        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(),
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate), target, hits.stream().map(Enum::ordinal).toList(), craft));
+        hammer.setItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern);
+        int queue = dev.strataindustria.steam.SteamHammerBlockEntity.QUEUE, result = dev.strataindustria.steam.SteamHammerBlockEntity.RESULT;
+        hammer.setItem(queue, ingot.copyWithCount(plate.value().count() * 2));
+
+        hammerTick(level, fireboxPos, firebox, hammerPos, hammer, 2);
+        helper.assertValueEqual(hammer.status(), dev.strataindustria.steam.SteamHammerBlockEntity.Status.TOO_COLD, "status over a cold firebox");
+        helper.assertTrue(!hammer.input().isEmpty(), "the first ingot is on the anvil");
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+        firebox.preheat(1600.0f);
+        hammerTick(level, fireboxPos, firebox, hammerPos, hammer, 5);
+        helper.assertValueEqual(hammer.status(), dev.strataindustria.steam.SteamHammerBlockEntity.Status.HEATING, "status while the ingot heats");
+        int tick = 0;
+        for (; tick < 1000 && hammer.status() == dev.strataindustria.steam.SteamHammerBlockEntity.Status.HEATING; tick++) {
+            hammerTick(level, fireboxPos, firebox, hammerPos, hammer, 1);
+        }
+        helper.assertValueEqual(hammer.status(), dev.strataindustria.steam.SteamHammerBlockEntity.Status.NO_STEAM,
+                "status once hot, after " + tick + " ticks");
+
+        // Full pressure: one blow per 5 ticks.
+        int ticks = 0;
+        for (; ticks < 1000 && hammer.getItem(result).isEmpty(); ticks++) steamTick(level, fireboxPos, firebox, hammerPos, hammer, 2.0f);
+        helper.assertTrue(hammer.getItem(result).is(steelPlate), "a steel plate comes out, got " + hammer.getItem(result)
+                + ", status " + hammer.status());
+        helper.assertTrue(ticks <= hits.size() * 5 + 2, hits.size() + " blows at 2 bar took " + ticks + " ticks");
+        var quality = hammer.getItem(result).get(ModDataComponents.QUALITY.get());
+        helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the pattern's craft part " + craft + ", got " + quality);
+
+        // Half pressure: the second, cold ingot heats again, then one blow per 10 ticks.
+        int working = 0;
+        for (ticks = 0; ticks < 3000 && hammer.getItem(result).getCount() < 2; ticks++) {
+            steamTick(level, fireboxPos, firebox, hammerPos, hammer, 1.5f);
+            if (hammer.status() == dev.strataindustria.steam.SteamHammerBlockEntity.Status.WORKING) working++;
+        }
+        helper.assertValueEqual(hammer.getItem(result).getCount(), 2, "plates after the second run, status " + hammer.status());
+        helper.assertTrue(working >= hits.size() * 10 - 1 && working <= hits.size() * 10 + 2,
+                hits.size() + " blows at 1.5 bar worked for " + working + " ticks");
+        helper.assertTrue(hammer.getItem(queue).isEmpty() && hammer.input().isEmpty(), "both ingots used up");
+        helper.succeed();
+    }
+
+    private static void hammerTick(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos hammerPos,
+            dev.strataindustria.steam.SteamHammerBlockEntity hammer, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            dev.strataindustria.steam.SteamHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
+        }
+    }
+
+    /** One tick with steam fed into the back of a north-facing hammer, as a boiler's pipe would. */
+    private static void steamTick(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos hammerPos,
+            dev.strataindustria.steam.SteamHammerBlockEntity hammer, float pressure) {
+        hammer.fill(Direction.SOUTH, Tier4Fluids.STEAM.get(), dev.strataindustria.steam.SteamHammerBlockEntity.STEAM_USE, pressure, false);
+        hammerTick(level, fireboxPos, firebox, hammerPos, hammer, 1);
     }
 
     private static void smelt(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos smelterPos,

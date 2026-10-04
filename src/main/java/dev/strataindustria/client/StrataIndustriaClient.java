@@ -69,6 +69,7 @@ public final class StrataIndustriaClient {
         event.register(dev.strataindustria.registry.Tier4Menus.KILN.get(), dev.strataindustria.client.screen.KilnScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.ROASTER.get(), dev.strataindustria.client.screen.RoasterScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.SMELTER.get(), dev.strataindustria.client.screen.SmelterScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.STEAM_HAMMER.get(), dev.strataindustria.client.screen.SteamHammerScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.BRONZE_BOILER.get(), dev.strataindustria.client.screen.BoilerScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.CRUSHER.get(), dev.strataindustria.client.screen.ProcessingScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.WASHER.get(), dev.strataindustria.client.screen.ProcessingScreen::new);
@@ -109,6 +110,9 @@ public final class StrataIndustriaClient {
         // Tier 4 spec 21.4: the blower's fan turns behind its grille.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.BLOWER.get(), context -> new RotorRenderer<>(context,
                 "blower_fan", state -> state.getValue(dev.strataindustria.ironworks.BlowerBlock.FACING), 0));
+        // Tier 4 spec 21.4: the steam hammer's ram drops with each blow.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.STEAM_HAMMER.get(),
+                dev.strataindustria.client.render.SteamHammerRenderer::new);
     }
 
     private static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {

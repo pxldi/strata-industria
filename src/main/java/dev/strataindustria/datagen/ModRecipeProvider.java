@@ -567,6 +567,18 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
                 .unlockedBy("has_bronze_boiler", has(Tier4Items.BRONZE_BOILER.get()))
                 .save(output, key("steam_engine"));
+        // Spec 10.5: the steam hammer, around a wrought iron anvil. The valve is a bronze pipe until valves exist.
+        shaped(RecipeCategory.REDSTONE, Tier4Items.STEAM_HAMMER.get())
+                .pattern("PVP")
+                .pattern(" R ")
+                .pattern("IAI")
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('V', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .define('R', ModItems.RODS.get(Metal.STEEL).get())
+                .define('I', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .define('A', ModItems.WROUGHT_IRON_ANVIL.get())
+                .unlockedBy("has_steam_engine", has(Tier4Items.STEAM_ENGINE.get()))
+                .save(output, key("steam_hammer"));
         // Spec 11.2: the crusher, and what it does better than a quern.
         shaped(RecipeCategory.REDSTONE, Tier4Items.CRUSHER.get())
                 .pattern("PGP")

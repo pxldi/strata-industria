@@ -290,6 +290,11 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.65f).volume(0.55f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.25f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        // Spec 21.7: a hiss, then the heavy ringing blow.
+        add(Tier4Sounds.STEAM_HAMMER_STRIKE, definition().subtitle(subtitle("steam_hammer.strike"))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.6f))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.75f).volume(0.55f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
         add(Tier4Sounds.STEAM_ENGINE_START, definition().subtitle(subtitle("steam_engine.start"))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.7f)));
         add(Tier4Sounds.STEAM_ENGINE_STOP, definition().subtitle(subtitle("steam_engine.stop"))

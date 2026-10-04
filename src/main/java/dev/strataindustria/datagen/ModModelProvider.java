@@ -373,6 +373,20 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(ModItems.TRIP_HAMMER.get(), ItemModelUtils.composite(
                 ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer")),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer_arm"))));
+        // Tier 4 spec 10.5: the steam hammer's frame turns with it; its ram is drawn by the renderer.
+        var steamHammer = BlockModelGenerators.plainVariant(StrataIndustria.id("block/steam_hammer"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> steamHammerState =
+                PropertyDispatch.initial(dev.strataindustria.steam.SteamHammerBlock.FACING, dev.strataindustria.steam.SteamHammerBlock.ACTIVE);
+        for (boolean active : new boolean[] {false, true}) {
+            steamHammerState.select(net.minecraft.core.Direction.NORTH, active, steamHammer);
+            steamHammerState.select(net.minecraft.core.Direction.EAST, active, steamHammer.with(BlockModelGenerators.Y_ROT_90));
+            steamHammerState.select(net.minecraft.core.Direction.SOUTH, active, steamHammer.with(BlockModelGenerators.Y_ROT_180));
+            steamHammerState.select(net.minecraft.core.Direction.WEST, active, steamHammer.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.registry.Tier4Blocks.STEAM_HAMMER.get()).with(steamHammerState));
+        itemModels.itemModelOutput.accept(dev.strataindustria.registry.Tier4Items.STEAM_HAMMER.get(), ItemModelUtils.composite(
+                ItemModelUtils.plainModel(StrataIndustria.id("block/steam_hammer")),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/steam_hammer_ram"))));
         flatItem(itemModels, ModItems.BARK.get());
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.CORE_SAMPLER.get(),
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/core_sampler"))));
