@@ -102,6 +102,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> WATER_WHEEL = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_WHEEL);
     public static final DeferredItem<BlockItem> MILLSTONE = ITEMS.registerSimpleBlockItem(ModBlocks.MILLSTONE);
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(ModBlocks.BELLOWS);
+    public static final DeferredItem<BlockItem> SAW_MILL = ITEMS.registerSimpleBlockItem(ModBlocks.SAW_MILL);
+    public static final DeferredItem<BlockItem> TRIP_HAMMER = ITEMS.registerSimpleBlockItem(ModBlocks.TRIP_HAMMER);
+    /** Tier 3 spec 12.4: from the saw mill; tannin later in tier 3, and a weak fuel meanwhile. */
+    public static final DeferredItem<Item> BARK = ITEMS.registerSimpleItem("bark");
     // Quern (spec 10.1).
     public static final DeferredItem<Item> QUERNSTONE = ITEMS.registerSimpleItem("quernstone", p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> QUERN = ITEMS.registerSimpleBlockItem(ModBlocks.QUERN);

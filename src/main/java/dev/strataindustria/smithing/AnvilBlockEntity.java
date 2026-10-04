@@ -147,7 +147,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         return off.is(ModTags.Items.HAMMERS) ? off : ItemStack.EMPTY;
     }
 
-    public Status status(Player player) {
+    public Status status(@org.jspecify.annotations.Nullable Player player) {
         refreshPlans();
         ItemStack input = input();
         if (input.isEmpty()) return Status.EMPTY;
@@ -171,22 +171,62 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
             if (status != Status.EMPTY) player.sendOverlayMessage(Component.translatable(status.key()));
             return;
         }
-        ItemStack input = input();
-        RecipeHolder<AnvilRecipe> recipe = selected().orElseThrow();
-        SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get());
-        int next = progress.position() + type.delta();
-        if (next < 0 || next > Smithing.MAX_POSITION) {
+        if (!inRange(type)) {
             player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".anvil.out_of_range"));
             return;
         }
-        progress = progress.hit(type);
+        hammer(player).hurtAndBreak(1, server, player,
+                broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
+        strike(server, type);
+    }
+
+    /** What a blow from a machine did (tier 3 spec 8.4). */
+    public enum MachineHit { STRUCK, DONE, TOO_COLD, REFUSED }
+
+    /**
+     * One blow from a trip hammer: the same rules as a hand blow, but no hammer is needed or worn.
+     */
+    public MachineHit machineHit(HitType type) {
+        if (!(level instanceof ServerLevel server)) return MachineHit.REFUSED;
+        Status status = status(null);
+        if (status == Status.TOO_COLD) return MachineHit.TOO_COLD;
+        if (status != Status.READY || !inRange(type)) return MachineHit.REFUSED;
+        return strike(server, type) ? MachineHit.DONE : MachineHit.STRUCK;
+    }
+
+    /** Puts the workpiece on recipe {@code id}, as if its plan had been picked. Returns whether that plan exists for it. */
+    public boolean select(net.minecraft.resources.ResourceKey<net.minecraft.world.item.crafting.Recipe<?>> id) {
+        refreshPlans();
+        for (RecipeHolder<AnvilRecipe> holder : candidates) {
+            if (!holder.id().equals(id)) continue;
+            ItemStack input = input();
+            SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get());
+            if (progress == null || !progress.recipe().equals(id)) {
+                input.set(ModDataComponents.SMITHING_PROGRESS.get(), progress == null ? SmithingProgress.start(id) : progress.withRecipe(id));
+                setChanged();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean inRange(HitType type) {
+        SmithingProgress progress = input().get(ModDataComponents.SMITHING_PROGRESS.get());
+        if (progress == null) return false;
+        int next = progress.position() + type.delta();
+        return next >= 0 && next <= Smithing.MAX_POSITION;
+    }
+
+    /** Lands one blow on the selected plan. Returns whether it finished the piece. */
+    private boolean strike(ServerLevel server, HitType type) {
+        ItemStack input = input();
+        RecipeHolder<AnvilRecipe> recipe = selected().orElseThrow();
+        SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get()).hit(type);
         input.set(ModDataComponents.SMITHING_PROGRESS.get(), progress);
         // Tier 3 spec 9.2: iron loses heat to every blow, so careless work means a trip back to the forge.
         if (metalOf(input).map(m -> m.tier() >= 3).orElse(false)) {
             Heat.set(input, Heat.get(input, server) - Config.SMITHING_HIT_COOLING.get(), server.getGameTime());
         }
-        hammer(player).hurtAndBreak(1, server, player,
-                broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
 
         float pitch = 0.9f + (type.delta() < 0 ? -type.delta() : type.delta()) * -0.012f + server.getRandom().nextFloat() * 0.1f;
         server.playSound(null, worldPosition, hitSound(input), SoundSource.BLOCKS, 0.7f, pitch + 0.3f);
@@ -194,10 +234,10 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
                 3 + server.getRandom().nextInt(3), 0.12, 0.0, 0.12, 0.04);
 
         int target = Smithing.target(server, recipe.id(), recipe.value());
-        if (Smithing.done(progress.position(), target, recipe.value().rules(), progress.recent(0), progress.recent(1), progress.recent(2))) {
-            finish(server, recipe, progress, target);
-        }
+        boolean done = Smithing.done(progress.position(), target, recipe.value().rules(), progress.recent(0), progress.recent(1), progress.recent(2));
+        if (done) finish(server, recipe, progress, target);
         setChanged();
+        return done;
     }
 
     /** Bronze rings; wrought iron rings lower; a raw bloom only thuds (tier 3 spec 20.6). */

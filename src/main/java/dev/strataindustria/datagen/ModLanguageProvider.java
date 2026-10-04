@@ -135,6 +135,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "kinetic.overstress", "Machinery groans to a halt");
         add(subtitles + "millstone.grind", "Millstone grinds");
         add(subtitles + "bellows.pump", "Bellows wheeze");
+        add(subtitles + "saw_mill.saw", "Saw rasps");
+        add(subtitles + "saw_mill.blade_break", "Saw blade snaps");
         add(subtitles + "anvil.weld_fail", "Weld refused");
         add(subtitles + "quern.load", "Quern loaded");
         add(subtitles + "quern.done", "Quern spills ground");
@@ -363,6 +365,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.millstone.hint", "Drive a millstone from an axle and let it grind for you.");
         add(journal + "t3.bellows", "Bellows");
         add(journal + "t3.bellows.hint", "Turn a bellows with a shaft and point its nozzle into a forge or a bloomery wall.");
+        add(journal + "t3.saw_mill", "Saw Mill");
+        add(journal + "t3.saw_mill.hint", "Fit a saw blade to a saw mill and saw a log: six planks and the bark.");
+        add(journal + "t3.trip_hammer", "Trip Hammer");
+        add(journal + "t3.trip_hammer.hint", "Give a trip hammer a recorded pattern and a forge beside its anvil, and let it smith.");
         add(journal + "t3.weld", "Forge Weld");
         add(journal + "t3.weld.hint", "Heat two iron ingots, add flux, and weld them into a double ingot on the anvil.");
         add(journal + "t3.pattern", "Smithing Pattern");
@@ -432,8 +438,23 @@ final class ModLanguageProvider extends LanguageProvider {
         add(machine + "working", "Working");
         add(machine + "not_turning", "Needs a turning shaft");
         add(machine + "too_slow", "Too slow: needs %s RPM");
-        add(machine + "no_recipe", "Cannot grind that");
+        add(machine + "no_recipe", "Cannot work that");
         add(machine + "output_full", "Output full");
+        add(machine + "no_blade", "Needs a saw blade");
+        addBlock(ModBlocks.SAW_MILL, "Saw Mill");
+        addBlock(ModBlocks.TRIP_HAMMER, "Trip Hammer");
+        addItem(ModItems.BARK, "Bark");
+        add("container." + id + ".saw_mill", "Saw Mill");
+        add("container." + id + ".trip_hammer", "Trip Hammer");
+        String hammer = id + ".trip_hammer.";
+        add(hammer + "no_anvil", "No anvil in front");
+        add(hammer + "no_pattern", "Needs a recorded pattern");
+        add(hammer + "not_turning", "Needs a turning shaft");
+        add(hammer + "too_slow", "Too slow: needs %s RPM");
+        add(hammer + "waiting", "Waiting for a hot workpiece");
+        add(hammer + "working", "Working (%s / %s hits)");
+        add(hammer + "output_full", "Output full");
+        add(hammer + "anvil_busy", "Something else is on the anvil");
 
         // Spec 9.4 and 9.5: welding, flux and patterns.
         addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");

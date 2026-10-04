@@ -2,6 +2,8 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.machine.BellowsBlock;
 import dev.strataindustria.machine.MillstoneBlock;
+import dev.strataindustria.machine.SawMillBlock;
+import dev.strataindustria.machine.TripHammerBlock;
 import dev.strataindustria.power.AxleBlock;
 import dev.strataindustria.power.GearboxBlock;
 import dev.strataindustria.power.HandCrankBlock;
@@ -171,6 +173,10 @@ public final class ModBlocks {
             p -> p.mapColor(MapColor.STONE).strength(2.5f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE).noOcclusion());
     public static final DeferredBlock<BellowsBlock> BELLOWS = BLOCKS.registerBlock("bellows", BellowsBlock::new,
             p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<SawMillBlock> SAW_MILL = BLOCKS.registerBlock("saw_mill", SawMillBlock::new,
+            p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<TripHammerBlock> TRIP_HAMMER = BLOCKS.registerBlock("trip_hammer", TripHammerBlock::new,
+            p -> kineticWood(p).strength(3.0f, 4.0f).noOcclusion());
 
     // Tier 3 spec 4.3: deposits that are a single block, whatever the rock around them.
     public static final DeferredBlock<Block> LIGNITE_SEAM = BLOCKS.registerSimpleBlock("lignite_seam", p -> p

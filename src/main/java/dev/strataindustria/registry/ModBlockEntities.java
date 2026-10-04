@@ -2,6 +2,8 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.machine.BellowsBlockEntity;
 import dev.strataindustria.machine.MillstoneBlockEntity;
+import dev.strataindustria.machine.SawMillBlockEntity;
+import dev.strataindustria.machine.TripHammerBlockEntity;
 import dev.strataindustria.power.HandCrankBlockEntity;
 import dev.strataindustria.power.KineticBlockEntity;
 import dev.strataindustria.power.WaterWheelBlockEntity;
@@ -68,6 +70,11 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("millstone", () -> new BlockEntityType<>(MillstoneBlockEntity::new, ModBlocks.MILLSTONE.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BellowsBlockEntity>> BELLOWS =
             BLOCK_ENTITIES.register("bellows", () -> new BlockEntityType<>(BellowsBlockEntity::new, ModBlocks.BELLOWS.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SawMillBlockEntity>> SAW_MILL =
+            BLOCK_ENTITIES.register("saw_mill", () -> new BlockEntityType<>(SawMillBlockEntity::new, ModBlocks.SAW_MILL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TripHammerBlockEntity>> TRIP_HAMMER =
+            BLOCK_ENTITIES.register("trip_hammer", () -> new BlockEntityType<>(TripHammerBlockEntity::new, ModBlocks.TRIP_HAMMER.get()));
 
     private ModBlockEntities() {}
 }
