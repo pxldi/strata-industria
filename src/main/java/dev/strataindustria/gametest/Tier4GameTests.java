@@ -417,8 +417,10 @@ final class Tier4GameTests {
         engine(level, fireboxPos, firebox, boilerPos, boiler, enginePos, engine, 60);
         helper.assertValueEqual(engine.sourceSpeed(), SteamEngineBlockEntity.HALF_SPEED, "engine speed between 1 and 2 bar");
 
-        engine(level, fireboxPos, firebox, boilerPos, boiler, enginePos, engine, 500);
+        // About 200 ticks to climb from 1 to 2 bar at half speed; a full boiler lasts some 530 ticks.
+        engine(level, fireboxPos, firebox, boilerPos, boiler, enginePos, engine, 250);
         helper.assertValueEqual(engine.sourceSpeed(), SteamEngineBlockEntity.FULL_SPEED, "engine speed on a running boiler");
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.RUNNING, "boiler status while driving the engine");
         helper.assertTrue(boiler.pressure() >= SteamEngineBlockEntity.HOLD_PRESSURE, "boiler holds pressure under load, got " + boiler.pressure());
         KineticNetworks.rebuildNow(level, axlePos);
         Kinetic axle = (Kinetic) level.getBlockEntity(axlePos);
