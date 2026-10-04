@@ -1,5 +1,11 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.machine.MillstoneBlock;
+import dev.strataindustria.power.AxleBlock;
+import dev.strataindustria.power.GearboxBlock;
+import dev.strataindustria.power.HandCrankBlock;
+import dev.strataindustria.power.WaterWheelBlock;
 import dev.strataindustria.bloomery.BloomeryBlock;
 import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.smithing.AnvilBlock;
@@ -152,6 +158,20 @@ public final class ModBlocks {
     public static final DeferredBlock<BloomeryBlock> BLOOMERY = BLOCKS.registerBlock("bloomery", BloomeryBlock::new,
             p -> fireBrick(p).lightLevel(state -> state.getValue(BloomeryBlock.LIT) ? 13 : 0));
 
+    // Tier 3 spec 7: mechanical power. Wooden parts sound and burn like wood.
+    public static final DeferredBlock<AxleBlock> WOODEN_AXLE = BLOCKS.registerBlock("wooden_axle", AxleBlock::new,
+            p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<GearboxBlock> WOODEN_GEARBOX = BLOCKS.registerBlock("wooden_gearbox", GearboxBlock::new,
+            ModBlocks::kineticWood);
+    public static final DeferredBlock<HandCrankBlock> HAND_CRANK = BLOCKS.registerBlock("hand_crank", HandCrankBlock::new,
+            p -> kineticWood(p).noOcclusion().pushReaction(PushReaction.POPPED));
+    public static final DeferredBlock<WaterWheelBlock> WATER_WHEEL = BLOCKS.registerBlock("water_wheel", WaterWheelBlock::new,
+            p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<MillstoneBlock> MILLSTONE = BLOCKS.registerBlock("millstone", MillstoneBlock::new,
+            p -> p.mapColor(MapColor.STONE).strength(2.5f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE).noOcclusion());
+    public static final DeferredBlock<BellowsBlock> BELLOWS = BLOCKS.registerBlock("bellows", BellowsBlock::new,
+            p -> kineticWood(p).noOcclusion());
+
     // Tier 3 spec 4.3: deposits that are a single block, whatever the rock around them.
     public static final DeferredBlock<Block> LIGNITE_SEAM = BLOCKS.registerSimpleBlock("lignite_seam", p -> p
             .mapColor(MapColor.TERRACOTTA_BROWN)
@@ -216,6 +236,10 @@ public final class ModBlocks {
                     p -> new GroundCoverBlock(Block.box(3, 0, 3, 13, 3, 13), p),
                     p -> groundCover(p).sound(SoundType.GRAVEL)));
         }
+    }
+
+    private static Block.Properties kineticWood(Block.Properties p) {
+        return p.mapColor(MapColor.WOOD).strength(2.0f, 3.0f).sound(SoundType.WOOD).ignitedByLava();
     }
 
     private static Block.Properties fireBrick(Block.Properties p) {

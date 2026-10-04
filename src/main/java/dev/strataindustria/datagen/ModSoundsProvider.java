@@ -123,6 +123,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:random/anvil_land").pitch(1.1f).volume(0.4f)));
         add(ModSounds.ANVIL_WELD_FAIL, definition().subtitle(subtitle("anvil.weld_fail"))
                 .with(sound("minecraft:random/click").pitch(0.6f).volume(0.5f)));
+        // Spec 20.6: mechanical power. These reuse vanilla events, retuned.
+        add(ModSounds.HAND_CRANK_TURN, definition().subtitle(subtitle("hand_crank.turn"))
+                .with(sound("minecraft:block.wooden_door.open", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.4f)));
+        add(ModSounds.WATER_WHEEL_TURN, definition().subtitle(subtitle("water_wheel.turn"))
+                .with(sound("minecraft:entity.boat.paddle_water", SoundDefinition.SoundType.EVENT).volume(0.7f)));
+        add(ModSounds.KINETIC_OVERSTRESS, definition().subtitle(subtitle("kinetic.overstress"))
+                .with(sound("minecraft:block.wood.break", SoundDefinition.SoundType.EVENT).pitch(0.5f)));
+        add(ModSounds.MILLSTONE_GRIND, definition().subtitle(subtitle("millstone.grind"))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f)));
+        add(ModSounds.BELLOWS_PUMP, definition().subtitle(subtitle("bellows.pump"))
+                .with(sound("minecraft:entity.horse.breathe", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

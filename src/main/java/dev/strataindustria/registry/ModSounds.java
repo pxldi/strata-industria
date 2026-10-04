@@ -80,6 +80,13 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD = register("anvil.weld");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD_FAIL = register("anvil.weld_fail");
 
+    /** Tier 3 spec 20.6: mechanical power and machines. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> HAND_CRANK_TURN = register("hand_crank.turn");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WATER_WHEEL_TURN = register("water_wheel.turn");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KINETIC_OVERSTRESS = register("kinetic.overstress");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MILLSTONE_GRIND = register("millstone.grind");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BELLOWS_PUMP = register("bellows.pump");
+
     /** Pages of the field journal turning. */
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");
 
