@@ -5,6 +5,10 @@ import dev.strataindustria.electric.CableBlockEntity;
 import dev.strataindustria.electric.EnergyAdapterBlockEntity;
 import dev.strataindustria.electric.TransformerBlockEntity;
 import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
+import dev.strataindustria.electric.ElectricHeaterBlockEntity;
+import dev.strataindustria.electric.ElectricPumpBlockEntity;
+import dev.strataindustria.electric.KineticMotorBlockEntity;
+import dev.strataindustria.electric.LiquidFuelBurnerBlockEntity;
 import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
@@ -77,6 +81,19 @@ public final class Tier5BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CombustionGeneratorBlockEntity>> COMBUSTION_GENERATOR =
             ModBlockEntities.BLOCK_ENTITIES.register("combustion_generator", () -> new BlockEntityType<>(CombustionGeneratorBlockEntity::new,
                     Tier5Blocks.COMBUSTION_GENERATOR.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LiquidFuelBurnerBlockEntity>> LIQUID_FUEL_BURNER =
+            ModBlockEntities.BLOCK_ENTITIES.register("liquid_fuel_burner", () -> new BlockEntityType<>(LiquidFuelBurnerBlockEntity::new,
+                    Tier5Blocks.LIQUID_FUEL_BURNER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricHeaterBlockEntity>> ELECTRIC_HEATER =
+            ModBlockEntities.BLOCK_ENTITIES.register("electric_heater", () -> new BlockEntityType<>(ElectricHeaterBlockEntity::new,
+                    Tier5Blocks.ELECTRIC_HEATER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectricPumpBlockEntity>> ELECTRIC_PUMP =
+            ModBlockEntities.BLOCK_ENTITIES.register("electric_pump", () -> new BlockEntityType<>(ElectricPumpBlockEntity::new,
+                    Tier5Blocks.ELECTRIC_PUMP.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticMotorBlockEntity>> KINETIC_MOTOR =
+            ModBlockEntities.BLOCK_ENTITIES.register("kinetic_motor", () -> new BlockEntityType<>(KineticMotorBlockEntity::new,
+                    Tier5Blocks.KINETIC_MOTOR.get()));
 
     public static void init() {}
 

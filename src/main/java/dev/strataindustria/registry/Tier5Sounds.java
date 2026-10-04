@@ -66,6 +66,15 @@ public final class Tier5Sounds {
     /** A slack wire flopping down when a span is cut. */
     public static final DeferredHolder<SoundEvent, SoundEvent> POLE_INSULATOR_DISCONNECT = register("block.pole_insulator.disconnect");
 
+    /** Spec 23.6: a steady burner roar, quieter than a firebox. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> LIQUID_FUEL_BURNER_RUN = register("block.liquid_fuel_burner.run");
+    /** An electric hum with the tick of expanding metal. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELECTRIC_HEATER_RUN = register("block.electric_heater.run");
+    /** Motor hum with water gulps. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELECTRIC_PUMP_RUN = register("block.electric_pump.run");
+    /** A smooth motor whine. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KINETIC_MOTOR_RUN = register("block.kinetic_motor.run");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

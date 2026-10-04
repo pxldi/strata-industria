@@ -18,17 +18,33 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * Tier 5 spec 7.3: a fluid that burns, as the fluid data map {@code strataindustria:liquid_fuel}, so packs can
- * add fuels. The combustion generator turns it into electricity; the liquid-fuel burner (7.5) will read the
- * same entry.
+ * add fuels. The combustion generator turns it into electricity; the liquid-fuel burner (7.5) turns it into heat.
  *
  * @param joulesPerMb J a combustion generator makes from 1 mB
  * @param bucket      the bucket item that carries it, so the generator takes it by hand
+ * @param burn        what the liquid-fuel burner makes of it; a fuel without it only feeds generators
  */
 @EventBusSubscriber(modid = StrataIndustria.MOD_ID)
-public record LiquidFuel(double joulesPerMb, Optional<Identifier> bucket) {
+public record LiquidFuel(double joulesPerMb, Optional<Identifier> bucket, Optional<Burn> burn) {
+    /**
+     * Tier 5 spec 7.5: heat from burning the fluid in a liquid-fuel burner.
+     *
+     * @param huPerMb        HU one mB gives
+     * @param maxTemperature °C the burner can reach on it
+     * @param huPerTick      HU/t at full burn
+     */
+    public record Burn(double huPerMb, int maxTemperature, int huPerTick) {
+        public static final Codec<Burn> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.doubleRange(0.01, 100_000).fieldOf("hu_per_mb").forGetter(Burn::huPerMb),
+                Codec.intRange(25, 3000).fieldOf("max_temperature").forGetter(Burn::maxTemperature),
+                Codec.intRange(1, 10_000).fieldOf("hu_per_tick").forGetter(Burn::huPerTick)
+        ).apply(i, Burn::new));
+    }
+
     public static final Codec<LiquidFuel> CODEC = RecordCodecBuilder.create(i -> i.group(
             Codec.doubleRange(0.01, 100_000).fieldOf("joules_per_mb").forGetter(LiquidFuel::joulesPerMb),
-            Identifier.CODEC.optionalFieldOf("bucket").forGetter(LiquidFuel::bucket)
+            Identifier.CODEC.optionalFieldOf("bucket").forGetter(LiquidFuel::bucket),
+            Burn.CODEC.optionalFieldOf("burn").forGetter(LiquidFuel::burn)
     ).apply(i, LiquidFuel::new));
 
     public static final DataMapType<Fluid, LiquidFuel> DATA_MAP = DataMapType.builder(StrataIndustria.id("liquid_fuel"), Registries.FLUID, CODEC).build();
@@ -36,6 +52,12 @@ public record LiquidFuel(double joulesPerMb, Optional<Identifier> bucket) {
     /** The fuel entry of {@code fluid}, or null when it does not burn. */
     public static @Nullable LiquidFuel of(Fluid fluid) {
         return fluid.builtInRegistryHolder().getData(DATA_MAP);
+    }
+
+    /** The burner's entry for {@code fluid}, or null when the burner cannot burn it. */
+    public static @Nullable Burn burnOf(Fluid fluid) {
+        LiquidFuel fuel = of(fluid);
+        return fuel == null ? null : fuel.burn().orElse(null);
     }
 
     /** The fuel whose bucket {@code stack} is, or null. */

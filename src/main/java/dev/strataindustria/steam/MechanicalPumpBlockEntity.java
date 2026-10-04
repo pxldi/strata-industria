@@ -3,6 +3,7 @@ package dev.strataindustria.steam;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.fluid.FluidPipes;
 import dev.strataindustria.fluid.FluidPort;
+import dev.strataindustria.fluid.PumpIntake;
 import dev.strataindustria.power.KineticBlockEntity;
 import dev.strataindustria.power.KineticConsumer;
 import dev.strataindustria.registry.Tier4BlockEntities;
@@ -13,14 +14,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
@@ -112,8 +110,8 @@ public class MechanicalPumpBlockEntity extends KineticBlockEntity implements Kin
         if (rpm <= 0) return Status.NOT_TURNING;
         if (rpm < MIN_SPEED) return Status.TOO_SLOW;
         BlockPos intake = pos.relative(facing());
-        FluidState water = level.getFluidState(intake);
-        if (!water.is(FluidTags.WATER) || !water.isSource()) {
+        Fluid drawn = PumpIntake.fluidAt(level, intake);
+        if (drawn == null) {
             drained = 0;
             carry = 0;
             return Status.NO_WATER;
@@ -129,10 +127,10 @@ public class MechanicalPumpBlockEntity extends KineticBlockEntity implements Kin
         carry += RATE * rpm / 16.0f;
         int amount = (int) carry;
         carry -= amount;
-        FluidPipes.Push push = FluidPipes.push(level, network, Fluids.WATER, amount, 20.0f, 0.0f);
+        FluidPipes.Push push = FluidPipes.push(level, network, drawn, amount, 20.0f, 0.0f);
         lastMoved = push.moved();
         if (lastMoved <= 0) return Status.OUTLET_FULL;
-        if (!infinite(level, intake)) {
+        if (!PumpIntake.infinite(level, intake)) {
             drained += lastMoved;
             if (drained >= SOURCE_AMOUNT) {
                 drained = 0;
@@ -140,16 +138,6 @@ public class MechanicalPumpBlockEntity extends KineticBlockEntity implements Kin
             }
         }
         return Status.PUMPING;
-    }
-
-    /** Vanilla's infinite water: at least two horizontal neighbours are water sources too. */
-    static boolean infinite(Level level, BlockPos intake) {
-        int sources = 0;
-        for (Direction side : Direction.Plane.HORIZONTAL) {
-            FluidState next = level.getFluidState(intake.relative(side));
-            if (next.is(FluidTags.WATER) && next.isSource()) sources++;
-        }
-        return sources >= 2;
     }
 
     public Component report() {

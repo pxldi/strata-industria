@@ -82,6 +82,11 @@ public final class Tier5Items {
     public static final DeferredItem<MachineBlockItem> STEAM_TURBINE = machineItem("steam_turbine", Tier5Blocks.STEAM_TURBINE);
     public static final DeferredItem<MachineBlockItem> COMBUSTION_GENERATOR = machineItem("combustion_generator", Tier5Blocks.COMBUSTION_GENERATOR);
 
+    public static final DeferredItem<BlockItem> LIQUID_FUEL_BURNER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LIQUID_FUEL_BURNER);
+    public static final DeferredItem<MachineBlockItem> ELECTRIC_HEATER = machineItem("electric_heater", Tier5Blocks.ELECTRIC_HEATER);
+    public static final DeferredItem<BlockItem> ELECTRIC_PUMP = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTRIC_PUMP);
+    public static final DeferredItem<MachineBlockItem> KINETIC_MOTOR = machineItem("kinetic_motor", Tier5Blocks.KINETIC_MOTOR);
+
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TRANSFORMER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.TRANSFORMER);
     public static final DeferredItem<MachineBlockItem> ENERGY_ADAPTER = machineItem("energy_adapter", Tier5Blocks.ENERGY_ADAPTER);
 

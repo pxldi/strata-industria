@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "C": "strataindustria:lv_cable",
+    "H": "strataindustria:lv_machine_hull",
+    "M": "strataindustria:magnet",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "PAP",
+    "MHM",
+    "PCP"
+  ],
+  "result": {
+    "id": "strataindustria:kinetic_motor"
+  }
+}

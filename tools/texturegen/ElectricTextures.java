@@ -2122,6 +2122,422 @@ public final class ElectricTextures {
         creosoteGuiStrip();
     }
 
+    // ---------------------------------------------------------------- heat and motion (heater, fuel burner, kinetic motor, electric pump)
+
+    static final int DARK1 = 0x141418, DARK2 = 0x24262c, PUMP_SLOT = 0x141010;
+
+    static void px(BufferedImage im, int x, int y, int col) { TextureGen.px(im, x, y, col); }
+
+    /** Round-ish distance from the tile centre (7.5, 7.5) shifted to (cx, cy). */
+    static double dist(int x, int y, double cx, double cy) { return Math.hypot(x - cx, y - cy); }
+
+    // ---- electric heater
+
+    /** Coil pixel: dull steel when idle, dark red (LV) or orange (MV) heat band colours when active. */
+    static int coilColor(boolean mv, boolean active, int frame, int x, int y) {
+        if (!active) return x % 2 == 0 ? c(STEEL, 3) : c(STEEL, 2);
+        boolean hi = (x + y * 2 + frame) % 3 == 0;
+        if (!mv) return hi ? HEAT[1] : HEAT[0];
+        if ((x * 2 + y + frame * 3) % 9 == 0) return HEAT[4];
+        return hi ? HEAT[3] : HEAT[2];
+    }
+
+    static BufferedImage heaterFront(boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 811 : 810);
+        // recessed opening 2..13 x 2..11: dark top-left lip, lit bottom-right lip
+        for (int x = 2; x <= 13; x++) { px(im, x, 2, c(r, base - 1)); px(im, x, 11, c(r, base + 2)); }
+        for (int y = 2; y <= 11; y++) { px(im, 2, y, c(r, base - 1)); px(im, 13, y, c(r, base + 2)); }
+        px(im, 13, 2, c(r, base));
+        px(im, 2, 11, c(r, base));
+        fill(im, 3, 3, 12, 10, DARK1);
+        fill(im, 3, 10, 12, 10, DARK2);
+        // coil: three horizontal runs joined by turns at alternating ends
+        for (int y : new int[]{4, 6, 8}) for (int x = 3; x <= 12; x++) px(im, x, y, coilColor(mv, active, frame, x, y));
+        px(im, 12, 5, coilColor(mv, active, frame, 12, 5));
+        px(im, 3, 7, coilColor(mv, active, frame, 3, 7));
+        // grille bars over the coil
+        for (int x : new int[]{5, 8, 11}) {
+            for (int y = 3; y <= 10; y++) px(im, x, y, c(r, y == 3 ? base + 1 : y == 10 ? base - 1 : base));
+        }
+        // vent slits under the opening
+        for (int x = 4; x <= 11; x++) px(im, x, 12, x % 2 == 0 ? c(STEEL, 1) : c(r, base + 1));
+        rivets(im, r, base, new int[][]{{1, 1}, {13, 1}});
+        return im;
+    }
+
+    /** Fire brick heat face with a faint heated centre: glowing mortar joints and scorched brick faces. */
+    static BufferedImage heaterTop(boolean mv) {
+        BufferedImage im = TextureGen.fireBricks();
+        int mortar = BRICK.get(1) & 0xFFFFFF;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = dist(x, y, 7.5, 7.5);
+                if (d > 4.6) continue;
+                int col = im.getRGB(x, y) & 0xFFFFFF;
+                if (col == mortar) px(im, x, y, HEAT[mv ? 1 : 0]);
+                else if (d <= 3.2) {
+                    // scorched: one step darker, never below step 2
+                    for (int s = 5; s >= 3; s--) if (col == (BRICK.get(s) & 0xFFFFFF)) px(im, x, y, BRICK.get(s - 1));
+                }
+            }
+        if (mv) for (int[] p : new int[][]{{1, 1}, {13, 1}, {1, 13}, {13, 13}}) {
+            px(im, p[0], p[1], c(ALUMINIUM, 5));
+            px(im, p[0] + 1, p[1], c(ALUMINIUM, 3));
+            px(im, p[0], p[1] + 1, c(ALUMINIUM, 2));
+        }
+        return im;
+    }
+
+    // ---- liquid fuel burner
+
+    /** Nozzle opening in fire bricks, brass nozzle, brass fuel valve below with an iron hand wheel. */
+    static BufferedImage burnerFront(int frame, boolean lit) {
+        BufferedImage im = TextureGen.fireBricks();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = dist(x, y, 7.5, 4.5);
+                if (d > 4.4) continue;
+                if (d > 3.6) px(im, x, y, TextureGen.PIG_IRON.get(x + y < 12 ? 4 : 2));
+                else px(im, x, y, DARK1);
+            }
+        // brass nozzle 6..9 x 3..6 with a 2x2 bore
+        for (int y = 3; y <= 6; y++)
+            for (int x = 6; x <= 9; x++) {
+                int s = (x == 6 || y == 3) ? 5 : (x == 9 || y == 6) ? 2 : 4;
+                px(im, x, y, c(BRASS, s));
+            }
+        for (int y = 4; y <= 5; y++) for (int x = 7; x <= 8; x++) px(im, x, y, DARK1);
+        if (lit) {
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    if (dist(x, y, 7.5, 4.5) > 3.6) continue;
+                    boolean nozzle = x >= 6 && x <= 9 && y >= 3 && y <= 6;
+                    if (nozzle) continue;
+                    boolean halo = x >= 5 && x <= 10 && y >= 2 && y <= 7;
+                    if (halo) px(im, x, y, ((x * 2 + y * 3 + frame * 5) % 4 == 0) ? HEAT[4] : c(BLUE, 5));
+                    else px(im, x, y, ((x + y + frame) % 4 == 0) ? DARK1 : c(BLUE, 3));
+                }
+            px(im, 7, 4, HEAT[4]);
+            px(im, 8, 4, frame % 2 == 0 ? HEAT[5] : HEAT[4]);
+            px(im, 7, 5, frame % 2 == 0 ? HEAT[4] : HEAT[5]);
+            px(im, 8, 5, HEAT[5]);
+        }
+        // hand wheel and stem
+        for (int x = 5; x <= 10; x++) px(im, x, 10, TextureGen.PIG_IRON.get(x == 5 || x == 6 ? 5 : 4));
+        px(im, 4, 10, TextureGen.PIG_IRON.get(3));
+        px(im, 11, 10, TextureGen.PIG_IRON.get(2));
+        px(im, 7, 11, c(BRASS, 3));
+        px(im, 8, 11, c(BRASS, 2));
+        // pipe running through the valve body
+        for (int x = 0; x <= 15; x++) {
+            px(im, x, 12, c(BRASS, 5));
+            px(im, x, 13, c(BRASS, 3));
+            px(im, x, 14, c(BRASS, 1));
+        }
+        for (int y = 11; y <= 15; y++)
+            for (int x = 5; x <= 10; x++) {
+                int s = x == 5 ? 5 : x == 10 ? 2 : (y == 11 ? 5 : y >= 14 ? 2 : 4);
+                px(im, x, y, c(BRASS, s));
+            }
+        px(im, 7, 11, c(BRASS, 3));
+        px(im, 8, 11, c(BRASS, 2));
+        px(im, 7, 13, c(BRASS, 1));
+        px(im, 8, 13, c(BRASS, 1));
+        return im;
+    }
+
+    static BufferedImage burnerSide() {
+        BufferedImage im = TextureGen.fireBricks();
+        for (int x = 0; x < 16; x++) {
+            px(im, x, 0, TextureGen.WROUGHT_IRON.get(x % 5 == 0 ? 5 : 4));
+            px(im, x, 1, TextureGen.WROUGHT_IRON.get(2));
+            px(im, x, 14, TextureGen.WROUGHT_IRON.get(x % 7 == 3 ? 4 : 3));
+            px(im, x, 15, TextureGen.WROUGHT_IRON.get(1));
+        }
+        for (int y = 2; y <= 13; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = dist(x, y, 7.5, 7.5);
+                if (d > 5.4) continue;
+                boolean lit = x + y < 15;
+                int col;
+                if (d > 4.4) col = c(BRASS, lit ? 5 : 2);
+                else if (d > 2.9) col = c(BRASS, 3);
+                else if (d > 2.1) col = c(BRASS, lit ? 1 : 4);
+                else col = DARK1;
+                px(im, x, y, col);
+            }
+        for (int[] p : new int[][]{{4, 4}, {11, 4}, {4, 11}, {11, 11}}) {
+            px(im, p[0], p[1], c(BRASS, 5));
+            px(im, p[0] + 1, p[1] + 1, c(BRASS, 1));
+        }
+        return im;
+    }
+
+    /** Fire bricks with an iron plate, a round flue and four bolts (the firebox has a hot plate instead). */
+    static BufferedImage burnerTop() {
+        BufferedImage im = TextureGen.fireBricks();
+        Random rnd = new Random(821);
+        for (int y = 2; y <= 13; y++)
+            for (int x = 2; x <= 13; x++) {
+                int step = 3;
+                if (x == 2 || y == 2) step = 4;
+                else if (x == 13 || y == 13) step = 2;
+                else if (rnd.nextInt(6) == 0) step = rnd.nextBoolean() ? 2 : 4;
+                px(im, x, y, TextureGen.PIG_IRON.get(step));
+            }
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = dist(x, y, 7.5, 7.5);
+                if (d > 4.3) continue;
+                if (d > 3.2) px(im, x, y, TextureGen.PIG_IRON.get(x + y < 15 ? 5 : 2));
+                else px(im, x, y, DARK1);
+            }
+        px(im, 6, 7, DARK2);
+        px(im, 6, 6, DARK2);
+        for (int[] b : new int[][]{{3, 3}, {11, 3}, {3, 11}, {11, 11}}) TextureGen.rivet(im, b[0], b[1]);
+        return im;
+    }
+
+    // ---- kinetic motor
+
+    /** Cavity seen behind the shaft: dark bore, steel laminations and a few copper field coil turns. */
+    static BufferedImage motorInner() {
+        BufferedImage im = TextureGen.img();
+        fill(im, 0, 0, 15, 15, DARK2);
+        Random rnd = new Random(891);
+        for (int i = 0; i < 5; i++) {
+            int len = 3 + rnd.nextInt(3), x = rnd.nextInt(11), y = rnd.nextInt(16);
+            for (int k = 0; k < len; k++) px(im, x + k, y, DARK1);
+        }
+        for (int y = 4; y <= 11; y++) {
+            boolean even = y % 2 == 0;
+            px(im, 4, y, c(STEEL, even ? 3 : 2));
+            px(im, 5, y, c(STEEL, even ? 2 : 1));
+            px(im, 10, y, c(STEEL, even ? 2 : 1));
+            px(im, 11, y, c(STEEL, even ? 3 : 2));
+        }
+        for (int y = 5; y <= 10; y++) {
+            if (y % 3 != 1) {
+                px(im, 5, y, c(COPPER, y % 3 == 2 ? 3 : 2));
+                px(im, 10, y, c(COPPER, y % 3 == 2 ? 2 : 1));
+            }
+        }
+        for (int y = 4; y <= 11; y++) for (int x = 6; x <= 9; x++) px(im, x, y, DARK1);
+        for (int y = 4; y <= 11; y++) px(im, 6, y, c(STEEL, 1));
+        return im;
+    }
+
+    static BufferedImage motorFront(boolean mv, int[] lamp) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 911 : 910);
+        // bearing flange round the window (window is 4..11): dark top-left, lit bottom-right, rounded corners
+        for (int i = 4; i <= 11; i++) {
+            px(im, i, 3, c(r, base - 1));
+            px(im, 3, i, c(r, base - 1));
+            px(im, i, 12, c(r, base + 2));
+            px(im, 12, i, c(r, base + 2));
+        }
+        for (int[] p : new int[][]{{3, 3}, {12, 3}, {3, 12}, {12, 12}}) px(im, p[0], p[1], c(r, base));
+        px(im, 4, 4, c(r, base - 2));
+        // shaft key marks on the flange instead of a nameplate: four bolts at the diagonals
+        for (int[] p : new int[][]{{2, 2}, {13, 13}}) px(im, p[0], p[1], c(r, base + 2));
+        px(im, 3, 2, c(r, base - 2));
+        px(im, 14, 14, c(r, base - 2));
+        if (!mv) for (int x = 5; x <= 10; x++) px(im, x, 13, x == 5 || x == 10 ? c(STEEL, 2) : DARK2);
+        rivets(im, r, base, new int[][]{{1, 8}, {13, 6}});
+        // status lamp socket and lamp, as on the dynamo
+        fill(im, 11, 0, 14, 3, c(STEEL, 1));
+        px(im, 12, 1, lamp[3]);
+        px(im, 13, 1, lamp[2]);
+        px(im, 12, 2, lamp[2]);
+        px(im, 13, 2, lamp[1]);
+        BufferedImage inner = motorInner();
+        for (int y = 4; y <= 11; y++) for (int x = 4; x <= 11; x++) im.setRGB(x, y, inner.getRGB(x, y));
+        return im;
+    }
+
+    /** Casing back with a round fan guard: frame ring, two guard rings, diagonal spokes, hub. */
+    static BufferedImage motorBack(boolean mv) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = mv ? casing(ALUMINIUM, 4, 65) : casing(STEEL, 3, 55);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double ox = x - 7.5, oy = y - 7.5, d = Math.hypot(ox, oy);
+                if (d > 6.0) continue;
+                boolean lit = ox + oy < 0;
+                int col;
+                if (d > 5.1) col = c(r, lit ? base + 1 : base - 1);
+                else if (d <= 1.7) col = c(r, lit ? base + 1 : base);
+                else {
+                    col = DARK1;
+                    boolean ring = d >= 3.0 && d <= 3.9;
+                    boolean spoke = Math.abs(ox) < 0.6 || Math.abs(oy) < 0.6;
+                    if (ring || spoke) col = c(r, lit ? base : base - 1);
+                }
+                px(im, x, y, col);
+            }
+        px(im, 7, 7, DARK2);
+        px(im, 8, 8, DARK2);
+        return im;
+    }
+
+    /** Vertical steel shaft: cylinder shading across x, brushed streaks along y, a keyway and two grooves. */
+    static BufferedImage motorShaft() {
+        BufferedImage im = TextureGen.img();
+        int[] prof = {3, 4, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 1, 1};
+        Random rnd = new Random(931);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int s = prof[x];
+                if (rnd.nextInt(7) == 0) s += rnd.nextBoolean() ? 1 : -1;
+                px(im, x, y, c(STEEL, s));
+            }
+        for (int y = 2; y <= 13; y++) {
+            px(im, 9, y, c(STEEL, 1));
+            px(im, 10, y, c(STEEL, 4));
+        }
+        for (int x = 0; x < 16; x++) {
+            px(im, x, 0, c(STEEL, 1));
+            px(im, x, 1, c(STEEL, prof[x] + 1));
+            px(im, x, 8, c(STEEL, 1));
+            px(im, x, 9, c(STEEL, prof[x] + 1));
+        }
+        px(im, 2, 3, c(STEEL, 5));
+        px(im, 2, 11, c(STEEL, 5));
+        return im;
+    }
+
+    static BufferedImage motorShaftEnd() {
+        BufferedImage im = TextureGen.img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int dx = 2 * x - 15, dy = 2 * y - 15;
+                int k = (Math.max(Math.abs(dx), Math.abs(dy)) + 1) / 2; // 1..8
+                boolean litSide = (dy < 0 && Math.abs(dy) >= Math.abs(dx)) || (dx < 0 && Math.abs(dx) >= Math.abs(dy));
+                int col;
+                if (k == 1) col = c(STEEL, 1);
+                else if (k == 2) col = c(STEEL, litSide ? 5 : 3);
+                else if (k == 3) col = c(STEEL, 1);
+                else if (k == 8) col = c(STEEL, 1);
+                else col = c(STEEL, (k % 2 == 0 ? 3 : 2) + (litSide ? 1 : 0));
+                px(im, x, y, col);
+            }
+        // keyway notch in the hub
+        px(im, 8, 6, c(STEEL, 1));
+        px(im, 8, 7, c(STEEL, 1));
+        return im;
+    }
+
+    // ---- electric pump
+
+    static BufferedImage pumpElFront(int frame, boolean active) {
+        BufferedImage im = TextureGen.bronzePlates(8811);
+        Random rnd = new Random(951);
+        // rows 0..3 are cropped away by the model: plain casing there
+        for (int y = 0; y <= 3; y++) for (int x = 0; x < 16; x++) px(im, x, y, c(BRONZE, y == 3 ? 2 : rnd.nextInt(5) == 0 ? 4 : 3));
+        for (int x = 0; x < 16; x++) px(im, x, 4, c(BRONZE, x % 5 == 0 ? 5 : 4));
+        for (int y = 5; y <= 15; y++) for (int x : new int[]{0, 15}) px(im, x, y, c(BRONZE, x == 0 ? 4 : 2));
+        // intake grille 3..12 x 5..11 in a bronze frame
+        for (int y = 5; y <= 11; y++)
+            for (int x = 3; x <= 12; x++) {
+                boolean frame2 = x == 3 || y == 5 || x == 12 || y == 11;
+                int col;
+                if (frame2) col = c(BRONZE, x == 3 || y == 5 ? 5 : 2);
+                else if (y % 2 == 0) col = c(BRONZE, 4);
+                else col = active ? c(BLUE, 1) : PUMP_SLOT;
+                px(im, x, y, col);
+            }
+        if (active) {
+            for (int y : new int[]{7, 9}) {
+                int gx = 4 + ((frame * 2 + (y == 9 ? 3 : 0)) % 8);
+                px(im, gx, y, c(BLUE, 4));
+                if (gx + 1 <= 11) px(im, gx + 1, y, c(BLUE, 3));
+                if (gx - 1 >= 4 && frame % 2 == 0) px(im, gx - 1, y, c(BLUE, 5));
+            }
+        }
+        // power lamp in a dark socket, bottom right
+        fill(im, 11, 12, 14, 14, c(BRONZE, 1));
+        px(im, 12, 13, active ? RUN[3] : c(STEEL, 2));
+        px(im, 13, 13, active ? RUN[2] : c(STEEL, 1));
+        for (int[] b : new int[][]{{1, 13}}) { px(im, b[0], b[1], c(BRONZE, 5)); px(im, b[0] + 1, b[1] + 1, c(BRONZE, 1)); }
+        return im;
+    }
+
+    /** Housing top: the used 8x8 centre carries four cooling fins; the rest is plain steel plate. */
+    static BufferedImage pumpMotorTop() {
+        BufferedImage im = TextureGen.img();
+        fill(im, 0, 0, 15, 15, c(STEEL, 3));
+        Random rnd = new Random(961);
+        for (int i = 0; i < 8; i++) {
+            int len = 3 + rnd.nextInt(3), x = rnd.nextInt(11), y = rnd.nextInt(16);
+            for (int k = 0; k < len; k++) px(im, x + k, y, c(STEEL, 4));
+        }
+        for (int y = 4; y <= 11; y++)
+            for (int x = 4; x <= 11; x++) {
+                int col;
+                if (y % 2 == 1) col = c(STEEL, 1);
+                else col = c(STEEL, x == 4 ? 5 : x == 11 ? 2 : 4);
+                px(im, x, y, col);
+            }
+        for (int x = 4; x <= 11; x++) px(im, x, 4, c(STEEL, x == 4 ? 5 : 5));
+        px(im, 11, 4, c(STEEL, 3));
+        return im;
+    }
+
+    /** Steel motor can: rows 0..3 (and every 4th row) are lit rim, body, body, shadow; ribs at the used edges. */
+    static BufferedImage pumpMotorSide() {
+        BufferedImage im = TextureGen.img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int row = y % 4;
+                int s = row == 0 ? 4 : row == 3 ? 2 : 3;
+                if (x == 4 || x == 11) s = row == 3 ? 1 : s + 1;
+                px(im, x, y, c(STEEL, Math.min(5, s)));
+            }
+        for (int y = 0; y < 16; y += 4) {
+            // nameplate-like vent slot and two bolts
+            for (int x = 6; x <= 9; x++) {
+                px(im, x, y + 1, c(STEEL, 1));
+                px(im, x, y + 2, x == 6 ? c(STEEL, 2) : c(STEEL, 4));
+            }
+            px(im, 5, y + 1, c(STEEL, 5));
+            px(im, 10, y + 1, c(STEEL, 5));
+        }
+        return im;
+    }
+
+    static void heatAndMotion() throws IOException {
+        for (boolean mv : new boolean[]{false, true}) {
+            String t = mv ? "mv" : "lv";
+            save("block/electric_heater_front_" + t, heaterFront(mv, 0, false));
+            TextureGen.saveAnimated("block/electric_heater_front_" + t + "_active",
+                    strip(f -> heaterFront(mv, f, true)), 4);
+            save("block/electric_heater_top_" + t, heaterTop(mv));
+
+            int[] off = {c(STEEL, 1), c(STEEL, 1), c(STEEL, 1), c(STEEL, 2)};
+            save("block/kinetic_motor_front_" + t + "_off", motorFront(mv, off));
+            save("block/kinetic_motor_front_" + t + "_run", motorFront(mv, RUN));
+            save("block/kinetic_motor_front_" + t + "_wait", motorFront(mv, WAIT));
+            save("block/kinetic_motor_front_" + t + "_error", motorFront(mv, ERROR));
+            save("block/kinetic_motor_back_" + t, motorBack(mv));
+        }
+        save("block/liquid_fuel_burner_front", burnerFront(0, false));
+        TextureGen.saveAnimated("block/liquid_fuel_burner_front_lit", strip(f -> burnerFront(f, true)), 3);
+        save("block/liquid_fuel_burner_side", burnerSide());
+        save("block/liquid_fuel_burner_top", burnerTop());
+        save("block/kinetic_motor_inner", motorInner());
+        save("block/kinetic_motor_shaft", motorShaft());
+        save("block/kinetic_motor_shaft_end", motorShaftEnd());
+        save("block/electric_pump_front", pumpElFront(0, false));
+        TextureGen.saveAnimated("block/electric_pump_front_active", strip(f -> pumpElFront(f, true)), 2);
+        save("block/electric_pump_motor_top", pumpMotorTop());
+        save("block/electric_pump_motor_side", pumpMotorSide());
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -2135,6 +2551,7 @@ public final class ElectricTextures {
         machines();
         transformerAndAdapter();
         generators();
+        heatAndMotion();
         chemistry();
         overheadLines();
         preview();

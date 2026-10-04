@@ -2,7 +2,12 @@
   "values": {
     "strataindustria:creosote": {
       "joules_per_mb": 8,
-      "bucket": "strataindustria:creosote_bucket"
+      "bucket": "strataindustria:creosote_bucket",
+      "burn": {
+        "hu_per_mb": 16,
+        "max_temperature": 1350,
+        "hu_per_tick": 30
+      }
     }
   }
 }

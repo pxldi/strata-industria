@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "strataindustria:fire_brick",
+    "H": "strataindustria:lv_machine_hull",
+    "P": "strataindustria:steel_plate",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    "PWP",
+    "WHW",
+    "BBB"
+  ],
+  "result": {
+    "id": "strataindustria:electric_heater"
+  }
+}

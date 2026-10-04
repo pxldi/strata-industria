@@ -343,6 +343,15 @@ public final class Config {
 
     static {
         BUILDER.pop();
+        BUILDER.comment("Mechanical and electric pumps.").push("pumps");
+    }
+
+    public static final ModConfigSpec.BooleanValue PUMPS_OCEAN_BRINE = BUILDER
+            .comment("A pump whose intake is in an ocean or beach biome pumps brine instead of water.")
+            .define("oceanBrine", true);
+
+    static {
+        BUILDER.pop();
         BUILDER.comment("Tree taps and rubber.").push("rubber");
     }
 

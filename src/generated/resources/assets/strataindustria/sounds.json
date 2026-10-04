@@ -333,6 +333,40 @@
     ],
     "subtitle": "subtitles.strataindustria.block.electric_furnace.run"
   },
+  "block.electric_heater.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.furnace.fire_crackle",
+        "pitch": 1.4,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 0.6,
+        "volume": 0.12
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.electric_heater.run"
+  },
+  "block.electric_pump.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.fill",
+        "pitch": 0.8,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.1,
+        "volume": 0.1
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.electric_pump.run"
+  },
   "block.electrolyser.bubble": {
     "sounds": [
       {
@@ -372,6 +406,23 @@
     ],
     "subtitle": "subtitles.strataindustria.block.inserter.swing"
   },
+  "block.kinetic_motor.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.3,
+        "volume": 0.2
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.25,
+        "volume": 0.15
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.kinetic_motor.run"
+  },
   "block.lathe.cut": {
     "sounds": [
       {
@@ -394,6 +445,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.lathe.cut"
+  },
+  "block.liquid_fuel_burner.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.ambient",
+        "pitch": 0.8,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.fire.ambient",
+        "pitch": 0.7,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.liquid_fuel_burner.run"
   },
   "block.macerator.grind": {
     "sounds": [

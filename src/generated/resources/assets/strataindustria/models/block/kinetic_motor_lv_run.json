@@ -1,0 +1,10 @@
+{
+  "parent": "strataindustria:block/kinetic_dynamo",
+  "textures": {
+    "back": "strataindustria:block/kinetic_motor_back_lv",
+    "front": "strataindustria:block/kinetic_motor_front_lv_run",
+    "inner": "strataindustria:block/kinetic_motor_inner",
+    "particle": "strataindustria:block/casing/lv_side",
+    "side": "strataindustria:block/casing/lv_side"
+  }
+}

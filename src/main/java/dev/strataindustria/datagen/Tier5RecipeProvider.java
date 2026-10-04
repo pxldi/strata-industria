@@ -52,6 +52,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         storage();
         assembling();
         overheadLines();
+        heatAndMotion();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -287,6 +288,50 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .save(output, key("combustion_generator"));
     }
 
+
+    // Spec 7.5, 7.6, 10.10 and 10.11: the burner, heater, pump and motor.
+    private void heatAndMotion() {
+        Item brick = ModItems.FIRE_BRICK.get();
+        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get();
+        Item hull = Tier5Items.LV_MACHINE_HULL.get();
+        shaped(RecipeCategory.REDSTONE, Tier5Items.LIQUID_FUEL_BURNER.get())
+                .pattern("BFB")
+                .pattern("B B")
+                .pattern("BVB")
+                .define('B', brick)
+                .define('F', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .define('V', Tier4Items.VALVE.get())
+                .unlockedBy("has_valve", has(Tier4Items.VALVE.get()))
+                .save(output, key("liquid_fuel_burner"));
+        shaped(RecipeCategory.REDSTONE, Tier5Items.ELECTRIC_HEATER.get())
+                .pattern("PWP")
+                .pattern("WHW")
+                .pattern("BBB")
+                .define('P', steelPlate)
+                .define('W', Tier5Items.COPPER_WIRE.get())
+                .define('H', hull)
+                .define('B', brick)
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("electric_heater"));
+        shaped(RecipeCategory.REDSTONE, Tier5Items.KINETIC_MOTOR.get())
+                .pattern("PAP")
+                .pattern("MHM")
+                .pattern("PCP")
+                .define('P', steelPlate)
+                .define('A', Tier4Items.IRON_AXLE.get())
+                .define('M', Tier5Items.MAGNET.get())
+                .define('H', hull)
+                .define('C', Tier5Items.LV_CABLE.get())
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("kinetic_motor"));
+        shapeless(RecipeCategory.REDSTONE, Tier5Items.ELECTRIC_PUMP.get())
+                .requires(Tier4Items.MECHANICAL_PUMP.get())
+                .requires(Tier5Items.ELECTRIC_MOTOR.get())
+                .requires(Tier5Items.BASIC_CIRCUIT.get())
+                .requires(Tier5Items.LV_CABLE.get())
+                .unlockedBy("has_electric_motor", has(Tier5Items.ELECTRIC_MOTOR.get()))
+                .save(output, key("electric_pump"));
+    }
 
     // Spec 9.4, 9.5 and 7.4: the cell, the battery box and the MV upgrade kit.
     private void storage() {
