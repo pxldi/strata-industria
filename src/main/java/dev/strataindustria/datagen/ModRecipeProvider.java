@@ -26,6 +26,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.RecipeUnlockAdvancementBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -73,6 +74,7 @@ final class ModRecipeProvider extends RecipeProvider {
         metals();
         quern();
         smithing();
+        ironAge();
         vanillaOverrides();
     }
 
@@ -228,6 +230,7 @@ final class ModRecipeProvider extends RecipeProvider {
             if (!metal.isToolMetal()) continue;
             Item ingot = ModItems.ingot(metal);
             String m = metal.id();
+            var types = metal.toolTypes();
             anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 60,
                     rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
             anvil(m + "_pickaxe_head", ingot, 1, ModItems.head(metal, MoldType.PICKAXE_HEAD), 85,
@@ -238,16 +241,26 @@ final class ModRecipeProvider extends RecipeProvider {
                     rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
             anvil(m + "_hoe_head", ingot, 1, ModItems.head(metal, MoldType.HOE_HEAD), 65,
                     rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
-            anvil(m + "_knife_blade", ingot, 1, ModItems.head(metal, MoldType.KNIFE_BLADE), 95,
-                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
-            anvil(m + "_hammer_head", ingot, 1, ModItems.head(metal, MoldType.HAMMER_HEAD), 70,
-                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.SHRINK, Rule.Where.NOT_LAST));
-            anvil(m + "_saw_blade", ingot, 1, ModItems.head(metal, MoldType.SAW_BLADE), 55,
-                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST));
-            anvil(m + "_sword_blade", ingot, 2, ModItems.head(metal, MoldType.SWORD_BLADE), 100,
+            if (types.contains(MoldType.KNIFE_BLADE)) {
+                anvil(m + "_knife_blade", ingot, 1, ModItems.head(metal, MoldType.KNIFE_BLADE), 95,
+                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+                anvil(m + "_hammer_head", ingot, 1, ModItems.head(metal, MoldType.HAMMER_HEAD), 70,
+                        rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.SHRINK, Rule.Where.NOT_LAST));
+                anvil(m + "_saw_blade", ingot, 1, ModItems.head(metal, MoldType.SAW_BLADE), 55,
+                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST));
+                anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 80,
+                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+            }
+            // Tier 3 spec 9.3: a wrought iron sword blade is drawn from one welded double ingot.
+            Item bladeStock = metal == Metal.WROUGHT_IRON ? ModItems.WROUGHT_IRON_DOUBLE_INGOT.get() : ingot;
+            anvil(m + "_sword_blade", bladeStock, metal == Metal.WROUGHT_IRON ? 1 : 2, ModItems.head(metal, MoldType.SWORD_BLADE), 100,
                     rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.THIRD_LAST));
-            anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 80,
-                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+            if (metal == Metal.WROUGHT_IRON) {
+                output.accept(key("anvil/wrought_iron_rod"), new AnvilRecipe(Ingredient.of(ingot), 1,
+                        new ItemStackTemplate(ModItems.WROUGHT_IRON_ROD.get(), 2),
+                        List.of(rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST),
+                                rule(Rule.Kind.HIT, Rule.Where.NOT_LAST)), 45), null);
+            }
             if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
                 Item head = ModItems.PROSPECTOR_HEADS.get(metal).get();
                 anvil(m + "_prospectors_pick_head", ingot, 1, head, 90,
@@ -277,7 +290,8 @@ final class ModRecipeProvider extends RecipeProvider {
     // Spec 8.4: armour from plates over fibre cloth, 14 plates a set.
     private void armour(Metal metal) {
         Item plate = ModItems.PLATES.get(metal).get();
-        Item cloth = ModItems.FIBRE_CLOTH.get();
+        // Tier 3 spec 10.4: iron and gold plates are laced onto leather instead of fibre cloth.
+        Item cloth = metal == Metal.WROUGHT_IRON || metal == Metal.GOLD ? Items.LEATHER : ModItems.FIBRE_CLOTH.get();
         var pieces = ModItems.ARMOUR.get(metal);
         // Shapes from the spec table: helmet, chestplate, leggings, boots.
         String[][] shapes = {{"PPP", " C "}, {"P P", "PCP", " P "}, {"PCP", "P P"}, {"PCP"}};
@@ -289,6 +303,56 @@ final class ModRecipeProvider extends RecipeProvider {
             String path = metal.isVanilla() ? metal.id() + "_" + types[i].getName() + "_from_plates" : name(piece);
             builder.unlockedBy("has_plate", has(plate)).save(output, key(path));
         }
+    }
+
+
+    // Tier 3 spec 3: fire clay, fire bricks and the fire brick furnace.
+    private void ironAge() {
+        int brick = GridPattern.parse(List.of("##.##", "##.##", ".....", "##.##", "##.##")).getOrThrow();
+        output.accept(key("clay_forming/unfired_fire_brick"), new KnappingRecipe(Ingredient.of(ModItems.FIRE_CLAY_BALL.get()),
+                Knapping.CLAY_OPENING_COST, brick, true, new ItemStackTemplate(ModItems.UNFIRED_FIRE_BRICK.get(), 4)), null);
+        shapeless(RecipeCategory.MISC, ModItems.FIRE_CLAY_BALL.get(), 2)
+                .requires(Items.CLAY_BALL, 3)
+                .requires(ModItems.GROG.get())
+                .unlockedBy("has_grog", has(ModItems.GROG.get()))
+                .save(output, key("fire_clay_ball_from_grog"));
+        grind("grog", Ingredient.of(Items.BRICK), ModItems.GROG.get(), 2);
+
+        Item fireBrick = ModItems.FIRE_BRICK.get();
+        shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.FIRE_BRICKS.get())
+                .pattern("BB")
+                .pattern("BB")
+                .define('B', fireBrick)
+                .unlockedBy("has_fire_brick", has(fireBrick))
+                .save(output, key("fire_bricks"));
+        Item bricks = ModItems.FIRE_BRICKS.get();
+        shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.FIRE_BRICK_SLAB.get(), 6)
+                .pattern("BBB")
+                .define('B', bricks)
+                .unlockedBy("has_fire_bricks", has(bricks))
+                .save(output, key("fire_brick_slab"));
+        shaped(RecipeCategory.BUILDING_BLOCKS, ModItems.FIRE_BRICK_STAIRS.get(), 4)
+                .pattern("B  ")
+                .pattern("BB ")
+                .pattern("BBB")
+                .define('B', bricks)
+                .unlockedBy("has_fire_bricks", has(bricks))
+                .save(output, key("fire_brick_stairs"));
+        shaped(RecipeCategory.DECORATIONS, ModItems.FIRE_BRICK_WALL.get(), 6)
+                .pattern("BBB")
+                .pattern("BBB")
+                .define('B', bricks)
+                .unlockedBy("has_fire_bricks", has(bricks))
+                .save(output, key("fire_brick_wall"));
+
+        // Spec 2: the furnace returns in tier 3, built from fire bricks.
+        shaped(RecipeCategory.DECORATIONS, Items.FURNACE)
+                .pattern("FFF")
+                .pattern("F F")
+                .pattern("FFF")
+                .define('F', fireBrick)
+                .unlockedBy("has_fire_brick", has(fireBrick))
+                .save(output.withConditions(new ConfigCondition("vanilla.gateFurnace", true)), key("furnace_from_fire_bricks"));
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {
@@ -370,7 +434,7 @@ final class ModRecipeProvider extends RecipeProvider {
                         .save(output, key(name(ingot) + "_from_nuggets"));
             }
             if (!metal.isToolMetal()) continue;
-            for (MoldType type : MoldType.values()) {
+            for (MoldType type : metal.toolTypes()) {
                 Item head = ModItems.head(metal, type);
                 Item tool = ModItems.tool(metal, type);
                 var recipe = new MetalToolRecipe(new Recipe.CommonInfo(true),
@@ -450,6 +514,38 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('#', ItemTags.STONE_CRAFTING_MATERIALS)
                 .unlockedBy("has_cobblestone", has(ItemTags.STONE_CRAFTING_MATERIALS))
                 .save(whenOff("vanilla.gateFurnace"), vanillaKey(Items.FURNACE));
+
+        // Tier 3 spec 2: iron and gold gear comes from smithing, casting and plates.
+        RecipeOutput ironGear = whenOff("vanilla.replaceIronGear");
+        vanillaToolSet(ironGear, ItemTags.IRON_TOOL_MATERIALS, "has_iron_ingot",
+                Items.IRON_PICKAXE, Items.IRON_AXE, Items.IRON_SHOVEL, Items.IRON_HOE, Items.IRON_SWORD, null);
+        vanillaArmour(ironGear, Items.IRON_INGOT, "has_iron_ingot",
+                Items.IRON_HELMET, Items.IRON_CHESTPLATE, Items.IRON_LEGGINGS, Items.IRON_BOOTS);
+        RecipeOutput goldGear = whenOff("vanilla.replaceGoldGear");
+        vanillaToolSet(goldGear, ItemTags.GOLD_TOOL_MATERIALS, "has_gold_ingot",
+                Items.GOLDEN_PICKAXE, Items.GOLDEN_AXE, Items.GOLDEN_SHOVEL, Items.GOLDEN_HOE, Items.GOLDEN_SWORD, null);
+        vanillaArmour(goldGear, Items.GOLD_INGOT, "has_gold_ingot",
+                Items.GOLDEN_HELMET, Items.GOLDEN_CHESTPLATE, Items.GOLDEN_LEGGINGS, Items.GOLDEN_BOOTS);
+
+        SimpleCookingRecipeBuilder.smelting(tag(ItemTags.LOGS_THAT_BURN), RecipeCategory.MISC, Items.CHARCOAL, 0.15f, 200)
+                .unlockedBy("has_log", has(ItemTags.LOGS_THAT_BURN))
+                .save(whenOff("vanilla.removeFurnaceCharcoal"), vanillaKey(Items.CHARCOAL));
+
+        RecipeOutput oreSmelting = whenOff("vanilla.removeOreSmelting");
+        vanillaOreSmelting(oreSmelting, Items.IRON_INGOT, 0.7f, Items.IRON_ORE, Items.DEEPSLATE_IRON_ORE, Items.RAW_IRON);
+        vanillaOreSmelting(oreSmelting, Items.COPPER_INGOT, 0.7f, Items.COPPER_ORE, Items.DEEPSLATE_COPPER_ORE, Items.RAW_COPPER);
+        vanillaOreSmelting(oreSmelting, Items.GOLD_INGOT, 1.0f, Items.GOLD_ORE, Items.DEEPSLATE_GOLD_ORE, Items.NETHER_GOLD_ORE,
+                Items.RAW_GOLD);
+
+        shaped(RecipeCategory.DECORATIONS, Items.BLAST_FURNACE)
+                .pattern("III")
+                .pattern("IXI")
+                .pattern("###")
+                .define('I', Items.IRON_INGOT)
+                .define('X', Items.FURNACE)
+                .define('#', Items.SMOOTH_STONE)
+                .unlockedBy("has_smooth_stone", has(Items.SMOOTH_STONE))
+                .save(whenOff("vanilla.removeBlastFurnace"), vanillaKey(Items.BLAST_FURNACE));
     }
 
     private RecipeOutput whenOff(String configKey) {
@@ -478,6 +574,34 @@ final class ModRecipeProvider extends RecipeProvider {
         shaped(RecipeCategory.COMBAT, spear).define('#', Items.STICK).define('X', material)
                 .pattern("  X").pattern(" # ").pattern("#  ")
                 .unlockedBy(criterion, has).save(out, vanillaKey(spear));
+    }
+
+    private void vanillaArmour(RecipeOutput out, Item ingot, String criterion, Item helmet, Item chestplate, Item leggings, Item boots) {
+        Criterion<?> has = has(ingot);
+        shaped(RecipeCategory.COMBAT, helmet).define('X', ingot).pattern("XXX").pattern("X X")
+                .unlockedBy(criterion, has).save(out, vanillaKey(helmet));
+        shaped(RecipeCategory.COMBAT, chestplate).define('X', ingot).pattern("X X").pattern("XXX").pattern("XXX")
+                .unlockedBy(criterion, has).save(out, vanillaKey(chestplate));
+        shaped(RecipeCategory.COMBAT, leggings).define('X', ingot).pattern("XXX").pattern("X X").pattern("X X")
+                .unlockedBy(criterion, has).save(out, vanillaKey(leggings));
+        shaped(RecipeCategory.COMBAT, boots).define('X', ingot).pattern("X X").pattern("X X")
+                .unlockedBy(criterion, has).save(out, vanillaKey(boots));
+    }
+
+    /** The vanilla smelting and blasting recipes of one metal's ores and raw item, under their vanilla ids. */
+    private void vanillaOreSmelting(RecipeOutput out, Item result, float experience, Item... inputs) {
+        for (Item input : inputs) {
+            SimpleCookingRecipeBuilder.smelting(Ingredient.of(input), RecipeCategory.MISC, result, experience, 200)
+                    .group(name(result))
+                    .unlockedBy("has_" + name(input), has(input))
+                    .save(out, ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace(
+                            name(result) + "_from_smelting_" + name(input))));
+            SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, result, experience, 100)
+                    .group(name(result))
+                    .unlockedBy("has_" + name(input), has(input))
+                    .save(out, ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace(
+                            name(result) + "_from_blasting_" + name(input))));
+        }
     }
 
     private void vanillaPlanks(RecipeOutput out, TagKey<Item> logs, Item planks) {

@@ -45,8 +45,10 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         for (Rock rock : Rock.values()) {
             looseRocks.add(ModItems.LOOSE_ROCK.get(rock).getKey());
             cobbled.add(ModItems.COBBLED_ROCK.get(rock).getKey());
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 ores.add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
+                if (mineral.isIron()) tag(Tags.Items.ORES_IRON).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
+                if (mineral == OreMineral.NATIVE_GOLD) tag(Tags.Items.ORES_GOLD).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
             }
         }
 
@@ -57,7 +59,21 @@ final class ModItemTagsProvider extends ItemTagsProvider {
             for (OreGrade grade : OreGrade.values()) {
                 mineralTag.add(ModItems.ORE_PIECES.get(mineral).get(grade).getKey());
             }
+            if (mineral.isIron()) {
+                var iron = tag(ModTags.Items.IRON_ORES).add(ModItems.SMALL_ORES.get(mineral).getKey());
+                for (OreGrade grade : OreGrade.values()) {
+                    iron.add(ModItems.ORE_PIECES.get(mineral).get(grade).getKey()).add(ModItems.CRUSHED_ORES.get(mineral).get(grade).getKey());
+                }
+            }
         }
+        ores.add(ModItems.BOG_IRON.getKey());
+        tag(Tags.Items.ORES_IRON).add(ModItems.BOG_IRON.getKey());
+
+        // Tier 3.
+        tag(ModTags.Items.BLOOMERY_FUEL).add(key(Items.CHARCOAL));
+        tag(ItemTags.SLABS).add(ModItems.FIRE_BRICK_SLAB.getKey());
+        tag(ItemTags.STAIRS).add(ModItems.FIRE_BRICK_STAIRS.getKey());
+        tag(ItemTags.WALLS).add(ModItems.FIRE_BRICK_WALL.getKey());
 
         tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.LOOSE_ROCKS).add(key(Items.FLINT));
         tag(Tags.Items.STRINGS).add(ModItems.TWINE.getKey());
@@ -67,7 +83,8 @@ final class ModItemTagsProvider extends ItemTagsProvider {
             large.add(item.getKey());
         }
         var fireable = tag(ModTags.Items.PIT_KILN_FIREABLE).addTag(ModTags.Items.PIT_KILN_LARGE)
-                .add(ModItems.UNFIRED_INGOT_MOLD.getKey()).add(ModItems.UNFIRED_BRICK.getKey());
+                .add(ModItems.UNFIRED_INGOT_MOLD.getKey()).add(ModItems.UNFIRED_BRICK.getKey())
+                .add(ModItems.UNFIRED_FIRE_BRICK.getKey());
         for (MoldType type : MoldType.values()) fireable.add(ModItems.UNFIRED_MOLDS.get(type).getKey());
 
         // Our tools join the vanilla tool tags, which also makes them enchantable like vanilla tools.
@@ -100,7 +117,9 @@ final class ModItemTagsProvider extends ItemTagsProvider {
             if (metal.isBronze()) {
                 tag(ModTags.Items.ANY_BRONZE_INGOTS).addTag(ModTags.Items.ingots(metal));
                 tag(ModTags.Items.ANY_BRONZE_PLATES).add(ModItems.PLATES.get(metal).getKey());
+                tag(ModTags.Items.SOFT_METAL_PLATES).add(ModItems.PLATES.get(metal).getKey());
             }
+            if (metal == Metal.COPPER) tag(ModTags.Items.SOFT_METAL_PLATES).add(ModItems.PLATES.get(metal).getKey());
             if (!metal.isToolMetal()) continue;
             if (!metal.isVanilla()) {
                 var armour = ModItems.ARMOUR.get(metal);
@@ -112,7 +131,7 @@ final class ModItemTagsProvider extends ItemTagsProvider {
             if (ModItems.PROSPECTORS_PICKS.containsKey(metal)) {
                 tag(ItemTags.PICKAXES).add(ModItems.PROSPECTORS_PICKS.get(metal).getKey());
             }
-            for (MoldType type : MoldType.values()) {
+            for (MoldType type : metal.toolTypes()) {
                 Item tool = ModItems.tool(metal, type);
                 if (metal.isVanilla() && tool.builtInRegistryHolder().key().identifier().getNamespace().equals("minecraft")) continue;
                 var toolKey = key(tool);

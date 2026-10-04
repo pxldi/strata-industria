@@ -259,7 +259,12 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         if (slot == MOLD_SLOT) return stack.getItem() instanceof CastMoldItem;
-        return roomFor(stack, items.get(slot)) >= stack.getCount();
+        return accepts(stack) && roomFor(stack, items.get(slot)) >= stack.getCount();
+    }
+
+    /** Anything with metal, except iron, which no tier 3 fire can melt (tier 3 spec 4.1). */
+    public static boolean accepts(ItemStack stack) {
+        return MetalContent.of(stack).map(melt -> melt.units().keySet().stream().allMatch(Metal::meltsInCrucible)).orElse(false);
     }
 
     @Override

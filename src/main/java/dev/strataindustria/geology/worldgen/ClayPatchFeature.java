@@ -66,7 +66,7 @@ public record ClayPatchFeature() implements Feature {
         return placed;
     }
 
-    private static boolean nearWater(WorldGenLevel level, BlockPos centre) {
+    static boolean nearWater(WorldGenLevel level, BlockPos centre) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int dx = -6; dx <= 6; dx += 2) {
             for (int dz = -6; dz <= 6; dz += 2) {

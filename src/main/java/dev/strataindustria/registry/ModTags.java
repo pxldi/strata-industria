@@ -19,6 +19,12 @@ public final class ModTags {
         public static final TagKey<Block> INCORRECT_FOR_STONE_TOOL = tag("incorrect_for_stone_tool");
         public static final TagKey<Block> INCORRECT_FOR_COPPER_TOOL = tag("incorrect_for_copper_tool");
         public static final TagKey<Block> INCORRECT_FOR_BRONZE_TOOL = tag("incorrect_for_bronze_tool");
+        public static final TagKey<Block> NEEDS_STEEL_TOOL = tag("needs_steel_tool");
+        public static final TagKey<Block> INCORRECT_FOR_WROUGHT_IRON_TOOL = tag("incorrect_for_wrought_iron_tool");
+        /** Blocks every heat structure accepts as its walls (tier 3 spec 3.3). */
+        public static final TagKey<Block> REFRACTORY = tag("refractory");
+        /** Non-ore deposits the prospector's pick reports: lignite, fire clay and bog iron. */
+        public static final TagKey<Block> PROSPECTABLE = tag("prospectable");
         /** Plants and leaves: what a knife cuts quickly. */
         public static final TagKey<Block> MINEABLE_WITH_KNIFE = tag("mineable/knife");
         /** Nothing yet: the hammer is a smithing tool and a weapon. */
@@ -54,6 +60,12 @@ public final class ModTags {
         public static final TagKey<Item> SAWS = tag("tools/saws");
         public static final TagKey<Item> ANY_BRONZE_INGOTS = tag("ingots/any_bronze");
         public static final TagKey<Item> ANY_BRONZE_PLATES = tag("plates/any_bronze");
+        /** Copper or any bronze plate: the bloomery door and the washing pan. */
+        public static final TagKey<Item> SOFT_METAL_PLATES = tag("plates/copper_or_bronze");
+        /** Every iron ore piece, crushed or not (tier 3 spec 14.7). */
+        public static final TagKey<Item> IRON_ORES = tag("ores/iron_any");
+        /** What a bloomery burns: charcoal only (tier 3 spec 5.2). */
+        public static final TagKey<Item> BLOOMERY_FUEL = tag("bloomery_fuel");
 
         public static TagKey<Item> rocks(RockCategory category) {
             return tag("rocks/" + category.getSerializedName());

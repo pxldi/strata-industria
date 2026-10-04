@@ -64,8 +64,26 @@ public final class Config {
             .comment("Remove the campfire recipe; the fire pit replaces it.")
             .define("removeCampfire", true);
     public static final ModConfigSpec.BooleanValue GATE_FURNACE = BUILDER
-            .comment("Remove the furnace recipe until tier 3.")
+            .comment("The furnace is built from fire bricks (tier 3) instead of cobblestone.")
             .define("gateFurnace", true);
+    public static final ModConfigSpec.BooleanValue REMOVE_FURNACE_CHARCOAL = BUILDER
+            .comment("Remove log to charcoal smelting, so the charcoal pit stays the charcoal source.")
+            .define("removeFurnaceCharcoal", true);
+    public static final ModConfigSpec.BooleanValue REMOVE_ORE_SMELTING = BUILDER
+            .comment("Remove smelting and blasting of vanilla ores and raw iron, copper and gold.")
+            .define("removeOreSmelting", true);
+    public static final ModConfigSpec.BooleanValue REMOVE_BLAST_FURNACE = BUILDER
+            .comment("Remove the vanilla blast furnace recipe.")
+            .define("removeBlastFurnace", true);
+    public static final ModConfigSpec.BooleanValue REPLACE_IRON_GEAR = BUILDER
+            .comment("Replace the recipes of vanilla iron tools and armour with smithing and plates.")
+            .define("replaceIronGear", true);
+    public static final ModConfigSpec.BooleanValue REPLACE_GOLD_GEAR = BUILDER
+            .comment("Replace the recipes of vanilla gold tools and armour with casting, smithing and plates.")
+            .define("replaceGoldGear", true);
+    public static final ModConfigSpec.BooleanValue GOLEM_DROPS_NUGGETS = BUILDER
+            .comment("Iron golems drop iron nuggets instead of ingots.")
+            .define("golemDropsNuggets", true);
     public static final ModConfigSpec.BooleanValue REPLACE_COPPER_GEAR = BUILDER
             .comment("Replace the recipes of vanilla copper tools and armour.")
             .define("replaceCopperGear", true);
@@ -142,6 +160,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue SMITHING_RANDOM_TARGETS = BUILDER
             .comment("Each world gets its own smithing targets. Off uses each recipe's default target.")
             .define("randomTargets", true);
+    public static final ModConfigSpec.IntValue SMITHING_HIT_COOLING = BUILDER
+            .comment("Degrees each hit takes off a tier 3 or higher workpiece, on top of normal cooling.")
+            .defineInRange("hitCooling", 20, 0, 200);
 
     static {
         BUILDER.pop();

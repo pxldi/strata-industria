@@ -14,13 +14,18 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Province;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.VeinType;
+import dev.strataindustria.geology.worldgen.BogIronFeature;
 import dev.strataindustria.geology.worldgen.ClayPatchFeature;
+import dev.strataindustria.geology.worldgen.PlacerFeature;
 import dev.strataindustria.geology.worldgen.GroundCoverFeature;
 import dev.strataindustria.geology.worldgen.StrataFeature;
 import dev.strataindustria.geology.worldgen.VeinFeature;
 import dev.strataindustria.registry.ModWorldgen;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
+import dev.strataindustria.registry.ModBlocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -75,6 +80,26 @@ final class GeologyData {
                 List.of(m(OreMineral.CASSITERITE, 100)), List.of(GRANITE, RHYOLITE), List.of(GRANITE), -64, 160, 25);
         vein(ctx, "bismuthinite", VeinType.ClusterShape.of(4, 7, 3, 5, 0.30f),
                 List.of(m(OreMineral.BISMUTHINITE, 100)), List.of(SLATE, SHALE, LIMESTONE, MARBLE), List.of(SLATE), -24, 120, 20);
+
+        // Tier 3 (worldgen spec 5.3): iron and gold, then the sediment beds.
+        vein(ctx, "hematite", VeinType.ClusterShape.layer(12, 20, 3, 5, 0.35f),
+                List.of(m(OreMineral.HEMATITE, 100)), List.of(SHALE, SLATE), List.of(SHALE), -32, 120, 30);
+        vein(ctx, "magnetite", VeinType.ClusterShape.of(6, 10, 4, 6, 0.30f),
+                List.of(m(OreMineral.MAGNETITE, 90), m(OreMineral.NATIVE_COPPER, 10)), List.of(GABBRO, BASALT, MARBLE), List.of(GABBRO),
+                -64, 100, 20);
+        vein(ctx, "native_gold", VeinType.ClusterShape.of(3, 5, 3, 4, 0.20f),
+                List.of(m(OreMineral.NATIVE_GOLD, 100)), List.of(GRANITE, RHYOLITE), List.of(GRANITE), -64, 60, 8);
+        sediment(ctx, "lignite", VeinType.ClusterShape.layer(14, 24, 2, 3, 0.60f), ModBlocks.LIGNITE_SEAM.get().defaultBlockState(),
+                List.of(SHALE, LIMESTONE, SLATE), List.of(SHALE), 20, 140, 25);
+        sediment(ctx, "fire_clay", VeinType.ClusterShape.layer(10, 16, 2, 4, 0.80f), ModBlocks.FIRE_CLAY.get().defaultBlockState(),
+                List.of(SHALE, SLATE, LIMESTONE, GRANITE), List.of(SHALE), 30, 140, 25);
+    }
+
+    /** A plain-block bed in the sediment pass, never deeper than 40 blocks below the surface. */
+    private static void sediment(BootstrapContext<VeinType> ctx, String name, VeinType.ClusterShape shape, BlockState block,
+            List<Rock> hosts, List<Rock> preferred, int minY, int maxY, int weight) {
+        ctx.register(ResourceKey.create(VeinType.REGISTRY, StrataIndustria.id(name)), new VeinType(shape, List.of(), Optional.of(block),
+                hosts, preferred, minY, maxY, weight, false, VeinType.Pass.SEDIMENT, 40));
     }
 
     private static VeinType.MineralWeight m(OreMineral mineral, int weight) {
@@ -92,6 +117,8 @@ final class GeologyData {
         ctx.register(ModWorldgen.VEINS, VeinFeature.INSTANCE);
         ctx.register(ModWorldgen.GROUND_COVER, GroundCoverFeature.INSTANCE);
         ctx.register(ModWorldgen.CLAY_PATCHES, ClayPatchFeature.INSTANCE);
+        ctx.register(ModWorldgen.BOG_IRON, BogIronFeature.INSTANCE);
+        ctx.register(ModWorldgen.PLACERS, PlacerFeature.INSTANCE);
     }
 
     static void placedFeatures(BootstrapContext<PlacedFeature> ctx) {
@@ -100,6 +127,8 @@ final class GeologyData {
         ctx.register(ModWorldgen.VEINS_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.VEINS), List.of()));
         ctx.register(ModWorldgen.GROUND_COVER_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.GROUND_COVER), List.of()));
         ctx.register(ModWorldgen.CLAY_PATCHES_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.CLAY_PATCHES), List.of()));
+        ctx.register(ModWorldgen.BOG_IRON_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.BOG_IRON), List.of()));
+        ctx.register(ModWorldgen.PLACERS_PLACED, new PlacedFeature(features.getOrThrow(ModWorldgen.PLACERS), List.of()));
     }
 
     static void biomeModifiers(BootstrapContext<BiomeModifier> ctx) {
@@ -109,6 +138,9 @@ final class GeologyData {
 
         add(ctx, ModWorldgen.ADD_STRATA, overworld, placed, ModWorldgen.STRATA_PLACED, GenerationStep.Decoration.RAW_GENERATION);
         add(ctx, ModWorldgen.ADD_CLAY_PATCHES, overworld, placed, ModWorldgen.CLAY_PATCHES_PLACED, GenerationStep.Decoration.LAKES);
+        add(ctx, ModWorldgen.ADD_BOG_IRON, overworld, placed, ModWorldgen.BOG_IRON_PLACED, GenerationStep.Decoration.LAKES);
+        add(ctx, ModWorldgen.ADD_PLACERS, biomes.getOrThrow(BiomeTags.IS_RIVER), placed, ModWorldgen.PLACERS_PLACED,
+                GenerationStep.Decoration.LAKES);
         add(ctx, ModWorldgen.ADD_VEINS, overworld, placed, ModWorldgen.VEINS_PLACED, GenerationStep.Decoration.UNDERGROUND_ORES);
         add(ctx, ModWorldgen.ADD_GROUND_COVER, overworld, placed, ModWorldgen.GROUND_COVER_PLACED, GenerationStep.Decoration.TOP_LAYER_MODIFICATION);
 

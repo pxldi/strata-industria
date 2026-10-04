@@ -12,6 +12,7 @@ public record FirePitFuel(int burnTicks, float maxTemperature) {
     public static final FirePitFuel STICK = new FirePitFuel(300, 400);
     public static final FirePitFuel LOG = new FirePitFuel(1200, 550);
     public static final FirePitFuel CHARCOAL = new FirePitFuel(1800, 650);
+    public static final FirePitFuel LIGNITE = new FirePitFuel(1200, 600);
 
     public static Optional<FirePitFuel> of(ItemStack stack) {
         if (stack.isEmpty()) return Optional.empty();
@@ -19,6 +20,7 @@ public record FirePitFuel(int burnTicks, float maxTemperature) {
         if (stack.is(Items.STICK)) return Optional.of(STICK);
         if (stack.is(ItemTags.LOGS_THAT_BURN)) return Optional.of(LOG);
         if (stack.is(Items.CHARCOAL)) return Optional.of(CHARCOAL);
+        if (stack.is(ModItems.LIGNITE.get())) return Optional.of(LIGNITE);
         return Optional.empty();
     }
 
