@@ -1,0 +1,68 @@
+{
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "strataindustria:block/tannin_still",
+    "fluid": "strataindustria:block/tannin_still"
+  },
+  "elements": [
+    {
+      "from": [
+        1.05,
+        0,
+        1.05
+      ],
+      "to": [
+        14.95,
+        16,
+        14.95
+      ],
+      "faces": {
+        "north": {
+          "texture": "#fluid",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#fluid",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#fluid",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#fluid",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#fluid",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        }
+      }
+    }
+  ]
+}
