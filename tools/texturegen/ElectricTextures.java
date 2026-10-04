@@ -1591,6 +1591,15 @@ public final class ElectricTextures {
                 OUTS.put("preview/" + n + "_" + t, chemFront(mix, mv, 2, true));
             }
         }
+        for (boolean mv : new boolean[]{false, true}) {
+            String t = mv ? "mv" : "lv";
+            save("block/assembler_front_" + t, assemblerFront(mv, 0, false));
+            BufferedImage s = new BufferedImage(16, 128, BufferedImage.TYPE_INT_ARGB);
+            for (int f = 0; f < 8; f++) s.getGraphics().drawImage(assemblerFront(mv, f, true), 0, f * 16, null);
+            TextureGen.saveAnimated("block/assembler_front_" + t + "_active", s, 2);
+            OUTS.put("preview/assembler_" + t, assemblerFront(mv, 2, true));
+        }
+        TextureGen.saveRaw("gui/assembler", assemblerGui());
         TextureGen.saveRaw("gui/mixer", mixerGui());
         TextureGen.saveRaw("gui/electrolyser", electrolyserGui());
         for (String n : new String[]{"aluminium_ingot", "aluminium_plate", "aluminium_rod", "aluminium_wire", "steel_wire",
@@ -1752,6 +1761,39 @@ public final class ElectricTextures {
         return im;
     }
 
+    /** Spec 23.2: a small window with two inserter-style arms over a work surface; the arms swing in turn when active. */
+    static BufferedImage assemblerFront(boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        BufferedImage im = frontBase(mv, 781 + (mv ? 1 : 0));
+        chemLip(im, 2, 5, 13, 12, mv);
+        fill(im, 3, 6, 12, 11, GLASS_DARK);
+        // work surface with a steel top edge and a copper blank on it
+        fill(im, 3, 10, 12, 11, c(STEEL, 3));
+        for (int x = 3; x <= 12; x++) { pxs(im, x, 10, c(STEEL, 5)); pxs(im, x, 11, c(STEEL, 2)); }
+        pxs(im, 7, 9, c(COPPER, 4)); pxs(im, 8, 9, c(COPPER, 5));
+        if (active && frame % 4 >= 2) pxs(im, 8, 8, c(COPPER, 3));
+        pxs(im, 3, 6, GLASS_LIT); pxs(im, 3, 7, TextureGen.mix(GLASS_LIT, GLASS_DARK, 0.5));
+        for (int side = 0; side < 2; side++) {
+            int px = side == 0 ? 4 : 11, dir = side == 0 ? 1 : -1;
+            double ph = active ? frame * Math.PI / 4 + side * Math.PI : 0.0;
+            // upper arm drops from the ceiling pivot, forearm reaches toward the centre and swings down to the surface
+            double reach = active ? 1.5 + 1.5 * Math.sin(ph) : 1.0;
+            int ex = px + dir, ey = 7;
+            int tx = px + dir * (int) Math.round(1 + reach), ty = 8 + (active && Math.cos(ph) < 0 ? 1 : 0);
+            pxs(im, px, 6, c(STEEL, 1));
+            pxs(im, px, 7, c(STEEL, 5));
+            for (int k = 0; k <= 2; k++) {
+                int lx = ex + (int) Math.round((tx - ex) * k / 2.0), ly = ey + (int) Math.round((ty - ey) * k / 2.0);
+                pxs(im, lx, ly, c(STEEL, k == 0 ? 4 : 5));
+            }
+            pxs(im, tx, ty, c(BRASS, 5));
+            pxs(im, tx, Math.min(ty + 1, 9), c(BRASS, 3));
+        }
+        for (int x : new int[]{2, 5, 8}) port(im, x, 2);
+        lampOff(im, mv);
+        return im;
+    }
+
     // ---- GUIs
 
     /** 18x36 recessed glass tank frame around a 16x34 well at (x, y), quarter tick marks on the right edge. */
@@ -1775,6 +1817,16 @@ public final class ElectricTextures {
         for (int[] t : tanks) tank(im, t[0], t[1]);
         for (int[] s : items) TextureGen.slot(im, s[0], s[1]);
         TextureGen.arrow(im, arrowX, 36);
+        return im;
+    }
+
+    static BufferedImage assemblerGui() {
+        BufferedImage im = chemGui(new int[][]{{62, 26}, {80, 26}, {98, 26}, {62, 44}, {80, 44}, {98, 44}, {144, 36}},
+                new int[][]{{36, 18}}, 116);
+        // a thin work rail under the grid, with two small clamps
+        TextureGen.fill(im, 62, 63, 54, 1, 0x373737);
+        TextureGen.fill(im, 62, 64, 54, 1, 0xffffff);
+        for (int x : new int[]{62, 113}) TextureGen.fill(im, x, 61, 3, 2, 0x8b8b8b);
         return im;
     }
 

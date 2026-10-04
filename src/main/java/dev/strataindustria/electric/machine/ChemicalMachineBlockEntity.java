@@ -237,7 +237,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
     }
 
     private boolean hasInputs(ChemicalIo io, int batch) {
-        boolean[] used = new boolean[ChemicalMachineLayout.ITEM_INPUTS];
+        boolean[] used = new boolean[layout.itemInputs()];
         for (ChemicalIo.ItemInput input : io.items()) {
             if (itemSlotFor(input, batch, used) < 0) return false;
         }
@@ -284,7 +284,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
         }
         // Items: the outputs after this operation's inputs are gone must take every result.
         NonNullList<ItemStack> outputs = NonNullList.withSize(layout.itemOutputs(), ItemStack.EMPTY);
-        for (int i = 0; i < outputs.size(); i++) outputs.set(i, items.get(ChemicalMachineLayout.ITEM_INPUTS + i).copy());
+        for (int i = 0; i < outputs.size(); i++) outputs.set(i, items.get(layout.itemInputs() + i).copy());
         for (var result : io.itemResults()) {
             ItemStack left = result.create();
             left.setCount(left.getCount() * batch);
@@ -295,7 +295,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
     }
 
     private void consume(ChemicalIo io, int batch) {
-        boolean[] used = new boolean[ChemicalMachineLayout.ITEM_INPUTS];
+        boolean[] used = new boolean[layout.itemInputs()];
         for (ChemicalIo.ItemInput input : io.items()) {
             int slot = itemSlotFor(input, batch, used);
             if (slot >= 0) items.get(slot).shrink(input.count() * batch);
@@ -320,14 +320,14 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
             amount[tank] += result.amount() * batch;
         }
         NonNullList<ItemStack> outputs = NonNullList.withSize(layout.itemOutputs(), ItemStack.EMPTY);
-        for (int i = 0; i < outputs.size(); i++) outputs.set(i, items.get(ChemicalMachineLayout.ITEM_INPUTS + i));
+        for (int i = 0; i < outputs.size(); i++) outputs.set(i, items.get(layout.itemInputs() + i));
         for (var result : io.itemResults()) {
             ItemStack left = result.create();
             left.setCount(left.getCount() * batch);
             if (io.resultTemperature() > 0) dev.strataindustria.heat.Heat.set(left, io.resultTemperature(), level.getGameTime());
             for (int i = 0; i < outputs.size() && !left.isEmpty(); i++) {
                 left = merge(outputs, i, left);
-                items.set(ChemicalMachineLayout.ITEM_INPUTS + i, outputs.get(i));
+                items.set(layout.itemInputs() + i, outputs.get(i));
             }
         }
     }
@@ -447,7 +447,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
         Direction back = getBlockState().getValue(ElectricMachineBlock.FACING).getOpposite();
         if (!(level.getBlockEntity(worldPosition.relative(back)) instanceof Container target)) return;
         for (int i = 0; i < layout.itemOutputs(); i++) {
-            int slot = ChemicalMachineLayout.ITEM_INPUTS + i;
+            int slot = layout.itemInputs() + i;
             ItemStack stack = items.get(slot);
             if (stack.isEmpty()) continue;
             ItemStack left = HopperBlockEntity.addItem(null, target, stack.copy(), back.getOpposite());
@@ -544,12 +544,12 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
 
     @Override
     public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
-        return slot >= ChemicalMachineLayout.ITEM_INPUTS;
+        return slot >= layout.itemInputs();
     }
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return slot < ChemicalMachineLayout.ITEM_INPUTS && uses(Fluids.EMPTY, stack);
+        return slot < layout.itemInputs() && uses(Fluids.EMPTY, stack);
     }
 
     @Override

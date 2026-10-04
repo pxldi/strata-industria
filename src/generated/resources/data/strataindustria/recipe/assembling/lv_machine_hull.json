@@ -1,0 +1,23 @@
+{
+  "type": "strataindustria:assembling",
+  "item_results": [
+    {
+      "id": "strataindustria:lv_machine_hull"
+    }
+  ],
+  "items": [
+    {
+      "count": 4,
+      "ingredient": "strataindustria:steel_plate"
+    },
+    {
+      "count": 2,
+      "ingredient": "strataindustria:wrought_iron_plate"
+    },
+    {
+      "count": 2,
+      "ingredient": "strataindustria:lv_cable"
+    }
+  ],
+  "ticks": 200
+}

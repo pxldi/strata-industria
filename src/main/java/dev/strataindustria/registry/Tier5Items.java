@@ -68,6 +68,7 @@ public final class Tier5Items {
     public static final DeferredItem<MachineBlockItem> LATHE = machineItem("lathe", Tier5Blocks.LATHE);
 
     public static final DeferredItem<MachineBlockItem> MIXER = machineItem("mixer", Tier5Blocks.MIXER);
+    public static final DeferredItem<MachineBlockItem> ASSEMBLER = machineItem("assembler", Tier5Blocks.ASSEMBLER);
     public static final DeferredItem<MachineBlockItem> ELECTROLYSER = machineItem("electrolyser", Tier5Blocks.ELECTROLYSER);
 
     public static final DeferredItem<MachineBlockItem> STEAM_TURBINE = machineItem("steam_turbine", Tier5Blocks.STEAM_TURBINE);

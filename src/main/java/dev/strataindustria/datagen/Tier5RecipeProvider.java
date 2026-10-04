@@ -50,6 +50,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         shapingMachines();
         chemistry();
         storage();
+        assembling();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -372,6 +373,42 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
         anvil("steel_wire", ModItems.ingot(Metal.STEEL), Tier5Items.STEEL_WIRE.get(), 3, 90,
                 rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+    }
+
+    // Spec 10.7: the assembler and the recipes it runs. H hull, C basic circuit, M electric motor, T inserter.
+    private void assembling() {
+        shaped(RecipeCategory.REDSTONE, Tier5Items.ASSEMBLER.get())
+                .pattern(" T ")
+                .pattern("CHM")
+                .pattern(" T ")
+                .define('T', Tier4Items.INSERTER.get())
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('H', Tier5Items.LV_MACHINE_HULL.get())
+                .define('M', Tier5Items.ELECTRIC_MOTOR.get())
+                .unlockedBy("has_lv_machine_hull", has(Tier5Items.LV_MACHINE_HULL.get()))
+                .save(output, key("assembler"));
+
+        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get(), steelRod = ModItems.RODS.get(Metal.STEEL).get();
+        Item wire = Tier5Items.COPPER_WIRE.get();
+        assemble("basic_circuit", 200, Tier5Items.BASIC_CIRCUIT.get(), 2, null, Tier5Items.CIRCUIT_BOARD.get(), 1, Tier5Items.RED_ALLOY_WIRE.get(), 2,
+                Items.REDSTONE, 2);
+        assemble("electric_motor", 200, Tier5Items.ELECTRIC_MOTOR.get(), 1, null, steelPlate, 2, wire, 4, steelRod, 1, Tier5Items.MAGNET.get(), 1);
+        assemble("magnet", 400, Tier5Items.MAGNET.get(), 1, null, steelRod, 1, wire, 8);
+        assemble("lead_acid_cell", 100, Tier5Items.LEAD_ACID_CELL.get(), 1, new FluidAmount(Tier5Fluids.SULFURIC_ACID.source().get(), 250),
+                Tier5Items.LEAD_PLATE.get(), 2, wire, 1);
+        assemble("lv_machine_hull", 200, Tier5Items.LV_MACHINE_HULL.get(), 1, null, steelPlate, 4, ModItems.PLATES.get(Metal.WROUGHT_IRON).get(), 2,
+                Tier5Items.LV_CABLE.get(), 2);
+        assemble("lv_cable", 100, Tier5Items.LV_CABLE.get(), 6, null, wire, 6, Tier5Items.RUBBER.get(), 3);
+        assemble("mv_upgrade_kit", 200, Tier5Items.MV_UPGRADE_KIT.get(), 1, null, ModItems.PLATES.get(Metal.ALUMINIUM).get(), 2,
+                Tier5Items.BASIC_CIRCUIT.get(), 2, Tier5Items.MV_CABLE.get(), 1, Tier5Items.ELECTRIC_MOTOR.get(), 1);
+    }
+
+    /** An assembler recipe: {@code inputs} alternate item and count. */
+    private void assemble(String name, int ticks, Item result, int count, FluidAmount fluid, Object... inputs) {
+        List<ChemicalIo.ItemInput> items = new java.util.ArrayList<>();
+        for (int i = 0; i < inputs.length; i += 2) items.add(new ChemicalIo.ItemInput(Ingredient.of((Item) inputs[i]), (Integer) inputs[i + 1]));
+        output.accept(key("assembling/" + name), new dev.strataindustria.processing.AssemblingRecipe(new ChemicalIo(items,
+                fluid == null ? List.of() : List.of(fluid), List.of(new ItemStackTemplate(result, count)), List.of(), ticks, ElectricTier.LV, 0)), null);
     }
 
     private <R extends Recipe<?>> void chemical(String path, net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.crafting.RecipeType<?>,

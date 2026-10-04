@@ -463,6 +463,11 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:entity.generic.swim", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f))
                 .with(sound("minecraft:entity.generic.swim", SoundDefinition.SoundType.EVENT).pitch(0.65f).volume(0.35f))
                 .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.3f)));
+        add(Tier5Sounds.ASSEMBLER_WORK, definition().subtitle(subtitle("block.assembler.work"))
+                .with(sound("minecraft:block.dispenser.dispense", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.25f))
+                .with(sound("minecraft:block.dispenser.dispense", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.2f))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.12f))
+                .with(sound("minecraft:block.comparator.click", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.3f)));
         add(Tier5Sounds.ELECTROLYSER_BUBBLE, definition().subtitle(subtitle("block.electrolyser.bubble"))
                 .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(1.0f).volume(0.5f))
                 .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.45f))

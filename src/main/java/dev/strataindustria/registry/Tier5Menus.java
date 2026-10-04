@@ -19,6 +19,8 @@ public final class Tier5Menus {
     public static final DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> MIXER = chemical(ChemicalMachineLayout.MIXER);
     public static final DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> ELECTROLYSER = chemical(ChemicalMachineLayout.ELECTROLYSER);
 
+    public static final DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> ASSEMBLER = chemical(ChemicalMachineLayout.ASSEMBLER);
+
     private static DeferredHolder<MenuType<?>, MenuType<ChemicalMachineMenu>> chemical(ChemicalMachineLayout layout) {
         return ModMenus.MENUS.register(layout.id(), () -> IMenuTypeExtension.create((id, inventory, buf) ->
                 new ChemicalMachineMenu(layout, id, inventory, buf)));

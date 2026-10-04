@@ -15,6 +15,7 @@ import dev.strataindustria.electric.MvUpgradeKitItem;
 import dev.strataindustria.registry.Tier5DataComponents;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ChemicalMachineBlockEntity;
+import dev.strataindustria.electric.machine.AssemblerBlockEntity;
 import dev.strataindustria.electric.machine.ElectrolyserBlockEntity;
 import dev.strataindustria.electric.machine.MixerBlockEntity;
 import dev.strataindustria.heat.Heat;
@@ -97,6 +98,7 @@ final class Tier5GameTests {
         tests.put("tier5_combustion_generator", Tier5GameTests::combustionGenerator);
         tests.put("tier5_shaping_machines", Tier5GameTests::shapingMachines);
         tests.put("tier5_aluminium_chain", Tier5GameTests::aluminiumChain);
+        tests.put("tier5_assembler", Tier5GameTests::assembler);
         tests.put("tier5_mv_upgrade", Tier5GameTests::mvUpgrade);
     }
 
@@ -670,6 +672,53 @@ final class Tier5GameTests {
         // Bucket by hand, and the acid only goes where a recipe wants it.
         helper.assertTrue(mixer.fill(Direction.UP, acid, 1000, 0, true) == 1000, "acid goes in the mixer");
         helper.assertTrue(mixer.fill(Direction.UP, hydrogen, 1000, 0, true) == 0, "hydrogen does not");
+        helper.succeed();
+    }
+
+    // Spec 10.7: shapeless matching in any slot; a circuit board, 2 red alloy wire and 2 redstone make 2 basic circuits in
+    // 200 ticks; a lead-acid cell takes 250 mB acid in 100; MV runs two at once in half the ticks; a missing
+    // ingredient or too little acid does nothing; a full output stops it.
+    private static void assembler(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(pos, Tier5Blocks.ASSEMBLER.get().defaultBlockState(), Block.UPDATE_ALL);
+        AssemblerBlockEntity machine = (AssemblerBlockEntity) level.getBlockEntity(pos);
+        int out = machine.layout().itemInputs();
+
+        machine.setItem(4, new ItemStack(Items.REDSTONE, 2));
+        machine.setItem(1, new ItemStack(Tier5Items.RED_ALLOY_WIRE.get(), 2));
+        helper.assertValueEqual(chemicalTicks(level, pos, machine, () -> machine.getItem(out).getCount() > 0), -1, "no circuit board, nothing happens");
+        machine.setItem(5, new ItemStack(Tier5Items.CIRCUIT_BOARD.get()));
+        helper.assertValueEqual(chemicalTicks(level, pos, machine, () -> machine.getItem(out).is(Tier5Items.BASIC_CIRCUIT.get())), 200, "circuits take 200 ticks");
+        helper.assertValueEqual(machine.getItem(out).getCount(), 2, "two circuits");
+        helper.assertTrue(machine.getItem(1).isEmpty() && machine.getItem(4).isEmpty() && machine.getItem(5).isEmpty(), "the inputs are used up");
+        machine.setItem(out, ItemStack.EMPTY);
+
+        machine.setItem(0, new ItemStack(Tier5Items.LEAD_PLATE.get(), 2));
+        machine.setItem(3, new ItemStack(Tier5Items.COPPER_WIRE.get()));
+        machine.setTank(0, Tier5Fluids.SULFURIC_ACID.source().get(), 200);
+        helper.assertValueEqual(chemicalTicks(level, pos, machine, () -> machine.getItem(out).getCount() > 0), -1, "200 mB of acid is not enough");
+        machine.setTank(0, Tier5Fluids.SULFURIC_ACID.source().get(), 1000);
+        helper.assertValueEqual(chemicalTicks(level, pos, machine, () -> machine.getItem(out).is(Tier5Items.LEAD_ACID_CELL.get())), 100, "a cell takes 100 ticks");
+        helper.assertValueEqual(machine.amount(0), 750, "a cell takes 250 mB acid");
+        helper.assertTrue(Math.abs(machine.stats().draw().get(ElectricTier.LV) * 100 - 1600.0) < 1e-6, "1600 J per cell");
+
+        // A full output stops it.
+        machine.setItem(out, new ItemStack(Tier5Items.LEAD_ACID_CELL.get(), 64));
+        machine.setItem(0, new ItemStack(Tier5Items.LEAD_PLATE.get(), 2));
+        machine.setItem(3, new ItemStack(Tier5Items.COPPER_WIRE.get()));
+        machine.setBuffer(machine.bufferCapacity());
+        ChemicalMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+        helper.assertValueEqual(machine.status(), ElectricMachineBlockEntity.Status.OUTPUT_FULL, "a full output stops it");
+        for (int i = 0; i < machine.getContainerSize(); i++) machine.setItem(i, ItemStack.EMPTY);
+        machine.setTank(0, Fluids.EMPTY, 0);
+
+        // MV: two at once in half the ticks.
+        level.setBlock(pos, level.getBlockState(pos).setValue(ElectricMachineBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
+        machine.setItem(0, new ItemStack(ModItems.RODS.get(Metal.STEEL).get(), 2));
+        machine.setItem(1, new ItemStack(Tier5Items.COPPER_WIRE.get(), 16));
+        helper.assertValueEqual(chemicalTicks(level, pos, machine, () -> machine.getItem(out).is(Tier5Items.MAGNET.get())), 200, "MV halves the 400 ticks");
+        helper.assertValueEqual(machine.getItem(out).getCount(), 2, "and makes two magnets");
         helper.succeed();
     }
 

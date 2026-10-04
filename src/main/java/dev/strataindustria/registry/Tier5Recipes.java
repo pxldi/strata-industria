@@ -1,6 +1,7 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.processing.AssemblingRecipe;
 import dev.strataindustria.processing.ElectrolysisRecipe;
 import dev.strataindustria.processing.MachiningRecipe;
 import dev.strataindustria.processing.MixingRecipe;
@@ -25,6 +26,12 @@ public final class Tier5Recipes {
             ModRecipes.TYPES.register("electrolysis", () -> RecipeType.simple(StrataIndustria.id("electrolysis")));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ElectrolysisRecipe>> ELECTROLYSIS_SERIALIZER =
             ModRecipes.SERIALIZERS.register("electrolysis", () -> ElectrolysisRecipe.SERIALIZER);
+
+    /** The assembler (spec 10.7). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<AssemblingRecipe>> ASSEMBLING =
+            ModRecipes.TYPES.register("assembling", () -> RecipeType.simple(StrataIndustria.id("assembling")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AssemblingRecipe>> ASSEMBLING_SERIALIZER =
+            ModRecipes.SERIALIZERS.register("assembling", () -> AssemblingRecipe.SERIALIZER);
 
     /** Loads the class so its entries join the registers before they fire. */
     public static void init() {}

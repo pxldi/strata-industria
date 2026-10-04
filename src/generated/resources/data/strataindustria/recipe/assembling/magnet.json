@@ -1,0 +1,18 @@
+{
+  "type": "strataindustria:assembling",
+  "item_results": [
+    {
+      "id": "strataindustria:magnet"
+    }
+  ],
+  "items": [
+    {
+      "ingredient": "strataindustria:steel_rod"
+    },
+    {
+      "count": 8,
+      "ingredient": "strataindustria:copper_wire"
+    }
+  ],
+  "ticks": 400
+}

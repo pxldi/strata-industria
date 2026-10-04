@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:machine_tier": "mv"
+            },
+            "condition": {
+              "type": "minecraft:match_block",
+              "blocks": "strataindustria:assembler",
+              "state": {
+                "tier": "mv"
+              }
+            }
+          },
+          "name": "strataindustria:assembler"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:blocks/assembler"
+}

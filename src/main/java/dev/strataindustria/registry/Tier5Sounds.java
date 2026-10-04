@@ -52,6 +52,8 @@ public final class Tier5Sounds {
     /** Spec 23.6: the mixer's paddle sloshing. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MIXER_STIR = register("block.mixer.stir");
     /** Fizzing bubbles with a low hum. */
+    /** Spec 23.6: small servos whirring and clicking. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ASSEMBLER_WORK = register("block.assembler.work");
     public static final DeferredHolder<SoundEvent, SoundEvent> ELECTROLYSER_BUBBLE = register("block.electrolyser.bubble");
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {

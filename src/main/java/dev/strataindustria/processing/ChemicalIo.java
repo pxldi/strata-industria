@@ -37,7 +37,7 @@ public record ChemicalIo(List<ItemInput> items, List<FluidAmount> fluids, List<I
             ByteBufCodecs.VAR_INT.map(i -> ElectricTier.values()[i], ElectricTier::ordinal);
 
     public static final MapCodec<ChemicalIo> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-            ItemInput.CODEC.listOf(0, 2).optionalFieldOf("items", List.of()).forGetter(ChemicalIo::items),
+            ItemInput.CODEC.listOf(0, 6).optionalFieldOf("items", List.of()).forGetter(ChemicalIo::items),
             FluidAmount.CODEC.listOf(0, 3).optionalFieldOf("fluids", List.of()).forGetter(ChemicalIo::fluids),
             ItemStackTemplate.CODEC.listOf(0, 2).optionalFieldOf("item_results", List.of()).forGetter(ChemicalIo::itemResults),
             FluidAmount.CODEC.listOf(0, 3).optionalFieldOf("fluid_results", List.of()).forGetter(ChemicalIo::fluidResults),

@@ -6,6 +6,7 @@ import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
 import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
+import dev.strataindustria.electric.machine.AssemblerBlockEntity;
 import dev.strataindustria.electric.machine.ElectrolyserBlockEntity;
 import dev.strataindustria.electric.machine.MixerBlockEntity;
 import dev.strataindustria.electric.machine.BenderBlockEntity;
@@ -48,6 +49,8 @@ public final class Tier5BlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MixerBlockEntity>> MIXER =
             ModBlockEntities.BLOCK_ENTITIES.register("mixer", () -> new BlockEntityType<>(MixerBlockEntity::new, Tier5Blocks.MIXER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AssemblerBlockEntity>> ASSEMBLER =
+            ModBlockEntities.BLOCK_ENTITIES.register("assembler", () -> new BlockEntityType<>(AssemblerBlockEntity::new, Tier5Blocks.ASSEMBLER.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrolyserBlockEntity>> ELECTROLYSER =
             ModBlockEntities.BLOCK_ENTITIES.register("electrolyser", () -> new BlockEntityType<>(ElectrolyserBlockEntity::new,
                     Tier5Blocks.ELECTROLYSER.get()));

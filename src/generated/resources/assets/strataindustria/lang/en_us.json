@@ -1,4 +1,5 @@
 {
+  "block.strataindustria.assembler": "Assembler",
   "block.strataindustria.basalt": "Raw Basalt",
   "block.strataindustria.basalt_anvil": "Basalt Anvil",
   "block.strataindustria.basalt_bismuthinite_ore": "Basalt Bismuthinite Ore",
@@ -1712,6 +1713,7 @@
   "subtitles.strataindustria.belt.attach": "Belt fastened",
   "subtitles.strataindustria.blast_furnace.roar": "Blast furnace roars",
   "subtitles.strataindustria.blast_furnace.tap": "Pig iron pours",
+  "subtitles.strataindustria.block.assembler.work": "Assembler whirs",
   "subtitles.strataindustria.block.bender.press": "Bender presses",
   "subtitles.strataindustria.block.combustion_generator.ignite": "Combustion generator coughs",
   "subtitles.strataindustria.block.combustion_generator.run": "Combustion generator putters",

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "H": "strataindustria:lv_machine_hull",
+    "M": "strataindustria:electric_motor",
+    "T": "strataindustria:inserter"
+  },
+  "pattern": [
+    " T ",
+    "CHM",
+    " T "
+  ],
+  "result": {
+    "id": "strataindustria:assembler"
+  }
+}

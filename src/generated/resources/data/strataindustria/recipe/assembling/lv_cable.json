@@ -1,0 +1,20 @@
+{
+  "type": "strataindustria:assembling",
+  "item_results": [
+    {
+      "count": 6,
+      "id": "strataindustria:lv_cable"
+    }
+  ],
+  "items": [
+    {
+      "count": 6,
+      "ingredient": "strataindustria:copper_wire"
+    },
+    {
+      "count": 3,
+      "ingredient": "strataindustria:rubber"
+    }
+  ],
+  "ticks": 100
+}
