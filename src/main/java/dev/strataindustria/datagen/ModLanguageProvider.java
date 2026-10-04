@@ -40,6 +40,7 @@ final class ModLanguageProvider extends LanguageProvider {
         RailwayData.lang(this::add);
         RopewayData.lang(this::add);
         TramData.lang(this::add);
+        TelegraphData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
         FellingData.lang(this::add);

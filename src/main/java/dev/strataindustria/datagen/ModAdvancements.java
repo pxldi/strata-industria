@@ -272,8 +272,13 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder mv = goal(assembler, "t5/mv", Tier5Items.MV_UPGRADE_KIT.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.MV_UPGRADE));
         AdvancementHolder transformer = goal(mv, "t5/transformer", Tier5Items.TRANSFORMER.get(), JournalTrigger.TriggerInstance.of(Journal.TRANSFORMER));
-        AdvancementHolder powerLine = goal(transformer, "t5/power_line", Tier5Items.POLE_INSULATOR.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.POWER_LINE));
-        // Outposts spec 11: a tram runs 256 blocks on wire power.
+        AdvancementHolder powerLine = goal(transformer, "t5/power_line", Tier5Items.POLE_INSULATOR.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.POWER_LINE));
+        // Outposts spec 11: a key reaches a sounder at another charter, then a board lists two outposts.
+        AdvancementHolder telegraph = goal(powerLine, "t5/telegraph", dev.strataindustria.transport.telegraph.TelegraphRegistry.KEY_ITEM.get(),
+                AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.TELEGRAPH_CALL));
+        goal(telegraph, "t5/dispatch", dev.strataindustria.transport.telegraph.TelegraphRegistry.BOARD_ITEM.get(),
+                AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.DISPATCH_BOARD_LINES));
         goal(powerLine, "t5/tram", dev.strataindustria.transport.rail.TramRegistry.ELECTRIC_TRAM.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.TRAM_DISTANCE));
         AdvancementHolder pipe = goal(machine, "t5/item_pipe", Tier5Logistics.ITEM_PIPE_ITEM.get(), JournalTrigger.TriggerInstance.of(Journal.ITEM_PIPE));

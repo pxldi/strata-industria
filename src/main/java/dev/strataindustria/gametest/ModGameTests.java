@@ -150,6 +150,7 @@ public final class ModGameTests {
         SharedBlockGameTests.register(TESTS);
         BranchGameTests.register(TESTS);
         CordGameTests.register(TESTS);
+        TelegraphGameTests.register(TESTS);
         TramGameTests.register(TESTS);
     }
 

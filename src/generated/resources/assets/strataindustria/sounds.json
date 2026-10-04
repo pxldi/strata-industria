@@ -2559,6 +2559,31 @@
     ],
     "subtitle": "subtitles.strataindustria.crusher.crush"
   },
+  "dispatch_board.update": {
+    "sounds": [
+      {
+        "name": "item/brush/brushing_generic1",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "name": "item/brush/brushing_generic2",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "name": "item/brush/brushing_generic3",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "name": "item/brush/brushing_generic4",
+        "pitch": 1.5,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.dispatch_board.update"
+  },
   "electric.overvoltage": {
     "sounds": [
       {
@@ -4853,6 +4878,164 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.tap.thud"
+  },
+  "telegraph.drop_hung": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.6,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.tripwire.click_on",
+        "pitch": 1.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.drop_hung"
+  },
+  "telegraph.key": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 1.7,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_button.click_on",
+        "pitch": 1.4,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 2.0,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.key"
+  },
+  "telegraph.key_up": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_button.click_off",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 1.3,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.key_up"
+  },
+  "telegraph.line_open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bell",
+        "pitch": 1.7,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.chime",
+        "pitch": 1.2,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 0.9,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.line_open"
+  },
+  "telegraph.sounder": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 1.55,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.close",
+        "pitch": 1.6,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.hat",
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.sounder"
+  },
+  "telegraph.sounder_lift": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_button.click_off",
+        "pitch": 1.9,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.sounder_lift"
+  },
+  "telegraph.wire_snap": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.lead.break",
+        "pitch": 1.2,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.tripwire.detach",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.wire_snap"
+  },
+  "telegraph.wire_strung": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.lead.tied",
+        "pitch": 1.4,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.tripwire.attach",
+        "pitch": 1.3,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.8,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.telegraph.wire_strung"
   },
   "tipple.dump": {
     "sounds": [

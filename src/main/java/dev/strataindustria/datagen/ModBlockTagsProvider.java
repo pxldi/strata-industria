@@ -244,6 +244,10 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(dev.strataindustria.transport.ropeway.RopewayRegistry.RETURN.getKey())
                 .add(dev.strataindustria.transport.ropeway.RopewayRegistry.ANGLE_STATION.getKey())
                 .add(dev.strataindustria.transport.ropeway.RopewayRegistry.STEEL_TOWER.getKey());
+        // Telegraph (outposts spec 9.1): wooden bases and a slate in a wooden frame.
+        tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.telegraph.TelegraphRegistry.KEY.getKey())
+                .add(dev.strataindustria.transport.telegraph.TelegraphRegistry.SOUNDER.getKey())
+                .add(dev.strataindustria.transport.telegraph.TelegraphRegistry.BOARD.getKey());
         tag(dev.strataindustria.transport.ropeway.RopewayRegistry.TOWER_BASE).addTag(BlockTags.FENCES).addTag(BlockTags.WALLS).addTag(BlockTags.LOGS)
                 .add(dev.strataindustria.registry.Tier5Blocks.UTILITY_POLE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey())

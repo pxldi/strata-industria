@@ -33,11 +33,19 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
     private static final double TIP = 0.22;
 
     private final List<BlockPos> spans = new ArrayList<>();
+    /** Telegraph wires (outposts spec 9.1): drawn like spans but they carry signals only and never join the power network. */
+    private final List<BlockPos> wires = new ArrayList<>();
     /** How hard the line is working, 0 to 3 (uniqueness 7.1): the spans sag more at 2 and glow at 3. */
     private int strain;
 
     public PoleInsulatorBlockEntity(BlockPos pos, BlockState state) {
         super(Tier5BlockEntities.POLE_INSULATOR.get(), pos, state);
+    }
+
+    /** Where a telegraph wire leaves an insulator: a second, lower clamp so it hangs apart from the power spans. */
+    public static Vec3 wireTip(BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(PoleInsulatorBlock.FACING);
+        return Vec3.atCenterOf(pos).add(facing.getStepX() * 0.06, facing.getStepY() * 0.06, facing.getStepZ() * 0.06);
     }
 
     /** Where the wire leaves an insulator. */
@@ -49,6 +57,26 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
     @Override
     public List<BlockPos> spans() {
         return List.copyOf(spans);
+    }
+
+    public List<BlockPos> wires() {
+        return List.copyOf(wires);
+    }
+
+    /** Lists a telegraph wire at this end only; the wire item does both ends and keeps the index. */
+    public void addWire(BlockPos other) {
+        if (wires.contains(other)) return;
+        wires.add(other.immutable());
+        sync();
+    }
+
+    public void removeWire(BlockPos other) {
+        if (wires.remove(other)) sync();
+    }
+
+    private void sync() {
+        setChanged();
+        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
 
     public int spanCount() {
@@ -128,7 +156,12 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
     @Override
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
-        if (level == null || level.isClientSide() || spans.isEmpty()) return;
+        if (level == null || level.isClientSide()) return;
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            dev.strataindustria.transport.telegraph.TelegraphLine.insulatorRemoved(server, pos, wires);
+            wires.clear();
+        }
+        if (spans.isEmpty()) return;
         if (level instanceof net.minecraft.server.level.ServerLevel server) dev.strataindustria.transport.outpost.RouteIndex.get(server).cut(server, pos);
         int conductors = 0;
         for (BlockPos other : spans) {
@@ -147,6 +180,8 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
         super.loadAdditional(in);
         spans.clear();
         in.read("spans", BlockPos.CODEC.listOf()).ifPresent(spans::addAll);
+        wires.clear();
+        in.read("wires", BlockPos.CODEC.listOf()).ifPresent(wires::addAll);
         strain = in.getIntOr("strain", 0);
     }
 
@@ -154,6 +189,7 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
     protected void saveAdditional(ValueOutput out) {
         super.saveAdditional(out);
         out.store("spans", BlockPos.CODEC.listOf(), List.copyOf(spans));
+        out.store("wires", BlockPos.CODEC.listOf(), List.copyOf(wires));
         out.putInt("strain", strain);
     }
 

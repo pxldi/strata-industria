@@ -1,0 +1,58 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/telegraph_line",
+    "line": "strataindustria:block/telegraph_line"
+  },
+  "elements": [
+    {
+      "from": [
+        7.75,
+        7.75,
+        0
+      ],
+      "to": [
+        8.25,
+        8.25,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}
