@@ -1,0 +1,118 @@
+cmd gamerule advance_time false
+cmd time set noon
+cmd weather clear
+cmd gamerule spawn_mobs false
+cmd setblock 0 -61 0 minecraft:smooth_stone
+cmd setblock 0 -60 0 strataindustria:crucible
+cmd gamemode spectator @p
+wait 60
+cmd tick freeze
+cmd tp @p 0.50 -59.7 2.50 180.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 0.85 -59.7 2.47 170.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 1.18 -59.7 2.38 160.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 1.50 -59.7 2.23 150.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 1.79 -59.7 2.03 140.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.03 -59.7 1.79 130.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.23 -59.7 1.50 120.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.38 -59.7 1.18 110.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.47 -59.7 0.85 100.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.50 -59.7 0.50 90.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.47 -59.7 0.15 80.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.38 -59.7 -0.18 70.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.23 -59.7 -0.50 60.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 2.03 -59.7 -0.79 50.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 1.79 -59.7 -1.03 40.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 1.50 -59.7 -1.23 30.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 1.18 -59.7 -1.38 20.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 0.85 -59.7 -1.47 10.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 0.50 -59.7 -1.50 0.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 0.15 -59.7 -1.47 350.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -0.18 -59.7 -1.38 340.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -0.50 -59.7 -1.23 330.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -0.79 -59.7 -1.03 320.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.03 -59.7 -0.79 310.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.23 -59.7 -0.50 300.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.38 -59.7 -0.18 290.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.47 -59.7 0.15 280.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.50 -59.7 0.50 270.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.47 -59.7 0.85 260.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.38 -59.7 1.18 250.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.23 -59.7 1.50 240.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -1.03 -59.7 1.79 230.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -0.79 -59.7 2.03 220.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -0.50 -59.7 2.23 210.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p -0.18 -59.7 2.38 200.0 28
+wait 1
+frames crucible_orbit 1
+cmd tp @p 0.15 -59.7 2.47 190.0 28
+wait 1
+frames crucible_orbit 1
+quit

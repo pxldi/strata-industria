@@ -33,6 +33,9 @@ neoForge {
         register("client") {
             client()
             systemProperty("neoforge.enabledGameTestNamespaces", prop("mod_id"))
+            // tools/capture: -Pcapture=<scene file> [-PcaptureOut=<dir>] records a scripted scene instead of playing.
+            providers.gradleProperty("capture").orNull?.let { systemProperty("strata.capture", it) }
+            providers.gradleProperty("captureOut").orNull?.let { systemProperty("strata.capture.out", it) }
         }
         register("server") {
             server()

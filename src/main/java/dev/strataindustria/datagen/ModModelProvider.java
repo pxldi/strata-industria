@@ -212,8 +212,10 @@ final class ModModelProvider extends ModelProvider {
         for (var block : java.util.List.of(ModBlocks.LARGE_VESSEL, ModBlocks.CRUCIBLE)) {
             var model = StrataIndustria.id("block/" + block.getId().getPath());
             blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block.get(), BlockModelGenerators.plainVariant(model)));
-            // Flat item art, so the unfired and fired pieces share one silhouette (style guide 5).
-            flatItem(itemModels, block.get().asItem());
+            // Flat item art in the inventory so the unfired and fired pieces share one silhouette (style guide 5);
+            // the crucible is a 3D pot everywhere else.
+            if (block == ModBlocks.CRUCIBLE) InWorld3d.apply(itemModels, block.get().asItem(), model);
+            else flatItem(itemModels, block.get().asItem());
         }
 
         for (var item : java.util.List.of(ModItems.UNFIRED_SMALL_VESSEL, ModItems.UNFIRED_LARGE_VESSEL, ModItems.UNFIRED_CRUCIBLE,
