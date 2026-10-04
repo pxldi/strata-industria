@@ -24,7 +24,7 @@ public final class TextureGen {
     static final Path OUT = Path.of("src/main/resources/assets/strataindustria/textures");
     static final Map<String, BufferedImage> PREVIEW = new LinkedHashMap<>();
     static final java.util.Set<String> HAND_MADE = java.util.Set.of(
-            "item/plant_fibre", "item/stone_axe");
+            "item/plant_fibre");
 
     // ---------------------------------------------------------------- palette (5-step ramps)
 
@@ -104,7 +104,7 @@ public final class TextureGen {
     static final Ramp ORE_LIMONITE = ramp(0, 0x4a2c0e, 0x7a4a18, 0xa8701e, 0xc89030, 0xe0b050);
     static final Ramp ORE_SPHALERITE = ramp(0, 0x2a1810, 0x4e2c14, 0x7a4a1a, 0xa8701e, 0xd09a36);
     static final Ramp ORE_GALENA = ramp(0xeef2f8, 0x30343e, 0x525a68, 0x7a8494, 0xa0aab8, 0xc8d0dc);
-    static final Ramp ORE_COAL = ramp(0, 0x0c0c0e, 0x18181c, 0x26262c, 0x3c3c44, 0x5a5a66);
+    static final Ramp ORE_COAL = ramp(0, 0x1c1c22, 0x2e2e36, 0x464650, 0x666674, 0x8e8e9e);
     static final Ramp ORE_SULFUR = ramp(0, 0x5a5214, 0x867a1c, 0xb4a428, 0xd8c83c, 0xf0e46a);
 
 
@@ -166,8 +166,12 @@ public final class TextureGen {
         return (r << 16) | (g << 8) | b;
     }
 
+    /** True while generating items that already follow style guide v2 (near-black outline). */
+    static boolean itemsV2 = false;
+
     /** Adds the 1 px coloured outline around an item silhouette (style guide 5). */
     static BufferedImage outline(BufferedImage im) {
+        if (itemsV2) return V2.outline(im);
         BufferedImage out = img();
         out.getGraphics().drawImage(im, 0, 0, null);
         for (int y = 0; y < 16; y++) {
@@ -238,7 +242,8 @@ public final class TextureGen {
         long seed = rock.name().hashCode() * 31L;
         Ramp p = rock.ramp();
         Random r = new Random(seed ^ 0x5eedL);
-        double[][] f = V2.terrainField(seed);
+        // Intrusive rocks have almost no grain direction, so the period-4 noise would show as a grid: lean on per-pixel noise.
+        double[][] f = V2.terrainField(seed, rock.category().equals("intrusive") ? 0.8 : 0.68);
         switch (rock.category()) {
             case "intrusive" -> f = V2.smear(f, 1, 0, 0.25);      // coarse crystals, little grain direction
             case "extrusive" -> f = V2.smear(f, 0, 1, 0.35);      // columnar: vertical grain
@@ -276,6 +281,8 @@ public final class TextureGen {
     static BufferedImage cobbled(Rock rock) {
         Ramp p = rock.ramp();
         BufferedImage im = img();
+        int c3 = p.get(3);
+        boolean dark = (0.299 * ((c3 >> 16) & 255) + 0.587 * ((c3 >> 8) & 255) + 0.114 * (c3 & 255)) / 255 < 0.3;
         for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) px(im, x, y, p.get(1));
         Random r = new Random(rock.name().hashCode() * 17L);
         int[][] centres = new int[9][2];
@@ -303,6 +310,7 @@ public final class TextureGen {
                 int step = rel < -2 ? 4 : rel > 3 ? 2 : 3;
                 double g = r.nextDouble();
                 step += g < 0.18 ? 1 : g > 0.84 ? -1 : 0;
+                if (dark) step++; // dark rocks sit in the lower part of vanilla's value band, not under it
                 px(im, x, y, p.get(Math.max(2, Math.min(5, step))));
             }
         return im;
@@ -324,14 +332,31 @@ public final class TextureGen {
         static final Ramp FIRE_BRICK_V2 = ramp(0, 0x5e4a36, 0x7a6248, 0x927a58, 0xa68e68, 0xbaa27a);
         static final Ramp MORTAR_V2 = ramp(0, 0x6a645a, 0x6a645a, 0xaaa498, 0xc0baae, 0xc0baae);
         static final Ramp STEEL_V2 = ramp(0xd4d8da, 0x3a3c42, 0x5a5d64, 0x7a7d84, 0x959aa0, 0xb4b8bc);
+        // A2: tier 0-2 item ramps (6 steps with a glint, vanilla item value band).
+        static final Ramp COPPER_V2 = ramp(0xffe2bc, 0x4a2214, 0x82401f, 0xb85f2f, 0xe08040, 0xf4a868);
+        static final Ramp TIN_V2 = ramp(0xffffff, 0x383c48, 0x5e6474, 0x8890a0, 0xb4bcc8, 0xdce2ea);
+        static final Ramp BISMUTH_V2 = ramp(0xfaf4fc, 0x403648, 0x665870, 0x8e7e98, 0xb4a4bc, 0xd4c8da);
+        static final Ramp ARSENICAL_BRONZE_V2 = ramp(0xf6d2b4, 0x3e2216, 0x6a3e24, 0x93583a, 0xb87852, 0xd89c70);
+        static final Ramp BISMUTH_BRONZE_V2 = ramp(0xf2dcc4, 0x3e2a1e, 0x694834, 0x91694c, 0xb48a68, 0xd2ac88);
+        static final Ramp SLAG_V2 = ramp(0xc8bcb0, 0x38302c, 0x58504a, 0x7a6e66, 0x988c82, 0xb4a89c);
+        static final Ramp FLINT_V2 = ramp(0xe4e8ee, 0x2c2e36, 0x484c58, 0x6a707e, 0x9096a4, 0xbcc2cc);
+        static final Ramp CLAY_V2 = ramp(0, 0x5a5254, 0x7a7072, 0x9c9090, 0xbcb0ae, 0xd6cac6);
+        static final Ramp CERAMIC_V2 = ramp(0xeab08a, 0x4e2a22, 0x7c4234, 0xa65c46, 0xc47c5c, 0xdc9e78);
+        static final Ramp ASH_V2 = ramp(0, 0x5a5856, 0x787572, 0x98948f, 0xb8b4ae, 0xd4d0ca);
+        static final Ramp FIBRE_V2 = ramp(0, 0x38441c, 0x4e6028, 0x6a7e34, 0x8aa044, 0xaec25e);
+        static final Ramp STRAW_V2 = ramp(0, 0x6a5624, 0x8a7430, 0xb09a42, 0xd0b858, 0xe8d476);
 
         /** 50% per-pixel noise + 30% tileable noise at period 4 + 20% at period 2. */
-        static double[][] terrainField(long seed) {
+        static double[][] terrainField(long seed) { return terrainField(seed, 0.5); }
+
+        /** Same field with a chosen share of per-pixel noise; the rest is split 3:2 between period 4 and 2. */
+        static double[][] terrainField(long seed, double white) {
+            double lo = (1 - white) * 0.6, mid = (1 - white) * 0.4;
             Random r = new Random(seed);
             double[][] a = noise(seed + 11, 4), b = noise(seed + 12, 2);
             double[][] out = new double[16][16];
             for (int y = 0; y < 16; y++)
-                for (int x = 0; x < 16; x++) out[y][x] = 0.5 * r.nextDouble() + 0.3 * a[y][x] + 0.2 * b[y][x];
+                for (int x = 0; x < 16; x++) out[y][x] = white * r.nextDouble() + lo * a[y][x] + mid * b[y][x];
             return out;
         }
 
@@ -372,7 +397,12 @@ public final class TextureGen {
         }
 
         /** Item outline colour: the neighbour darkened to 32%, hue kept. */
-        static int outlineCol(int c) { return scale(c, 0.32); }
+        static int outlineCol(int c) {
+            int d = scale(c, 0.32);
+            // Snap to a coarse grid so neighbouring steps share one outline colour, like vanilla's near-black rims.
+            int r = ((d >> 16) & 255) / 12 * 12, g = ((d >> 8) & 255) / 12 * 12, b = (d & 255) / 12 * 12;
+            return (r << 16) | (g << 8) | b;
+        }
 
         /** 1 px outline round the silhouette on all four sides, near black, colour from the bordering pixel. */
         static BufferedImage outline(BufferedImage in) {
@@ -480,6 +510,27 @@ public final class TextureGen {
             "2333333321",
             ".2222222..",
     };
+    static final String[] INGOT_V2 = {
+            "......5555s52...",
+            ".....444444421..",
+            "....4444444421..",
+            "...333333333321.",
+            "...22222222221..",
+    };
+
+    /** Tier 0-2 metal ramps in the v2 value band. */
+    static Ramp v2Metal(String name) {
+        return switch (name) {
+            case "copper" -> V2.COPPER_V2;
+            case "tin" -> V2.TIN_V2;
+            case "bismuth" -> V2.BISMUTH_V2;
+            case "bronze" -> V2.BRONZE_V2;
+            case "arsenical_bronze" -> V2.ARSENICAL_BRONZE_V2;
+            case "bismuth_bronze" -> V2.BISMUTH_BRONZE_V2;
+            default -> throw new IllegalArgumentException(name);
+        };
+    }
+
     static final String[] NUGGET = {
             "..45.",
             ".4543",
@@ -728,11 +779,18 @@ public final class TextureGen {
             case "shovel", "spear" -> 9;
             default -> 10;
         };
-        for (int i = 0; i < end; i++) {
-            int x = 2 + i, y = 13 - i;
-            px(im, x, y, handle.get(3));
-            px(im, x + 1, y, handle.get(2));
-            if (i % 3 == 0) px(im, x, y, handle.get(4));
+        if (itemsV2) {
+            // Vanilla pose: 1 px handle from the bottom-left corner, two tones, a lighter pixel near the grip.
+            for (int i = 0; i <= end; i++) {
+                px(im, 1 + i, 14 - i, handle.get(i % 3 == 0 ? 2 : 3));
+            }
+        } else {
+            for (int i = 0; i < end; i++) {
+                int x = 2 + i, y = 13 - i;
+                px(im, x, y, handle.get(3));
+                px(im, x + 1, y, handle.get(2));
+                if (i % 3 == 0) px(im, x, y, handle.get(4));
+            }
         }
         if (lashing != null) {
             int x = 2 + end - 2, y = 13 - (end - 2);
@@ -743,6 +801,7 @@ public final class TextureGen {
         Ramp h = head;
         switch (kind) {
             case "pickaxe" -> {
+                if (itemsV2) { crescent(im, h, true); break; }
                 String[] rows = {
                         "....44455..",
                         "..443333345",
@@ -753,19 +812,57 @@ public final class TextureGen {
                 };
                 drawAt(im, h, rows, 4, 1);
             }
-            case "axe" -> drawAt(im, h, new String[] {"..455", ".4443", "44333", "43332", ".332.", "..2.."}, 9, 1);
+            case "axe" -> {
+                if (itemsV2) drawAt(im, h, new String[] {"..5", "345", "2345", "..345", "..234", "...23"}, 10, 1);
+                else drawAt(im, h, new String[] {"..455", ".4443", "44333", "43332", ".332.", "..2.."}, 9, 1);
+            }
             case "shovel" -> drawAt(im, h, new String[] {"..45.", ".4445", "44433", "43332", "4332.", ".2..."}, 9, 1);
             case "hoe" -> drawAt(im, h, new String[] {"4444455", "43333..", "32....."}, 7, 2);
             case "knife" -> drawAt(im, h, new String[] {"......45", ".....453", "....443.", "...443..", "..443...", ".332....", ".2......"}, 6, 1);
             case "hammer" -> drawAt(im, h, new String[] {"..4455.", ".44433s", "4433332", ".33322.", "..32..."}, 8, 1);
             // A wide blade with teeth along its lower edge.
             case "saw" -> drawAt(im, h, new String[] {"........455", ".......44432", "......4443.", ".....44432.", "....4443...", "...44432...", "..332......", ".2........."}, 5, 0);
-            case "sword" -> drawAt(im, h, SWORD_BLADE, 5, 0);
+            case "sword" -> {
+                drawAt(im, h, SWORD_BLADE, 5, 0);
+                if (itemsV2) { // crossguard across the handle
+                    px(im, 3, 8, h.get(3)); px(im, 4, 9, h.get(4)); px(im, 6, 11, h.get(3)); px(im, 7, 12, h.get(2));
+                }
+            }
             case "spear" -> drawAt(im, h, new String[] {"..455", ".4453", "44332", "4332.", ".2..."}, 10, 1);
             case "prospectors_pick" -> drawAt(im, h, new String[] {"...4455", ".443334", "43....3", "3......"}, 6, 2);
             default -> throw new IllegalArgumentException(kind);
         }
         return outline(im);
+    }
+
+    /** Vanilla-style pickaxe head: a crescent arc across the top-right, tapered at both tips, glint on the outer curve. */
+    static void crescent(BufferedImage im, Ramp c, boolean withTip) {
+        double cx = 1.5, cy = 14.5;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x + 0.5 - cx, dy = cy - (y + 0.5);
+                double r = Math.hypot(dx, dy), ang = Math.toDegrees(Math.atan2(dy, dx));
+                double taper = (ang < 26 || ang > 64) ? 0.9 : 0;
+                if (r >= 11.6 + taper && r <= 13.9 - taper * 0.3 && ang >= 14 && ang <= 76) {
+                    boolean outer = r > 12.9;
+                    int step = outer ? 4 : 2;
+                    if (!outer && ang > 40 && ang < 50) step = 3;
+                    px(im, x, y, c.get(step));
+                }
+            }
+        px(im, 10, 3, c.spec() != 0 ? c.spec() : c.get(5));
+    }
+
+    /** The crescent head on its own, centred. */
+    static BufferedImage pickaxeHeadV2(Ramp c) {
+        BufferedImage im = img();
+        crescent(im, c, false);
+        int x0 = 16, x1 = -1, y0 = 16, y1 = -1;
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) if (opaque(im, x, y)) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); }
+        BufferedImage out = img();
+        int ox = (16 - (x1 - x0 + 1)) / 2 - x0, oy = (16 - (y1 - y0 + 1)) / 2 - y0;
+        for (int y = y0; y <= y1; y++) for (int x = x0; x <= x1; x++) if (opaque(im, x, y)) px(out, x + ox, y + oy, rgb(im, x, y));
+        return outline(out);
     }
 
     static void drawAt(BufferedImage im, Ramp a, String[] rows, int left, int top) {
@@ -1424,7 +1521,7 @@ public final class TextureGen {
     };
 
     static BufferedImage tongs() {
-        return map(BRONZE, WOOD, TONGS_ITEM);
+        return map(V2.BRONZE_V2, V2.WOOD_V2, TONGS_ITEM);
     }
 
     // ---------------------------------------------------------------- armour (spec 8.4)
@@ -8054,6 +8151,7 @@ public final class TextureGen {
     }
 
     public static void main(String[] args) throws IOException {
+        itemsV2 = true;
         for (Rock rock : ROCKS) {
             save("block/" + rock.name(), rock(rock));
             save("block/cobbled_" + rock.name(), cobbled(rock));
@@ -8072,49 +8170,58 @@ public final class TextureGen {
             save("item/small_" + n, map(m.ramp(), NUGGET));
             save("block/small_" + n, pebbles(m));
         }
-        save("item/flint_shard", map(FLINT, FLINT_SHARD));
+        save("item/flint_shard", map(V2.FLINT_V2, FLINT_SHARD));
+        itemsV2 = false;
         save("block/loose_stick", art(WOOD, LOOSE_STICKS));
         save("block/loose_flint", art(FLINT, LOOSE_FLINTS));
+        itemsV2 = true;
 
         // Stone age (tier 0-2 spec 3).
-        save("item/straw", art(STRAW, STRAW_SHEAF));
-        save("item/twine", art(FIBRE, TWINE_HANK));
-        save("item/field_journal", art(FIELD_JOURNAL, STRAW, FIBRE, PAPER));
+        save("item/straw", art(V2.STRAW_V2, STRAW_SHEAF));
+        save("item/twine", art(V2.FIBRE_V2, TWINE_HANK));
+        save("item/field_journal", art(FIELD_JOURNAL, V2.STRAW_V2, V2.FIBRE_V2, PAPER));
         save("item/fibre_cloth", fibreCloth());
-        save("item/stone_axe_head", map(FLINT, KNAPPED_AXE_HEAD));
-        save("item/stone_knife_blade", map(FLINT, KNAPPED_KNIFE_BLADE));
-        save("item/stone_shovel_head", map(FLINT, KNAPPED_SHOVEL_HEAD));
-        save("item/stone_hoe_head", map(FLINT, KNAPPED_HOE_HEAD));
-        save("item/stone_hammer_head", map(FLINT, KNAPPED_HAMMER_HEAD));
-        save("item/stone_spear_head", map(FLINT, KNAPPED_SPEAR_HEAD));
-        save("item/stone_pickaxe_head", map(FLINT, KNAPPED_PICKAXE_HEAD));
+        save("item/stone_axe_head", map(V2.FLINT_V2, KNAPPED_AXE_HEAD));
+        save("item/stone_knife_blade", map(V2.FLINT_V2, KNAPPED_KNIFE_BLADE));
+        save("item/stone_shovel_head", map(V2.FLINT_V2, KNAPPED_SHOVEL_HEAD));
+        save("item/stone_hoe_head", map(V2.FLINT_V2, KNAPPED_HOE_HEAD));
+        save("item/stone_hammer_head", map(V2.FLINT_V2, KNAPPED_HAMMER_HEAD));
+        save("item/stone_spear_head", map(V2.FLINT_V2, KNAPPED_SPEAR_HEAD));
+        save("item/stone_pickaxe_head", pickaxeHeadV2(V2.FLINT_V2));
         for (String kind : List.of("axe", "knife", "shovel", "hoe", "hammer", "pickaxe"))
-            save("item/stone_" + kind, tool(FLINT, WOOD, FIBRE, kind));
+            save("item/stone_" + kind, tool(V2.FLINT_V2, V2.WOOD_V2, V2.FIBRE_V2, kind));
         save("gui/knapping/flint", flintSurface());
         saveRaw("gui/knapping", knappingGui());
 
         // Fire (spec 3.5).
+        itemsV2 = false;
         save("block/fire_pit_stones", fieldStones());
         save("block/fire_pit_wood", stickWood());
         save("block/fire_pit_ash", ashBed());
         save("block/fire_pit_embers", emberBed());
+        itemsV2 = true;
         save("item/firestarter", firestarter());
+        itemsV2 = false;
         saveRaw("gui/fire_pit", firePitGui());
+        itemsV2 = true;
 
         // Clay (spec 4.1 to 4.3).
+        itemsV2 = false;
         save("gui/knapping/clay", claySurface());
+        itemsV2 = true;
         for (var piece : List.of(java.util.Map.entry("small_vessel", SMALL_VESSEL_ITEM), java.util.Map.entry("large_vessel", LARGE_VESSEL_ITEM),
                 java.util.Map.entry("crucible", CRUCIBLE_ITEM), java.util.Map.entry("ingot_mold", INGOT_MOLD_ITEM))) {
-            save("item/unfired_" + piece.getKey(), art(CLAY, piece.getValue()));
-            save("item/" + piece.getKey(), art(CERAMIC, piece.getValue()));
+            save("item/unfired_" + piece.getKey(), art(V2.CLAY_V2, piece.getValue()));
+            save("item/" + piece.getKey(), art(V2.CERAMIC_V2, piece.getValue()));
         }
-        save("item/unfired_brick", art(CLAY, BRICK_ITEM));
-        save("item/ingot_mold_filled", filledIngotMold());
+        save("item/unfired_brick", art(V2.CLAY_V2, BRICK_ITEM));
+        save("item/ingot_mold_filled", filledIngotMold(V2.CERAMIC_V2));
         for (var cavity : MOLD_CAVITIES.entrySet()) {
-            save("item/unfired_" + cavity.getKey() + "_mold", mold(CLAY, cavity.getValue()));
-            save("item/" + cavity.getKey() + "_mold", mold(CERAMIC, cavity.getValue()));
-            save("item/" + cavity.getKey() + "_mold_filled", filledMold(cavity.getValue()));
+            save("item/unfired_" + cavity.getKey() + "_mold", mold(V2.CLAY_V2, cavity.getValue()));
+            save("item/" + cavity.getKey() + "_mold", mold(V2.CERAMIC_V2, cavity.getValue()));
+            save("item/" + cavity.getKey() + "_mold_filled", filledMold(V2.CERAMIC_V2, cavity.getValue()));
         }
+        itemsV2 = false;
         save("block/large_vessel_side", ceramicWall(6161, true));
         save("block/large_vessel_top", vesselTop());
         save("block/large_vessel_bottom", ceramicPlain(6262, 2, 3));
@@ -8130,7 +8237,9 @@ public final class TextureGen {
         save("block/log_pile_side", logPileSide());
         save("block/log_pile_top", logPileTop());
         save("block/charcoal_pile", charcoalPile());
-        save("item/ash", art(ASH, ASH_HEAP));
+        itemsV2 = true;
+        save("item/ash", art(V2.ASH_V2, ASH_HEAP));
+        itemsV2 = false;
 
         // Forge (spec 4.5).
         save("block/forge_side", forgeBricks(7070));
@@ -8149,34 +8258,39 @@ public final class TextureGen {
         heads.put("hammer_head", HAMMER_HEAD);
         heads.put("saw_blade", SAW_BLADE);
         heads.put("sword_blade", SWORD_BLADE);
+        itemsV2 = true;
         for (Metal metal : METALS) {
             String n = metal.name();
+            Ramp mr = v2Metal(n);
             if (!metal.vanillaIngot()) {
-                save("item/" + n + "_ingot", map(metal.ramp(), INGOT));
-                save("item/" + n + "_nugget", map(metal.ramp(), NUGGET));
+                save("item/" + n + "_ingot", map(mr, INGOT_V2));
+                save("item/" + n + "_nugget", map(mr, NUGGET));
             }
             if (n.equals("tin") || n.equals("bismuth")) continue;
-            save("item/" + n + "_plate", map(metal.ramp(), PLATE));
-            for (var head : heads.entrySet()) save("item/" + n + "_" + head.getKey(), map(metal.ramp(), head.getValue()));
+            save("item/" + n + "_plate", map(mr, PLATE));
+            for (var head : heads.entrySet())
+                save("item/" + n + "_" + head.getKey(), head.getKey().equals("pickaxe_head") ? pickaxeHeadV2(mr) : map(mr, head.getValue()));
             for (String kind : List.of("pickaxe", "axe", "shovel", "hoe", "knife", "hammer", "saw", "sword")) {
                 // Copper's pickaxe, axe, shovel, hoe and sword are the vanilla items and keep vanilla art.
                 if (metal.vanillaIngot() && !List.of("knife", "hammer", "saw").contains(kind)) continue;
-                save("item/" + n + "_" + kind, tool(metal.ramp(), WOOD, null, kind));
+                save("item/" + n + "_" + kind, tool(mr, V2.WOOD_V2, null, kind));
             }
         }
-        save("item/slag_metal_ingot", map(SLAG, INGOT));
+        save("item/slag_metal_ingot", map(V2.SLAG_V2, INGOT_V2));
         for (Metal metal : METALS) {
             String n = metal.name();
             if (!n.contains("bronze")) continue;
-            saveRaw("entity/equipment/humanoid/" + n, armourLayer(metal.ramp()));
-            saveRaw("entity/equipment/humanoid_leggings/" + n, leggingsLayer(metal.ramp()));
-            save("item/" + n + "_helmet", map(metal.ramp(), FIBRE, HELMET_ITEM));
-            save("item/" + n + "_chestplate", map(metal.ramp(), FIBRE, CHESTPLATE_ITEM));
-            save("item/" + n + "_leggings", map(metal.ramp(), FIBRE, LEGGINGS_ITEM));
-            save("item/" + n + "_boots", map(metal.ramp(), FIBRE, BOOTS_ITEM));
-            save("item/" + n + "_prospectors_pick_head", map(metal.ramp(), PROSPECTOR_HEAD));
-            save("item/" + n + "_prospectors_pick", tool(metal.ramp(), WOOD, null, "prospectors_pick"));
+            Ramp mr = v2Metal(n);
+            saveRaw("entity/equipment/humanoid/" + n, armourLayer(mr));
+            saveRaw("entity/equipment/humanoid_leggings/" + n, leggingsLayer(mr));
+            save("item/" + n + "_helmet", map(mr, V2.FIBRE_V2, HELMET_ITEM));
+            save("item/" + n + "_chestplate", map(mr, V2.FIBRE_V2, CHESTPLATE_ITEM));
+            save("item/" + n + "_leggings", map(mr, V2.FIBRE_V2, LEGGINGS_ITEM));
+            save("item/" + n + "_boots", map(mr, V2.FIBRE_V2, BOOTS_ITEM));
+            save("item/" + n + "_prospectors_pick_head", map(mr, PROSPECTOR_HEAD));
+            save("item/" + n + "_prospectors_pick", tool(mr, V2.WOOD_V2, null, "prospectors_pick"));
         }
+        itemsV2 = false;
         saveRaw("gui/crucible", crucibleGui());
 
         saveRaw("gui/anvil", anvilGui());
@@ -8186,14 +8300,18 @@ public final class TextureGen {
         }
         save("block/bronze_anvil", bronzeAnvilBody());
         save("block/bronze_anvil_top", bronzeAnvilTop());
-        save("item/tongs_jaw", map(BRONZE, TONGS_JAW_ITEM));
+        itemsV2 = true;
+        save("item/tongs_jaw", map(V2.BRONZE_V2, TONGS_JAW_ITEM));
         save("item/tongs", tongs());
+        itemsV2 = false;
 
         // Quern (spec 10.1).
         save("block/quern_side", quernSide());
         save("block/quern_top", quernFace(5252, false));
         save("block/quern_runner", quernFace(5353, true));
-        save("item/quernstone", art(GRANITE, QUERNSTONE_ITEM));
+        itemsV2 = true;
+        save("item/quernstone", art(GRANITE_V2, QUERNSTONE_ITEM));
+        itemsV2 = false;
 
         tier3();
         kinetics();
