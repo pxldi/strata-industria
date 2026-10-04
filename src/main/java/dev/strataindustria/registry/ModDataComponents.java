@@ -1,6 +1,5 @@
 package dev.strataindustria.registry;
 
-import dev.strataindustria.smithing.SmithingPattern;
 import dev.strataindustria.smithing.SmithingProgress;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.Temperature;
@@ -62,12 +61,6 @@ public final class ModDataComponents {
             COMPONENTS.registerComponentType("bloom_contents", b -> b
                     .persistent(Melt.CODEC)
                     .networkSynchronized(Melt.STREAM_CODEC));
-
-    /** Tier 3 spec 9.5: a recorded smithing sequence. */
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SmithingPattern>> SMITHING_PATTERN =
-            COMPONENTS.registerComponentType("smithing_pattern", b -> b
-                    .persistent(SmithingPattern.CODEC)
-                    .networkSynchronized(SmithingPattern.STREAM_CODEC));
 
     /** Tier 3 spec 8.5: the column a core sampler drilled. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.strataindustria.prospecting.CoreSample>> CORE_SAMPLE =

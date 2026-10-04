@@ -160,9 +160,7 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(waterPower, "t3/bellows", ModItems.BELLOWS.get(), JournalTrigger.TriggerInstance.of(Journal.BELLOWS));
         goal(waterPower, "t3/saw_mill", ModItems.SAW_MILL.get(), JournalTrigger.TriggerInstance.of(Journal.SAW_MILL));
         AdvancementHolder weld = goal(refine, "t3/weld", ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), has(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()));
-        AdvancementHolder pattern = goal(weld, "t3/pattern", ModItems.SMITHING_PATTERN.get(),
-                JournalTrigger.TriggerInstance.of(Journal.PATTERN_RECORDED));
-        goal(pattern, "t3/trip_hammer", ModItems.TRIP_HAMMER.get(), AdvancementType.GOAL,
+        goal(weld, "t3/trip_hammer", ModItems.TRIP_HAMMER.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.TRIP_HAMMER));
         AdvancementHolder tramway = goal(refine, "t3/tramway", dev.strataindustria.transport.rail.RailRegistry.MINE_TUB.get(),
                 JournalTrigger.TriggerInstance.of(Journal.TUB_ARRIVED));

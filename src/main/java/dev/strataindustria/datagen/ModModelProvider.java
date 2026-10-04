@@ -328,14 +328,7 @@ final class ModModelProvider extends ModelProvider {
         heatable(itemModels, ModItems.WROUGHT_IRON_ROD.get());
         heatable(itemModels, ModItems.WROUGHT_IRON_DOUBLE_INGOT.get());
 
-        // Spec 9.4 and 9.5: flux, and a pattern that shows its notes once a sequence is recorded on it.
         flatItem(itemModels, ModItems.FLUX.get());
-        Item pattern = ModItems.SMITHING_PATTERN.get();
-        var blank = itemModels.createFlatItemModel(pattern, ModelTemplates.FLAT_ITEM);
-        var recorded = itemModels.createFlatItemModel(pattern, "_recorded", ModelTemplates.FLAT_ITEM);
-        itemModels.itemModelOutput.accept(pattern, ItemModelUtils.conditional(
-                ItemModelUtils.hasComponent(ModDataComponents.SMITHING_PATTERN.get()),
-                ItemModelUtils.plainModel(recorded), ItemModelUtils.plainModel(blank)));
     }
 
     /**

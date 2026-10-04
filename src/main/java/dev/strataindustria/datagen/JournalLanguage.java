@@ -142,10 +142,8 @@ final class JournalLanguage {
                 "Charter set at the tin workings. The line runs; the place keeps working while I'm home.");
         lead.add("t3/weld", "One ingot is too small for the bigger tools. Could two be joined while hot?",
                 "Hammered together white hot, two ingots became one. The seam does not show.");
-        lead.add("t3/pattern", "I smith the same pieces again and again. Could the anvil remember a shape for a machine?",
-                "The shape is marked on a blank pattern. A machine can work it now.");
-        lead.add("t3/trip_hammer", "With a pattern and a turning shaft, could a hammer work by itself?",
-                "The trip hammer rises and falls on its own, following my pattern blow for blow.");
+        lead.add("t3/trip_hammer", "I smith the same pieces again and again. With a turning shaft, could a hammer do it for me?",
+                "The trip hammer rises and falls on its own and makes whatever shape I set on it.");
         lead.add("t3/core_sample", "My prospector's pick only hears so far. What lies deep below?",
                 "The core came up in bands: every layer of rock beneath me, laid out in order.");
         lead.add("t3/wash", "There is ore in the river gravel. Could I wash it out?",

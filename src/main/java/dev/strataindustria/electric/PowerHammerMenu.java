@@ -2,6 +2,9 @@ package dev.strataindustria.electric;
 
 import dev.strataindustria.registry.Tier5Menus;
 import dev.strataindustria.smithing.AnvilBlockEntity;
+import dev.strataindustria.smithing.ShapeMachine;
+import dev.strataindustria.smithing.ShapeSelector;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -14,18 +17,18 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Power hammer screen: the recorded pattern and the flux on the left, the input and the second (weld)
+ * Power hammer screen: the shape button on the left, the input and the second (weld)
  * piece, then the piece on the anvil and the result, with the hits filling the arrow, the power bar on the
  * right, the status and temperature lines, and the auto-eject toggle (button 0).
  */
 public class PowerHammerMenu extends AbstractContainerMenu {
     public static final int BUTTON_EJECT = 0;
-    public static final int PATTERN_X = 8, PATTERN_Y = 26, FLUX_X = 8, FLUX_Y = 46, QUEUE_X = 35, QUEUE_Y = 26, SECOND_X = 35, SECOND_Y = 46,
+    public static final int SHAPE_X = 8, SHAPE_Y = 36, QUEUE_X = 35, QUEUE_Y = 26, SECOND_X = 35, SECOND_Y = 46,
             PIECE_X = 71, PIECE_Y = 35, RESULT_X = 125, RESULT_Y = 35;
     public static final int INVENTORY_Y = 100;
     private static final int SLOTS = PowerHammerBlockEntity.HAMMER_SLOTS;
-    /** Menu slots in order: pattern, flux, input, second, piece, result. */
-    private static final int MENU_SLOTS = 6;
+    /** Menu slots in order: input, second, piece, result. */
+    private static final int MENU_SLOTS = 4;
 
     private final Container container;
     private final ContainerData data;
@@ -40,23 +43,6 @@ public class PowerHammerMenu extends AbstractContainerMenu {
         checkContainerSize(container, SLOTS);
         this.container = container;
         this.data = data;
-        addSlot(new Slot(container, AnvilBlockEntity.PATTERN, PATTERN_X, PATTERN_Y) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return PowerHammerBlockEntity.isRecordedPattern(stack);
-            }
-
-            @Override
-            public int getMaxStackSize() {
-                return 1;
-            }
-        });
-        addSlot(new Slot(container, AnvilBlockEntity.FLUX, FLUX_X, FLUX_Y) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return AnvilBlockEntity.isFlux(stack);
-            }
-        });
         addSlot(new Slot(container, PowerHammerBlockEntity.QUEUE, QUEUE_X, QUEUE_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -89,7 +75,7 @@ public class PowerHammerMenu extends AbstractContainerMenu {
     public PowerHammerBlockEntity.Status status() {
         int s = data.get(PowerHammerBlockEntity.DATA_STATUS);
         PowerHammerBlockEntity.Status[] values = PowerHammerBlockEntity.Status.values();
-        return s >= 0 && s < values.length ? values[s] : PowerHammerBlockEntity.Status.NO_PATTERN;
+        return s >= 0 && s < values.length ? values[s] : PowerHammerBlockEntity.Status.WAITING;
     }
 
     public int hitsDone() {
@@ -121,8 +107,14 @@ public class PowerHammerMenu extends AbstractContainerMenu {
         return data.get(PowerHammerBlockEntity.DATA_EJECT) != 0;
     }
 
+    /** What the shape button shows: the item the working shape makes. */
+    public ItemStack shape() {
+        return ShapeSelector.displayStack(data.get(PowerHammerBlockEntity.DATA_SHAPE));
+    }
+
     @Override
     public boolean clickMenuButton(Player player, int id) {
+        if (player instanceof ServerPlayer server && ShapeMachine.press(container, server, id)) return true;
         if (id == BUTTON_EJECT && container instanceof PowerHammerBlockEntity hammer) {
             hammer.toggleAutoEject();
             return true;
@@ -138,11 +130,7 @@ public class PowerHammerMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
         if (index < MENU_SLOTS) {
             if (!moveItemStackTo(stack, MENU_SLOTS, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (PowerHammerBlockEntity.isRecordedPattern(stack)) {
-            if (!moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;
-        } else if (AnvilBlockEntity.isFlux(stack)) {
-            if (!moveItemStackTo(stack, 1, 2, false)) return ItemStack.EMPTY;
-        } else if (!moveItemStackTo(stack, 2, 3, false)) {
+        } else if (!moveItemStackTo(stack, 0, 1, false)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);

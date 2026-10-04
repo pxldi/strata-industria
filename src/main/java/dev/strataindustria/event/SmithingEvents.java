@@ -32,19 +32,16 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public final class SmithingEvents {
     private SmithingEvents() {}
 
-    /** A hammer on an anvil strikes, sneaking with it cycles the shape; sneaking with a blank pattern sets its shape. */
+    /** A hammer on an anvil strikes; sneaking with it cycles the shape. */
     private static boolean handleAnvil(PlayerInteractEvent.RightClickBlock event, Player player, ItemStack held) {
-        boolean hammer = held.is(ModTags.Items.HAMMERS);
-        boolean pattern = AnvilBlockEntity.isBlankPattern(held) && player.isSecondaryUseActive();
-        if (!hammer && !pattern) return false;
+        if (!held.is(ModTags.Items.HAMMERS)) return false;
         Level level = event.getLevel();
         if (!(level.getBlockEntity(event.getPos()) instanceof AnvilBlockEntity anvil)
                 || !(level.getBlockState(event.getPos()).getBlock() instanceof AnvilBlock)) return false;
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
         if (!(player instanceof ServerPlayer server)) return true;
-        if (pattern) anvil.record(server, held);
-        else if (player.isSecondaryUseActive()) anvil.cycleShape(server);
+        if (player.isSecondaryUseActive()) anvil.cycleShape(server);
         else anvil.strikeBy(server);
         return true;
     }

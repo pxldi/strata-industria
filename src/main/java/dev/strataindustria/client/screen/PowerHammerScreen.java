@@ -15,7 +15,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * Power hammer: the pattern and flux, the input and the second piece, the piece on the anvil and the
+ * Power hammer: the shape button, the input and the second piece, the piece on the anvil and the
  * result with the hits filling the arrow, the power bar on the right, and lines for what it is doing and
  * how hot the piece is.
  */
@@ -28,6 +28,7 @@ public class PowerHammerScreen extends AbstractContainerScreen<PowerHammerMenu> 
     public static final int EJECT_X = 154, EJECT_Y = 68, EJECT_SIZE = 14;
     public static final int STATUS_Y = 66;
     private static final String KEY = StrataIndustria.MOD_ID + ".power_hammer.";
+    private final ShapeButton shapeButton = new ShapeButton(PowerHammerMenu.SHAPE_X, PowerHammerMenu.SHAPE_Y);
 
     public PowerHammerScreen(PowerHammerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, 176, PowerHammerMenu.INVENTORY_Y + 82);
@@ -42,6 +43,7 @@ public class PowerHammerScreen extends AbstractContainerScreen<PowerHammerMenu> 
     public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(g, mouseX, mouseY, partialTick);
         g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+        shapeButton.extract(g, leftPos, topPos, menu.shape(), mouseX, mouseY);
         int total = menu.hitsTotal();
         if (total > 0 && menu.hitsDone() > 0) {
             int w = Math.max(1, Math.round((float) ARROW_W * Math.min(menu.hitsDone(), total) / total));
@@ -76,6 +78,11 @@ public class PowerHammerScreen extends AbstractContainerScreen<PowerHammerMenu> 
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (shapeButton.click(event, menu.containerId, leftPos, topPos)) {
+            minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                    net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0f));
+            return true;
+        }
         if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && overEject(event.x(), event.y()) && minecraft.gameMode != null) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, PowerHammerMenu.BUTTON_EJECT);
             minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
@@ -106,7 +113,9 @@ public class PowerHammerScreen extends AbstractContainerScreen<PowerHammerMenu> 
     @Override
     protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractTooltip(g, mouseX, mouseY);
-        if (overBar(mouseX, mouseY)) {
+        if (shapeButton.over(mouseX, mouseY, leftPos, topPos)) {
+            shapeButton.tooltip(g, font, menu.shape(), mouseX, mouseY);
+        } else if (overBar(mouseX, mouseY)) {
             g.setTooltipForNextFrame(Component.translatable(StrataIndustria.MOD_ID + ".electric_machine.buffer", Math.round(menu.buffer() * 100)),
                     mouseX, mouseY);
         } else if (overEject(mouseX, mouseY)) {
@@ -115,9 +124,7 @@ public class PowerHammerScreen extends AbstractContainerScreen<PowerHammerMenu> 
         } else if (hoveredSlot != null && !hoveredSlot.hasItem() && hoveredSlot.container != minecraft.player.getInventory()) {
             // Empty slots say what they are for.
             int slot = hoveredSlot.getContainerSlot();
-            String what = slot == AnvilBlockEntity.PATTERN ? "slot.pattern"
-                    : slot == AnvilBlockEntity.FLUX ? "slot.flux"
-                    : slot == PowerHammerBlockEntity.QUEUE ? "slot.input"
+            String what = slot == PowerHammerBlockEntity.QUEUE ? "slot.input"
                     : slot == AnvilBlockEntity.SECOND ? "slot.second"
                     : slot == AnvilBlockEntity.INPUT ? "slot.piece"
                     : slot == PowerHammerBlockEntity.RESULT ? "slot.result" : null;

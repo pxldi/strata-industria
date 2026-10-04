@@ -1,3 +1,4 @@
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -2060,24 +2061,6 @@ public final class TextureGen {
             "................",
     };
 
-    static final String[] GHOST_PATTERN = {
-            "................",
-            "...#########....",
-            "...#.......##...",
-            "...#.......#.#..",
-            "...#.......####.",
-            "...#..........#.",
-            "...#.###.##...#.",
-            "...#..........#.",
-            "...#.##.####..#.",
-            "...#..........#.",
-            "...#.####.##..#.",
-            "...#..........#.",
-            "...#.###......#.",
-            "...#..........#.",
-            "...############.",
-            "................",
-    };
 
     /** A faint outline in an empty slot showing what goes there. */
     static void ghost(BufferedImage im, int itemX, int itemY, String[] rows) {
@@ -2202,6 +2185,27 @@ public final class TextureGen {
         fill(im, x + w - 1, y + 1, 1, h - 1, GUI_LIGHT);
         im.setRGB(x + w - 1, y, 0xff000000 | SLOT_FILL);
         im.setRGB(x, y + h - 1, 0xff000000 | SLOT_FILL);
+    }
+
+    /**
+     * The shape button of a hammer machine: a raised 20x20 plate (white bevel top left, grey bottom right, black
+     * rim) around a 16x16 icon at itemX, itemY, with the slot's grey behind the icon. Clicks anywhere on it count.
+     */
+    static void iconButton(BufferedImage im, int itemX, int itemY) {
+        int x = itemX - 2, y = itemY - 2;
+        fill(im, x, y, 20, 20, GUI_EDGE);
+        fill(im, x + 1, y + 1, 18, 18, 0xa8a8a8);
+        fill(im, x + 1, y + 1, 18, 1, GUI_LIGHT);
+        fill(im, x + 1, y + 1, 1, 18, GUI_LIGHT);
+        fill(im, x + 1, y + 18, 18, 1, GUI_SHADOW);
+        fill(im, x + 18, y + 1, 1, 18, GUI_SHADOW);
+        im.setRGB(x + 18, y + 1, 0xff000000 | 0xa8a8a8);
+        im.setRGB(x + 1, y + 18, 0xff000000 | 0xa8a8a8);
+        fill(im, itemX, itemY, 16, 16, SLOT_FILL);
+        // A small dark chevron at the bottom right says it steps on when clicked.
+        im.setRGB(x + 15, y + 15, 0xff000000 | SLOT_DARK);
+        im.setRGB(x + 16, y + 16, 0xff000000 | SLOT_DARK);
+        im.setRGB(x + 15, y + 17, 0xff000000 | SLOT_DARK);
     }
 
     static void slot(BufferedImage im, int itemX, int itemY) {
@@ -2694,43 +2698,6 @@ public final class TextureGen {
             "................",
             "................",
     };
-    static final String[] SMITHING_PATTERN = {
-            "................",
-            "................",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "....45555554....",
-            "....54444443....",
-            "....54444443....",
-            "....54444443....",
-            "....54444443....",
-            "....44444442....",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "................",
-            "................",
-    };
-    static final String[] SMITHING_PATTERN_RECORDED = {
-            "................",
-            "................",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "....45555554....",
-            "....5ccc4cc3....",
-            "....54444443....",
-            "....5cc4ccc3....",
-            "....54444443....",
-            "....4bbbb442....",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "................",
-            "................",
-    };
-
     // New shared shapes (spec 20.4).
     static final String[] ROD = {
             "..........45",
@@ -2812,8 +2779,6 @@ public final class TextureGen {
         save("item/raw_bloom", map(WROUGHT_IRON, LIGNITE, RAW_BLOOM));
         save("item/bloomery_slag", map(SLAG, HEMATITE, BLOOMERY_SLAG));
         save("item/flux", art(MARBLE, FLUX_HEAP));
-        save("item/smithing_pattern", art(SMITHING_PATTERN, PAPER, CHARCOAL, FIBRE));
-        save("item/smithing_pattern_recorded", art(SMITHING_PATTERN_RECORDED, PAPER, CHARCOAL, FIBRE));
 
         // Wrought iron and gold forms (both keep vanilla ingots and nuggets).
         java.util.Map<String, String[]> heads = new java.util.LinkedHashMap<>();
@@ -3733,11 +3698,24 @@ public final class TextureGen {
     static BufferedImage tripHammerGui() {
         BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
         panel(im, 176, 166);
-        slot(im, 44, 35);
+        iconButton(im, 44, 35);
         slot(im, 80, 35);
-        ghost(im, 44, 35, GHOST_PATTERN);
         ghost(im, 80, 35, GHOST_INGOT);
         inventory(im);
+        return im;
+    }
+
+    /**
+     * Steam hammer: the committed sheet with the old pattern slot (7 to 24, 34 to 51) cleared and the shape button
+     * drawn in its place. Redrawing over a sheet that already has the button gives the same sheet.
+     */
+    static BufferedImage steamHammerGui() throws IOException {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = im.createGraphics();
+        g.drawImage(ImageIO.read(OUT.resolve("gui/steam_hammer.png").toFile()), 0, 0, null);
+        g.dispose();
+        fill(im, 5, 32, 22, 22, GUI_FACE);
+        iconButton(im, 8, 35);
         return im;
     }
 
@@ -3810,6 +3788,7 @@ public final class TextureGen {
         save("item/bark", barkItem());
         save("item/core_sample", coreSampleItem());
         saveRaw("gui/trip_hammer", tripHammerGui());
+        saveRaw("gui/steam_hammer", steamHammerGui());
         saveRaw("gui/saw_mill", sawMillGui());
         saveRaw("gui/core_sampler", coreSamplerGui());
     }

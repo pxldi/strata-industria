@@ -922,18 +922,6 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_double_ingot", has(doubleIngot))
                 .save(output, key("wrought_iron_anvil"));
 
-        // Spec 9.5: a blank pattern, and wiping a recorded one.
-        Item pattern = ModItems.SMITHING_PATTERN.get();
-        shapeless(RecipeCategory.MISC, pattern, 2)
-                .requires(Items.PAPER, 2)
-                .requires(Items.CHARCOAL)
-                .unlockedBy("has_double_ingot", has(doubleIngot))
-                .save(output, key("smithing_pattern"));
-        shapeless(RecipeCategory.MISC, pattern)
-                .requires(pattern)
-                .unlockedBy("has_smithing_pattern", has(pattern))
-                .save(output, key("smithing_pattern_wipe"));
-
         kinetics();
 
         // Spec 2: the furnace returns in tier 3, built from fire bricks.

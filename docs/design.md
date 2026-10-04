@@ -208,7 +208,7 @@ One or two flagship megaprojects that act as a "you finished it" moment, for exa
 ### 5.4 Smithing
 
 - Rule-based anvil minigame (see tier 2). Each recipe is data: target position plus up to three final-hit rules.
-- The trip hammer (tier 3) and the power hammer (tier 5) automate smithing recipes once you have smithed them by hand once (a "pattern" is recorded).
+- The trip hammer (tier 3), the steam hammer (tier 4) and the power hammer (tier 5) automate smithing: pick a shape with the button on the machine screen and they work it on every piece you feed them.
 
 ### 5.5 Power
 
