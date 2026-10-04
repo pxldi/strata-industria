@@ -74,6 +74,7 @@ final class Tier4GameTests {
         tests.put("tier4_crusher", Tier4GameTests::crusher);
         tests.put("tier4_washer", Tier4GameTests::washer);
         tests.put("tier4_blast_furnace", Tier4GameTests::blastFurnace);
+        tests.put("tier4_converter", Tier4GameTests::converter);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -611,6 +612,82 @@ final class Tier4GameTests {
         smelt(level, controllerPos, furnace, 1);
         helper.assertValueEqual(furnace.status(), dev.strataindustria.ironworks.BlastFurnaceBlockEntity.Status.NEEDS_IRON, "status with 60 units left");
         helper.succeed();
+    }
+
+    // Spec 12.2 and 23: 8 pig iron and a coke with air give 8 steel and 2 slag in 600 ticks. A smaller charge
+    // waits for more, then blows with a scrap item for every 4 pig iron.
+    private static void converter(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos controllerPos = helper.absolutePos(new BlockPos(4, 0, 2));
+        BlockPos centre = controllerPos.south();
+        BlockState casing = Tier4Blocks.REFRACTORY_CASING.get().defaultBlockState();
+        for (int y = 0; y <= 2; y++)
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos pos = centre.offset(dx, y, dz);
+                    BlockState state = dx == 0 && dz == 0 && y == 1 ? Blocks.AIR.defaultBlockState()
+                            : y == 2 ? ModBlocks.FIRE_BRICKS.get().defaultBlockState() : casing;
+                    level.setBlock(pos, state, Block.UPDATE_ALL);
+                }
+        BlockPos tuyerePos = centre.west(), tapPos = centre.above().east(), hatchPos = centre.above(2), blowerPos = tuyerePos.west();
+        level.setBlock(controllerPos, Tier4Blocks.CONVERTER_CONTROLLER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.ConverterBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(tuyerePos, Tier4Blocks.TUYERE.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.FurnacePartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(tapPos, Tier4Blocks.TAP_HATCH.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.TapHatchBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(hatchPos, Tier4Blocks.CHARGING_HATCH.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(blowerPos, Tier4Blocks.BLOWER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlowerBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        var converter = (dev.strataindustria.ironworks.ConverterBlockEntity) level.getBlockEntity(controllerPos);
+        var hatch = (dev.strataindustria.ironworks.FurnaceHatchBlockEntity) level.getBlockEntity(hatchPos);
+        Item pig = ModItems.ingot(Metal.PIG_IRON), steel = ModItems.ingot(Metal.STEEL);
+        int pigSlot = dev.strataindustria.ironworks.ConverterBlockEntity.PIG_IRON;
+
+        blow(level, controllerPos, converter, 1);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.EMPTY, "status when built and empty");
+        hatch.setItem(pigSlot, new ItemStack(pig, 8));
+        helper.assertTrue(!hatch.canPlaceItemThroughFace(pigSlot, new ItemStack(pig), Direction.UP), "8 pig iron is a full charge");
+        blow(level, controllerPos, converter, 1);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.NO_AIR, "status without air");
+        drive(level, blowerPos.west(), Direction.EAST, blowerPos);
+        blow(level, controllerPos, converter, 1);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.NEEDS_PREHEAT, "status without coke");
+        hatch.setItem(dev.strataindustria.ironworks.ConverterBlockEntity.COKE, new ItemStack(Tier4Items.COKE.get()));
+        blow(level, controllerPos, converter, 1);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.BLOWING, "a full charge blows at once");
+        helper.assertValueEqual(converter.blowing(), 8, "pig iron in the blow");
+        helper.assertTrue(converter.getItem(dev.strataindustria.ironworks.ConverterBlockEntity.COKE).isEmpty(), "the coke preheated it");
+        blow(level, controllerPos, converter, 599);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.BLOWING, "still blowing at 599 ticks");
+        helper.assertTrue(level.getBlockState(tapPos).getValue(dev.strataindustria.ironworks.TapHatchBlock.HOT), "the tap glows during a blow");
+        blow(level, controllerPos, converter, 1);
+        var tap = (dev.strataindustria.ironworks.FurnaceHatchBlockEntity) level.getBlockEntity(tapPos);
+        int steelSlot = dev.strataindustria.ironworks.ConverterBlockEntity.STEEL, slagSlot = dev.strataindustria.ironworks.ConverterBlockEntity.SLAG;
+        helper.assertTrue(tap.getItem(steelSlot).is(steel), "steel at the tap");
+        helper.assertValueEqual(tap.getItem(steelSlot).getCount(), 8, "steel from 8 pig iron");
+        helper.assertValueEqual(tap.getItem(slagSlot).getCount(), 2, "slag from 8 pig iron");
+
+        // Half a charge with a piece of scrap: it waits two seconds for more, then blows.
+        hatch.setItem(pigSlot, new ItemStack(pig, 4));
+        hatch.setItem(dev.strataindustria.ironworks.ConverterBlockEntity.SCRAP, new ItemStack(ModItems.ingot(Metal.WROUGHT_IRON), 2));
+        hatch.setItem(dev.strataindustria.ironworks.ConverterBlockEntity.COKE, new ItemStack(Tier4Items.COKE.get()));
+        blow(level, controllerPos, converter, 40);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.CHARGING, "a short charge waits");
+        blow(level, controllerPos, converter, 1);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.BLOWING, "then blows as it is");
+        helper.assertValueEqual(converter.getItem(dev.strataindustria.ironworks.ConverterBlockEntity.SCRAP).getCount(), 1,
+                "one scrap for 4 pig iron, the other stays");
+        blow(level, controllerPos, converter, 600);
+        helper.assertValueEqual(tap.getItem(steelSlot).getCount(), 13, "5 more steel");
+        helper.assertValueEqual(tap.getItem(slagSlot).getCount(), 3, "one more slag");
+        helper.succeed();
+    }
+
+    private static void blow(ServerLevel level, BlockPos pos, dev.strataindustria.ironworks.ConverterBlockEntity converter, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            dev.strataindustria.ironworks.ConverterBlockEntity.serverTick(level, pos, level.getBlockState(pos), converter);
+        }
     }
 
     private static void smelt(ServerLevel level, BlockPos pos, dev.strataindustria.ironworks.BlastFurnaceBlockEntity furnace, int ticks) {

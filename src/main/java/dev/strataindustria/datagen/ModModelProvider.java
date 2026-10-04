@@ -594,6 +594,17 @@ final class ModModelProvider extends ModelProvider {
         for (boolean on : new boolean[] {false, true}) facing(controllerState, on, on ? litModel : coldModel);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(controller).with(controllerState));
 
+        Block converter = Tier4Blocks.CONVERTER_CONTROLLER.get();
+        TextureMapping still = new TextureMapping().put(TextureSlot.FRONT, blockTexture("converter_controller_front"))
+                .put(TextureSlot.SIDE, casing).put(TextureSlot.TOP, casing);
+        var stillModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(converter, still, blockModels.modelOutput));
+        var blowingModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(converter, "_blowing",
+                still.copyAndUpdate(TextureSlot.FRONT, blockTexture("converter_controller_front_blowing")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> converterState = PropertyDispatch.initial(
+                dev.strataindustria.ironworks.ConverterBlock.FACING, dev.strataindustria.ironworks.ConverterBlock.LIT);
+        for (boolean on : new boolean[] {false, true}) facing(converterState, on, on ? blowingModel : stillModel);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(converter).with(converterState));
+
         Block tap = Tier4Blocks.TAP_HATCH.get();
         TextureMapping plugged = new TextureMapping().put(TextureSlot.FRONT, blockTexture("tap_hatch_front"))
                 .put(TextureSlot.SIDE, casing).put(TextureSlot.TOP, casing);

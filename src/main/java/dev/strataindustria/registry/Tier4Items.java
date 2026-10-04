@@ -79,6 +79,7 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> TUYERE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.TUYERE);
     public static final DeferredItem<BlockItem> CHARGING_HATCH = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CHARGING_HATCH);
     public static final DeferredItem<BlockItem> TAP_HATCH = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.TAP_HATCH);
+    public static final DeferredItem<BlockItem> CONVERTER_CONTROLLER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CONVERTER_CONTROLLER);
     public static final DeferredItem<BlockItem> BLOWER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BLOWER);
     public static final DeferredItem<Item> SLAG = ModItems.ITEMS.registerSimpleItem("slag");
     /** Spec 4.6: ground slag, a fertiliser worth two bone meal. */

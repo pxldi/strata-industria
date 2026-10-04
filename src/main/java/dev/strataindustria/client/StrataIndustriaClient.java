@@ -70,6 +70,7 @@ public final class StrataIndustriaClient {
         event.register(dev.strataindustria.registry.Tier4Menus.CRUSHER.get(), dev.strataindustria.client.screen.ProcessingScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.WASHER.get(), dev.strataindustria.client.screen.ProcessingScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.BLAST_FURNACE.get(), dev.strataindustria.client.screen.BlastFurnaceScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.CONVERTER.get(), dev.strataindustria.client.screen.ConverterScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

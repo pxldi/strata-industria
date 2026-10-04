@@ -602,6 +602,39 @@
     ],
     "subtitle": "subtitles.strataindustria.coke_oven.working"
   },
+  "converter.blow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.blaze.burn",
+        "pitch": 0.5
+      },
+      {
+        "type": "event",
+        "name": "entity.blaze.burn",
+        "pitch": 0.45,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "item.firecharge.use",
+        "pitch": 0.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.converter.blow"
+  },
+  "converter.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 0.8,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.converter.done"
+  },
   "core_sample.open": {
     "sounds": [
       {
