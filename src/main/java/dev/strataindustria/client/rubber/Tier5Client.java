@@ -20,6 +20,11 @@ public final class Tier5Client {
     static void registerFluidModels(RegisterFluidModelsEvent event) {
         event.register(new FluidModel.Unbaked(new Material(StrataIndustria.id("block/latex_still")),
                 new Material(StrataIndustria.id("block/latex_flow")), null, null), Tier5Fluids.LATEX, Tier5Fluids.FLOWING_LATEX);
+        for (Tier5Fluids.Entry fluid : Tier5Fluids.ALL.values()) {
+            Material still = new Material(StrataIndustria.id("block/fluid/" + fluid.name() + (fluid.gas() ? "" : "_still")));
+            Material flow = fluid.gas() ? still : new Material(StrataIndustria.id("block/fluid/" + fluid.name() + "_flow"));
+            event.register(new FluidModel.Unbaked(still, flow, null, null), fluid.source(), fluid.flowing());
+        }
     }
 
     @SubscribeEvent

@@ -189,7 +189,7 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
         int i = slot - FIRST_HEAT_SLOT;
         ItemStack stack = items.get(slot);
         Optional<RecipeHolder<RoastingRecipe>> found = RoastingRecipe.recipeFor(level, stack);
-        if (found.isEmpty()) {
+        if (found.isEmpty() || !found.get().value().forge()) {
             roastProgress[i] = roastTotal[i] = 0;
             return false;
         }
@@ -199,7 +199,7 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
         if (heat < recipe.minTemperature()) return false;
         roastProgress[i] += HEAT_INTERVAL;
         if (roastProgress[i] >= recipe.ticks()) {
-            ItemStack result = recipe.result().create();
+            ItemStack result = recipe.assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(stack));
             result.setCount(Math.min(result.getMaxStackSize(), stack.getCount() * result.getCount()));
             Heat.set(result, heat, now);
             items.set(slot, result);

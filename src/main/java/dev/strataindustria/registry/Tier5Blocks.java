@@ -7,7 +7,10 @@ import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
+import dev.strataindustria.electric.machine.ChemicalMachineBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
+import dev.strataindustria.electric.machine.ElectrolyserBlockEntity;
+import dev.strataindustria.electric.machine.MixerBlockEntity;
 import dev.strataindustria.electric.machine.BenderBlockEntity;
 import dev.strataindustria.electric.machine.LatheBlock;
 import dev.strataindustria.electric.machine.LatheBlockEntity;
@@ -84,6 +87,12 @@ public final class Tier5Blocks {
             "bender", p -> new ElectricMachineBlock<>(Tier5BlockEntities.BENDER, BenderBlockEntity::new, p), Tier5Blocks::machine);
     public static final DeferredBlock<LatheBlock> LATHE = ModBlocks.BLOCKS.registerBlock(
             "lathe", p -> new LatheBlock(Tier5BlockEntities.LATHE, LatheBlockEntity::new, p), Tier5Blocks::machine);
+
+    // Spec 11.1 and 11.2: the chemistry machines.
+    public static final DeferredBlock<ChemicalMachineBlock<MixerBlockEntity>> MIXER = ModBlocks.BLOCKS.registerBlock(
+            "mixer", p -> new ChemicalMachineBlock<>(Tier5BlockEntities.MIXER, MixerBlockEntity::new, p), Tier5Blocks::machine);
+    public static final DeferredBlock<ChemicalMachineBlock<ElectrolyserBlockEntity>> ELECTROLYSER = ModBlocks.BLOCKS.registerBlock(
+            "electrolyser", p -> new ChemicalMachineBlock<>(Tier5BlockEntities.ELECTROLYSER, ElectrolyserBlockEntity::new, p), Tier5Blocks::machine);
 
     private static Block.Properties cable(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BLACK)

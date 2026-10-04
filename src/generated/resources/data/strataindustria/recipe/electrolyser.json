@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "H": "strataindustria:lv_machine_hull",
+    "Q": "strataindustria:lead_plate",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    " Q ",
+    "CHW",
+    " Q "
+  ],
+  "result": {
+    "id": "strataindustria:electrolyser"
+  }
+}

@@ -38,7 +38,8 @@ final class Tier5Models {
         for (var item : java.util.List.of(Tier5Items.MAGNET, Tier5Items.COPPER_ROD, Tier5Items.COPPER_WIRE, Tier5Items.LEAD_PLATE,
                 Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER, Tier5Items.LATEX_BUCKET, Tier5Items.TREE_TAP,
                 Tier5Items.RED_ALLOY_ROD, Tier5Items.RED_ALLOY_WIRE, Tier5Items.DRAW_PLATE, Tier5Items.CIRCUIT_BOARD, Tier5Items.BASIC_CIRCUIT,
-                Tier5Items.ELECTRIC_MOTOR)) {
+                Tier5Items.ELECTRIC_MOTOR, Tier5Items.ALUMINIUM_WIRE, Tier5Items.STEEL_WIRE, Tier5Items.SULFURIC_ACID_BUCKET, Tier5Items.ALUM,
+                Tier5Items.ALUMINA)) {
             itemModels.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
         }
         treeTap(blockModels);
@@ -49,6 +50,8 @@ final class Tier5Models {
         machine(blockModels, itemModels, Tier5Blocks.MACERATOR.get(), "macerator");
         machine(blockModels, itemModels, Tier5Blocks.WIREMILL.get(), "wiremill");
         machine(blockModels, itemModels, Tier5Blocks.BENDER.get(), "bender");
+        machine(blockModels, itemModels, Tier5Blocks.MIXER.get(), "mixer");
+        machine(blockModels, itemModels, Tier5Blocks.ELECTROLYSER.get(), "electrolyser");
         lathe(blockModels, itemModels);
         generator(blockModels, itemModels, Tier5Blocks.STEAM_TURBINE.get(), "steam_turbine", false);
         generator(blockModels, itemModels, Tier5Blocks.COMBUSTION_GENERATOR.get(), "combustion_generator", true);

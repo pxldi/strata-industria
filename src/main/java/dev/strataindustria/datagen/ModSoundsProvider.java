@@ -455,6 +455,14 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:item.axe.strip", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.45f))
                 .with(sound("minecraft:item.axe.strip", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.4f))
                 .with(sound("minecraft:item.axe.strip", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.4f)));
+        add(Tier5Sounds.MIXER_STIR, definition().subtitle(subtitle("block.mixer.stir"))
+                .with(sound("minecraft:entity.generic.swim", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f))
+                .with(sound("minecraft:entity.generic.swim", SoundDefinition.SoundType.EVENT).pitch(0.65f).volume(0.35f))
+                .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.3f)));
+        add(Tier5Sounds.ELECTROLYSER_BUBBLE, definition().subtitle(subtitle("block.electrolyser.bubble"))
+                .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(1.0f).volume(0.5f))
+                .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.45f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.12f)));
         add(Tier5Sounds.STEAM_TURBINE_RUN, definition().subtitle(subtitle("block.steam_turbine.run"))
                 .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.5f))
                 .with(sound("minecraft:entity.minecart.riding", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f))

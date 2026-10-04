@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "F": "strataindustria:bronze_fluid_pipe",
+    "H": "strataindustria:lv_machine_hull",
+    "M": "strataindustria:electric_motor"
+  },
+  "pattern": [
+    " F ",
+    "CHM",
+    " F "
+  ],
+  "result": {
+    "id": "strataindustria:mixer"
+  }
+}

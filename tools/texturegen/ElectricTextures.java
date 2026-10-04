@@ -1497,6 +1497,268 @@ public final class ElectricTextures {
         }
     }
 
+    // ---------------------------------------------------------------- chemistry (aluminium, acids, mixer, electrolyser)
+
+    static final TextureGen.Ramp ALUMINA = TextureGen.ramp(0xffffff, 0xa4aab4, 0xc2c7ce, 0xdce0e4, 0xeef0f3, 0xfafbfc);
+    static final TextureGen.Ramp ALUM = TextureGen.ramp(0xffffff, 0x6c667c, 0x8e88a0, 0xb4b0c4, 0xd6d4e0, 0xeeedf5);
+    static final TextureGen.Ramp ACID = TextureGen.ramp(0, 0x7a7430, 0x9a9040, 0xbcb25a, 0xd8cf7c, 0xeee8a2);
+    static final TextureGen.Ramp BRINE = TextureGen.ramp(0, 0x2e4a50, 0x3e6068, 0x507a80, 0x6a9498, 0x8cb2b2);
+
+    static final String[] ALUMINA_HEAP = {
+            "....5s......",
+            "...455554...",
+            "..44555554..",
+            ".3445545544.",
+            "334454444433",
+            "233344343332",
+            ".2233333322.",
+    };
+    static final String[] ALUM_LUMPS = {
+            "....s5...s5.",
+            "...4554.4554",
+            "..4455433443",
+            ".44554344332",
+            "344433444322",
+            "233333333221",
+            ".2222222221.",
+    };
+
+    static void chemistry() throws IOException {
+        for (String m : new String[]{"ingot", "nugget", "plate", "rod"}) {
+            String[] shape = m.equals("ingot") ? TextureGen.INGOT : m.equals("nugget") ? TextureGen.NUGGET
+                    : m.equals("plate") ? TextureGen.PLATE : TextureGen.ROD;
+            save("item/aluminium_" + m, TextureGen.map(ALUMINIUM, shape));
+        }
+        save("item/aluminium_wire", TextureGen.map(ALUMINIUM, WIRE));
+        save("item/steel_wire", TextureGen.map(STEEL, WIRE));
+        save("item/alumina", TextureGen.map(ALUMINA, ALUMINA_HEAP));
+        save("item/alum", TextureGen.map(ALUM, ALUM_LUMPS));
+        save("item/sulfuric_acid_bucket", TextureGen.map(IRON, ACID, TextureGen.CREOSOTE_BUCKET));
+
+        fluidAnimated("block/fluid/sulfuric_acid_still", acidFluid(false), 4);
+        fluidAnimated("block/fluid/sulfuric_acid_flow", acidFluid(true), 4);
+        fluidAnimated("block/fluid/brine_still", brineFluid(false), 2);
+        fluidAnimated("block/fluid/brine_flow", brineFluid(true), 2);
+        TextureGen.save("block/fluid/hydrogen", gasTexture(0xcfe4ff, 0x4c, 301));
+        TextureGen.save("block/fluid/oxygen", gasTexture(0xb4e6ee, 0xb0, 302));
+        TextureGen.save("block/fluid/chlorine", gasTexture(0xbcc068, 0xe0, 303));
+
+        for (boolean mv : new boolean[]{false, true}) {
+            String t = mv ? "mv" : "lv";
+            for (String n : new String[]{"mixer", "electrolyser"}) {
+                boolean mix = n.equals("mixer");
+                save("block/" + n + "_front_" + t, chemFront(mix, mv, 0, false));
+                BufferedImage s = new BufferedImage(16, 128, BufferedImage.TYPE_INT_ARGB);
+                for (int f = 0; f < 8; f++) s.getGraphics().drawImage(chemFront(mix, mv, f, true), 0, f * 16, null);
+                TextureGen.saveAnimated("block/" + n + "_front_" + t + "_active", s, 2);
+                OUTS.put("preview/" + n + "_" + t, chemFront(mix, mv, 2, true));
+            }
+        }
+        TextureGen.saveRaw("gui/mixer", mixerGui());
+        TextureGen.saveRaw("gui/electrolyser", electrolyserGui());
+        for (String n : new String[]{"aluminium_ingot", "aluminium_plate", "aluminium_rod", "aluminium_wire", "steel_wire",
+                "alumina", "alum", "sulfuric_acid_bucket"})
+            OUTS.put("preview/item_" + n, ImageIO.read(TextureGen.OUT.resolve("item/" + n + ".png").toFile()));
+    }
+
+    static void fluidAnimated(String path, BufferedImage strip, int frametime) throws IOException {
+        TextureGen.save(path, strip);
+        java.nio.file.Files.writeString(TextureGen.OUT.resolve(path + ".png.mcmeta"),
+                "{\"animation\":{\"frametime\":" + frametime + ",\"interpolate\":false}}\n");
+    }
+
+    /** Oily pale yellow, partial alpha: slow folds with thin lighter sheen streaks. Looping, same layout as creosote. */
+    static BufferedImage acidFluid(boolean flow) {
+        int p = flow ? 32 : 16, frames = 32, k = p / 16;
+        BufferedImage im = new BufferedImage(p, p * frames, BufferedImage.TYPE_INT_ARGB);
+        double tau = 2 * Math.PI, p1 = 0.37, p2 = 0.71;
+        for (int f = 0; f < frames; f++) {
+            double t = (double) f / frames;
+            for (int y = 0; y < p; y++)
+                for (int x = 0; x < p; x++) {
+                    double u = (double) x / p, w = (double) y / p;
+                    double wf = flow ? w - t : w;
+                    double v = 0.5 + 0.24 * Math.sin(tau * (k * u + k * w + p1) + 0.9 * Math.sin(tau * (wf - (flow ? 0 : t))))
+                            + 0.12 * Math.sin(tau * (2 * k * u - k * w + p2 + (flow ? 0 : t)));
+                    int step = v < 0.28 ? 2 : v < 0.62 ? 3 : 4;
+                    int alpha = 0xC4;
+                    double sy = flow ? wf : w - t;
+                    double streak = Math.sin(tau * (2 * k * u + 3 * sy + 0.2));
+                    if (streak > 0.93 && v > 0.45) { step = 5; alpha = 0xDC; }
+                    im.setRGB(x, f * p + y, alpha << 24 | ACID.get(step));
+                }
+        }
+        return im;
+    }
+
+    /** Vanilla water structure (lattice of waves quantised to four shades) in a grey green-blue. */
+    static BufferedImage brineFluid(boolean flow) {
+        int p = flow ? 32 : 16, frames = 16, k = p / 16;
+        BufferedImage im = new BufferedImage(p, p * frames, BufferedImage.TYPE_INT_ARGB);
+        double tau = 2 * Math.PI;
+        int[][] waves = {{1, 1, 1}, {-1, 2, 1}, {2, -1, 2}};
+        double[] amp = {1.0, 0.7, 0.45};
+        for (int f = 0; f < frames; f++) {
+            double t = (double) f / frames;
+            for (int y = 0; y < p; y++)
+                for (int x = 0; x < p; x++) {
+                    double sum = 0;
+                    for (int i = 0; i < 3; i++)
+                        sum += amp[i] * Math.sin(tau * (k * (waves[i][0] * x + waves[i][1] * y) / (double) p
+                                - waves[i][2] * (flow ? t : -t) + i * 1.7));
+                    double v = sum / 2.15 + 0.5;
+                    int step = v < 0.3 ? 2 : v < 0.55 ? 3 : v < 0.8 ? 4 : 5;
+                    int alpha = step == 5 ? 0xCC : step == 2 ? 0xB0 : 0xBC;
+                    im.setRGB(x, f * p + y, alpha << 24 | BRINE.get(step));
+                }
+        }
+        return im;
+    }
+
+    /** Single-frame gas: soft warped three-shade clouds of one tint, like steam and sulfur dioxide. */
+    static BufferedImage gasTexture(int tint, int alpha, long seed) {
+        Random r = new Random(seed);
+        double[][] g = new double[4][4];
+        for (double[] row : g) for (int i = 0; i < 4; i++) row[i] = r.nextDouble();
+        double[] val = new double[256];
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double u = x / 4.0, w = y / 4.0;
+                int x0 = (int) Math.floor(u), y0 = (int) Math.floor(w);
+                double fx = u - x0, fy = w - y0;
+                fx = fx * fx * (3 - 2 * fx); fy = fy * fy * (3 - 2 * fy);
+                double a = g[y0 & 3][x0 & 3], b = g[y0 & 3][(x0 + 1) & 3], c2 = g[(y0 + 1) & 3][x0 & 3], d = g[(y0 + 1) & 3][(x0 + 1) & 3];
+                val[y * 16 + x] = (a * (1 - fx) + b * fx) * (1 - fy) + (c2 * (1 - fx) + d * fx) * fy;
+            }
+        double[] sorted = val.clone();
+        java.util.Arrays.sort(sorted);
+        double q1 = sorted[(int) (256 * 0.30)], q2 = sorted[(int) (256 * 0.72)];
+        BufferedImage im = TextureGen.img();
+        for (int i = 0; i < 256; i++) {
+            double m = val[i] < q1 ? 0.88 : val[i] < q2 ? 1.0 : 1.07;
+            int col = 0;
+            for (int sh = 16; sh >= 0; sh -= 8) col |= Math.min(255, (int) Math.round((tint >> sh & 0xFF) * m)) << sh;
+            int a = val[i] < q1 ? alpha * 9 / 10 : alpha;
+            im.setRGB(i % 16, i / 16, a << 24 | col);
+        }
+        return im;
+    }
+
+    /** Pipe stub: dark mouth over a shaded brass rim, 2x2. */
+    static void port(BufferedImage im, int x, int y) {
+        pxs(im, x, y, c(STEEL, 1)); pxs(im, x + 1, y, c(STEEL, 1));
+        pxs(im, x, y + 1, c(BRASS, 5)); pxs(im, x + 1, y + 1, c(BRASS, 3));
+    }
+
+    static void chemLip(BufferedImage im, int x0, int y0, int x1, int y1, boolean mv) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        for (int x = x0; x <= x1; x++) { pxs(im, x, y0, c(r, base + 2)); pxs(im, x, y1, c(r, base - 1)); }
+        for (int y = y0; y <= y1; y++) { pxs(im, x0, y, c(r, base + 2)); pxs(im, x1, y, c(r, base - 1)); }
+        pxs(im, x1, y0, c(r, base)); pxs(im, x0, y1, c(r, base));
+    }
+
+    static final int GLASS_DARK = 0x1a2630, GLASS_LIT = 0xa8c8d0, LIQUID = 0x4a6a74, LIQUID_LIVE = 0x6a98a4;
+
+    static BufferedImage chemFront(boolean mixer, boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, (mixer ? 761 : 771) + (mv ? 1 : 0));
+        if (mixer) {
+            for (int x : new int[]{2, 5, 8}) port(im, x, 2);
+            double cx = 8.0, cy = 9.0;
+            double ph = active ? frame * Math.PI / 8 : 0.5;
+            for (int y = 5; y <= 12; y++)
+                for (int x = 4; x <= 11; x++) {
+                    double ox = x + 0.5 - cx, oy = y + 0.5 - cy, d = Math.sqrt(ox * ox + oy * oy);
+                    if (d > 4.0) continue;
+                    int col;
+                    if (d > 3.0) col = c(r, ox + oy < 0 ? base + 2 : base - 1);
+                    else {
+                        col = GLASS_DARK;
+                        if (y >= 9) col = active ? LIQUID_LIVE : LIQUID;
+                        if (y == 9 && active && (x + frame) % 4 < 2) col = TextureGen.mix(LIQUID_LIVE, 0xffffff, 0.3);
+                        else if (y == 9) col = TextureGen.mix(col, 0xffffff, 0.15);
+                        if (ox < -1.5 && oy < -0.5 && ox + oy < -3.2) col = GLASS_LIT;
+                    }
+                    pxs(im, x, y, col);
+                }
+            // agitator: two blades from a hub, drawn over the glass and the liquid
+            for (int s = -1; s <= 1; s += 2)
+                for (double t = 1.0; t <= 2.6; t += 0.5) {
+                    int px = (int) Math.floor(cx + s * t * Math.cos(ph)), py = (int) Math.floor(cy + s * t * Math.sin(ph));
+                    pxs(im, px, py, c(STEEL, t > 2.0 ? 4 : 5));
+                }
+            for (int j = 8; j <= 9; j++) for (int i = 7; i <= 8; i++) pxs(im, i, j, c(STEEL, i == 7 && j == 8 ? 5 : 3));
+        } else {
+            // tall glass cell with two lead electrodes
+            chemLip(im, 2, 2, 9, 10, mv);
+            fill(im, 3, 3, 8, 9, GLASS_DARK);
+            fill(im, 3, 5, 8, 9, active ? LIQUID_LIVE : LIQUID);
+            for (int x = 3; x <= 8; x++) pxs(im, x, 5, TextureGen.mix(active ? LIQUID_LIVE : LIQUID, 0xffffff, 0.2));
+            pxs(im, 3, 3, GLASS_LIT); pxs(im, 3, 4, TextureGen.mix(GLASS_LIT, GLASS_DARK, 0.5));
+            for (int[] e : new int[][]{{3, 4}, {7, 8}}) {
+                for (int y = 3; y <= 9; y++) { pxs(im, e[0], y, c(LEAD, 5)); pxs(im, e[1], y, c(LEAD, 3)); }
+                pxs(im, e[0], 3, c(LEAD, 5)); pxs(im, e[1], 3, c(LEAD, 4));
+            }
+            if (active) {
+                int[][] bubbles = {{5, 0}, {6, 4}, {5, 5}, {6, 1}};
+                for (int[] b : bubbles) {
+                    int yy = 9 - ((frame + b[1]) % 8) * 5 / 8;
+                    pxs(im, b[0], Math.max(5, yy), 0xe8f4ff);
+                }
+            }
+            for (int y : new int[]{7, 9, 11}) { pxs(im, 12, y, c(STEEL, 1)); pxs(im, 13, y, c(STEEL, 1)); pxs(im, 12, y + 1, c(r, base + 2)); pxs(im, 13, y + 1, c(r, base + 2)); }
+            for (int x : new int[]{2, 5, 8}) port(im, x, 11);
+        }
+        lampOff(im, mv);
+        return im;
+    }
+
+    // ---- GUIs
+
+    /** 18x36 recessed glass tank frame around a 16x34 well at (x, y), quarter tick marks on the right edge. */
+    static void tank(BufferedImage im, int x, int y) {
+        TextureGen.well(im, x - 1, y - 1, 18, 36, 0x20262e);
+        for (int j = 0; j < 34; j++) {
+            TextureGen.px(im, x, y + j, 0x28303a);
+            TextureGen.px(im, x + 1, y + j, 0x232a33);
+        }
+        for (int j = 0; j < 4; j++) TextureGen.px(im, x + 1, y + 1 + j, 0x3c4a58);
+        for (int q = 1; q <= 3; q++) {
+            int ty = y + 34 - q * 34 / 4;
+            int len = q == 2 ? 4 : 2;
+            for (int i = 0; i < len; i++) TextureGen.px(im, x + 15 - i, ty, 0x7a8ea0);
+            TextureGen.px(im, x + 16, ty, TextureGen.SLOT_DARK);
+        }
+    }
+
+    static BufferedImage chemGui(int[][] items, int[][] tanks, int arrowX) {
+        BufferedImage im = machineGui(new int[]{}, 0);
+        for (int[] t : tanks) tank(im, t[0], t[1]);
+        for (int[] s : items) TextureGen.slot(im, s[0], s[1]);
+        TextureGen.arrow(im, arrowX, 36);
+        return im;
+    }
+
+    static BufferedImage mixerGui() {
+        return chemGui(new int[][]{{36, 54}, {54, 54}, {118, 54}},
+                new int[][]{{36, 18}, {54, 18}, {72, 18}, {118, 18}}, 92);
+    }
+
+    static BufferedImage electrolyserGui() {
+        BufferedImage im = chemGui(new int[][]{{36, 54}, {54, 54}, {100, 54}, {118, 54}},
+                new int[][]{{36, 18}, {100, 18}, {118, 18}, {136, 18}}, 66);
+        // small lead electrode pair between the input tank and the arrow, with two rising bubbles
+        TextureGen.fill(im, 56, 20, 8, 1, 0x373737);
+        for (int[] e : new int[][]{{57, 5}, {61, 3}}) {
+            for (int y = 21; y <= 34; y++) { TextureGen.px(im, e[0], y, c(LEAD, e[1])); TextureGen.px(im, e[0] + 1, y, c(LEAD, e[1] - 1)); }
+            TextureGen.px(im, e[0], 21, c(LEAD, 5));
+        }
+        TextureGen.px(im, 60, 30, 0x8b8b8b); TextureGen.px(im, 60, 26, 0x8b8b8b); TextureGen.px(im, 60, 23, 0x8b8b8b);
+        return im;
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -1509,6 +1771,7 @@ public final class ElectricTextures {
         redAlloy();
         machines();
         generators();
+        chemistry();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");
     }

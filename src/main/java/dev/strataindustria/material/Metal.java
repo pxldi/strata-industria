@@ -39,7 +39,9 @@ public enum Metal implements StringRepresentable {
     /** Copper and redstone: wire for circuits, never a tool. Its rod and wire are tier 5 items. */
     RED_ALLOY(1000, 2, 0x8A2A2E, Forms.STORAGE, false),
     /** Exists only dissolved in molten copper, like carbon in iron. */
-    REDSTONE(0, 0, 0x862A24, Forms.NONE, false);
+    REDSTONE(0, 0, 0x862A24, Forms.NONE, false),
+    /** Soft and light: plates, rods and wire for MV cables and overhead lines, never tools. Colour is ramp step 3. */
+    ALUMINIUM(660, 3, 0x8A929C, Forms.PARTS, false);
 
     public static final Codec<Metal> CODEC = StringRepresentable.fromEnum(Metal::values);
     public static final StreamCodec<ByteBuf, Metal> STREAM_CODEC =
@@ -106,9 +108,9 @@ public enum Metal implements StringRepresentable {
         return forms == Forms.PARTS || forms == Forms.TOOL_METAL;
     }
 
-    /** Generic rods (tier 4 spec 4.1): steel and brass. Wrought iron has its own tier 3 rod item. */
+    /** Generic rods (tier 4 spec 4.1, tier 5 spec 4.1): steel, brass and aluminium. Wrought iron has its own tier 3 rod item. */
     public boolean hasRod() {
-        return this == STEEL || this == BRASS;
+        return this == STEEL || this == BRASS || this == ALUMINIUM;
     }
 
     /** Gears (tier 4 spec 6.1): brass, steel and the bronzes. */

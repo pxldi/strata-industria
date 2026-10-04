@@ -1,0 +1,10 @@
+{
+  "parent": "strataindustria:block/electric_machine",
+  "textures": {
+    "bottom": "strataindustria:block/casing/lv_bottom",
+    "front": "strataindustria:block/mixer_front_lv",
+    "side": "strataindustria:block/casing/lv_side",
+    "status": "strataindustria:block/overlay/status_error",
+    "top": "strataindustria:block/casing/lv_top"
+  }
+}

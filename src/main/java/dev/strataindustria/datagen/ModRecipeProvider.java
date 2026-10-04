@@ -335,8 +335,10 @@ final class ModRecipeProvider extends RecipeProvider {
                     new ItemStackTemplate(ModItems.RODS.get(metal).get(), 2),
                     List.of(rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST),
                             rule(Rule.Kind.HIT, Rule.Where.NOT_LAST)), 45), null);
-            anvil(m + "_gear", ingot, 1, ModItems.GEARS.get(metal).get(), 70,
-                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.UPSET, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
+            if (ModItems.GEARS.containsKey(metal)) {
+                anvil(m + "_gear", ingot, 1, ModItems.GEARS.get(metal).get(), 70,
+                        rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.UPSET, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
+            }
         }
         shaped(RecipeCategory.DECORATIONS, ModItems.BRONZE_ANVIL.get())
                 .pattern("PPP")

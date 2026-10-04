@@ -1,0 +1,24 @@
+{
+  "type": "strataindustria:mixing",
+  "fluid_results": [
+    {
+      "amount": 100,
+      "fluid": "strataindustria:sulfuric_acid"
+    }
+  ],
+  "fluids": [
+    {
+      "amount": 100,
+      "fluid": "strataindustria:sulfur_dioxide"
+    },
+    {
+      "amount": 50,
+      "fluid": "strataindustria:oxygen"
+    },
+    {
+      "amount": 100,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "ticks": 40
+}

@@ -36,6 +36,11 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(common("wires/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_WIRE.getKey());
         tag(common("rods/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_ROD.getKey());
         tag(common("plates/lead")).add(dev.strataindustria.registry.Tier5Items.LEAD_PLATE.getKey());
+        tag(common("wires/aluminum")).add(dev.strataindustria.registry.Tier5Items.ALUMINIUM_WIRE.getKey());
+        tag(common("wires/steel")).add(dev.strataindustria.registry.Tier5Items.STEEL_WIRE.getKey());
+        tag(common("rods/aluminum")).add(ModItems.RODS.get(Metal.ALUMINIUM).getKey());
+        tag(common("plates/aluminum")).add(ModItems.PLATES.get(Metal.ALUMINIUM).getKey());
+        tag(common("ingots/aluminum")).add(key(ModItems.ingot(Metal.ALUMINIUM)));
         tag(common("wires/red_alloy")).add(dev.strataindustria.registry.Tier5Items.RED_ALLOY_WIRE.getKey());
         tag(common("rods/red_alloy")).add(dev.strataindustria.registry.Tier5Items.RED_ALLOY_ROD.getKey());
         // Tier 6 spec 17.6: plastics and synthetic rubber.

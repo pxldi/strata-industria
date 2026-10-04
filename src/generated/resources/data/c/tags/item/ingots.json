@@ -12,6 +12,7 @@
     "#c:ingots/lead",
     "#c:ingots/brass",
     "#c:ingots/solder",
-    "#c:ingots/red_alloy"
+    "#c:ingots/red_alloy",
+    "#c:ingots/aluminium"
   ]
 }

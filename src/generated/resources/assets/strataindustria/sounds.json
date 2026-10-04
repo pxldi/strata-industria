@@ -258,6 +258,28 @@
     ],
     "subtitle": "subtitles.strataindustria.block.electric_furnace.run"
   },
+  "block.electrolyser.bubble": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "pitch": 1.1,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 0.5,
+        "volume": 0.12
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.electrolyser.bubble"
+  },
   "block.inserter.swing": {
     "sounds": [
       {
@@ -365,6 +387,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.machine.power_on"
+  },
+  "block.mixer.stir": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.generic.swim",
+        "pitch": 0.7,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "entity.generic.swim",
+        "pitch": 0.65,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "pitch": 0.9,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.mixer.stir"
   },
   "block.pit_prop.creak": {
     "sounds": [

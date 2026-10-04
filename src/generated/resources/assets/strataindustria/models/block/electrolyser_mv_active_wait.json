@@ -1,0 +1,10 @@
+{
+  "parent": "strataindustria:block/electric_machine",
+  "textures": {
+    "bottom": "strataindustria:block/casing/mv_bottom",
+    "front": "strataindustria:block/electrolyser_front_mv_active",
+    "side": "strataindustria:block/casing/mv_side",
+    "status": "strataindustria:block/overlay/status_wait",
+    "top": "strataindustria:block/casing/mv_top"
+  }
+}

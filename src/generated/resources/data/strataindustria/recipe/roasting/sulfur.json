@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:roasting",
+  "forge": false,
+  "gas": {
+    "amount": 100,
+    "fluid": "strataindustria:sulfur_dioxide"
+  },
+  "ingredient": "strataindustria:sulfur_dust",
+  "min_temperature": 400,
+  "ticks": 100
+}

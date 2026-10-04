@@ -1,0 +1,21 @@
+{
+  "type": "strataindustria:mixing",
+  "fluids": [
+    {
+      "amount": 100,
+      "fluid": "strataindustria:sulfuric_acid"
+    }
+  ],
+  "item_results": [
+    {
+      "id": "strataindustria:alum"
+    }
+  ],
+  "items": [
+    {
+      "count": 4,
+      "ingredient": "minecraft:clay_ball"
+    }
+  ],
+  "ticks": 200
+}
