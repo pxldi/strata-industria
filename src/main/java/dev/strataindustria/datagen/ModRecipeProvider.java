@@ -370,6 +370,19 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_fire_bricks", has(bricks))
                 .save(output, key("fire_brick_wall"));
 
+        // Spec 5.1: the bloomery controller, with a copper or bronze plate for the door.
+        shaped(RecipeCategory.DECORATIONS, ModItems.BLOOMERY.get())
+                .pattern("FFF")
+                .pattern("F F")
+                .pattern("FPF")
+                .define('F', fireBrick)
+                .define('P', ModTags.Items.SOFT_METAL_PLATES)
+                .unlockedBy("has_fire_brick", has(fireBrick))
+                .save(output, key("bloomery"));
+        // Spec 9.3: hammering the slag out of a bloom. Partial blooms give nuggets instead (AnvilRecipe#assemble).
+        anvil("bloom_refining", ModItems.RAW_BLOOM.get(), 1, Items.IRON_INGOT, 60,
+                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+
         // Spec 2: the furnace returns in tier 3, built from fire bricks.
         shaped(RecipeCategory.DECORATIONS, Items.FURNACE)
                 .pattern("FFF")

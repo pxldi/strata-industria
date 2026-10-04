@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/raw_bloom",
+    "layer1": "strataindustria:item/glow/raw_bloom"
+  }
+}

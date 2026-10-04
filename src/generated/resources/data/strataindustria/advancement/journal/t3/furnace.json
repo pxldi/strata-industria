@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/fire_brick",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:furnace"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.furnace.hint"
+    },
+    "icon": {
+      "id": "minecraft:furnace"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.furnace"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

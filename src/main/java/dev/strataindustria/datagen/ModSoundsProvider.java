@@ -92,6 +92,32 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition pages = definition().subtitle(subtitle("journal.open"));
         for (int i = 1; i <= 3; i++) pages.with(sound("minecraft:item/book/open_flip" + i).volume(0.8f));
         add(ModSounds.JOURNAL_OPEN, pages);
+
+        // Tier 3 bloomery (spec 20.6): a whoosh of catching charcoal, a low draught roar, ore on coals, and
+        // a metallic crunch as a bloom comes out.
+        add(ModSounds.BLOOMERY_LIGHT, definition().subtitle(subtitle("bloomery.light"))
+                .with(sound("minecraft:mob/ghast/fireball4").pitch(0.8f).volume(0.6f))
+                .with(sound("minecraft:fire/ignite").pitch(0.7f)));
+        SoundDefinition roar = definition().subtitle(subtitle("bloomery.roar"));
+        roar.with(sound("minecraft:fire/fire").pitch(0.6f).volume(0.9f));
+        for (int i = 1; i <= 2; i++) roar.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.6f).volume(0.8f));
+        add(ModSounds.BLOOMERY_ROAR, roar);
+        SoundDefinition charge = definition().subtitle(subtitle("bloomery.charge"));
+        for (int i = 1; i <= 3; i++) charge.with(sound("minecraft:dig/gravel" + i).pitch(0.9f).volume(0.8f));
+        add(ModSounds.BLOOMERY_CHARGE, charge);
+        add(ModSounds.BLOOMERY_DONE, definition().subtitle(subtitle("bloomery.done"))
+                .with(sound("minecraft:liquid/lavapop").pitch(0.6f))
+                .with(sound("minecraft:random/fizz").pitch(0.7f).volume(0.6f)));
+        SoundDefinition extract = definition().subtitle(subtitle("bloomery.extract"));
+        for (int i = 1; i <= 3; i++) extract.with(sound("minecraft:random/anvil_land").pitch(0.7f).volume(0.4f));
+        extract.with(sound("minecraft:random/fizz").pitch(1.2f).volume(0.5f));
+        add(ModSounds.BLOOMERY_EXTRACT, extract);
+        SoundDefinition bloomHit = definition().subtitle(subtitle("raw_bloom.hit"));
+        for (int i = 1; i <= 4; i++) bloomHit.with(sound("minecraft:random/anvil_use").pitch(0.6f).volume(0.6f));
+        bloomHit.with(sound("minecraft:liquid/lavapop").pitch(1.4f).volume(0.4f));
+        add(ModSounds.RAW_BLOOM_HIT, bloomHit);
+        add(ModSounds.WROUGHT_IRON_HIT, definition().subtitle(subtitle("wrought_iron.hit"))
+                .with(sound("minecraft:random/anvil_use").pitch(0.85f).volume(0.8f)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
 

@@ -32,6 +32,8 @@ public final class Journal {
     public static final String STONE_ANVIL = "stone_anvil";
     public static final String PROSPECT = "prospect";
     public static final String BRONZE_ARMOUR = "bronze_armour";
+    public static final String BLOOMERY_BUILT = "bloomery_built";
+    public static final String BLOOM_REFINED = "bloom_refined";
 
     /** Block events count for players this close: whoever lit the kiln is standing near it. */
     static final double NEARBY = 16;
@@ -43,7 +45,9 @@ public final class Journal {
             "t0/loose_rock", "t0/knap", "t0/twine", "t0/stone_axe", "t0/log", "t0/fire", "t0/crafting_table", "t0/clay",
             "t1/clay_forming", "t1/pit_kiln", "t1/charcoal", "t1/forge", "t1/nugget", "t1/crucible",
             "t2/melt", "t2/copper_ingot", "t2/copper_pickaxe", "t2/alloy_metal", "t2/quern", "t2/bronze",
-            "t2/stone_anvil", "t2/smith", "t2/bronze_tools", "t2/bronze_armour", "t2/prospectors_pick", "t2/bronze_anvil");
+            "t2/stone_anvil", "t2/smith", "t2/bronze_tools", "t2/bronze_armour", "t2/prospectors_pick", "t2/bronze_anvil",
+            "t3/fire_clay", "t3/fire_brick", "t3/iron_ore", "t3/bloomery", "t3/bloom", "t3/refine", "t3/iron_pickaxe",
+            "t3/bucket", "t3/furnace");
 
     public static Identifier goal(String path) {
         return StrataIndustria.id("journal/" + path);

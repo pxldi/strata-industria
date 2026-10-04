@@ -1997,7 +1997,7 @@ public final class TextureGen {
 
     /** Metal items that go in the forge: ingots, nuggets, plates, cast heads and blades, the tongs jaw. */
     static final java.util.regex.Pattern HEATABLE =
-            java.util.regex.Pattern.compile("(?!stone_|unfired_).*(_ingot|_nugget|(?<!chest)_plate|_head|_blade|_rod)|tongs_jaw");
+            java.util.regex.Pattern.compile("(?!stone_|unfired_).*(_ingot|_nugget|(?<!chest)_plate|_head|_blade|_rod)|tongs_jaw|raw_bloom");
 
     /**
      * A pale copy of each heatable item: its shading kept as light greys so the heat tint reads as glowing

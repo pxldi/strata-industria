@@ -26,6 +26,7 @@ public final class MetalContent {
     public static final int ROD_UNITS = 50;
     /** A vanilla raw iron, copper or gold from loot: as much as a raw normal hematite. */
     public static final int RAW_VANILLA_UNITS = 28;
+    public static final int BLOOMERY_SLAG_UNITS = 10;
 
     private static Map<Item, Melt> fixed;
 
@@ -55,6 +56,8 @@ public final class MetalContent {
             // Tier 3 spec 4.1: rods are half an ingot, a double ingot two.
             map.put(ModItems.WROUGHT_IRON_ROD.get(), Melt.of(Metal.WROUGHT_IRON, ROD_UNITS, 0));
             map.put(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), Melt.of(Metal.WROUGHT_IRON, 2 * INGOT_UNITS, 0));
+            // Tier 3 spec 5.4: bloomery slag still holds some iron.
+            map.put(ModItems.BLOOMERY_SLAG.get(), Melt.of(Metal.WROUGHT_IRON, BLOOMERY_SLAG_UNITS, 0));
             // Spec 4.2: vanilla raw ores from loot count as raw normal ore.
             map.put(Items.RAW_IRON, Melt.of(Metal.WROUGHT_IRON, RAW_VANILLA_UNITS, 0));
             map.put(Items.RAW_COPPER, Melt.of(Metal.COPPER, RAW_VANILLA_UNITS, 0));
@@ -79,6 +82,8 @@ public final class MetalContent {
     /** The metal in one of this item, if any. */
     public static Optional<Melt> of(ItemStack stack) {
         if (stack.isEmpty()) return Optional.empty();
+        Melt bloom = stack.get(ModDataComponents.BLOOM_CONTENTS.get());
+        if (bloom != null) return Optional.of(bloom);
         Melt slag = stack.get(ModDataComponents.SLAG.get());
         if (slag != null) return Optional.of(slag.scaled(SLAG_RETURN));
         Melt melt = fixed().get(stack.getItem());

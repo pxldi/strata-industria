@@ -119,9 +119,18 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder bronzeAnvil = goal(smith, "t2/bronze_anvil", ModItems.BRONZE_ANVIL.get(), AdvancementType.GOAL,
                 ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.BRONZE_ANVIL.get()));
 
-        // Tier 3 is the next milestone: a signpost with no way to complete it yet.
-        goal(bronzeAnvil, "t3/iron", Items.RAW_IRON, AdvancementType.GOAL,
-                CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance()));
+        // Tier 3 (spec 13): fire clay to bloomery to wrought iron.
+        AdvancementHolder fireClay = goal(bronzeAnvil, "t3/fire_clay", ModItems.FIRE_CLAY_BALL.get(), has(ModItems.FIRE_CLAY_BALL.get()));
+        AdvancementHolder fireBrick = goal(fireClay, "t3/fire_brick", ModItems.FIRE_BRICK.get(), has(ModItems.FIRE_BRICK.get()));
+        AdvancementHolder ironOre = goal(fireBrick, "t3/iron_ore", ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL),
+                InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.IRON_ORES)));
+        AdvancementHolder bloomery = goal(ironOre, "t3/bloomery", ModItems.BLOOMERY.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.BLOOMERY_BUILT));
+        AdvancementHolder bloom = goal(bloomery, "t3/bloom", ModItems.RAW_BLOOM.get(), has(ModItems.RAW_BLOOM.get()));
+        AdvancementHolder refine = goal(bloom, "t3/refine", Items.IRON_INGOT, JournalTrigger.TriggerInstance.of(Journal.BLOOM_REFINED));
+        goal(refine, "t3/iron_pickaxe", Items.IRON_PICKAXE, has(Items.IRON_PICKAXE));
+        goal(refine, "t3/bucket", Items.BUCKET, has(Items.BUCKET));
+        goal(fireBrick, "t3/furnace", Items.FURNACE, has(Items.FURNACE));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */
