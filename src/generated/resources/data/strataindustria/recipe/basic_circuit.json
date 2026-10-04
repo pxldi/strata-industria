@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "strataindustria:circuit_board",
+    "D": "strataindustria:red_alloy_wire",
+    "X": "minecraft:redstone"
+  },
+  "pattern": [
+    " D ",
+    "XBX",
+    " D "
+  ],
+  "result": {
+    "id": "strataindustria:basic_circuit"
+  }
+}
