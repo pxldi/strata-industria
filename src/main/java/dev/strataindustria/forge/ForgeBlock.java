@@ -66,7 +66,7 @@ public class ForgeBlock extends BaseEntityBlock implements Ignitable {
             }
             return InteractionResult.SUCCESS;
         }
-        if (stack.getItem() instanceof FirestarterItem && canIgnite(level, pos, state)) return InteractionResult.PASS;
+        if (stack.getItem() instanceof FirestarterItem && Ignitable.mayIgnite(level, pos, state)) return InteractionResult.PASS;
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 

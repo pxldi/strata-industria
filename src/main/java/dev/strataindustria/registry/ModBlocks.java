@@ -104,11 +104,11 @@ public final class ModBlocks {
                     .noLootTable()
                     .lightLevel(state -> state.getValue(LogPileBlock.LIT) ? 8 : 0)
                     .pushReaction(PushReaction.IMMOVEABLE));
+    // Drops its charcoal to any tool: losing a whole burn to a bare-handed dig is no lesson. A shovel is just faster.
     public static final DeferredBlock<CharcoalPileBlock> CHARCOAL_PILE = BLOCKS.registerBlock("charcoal_pile", CharcoalPileBlock::new,
             p -> p.mapColor(MapColor.COLOR_BLACK)
                     .strength(0.8f)
-                    .sound(SoundType.GRAVEL)
-                    .requiresCorrectToolForDrops());
+                    .sound(SoundType.GRAVEL));
 
     /** Brick forge (spec 4.5). Light 13 while the coals glow. */
     public static final DeferredBlock<ForgeBlock> FORGE = BLOCKS.registerBlock("forge", ForgeBlock::new,
