@@ -42,6 +42,9 @@ neoForge {
         register("gameTestServer") {
             type = "gameTestServer"
             systemProperty("neoforge.enabledGameTestNamespaces", prop("mod_id"))
+            // tools/structure-preview: -PpreviewDir=<dir> makes structure_preview_export write block lists there.
+            providers.gradleProperty("previewDir").orNull?.let { systemProperty("strata.previewDir", it) }
+            providers.gradleProperty("previewOnly").orNull?.let { systemProperty("strata.previewOnly", it) }
         }
         register("data") {
             clientData()
