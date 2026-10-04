@@ -1,8 +1,8 @@
 {
   "type": "strataindustria:knapping",
+  "blows": 6,
   "consume": 4,
   "ingredient": "#strataindustria:loose_rocks",
-  "mirror": false,
   "pattern": [
     ".###.",
     "#####",

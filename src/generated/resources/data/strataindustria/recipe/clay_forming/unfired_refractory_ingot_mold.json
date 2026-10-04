@@ -1,5 +1,6 @@
 {
   "type": "strataindustria:knapping",
+  "blows": 3,
   "consume": 5,
   "ingredient": "strataindustria:fire_clay_ball",
   "pattern": [

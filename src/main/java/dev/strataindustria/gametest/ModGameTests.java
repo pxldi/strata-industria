@@ -16,9 +16,6 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.heat.Heat;
-import dev.strataindustria.knapping.GridPattern;
-import dev.strataindustria.knapping.KnappingInput;
-import dev.strataindustria.knapping.KnappingMenu;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.machine.BellowsBlock;
 import dev.strataindustria.machine.MillstoneBlockEntity;
@@ -96,8 +93,7 @@ public final class ModGameTests {
     private static final Map<String, Consumer<GameTestHelper>> TESTS = new LinkedHashMap<>();
 
     static {
-        TESTS.put("knapping_patterns", ModGameTests::knappingPatterns);
-        TESTS.put("knapping_clicks", ModGameTests::knappingClicks);
+        ShapingGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
         TESTS.put("smithing_shapes", ModGameTests::smithingShapes);
         TESTS.put("item_heat", ModGameTests::itemHeat);
@@ -190,94 +186,7 @@ public final class ModGameTests {
         }
     }
 
-    // Knapping and clay forming (spec 3.2, 4.1): every pattern finds exactly one recipe, mirrored too.
-
-    private static void knappingPatterns(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        ItemStack rock = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.GRANITE).get());
-        ItemStack flint = new ItemStack(Items.FLINT);
-        ItemStack clay = new ItemStack(Items.CLAY_BALL);
-
-        Map<ItemStack, List<String[]>> expected = new LinkedHashMap<>();
-        List<String[]> stone = List.of(
-                pattern(ModItems.STONE_AXE_HEAD.getId().getPath(), ".#...", "####.", "#####", "####.", ".#..."),
-                pattern(ModItems.STONE_KNIFE_BLADE.getId().getPath(), "#....", "##...", ".##..", "..##.", "...##"),
-                pattern(ModItems.STONE_SHOVEL_HEAD.getId().getPath(), ".###.", ".###.", ".###.", ".###.", "..#.."),
-                pattern(ModItems.STONE_HOE_HEAD.getId().getPath(), "#####", "##...", ".....", ".....", "....."),
-                pattern(ModItems.STONE_HAMMER_HEAD.getId().getPath(), "#####", "#####", "..#..", ".....", "....."),
-                pattern(ModItems.STONE_SPEAR_HEAD.getId().getPath(), "..#..", ".###.", ".###.", "..#..", "..#.."),
-                pattern(ModItems.STONE_PICKAXE_HEAD.getId().getPath(), ".###.", "#...#", ".....", ".....", "....."));
-        expected.put(flint, stone);
-        List<String[]> rockPatterns = new ArrayList<>(stone);
-        rockPatterns.add(pattern(ModItems.QUERNSTONE.getId().getPath(), ".###.", "#####", "##.##", "#####", ".###."));
-        expected.put(rock, rockPatterns);
-        expected.put(clay, List.of(
-                pattern("unfired_small_vessel", ".....", ".###.", "#####", "#####", ".###."),
-                pattern("unfired_large_vessel", ".###.", "#####", "#####", "#####", ".###."),
-                pattern("unfired_crucible", "##.##", "#...#", "#...#", "#...#", "#####"),
-                pattern("unfired_ingot_mold", ".....", "#####", "#...#", "#####", "....."),
-                pattern("unfired_brick", "##.##", "##.##", ".....", "##.##", "##.##"),
-                pattern("unfired_pickaxe_head_mold", "#...#", ".###.", "#####", "#####", "#####"),
-                pattern("unfired_axe_head_mold", "#.###", "....#", ".....", "....#", "#.###"),
-                pattern("unfired_shovel_head_mold", "#...#", "#...#", "#...#", "#...#", "##.##"),
-                pattern("unfired_hoe_head_mold", ".....", "..###", "#####", "#####", "#####"),
-                pattern("unfired_knife_blade_mold", ".####", "..###", "#..##", "##..#", "###.."),
-                pattern("unfired_hammer_head_mold", ".....", ".....", "##.##", "#####", "#####"),
-                pattern("unfired_saw_blade_mold", "#####", "#####", ".....", ".....", "#####"),
-                pattern("unfired_sword_blade_mold", "###..", "##..#", "#..##", "..###", ".####")));
-
-        for (var entry : expected.entrySet()) {
-            ItemStack material = entry.getKey();
-            for (String[] p : entry.getValue()) {
-                int mask = GridPattern.parse(List.of(p).subList(1, 6)).getOrThrow();
-                for (int shape : new int[] {mask, GridPattern.mirror(mask)}) {
-                    List<RecipeHolder<KnappingRecipe>> found = level.recipeAccess().recipeMap()
-                            .getRecipesFor(ModRecipes.KNAPPING.get(), new KnappingInput(material, shape), level).toList();
-                    helper.assertValueEqual(found.size(), 1, "recipes for " + p[0] + " from " + material.getItem());
-                    ItemStack result = found.get(0).value().assemble(new KnappingInput(material, shape));
-                    helper.assertValueEqual(result.getItem().builtInRegistryHolder().key().identifier().getPath(), p[0],
-                            "knapping result from " + material.getItem());
-                }
-            }
-        }
-        // Clay has no stone patterns and stone has no clay patterns.
-        int crucible = GridPattern.parse(List.of("##.##", "#...#", "#...#", "#...#", "#####")).getOrThrow();
-        helper.assertTrue(level.recipeAccess().recipeMap()
-                .getRecipesFor(ModRecipes.KNAPPING.get(), new KnappingInput(flint, crucible), level).findAny().isEmpty(),
-                "flint should not form a crucible");
-        helper.succeed();
-    }
-
-    private static String[] pattern(String result, String... rows) {
-        String[] out = new String[6];
-        out[0] = result;
-        System.arraycopy(rows, 0, out, 1, 5);
-        return out;
-    }
-
     // Alloys (spec 7.2 and 7.4): the three example batches, a near miss, and slag at 90%.
-
-    /** Right-click opens the grid exactly once, and a strike from the open menu removes a cell and spends the material. */
-    private static void knappingClicks(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        for (String stone : new String[] {"loose_basalt", "flint"}) {
-            FakePlayer knapper = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "knapper"));
-            var item = stone.equals("flint") ? (net.minecraft.world.item.Item) Items.FLINT : ModItems.LOOSE_ROCK.get(Rock.BASALT).get();
-            knapper.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item, 16));
-            var result = knapper.gameMode.useItem(knapper, level, knapper.getMainHandItem(), InteractionHand.MAIN_HAND);
-            helper.assertTrue(result.consumesAction(), stone + ": use should succeed, got " + result);
-            // FakePlayer cannot open screens, so the menu is built the way Knapping.tryOpen builds it.
-            KnappingMenu menu = new KnappingMenu(7, knapper.getInventory(), knapper.getMainHandItem().copyWithCount(1), InteractionHand.MAIN_HAND);
-            knapper.containerMenu = menu;
-            int id = menu.containerId;
-            helper.assertTrue(menu.isKept(12), stone + ": every cell starts kept");
-            helper.assertTrue(menu.clickMenuButton(knapper, 12), stone + ": striking a cell should be accepted");
-            helper.assertTrue(!menu.isKept(12), stone + ": the struck cell should be gone");
-            helper.assertTrue(menu.hasStarted(), stone + ": the first strike starts the work");
-            helper.assertTrue(knapper.containerMenu == menu && knapper.containerMenu.containerId == id, stone + ": the menu stays open");
-        }
-        helper.succeed();
-    }
 
     private static void alloyRules(GameTestHelper helper) {
         Melt bronze = melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 9)

@@ -4,6 +4,7 @@ import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.knapping.KnappedFrom;
 import dev.strataindustria.knapping.Knapping;
+import dev.strataindustria.knapping.Shaping;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
@@ -42,12 +43,12 @@ public final class StoneAgeEvents {
 
     private StoneAgeEvents() {}
 
-    /** Flint has no use of its own, so a right-click with it opens the knapping grid. */
+    /** Flint and clay have no use of their own, so a right-click strikes the shape you have picked. */
     @SubscribeEvent
     static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         ItemStack held = event.getItemStack();
-        if (!(Knapping.isFlint(held) || Knapping.isClay(held)) || event.getEntity().isSecondaryUseActive()) return;
-        if (event.getEntity() instanceof ServerPlayer player) Knapping.tryOpen(player, event.getHand());
+        if (!(Knapping.isFlint(held) || Knapping.isClay(held))) return;
+        if (event.getEntity() instanceof ServerPlayer player) Shaping.use(player, event.getHand());
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
     }

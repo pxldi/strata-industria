@@ -508,7 +508,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .save(output, key("pole_insulator"));
         int pattern = dev.strataindustria.knapping.GridPattern.parse(List.of(".###.", "..#..", ".###.", "..#..", ".###.")).getOrThrow();
         output.accept(key("clay_forming/unfired_insulator"), new dev.strataindustria.knapping.KnappingRecipe(Ingredient.of(Items.CLAY_BALL),
-                dev.strataindustria.knapping.Knapping.CLAY_OPENING_COST, pattern, true, new ItemStackTemplate(Tier5Items.UNFIRED_INSULATOR.get(), 2)), null);
+                dev.strataindustria.knapping.Knapping.CLAY_OPENING_COST, 3, pattern, new ItemStackTemplate(Tier5Items.UNFIRED_INSULATOR.get(), 2)), null);
         assemble("acsr_conductor", 200, Tier5Items.ACSR_CONDUCTOR.get(), 4, null, Tier5Items.ALUMINIUM_WIRE.get(), 6, Tier5Items.STEEL_WIRE.get(), 1);
     }
 
