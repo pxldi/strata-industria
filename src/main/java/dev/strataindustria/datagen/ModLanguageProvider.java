@@ -258,7 +258,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t1.clay_forming", "Shaped by Hand");
         add(journal + "t1.clay_forming.hint", "Form something from clay: use five clay balls to open the forming grid.");
         add(journal + "t1.pit_kiln", "Fired Pottery");
-        add(journal + "t1.pit_kiln.hint", "Fire clay pieces in a pit kiln under straw and logs, and let it burn out.");
+        add(journal + "t1.pit_kiln.hint", "Sneak and place unfired clay on the floor of a one-block pit, add 8 straw and 8 logs, then light it and let it burn out.");
         add(journal + "t1.charcoal", "Charcoal Burner");
         add(journal + "t1.charcoal.hint", "Sneak and place logs into a pile, light it, cover every face with soil or stone, then dig out the charcoal.");
         add(journal + "t1.forge", "The Forge");
@@ -276,7 +276,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.alloy_metal", "Tin, Bismuth or Arsenic");
         add(journal + "t2.alloy_metal.hint", "Mine cassiterite, bismuthinite or tennantite ore.");
         add(journal + "t2.quern", "Ground Fine");
-        add(journal + "t2.quern.hint", "Grind ore in a quern. Crushed ore melts down to more metal.");
+        add(journal + "t2.quern.hint", "Knap a quernstone from four loose rocks and stack two under a stick for a quern. Put ore in and keep turning it; crushed ore melts down to more metal.");
         add(journal + "t2.bronze", "Bronze Age");
         add(journal + "t2.bronze.hint", "Melt copper with tin, bismuth or arsenic in the right shares and cast a bronze ingot.");
         add(journal + "t2.stone_anvil", "Dressed Stone");
