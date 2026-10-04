@@ -47,10 +47,12 @@ public final class StrataIndustriaClient {
         modBus.addListener(StrataIndustriaClient::registerTints);
         modBus.addListener(StrataIndustriaClient::registerItemProperties);
         modBus.addListener(SurveyClient::registerTints);
+        modBus.addListener(MarkClient::registerTooltips);
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.KNAPPING.get(), KnappingScreen::new);
+        event.register(dev.strataindustria.mark.MarkRegistry.MENU.get(), dev.strataindustria.client.screen.MarkScreen::new);
         event.register(ModMenus.FIRE_PIT.get(), FirePitScreen::new);
         event.register(ModMenus.SMALL_VESSEL.get(), SmallVesselScreen::new);
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);

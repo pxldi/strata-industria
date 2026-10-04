@@ -55,6 +55,8 @@ public class MetalToolRecipe extends ShapelessRecipe {
             Quality quality = stack.get(ModDataComponents.QUALITY.get());
             if (quality == null) continue;
             tool.set(ModDataComponents.QUALITY.get(), quality);
+            dev.strataindustria.mark.MakerStamp stamp = stack.get(dev.strataindustria.mark.MarkRegistry.STAMP.get());
+            if (stamp != null) tool.set(dev.strataindustria.mark.MarkRegistry.STAMP.get(), stamp);
             if (tool.isDamageableItem()) {
                 tool.set(DataComponents.MAX_DAMAGE, Math.max(1, Math.round(tool.getMaxDamage() * quality.durabilityMultiplier())));
             }

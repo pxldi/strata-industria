@@ -2521,6 +2521,40 @@
     ],
     "subtitle": "subtitles.strataindustria.knapping.rock"
   },
+  "mark.cut": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.copper.hit",
+        "pitch": 1.7,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.8,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.mark.cut"
+  },
+  "mark.stamp": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.copper.hit",
+        "pitch": 0.8,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.mark.stamp"
+  },
   "mechanical_pump.run": {
     "sounds": [
       {
