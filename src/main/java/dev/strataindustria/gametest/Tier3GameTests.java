@@ -172,7 +172,7 @@ final class Tier3GameTests {
         BlockPos hammerPos = anvilPos.south();
         BlockPos crankPos = hammerPos.south();
         level.setBlock(anvilPos.below(), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(anvilPos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(anvilPos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         level.setBlock(hammerPos, ModBlocks.TRIP_HAMMER.get().defaultBlockState().setValue(TripHammerBlock.FACING, Direction.NORTH),
                 Block.UPDATE_ALL);
         level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.NORTH),
@@ -247,7 +247,7 @@ final class Tier3GameTests {
         BlockPos hammerPos = anvilPos.south();
         BlockPos crankPos = hammerPos.south();
         level.setBlock(anvilPos.below(), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(anvilPos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(anvilPos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         level.setBlock(hammerPos, ModBlocks.TRIP_HAMMER.get().defaultBlockState().setValue(TripHammerBlock.FACING, Direction.NORTH),
                 Block.UPDATE_ALL);
         level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.NORTH),
@@ -258,7 +258,7 @@ final class Tier3GameTests {
         TripHammerBlockEntity hammer = (TripHammerBlockEntity) level.getBlockEntity(hammerPos);
 
         ItemStack bloom = new ItemStack(ModItems.RAW_BLOOM.get());
-        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, BloomeryBlockEntity.BLOOM_UNITS, 0));
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, BloomeryBlockEntity.BLOOM_UNITS));
         Heat.set(bloom, 1200.0f, level.getGameTime());
         hammer.setItem(TripHammerBlockEntity.INPUT, bloom);
 

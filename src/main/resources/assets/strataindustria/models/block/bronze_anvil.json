@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/template_anvil",
-  "textures": {
-    "particle": "strataindustria:block/bronze_anvil",
-    "body": "strataindustria:block/bronze_anvil",
-    "top": "strataindustria:block/bronze_anvil_top"
-  }
-}

@@ -83,8 +83,8 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
     }
 
     /** What one item adds to the buffers. */
-    public record Charge(int iron, int qualityUnits, int fuel, int flux) {
-        public static final Charge NONE = new Charge(0, 0, 0, 0);
+    public record Charge(int iron, int fuel, int flux) {
+        public static final Charge NONE = new Charge(0, 0, 0);
 
         public boolean isEmpty() {
             return iron <= 0 && fuel <= 0 && flux <= 0;
@@ -96,7 +96,6 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
 
     private NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
     private int iron;
-    private int ironQuality;
     private int fuel;
     private int flux;
     private int slagHalves;
@@ -157,16 +156,15 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
                 : stack.is(Items.CHARCOAL) ? CHARCOAL_FUEL
                 : stack.is(Tier4Items.COKE_BLOCK.get()) ? COKE_BLOCK_FUEL : 0;
         int flux = stack.is(ModTags.Items.FLUX) ? FLUX_ITEM : 0;
-        int iron = 0, quality = 0;
+        int iron = 0;
         // Pig iron is the furnace's own product; it goes on to the converter or the crucible.
         if (!stack.is(ModItems.ingot(Metal.PIG_IRON))) {
             Melt melt = MetalContent.of(stack).orElse(null);
             if (melt != null) {
                 iron = melt.units().getOrDefault(Metal.WROUGHT_IRON, 0);
-                quality = iron * melt.quality();
             }
         }
-        return new Charge(iron, quality, fuel, flux);
+        return new Charge(iron, fuel, flux);
     }
 
     /** Which charge slot an item belongs in: anything with iron is ore, then fuel, then flux. */
@@ -193,7 +191,6 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
             if (charge.isEmpty()) continue;
             while (!stack.isEmpty() && roomFor(charge)) {
                 iron += charge.iron();
-                ironQuality += charge.qualityUnits();
                 fuel += charge.fuel();
                 flux += charge.flux();
                 stack.shrink(1);
@@ -305,19 +302,13 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         return out.isEmpty() || ItemStack.isSameItemSameComponents(out, made) && out.getCount() < out.getMaxStackSize();
     }
 
-    /** The next ingot: pig iron carrying the unit-weighted quality of the iron in the burden. */
     private ItemStack pigIron() {
-        ItemStack ingot = new ItemStack(ModItems.ingot(Metal.PIG_IRON));
-        int material = iron <= 0 ? 0 : Math.round(ironQuality / (float) iron);
-        if (material != 0) ingot.set(ModDataComponents.QUALITY.get(), new Quality(material, 0));
-        return ingot;
+        return new ItemStack(ModItems.ingot(Metal.PIG_IRON));
     }
 
     private void tapIngot(ServerLevel level) {
         ItemStack ingot = pigIron();
-        int material = ingot.has(ModDataComponents.QUALITY.get()) ? ingot.get(ModDataComponents.QUALITY.get()).material() : 0;
         iron -= IRON_PER_INGOT;
-        ironQuality = iron <= 0 ? 0 : ironQuality - material * IRON_PER_INGOT;
         // An ingot blown hot for at least half its run takes the hot blast's quarter of a coke.
         fuel -= runTicks > 0 && hotTicks * 2 >= runTicks ? FUEL_PER_HOT_INGOT : FUEL_PER_INGOT;
         hotTicks = 0;
@@ -480,7 +471,6 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(in, items);
         iron = in.getIntOr("iron", 0);
-        ironQuality = in.getIntOr("iron_quality", 0);
         fuel = in.getIntOr("fuel", 0);
         flux = in.getIntOr("flux", 0);
         slagHalves = in.getIntOr("slag_halves", 0);
@@ -497,7 +487,6 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         super.saveAdditional(out);
         ContainerHelper.saveAllItems(out, items);
         out.putInt("iron", iron);
-        out.putInt("iron_quality", ironQuality);
         out.putInt("fuel", fuel);
         out.putInt("flux", flux);
         out.putInt("slag_halves", slagHalves);

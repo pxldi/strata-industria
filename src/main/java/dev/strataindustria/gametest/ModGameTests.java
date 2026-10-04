@@ -137,6 +137,7 @@ public final class ModGameTests {
         OutpostGameTests.register(TESTS);
         BronzeGameTests.register(TESTS);
         BellGameTests.register(TESTS);
+        TwoAnvilGameTests.register(TESTS);
         CabinetGameTests.register(TESTS);
         JournalGameTests.register(TESTS);
         FloraGameTests.register(TESTS);
@@ -205,7 +206,7 @@ public final class ModGameTests {
         Melt bismuth = melt(Items.COPPER_INGOT, 3).plus(melt(ModItems.crushedOre(OreMineral.BISMUTHINITE, OreGrade.RICH), 1));
         helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "3 copper ingots + 1 rich bismuthinite");
 
-        Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13), 0);
+        Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13));
         helper.assertTrue(Alloy.resultOf(off).isEmpty(), "87% copper and 13% tin should be no known alloy");
 
         ItemStack slag = new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
@@ -594,7 +595,7 @@ public final class ModGameTests {
     private static void anvilWeld(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         float heat = Metal.WROUGHT_IRON.weldingTemperature() + 80.0f;
@@ -618,7 +619,7 @@ public final class ModGameTests {
     private static void anvilWeldCold(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         anvil.setItem(AnvilBlockEntity.INPUT, hotIngot(level, Items.IRON_INGOT, 200.0f));
@@ -635,12 +636,12 @@ public final class ModGameTests {
     private static void anvilBloomWeld(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         for (int slot = 1; slot <= 2; slot++) {
             ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1300.0f);
-            bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, 40, 0));
+            bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, 40));
             smith.getInventory().setItem(slot, bloom);
             helper.assertTrue(anvil.place(smith, bloom), "bloom " + slot + " goes on the anvil");
         }
@@ -658,11 +659,11 @@ public final class ModGameTests {
     private static void anvilBloomRefine(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1200.0f);
-        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, dev.strataindustria.bloomery.BloomeryBlockEntity.BLOOM_UNITS, 0));
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, dev.strataindustria.bloomery.BloomeryBlockEntity.BLOOM_UNITS));
         anvil.setItem(AnvilBlockEntity.INPUT, bloom);
         helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.READY, "a hot bloom is ready to work");
         for (int i = 0; i < 12 && anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(); i++) strike(anvil, smith, 100 + i * STEP);

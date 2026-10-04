@@ -330,8 +330,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         int taken = Math.min(carbon, amount);
         if (carbon - taken > 0) left.put(Metal.CARBON, carbon - taken);
         else left.remove(Metal.CARBON);
-        int total = melt.total();
-        return new Melt(left, total == 0 ? 0 : Math.round(melt.qualityUnits() * (float) (total - taken) / total));
+        return new Melt(left);
     }
 
     private static boolean isRedstone(Melt content) {
@@ -494,7 +493,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
             int d = u - after.units().getOrDefault(metal, 0);
             if (d > 0) out.put(metal, d);
         });
-        return new Melt(out, before.qualityUnits() - after.qualityUnits());
+        return new Melt(out);
     }
 
     public ContainerData data() {

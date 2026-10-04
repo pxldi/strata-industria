@@ -88,13 +88,10 @@ public class BellBlock extends BaseEntityBlock {
         if (powered) ring((ServerLevel) level, pos);
     }
 
-    /** Rings the bell once at its own pitch; a cracked bell rings with a beat in it. */
+    /** Rings the bell once at its own pitch. */
     public static void ring(ServerLevel level, BlockPos pos) {
         BellTone tone = level.getBlockEntity(pos) instanceof BellBlockEntity bell ? bell.tone() : BellTone.DEFAULT;
         level.playSound(null, pos, BronzeRegistry.BELL_RING.get(), SoundSource.BLOCKS, 2.0f, tone.pitch());
-        if (tone.cracked()) {
-            level.playSound(null, pos, BronzeRegistry.BELL_RING.get(), SoundSource.BLOCKS, 1.4f, Math.min(2.0f, tone.pitch() * 1.07f));
-        }
         level.sendParticles(ParticleTypes.NOTE, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 0, tone.noteColour(), 0, 0, 1.0);
     }
 

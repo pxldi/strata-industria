@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_double_ingot": {
+    "has_iron_ingot": {
       "conditions": {
         "items": [
           {
-            "items": "strataindustria:wrought_iron_double_ingot"
+            "items": "minecraft:iron_ingot"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "strataindustria:wrought_iron_anvil"
+        "recipes": "strataindustria:iron_anvil"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_double_ingot"
+      "has_iron_ingot"
     ]
   ],
   "rewards": {
     "recipes": [
-      "strataindustria:wrought_iron_anvil"
+      "strataindustria:iron_anvil"
     ]
   }
 }

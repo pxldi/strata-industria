@@ -78,7 +78,6 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
     /** The charge being blown: pig iron and scrap counts and their summed material quality. */
     private int blowPig;
     private int blowScrap;
-    private int blowQuality;
     private int blown;
     /** Slag owed in quarters: a slag for every 4 pig iron, carried between blows. */
     private int slagQuarters;
@@ -173,11 +172,6 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         };
     }
 
-    private static int material(ItemStack stack) {
-        Quality quality = stack.get(ModDataComponents.QUALITY.get());
-        return quality == null ? 0 : quality.material();
-    }
-
     // ------------------------------------------------------------------ running
 
     private Direction facing() {
@@ -267,7 +261,7 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         if (!heated && items.get(COKE).isEmpty()) return Status.NEEDS_PREHEAT;
         int pigCount = pig.getCount();
         int scrapCount = Math.min(items.get(SCRAP).getCount(), pigCount * MAX_SCRAP / MAX_PIG_IRON);
-        if (!fits(STEEL, steel(0), pigCount + scrapCount) || !fits(SLAG, new ItemStack(Tier4Items.SLAG.get()), (slagQuarters + pigCount) / 4)) {
+        if (!fits(STEEL, steel(), pigCount + scrapCount) || !fits(SLAG, new ItemStack(Tier4Items.SLAG.get()), (slagQuarters + pigCount) / 4)) {
             return Status.OUTPUT_FULL;
         }
         start(pigCount, scrapCount, heated);
@@ -279,7 +273,6 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         ItemStack pig = items.get(PIG_IRON), scrapStack = items.get(SCRAP);
         blowPig = pigCount;
         blowScrap = scrapCount;
-        blowQuality = material(pig) * pigCount + (scrapCount > 0 ? material(scrapStack) * scrapCount : 0);
         blown = 0;
         pig.shrink(pigCount);
         scrapStack.shrink(scrapCount);
@@ -290,14 +283,13 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
 
     private void finish(ServerLevel level) {
         int count = blowPig + blowScrap;
-        insert(STEEL, steel(Math.round(blowQuality / (float) count)), count);
+        insert(STEEL, steel(), count);
         slagQuarters += blowPig;
         int slag = slagQuarters / 4;
         slagQuarters %= 4;
         if (slag > 0) insert(SLAG, new ItemStack(Tier4Items.SLAG.get()), slag);
         blowPig = 0;
         blowScrap = 0;
-        blowQuality = 0;
         blown = 0;
         level.playSound(null, worldPosition, Tier4Sounds.CONVERTER_DONE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         BlockPos tap = structure.tap();
@@ -320,18 +312,15 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         }
     }
 
-    private ItemStack steel(int material) {
-        ItemStack ingot = new ItemStack(ModItems.ingot(Metal.STEEL));
-        if (material != 0) ingot.set(ModDataComponents.QUALITY.get(), new Quality(material, 0));
-        return ingot;
+    private ItemStack steel() {
+        return new ItemStack(ModItems.ingot(Metal.STEEL));
     }
 
     private boolean fits(int slot, ItemStack made, int count) {
         if (count <= 0) return true;
         ItemStack out = items.get(slot);
         if (out.isEmpty()) return count <= made.getMaxStackSize();
-        // Quality is not known until the blow ends; any steel stack with room will do.
-        boolean same = slot == STEEL ? out.is(made.getItem()) : ItemStack.isSameItemSameComponents(out, made);
+        boolean same = ItemStack.isSameItemSameComponents(out, made);
         return same && out.getCount() + count <= out.getMaxStackSize();
     }
 
@@ -461,7 +450,6 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         ContainerHelper.loadAllItems(in, items);
         blowPig = in.getIntOr("blow_pig", 0);
         blowScrap = in.getIntOr("blow_scrap", 0);
-        blowQuality = in.getIntOr("blow_quality", 0);
         blown = in.getIntOr("blown", 0);
         slagQuarters = in.getIntOr("slag_quarters", 0);
         built = in.getIntOr("built", 0) != 0;
@@ -473,7 +461,6 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         ContainerHelper.saveAllItems(out, items);
         out.putInt("blow_pig", blowPig);
         out.putInt("blow_scrap", blowScrap);
-        out.putInt("blow_quality", blowQuality);
         out.putInt("blown", blown);
         out.putInt("slag_quarters", slagQuarters);
         out.putInt("built", built ? 1 : 0);

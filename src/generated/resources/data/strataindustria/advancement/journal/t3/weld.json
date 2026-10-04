@@ -1,5 +1,5 @@
 {
-  "parent": "strataindustria:journal/t3/refine",
+  "parent": "strataindustria:journal/t3/iron_anvil",
   "criteria": {
     "done": {
       "conditions": {
