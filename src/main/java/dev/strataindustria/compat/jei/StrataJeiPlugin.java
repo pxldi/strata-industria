@@ -88,21 +88,21 @@ public final class StrataJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addCraftingStation(JeiTypes.PIT_KILN, ModItems.STRAW.get());
+        registration.addCraftingStation(JeiTypes.PIT_KILN, ModItems.STRAW.get(), Tier4Items.KILN.get());
         registration.addCraftingStation(JeiTypes.CHARCOAL_PIT, ModItems.FIRESTARTER.get());
         registration.addCraftingStation(JeiTypes.QUERN, ModItems.QUERN.get(), ModItems.MILLSTONE.get());
-        registration.addCraftingStation(JeiTypes.ALLOYING, ModItems.CRUCIBLE.get(), Tier4Items.REFRACTORY_CRUCIBLE.get(), ModItems.FORGE.get());
-        registration.addCraftingStation(JeiTypes.CASTING, ModItems.CRUCIBLE.get(), Tier4Items.REFRACTORY_CRUCIBLE.get());
+        registration.addCraftingStation(JeiTypes.ALLOYING, ModItems.CRUCIBLE.get(), Tier4Items.REFRACTORY_CRUCIBLE.get(), Tier4Items.SMELTER.get(), ModItems.FORGE.get());
+        registration.addCraftingStation(JeiTypes.CASTING, ModItems.CRUCIBLE.get(), Tier4Items.REFRACTORY_CRUCIBLE.get(), Tier4Items.SMELTER.get());
         Item[] anvils = BuiltInRegistries.ITEM.stream()
                 .filter(i -> i instanceof BlockItem block && block.getBlock() instanceof AnvilBlock).toArray(Item[]::new);
         registration.addCraftingStation(JeiTypes.ANVIL, anvils);
-        registration.addCraftingStation(JeiTypes.ANVIL, ModItems.TRIP_HAMMER.get());
+        registration.addCraftingStation(JeiTypes.ANVIL, ModItems.TRIP_HAMMER.get(), Tier4Items.STEAM_HAMMER.get());
         registration.addCraftingStation(JeiTypes.WELDING, anvils);
         registration.addCraftingStation(JeiTypes.BLOOMERY, ModItems.BLOOMERY.get(), ModItems.BELLOWS.get());
         registration.addCraftingStation(JeiTypes.SAWING, ModItems.SAW_MILL.get());
         registration.addCraftingStation(JeiTypes.WASHING, ModItems.WASHING_PAN.get(), ModItems.SLUICE.get());
         registration.addCraftingStation(JeiTypes.BARREL, ModItems.SOAKING_BARREL.get());
-        registration.addCraftingStation(JeiTypes.ROASTING, ModItems.FORGE.get());
+        registration.addCraftingStation(JeiTypes.ROASTING, ModItems.FORGE.get(), Tier4Items.ROASTER.get());
         registration.addCraftingStation(JeiTypes.COKING, Tier4Items.COKE_OVEN_DOOR.get());
         registration.addCraftingStation(JeiTypes.FIREBOX_FUEL, Tier4Items.FIREBOX.get());
         // The fire pit cooks vanilla campfire recipes.

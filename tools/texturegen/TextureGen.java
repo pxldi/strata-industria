@@ -1566,6 +1566,13 @@ public final class TextureGen {
             for (int x = 0; x < 16; x++) {
                 int step = n[y][x] > 0.6 ? 4 : 3;
                 if (x % 5 == 1 && n[y][x] < 0.5) step = 3;
+                // Thrown from coils: a thick lip at the rim, a shadowed seam under it and a faint coil line.
+                if (y < 2) step = 5;
+                else if (y == 2) step = 2;
+                else if (y == 7 && (x + 2) % 7 != 0) step = 2;
+                else if (y == 6 && x % 2 == 0) step = Math.max(step, 4);
+                else if (x == 0) step = 5;
+                else if (x >= 14) step = Math.max(2, step - 1);
                 int c = CERAMIC.get(step);
                 if (y > 11 + (int) Math.round(n[y][x] * 2)) c = CHARCOAL.get(n[y][x] > 0.5 ? 4 : 3);
                 px(im, x, y, c);
@@ -6971,6 +6978,919 @@ public final class TextureGen {
         }
     }
 
+    /** Heat pipes and ducts: copper tube with soldered joints, fire brick sleeve with steel bands, and the inlet flange. */
+    static final class Hp {
+        static final int BORE = 0x0e0c0c;
+        static int st(int s) { return STEEL.get(s); }
+        static int cu(int s) { return COPPER.get(s); }
+        static int so(int s) { return SOLDER.get(s); }
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+
+        /** Heat band colour for glow g in 0..1: dull red up to yellow. */
+        static int band(double g) {
+            double f = Math.max(0, Math.min(1, g)) * 4;
+            int i = (int) Math.min(3, Math.floor(f));
+            return mix(HEAT_BAND[i], HEAT_BAND[i + 1], f - i);
+        }
+        static void glow(BufferedImage im, int x, int y, double g, double strength) {
+            if (g <= 0) return;
+            px(im, x, y, mix(rgb(im, x, y), band(g), Math.min(1, g * strength)));
+        }
+
+        // ---- copper pipe
+        static BufferedImage copper(boolean hot) {
+            BufferedImage im = img();
+            int[] across = {5, 4, 4, 3, 3, 2, 2};
+            double[] mid = {0.30, 0.52, 0.72, 0.85, 0.72, 0.52, 0.30};
+            // Tube side everywhere first (plain tube for break particles).
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int a = y % 7;
+                    int step = across[a];
+                    if (x == 3) step = 0; // solder band marker
+                    if (step == 0) px(im, x, y, so(a == 0 ? 5 : a < 3 ? 4 : a < 5 ? 3 : 2));
+                    else px(im, x, y, cu(step));
+                    if (y < 7 && x == 1 && a == 1) px(im, x, y, COPPER.spec());
+                }
+            // Hub: collar block with a solder ring round a copper boss.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    boolean edge = x == 4 || y == 4 || x == 11 || y == 11;
+                    boolean ring = !edge && (x == 5 || y == 5 || x == 10 || y == 10);
+                    int c;
+                    if (edge) c = cu(x == 4 || y == 4 ? 5 : 2);
+                    else if (ring) c = so(x == 5 || y == 5 ? 5 : x == 10 || y == 10 ? 2 : 4);
+                    else c = cu((x + y) < 15 ? 4 : 3);
+                    px(im, x, y, c);
+                }
+            px(im, 6, 6, COPPER.spec());
+            px(im, 9, 9, cu(2)); px(im, 9, 8, cu(2)); px(im, 8, 9, cu(2));
+            // End: copper ring round a dark bore.
+            for (int y = 9; y <= 15; y++)
+                for (int x = 0; x <= 6; x++) {
+                    int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                    boolean lit = x + (y - 9) < 6;
+                    int c;
+                    if (d == 0) c = cu(lit ? 5 : 2);
+                    else if (d == 1) c = cu(lit ? 4 : 3);
+                    else c = (y == 11 || x == 2) ? cu(1) : BORE;
+                    px(im, x, y, c);
+                }
+            if (hot) {
+                for (int y = 0; y < 16; y++)
+                    for (int x = 0; x < 16; x++) {
+                        boolean hub = x >= 4 && x <= 11 && y >= 4 && y <= 11;
+                        boolean end = x <= 6 && y >= 9;
+                        if (hub) {
+                            double d = Math.hypot(x - 7.5, y - 7.5);
+                            glow(im, x, y, Math.max(0.2, 0.9 - d * 0.14), 0.85);
+                        } else if (end) {
+                            int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                            if (d >= 2) px(im, x, y, band(d == 2 ? 0.85 : 1.0));
+                            else glow(im, x, y, d == 1 ? 0.6 : 0.4, 0.85);
+                        } else glow(im, x, y, mid[y % 7], 0.85);
+                    }
+                // Hot spots on the tube: lit crest stays brighter.
+                for (int y = 0; y < 16; y++) if (y % 7 == 3) for (int x = 0; x < 4; x++) if (y < 7) px(im, x, y, band(x == 3 ? 0.9 : 1.0));
+            }
+            return im;
+        }
+
+        // ---- refractory duct
+        static BufferedImage duct(boolean hot) {
+            BufferedImage im = img();
+            // Side: brick courses (7 rows: 3 brick, mortar, 3 brick), staggered joints, steel band at x=3.
+            int[] rowStep = {5, 4, 3, 1, 5, 4, 3};
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int a = y % 7;
+                    int step = rowStep[a];
+                    int joint = a < 3 ? 1 : 2;
+                    if (step != 1 && x == joint) step = 1;
+                    if (step != 1 && x == joint + 1 && a != 0) step = Math.max(2, step - 1);
+                    if (step != 1) step = Math.max(2, step);
+                    px(im, x, y, fb(step));
+                }
+            for (int y = 0; y < 16; y++) {
+                int a = y % 7;
+                px(im, 3, y, st(a == 0 ? 5 : a < 3 ? 4 : a < 5 ? 3 : 2));
+            }
+            // Hub: brick block, one mortar course and a staggered joint, steel brackets in each corner.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    int step = (y - 4) % 4 == 0 ? 5 : 4;
+                    if (y == 7 || y == 11) step = 1;
+                    if (y < 7 && x == 8 && y != 7) step = 1;
+                    if (y > 7 && y < 11 && x == 6) step = 1;
+                    if (step != 1 && (x == 11)) step = 3;
+                    px(im, x, y, fb(step));
+                }
+            // Corner brackets: 3x3 L shapes of steel, lit top-left.
+            for (int[] c : new int[][] {{4, 4}, {9, 4}, {4, 9}, {9, 9}}) {
+                for (int j = 0; j < 3; j++)
+                    for (int i = 0; i < 3; i++) {
+                        boolean left = c[0] == 4, top = c[1] == 4;
+                        boolean onX = left ? i == 0 : i == 2, onY = top ? j == 0 : j == 2;
+                        if (!(onX || onY)) continue;
+                        int s = 3;
+                        if (j == 0 && top || i == 0 && left) s = 5;
+                        if (j == 2 && !top || i == 2 && !left) s = 2;
+                        if (i == (left ? 0 : 2) && j == (top ? 0 : 2)) s = left && top ? 5 : left || top ? 4 : 2;
+                        px(im, c[0] + i, c[1] + j, st(s));
+                    }
+            }
+            // End: square brick sleeve round a dark square bore, steel corner pins.
+            for (int y = 9; y <= 15; y++)
+                for (int x = 0; x <= 6; x++) {
+                    int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                    boolean lit = x + (y - 9) < 6;
+                    int c;
+                    if (d == 0) c = fb(lit ? 5 : 3);
+                    else if (d == 1) c = fb(lit ? 4 : 2);
+                    else c = (y == 11 || x == 2) ? fb(1) : BORE;
+                    px(im, x, y, c);
+                }
+            px(im, 0, 9, st(5)); px(im, 6, 9, st(4)); px(im, 0, 15, st(3)); px(im, 6, 15, st(2));
+            if (hot) {
+                for (int y = 0; y < 16; y++)
+                    for (int x = 0; x < 16; x++) {
+                        int c = rgb(im, x, y);
+                        boolean hub = x >= 4 && x <= 11 && y >= 4 && y <= 11;
+                        boolean end = x <= 6 && y >= 9;
+                        boolean mortar = c == fb(1);
+                        boolean steel = false;
+                        for (int s = 1; s <= 5; s++) if (c == st(s)) steel = true;
+                        if (end) {
+                            int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                            if (d >= 2 && !mortar) px(im, x, y, band(1.0));
+                            else if (mortar) px(im, x, y, band(0.7));
+                            else if (!steel) glow(im, x, y, d == 1 ? 0.45 : 0.3, 0.8);
+                            continue;
+                        }
+                        if (mortar) { px(im, x, y, band(0.78)); continue; }
+                        if (steel) { glow(im, x, y, 0.2, 0.5); continue; }
+                        if (hub) {
+                            double d = Math.hypot(x - 7.5, y - 7.5);
+                            glow(im, x, y, Math.max(0.15, 0.7 - d * 0.1), 0.8);
+                        } else glow(im, x, y, 0.32, 0.8);
+                    }
+                // Heat seeps along the middle mortar course of the side.
+                for (int y = 0; y < 16; y++) if (y % 7 == 3 && !(y >= 4 && y <= 11)) for (int x = 0; x < 3; x++) px(im, x, y, band(0.95));
+            }
+            return im;
+        }
+
+        // ---- heat inlet: refractory casing with a round steel duct flange
+        static BufferedImage inlet() {
+            BufferedImage im = Bf.casing();
+            double cx = 7.5, cy = 7.5;
+            for (int y = 2; y < 14; y++)
+                for (int x = 2; x < 14; x++) {
+                    double dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
+                    if (d > 5.3) continue;
+                    double t = dx + dy;
+                    int c;
+                    if (d > 4.6) c = t < 0 ? st(5) : st(2);
+                    else if (d > 2.9) c = t < 1 ? st(3) : st(2);
+                    else if (d > 2.2) c = t < 0 ? st(1) : st(3);
+                    else c = BORE;
+                    px(im, x, y, c);
+                }
+            // Bolt heads on the flange face (pinwheel), lit top-left with a shadow pixel.
+            for (int[] b : new int[][] {{4, 6}, {9, 4}, {11, 9}, {6, 11}}) {
+                px(im, b[0], b[1], st(5));
+                px(im, b[0] + 1, b[1] + 1, st(1));
+            }
+            return im;
+        }
+    }
+
+    static void heatPipes() throws IOException {
+        save("block/copper_heat_pipe", Hp.copper(false));
+        save("block/copper_heat_pipe_hot", Hp.copper(true));
+        save("block/refractory_heat_duct", Hp.duct(false));
+        save("block/refractory_heat_duct_hot", Hp.duct(true));
+        save("block/heat_inlet", Hp.inlet());
+    }
+
+    // ---------------------------------------------------------------- tier 4: kiln and insulated heat lines
+
+    static final class Kn {
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+        static int st(int s) { return STEEL.get(s); }
+        static int pi(int s) { return PIG_IRON.get(s); }
+        static int cu(int s) { return COPPER.get(s); }
+
+        // ---- fire brick faces
+        static boolean isMortar(BufferedImage im, int x, int y) { return rgb(im, x, y) == fb(1); }
+
+        /** Fire brick ring-and-radial joints around a centre, between radii r0 and r1 (dome voussoirs). */
+        static BufferedImage front(boolean active) {
+            BufferedImage im = fireBricks();
+            double cx = 7.5, cy = 8.0;
+            // Voussoir ring round the arch: radial joints every ~30 degrees, keystone lit.
+            for (int y = 0; y < 8; y++)
+                for (int x = 0; x < 16; x++) {
+                    double dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
+                    if (d < 5.2 || d > 7.8) continue;
+                    double ang = Math.toDegrees(Math.atan2(-dy, dx)); // 0 right, 90 up
+                    int sector = (int) Math.floor((ang + 15) / 30.0);
+                    double edge = ((ang + 15) % 30 + 30) % 30;
+                    boolean joint = edge < 7.0 / Math.max(d, 1) * 8 && edge < 6.0 && d > 5.2;
+                    boolean lit = dx + dy < -1;
+                    int step = lit ? 5 : (dx > 1.5 ? 3 : 4);
+                    if (Math.abs(sector - 3) == 0 && d < 7.0) step = 5;
+                    if (joint) step = 1;
+                    else if (d > 7.0 && step > 3) step--;
+                    px(im, x, y, fb(step));
+                }
+            // Door opening, 8 wide, round-headed: cells by row range.
+            int[][] span = {{6, 9}, {5, 10}, {4, 11}, {4, 11}};
+            int top = 3, bottom = 14;
+            boolean[][] open = new boolean[16][16];
+            for (int y = top; y <= bottom; y++) {
+                int a = y - top < 3 ? span[y - top][0] : 4, b = y - top < 3 ? span[y - top][1] : 11;
+                for (int x = a; x <= b; x++) open[y][x] = true;
+            }
+            // Frame ring (dark iron) around the opening, lit top-left.
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    if (open[y][x]) continue;
+                    boolean near = false;
+                    for (int j = -1; j <= 1; j++)
+                        for (int i = -1; i <= 1; i++) {
+                            int nx = x + i, ny = y + j;
+                            if (nx >= 0 && ny >= 0 && nx < 16 && ny < 16 && open[ny][nx]) near = true;
+                        }
+                    if (!near) continue;
+                    boolean up = y < 9 && (x + y < 12 || x - y > 3 ? true : false);
+                    int s = (x <= 3 || y <= 3 && x < 8) ? 4 : 2;
+                    if (y == bottom + 1) s = 2;
+                    if ((x == 2 && y == 6) || (x == 13 && y == 6) || (x == 2 && y == 13) || (x == 13 && y == 13)) s = 5;
+                    px(im, x, y, pi(s));
+                }
+            // Door leaf inside a 1 px gap.
+            for (int y = top; y <= bottom; y++)
+                for (int x = 3; x <= 12; x++) {
+                    if (!open[y][x]) continue;
+                    boolean leaf = isLeaf(open, x, y);
+                    int c;
+                    if (!leaf) c = active ? Hp.band(y > 8 ? 0.85 : 0.65) : 0x16110f;
+                    else {
+                        int s = 3;
+                        if (x == 5 || y == top + 1 && x < 8 || y == top + 1 && x == 5) s = 4;
+                        if (x == 10 || y == bottom - 1) s = 2;
+                        c = pi(s);
+                    }
+                    px(im, x, y, c);
+                }
+            // Vent slits and handle.
+            for (int x = 6; x <= 9; x++) {
+                px(im, x, 7, active ? Hp.band(1.0) : pi(1));
+                px(im, x, 11, active ? Hp.band(0.9) : pi(1));
+            }
+            for (int x = 6; x <= 9; x++) { px(im, x, 6, pi(4)); px(im, x, 10, pi(4)); }
+            px(im, 9, 9, st(5)); px(im, 9, 10, st(3));
+            px(im, 6, 5, st(4)); px(im, 6, 13, st(4));
+            if (active) {
+                // Warm bleed on the frame pixels touching the gaps.
+                for (int y = top - 1; y <= bottom + 1; y++)
+                    for (int x = 2; x <= 13; x++) {
+                        if (y < 0 || y > 15 || open[y][x] || (y >= 0 && y <= 15 && !isFrame(im, x, y))) continue;
+                        Hp.glow(im, x, y, 0.35, 0.7);
+                    }
+            }
+            return im;
+        }
+
+        static boolean isLeaf(boolean[][] open, int x, int y) {
+            // Leaf = open cell whose 4 neighbours are all open (gap is the 1 px ring inside the frame).
+            return open[y][x] && open[y - 1][x] && open[y + 1 < 16 ? y + 1 : y][x] && open[y][x - 1] && open[y][x + 1]
+                    && y + 1 <= 14 + 0 && true;
+        }
+
+        static boolean isFrame(BufferedImage im, int x, int y) {
+            int c = rgb(im, x, y);
+            for (int s = 1; s <= 5; s++) if (c == pi(s)) return true;
+            return false;
+        }
+
+        static BufferedImage side() {
+            BufferedImage im = img();
+            Random r = new Random(9101);
+            // Bricks in three bands separated by a riveted iron hoop; edge columns step down to read as curved.
+            int[][] joints = {{3, 9, 14}, {6, 12, 1}, {2, 8, 13}};
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int row = y < 7 ? y / 3 : y > 8 ? (y - 9) / 3 : -1; // 0,1 above ; courses
+                    int step;
+                    int a = y < 7 ? y % 3 : (y - 9) % 3;
+                    if (y < 7 || y > 8) {
+                        int c = y < 7 ? y / 3 : 2 + (y - 9) / 3;
+                        int[] j = joints[c % 3];
+                        boolean joint = a == 2 || x == j[0] || x == j[1] || x == j[2];
+                        if (y < 7 && y % 3 == 2 && y == 6) joint = false;
+                        step = joint ? 1 : (a == 0 ? 5 : 4);
+                        if (step != 1) {
+                            if (x == j[0] - 1 || x == j[1] - 1 || x == j[2] - 1) step = Math.max(3, step - 1);
+                            if (x <= 1) step = Math.min(5, step + 1);
+                            if (x >= 14) step = Math.max(2, step - 1);
+                            if (r.nextInt(7) == 0) step = Math.max(2, step - 1);
+                        } else if (y == 6 || y == 15 || y == 0) step = 1;
+                    } else {
+                        // Iron hoop, 2 px tall.
+                        int s = y == 7 ? 4 : 2;
+                        if (x == 0) s = y == 7 ? 5 : 3;
+                        if (x == 15) s = 1;
+                        px(im, x, y, pi(s));
+                        continue;
+                    }
+                    px(im, x, y, fb(step));
+                }
+            for (int x : new int[] {3, 11}) { px(im, x, 7, st(5)); px(im, x + 1, 8, pi(1)); }
+            return im;
+        }
+
+        static BufferedImage top() {
+            BufferedImage im = img();
+            double c = 7.5;
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    double dx = x - c, dy = y - c, d = Math.hypot(dx, dy);
+                    double ang = Math.toDegrees(Math.atan2(dy, dx));
+                    int step;
+                    if (d <= 2.0) step = -1;
+                    else if (d <= 3.4) step = -2;
+                    else {
+                        boolean ring = (d > 5.5 && d <= 6.4) || (d > 8.2 && d <= 9.0);
+                        int seg = d < 5.5 ? 6 : d < 8.2 ? 10 : 14;
+                        double w = 360.0 / seg;
+                        double off = d > 5.5 && d < 8.2 ? w / 2 : 0;
+                        double e = (((ang + off) % w) + w) % w;
+                        boolean joint = ring || e * Math.PI / 180 * d < 1.0 && d < 8.2;
+                        if (d > 8.2 && !ring) joint = (((ang) % 22.5) + 22.5) % 22.5 * Math.PI / 180 * d < 1.0;
+                        step = joint ? 1 : (dx + dy < -2 ? 5 : dx + dy > 5 ? 3 : 4);
+                    }
+                    int col;
+                    if (step == -1) col = x + y < 14 ? 0x0e0c0c : 0x1a1514;
+                    else if (step == -2) col = dx + dy < 0 ? pi(5) : dx + dy < 2.5 ? pi(4) : pi(2);
+                    else col = fb(step);
+                    if (step == -1 && (x == 6 && y == 6 || x == 7 && y == 6 || x == 6 && y == 7)) col = pi(1);
+                    px(im, x, y, col);
+                }
+            return im;
+        }
+
+        // ---- insulated lines: slag wool wrap
+        static int wc(int s) { return mix(Bf.SLAG_TINT.get(s), Bf.SLAG_SPEC.get(s), 0.4); }
+
+        /** Tile of wool steps (2..5): clustered fibres, a lit tuft or two, wrapped so edges tile. */
+        static int[][] wool(long seed) {
+            Random r = new Random(seed);
+            int[][] f = new int[16][16];
+            for (int[] row : f) java.util.Arrays.fill(row, 3);
+            for (int n = 0; n < 16; n++) {
+                int x = r.nextInt(16), y = r.nextInt(16), w = 2 + r.nextInt(2), dir = r.nextInt(3) - 1;
+                int tone = r.nextInt(5) < 3 ? 1 : -1;
+                for (int i = 0; i < w; i++) {
+                    f[Math.floorMod(y + (dir * i) / 2, 16)][Math.floorMod(x + i, 16)] += tone;
+                    if (i == 0 || i == w - 1) f[Math.floorMod(y + 1, 16)][Math.floorMod(x + i, 16)] += tone > 0 ? 0 : 0;
+                }
+            }
+            for (int[] row : f) for (int i = 0; i < 16; i++) row[i] = Math.max(2, Math.min(4, row[i]));
+            return f;
+        }
+
+        static int ws(int[][] f, int x, int y, int shade) {
+            return Math.max(2, Math.min(5, f[Math.floorMod(y, 16)][Math.floorMod(x, 16)] + shade));
+        }
+
+        static BufferedImage insulated(boolean duct) {
+            BufferedImage im = img();
+            int[][] f = wool(duct ? 7702 : 7701);
+            int[] sh = {1, 1, 0, 0, 0, -1, -1};
+            int[] wire = {5, 4, 3, 3, 2, 2, 1};
+            // Wrapped tube side everywhere (also fills the unused pixels): shaded across 7 rows, wire ties x=1 and x=3... one tie at x=3.
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int a = y % 7;
+                    if (x % 4 == 3 && !(x >= 4 && x <= 11 && y >= 4 && y <= 11)) px(im, x, y, st(wire[a] == 1 ? 1 : Math.min(5, wire[a])));
+                    else px(im, x, y, wc(ws(f, x, y, sh[a])));
+                }
+            // Hub: wrapped joint, two ties, an exposed band of the pipe material.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    boolean top = y == 4, left = x == 4, bot = y == 11, right = x == 11;
+                    int sh2 = (top || left) ? 1 : (bot || right) ? -1 : (x + y < 14 ? 0 : -0);
+                    int s = ws(f, x + 3, y + 5, sh2);
+                    if (top || left) s = Math.max(s, 4);
+                    if (bot || right) s = Math.min(s, 3);
+                    px(im, x, y, wc(s));
+                }
+            for (int y = 5; y <= 10; y++) { // wire ties
+                px(im, 5, y, st(y == 5 ? 5 : 3)); px(im, 10, y, st(y == 5 ? 4 : 2));
+            }
+            // Exposed band between the ties.
+            for (int y = 7; y <= 8; y++)
+                for (int x = 6; x <= 9; x++) {
+                    if (duct) px(im, x, y, fb(y == 7 ? (x == 6 ? 5 : 4) : (x == 9 ? 2 : 3)));
+                    else px(im, x, y, cu(y == 7 ? (x == 6 ? 5 : 4) : (x == 9 ? 2 : 3)));
+                }
+            if (duct) px(im, 8, 7, fb(1));
+            else px(im, 6, 7, COPPER.spec());
+            px(im, 7, 5, wc(5)); px(im, 6, 10, wc(2));
+            // End: wool ring, then pipe material ring, then bore.
+            for (int y = 9; y <= 15; y++)
+                for (int x = 0; x <= 6; x++) {
+                    int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                    boolean lit = x + (y - 9) < 6;
+                    int c;
+                    if (d == 0) c = wc(ws(f, x + 9, y, lit ? 1 : -1));
+                    else if (d == 1) c = duct ? (lit ? fb(4) : fb(2)) : cu(lit ? 4 : 3);
+                    else c = (y == 11 || x == 2) ? (duct ? fb(1) : cu(1)) : Hp.BORE;
+                    px(im, x, y, c);
+                }
+            if (duct) { px(im, 1, 10, st(5)); px(im, 5, 14, st(2)); }
+            else px(im, 1, 10, COPPER.spec());
+            px(im, 3, 9, wc(4)); // wire tie crosses the ring
+            px(im, 3, 15, st(2));
+            return im;
+        }
+
+        static BufferedImage wool() {
+            BufferedImage im = img();
+            Random r = new Random(7703);
+            // Overlapping puffs: centre x, y, radius.
+            double[][] puffs = {{8, 9.5, 4.4}, {5, 8, 3.2}, {11, 8.5, 3.4}, {7.5, 6, 3.3}, {10, 11.5, 2.8}, {5, 11, 2.6}};
+            for (int y = 1; y < 15; y++)
+                for (int x = 1; x < 15; x++) {
+                    double best = -1;
+                    for (double[] p : puffs) {
+                        double d = Math.hypot(x - p[0], (y - p[1]) * 1.1) / p[2];
+                        if (d < 1 && (1 - d) > best) best = 1 - d;
+                    }
+                    if (best < 0) continue;
+                    int s = 3;
+                    double lx = x - 6.5, ly = y - 6.5;
+                    if (lx + ly < 0) s++;
+                    if (lx + ly < -5) s++;
+                    if (lx + ly > 6) s--;
+                    if (best < 0.18 && lx + ly > 0) s--;
+                    if (r.nextInt(5) == 0) s += r.nextBoolean() ? 1 : -1;
+                    px(im, x, y, wc(Math.max(2, Math.min(5, s))));
+                }
+            // Fibre wisps: short bright strands on the lit side, dark creases between puffs.
+            int[][] wisps = {{6, 3}, {7, 2}, {10, 4}, {3, 7}, {12, 10}, {13, 9}};
+            for (int[] w : wisps) if (!opaque(im, w[0], w[1])) px(im, w[0], w[1], wc(w[0] + w[1] < 11 ? 4 : 3));
+            int[][] creases = {{8, 7}, {9, 7}, {6, 10}, {7, 11}, {10, 9}, {11, 9}};
+            for (int[] c : creases) if (opaque(im, c[0], c[1])) px(im, c[0], c[1], wc(2));
+            int[][] bright = {{5, 6}, {6, 5}, {7, 4}};
+            for (int[] c : bright) if (opaque(im, c[0], c[1])) px(im, c[0], c[1], wc(5));
+            return outline(im);
+        }
+
+        static BufferedImage gui() {
+            BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            panel(im, 176, 176);
+            for (int x : new int[] {8, 26, 44, 62}) for (int y : new int[] {20, 38}) slot(im, x, y);
+            for (int x : new int[] {98, 116, 134, 152}) for (int y : new int[] {20, 38}) slot(im, x, y);
+            for (int y = 0; y < 14; y++)
+                for (int x = 0; x < 14; x++)
+                    if (FLAME_SILHOUETTE[y].charAt(x) == '#') {
+                        im.setRGB(81 + x, 28 + y, 0xff000000 | SLOT_FILL);
+                        int band = y < 4 ? 4 : y < 8 ? 3 : y < 11 ? 2 : 1;
+                        im.setRGB(176 + x, y, 0xff000000 | HEAT_BAND[band]);
+                    }
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 94 + row * 18);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 152);
+            return im;
+        }
+
+        static void kiln() throws IOException {
+            save("block/kiln_front", front(false));
+            save("block/kiln_front_active", front(true));
+            save("block/kiln_side", side());
+            save("block/kiln_top", top());
+            save("block/insulated_copper_heat_pipe", insulated(false));
+            save("block/insulated_refractory_heat_duct", insulated(true));
+            save("item/slag_wool", wool());
+            saveRaw("gui/kiln", gui());
+        }
+    }
+
+    // ---------------------------------------------------------------- tier 4: roaster
+
+    static final class Ro {
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+        static int cu(int s) { return COPPER.get(s); }
+        static final int CAVITY = 0x16110f, DEEP = 0x0e0c0c;
+        static final int[] FUME = {0xe8e2a6, 0xcfc67e, 0xa89f5c};
+
+        static int hash(int x, int y) { return Math.floorMod(x * 73 + y * 151 + x * y * 17 + 11, 97); }
+
+        /** Copper hood plates: lit top edge, seams, rivets, lip shadow on the face below. */
+        static void hood(BufferedImage im, int rows) {
+            for (int y = 0; y < rows; y++)
+                for (int x = 0; x < 16; x++) {
+                    int s = y == 0 ? 5 : y == 1 ? 4 : y >= rows - 2 ? 2 : 3;
+                    if (y == rows - 2) s = 2;
+                    if (y == rows - 1) s = 1;
+                    if ((x == 5 || x == 10) && y > 0 && y < rows - 2) s = 2;
+                    if ((x == 6 || x == 11) && y > 0 && y < rows - 2) s = 4;
+                    if (x == 0 && y < rows - 1) s = Math.min(5, s + 1);
+                    if (x == 15 && y < rows - 1) s = Math.max(2, s - 1);
+                    px(im, x, y, cu(s));
+                }
+            for (int x : new int[] {2, 8, 13}) { px(im, x, 2, cu(5)); px(im, x + 1, 3, cu(1)); }
+            px(im, 3, 1, COPPER.spec());
+        }
+
+        /** Ore bed height per column x=3..12. */
+        static final int[] HEIGHT = {2, 3, 3, 4, 4, 4, 3, 3, 3, 2};
+
+        static int oreStep(int x, int y, int top) {
+            int h = hash(x, y);
+            int s = h % 5 == 0 ? 3 : h % 3 == 0 ? 2 : 1;
+            if (y == top && x < 8) s = Math.min(4, s + 1);
+            if (y == top && x >= 8) s = Math.max(1, s);
+            return s;
+        }
+
+        static BufferedImage front(int frame) {
+            boolean active = frame >= 0;
+            BufferedImage im = fireBricks();
+            hood(im, 8);
+            // Hearth opening: x3..12, y8..13, brick surround with a dark rim.
+            for (int y = 8; y <= 14; y++)
+                for (int x = 2; x <= 13; x++) {
+                    boolean open = x >= 3 && x <= 12 && y <= 13;
+                    if (open) continue;
+                    int s = (x == 2 || y == 14) ? (y == 14 ? 4 : 1) : (x == 13 ? 3 : 1);
+                    if (y == 14 && x == 2) s = 1;
+                    if (x == 13 && y == 14) s = 2;
+                    px(im, x, y, fb(s));
+                }
+            for (int x = 3; x <= 12; x++) px(im, x, 14, fb(x < 8 ? 5 : 4));
+            for (int y = 8; y <= 13; y++)
+                for (int x = 3; x <= 12; x++) {
+                    int top = 14 - HEIGHT[x - 3];
+                    int c;
+                    if (y < top) c = y == 8 ? DEEP : CAVITY;
+                    else c = mix(CHARCOAL.get(oreStep(x, y, top)), CASSITERITE.get(oreStep(x, y, top) + 1), 0.5);
+                    px(im, x, y, c);
+                }
+            if (!active) return im;
+            // Glowing parts of the bed: surface and crevices, flickering by frame.
+            for (int x = 3; x <= 12; x++)
+                for (int y = 14 - HEIGHT[x - 3]; y <= 13; y++) {
+                    int h = hash(x, y);
+                    if (h % 5 >= 3 && y != 14 - HEIGHT[x - 3]) continue;
+                    double g = 0.30 + 0.62 * (((h + frame) % 4) / 3.0);
+                    if (y == 13) g *= 0.8;
+                    px(im, x, y, Hp.band(g));
+                }
+            // Warm bleed on the surround and the cavity ceiling.
+            for (int x = 3; x <= 12; x++) {
+                Hp.glow(im, x, 14, 0.5, 0.45);
+            }
+            for (int y = 9; y <= 13; y++) { Hp.glow(im, 2, y, 0.45, 0.4); Hp.glow(im, 13, y, 0.45, 0.4); }
+            // Fume wisps rising through the cavity.
+            int[][] wisps = {{5, 0}, {8, 2}, {10, 1}};
+            for (int[] w : wisps) {
+                int top = 14 - HEIGHT[w[0] - 3];
+                for (int k = 0; k < 2; k++) {
+                    int y = top - 1 - Math.floorMod(frame + w[1] + k * 2, 4) % 3 + 0;
+                    y = Math.max(8, Math.min(top - 1, y));
+                    int xx = w[0] + ((frame + w[1] + k) % 2);
+                    int top2 = 14 - HEIGHT[Math.min(12, Math.max(3, xx)) - 3];
+                    if (y >= 8 && y < top2) px(im, xx, y, FUME[k == 0 ? 0 : 1 + (frame + w[1]) % 2]);
+                }
+            }
+            return im;
+        }
+
+        static BufferedImage side() {
+            BufferedImage im = fireBricks();
+            for (int x = 0; x < 16; x++) {
+                px(im, x, 0, cu(5));
+                px(im, x, 1, cu(4));
+                px(im, x, 2, cu(3));
+                px(im, x, 3, cu(2));
+                px(im, x, 4, fb(1));
+                if (x == 0) { px(im, x, 1, cu(5)); px(im, x, 2, cu(4)); }
+                if (x == 15) { px(im, x, 0, cu(4)); px(im, x, 1, cu(3)); px(im, x, 2, cu(2)); }
+            }
+            for (int x : new int[] {3, 11}) { px(im, x, 1, COPPER.spec()); px(im, x + 1, 2, cu(1)); }
+            for (int x = 5; x <= 9; x++) px(im, x, 3, cu(1));
+            return im;
+        }
+
+        static BufferedImage back() {
+            BufferedImage im = fireBricks();
+            double c = 7.5;
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    double dx = x - c, dy = y - c, d = Math.hypot(dx, dy);
+                    if (d > 6.0 && d <= 7.1 && dx + dy > 1) px(im, x, y, fb(1)); // cast shadow
+                    if (d > 6.0) continue;
+                    boolean lit = dx + dy < -1.5;
+                    int s;
+                    if (d <= 2.2) { px(im, x, y, dx + dy < -1 ? DEEP : 0x1b1615); continue; }
+                    else if (d <= 3.6) s = lit ? 5 : dx + dy > 2 ? 2 : 3; // pipe collar
+                    else s = lit ? 4 : dx + dy > 2.5 ? 2 : 3; // flange face
+                    if (d > 5.3) s = lit ? 5 : dx + dy > 2.5 ? 1 : 2; // flange rim
+                    if (Math.abs(d - 3.65) < 0.5) s = 1; // collar seam
+                    px(im, x, y, cu(s));
+                }
+            // Eight bolts on the flange.
+            int[][] bolts = {{7, 2}, {8, 2}, {7, 13}, {8, 13}, {2, 7}, {2, 8}, {13, 7}, {13, 8}};
+            int[][] diag = {{3, 3}, {12, 3}, {3, 12}, {12, 12}};
+            for (int[] b : diag) { px(im, b[0], b[1], cu(5)); px(im, b[0] + 1, b[1] + 1, cu(1)); }
+            px(im, 7, 2, cu(5)); px(im, 8, 13, cu(1)); px(im, 2, 8, cu(5)); px(im, 13, 7, cu(1));
+            px(im, 8, 2, cu(1)); px(im, 7, 13, cu(5)); px(im, 2, 7, cu(1)); px(im, 13, 8, cu(5));
+            px(im, 3, 3, COPPER.spec());
+            return im;
+        }
+
+        static BufferedImage top() {
+            BufferedImage im = img();
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int s = 3;
+                    if (y == 0 || x == 0) s = 5;
+                    else if (y == 15 || x == 15) s = 1;
+                    else if (y == 1 || x == 1) s = 4;
+                    else if (y == 14 || x == 14) s = 2;
+                    else if (x == 5 || x == 10) s = (x == 5) ? 2 : 2;
+                    else if (x == 6 || x == 11) s = 4;
+                    px(im, x, y, cu(s));
+                }
+            for (int[] r : new int[][] {{2, 2}, {13, 2}, {2, 13}, {13, 13}}) {
+                px(im, r[0], r[1], cu(5)); px(im, r[0] + 1, r[1] + 1, cu(1));
+            }
+            px(im, 2, 2, COPPER.spec());
+            // Flue: 6x6 collar with a 4x4 dark opening.
+            for (int y = 5; y <= 10; y++)
+                for (int x = 5; x <= 10; x++) {
+                    boolean in = x >= 6 && x <= 9 && y >= 6 && y <= 9;
+                    if (in) { px(im, x, y, (x == 6 || y == 6) ? DEEP : 0x1b1615); continue; }
+                    int s = (y == 5 || x == 5) ? 5 : (y == 10 || x == 10) ? 2 : 4;
+                    if (x == 10 && y == 10) s = 1;
+                    px(im, x, y, cu(s));
+                }
+            px(im, 7, 7, 0x000000 | CAVITY);
+            return im;
+        }
+
+        static void arrowShape(BufferedImage im, int ox, int oy, java.util.function.IntBinaryOperator colour) {
+            String[] a = {"..####..", "..####..", "..####..", "..####..", "########", ".######.", "..####..", "...##..."};
+            for (int y = 0; y < 8; y++)
+                for (int x = 0; x < 8; x++)
+                    if (a[y].charAt(x) == '#') im.setRGB(ox + x, oy + y, 0xff000000 | colour.applyAsInt(x, y));
+        }
+
+        static BufferedImage gui() {
+            BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            panel(im, 176, 182);
+            for (int i = 0; i < 4; i++) {
+                int x = 35 + 18 * i;
+                slot(im, x, 17);
+                slot(im, x, 46);
+                arrowShape(im, x + 4, 36, (px, py) -> SLOT_FILL);
+            }
+            // Filled arrow sprite.
+            arrowShape(im, 176, 0, (px, py) -> {
+                int c = mix(HEAT_BAND[3], HEAT_BAND[4], py / 7.0);
+                if (px >= 5 && py < 4) c = mix(c, HEAT_BAND[2], 0.35);
+                if (py == 7) c = HEAT_BAND[4];
+                return c;
+            });
+            // Gas gauge: recessed well, 16x46 dark inner.
+            well(im, 139, 16, 18, 48, 0x2b2b2b);
+            fill(im, 140, 17, 16, 46, 0x2b2b2b);
+            for (int t = 0; t < 4; t++) {
+                int y = 17 + 9 + t * 9;
+                int len = t == 1 ? 5 : 3;
+                fill(im, 156 - len, y, len, 1, SLOT_FILL);
+            }
+            // Filled gas sprite: sulfur yellow gradient, lighter top, a soft light edge on the left.
+            for (int y = 0; y < 46; y++)
+                for (int x = 0; x < 16; x++) {
+                    double t = y / 45.0;
+                    int c = mix(0xeee89c, 0xb8ae48, t);
+                    if (x == 0) c = mix(c, 0xfff8c8, 0.4);
+                    if (x == 15) c = mix(c, 0x80781e, 0.3);
+                    if (y == 0) c = 0xfff4b8;
+                    if (((x * 5 + y * 3) % 11) == 0 && x > 1 && x < 14) c = mix(c, 0xfff8c8, 0.35);
+                    im.setRGB(184 + x, y, 0xff000000 | c);
+                }
+            for (int t = 0; t < 4; t++) {
+                int y = 9 + t * 9, len = t == 1 ? 5 : 3;
+                for (int i = 0; i < len; i++) im.setRGB(184 + 15 - i, y, 0xff000000 | 0x8a8030);
+            }
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 100 + row * 18);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 158);
+            return im;
+        }
+
+        static void roaster() throws IOException {
+            save("block/roaster_front", front(-1));
+            BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+            for (int f = 0; f < 4; f++) {
+                BufferedImage fr = front(f);
+                for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) strip.setRGB(x, f * 16 + y, fr.getRGB(x, y));
+            }
+            saveAnimated("block/roaster_front_active", strip, 3);
+            save("block/roaster_side", side());
+            save("block/roaster_back", back());
+            save("block/roaster_top", top());
+            saveRaw("gui/roaster", gui());
+        }
+    }
+
+    static final class Sm {
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+        static int st(int s) { return STEEL.get(s); }
+        static int rf(int s) { return REFRACTORY.get(s); }
+        static final int CAVITY = 0x16110f, DEEP = 0x0e0c0c;
+        static int hash(int x, int y) { return Math.floorMod(x * 73 + y * 151 + x * y * 17 + 11, 97); }
+
+        /** Steel band across rows 2..4: lit top edge, shaded lower edge, rivets, seam shadow below. */
+        static void band(BufferedImage im) {
+            for (int x = 0; x < 16; x++) {
+                px(im, x, 2, st(x == 15 ? 4 : 5));
+                px(im, x, 3, st(x == 15 ? 2 : 4));
+                px(im, x, 4, st(x == 15 ? 1 : 2));
+                if (x == 0) { px(im, x, 3, st(5)); px(im, x, 4, st(3)); }
+                px(im, x, 5, fb(1));
+            }
+            px(im, 3, 3, STEEL.spec()); px(im, 4, 4, st(1));
+            px(im, 11, 3, st(5)); px(im, 12, 4, st(1));
+        }
+
+        static BufferedImage side() {
+            BufferedImage im = fireBricks();
+            band(im);
+            return im;
+        }
+
+        static BufferedImage front(int frame) {
+            boolean active = frame >= 0;
+            BufferedImage im = fireBricks();
+            band(im);
+            // Spout housing: steel block x5..10, y6..9 with a dark mouth, lit top-left.
+            for (int y = 6; y <= 10; y++)
+                for (int x = 5; x <= 10; x++) {
+                    int s = y == 6 ? 5 : y == 10 ? 1 : 3;
+                    if (x == 5) s = Math.min(5, s + 1);
+                    if (x == 10) s = Math.max(1, s - 1);
+                    if (y == 10 && x == 5) s = 2;
+                    px(im, x, y, st(s));
+                }
+            // Mouth, 2 wide, running down the lip.
+            for (int y = 8; y <= 10; y++) { px(im, 7, y, DEEP); px(im, 8, y, DEEP); }
+            px(im, 6, 8, st(1)); px(im, 9, 8, st(2));
+            // Shadow cast under the spout.
+            px(im, 6, 11, fb(1)); px(im, 7, 11, fb(2)); px(im, 8, 11, fb(2)); px(im, 9, 11, fb(1)); px(im, 10, 11, fb(1));
+            // Catch trough below.
+            for (int x = 4; x <= 11; x++) { px(im, x, 14, x == 4 ? st(4) : x == 11 ? st(1) : st(2)); px(im, x, 13, x < 8 ? st(5) : st(4)); }
+            px(im, 4, 13, st(5)); px(im, 11, 13, st(2));
+            for (int x = 5; x <= 10; x++) px(im, x, 15, fb(1));
+            // Status light: small lens on the band's right end.
+            px(im, 13, 3, 0x2a3a30);
+            if (active) {
+                px(im, 13, 3, 0x4ac060);
+                px(im, 12, 3, mix(st(4), 0x4ac060, 0.45)); px(im, 14, 3, mix(st(4), 0x4ac060, 0.3));
+                px(im, 13, 2, mix(st(5), 0x4ac060, 0.5));
+                // Glowing mouth and a thin trickle with a drip running down.
+                px(im, 7, 8, Hp.band(0.8)); px(im, 8, 8, Hp.band(0.95));
+                px(im, 7, 9, Hp.band(0.85)); px(im, 8, 9, Hp.band(1.0));
+                px(im, 7, 10, Hp.band(0.9)); px(im, 8, 10, Hp.band(0.75));
+                px(im, 6, 9, mix(st(3), Hp.band(0.5), 0.5)); px(im, 9, 9, mix(st(2), Hp.band(0.5), 0.5));
+                px(im, 8, 11, Hp.band(0.9));
+                px(im, 8, 12, Hp.band(0.8));
+                int dy = 12 + frame % 4;
+                // Stream into the trough, a drip falling with the frame.
+                px(im, 8, 13, Hp.band(1.0));
+                if (frame % 2 == 0) px(im, 7, 11, Hp.band(0.55));
+                int y1 = 11 + (frame % 4);
+                px(im, 7, y1, Hp.band(1.0));
+                if (y1 + 1 <= 12) px(im, 7, y1 + 1, Hp.band(0.6));
+                // Metal pooled in the trough.
+                for (int x = 5; x <= 10; x++) px(im, x, 13, Hp.band(x == 8 ? 1.0 : 0.55 + 0.3 * (((x + frame) % 3) / 2.0)));
+                // Warm bleed on the steel round the mouth and the bricks under the trough.
+                for (int x = 5; x <= 10; x++) { Hp.glow(im, x, 10, 0.5, 0.45); Hp.glow(im, x, 14, 0.4, 0.35); }
+                Hp.glow(im, 5, 8, 0.4, 0.4); Hp.glow(im, 10, 8, 0.4, 0.4);
+            }
+            return im;
+        }
+
+        /** Rim from above: fire brick, steel collar, refractory pot rim, 6x6 opening. */
+        static BufferedImage top(int frame) {
+            boolean active = frame >= 0;
+            BufferedImage im = fireBricks();
+            for (int y = 1; y <= 14; y++)
+                for (int x = 1; x <= 14; x++) {
+                    boolean corner = (x == 1 || x == 14) && (y == 1 || y == 14);
+                    if (corner) continue;
+                    boolean outer = x == 1 || x == 14 || y == 1 || y == 14;
+                    int s = 3;
+                    if (outer) s = (x == 14 || y == 14) ? 1 : 3;
+                    else if (y == 2 || x == 2) s = 5;
+                    else if (y == 13 || x == 13) s = 2;
+                    else if (y == 3 || x == 3) s = 4;
+                    px(im, x, y, st(s));
+                }
+            // Collar rivets.
+            for (int[] r : new int[][] {{3, 3}, {12, 3}, {3, 12}, {12, 12}}) { px(im, r[0], r[1], st(5)); px(im, r[0] + 1, r[1] + 1, st(1)); }
+            px(im, 3, 3, STEEL.spec());
+            // Pot rim: refractory ring x4..11.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    boolean corner = (x == 4 || x == 11) && (y == 4 || y == 11);
+                    if (corner) { px(im, x, y, st(2)); continue; }
+                    int s = (y == 4 || x == 4) ? 5 : (y == 11 || x == 11) ? 2 : 4;
+                    px(im, x, y, rf(s));
+                }
+            // Opening x5..10, y5..10 with the corners cut.
+            for (int y = 5; y <= 10; y++)
+                for (int x = 5; x <= 10; x++) {
+                    boolean corner = (x == 5 || x == 10) && (y == 5 || y == 10);
+                    if (corner) { px(im, x, y, rf(2)); continue; }
+                    int c;
+                    if (!active) c = (x == 5 || y == 5) ? DEEP : (x == 10 || y == 10) ? 0x1f1a17 : CAVITY;
+                    else {
+                        double g = 0.62 + 0.38 * (((hash(x, y) + frame * 3) % 8) / 7.0);
+                        // slow drifting swirl: lighter band sweeping diagonally
+                        double sweep = Math.sin((x + y) * 0.9 - frame * 0.785) * 0.5 + 0.5;
+                        g = Math.min(1.0, 0.55 + 0.25 * sweep + 0.2 * g);
+                        c = Hp.band(g);
+                        if (hash(x + 5, y) % 9 == 0 && (x + frame) % 4 != 0) c = HEAT_BAND[2];
+                        if (x == 5 || y == 5) c = mix(c, HEAT_BAND[2], 0.5);
+                        if (hash(x, y + frame) % 17 == 0) c = HEAT_BAND[5];
+                    }
+                    px(im, x, y, c);
+                }
+            if (active) {
+                for (int i = 4; i <= 11; i++) { Hp.glow(im, i, 4, 0.5, 0.3); Hp.glow(im, 4, i, 0.5, 0.3); Hp.glow(im, i, 11, 0.5, 0.35); Hp.glow(im, 11, i, 0.5, 0.35); }
+            }
+            return im;
+        }
+
+        static BufferedImage strip(java.util.function.IntFunction<BufferedImage> f) {
+            BufferedImage s = new BufferedImage(16, 128, BufferedImage.TYPE_INT_ARGB);
+            for (int fr = 0; fr < 8; fr++) {
+                BufferedImage a = f.apply(fr);
+                for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) s.setRGB(x, fr * 16 + y, a.getRGB(x, y));
+            }
+            return s;
+        }
+
+        static void rightArrow(BufferedImage im, int ox, int oy, java.util.function.IntBinaryOperator colour) {
+            String[] a = {".......#....", ".......##...", "##########..", "############", "############", "##########..", ".......##...", ".......#...."};
+            for (int y = 0; y < 8; y++)
+                for (int x = 0; x < 12; x++)
+                    if (a[y].charAt(x) == '#') im.setRGB(ox + x, oy + y, 0xff000000 | colour.applyAsInt(x, y));
+        }
+
+        static BufferedImage gui() {
+            BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            panel(im, 176, 240);
+            for (int i = 0; i < 9; i++) slot(im, 8 + (i % 3) * 18, 18 + (i / 3) * 18);
+            well(im, 65, 17, 10, 54, 0x2a2a2a);
+            for (int u = 1; u < 4; u++) fill(im, 75, 17 + 1 + Math.round(52 - u * 13f), 2, 1, SLOT_FILL);
+            well(im, 159, 17, 10, 54, 0x2a2a2a);
+            for (int t = 250; t < 1750; t += 250) {
+                int y = 18 + 52 - Math.round(t / 1750f * 52);
+                fill(im, 156, y, 3, 1, t % 500 == 0 ? GUI_SHADOW : SLOT_FILL);
+            }
+            slot(im, 8, 78); slot(im, 26, 78); slot(im, 62, 78); slot(im, 98, 78);
+            rightArrow(im, 45, 82, (px, py) -> SLOT_FILL);
+            rightArrow(im, 81, 82, (px, py) -> SLOT_FILL);
+            rightArrow(im, 176, 0, (px, py) -> {
+                int c = mix(HEAT_BAND[3], HEAT_BAND[4], py / 7.0);
+                if (px < 7 && py < 3) c = mix(c, HEAT_BAND[2], 0.35);
+                if (px == 11 || py == 7) c = HEAT_BAND[4];
+                return c;
+            });
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 158 + row * 18);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 216);
+            return im;
+        }
+
+        static void smelter() throws IOException {
+            save("block/smelter_front", front(-1));
+            saveAnimated("block/smelter_front_active", strip(Sm::front), 3);
+            save("block/smelter_side", side());
+            save("block/smelter_top", top(-1));
+            saveAnimated("block/smelter_top_active", strip(Sm::top), 3);
+            saveRaw("gui/smelter", gui());
+        }
+    }
+
     static void converter() throws IOException {
         save("block/converter_controller_front", Cv.front(-1));
         saveAnimated("block/converter_controller_front_blowing", Cv.blowing(), 2);
@@ -6991,6 +7911,10 @@ public final class TextureGen {
         washer();
         blastFurnace();
         converter();
+        heatPipes();
+        Kn.kiln();
+        Ro.roaster();
+        Sm.smelter();
     }
 
     static void steam() throws IOException {

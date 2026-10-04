@@ -129,6 +129,10 @@ public final class Config {
             .comment("Holding an item at 480 °C or hotter without tongs in the off hand burns the player.")
             .define("burnPlayer", true);
 
+    public static final ModConfigSpec.IntValue HEAT_MAX_PIPE_LENGTH = BUILDER
+            .comment("How many heat pipe blocks heat crosses at most on its way from a firebox to a consumer.")
+            .defineInRange("maxPipeLength", 32, 1, 256);
+
     static {
         BUILDER.pop();
     }
@@ -299,6 +303,12 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue JOURNAL_GIVE_ON_JOIN = BUILDER
             .comment("Give each player a field journal the first time they join.")
             .define("giveOnJoin", true);
+    public static final ModConfigSpec.IntValue JOURNAL_HINT_MINUTES = BUILDER
+            .comment("Minutes of play an open lead waits before the journal remembers its hint. -1 never; studying still does.")
+            .defineInRange("hintMinutes", 10, -1, 600);
+    public static final ModConfigSpec.BooleanValue JOURNAL_CHECKLIST = BUILDER
+            .comment("Show the Checklist tab in the journal: every goal of the tree as a list, for players who want the overview.")
+            .define("checklist", false);
 
     static {
         BUILDER.pop();

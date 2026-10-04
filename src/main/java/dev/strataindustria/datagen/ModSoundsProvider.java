@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.journal.JournalContent;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.registry.Tier5Sounds;
@@ -97,6 +98,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition pages = definition().subtitle(subtitle("journal.open"));
         for (int i = 1; i <= 3; i++) pages.with(sound("minecraft:item/book/open_flip" + i).volume(0.8f));
         add(ModSounds.JOURNAL_OPEN, pages);
+        journal();
 
         // Tier 3 bloomery (spec 20.6): a whoosh of catching charcoal, a low draught roar, ore on coals, and
         // a metallic crunch as a bloom comes out.
@@ -185,10 +187,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 3; i++) unfold.with(sound("minecraft:item/book/open_flip" + i).pitch(1.25f).volume(0.7f));
         add(StructureContent.SURVEY_NOTES_OPEN, unfold);
         add(StructureContent.SURVEY_NOTES_FOUND, definition().subtitle(subtitle("survey_notes.found"))
-                .with(sound("minecraft:block/note_block/chime").pitch(0.8f).volume(0.35f))
-                .with(sound("minecraft:item/book/page_turn1").pitch(1.1f).volume(0.6f)));
+                .with(sound("minecraft:note/icechime").pitch(0.8f).volume(0.35f))
+                .with(sound("minecraft:item/book/open_flip1").pitch(1.1f).volume(0.6f)));
         SoundDefinition place = definition().subtitle(subtitle("journal.place"));
-        for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/page_turn" + i).pitch(0.9f).volume(0.7f));
+        for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/open_flip" + i).pitch(0.9f).volume(0.7f));
         add(StructureContent.JOURNAL_PLACE, place);
 
         // Ruins: heat-cracked brick crumbling, and slag that crunches like gravel with a glassy clink.
@@ -238,6 +240,22 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 3; i++) burn.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.85f).volume(0.8f));
         burn.with(sound("minecraft:fire/fire").pitch(0.7f).volume(0.4f));
         add(Tier4Sounds.FIREBOX_BURN, burn);
+        SoundDefinition kilnWork = definition().subtitle(subtitle("kiln.work"));
+        for (int i = 1; i <= 3; i++) kilnWork.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.7f).volume(0.6f));
+        add(Tier4Sounds.KILN_WORK, kilnWork);
+        add(Tier4Sounds.KILN_DONE, definition().subtitle(subtitle("kiln.done"))
+                .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
+        // Spec 21: the smelter's pour is thicker than a crucible's, and its pot bubbles while molten.
+        add(Tier4Sounds.SMELTER_POUR, definition().subtitle(subtitle("smelter.pour"))
+                .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.85f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.3f)));
+        add(Tier4Sounds.SMELTER_BUBBLE, definition().subtitle(subtitle("smelter.bubble"))
+                .with(sound("minecraft:block.lava.ambient", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.7f))
+                .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
+        add(Tier4Sounds.HEAT_PIPE_TICK, definition().subtitle(subtitle("heat_pipe.tick"))
+                .with(sound("minecraft:block.copper.step", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.25f)));
         add(Tier4Sounds.FLUID_PIPE_REFUSE, definition().subtitle(subtitle("fluid_pipe.refuse"))
                 .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.3f)));
@@ -272,6 +290,25 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.65f).volume(0.55f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.25f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        // Spec 21.7: the valve's wheel squeak and thunk, and liquid poured into a metal tank.
+        add(Tier4Sounds.VALVE_OPEN, definition().subtitle(subtitle("valve.open"))
+                .with(sound("minecraft:block.iron_trapdoor.open", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:block.iron_trapdoor.open", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.7f)));
+        add(Tier4Sounds.VALVE_CLOSE, definition().subtitle(subtitle("valve.close"))
+                .with(sound("minecraft:block.iron_trapdoor.close", SoundDefinition.SoundType.EVENT).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:block.iron_trapdoor.close", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f)));
+        add(Tier4Sounds.FLUID_TANK_FILL, definition().subtitle(subtitle("fluid_tank.fill"))
+                .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.8f))
+                .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
+        add(Tier4Sounds.BLOWING_ENGINE_STROKE, definition().subtitle(subtitle("blowing_engine.stroke"))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.6f))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.55f))
+                .with(sound("minecraft:entity.breeze.wind_burst", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.25f)));
+        // Spec 21.7: a hiss, then the heavy ringing blow.
+        add(Tier4Sounds.STEAM_HAMMER_STRIKE, definition().subtitle(subtitle("steam_hammer.strike"))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.6f))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.75f).volume(0.55f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
         add(Tier4Sounds.STEAM_ENGINE_START, definition().subtitle(subtitle("steam_engine.start"))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.7f)));
         add(Tier4Sounds.STEAM_ENGINE_STOP, definition().subtitle(subtitle("steam_engine.stop"))
@@ -324,6 +361,29 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.bubble_column.bubble_pop", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
                 .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f))
                 .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.3f)));
+    }
+
+    /** The leads notebook: a pencil on paper, pages, and a tack into cork, all short and quiet. */
+    private void journal() {
+        add(JournalContent.WRITE, brush("journal.write", 1.5f, 0.4f));
+        add(JournalContent.CROSS_OFF, brush("journal.cross_off", 1.7f, 0.5f));
+        add(JournalContent.STUDY, brush("journal.study", 1.05f, 0.45f));
+        SoundDefinition remember = definition().subtitle(subtitle("journal.remember"));
+        for (int i = 1; i <= 3; i++) remember.with(sound("minecraft:item/book/open_flip" + i).pitch(0.75f).volume(0.8f));
+        add(JournalContent.REMEMBER, remember);
+        SoundDefinition page = definition().subtitle(subtitle("journal.page"));
+        for (int i = 1; i <= 3; i++) page.with(sound("minecraft:item/book/open_flip" + i).pitch(1.05f).volume(0.7f));
+        add(JournalContent.PAGE, page);
+        SoundDefinition pin = definition().subtitle(subtitle("journal.pin"));
+        for (int i = 1; i <= 4; i++) pin.with(sound("minecraft:dig/wood" + i).pitch(1.9f).volume(0.35f));
+        add(JournalContent.PIN, pin);
+    }
+
+    /** A brush on paper reads as a pencil when pitched up. */
+    private static SoundDefinition brush(String subtitle, float pitch, float volume) {
+        SoundDefinition definition = definition().subtitle(subtitle(subtitle));
+        for (int i = 1; i <= 4; i++) definition.with(sound("minecraft:item/brush/brushing_generic" + i).pitch(pitch).volume(volume));
+        return definition;
     }
 
     private static String subtitle(String name) {

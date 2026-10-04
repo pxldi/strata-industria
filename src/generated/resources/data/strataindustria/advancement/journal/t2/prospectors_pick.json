@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:bronze_prospectors_pick"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t2.prospectors_pick"
     }

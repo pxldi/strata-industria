@@ -12,11 +12,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 /**
- * Bronze boiler: the water and steam tanks on the left, the pressure dial with its green, amber and
+ * Bronze boiler and steel boiler controller: the water and steam tanks on the left, the pressure dial with its green, amber and
  * red arcs in the middle, the shell's integrity and the fire on the right, and the status underneath.
  */
 public class BoilerScreen extends AbstractContainerScreen<BoilerMenu> {
-    private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/bronze_boiler.png");
+    private static final Identifier BRONZE = StrataIndustria.id("textures/gui/bronze_boiler.png");
+    private static final Identifier STEEL = StrataIndustria.id("textures/gui/boiler_controller.png");
     private static final String KEY = StrataIndustria.MOD_ID + ".boiler.";
     /** Tank insides; their fill strips are at (WATER_U, 0) and (STEAM_U, 0) in the texture. */
     public static final int WATER_X = 8, STEAM_X = 30, TANK_Y = 17, TANK_W = 16, TANK_H = 52, WATER_U = 176, STEAM_U = 192;
@@ -31,15 +32,19 @@ public class BoilerScreen extends AbstractContainerScreen<BoilerMenu> {
         this.inventoryLabelY = BoilerMenu.INVENTORY_Y - 11;
     }
 
+    private Identifier background() {
+        return menu.steel() ? STEEL : BRONZE;
+    }
+
     @Override
     public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(g, mouseX, mouseY, partialTick);
-        g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
-        tank(g, WATER_X, WATER_U, menu.water() / (float) BoilerBlockEntity.WATER_CAPACITY);
-        tank(g, STEAM_X, STEAM_U, menu.steam() / (float) BoilerBlockEntity.STEAM_CAPACITY);
+        g.blit(RenderPipelines.GUI_TEXTURED, background(), leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+        tank(g, WATER_X, WATER_U, menu.water() / (float) menu.waterCapacity());
+        tank(g, STEAM_X, STEAM_U, menu.steam() / (float) menu.steamCapacity());
 
         // The needle, from 180 degrees (empty) round to 0 (rated pressure).
-        float share = Math.min(1.0f, menu.pressure() / BoilerBlockEntity.RATED_PRESSURE);
+        float share = menu.ratedPressure() <= 0 ? 0 : Math.min(1.0f, menu.pressure() / menu.ratedPressure());
         double angle = Math.PI * (1.0 - share);
         int cx = leftPos + DIAL_X, cy = topPos + DIAL_Y;
         for (int r = 2; r <= NEEDLE; r++) {
@@ -59,7 +64,7 @@ public class BoilerScreen extends AbstractContainerScreen<BoilerMenu> {
     private void tank(GuiGraphicsExtractor g, int x, int u, float share) {
         if (share <= 0) return;
         int h = Math.max(1, Math.round(TANK_H * Math.min(1.0f, share)));
-        g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos + x, topPos + TANK_Y + TANK_H - h, u, TANK_H - h, TANK_W, h, 256, 256);
+        g.blit(RenderPipelines.GUI_TEXTURED, background(), leftPos + x, topPos + TANK_Y + TANK_H - h, u, TANK_H - h, TANK_W, h, 256, 256);
     }
 
     @Override
@@ -80,10 +85,13 @@ public class BoilerScreen extends AbstractContainerScreen<BoilerMenu> {
             case HEATING -> Component.translatable(status.key(), menu.warmth());
             case TOO_COOL -> Component.translatable(status.key(), BoilerBlockEntity.MIN_TEMPERATURE, menu.temperature());
             case DRY_FIRING -> Component.translatable(status.key(), Math.round(menu.integrity()));
+            case INCOMPLETE -> Component.translatable(menu.problem().key(), menu.problemLayer(),
+                    Component.translatable(StrataIndustria.MOD_ID + ".blast_furnace.spot." + menu.problemSpot()));
             default -> Component.translatable(status.key());
         };
         int colour = status.warning() ? 0xFF8A3A2A : 0xFF404040;
-        int centre = (52 + 168) / 2;
+        // The structure line is long; it gets the whole width.
+        int centre = status == BoilerBlockEntity.Status.INCOMPLETE ? imageWidth / 2 : (52 + 168) / 2;
         g.text(font, line, centre - font.width(line) / 2, STATUS_Y, colour, false);
     }
 
@@ -93,9 +101,9 @@ public class BoilerScreen extends AbstractContainerScreen<BoilerMenu> {
         int x = mouseX - leftPos, y = mouseY - topPos;
         if (y >= TANK_Y && y < TANK_Y + TANK_H) {
             if (x >= WATER_X && x < WATER_X + TANK_W) {
-                g.setTooltipForNextFrame(Component.translatable(KEY + "water", menu.water(), BoilerBlockEntity.WATER_CAPACITY), mouseX, mouseY);
+                g.setTooltipForNextFrame(Component.translatable(KEY + "water", menu.water(), menu.waterCapacity()), mouseX, mouseY);
             } else if (x >= STEAM_X && x < STEAM_X + TANK_W) {
-                g.setTooltipForNextFrame(Component.translatable(KEY + "steam", menu.steam(), BoilerBlockEntity.STEAM_CAPACITY), mouseX, mouseY);
+                g.setTooltipForNextFrame(Component.translatable(KEY + "steam", menu.steam(), menu.steamCapacity()), mouseX, mouseY);
             }
         }
         if (x >= BAR_X - 1 && x < BAR_X + BAR_W + 1 && y >= BAR_Y - 1 && y < BAR_Y + BAR_H + 1) {

@@ -113,9 +113,19 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(Tier4Blocks.MECHANICAL_PUMP.getKey()).add(Tier4Blocks.STEAM_ENGINE.getKey())
                 .add(Tier4Blocks.CRUSHER.getKey()).add(Tier4Blocks.REFRACTORY_CASING.getKey())
                 .add(Tier4Blocks.BLAST_FURNACE_CONTROLLER.getKey()).add(Tier4Blocks.TUYERE.getKey()).add(Tier4Blocks.CHARGING_HATCH.getKey())
-                .add(Tier4Blocks.TAP_HATCH.getKey()).add(Tier4Blocks.BLOWER.getKey()).add(Tier4Blocks.CONVERTER_CONTROLLER.getKey());
+                .add(Tier4Blocks.TAP_HATCH.getKey()).add(Tier4Blocks.BLOWER.getKey()).add(Tier4Blocks.CONVERTER_CONTROLLER.getKey())
+                .add(Tier4Blocks.COPPER_HEAT_PIPE.getKey()).add(Tier4Blocks.REFRACTORY_HEAT_DUCT.getKey()).add(Tier4Blocks.HEAT_INLET.getKey())
+                .add(Tier4Blocks.INSULATED_COPPER_HEAT_PIPE.getKey()).add(Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT.getKey())
+                .add(Tier4Blocks.KILN.getKey()).add(Tier4Blocks.ROASTER.getKey())
+                .add(Tier4Blocks.SMELTER.getKey()).add(Tier4Blocks.STEAM_HAMMER.getKey())
+                .add(Tier4Blocks.VALVE.getKey()).add(Tier4Blocks.FLUID_TANK.getKey()).add(Tier4Blocks.BLOWING_ENGINE.getKey())
+                .add(Tier4Blocks.STEEL_BOILER_SHELL.getKey()).add(Tier4Blocks.BOILER_FLUID_PORT.getKey())
+                .add(Tier4Blocks.BOILER_CONTROLLER.getKey()).add(Tier4Blocks.CRACKED_BOILER_CONTROLLER.getKey());
+        tag(ModTags.Blocks.HEAT_PIPES).add(Tier4Blocks.COPPER_HEAT_PIPE.getKey()).add(Tier4Blocks.REFRACTORY_HEAT_DUCT.getKey())
+                .add(Tier4Blocks.INSULATED_COPPER_HEAT_PIPE.getKey()).add(Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT.getKey());
         tag(dev.strataindustria.registry.ModTags.Blocks.FLUID_PIPES).add(Tier4Blocks.COPPER_FLUID_PIPE.getKey())
-                .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey());
+                .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey())
+                .add(Tier4Blocks.VALVE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(Tier4Blocks.WASHER.getKey()).add(Tier4Blocks.TREATED_PLANKS.getKey()).add(Tier4Blocks.TREATED_SLAB.getKey())
                 .add(Tier4Blocks.TREATED_STAIRS.getKey()).add(Tier4Blocks.TREATED_FENCE.getKey());
         tag(BlockTags.WOODEN_SLABS).add(Tier4Blocks.TREATED_SLAB.getKey());

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:bronze_fluid_pipe",
+    "strataindustria:brass_plate",
+    "strataindustria:brass_rod"
+  ],
+  "result": {
+    "id": "strataindustria:valve"
+  }
+}

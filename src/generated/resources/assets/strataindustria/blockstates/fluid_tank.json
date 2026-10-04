@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "down=false,up=false": {
+      "model": "strataindustria:block/fluid_tank"
+    },
+    "down=false,up=true": {
+      "model": "strataindustria:block/fluid_tank_bottom"
+    },
+    "down=true,up=false": {
+      "model": "strataindustria:block/fluid_tank_top"
+    },
+    "down=true,up=true": {
+      "model": "strataindustria:block/fluid_tank_middle"
+    }
+  }
+}

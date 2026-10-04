@@ -58,6 +58,38 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.FurnaceHatchBlockEntity>> FURNACE_HATCH =
             ModBlockEntities.BLOCK_ENTITIES.register("furnace_hatch", () -> new BlockEntityType<>(dev.strataindustria.ironworks.FurnaceHatchBlockEntity::new,
                     Tier4Blocks.CHARGING_HATCH.get(), Tier4Blocks.TAP_HATCH.get()));
+    // Spec 8.6: the kiln.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ceramics.KilnBlockEntity>> KILN =
+            ModBlockEntities.BLOCK_ENTITIES.register("kiln", () -> new BlockEntityType<>(dev.strataindustria.ceramics.KilnBlockEntity::new,
+                    Tier4Blocks.KILN.get()));
+    // Spec 8.5: the roaster.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.roasting.RoasterBlockEntity>> ROASTER =
+            ModBlockEntities.BLOCK_ENTITIES.register("roaster", () -> new BlockEntityType<>(dev.strataindustria.roasting.RoasterBlockEntity::new,
+                    Tier4Blocks.ROASTER.get()));
+    // Spec 8.7: the smelter.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.metal.SmelterBlockEntity>> SMELTER =
+            ModBlockEntities.BLOCK_ENTITIES.register("smelter", () -> new BlockEntityType<>(dev.strataindustria.metal.SmelterBlockEntity::new,
+                    Tier4Blocks.SMELTER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.steam.SteamHammerBlockEntity>> STEAM_HAMMER =
+            ModBlockEntities.BLOCK_ENTITIES.register("steam_hammer", () -> new BlockEntityType<>(dev.strataindustria.steam.SteamHammerBlockEntity::new,
+                    Tier4Blocks.STEAM_HAMMER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.fluid.FluidTankBlockEntity>> FLUID_TANK =
+            ModBlockEntities.BLOCK_ENTITIES.register("fluid_tank", () -> new BlockEntityType<>(dev.strataindustria.fluid.FluidTankBlockEntity::new,
+                    Tier4Blocks.FLUID_TANK.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.BlowingEngineBlockEntity>> BLOWING_ENGINE =
+            ModBlockEntities.BLOCK_ENTITIES.register("blowing_engine", () -> new BlockEntityType<>(dev.strataindustria.ironworks.BlowingEngineBlockEntity::new,
+                    Tier4Blocks.BLOWING_ENGINE.get()));
+    // Spec 8.4: the heat inlet's link to its multiblock.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.steam.SteelBoilerControllerBlockEntity>> BOILER_CONTROLLER =
+            ModBlockEntities.BLOCK_ENTITIES.register("boiler_controller", () -> new BlockEntityType<>(dev.strataindustria.steam.SteelBoilerControllerBlockEntity::new,
+                    Tier4Blocks.BOILER_CONTROLLER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.steam.BoilerPartBlockEntity>> BOILER_PART =
+            ModBlockEntities.BLOCK_ENTITIES.register("boiler_part", () -> new BlockEntityType<>(dev.strataindustria.steam.BoilerPartBlockEntity::new,
+                    Tier4Blocks.STEEL_BOILER_SHELL.get(), Tier4Blocks.BOILER_FLUID_PORT.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.heat.HeatInletBlockEntity>> HEAT_INLET =
+            ModBlockEntities.BLOCK_ENTITIES.register("heat_inlet", () -> new BlockEntityType<>(dev.strataindustria.heat.HeatInletBlockEntity::new,
+                    Tier4Blocks.HEAT_INLET.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.BlowerBlockEntity>> BLOWER =
             ModBlockEntities.BLOCK_ENTITIES.register("blower", () -> new BlockEntityType<>(dev.strataindustria.ironworks.BlowerBlockEntity::new,
                     Tier4Blocks.BLOWER.get()));

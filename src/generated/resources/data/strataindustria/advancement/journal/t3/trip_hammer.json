@@ -17,6 +17,7 @@
     "icon": {
       "id": "strataindustria:trip_hammer"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.trip_hammer"
     }

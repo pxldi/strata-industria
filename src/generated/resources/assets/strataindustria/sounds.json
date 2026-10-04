@@ -474,6 +474,29 @@
     ],
     "subtitle": "subtitles.strataindustria.blower.run"
   },
+  "blowing_engine.stroke": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 0.5,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "entity.breeze.wind_burst",
+        "pitch": 0.6,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.blowing_engine.stroke"
+  },
   "boiler.crack": {
     "sounds": [
       {
@@ -1020,6 +1043,21 @@
     ],
     "subtitle": "subtitles.strataindustria.fluid_pipe.refuse"
   },
+  "fluid_tank.fill": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.empty",
+        "pitch": 0.8
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.empty",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fluid_tank.fill"
+  },
   "forge.ignite": {
     "sounds": [
       {
@@ -1075,6 +1113,23 @@
     ],
     "subtitle": "subtitles.strataindustria.heat.sear"
   },
+  "heat_pipe.tick": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.copper.step",
+        "pitch": 1.5,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 1.7,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.heat_pipe.tick"
+  },
   "hide.scrape": {
     "sounds": [
       {
@@ -1120,12 +1175,12 @@
   "item.survey_notes.found": {
     "sounds": [
       {
-        "name": "block/note_block/chime",
+        "name": "note/icechime",
         "pitch": 0.8,
         "volume": 0.35
       },
       {
-        "name": "item/book/page_turn1",
+        "name": "item/book/open_flip1",
         "pitch": 1.1,
         "volume": 0.6
       }
@@ -1152,6 +1207,31 @@
     ],
     "subtitle": "subtitles.strataindustria.survey_notes.open"
   },
+  "journal.cross_off": {
+    "sounds": [
+      {
+        "name": "item/brush/brushing_generic1",
+        "pitch": 1.7,
+        "volume": 0.5
+      },
+      {
+        "name": "item/brush/brushing_generic2",
+        "pitch": 1.7,
+        "volume": 0.5
+      },
+      {
+        "name": "item/brush/brushing_generic3",
+        "pitch": 1.7,
+        "volume": 0.5
+      },
+      {
+        "name": "item/brush/brushing_generic4",
+        "pitch": 1.7,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.cross_off"
+  },
   "journal.open": {
     "sounds": [
       {
@@ -1168,6 +1248,158 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.journal.open"
+  },
+  "journal.page": {
+    "sounds": [
+      {
+        "name": "item/book/open_flip1",
+        "pitch": 1.05,
+        "volume": 0.7
+      },
+      {
+        "name": "item/book/open_flip2",
+        "pitch": 1.05,
+        "volume": 0.7
+      },
+      {
+        "name": "item/book/open_flip3",
+        "pitch": 1.05,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.page"
+  },
+  "journal.pin": {
+    "sounds": [
+      {
+        "name": "dig/wood1",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "name": "dig/wood2",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "name": "dig/wood3",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "name": "dig/wood4",
+        "pitch": 1.9,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.pin"
+  },
+  "journal.remember": {
+    "sounds": [
+      {
+        "name": "item/book/open_flip1",
+        "pitch": 0.75,
+        "volume": 0.8
+      },
+      {
+        "name": "item/book/open_flip2",
+        "pitch": 0.75,
+        "volume": 0.8
+      },
+      {
+        "name": "item/book/open_flip3",
+        "pitch": 0.75,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.remember"
+  },
+  "journal.study": {
+    "sounds": [
+      {
+        "name": "item/brush/brushing_generic1",
+        "pitch": 1.05,
+        "volume": 0.45
+      },
+      {
+        "name": "item/brush/brushing_generic2",
+        "pitch": 1.05,
+        "volume": 0.45
+      },
+      {
+        "name": "item/brush/brushing_generic3",
+        "pitch": 1.05,
+        "volume": 0.45
+      },
+      {
+        "name": "item/brush/brushing_generic4",
+        "pitch": 1.05,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.study"
+  },
+  "journal.write": {
+    "sounds": [
+      {
+        "name": "item/brush/brushing_generic1",
+        "pitch": 1.5,
+        "volume": 0.4
+      },
+      {
+        "name": "item/brush/brushing_generic2",
+        "pitch": 1.5,
+        "volume": 0.4
+      },
+      {
+        "name": "item/brush/brushing_generic3",
+        "pitch": 1.5,
+        "volume": 0.4
+      },
+      {
+        "name": "item/brush/brushing_generic4",
+        "pitch": 1.5,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.write"
+  },
+  "kiln.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.decorated_pot.hit",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.4,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.kiln.done"
+  },
+  "kiln.work": {
+    "sounds": [
+      {
+        "name": "block/furnace/fire_crackle1",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "block/furnace/fire_crackle2",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "block/furnace/fire_crackle3",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.kiln.work"
   },
   "kinetic.overstress": {
     "sounds": [
@@ -1636,6 +1868,39 @@
     ],
     "subtitle": "subtitles.strataindustria.sluice.wash"
   },
+  "smelter.bubble": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.lava.ambient",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.lava.pop",
+        "pitch": 0.7,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.smelter.bubble"
+  },
+  "smelter.pour": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.empty_lava",
+        "pitch": 0.85
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.3,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.smelter.pour"
+  },
   "soaking_barrel.done": {
     "sounds": [
       {
@@ -1728,25 +1993,81 @@
     ],
     "subtitle": "subtitles.strataindustria.steam_engine.stop"
   },
+  "steam_hammer.strike": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 0.8,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 0.75,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.4,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steam_hammer.strike"
+  },
   "ui.journal.place": {
     "sounds": [
       {
-        "name": "item/book/page_turn1",
+        "name": "item/book/open_flip1",
         "pitch": 0.9,
         "volume": 0.7
       },
       {
-        "name": "item/book/page_turn2",
+        "name": "item/book/open_flip2",
         "pitch": 0.9,
         "volume": 0.7
       },
       {
-        "name": "item/book/page_turn3",
+        "name": "item/book/open_flip3",
         "pitch": 0.9,
         "volume": 0.7
       }
     ],
     "subtitle": "subtitles.strataindustria.journal.place"
+  },
+  "valve.close": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 0.9,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.valve.close"
+  },
+  "valve.open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.1,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.valve.open"
   },
   "washer.wash": {
     "sounds": [

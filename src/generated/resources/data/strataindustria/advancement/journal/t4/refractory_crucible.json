@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:refractory_crucible"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.refractory_crucible"
     }

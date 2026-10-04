@@ -58,26 +58,8 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
         super.extractBackground(g, mouseX, mouseY, partialTick);
         g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 
-        // Melt progress rises over each input like a liquid line.
-        for (int i = 0; i < CrucibleBlockEntity.INPUT_SLOTS; i++) {
-            int p = menu.slotProgress(i);
-            if (p <= 0) continue;
-            int h = Math.max(1, Math.round(16 * Math.min(100, p) / 100f));
-            int x = leftPos + CrucibleMenu.GRID_X + (i % 3) * 18, y = topPos + CrucibleMenu.GRID_Y + (i / 3) * 18 + 16 - h;
-            g.fill(x, y, x + 16, y + h, 0x60F07A22);
-        }
-
-        // Contents bar: each metal stacked in its own colour, scaled to capacity.
-        Melt melt = menu.melt();
-        int capacity = Math.max(1, menu.capacity());
-        int bottom = topPos + BAR_Y + BAR_H;
-        for (Metal metal : Metal.values()) {
-            int u = melt.units().getOrDefault(metal, 0);
-            if (u <= 0) continue;
-            int h = Math.max(1, Math.round(BAR_H * Math.min(1f, u / (float) capacity)));
-            g.fill(leftPos + BAR_X, bottom - h, leftPos + BAR_X + BAR_W, bottom, 0xFF000000 | metal.colour());
-            bottom -= h;
-        }
+        drawSlotProgress(g, leftPos + CrucibleMenu.GRID_X, topPos + CrucibleMenu.GRID_Y, menu::slotProgress);
+        drawMeltBar(g, leftPos + BAR_X, topPos + BAR_Y, menu.melt(), menu.capacity());
 
         int poured = menu.pourPercent();
         if (poured > 0) {
@@ -85,10 +67,38 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
             g.fill(x, y, x + Math.round(30 * poured / 100f), y + 4, 0xFFF07A22);
         }
 
-        float t = menu.temperature();
+        drawGauge(g, leftPos + GAUGE_X, topPos + GAUGE_Y, menu.temperature());
+    }
+
+    /** Melt progress rises over each input of the 3x3 grid at {@code x, y} like a liquid line. */
+    static void drawSlotProgress(GuiGraphicsExtractor g, int x0, int y0, java.util.function.IntUnaryOperator progress) {
+        for (int i = 0; i < CrucibleBlockEntity.INPUT_SLOTS; i++) {
+            int p = progress.applyAsInt(i);
+            if (p <= 0) continue;
+            int h = Math.max(1, Math.round(16 * Math.min(100, p) / 100f));
+            int x = x0 + (i % 3) * 18, y = y0 + (i / 3) * 18 + 16 - h;
+            g.fill(x, y, x + 16, y + h, 0x60F07A22);
+        }
+    }
+
+    /** Contents bar: each metal stacked in its own colour, scaled to capacity. */
+    static void drawMeltBar(GuiGraphicsExtractor g, int x, int y, Melt melt, int capacity) {
+        capacity = Math.max(1, capacity);
+        int bottom = y + BAR_H;
+        for (Metal metal : Metal.values()) {
+            int u = melt.units().getOrDefault(metal, 0);
+            if (u <= 0) continue;
+            int h = Math.max(1, Math.round(BAR_H * Math.min(1f, u / (float) capacity)));
+            g.fill(x, bottom - h, x + BAR_W, bottom, 0xFF000000 | metal.colour());
+            bottom -= h;
+        }
+    }
+
+    /** The temperature gauge, filled in its heat band's colour. */
+    static void drawGauge(GuiGraphicsExtractor g, int x, int y, float t) {
         int filled = Math.round(Math.min(1.0f, Math.max(0.0f, t / GAUGE_MAX)) * GAUGE_H);
         if (filled > 0) {
-            int x = leftPos + GAUGE_X, b = topPos + GAUGE_Y + GAUGE_H;
+            int b = y + GAUGE_H;
             g.fill(x, b - filled, x + GAUGE_W, b, 0xFF000000 | HeatBand.of(t).colour());
         }
     }
@@ -97,27 +107,31 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     protected void extractLabels(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractLabels(g, mouseX, mouseY);
         Melt melt = menu.melt();
-        int y = TEXT_Y;
-        g.text(font, Component.literal(melt.total() + " / " + menu.capacity()), TEXT_X, y, 0xFF404040, false);
+        drawMeltText(g, font, melt, menu.capacity(), TEXT_X, TEXT_Y);
+        g.text(font, statusLine(menu.status(), melt, menu.meltingPercent(), menu.maxTemperature()), 8, STATUS_Y, 0xFF404040, false);
+        Component hint = hintLine(melt);
+        if (hint != null) g.text(font, hint, 8, STATUS_Y + 10, 0xFF7a4a20, false);
+    }
+
+    /** Units against capacity, then each metal's share in a darker shade of its colour. */
+    static void drawMeltText(GuiGraphicsExtractor g, net.minecraft.client.gui.Font font, Melt melt, int capacity, int x, int y0) {
+        int y = y0;
+        g.text(font, Component.literal(melt.total() + " / " + capacity), x, y, 0xFF404040, false);
         for (Metal metal : Metal.values()) {
             int u = melt.units().getOrDefault(metal, 0);
             if (u <= 0) continue;
             y += 10;
             Component line = Component.translatable(StrataIndustria.MOD_ID + ".metal." + metal.id())
                     .append(String.format(Locale.ROOT, " %d%%", Math.round(melt.share(metal) * 100)));
-            g.text(font, line, TEXT_X, y, 0xFF000000 | darker(metal.colour()), false);
-            if (y > TEXT_Y + 40) break;
+            g.text(font, line, x, y, 0xFF000000 | darker(metal.colour()), false);
+            if (y > y0 + 40) break;
         }
-        g.text(font, statusLine(melt), 8, STATUS_Y, 0xFF404040, false);
-        Component hint = hintLine(melt);
-        if (hint != null) g.text(font, hint, 8, STATUS_Y + 10, 0xFF7a4a20, false);
     }
 
-    private Component statusLine(Melt melt) {
-        CrucibleStatus status = menu.status();
+    static Component statusLine(CrucibleStatus status, Melt melt, int meltingPercent, int maxTemperature) {
         return switch (status) {
-            case MELTING -> Component.translatable(status.key(), menu.meltingPercent());
-            case AT_LIMIT -> Component.translatable(status.key(), menu.maxTemperature());
+            case MELTING -> Component.translatable(status.key(), meltingPercent);
+            case AT_LIMIT -> Component.translatable(status.key(), maxTemperature);
             case MOLTEN -> Alloy.resultOf(melt)
                     .map(m -> Component.translatable(status.key(), Component.translatable(StrataIndustria.MOD_ID + ".metal." + m.id())))
                     .orElse(Component.translatable(StrataIndustria.MOD_ID + ".crucible.status.molten_unknown"));
@@ -126,7 +140,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     }
 
     /** "Bronze needs 8 to 12% tin; you have 5%" for a mix that is close to an alloy but outside it. */
-    private Component hintLine(Melt melt) {
+    static Component hintLine(Melt melt) {
         if (melt.units().size() < 2 || Alloy.resultOf(melt).isPresent()) return null;
         Optional<Alloy> closest = Alloy.closest(melt);
         if (closest.isEmpty()) return null;

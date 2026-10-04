@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:washing_pan"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.wash"
     }

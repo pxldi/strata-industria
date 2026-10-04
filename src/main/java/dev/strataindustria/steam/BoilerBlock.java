@@ -67,7 +67,7 @@ public class BoilerBlock extends BaseEntityBlock {
             InteractionHand hand, BlockHitResult hit) {
         if (!(level.getBlockEntity(pos) instanceof BoilerBlockEntity boiler)) return InteractionResult.TRY_WITH_EMPTY_HAND;
         if (stack.is(Items.WATER_BUCKET)) {
-            if (boiler.water() + 1000 > BoilerBlockEntity.WATER_CAPACITY) return InteractionResult.TRY_WITH_EMPTY_HAND;
+            if (boiler.fillWater(net.minecraft.world.level.material.Fluids.WATER, 1000, true) < 1000) return InteractionResult.TRY_WITH_EMPTY_HAND;
             if (!level.isClientSide()) {
                 boiler.addWater(1000);
                 player.setItemInHand(hand, ItemUtils.createFilledResult(stack, player, new ItemStack(Items.BUCKET)));
@@ -75,11 +75,16 @@ public class BoilerBlock extends BaseEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
-        if (stack.is(ModTags.Items.ANY_BRONZE_PLATES) && boiler.integrity() < 100.0f) {
+        if (repairsWith(stack) && boiler.integrity() < 100.0f) {
             if (!level.isClientSide() && boiler.repair()) stack.consume(1, player);
             return InteractionResult.SUCCESS;
         }
         return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
+    /** The plate that patches it: bronze for the bronze boiler. */
+    protected boolean repairsWith(ItemStack stack) {
+        return stack.is(ModTags.Items.ANY_BRONZE_PLATES);
     }
 
     @Override

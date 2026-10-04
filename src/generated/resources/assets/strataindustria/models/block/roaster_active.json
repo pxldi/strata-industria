@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "strataindustria:block/fire_bricks",
+    "east": "strataindustria:block/roaster_side",
+    "north": "strataindustria:block/roaster_front_active",
+    "particle": "strataindustria:block/roaster_side",
+    "south": "strataindustria:block/roaster_back",
+    "up": "strataindustria:block/roaster_top",
+    "west": "strataindustria:block/roaster_side"
+  }
+}

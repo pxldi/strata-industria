@@ -54,6 +54,7 @@
     "icon": {
       "id": "strataindustria:quern"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t2.quern"
     }

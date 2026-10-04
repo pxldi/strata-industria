@@ -1,0 +1,485 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "strataindustria:block/steam_hammer_frame",
+    "frame": "strataindustria:block/steam_hammer_frame",
+    "base": "strataindustria:block/steam_hammer_base",
+    "base_top": "strataindustria:block/steam_hammer_base_top",
+    "valve": "strataindustria:block/steam_hammer_valve",
+    "valve_front": "strataindustria:block/steam_hammer_valve_front"
+  },
+  "elements": [
+    {
+      "name": "anvil_foot",
+      "from": [
+        2,
+        0,
+        3
+      ],
+      "to": [
+        14,
+        2,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#base",
+          "uv": [
+            2,
+            0,
+            14,
+            2
+          ]
+        },
+        "south": {
+          "texture": "#base",
+          "uv": [
+            2,
+            0,
+            14,
+            2
+          ]
+        },
+        "east": {
+          "texture": "#base",
+          "uv": [
+            3,
+            0,
+            13,
+            2
+          ]
+        },
+        "west": {
+          "texture": "#base",
+          "uv": [
+            3,
+            0,
+            13,
+            2
+          ]
+        },
+        "up": {
+          "texture": "#base",
+          "uv": [
+            2,
+            7,
+            14,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#base",
+          "uv": [
+            2,
+            7,
+            14,
+            16
+          ],
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "anvil_waist",
+      "from": [
+        4,
+        2,
+        5
+      ],
+      "to": [
+        12,
+        4,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#base",
+          "uv": [
+            4,
+            2,
+            12,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#base",
+          "uv": [
+            4,
+            2,
+            12,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#base",
+          "uv": [
+            5,
+            2,
+            11,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#base",
+          "uv": [
+            5,
+            2,
+            11,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "name": "anvil_face",
+      "from": [
+        3,
+        4,
+        4
+      ],
+      "to": [
+        13,
+        7,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#base",
+          "uv": [
+            3,
+            4,
+            13,
+            7
+          ]
+        },
+        "south": {
+          "texture": "#base",
+          "uv": [
+            3,
+            4,
+            13,
+            7
+          ]
+        },
+        "east": {
+          "texture": "#base",
+          "uv": [
+            4,
+            4,
+            12,
+            7
+          ]
+        },
+        "west": {
+          "texture": "#base",
+          "uv": [
+            4,
+            4,
+            12,
+            7
+          ]
+        },
+        "up": {
+          "texture": "#base_top",
+          "uv": [
+            3,
+            4,
+            13,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#base",
+          "uv": [
+            3,
+            7,
+            13,
+            15
+          ]
+        }
+      }
+    },
+    {
+      "name": "left_column_lower",
+      "from": [
+        0,
+        0,
+        5
+      ],
+      "to": [
+        2,
+        2,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            14,
+            8,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            14,
+            8,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            14,
+            6,
+            16
+          ],
+          "cullface": "west"
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            9,
+            0,
+            11,
+            6
+          ],
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "left_column",
+      "from": [
+        0,
+        2,
+        5
+      ],
+      "to": [
+        3,
+        13,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            3,
+            9,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            3,
+            9,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            3,
+            6,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            3,
+            6,
+            14
+          ],
+          "cullface": "west"
+        }
+      }
+    },
+    {
+      "name": "right_column_lower",
+      "from": [
+        14,
+        0,
+        5
+      ],
+      "to": [
+        16,
+        2,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            14,
+            8,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            14,
+            8,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            14,
+            6,
+            16
+          ],
+          "cullface": "east"
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            9,
+            0,
+            11,
+            6
+          ],
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "right_column",
+      "from": [
+        13,
+        2,
+        5
+      ],
+      "to": [
+        16,
+        13,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            3,
+            9,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            3,
+            9,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            3,
+            6,
+            14
+          ],
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            0,
+            3,
+            6,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "name": "valve_chest",
+      "from": [
+        0,
+        13,
+        3
+      ],
+      "to": [
+        16,
+        16,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#valve_front",
+          "uv": [
+            0,
+            13,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#valve",
+          "uv": [
+            0,
+            13,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#valve",
+          "uv": [
+            3,
+            13,
+            13,
+            16
+          ],
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#valve",
+          "uv": [
+            3,
+            13,
+            13,
+            16
+          ],
+          "cullface": "west"
+        },
+        "up": {
+          "texture": "#valve",
+          "uv": [
+            0,
+            3,
+            16,
+            13
+          ],
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#valve",
+          "uv": [
+            0,
+            3,
+            16,
+            13
+          ]
+        }
+      }
+    }
+  ]
+}

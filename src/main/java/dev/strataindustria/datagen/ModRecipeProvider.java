@@ -467,13 +467,66 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('S', solder)
                 .unlockedBy("has_solder_ingot", has(solder))
                 .save(output, key("copper_fluid_pipe"));
+        // Spec 8.2 and 8.4: heat pipes and the inlet.
+        shaped(RecipeCategory.REDSTONE, Tier4Items.COPPER_HEAT_PIPE.get(), 4)
+                .pattern("PSP")
+                .define('P', copperPlate)
+                .define('S', solder)
+                .unlockedBy("has_firebox", has(Tier4Items.FIREBOX.get()))
+                .save(output, key("copper_heat_pipe"));
+        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get();
+        shaped(RecipeCategory.REDSTONE, Tier4Items.REFRACTORY_HEAT_DUCT.get(), 2)
+                .pattern("BPB")
+                .define('B', fireBrick)
+                .define('P', steelPlate)
+                .unlockedBy("has_steel_plate", has(steelPlate))
+                .save(output, key("refractory_heat_duct"));
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.HEAT_INLET.get())
+                .requires(Tier4Items.REFRACTORY_HEAT_DUCT.get())
+                .requires(steelPlate)
+                .requires(ModItems.FIRE_BRICKS.get())
+                .unlockedBy("has_refractory_heat_duct", has(Tier4Items.REFRACTORY_HEAT_DUCT.get()))
+                .save(output, key("heat_inlet"));
+        // Spec 8.2 and 8.6: wrapping pipes in slag wool, and the kiln that makes it.
+        for (var pair : java.util.List.of(java.util.Map.entry(Tier4Items.COPPER_HEAT_PIPE, Tier4Items.INSULATED_COPPER_HEAT_PIPE),
+                java.util.Map.entry(Tier4Items.REFRACTORY_HEAT_DUCT, Tier4Items.INSULATED_REFRACTORY_HEAT_DUCT))) {
+            shapeless(RecipeCategory.REDSTONE, pair.getValue().get())
+                    .requires(pair.getKey().get())
+                    .requires(Tier4Items.SLAG_WOOL.get())
+                    .unlockedBy("has_slag_wool", has(Tier4Items.SLAG_WOOL.get()))
+                    .save(output, key(pair.getValue().getId().getPath()));
+        }
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.KILN.get())
+                .pattern("BBB")
+                .pattern("B B")
+                .pattern("FFF")
+                .define('B', fireBrick)
+                .define('F', ModItems.FIRE_BRICKS.get())
+                .unlockedBy("has_firebox", has(Tier4Items.FIREBOX.get()))
+                .save(output, key("kiln"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.ROASTER.get())
+                .pattern("BPB")
+                .pattern("B B")
+                .pattern("BPB")
+                .define('B', fireBrick)
+                .define('P', ModItems.PLATES.get(Metal.COPPER).get())
+                .unlockedBy("has_firebox", has(Tier4Items.FIREBOX.get()))
+                .save(output, key("roaster"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.SMELTER.get())
+                .pattern("FCF")
+                .pattern("F F")
+                .pattern("FPF")
+                .define('F', ModItems.FIRE_BRICKS.get())
+                .define('C', Tier4Items.REFRACTORY_CRUCIBLE.get())
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .unlockedBy("has_refractory_crucible", has(Tier4Items.REFRACTORY_CRUCIBLE.get()))
+                .save(output, key("smelter"));
         shaped(RecipeCategory.REDSTONE, Tier4Items.BRONZE_FLUID_PIPE.get(), 4)
                 .pattern("PSP")
                 .define('P', ModTags.Items.ANY_BRONZE_PLATES)
                 .define('S', solder)
                 .unlockedBy("has_solder_ingot", has(solder))
                 .save(output, key("bronze_fluid_pipe"));
-        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get();
         shaped(RecipeCategory.REDSTONE, Tier4Items.STEEL_FLUID_PIPE.get(), 4)
                 .pattern("PPP")
                 .define('P', steelPlate)
@@ -486,6 +539,21 @@ final class ModRecipeProvider extends RecipeProvider {
                 .requires(ModItems.RODS.get(Metal.BRASS).get())
                 .unlockedBy("has_brass_plate", has(brassPlate))
                 .save(output, key("pressure_gauge"));
+        // Spec 9.3: the valve and the fluid tank.
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.VALVE.get())
+                .requires(Tier4Items.BRONZE_FLUID_PIPE.get())
+                .requires(brassPlate)
+                .requires(ModItems.RODS.get(Metal.BRASS).get())
+                .unlockedBy("has_brass_plate", has(brassPlate))
+                .save(output, key("valve"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.FLUID_TANK.get())
+                .pattern("PGP")
+                .pattern("G G")
+                .pattern("PGP")
+                .define('P', ModItems.PLATES.get(Metal.COPPER).get())
+                .define('G', Items.GLASS)
+                .unlockedBy("has_copper_fluid_pipe", has(Tier4Items.COPPER_FLUID_PIPE.get()))
+                .save(output, key("fluid_tank"));
         shaped(RecipeCategory.DECORATIONS, Tier4Items.BRONZE_BOILER.get())
                 .pattern("PPP")
                 .pattern("PGP")
@@ -494,6 +562,33 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('G', Tier4Items.PRESSURE_GAUGE.get())
                 .unlockedBy("has_pressure_gauge", has(Tier4Items.PRESSURE_GAUGE.get()))
                 .save(output, key("bronze_boiler"));
+        // Spec 10.3: the steel boiler.
+        Item boilerSteel = ModItems.PLATES.get(Metal.STEEL).get();
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.STEEL_BOILER_SHELL.get())
+                .pattern("SW")
+                .pattern("WS")
+                .define('S', boilerSteel)
+                .define('W', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .unlockedBy("has_steel_plate", has(boilerSteel))
+                .save(output, key("steel_boiler_shell"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.BOILER_CONTROLLER.get())
+                .pattern("PGP")
+                .pattern("PVP")
+                .pattern("PPP")
+                .define('P', boilerSteel)
+                .define('G', Tier4Items.PRESSURE_GAUGE.get())
+                .define('V', Tier4Items.VALVE.get())
+                .unlockedBy("has_steel_boiler_shell", has(Tier4Items.STEEL_BOILER_SHELL.get()))
+                .save(output, key("boiler_controller"));
+        shapeless(RecipeCategory.DECORATIONS, Tier4Items.BOILER_FLUID_PORT.get())
+                .requires(Tier4Items.STEEL_BOILER_SHELL.get())
+                .requires(Tier4Items.BRONZE_FLUID_PIPE.get())
+                .unlockedBy("has_steel_boiler_shell", has(Tier4Items.STEEL_BOILER_SHELL.get()))
+                .save(output, key("boiler_fluid_port"));
+        shapeless(RecipeCategory.MISC, boilerSteel, 4)
+                .requires(Tier4Items.CRACKED_BOILER_CONTROLLER.get())
+                .unlockedBy("has_cracked_boiler_controller", has(Tier4Items.CRACKED_BOILER_CONTROLLER.get()))
+                .save(output, key("steel_plate_from_cracked_boiler_controller"));
         shaped(RecipeCategory.REDSTONE, Tier4Items.MECHANICAL_PUMP.get())
                 .pattern("PGP")
                 .pattern(" A ")
@@ -514,6 +609,18 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
                 .unlockedBy("has_bronze_boiler", has(Tier4Items.BRONZE_BOILER.get()))
                 .save(output, key("steam_engine"));
+        // Spec 10.5: the steam hammer, around a wrought iron anvil.
+        shaped(RecipeCategory.REDSTONE, Tier4Items.STEAM_HAMMER.get())
+                .pattern("PVP")
+                .pattern(" R ")
+                .pattern("IAI")
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('V', Tier4Items.VALVE.get())
+                .define('R', ModItems.RODS.get(Metal.STEEL).get())
+                .define('I', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .define('A', ModItems.WROUGHT_IRON_ANVIL.get())
+                .unlockedBy("has_steam_engine", has(Tier4Items.STEAM_ENGINE.get()))
+                .save(output, key("steam_hammer"));
         // Spec 11.2: the crusher, and what it does better than a quern.
         shaped(RecipeCategory.REDSTONE, Tier4Items.CRUSHER.get())
                 .pattern("PGP")
@@ -1087,7 +1194,7 @@ final class ModRecipeProvider extends RecipeProvider {
         shapeless(RecipeCategory.DECORATIONS, Tier4Items.TUYERE.get())
                 .requires(casing)
                 .requires(Tier4Items.BRONZE_FLUID_PIPE.get())
-                .requires(ModItems.PLATES.get(Metal.COPPER).get())
+                .requires(Tier4Items.COPPER_HEAT_PIPE.get())
                 .unlockedBy("has_refractory_casing", has(casing))
                 .save(output, key("tuyere"));
         shapeless(RecipeCategory.DECORATIONS, Tier4Items.CHARGING_HATCH.get())
@@ -1111,6 +1218,12 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('A', Tier4Items.IRON_AXLE.get())
                 .unlockedBy("has_iron_axle", has(Tier4Items.IRON_AXLE.get()))
                 .save(output, key("blower"));
+        // Spec 10.5: the blowing engine.
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.BLOWING_ENGINE.get())
+                .requires(Tier4Items.STEAM_ENGINE.get())
+                .requires(Tier4Items.BLOWER.get())
+                .unlockedBy("has_blower", has(Tier4Items.BLOWER.get()))
+                .save(output, key("blowing_engine"));
         shaped(RecipeCategory.DECORATIONS, Tier4Items.CONVERTER_CONTROLLER.get())
                 .pattern("PGP")
                 .pattern("PCP")

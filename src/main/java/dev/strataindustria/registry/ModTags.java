@@ -22,6 +22,7 @@ public final class ModTags {
         public static final TagKey<Block> NEEDS_STEEL_TOOL = tag("needs_steel_tool");
         /** Tier 4 spec 16.6: every fluid pipe, the gauge included. */
         public static final TagKey<Block> FLUID_PIPES = tag("fluid_pipes");
+        public static final TagKey<Block> HEAT_PIPES = tag("heat_pipes");
         public static final TagKey<Block> INCORRECT_FOR_WROUGHT_IRON_TOOL = tag("incorrect_for_wrought_iron_tool");
         /** Tier 4 spec 4.7: what a steel tool cannot mine, the vanilla diamond tier's list. */
         public static final TagKey<Block> INCORRECT_FOR_STEEL_TOOL = tag("incorrect_for_steel_tool");

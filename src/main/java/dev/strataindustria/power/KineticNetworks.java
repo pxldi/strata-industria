@@ -172,6 +172,7 @@ public final class KineticNetworks {
         }
         if (status == KineticState.Status.OVERSTRESSED && !wasOverstressed) {
             level.playSound(null, start, ModSounds.KINETIC_OVERSTRESS.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+            dev.strataindustria.journal.Observations.overstress(level, start);
         }
         if (running && !wasRunning && overspeed.size() < members.size()) Journal.awardNear(level, start, Journal.ROTATION);
     }

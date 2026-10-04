@@ -5,10 +5,12 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.fluid.FluidPipes;
 import dev.strataindustria.fluid.FluidPort;
 import dev.strataindustria.heat.HeatConsumer;
+import dev.strataindustria.heat.HeatPort;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.Tier4BlockEntities;
 import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.Tier4Fluids;
+import dev.strataindustria.registry.Tier4Menus;
 import dev.strataindustria.registry.Tier4Sounds;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
@@ -31,6 +33,7 @@ import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
@@ -44,7 +47,7 @@ import net.minecraft.world.level.storage.ValueOutput;
  * buffer vents. Water comes in by pipe on the other faces or by bucket. Firing it nearly dry costs
  * integrity, and at zero it cracks.
  */
-public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, FluidPort, MenuProvider {
+public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, HeatPort, FluidPort, MenuProvider {
     public static final int WATER_CAPACITY = 8000;
     public static final int STEAM_CAPACITY = 4000;
     public static final float RATED_PRESSURE = 4.0f;
@@ -62,7 +65,8 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     public static final int MAX_PUSH = 400;
 
     public static final int DATA_WATER = 0, DATA_STEAM = 1, DATA_WARMTH = 2, DATA_INTEGRITY = 3, DATA_STATUS = 4,
-            DATA_TEMPERATURE = 5, DATA_HEAT = 6, DATA_COUNT = 7;
+            DATA_TEMPERATURE = 5, DATA_HEAT = 6, DATA_WATER_CAPACITY = 7, DATA_STEAM_CAPACITY = 8, DATA_RATED = 9,
+            DATA_PROBLEM = 10, DATA_WHERE = 11, DATA_COUNT = 12;
 
     public enum Status {
         /** No heat coming in. */
@@ -78,7 +82,9 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
         /** The pipe on top cannot take steam this hot. */
         PIPE_TOO_HOT,
         LOW_WATER,
-        DRY_FIRING;
+        DRY_FIRING,
+        /** A steel boiler whose structure is not built. */
+        INCOMPLETE;
 
         public String key() {
             return StrataIndustria.MOD_ID + ".boiler.status." + name().toLowerCase(Locale.ROOT);
@@ -86,15 +92,15 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
 
         /** Warnings show red on the screen. */
         public boolean warning() {
-            return this == PIPE_TOO_HOT || this == LOW_WATER || this == DRY_FIRING || this == NO_WATER;
+            return this == PIPE_TOO_HOT || this == LOW_WATER || this == DRY_FIRING || this == NO_WATER || this == INCOMPLETE;
         }
     }
 
-    private int water;
-    private int steam;
+    protected int water;
+    protected int steam;
     private float warmth;
     private float integrity = 100.0f;
-    private Status status = Status.NO_HEAT;
+    protected Status status = Status.NO_HEAT;
     private boolean announced;
 
     // Heat offered by the firebox since the last tick, and how hot it was.
@@ -105,12 +111,12 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     private int ticksWithoutHeat = COLD_AFTER;
     private int dryTicks;
     private int burstCooldown;
-    private int age;
+    protected int age;
 
     private FluidPipes.Network network = FluidPipes.Network.NONE;
     private int networkAge = 20;
 
-    private final ContainerData data = new ContainerData() {
+    protected final ContainerData data = new ContainerData() {
         @Override
         public int get(int index) {
             return switch (index) {
@@ -121,6 +127,11 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
                 case DATA_STATUS -> status.ordinal();
                 case DATA_TEMPERATURE -> Math.round(lastTemperature);
                 case DATA_HEAT -> lastHeat;
+                case DATA_WATER_CAPACITY -> waterCapacity();
+                case DATA_STEAM_CAPACITY -> steamCapacity();
+                case DATA_RATED -> Math.round(ratedPressure() * 10);
+                case DATA_PROBLEM -> problem();
+                case DATA_WHERE -> problemWhere();
                 default -> 0;
             };
         }
@@ -135,7 +146,76 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     };
 
     public BoilerBlockEntity(BlockPos pos, BlockState state) {
-        super(Tier4BlockEntities.BRONZE_BOILER.get(), pos, state);
+        this(Tier4BlockEntities.BRONZE_BOILER.get(), pos, state);
+    }
+
+    protected BoilerBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
+    }
+
+    // Hooks for the steel boiler (spec 10.3), which grows with its shell layers and takes heat and water
+    // through its parts.
+
+    public int waterCapacity() {
+        return WATER_CAPACITY;
+    }
+
+    public int steamCapacity() {
+        return STEAM_CAPACITY;
+    }
+
+    public float ratedPressure() {
+        return RATED_PRESSURE;
+    }
+
+    public int maxHeat() {
+        return MAX_HEAT;
+    }
+
+    /** Whether it can work at all; a steel boiler needs its structure built. */
+    protected boolean ready() {
+        return true;
+    }
+
+    /** Which faces take water by pipe. */
+    protected boolean takesWater(Direction side) {
+        return side != Direction.UP;
+    }
+
+    /** Sends steam on to the pipes; the bronze boiler's leave through its top. */
+    protected FluidPipes.Push pushSteam(ServerLevel level, BlockPos pos, int amount) {
+        if (++networkAge >= 20) {
+            network = FluidPipes.find(level, pos, Direction.UP);
+            networkAge = 0;
+        }
+        FluidPipes.Push push = FluidPipes.push(level, network, Tier4Fluids.STEAM.get(), amount, steamTemperature(), pressure());
+        if (push.refused() && age % 20 == 0 && network.firstPipe() != null) dev.strataindustria.fluid.FluidPipeBlock.refuseSound(level, network.firstPipe());
+        return push;
+    }
+
+    /** Where the safety valve lets steam out. */
+    protected BlockPos valve() {
+        return worldPosition;
+    }
+
+    /** What is left when it cracks. */
+    protected BlockState cracked(BlockState state) {
+        return Tier4Blocks.CRACKED_BRONZE_BOILER.get().defaultBlockState().setValue(BoilerBlock.FACING, state.getValue(BoilerBlock.FACING));
+    }
+
+    /** Called after each tick's status is set. */
+    protected void afterTick(ServerLevel level, BlockPos pos) {}
+
+    protected int problem() {
+        return 0;
+    }
+
+    protected int problemWhere() {
+        return 0;
+    }
+
+    protected String containerName() {
+        return "bronze_boiler";
     }
 
     public int water() {
@@ -156,7 +236,7 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
 
     /** Bar: the rated pressure times how full the steam buffer is (spec 10.1). */
     public float pressure() {
-        return RATED_PRESSURE * steam / STEAM_CAPACITY;
+        return ratedPressure() * steam / steamCapacity();
     }
 
     /** Spec 9.1: steam is 100 °C plus 15 per bar. */
@@ -174,10 +254,30 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     }
 
     @Override
+    public int heatDemand(float temperature) {
+        return temperature < MIN_TEMPERATURE || !ready() ? 0 : Math.max(0, maxHeat() - pendingHeat);
+    }
+
+    /** Heat pipes join it on any face. */
+    @Override
+    public boolean connectsHeat(Direction side) {
+        return true;
+    }
+
+    /** The temperature and HU it was offered last tick, for tests. */
+    public float heatTemperature() {
+        return lastTemperature;
+    }
+
+    public int heatTaken() {
+        return lastHeat;
+    }
+
+    @Override
     public int offerHeat(float temperature, int heat) {
         offeredTemperature = Math.max(offeredTemperature, temperature);
-        if (temperature < MIN_TEMPERATURE) return 0;
-        int take = Math.max(0, Math.min(heat, MAX_HEAT - pendingHeat));
+        if (temperature < MIN_TEMPERATURE || !ready()) return 0;
+        int take = Math.max(0, Math.min(heat, maxHeat() - pendingHeat));
         pendingHeat += take;
         return take;
     }
@@ -190,8 +290,14 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     /** Water on any face but the top; the top is the steam outlet. */
     @Override
     public int fill(Direction side, Fluid fluid, int amount, float pressure, boolean simulate) {
-        if (side == Direction.UP || !fluid.isSame(Fluids.WATER) || amount <= 0) return 0;
-        int take = Math.min(amount, WATER_CAPACITY - water);
+        if (!takesWater(side)) return 0;
+        return fillWater(fluid, amount, simulate);
+    }
+
+    /** Takes water, from a pipe or a steel boiler's water port. */
+    public int fillWater(Fluid fluid, int amount, boolean simulate) {
+        if (!fluid.isSame(Fluids.WATER) || amount <= 0 || !ready()) return 0;
+        int take = Math.min(amount, waterCapacity() - water);
         if (take <= 0 || simulate) return Math.max(0, take);
         addWater(take);
         return take;
@@ -201,7 +307,7 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     public void addWater(int amount) {
         if (level == null) return;
         if (dryTicks >= 20 && burstCooldown <= 0) burst();
-        water = Math.min(WATER_CAPACITY, water + amount);
+        water = Math.min(waterCapacity(), water + amount);
         setChanged();
     }
 
@@ -230,7 +336,14 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
         else if (++ticksWithoutHeat >= COLD_AFTER) warmth = 0;
 
         Status before = status;
-        float share = water / (float) WATER_CAPACITY;
+        if (!ready()) {
+            // A steel boiler with its structure broken holds what it has and does nothing.
+            status = Status.INCOMPLETE;
+            afterTick(level, pos);
+            if (status != before) sync();
+            return;
+        }
+        float share = water / (float) waterCapacity();
         boolean dry = heat > 0 && share < DRY;
         if (dry) {
             dryTicks++;
@@ -262,20 +375,16 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
 
         boolean refused = false;
         if (steam > 0) {
-            if (++networkAge >= 20) {
-                network = FluidPipes.find(level, pos, Direction.UP);
-                networkAge = 0;
-            }
-            FluidPipes.Push push = FluidPipes.push(level, network, Tier4Fluids.STEAM.get(), Math.min(steam, MAX_PUSH), steamTemperature(), pressure());
+            FluidPipes.Push push = pushSteam(level, pos, Math.min(steam, MAX_PUSH * Math.max(1, maxHeat() / MAX_HEAT)));
             steam -= push.moved();
             refused = push.refused();
-            if (refused && age % 20 == 0 && network.firstPipe() != null) dev.strataindustria.fluid.FluidPipeBlock.refuseSound(level, network.firstPipe());
         }
-        boolean venting = steam > STEAM_CAPACITY;
+        boolean venting = steam > steamCapacity();
         if (venting) {
-            steam = STEAM_CAPACITY;
-            if (age % 30 == 0) level.playSound(null, pos, Tier4Sounds.BOILER_VENT.get(), SoundSource.BLOCKS, 1.0f, 0.95f + level.getRandom().nextFloat() * 0.1f);
-            if (age % 2 == 0) level.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 1.1, pos.getZ() + 0.5, 3, 0.08, 0.1, 0.08, 0.06);
+            steam = steamCapacity();
+            BlockPos valve = valve();
+            if (age % 30 == 0) level.playSound(null, valve, Tier4Sounds.BOILER_VENT.get(), SoundSource.BLOCKS, 1.0f, 0.95f + level.getRandom().nextFloat() * 0.1f);
+            if (age % 2 == 0) level.sendParticles(ParticleTypes.CLOUD, valve.getX() + 0.5, valve.getY() + 1.1, valve.getZ() + 0.5, 3, 0.08, 0.1, 0.08, 0.06);
         }
 
         if (heat <= 0) status = water <= 0 ? Status.NO_WATER : lastTemperature > 0 ? Status.TOO_COOL : Status.NO_HEAT;
@@ -290,6 +399,7 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
         if (made > 0 && age % 50 == 0) play(level, pos, Tier4Sounds.BOILER_RUN.get(), SoundSource.BLOCKS, 0.7f);
         if (status == Status.LOW_WATER && age % 100 == 0) play(level, pos, Tier4Sounds.BOILER_LOW_WATER.get(), SoundSource.PLAYERS, 0.6f);
 
+        afterTick(level, pos);
         if (!announced && pressure() >= 1.0f) {
             announced = true;
             Journal.awardNear(level, pos, Journal.BOILER);
@@ -319,14 +429,13 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
         BlockState state = getBlockState();
         level.playSound(null, pos, Tier4Sounds.BOILER_CRACK.get(), SoundSource.BLOCKS, 1.2f, 1.0f);
         level.sendParticles(ParticleTypes.CLOUD, pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5, 30, 0.5, 0.5, 0.5, 0.1);
-        level.setBlock(pos, Tier4Blocks.CRACKED_BRONZE_BOILER.get().defaultBlockState()
-                .setValue(BoilerBlock.FACING, state.getValue(BoilerBlock.FACING)), Block.UPDATE_ALL);
+        level.setBlock(pos, cracked(state), Block.UPDATE_ALL);
         if (Config.STEAM_BOILER_EXPLOSIONS.get()) {
             level.explode(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3.0f, Level.ExplosionInteraction.BLOCK);
         }
     }
 
-    private void sync() {
+    protected void sync() {
         setChanged();
         if (level != null && !level.isClientSide()) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
     }
@@ -340,12 +449,16 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
 
     @Override
     public Component getDisplayName() {
-        return Component.translatable("container." + StrataIndustria.MOD_ID + ".bronze_boiler");
+        return Component.translatable("container." + StrataIndustria.MOD_ID + "." + containerName());
     }
 
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
-        return new BoilerMenu(id, inventory, worldPosition, data);
+        return menu(id, inventory);
+    }
+
+    protected AbstractContainerMenu menu(int id, Inventory inventory) {
+        return new BoilerMenu(Tier4Menus.BRONZE_BOILER.get(), id, inventory, worldPosition, data);
     }
 
     @Override

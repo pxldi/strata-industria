@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/cracked_boiler_controller",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/cracked_boiler_controller"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/cracked_boiler_controller",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/cracked_boiler_controller",
+      "y": 270
+    }
+  }
+}

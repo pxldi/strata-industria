@@ -119,7 +119,11 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 Tier4Blocks.STEEL_FLUID_PIPE, Tier4Blocks.PRESSURE_GAUGE, Tier4Blocks.MECHANICAL_PUMP, Tier4Blocks.STEAM_ENGINE,
                 Tier4Blocks.CRUSHER, Tier4Blocks.WASHER, Tier4Blocks.REFRACTORY_CASING, Tier4Blocks.BLAST_FURNACE_CONTROLLER,
                 Tier4Blocks.TUYERE, Tier4Blocks.CHARGING_HATCH, Tier4Blocks.TAP_HATCH, Tier4Blocks.BLOWER,
-                Tier4Blocks.CONVERTER_CONTROLLER)) {
+                Tier4Blocks.CONVERTER_CONTROLLER, Tier4Blocks.COPPER_HEAT_PIPE, Tier4Blocks.REFRACTORY_HEAT_DUCT, Tier4Blocks.HEAT_INLET,
+                Tier4Blocks.INSULATED_COPPER_HEAT_PIPE, Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT, Tier4Blocks.KILN,
+                Tier4Blocks.ROASTER, Tier4Blocks.STEAM_HAMMER, Tier4Blocks.VALVE, Tier4Blocks.FLUID_TANK,
+                Tier4Blocks.BLOWING_ENGINE, Tier4Blocks.STEEL_BOILER_SHELL, Tier4Blocks.BOILER_FLUID_PORT, Tier4Blocks.BOILER_CONTROLLER,
+                Tier4Blocks.CRACKED_BOILER_CONTROLLER)) {
             dropSelf(block.get());
         }
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);
@@ -130,6 +134,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
     private void crucible() {
         crucible(ModBlocks.CRUCIBLE.get());
         crucible(Tier4Blocks.REFRACTORY_CRUCIBLE.get());
+        // The smelter keeps its load and melt like a crucible does.
+        crucible(Tier4Blocks.SMELTER.get());
     }
 
     private void crucible(Block block) {

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "strataindustria:block/smelter_front_active",
+    "side": "strataindustria:block/smelter_side",
+    "top": "strataindustria:block/smelter_top_active"
+  }
+}

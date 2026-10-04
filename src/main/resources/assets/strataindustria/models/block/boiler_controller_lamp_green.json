@@ -1,0 +1,16 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/boiler_controller_lamp_green",
+    "lamp": "strataindustria:block/boiler_controller_lamp_green"
+  },
+  "elements": [
+    {
+      "from": [12, 2, -0.02],
+      "to": [14, 4, 0],
+      "light_emission": 12,
+      "faces": {
+        "north": {"uv": [2, 12, 4, 14], "texture": "#lamp"}
+      }
+    }
+  ]
+}

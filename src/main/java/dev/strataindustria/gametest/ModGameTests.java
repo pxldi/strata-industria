@@ -18,6 +18,7 @@ import dev.strataindustria.geology.Rock;
 import dev.strataindustria.heat.Heat;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.KnappingInput;
+import dev.strataindustria.knapping.KnappingMenu;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.machine.BellowsBlock;
 import dev.strataindustria.machine.MillstoneBlockEntity;
@@ -62,6 +63,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -97,6 +99,7 @@ public final class ModGameTests {
 
     static {
         TESTS.put("knapping_patterns", ModGameTests::knappingPatterns);
+        TESTS.put("knapping_clicks", ModGameTests::knappingClicks);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
         TESTS.put("smithing_solvable", ModGameTests::smithingSolvable);
         TESTS.put("item_heat", ModGameTests::itemHeat);
@@ -114,6 +117,7 @@ public final class ModGameTests {
         Tier4GameTests.register(TESTS);
         Tier5GameTests.register(TESTS);
         Tier6GameTests.register(TESTS);
+        JournalGameTests.register(TESTS);
     }
 
     private ModGameTests() {}
@@ -226,6 +230,28 @@ public final class ModGameTests {
     }
 
     // Alloys (spec 7.2 and 7.4): the three example batches, a near miss, and slag at 90%.
+
+    /** Right-click opens the grid exactly once, and a strike from the open menu removes a cell and spends the material. */
+    private static void knappingClicks(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        for (String stone : new String[] {"loose_basalt", "flint"}) {
+            FakePlayer knapper = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "knapper"));
+            var item = stone.equals("flint") ? (net.minecraft.world.item.Item) Items.FLINT : ModItems.LOOSE_ROCK.get(Rock.BASALT).get();
+            knapper.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item, 16));
+            var result = knapper.gameMode.useItem(knapper, level, knapper.getMainHandItem(), InteractionHand.MAIN_HAND);
+            helper.assertTrue(result.consumesAction(), stone + ": use should succeed, got " + result);
+            // FakePlayer cannot open screens, so the menu is built the way Knapping.tryOpen builds it.
+            KnappingMenu menu = new KnappingMenu(7, knapper.getInventory(), knapper.getMainHandItem().copyWithCount(1), InteractionHand.MAIN_HAND);
+            knapper.containerMenu = menu;
+            int id = menu.containerId;
+            helper.assertTrue(menu.isKept(12), stone + ": every cell starts kept");
+            helper.assertTrue(menu.clickMenuButton(knapper, 12), stone + ": striking a cell should be accepted");
+            helper.assertTrue(!menu.isKept(12), stone + ": the struck cell should be gone");
+            helper.assertTrue(menu.hasStarted(), stone + ": the first strike starts the work");
+            helper.assertTrue(knapper.containerMenu == menu && knapper.containerMenu.containerId == id, stone + ": the menu stays open");
+        }
+        helper.succeed();
+    }
 
     private static void alloyRules(GameTestHelper helper) {
         Melt bronze = melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 9)

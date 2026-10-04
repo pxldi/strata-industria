@@ -16,6 +16,7 @@
     "icon": {
       "id": "minecraft:iron_ingot"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.refine"
     }

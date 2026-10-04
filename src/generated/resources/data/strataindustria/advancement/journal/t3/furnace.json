@@ -20,6 +20,7 @@
     "icon": {
       "id": "minecraft:furnace"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.furnace"
     }

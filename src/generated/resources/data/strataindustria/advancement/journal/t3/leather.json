@@ -17,6 +17,7 @@
     "icon": {
       "id": "minecraft:leather"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.leather"
     }

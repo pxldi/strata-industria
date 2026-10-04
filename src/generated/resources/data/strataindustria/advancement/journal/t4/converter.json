@@ -17,6 +17,7 @@
     "icon": {
       "id": "strataindustria:converter_controller"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.converter"
     }

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "strataindustria:pressure_gauge",
+    "P": "strataindustria:steel_plate",
+    "V": "strataindustria:valve"
+  },
+  "pattern": [
+    "PGP",
+    "PVP",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:boiler_controller"
+  }
+}

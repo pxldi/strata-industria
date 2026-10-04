@@ -12,6 +12,7 @@ import dev.strataindustria.steam.FireboxBlock;
 import dev.strataindustria.steam.MechanicalPumpBlock;
 import dev.strataindustria.steam.SteamEngineBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -100,6 +101,17 @@ public final class Tier4Blocks {
             Tier4Blocks::boiler);
     public static final DeferredBlock<CrackedBoilerBlock> CRACKED_BRONZE_BOILER = ModBlocks.BLOCKS.registerBlock("cracked_bronze_boiler",
             CrackedBoilerBlock::new, Tier4Blocks::boiler);
+    // Spec 10.3: the steel boiler multiblock.
+    public static final DeferredBlock<dev.strataindustria.steam.SteelBoilerShellBlock> STEEL_BOILER_SHELL = ModBlocks.BLOCKS.registerBlock(
+            "steel_boiler_shell", dev.strataindustria.steam.SteelBoilerShellBlock::new, Tier4Blocks::steelBoiler);
+    public static final DeferredBlock<dev.strataindustria.steam.BoilerFluidPortBlock> BOILER_FLUID_PORT = ModBlocks.BLOCKS.registerBlock(
+            "boiler_fluid_port", dev.strataindustria.steam.BoilerFluidPortBlock::new, Tier4Blocks::steelBoiler);
+    public static final DeferredBlock<dev.strataindustria.steam.SteelBoilerControllerBlock> BOILER_CONTROLLER = ModBlocks.BLOCKS.registerBlock(
+            "boiler_controller", dev.strataindustria.steam.SteelBoilerControllerBlock::new,
+            p -> steelBoiler(p).lightLevel(state -> state.getValue(dev.strataindustria.steam.SteelBoilerControllerBlock.LIGHT)
+                    == dev.strataindustria.steam.SteelBoilerControllerBlock.Light.OFF ? 0 : 4));
+    public static final DeferredBlock<CrackedBoilerBlock> CRACKED_BOILER_CONTROLLER = ModBlocks.BLOCKS.registerBlock("cracked_boiler_controller",
+            CrackedBoilerBlock::new, Tier4Blocks::steelBoiler);
 
     // Spec 9.2 and 9.3: fluid pipes, rated by the hottest fluid and the flow they take, and the gauge.
     public static final DeferredBlock<FluidPipeBlock> COPPER_FLUID_PIPE = ModBlocks.BLOCKS.registerBlock("copper_fluid_pipe",
@@ -110,6 +122,14 @@ public final class Tier4Blocks {
             p -> new FluidPipeBlock(400, 400, p), p -> pipe(p, MapColor.METAL, HEAVY_METAL));
     public static final DeferredBlock<PressureGaugeBlock> PRESSURE_GAUGE = ModBlocks.BLOCKS.registerBlock("pressure_gauge",
             p -> new PressureGaugeBlock(220, 200, p), p -> pipe(p, MapColor.GOLD, BRASS_SOUND));
+    public static final DeferredBlock<dev.strataindustria.fluid.ValveBlock> VALVE = ModBlocks.BLOCKS.registerBlock("valve",
+            p -> new dev.strataindustria.fluid.ValveBlock(220, 200, p), p -> pipe(p, MapColor.GOLD, BRASS_SOUND));
+    public static final DeferredBlock<dev.strataindustria.fluid.FluidTankBlock> FLUID_TANK = ModBlocks.BLOCKS.registerBlock("fluid_tank",
+            dev.strataindustria.fluid.FluidTankBlock::new, p -> p.mapColor(MapColor.COLOR_ORANGE)
+                    .strength(3.0f, 6.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(SoundType.COPPER));
 
     // Spec 9.3 and 10.5: the mechanical pump, and the steam engine that turns a shaft.
     public static final DeferredBlock<MechanicalPumpBlock> MECHANICAL_PUMP = ModBlocks.BLOCKS.registerBlock("mechanical_pump",
@@ -120,6 +140,12 @@ public final class Tier4Blocks {
     public static final DeferredBlock<SteamEngineBlock> STEAM_ENGINE = ModBlocks.BLOCKS.registerBlock("steam_engine", SteamEngineBlock::new,
             p -> p.mapColor(MapColor.METAL)
                     .strength(4.0f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(HEAVY_METAL));
+    public static final DeferredBlock<dev.strataindustria.steam.SteamHammerBlock> STEAM_HAMMER = ModBlocks.BLOCKS.registerBlock("steam_hammer",
+            dev.strataindustria.steam.SteamHammerBlock::new, p -> p.mapColor(MapColor.METAL)
+                    .strength(5.0f, 1200.0f)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .sound(HEAVY_METAL));
@@ -162,6 +188,47 @@ public final class Tier4Blocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .sound(HEAVY_METAL));
+    // Spec 10.5: a steam engine on a blowing cylinder, worth two blowers.
+    public static final DeferredBlock<dev.strataindustria.ironworks.BlowingEngineBlock> BLOWING_ENGINE = ModBlocks.BLOCKS.registerBlock(
+            "blowing_engine", dev.strataindustria.ironworks.BlowingEngineBlock::new, p -> p.mapColor(MapColor.METAL)
+                    .strength(4.0f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(HEAVY_METAL));
+
+    // Spec 8.2 and 8.4: heat pipes, which glow while they carry heat, and the inlet that takes it into a multiblock.
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> COPPER_HEAT_PIPE = ModBlocks.BLOCKS.registerBlock("copper_heat_pipe",
+            p -> new dev.strataindustria.heat.HeatPipeBlock(1000, 10.0f, 0.01f, p),
+            p -> pipe(p, MapColor.COLOR_ORANGE, SoundType.COPPER).lightLevel(Tier4Blocks::heatGlow));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> REFRACTORY_HEAT_DUCT = ModBlocks.BLOCKS.registerBlock(
+            "refractory_heat_duct", p -> new dev.strataindustria.heat.HeatPipeBlock(1800, 5.0f, 0.005f, p),
+            p -> pipe(p, MapColor.COLOR_ORANGE, FIRE_BRICK_SOUND).lightLevel(Tier4Blocks::heatGlow));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> INSULATED_COPPER_HEAT_PIPE = ModBlocks.BLOCKS.registerBlock(
+            "insulated_copper_heat_pipe", p -> new dev.strataindustria.heat.HeatPipeBlock(1000, 5.0f, 0.005f, p),
+            p -> pipe(p, MapColor.COLOR_LIGHT_GRAY, SoundType.WOOL));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> INSULATED_REFRACTORY_HEAT_DUCT = ModBlocks.BLOCKS.registerBlock(
+            "insulated_refractory_heat_duct", p -> new dev.strataindustria.heat.HeatPipeBlock(1800, 2.5f, 0.0025f, p),
+            p -> pipe(p, MapColor.COLOR_LIGHT_GRAY, SoundType.WOOL));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatInletBlock> HEAT_INLET = ModBlocks.BLOCKS.registerBlock("heat_inlet",
+            dev.strataindustria.heat.HeatInletBlock::new, Tier4Blocks::refractory);
+
+    // Spec 8.6: the kiln.
+    public static final DeferredBlock<dev.strataindustria.ceramics.KilnBlock> KILN = ModBlocks.BLOCKS.registerBlock("kiln",
+            dev.strataindustria.ceramics.KilnBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ceramics.KilnBlock.LIT) ? 10 : 0));
+
+    // Spec 8.5: the roaster.
+    public static final DeferredBlock<dev.strataindustria.roasting.RoasterBlock> ROASTER = ModBlocks.BLOCKS.registerBlock("roaster",
+            dev.strataindustria.roasting.RoasterBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.roasting.RoasterBlock.LIT) ? 8 : 0));
+
+    // Spec 8.7: the smelter.
+    public static final DeferredBlock<dev.strataindustria.metal.SmelterBlock> SMELTER = ModBlocks.BLOCKS.registerBlock("smelter",
+            dev.strataindustria.metal.SmelterBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.metal.SmelterBlock.LIT) ? 12 : 0));
+
+    private static int heatGlow(BlockState state) {
+        return state.getValue(dev.strataindustria.heat.HeatPipeBlock.HOT) ? 6 : 0;
+    }
 
     /** Fire brick held in iron: as tough as the bricks, with their sound. */
     private static Block.Properties refractory(Block.Properties p) {
@@ -175,6 +242,13 @@ public final class Tier4Blocks {
     private static Block.Properties boiler(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BROWN)
                 .strength(4.0f, 8.0f)
+                .requiresCorrectToolForDrops()
+                .sound(HEAVY_METAL);
+    }
+
+    private static Block.Properties steelBoiler(Block.Properties p) {
+        return p.mapColor(MapColor.METAL)
+                .strength(5.0f, 10.0f)
                 .requiresCorrectToolForDrops()
                 .sound(HEAVY_METAL);
     }

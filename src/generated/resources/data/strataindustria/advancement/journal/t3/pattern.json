@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:smithing_pattern"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.pattern"
     }

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "strataindustria:block/blowing_engine_top",
+    "east": "strataindustria:block/blowing_engine_side",
+    "north": "strataindustria:block/blowing_engine_front",
+    "particle": "strataindustria:block/blowing_engine_side",
+    "south": "strataindustria:block/blowing_engine_back",
+    "up": "strataindustria:block/blowing_engine_top",
+    "west": "strataindustria:block/blowing_engine_side"
+  }
+}

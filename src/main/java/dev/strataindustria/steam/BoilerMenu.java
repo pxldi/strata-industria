@@ -7,11 +7,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** Boiler screen: water, steam, pressure, integrity and what the fire gives. No slots of its own. */
+/**
+ * Boiler screen, for the bronze boiler and the steel boiler's controller: water, steam, pressure,
+ * integrity and what the fire gives. No slots of its own.
+ */
 public class BoilerMenu extends AbstractContainerMenu {
     public static final int INVENTORY_Y = 84;
     /** How far from the boiler the screen stays open. */
@@ -20,12 +24,12 @@ public class BoilerMenu extends AbstractContainerMenu {
     private final ContainerData data;
     private final BlockPos pos;
 
-    public BoilerMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
-        this(id, inventory, buf.readBlockPos(), new SimpleContainerData(BoilerBlockEntity.DATA_COUNT));
+    public BoilerMenu(MenuType<?> type, int id, Inventory inventory, RegistryFriendlyByteBuf buf) {
+        this(type, id, inventory, buf.readBlockPos(), new SimpleContainerData(BoilerBlockEntity.DATA_COUNT));
     }
 
-    public BoilerMenu(int id, Inventory inventory, BlockPos pos, ContainerData data) {
-        super(Tier4Menus.BRONZE_BOILER.get(), id);
+    public BoilerMenu(MenuType<?> type, int id, Inventory inventory, BlockPos pos, ContainerData data) {
+        super(type, id);
         this.data = data;
         this.pos = pos;
         addStandardInventorySlots(inventory, 8, INVENTORY_Y);
@@ -44,8 +48,41 @@ public class BoilerMenu extends AbstractContainerMenu {
         return data.get(BoilerBlockEntity.DATA_STEAM);
     }
 
+    public int waterCapacity() {
+        return Math.max(1, data.get(BoilerBlockEntity.DATA_WATER_CAPACITY));
+    }
+
+    public int steamCapacity() {
+        return Math.max(1, data.get(BoilerBlockEntity.DATA_STEAM_CAPACITY));
+    }
+
+    public float ratedPressure() {
+        return data.get(BoilerBlockEntity.DATA_RATED) / 10.0f;
+    }
+
     public float pressure() {
-        return BoilerBlockEntity.RATED_PRESSURE * steam() / BoilerBlockEntity.STEAM_CAPACITY;
+        return ratedPressure() * steam() / steamCapacity();
+    }
+
+    /** Whether this is a steel boiler's controller. */
+    public boolean steel() {
+        return getType() == Tier4Menus.BOILER_CONTROLLER.get();
+    }
+
+    public SteelBoilerStructure.Problem problem() {
+        int p = data.get(BoilerBlockEntity.DATA_PROBLEM);
+        var values = SteelBoilerStructure.Problem.values();
+        return p >= 0 && p < values.length ? values[p] : SteelBoilerStructure.Problem.NONE;
+    }
+
+    /** Layer 1 (the fire) to 5 of the missing block. */
+    public int problemLayer() {
+        return data.get(BoilerBlockEntity.DATA_WHERE) / 9 + 1;
+    }
+
+    /** Where in its layer, from 0 (front left) to 8 (back right), as seen standing at the controller. */
+    public int problemSpot() {
+        return data.get(BoilerBlockEntity.DATA_WHERE) % 9;
     }
 
     /** Warm-up done, 0 to 100. */

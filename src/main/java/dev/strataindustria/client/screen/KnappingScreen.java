@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -72,7 +73,7 @@ public class KnappingScreen extends AbstractContainerScreen<KnappingMenu> {
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         int cell = hoveredCell(event.x(), event.y());
-        if (event.button() == 0 && cell >= 0) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && cell >= 0) {
             if (menu.isKept(cell) && !menu.isFinished() && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, cell);
                 spawnChips(cell);

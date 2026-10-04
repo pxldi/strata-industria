@@ -1,0 +1,138 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_core"
+      },
+      "when": {
+        "lit": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "x": 90
+      },
+      "when": {
+        "down": "true",
+        "lit": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "x": 270
+      },
+      "when": {
+        "lit": "false",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm"
+      },
+      "when": {
+        "lit": "false",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "y": 180
+      },
+      "when": {
+        "lit": "false",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "y": 270
+      },
+      "when": {
+        "lit": "false",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "lit": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_core"
+      },
+      "when": {
+        "lit": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "x": 90
+      },
+      "when": {
+        "down": "true",
+        "lit": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "x": 270
+      },
+      "when": {
+        "lit": "true",
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm"
+      },
+      "when": {
+        "lit": "true",
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "y": 180
+      },
+      "when": {
+        "lit": "true",
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "y": 270
+      },
+      "when": {
+        "lit": "true",
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/insulated_copper_heat_pipe_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "true",
+        "lit": "true"
+      }
+    }
+  ]
+}

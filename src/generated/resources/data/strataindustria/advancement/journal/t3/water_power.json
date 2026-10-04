@@ -17,6 +17,7 @@
     "icon": {
       "id": "strataindustria:water_wheel"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.water_power"
     }

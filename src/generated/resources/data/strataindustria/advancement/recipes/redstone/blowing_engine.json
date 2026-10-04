@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_blower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:blower"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:blowing_engine"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_blower"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:blowing_engine"
+    ]
+  }
+}

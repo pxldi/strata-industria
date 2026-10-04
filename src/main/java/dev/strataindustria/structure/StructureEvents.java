@@ -2,6 +2,7 @@ package dev.strataindustria.structure;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.journal.Journal;
+import dev.strataindustria.journal.Leads;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSoundPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -40,8 +41,12 @@ public final class StructureEvents {
         if (!id.getNamespace().equals(StrataIndustria.MOD_ID) || !id.getPath().startsWith("journal/" + PLACE)) return;
         player.connection.send(new ClientboundSoundPacket(StructureContent.JOURNAL_PLACE, SoundSource.PLAYERS,
                 player.getX(), player.getY(), player.getZ(), 0.8f, 1.0f, player.getRandom().nextLong()));
+        String place = Journal.key(id.getPath().substring("journal/".length()));
         player.sendOverlayMessage(Component.translatable("journal." + StrataIndustria.MOD_ID + ".place.noted",
-                Component.translatable("journal." + StrataIndustria.MOD_ID + "." + id.getPath().substring("journal/".length())
-                        .replace('/', '.'))));
+                Component.translatable(place)));
+        // Quiet: the page turn and the line above are its announcement.
+        event.getAdvancement().value().display().ifPresent(display -> Leads.note(player,
+                "journal." + StrataIndustria.MOD_ID + ".place.note", java.util.List.of(place, place + ".hint"),
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(display.icon().item().value()), true));
     }
 }
