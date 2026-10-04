@@ -17,6 +17,7 @@ import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
 import dev.strataindustria.smithing.Rule;
+import dev.strataindustria.smithing.WeldingRecipe;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import java.util.List;
@@ -362,6 +363,34 @@ final class ModRecipeProvider extends RecipeProvider {
         // Spec 9.3: hammering the slag out of a bloom. Partial blooms give nuggets instead (AnvilRecipe#assemble).
         anvil("bloom_refining", ModItems.RAW_BLOOM.get(), 1, Items.IRON_INGOT, 60,
                 rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+
+        // Spec 9.4: flux from the quern, welding, and the wrought iron anvil.
+        grind("flux_from_sand", Ingredient.of(Items.SAND), ModItems.FLUX.get(), 2);
+        grind("flux_from_limestone", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
+        grind("flux_from_marble", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
+        output.accept(key("welding/wrought_iron_double_ingot"), new WeldingRecipe(Ingredient.of(Items.IRON_INGOT),
+                Ingredient.of(Items.IRON_INGOT), new ItemStackTemplate(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get())), null);
+        Item doubleIngot = ModItems.WROUGHT_IRON_DOUBLE_INGOT.get();
+        shaped(RecipeCategory.DECORATIONS, ModItems.WROUGHT_IRON_ANVIL.get())
+                .pattern("DDD")
+                .pattern(" I ")
+                .pattern("III")
+                .define('D', doubleIngot)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has_double_ingot", has(doubleIngot))
+                .save(output, key("wrought_iron_anvil"));
+
+        // Spec 9.5: a blank pattern, and wiping a recorded one.
+        Item pattern = ModItems.SMITHING_PATTERN.get();
+        shapeless(RecipeCategory.MISC, pattern, 2)
+                .requires(Items.PAPER, 2)
+                .requires(Items.CHARCOAL)
+                .unlockedBy("has_double_ingot", has(doubleIngot))
+                .save(output, key("smithing_pattern"));
+        shapeless(RecipeCategory.MISC, pattern)
+                .requires(pattern)
+                .unlockedBy("has_smithing_pattern", has(pattern))
+                .save(output, key("smithing_pattern_wipe"));
 
         // Spec 2: the furnace returns in tier 3, built from fire bricks.
         shaped(RecipeCategory.DECORATIONS, Items.FURNACE)

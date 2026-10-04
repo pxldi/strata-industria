@@ -1765,7 +1765,7 @@ public final class TextureGen {
     /** Anvil (spec 9.2): workpiece, plans, work bar, eight hit buttons, rule and recent-hit boxes. */
     static BufferedImage anvilGui() {
         BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        panel(im, 176, 234);
+        panel(im, 176, 252);
         slot(im, 8, 27);
         slot(im, 152, 27);
         for (int i = 0; i < 12; i++) slot(im, 30 + (i % 6) * 18, 18 + (i / 6) * 18);
@@ -1782,9 +1782,16 @@ public final class TextureGen {
             well(im, 8 + i * 20, 106, 18, 18, SLOT_FILL);
             well(im, 116 + i * 18, 106, 18, 18, SLOT_FILL);
         }
+        // Weld row: second piece, flux, the weld button, and the pattern slot on the right.
+        slot(im, 8, 130);
+        slot(im, 26, 130);
+        slot(im, 152, 130);
+        ghost(im, 8, 130, GHOST_INGOT);
+        ghost(im, 26, 130, GHOST_FLUX);
+        ghost(im, 152, 130, GHOST_PATTERN);
         for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 152 + row * 18);
-        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 210);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 173 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 231);
 
         // Sprites: button faces (normal, hovered, disabled), then the hit icons.
         int[] faces = {0xa8a8a8, 0xc8c8d8, 0x6e6e6e};
@@ -1807,7 +1814,107 @@ public final class TextureGen {
             im.getGraphics().drawImage(icon, 176 + (i % 4) * 16, 18 + (i / 4) * 16, null);
         }
         im.getGraphics().drawImage(anyHitIcon(), 240, 18, null);
+        // Weld button faces (normal, hovered, disabled) with two bars meeting in a spark.
+        for (int b = 0; b < 3; b++) {
+            int x0 = 176 + b * 18;
+            im.getGraphics().drawImage(im.getSubimage(176 + b * 18, 0, 18, 18), x0, 52, null);
+            drawRows(im, x0 + 1, 53, WELD_ICON, b == 2
+                    ? new int[] {0x5a5a5a, 0x6a6a6a, 0x7a7a7a, 0x8a8a8a, 0x8a8a8a}
+                    : new int[] {0x3a3d48, 0x838998, 0xd6dbe2, 0xf0a030, 0xfff0a0});
+        }
         return im;
+    }
+
+    static final String[] WELD_ICON = {
+            "................",
+            ".......5........",
+            "....5..4..5.....",
+            ".....4.4.4......",
+            "......444.......",
+            "..1111.4.1111...",
+            "..2223...3222...",
+            "..3332...2333...",
+            "..1111...1111...",
+            "................",
+            "................",
+            "..111111111111..",
+            "..222223322222..",
+            "..333332233333..",
+            "..111111111111..",
+            "................",
+    };
+
+    static final String[] GHOST_INGOT = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "....########....",
+            "...#........#...",
+            "..#..........#..",
+            ".##############.",
+            ".#............#.",
+            ".#............#.",
+            ".##############.",
+            "................",
+            "................",
+            "................",
+            "................",
+    };
+
+    static final String[] GHOST_FLUX = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            ".......#........",
+            "....#......#....",
+            "..........#.....",
+            "......###.......",
+            "....#######.....",
+            "...#########....",
+            "..###########...",
+            ".#############..",
+            "................",
+            "................",
+            "................",
+    };
+
+    static final String[] GHOST_PATTERN = {
+            "................",
+            "...#########....",
+            "...#.......##...",
+            "...#.......#.#..",
+            "...#.......####.",
+            "...#..........#.",
+            "...#.###.##...#.",
+            "...#..........#.",
+            "...#.##.####..#.",
+            "...#..........#.",
+            "...#.####.##..#.",
+            "...#..........#.",
+            "...#.###......#.",
+            "...#..........#.",
+            "...############.",
+            "................",
+    };
+
+    /** A faint outline in an empty slot showing what goes there. */
+    static void ghost(BufferedImage im, int itemX, int itemY, String[] rows) {
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++)
+                if (rows[y].charAt(x) == '#') im.setRGB(itemX + x, itemY + y, 0xff7a7a7a);
+    }
+
+    /** Pixel rows where '1' to '5' pick from a five-colour palette. */
+    static void drawRows(BufferedImage im, int x0, int y0, String[] rows, int[] palette) {
+        for (int y = 0; y < rows.length; y++)
+            for (int x = 0; x < rows[y].length(); x++) {
+                char ch = rows[y].charAt(x);
+                if (ch >= '1' && ch <= '5') im.setRGB(x0 + x, y0 + y, 0xff000000 | palette[ch - '1']);
+            }
     }
 
     /**

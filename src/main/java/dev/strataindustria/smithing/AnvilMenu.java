@@ -1,5 +1,6 @@
 package dev.strataindustria.smithing;
 
+import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModMenus;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -19,9 +20,11 @@ import net.minecraft.world.item.ItemStack;
 public class AnvilMenu extends AbstractContainerMenu {
     public static final int INPUT_X = 8, INPUT_Y = 27, OUTPUT_X = 152, OUTPUT_Y = 27;
     public static final int PLANS_X = 30, PLANS_Y = 18, PLANS_PER_ROW = 6;
-    public static final int INVENTORY_Y = 152;
-    /** Button ids: 0 to 7 are the hits, {@code PLAN_BUTTON + i} picks plan i. */
-    public static final int PLAN_BUTTON = 100;
+    /** The weld row (tier 3 spec 9.4 and 9.5): second piece, flux, the Weld button, and the pattern slot. */
+    public static final int WELD_Y = 130, SECOND_X = 8, FLUX_X = 26, WELD_BUTTON_X = 46, PATTERN_X = 152;
+    public static final int INVENTORY_Y = 173;
+    /** Button ids: 0 to 7 are the hits, {@code PLAN_BUTTON + i} picks plan i, {@code WELD_BUTTON} welds. */
+    public static final int PLAN_BUTTON = 100, WELD_BUTTON = 200;
     private static final int PLAN_SLOT_START = AnvilBlockEntity.SLOTS;
     private static final int INVENTORY_START = PLAN_SLOT_START + AnvilBlockEntity.MAX_PLANS;
 
@@ -51,6 +54,24 @@ public class AnvilMenu extends AbstractContainerMenu {
                 return false;
             }
         });
+        addSlot(new Slot(container, AnvilBlockEntity.SECOND, SECOND_X, WELD_Y));
+        addSlot(new Slot(container, AnvilBlockEntity.FLUX, FLUX_X, WELD_Y) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return AnvilBlockEntity.isFlux(stack);
+            }
+        });
+        addSlot(new Slot(container, AnvilBlockEntity.PATTERN, PATTERN_X, WELD_Y) {
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return stack.is(ModItems.SMITHING_PATTERN.get());
+            }
+
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
         for (int i = 0; i < AnvilBlockEntity.MAX_PLANS; i++) {
             addSlot(new Slot(plans, i, PLANS_X + (i % PLANS_PER_ROW) * 18, PLANS_Y + (i / PLANS_PER_ROW) * 18) {
                 @Override
@@ -71,6 +92,10 @@ public class AnvilMenu extends AbstractContainerMenu {
     @Override
     public boolean clickMenuButton(Player player, int id) {
         if (anvil == null || !(player instanceof ServerPlayer server)) return false;
+        if (id == WELD_BUTTON) {
+            anvil.weld(server);
+            return true;
+        }
         if (id >= PLAN_BUTTON) {
             anvil.choose(id - PLAN_BUTTON);
             return true;
@@ -118,6 +143,15 @@ public class AnvilMenu extends AbstractContainerMenu {
         return data.get(AnvilBlockEntity.DATA_HITS);
     }
 
+    public AnvilBlockEntity.WeldStatus weldStatus() {
+        AnvilBlockEntity.WeldStatus[] values = AnvilBlockEntity.WeldStatus.values();
+        return values[Math.floorMod(data.get(AnvilBlockEntity.DATA_WELD), values.length)];
+    }
+
+    public int weldingTemperature() {
+        return data.get(AnvilBlockEntity.DATA_WELD_TEMP);
+    }
+
     public int workingTemperature() {
         return data.get(AnvilBlockEntity.DATA_WORKING);
     }
@@ -134,7 +168,12 @@ public class AnvilMenu extends AbstractContainerMenu {
         ItemStack original = stack.copy();
         if (index < PLAN_SLOT_START) {
             if (!moveItemStackTo(stack, INVENTORY_START, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (!moveItemStackTo(stack, AnvilBlockEntity.INPUT, AnvilBlockEntity.INPUT + 1, false)) {
+        } else if (AnvilBlockEntity.isFlux(stack)) {
+            if (!moveItemStackTo(stack, AnvilBlockEntity.FLUX, AnvilBlockEntity.FLUX + 1, false)) return ItemStack.EMPTY;
+        } else if (stack.is(ModItems.SMITHING_PATTERN.get())) {
+            if (!moveItemStackTo(stack, AnvilBlockEntity.PATTERN, AnvilBlockEntity.PATTERN + 1, false)) return ItemStack.EMPTY;
+        } else if (!moveItemStackTo(stack, AnvilBlockEntity.INPUT, AnvilBlockEntity.INPUT + 1, false)
+                && !moveItemStackTo(stack, AnvilBlockEntity.SECOND, AnvilBlockEntity.SECOND + 1, false)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);

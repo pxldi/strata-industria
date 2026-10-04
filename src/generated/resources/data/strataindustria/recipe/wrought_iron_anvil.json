@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "strataindustria:wrought_iron_double_ingot",
+    "I": "minecraft:iron_ingot"
+  },
+  "pattern": [
+    "DDD",
+    " I ",
+    "III"
+  ],
+  "result": {
+    "id": "strataindustria:wrought_iron_anvil"
+  }
+}
