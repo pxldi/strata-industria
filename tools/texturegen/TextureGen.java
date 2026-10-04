@@ -23,8 +23,7 @@ import javax.imageio.ImageIO;
 public final class TextureGen {
     static final Path OUT = Path.of("src/main/resources/assets/strataindustria/textures");
     static final Map<String, BufferedImage> PREVIEW = new LinkedHashMap<>();
-    static final java.util.Set<String> HAND_MADE = java.util.Set.of(
-            "item/plant_fibre");
+    static final java.util.Set<String> HAND_MADE = java.util.Set.of();
 
     // ---------------------------------------------------------------- palette (5-step ramps)
 
@@ -1081,6 +1080,30 @@ public final class TextureGen {
             "...........32...",
             "................",
     };
+
+    /** A loose bundle of long grass fibres laid on the diagonal, tied once at the middle, ends splayed. */
+    static BufferedImage plantFibre() {
+        Ramp a = V2.FIBRE_V2;
+        BufferedImage im = img();
+        // Two strands side by side, a lit one and a shaded one, bowed slightly in the middle.
+        for (int i = 0; i < 13; i++) {
+            int bow = i >= 5 && i <= 8 ? 1 : 0;
+            px(im, 1 + i + bow, 14 - i, a.get(i % 5 == 4 ? 5 : 4));
+            px(im, 2 + i + bow, 14 - i, a.get(i % 4 == 1 ? 2 : 3));
+        }
+        // The tie, across both strands.
+        px(im, 6, 8, a.get(1));
+        px(im, 7, 8, a.get(1));
+        px(im, 7, 7, a.get(2));
+        px(im, 8, 7, a.get(1));
+        // Frayed ends: single strands splayed away from the bundle.
+        px(im, 0, 14, a.get(3));
+        px(im, 1, 15, a.get(2));
+        px(im, 15, 1, a.get(4));
+        px(im, 14, 0, a.get(5));
+        px(im, 15, 3, a.get(3));
+        return outline(im);
+    }
 
     /** A square of woven fibre cloth with a frayed lower edge. */
     static BufferedImage fibreCloth() {
@@ -8182,6 +8205,7 @@ public final class TextureGen {
         // Stone age (tier 0-2 spec 3).
         save("item/straw", art(V2.STRAW_V2, STRAW_SHEAF));
         save("item/twine", art(V2.FIBRE_V2, TWINE_HANK));
+        save("item/plant_fibre", plantFibre());
         save("item/field_journal", art(FIELD_JOURNAL, V2.STRAW_V2, V2.FIBRE_V2, PAPER));
         save("item/fibre_cloth", fibreCloth());
         save("item/stone_axe_head", map(V2.FLINT_V2, KNAPPED_AXE_HEAD));

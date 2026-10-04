@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,6 +62,11 @@ public class PlanPiece extends StructurePiece {
     static final int TREE_PAD = 2;
     /** How far above a building trees and terrain are cleared. */
     static final int HEADROOM = 8;
+
+    /** Plain old names for the bloomery grave. */
+    private static final String[] GRAVE_NAMES = {"Aldric", "Berta", "Cuno", "Dietmar", "Edda", "Falk", "Gerda", "Hartwig", "Ilse",
+            "Jorn", "Kunigund", "Lorenz", "Mechthild", "Norbert", "Odo", "Pia", "Quirin", "Rolf", "Sigrid", "Tilman", "Ulf", "Vera",
+            "Wendel", "Yrsa"};
 
     private final String planId;
     private final Plan plan;
@@ -235,6 +241,8 @@ public class PlanPiece extends StructurePiece {
             case '3' -> rock.loose(rock.bottom());
             case 'C' -> StructureContent.FIBRE_CANVAS.get().defaultBlockState();
             case '_' -> StructureContent.FIBRE_CANVAS_CARPET.get().defaultBlockState();
+            case '7' -> StructureContent.FIBRE_CANVAS_STAIRS.get().defaultBlockState().setValue(StairBlock.FACING, Direction.EAST);
+            case '8' -> StructureContent.FIBRE_CANVAS_STAIRS.get().defaultBlockState().setValue(StairBlock.FACING, Direction.WEST);
             case 'P' -> StructureContent.PIT_PROP.get().defaultBlockState();
             case '=' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.X);
             case '|' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z);
@@ -269,7 +277,7 @@ public class PlanPiece extends StructurePiece {
             case '>' -> named("terracotta");
             case '`' -> Blocks.AIR.defaultBlockState();
             case '/' -> BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(wood.name().toLowerCase(java.util.Locale.ROOT) + "_sign"))
-                    .defaultBlockState();
+                    .defaultBlockState().setValue(StandingSignBlock.ROTATION, 4);
             case 'u', 'j', 'X' -> SharedBlocks.CRATE.get().defaultBlockState();
             case 'T' -> wood.trapdoor();
             case 't' -> wood.trapdoor().setValue(TrapDoorBlock.OPEN, true).setValue(TrapDoorBlock.FACING, Direction.WEST);
@@ -287,6 +295,7 @@ public class PlanPiece extends StructurePiece {
             case 'V' -> Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.SOUTH);
             case 'O' -> Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING, Direction.SOUTH);
             case '%' -> StructureContent.SPECIMEN_SHELF.get().defaultBlockState();
+            case '9' -> StructureContent.SPECIMEN_SHELF.get().defaultBlockState().setValue(SpecimenShelfBlock.FACING, Direction.SOUTH);
             case 'D' -> Blocks.PACKED_MUD.defaultBlockState();
             case '~' -> Blocks.HAY_BLOCK.defaultBlockState();
             case '@' -> SharedBlocks.SMOULDERING_LOG_PILE.get().defaultBlockState();
@@ -306,7 +315,7 @@ public class PlanPiece extends StructurePiece {
         };
         if (state == null) return;
         level.setBlock(pos, state.rotate(rotation), Block.UPDATE_CLIENTS);
-        if (c == 'k') fences.add(pos.immutable());
+        if (c == 'k' || c == 'w') fences.add(pos.immutable());
         fill(level, random, pos, c, rock);
         if (c == 'm' && Weathering.chance(pos.above(), seed, 0.5) && level.getBlockState(pos.above()).isAir()) {
             level.setBlock(pos.above(), Blocks.MOSS_CARPET.defaultBlockState(), Block.UPDATE_CLIENTS);
@@ -359,11 +368,21 @@ public class PlanPiece extends StructurePiece {
                     RandomizableContainer.setBlockEntityLootTable(level, random, pos, CampLoot.key(CampLoot.PLACER_TIN));
                 }
             }
+            case '9' -> {
+                // The camp's own samples: the mineral it was dug for, and one it was mistaken for.
+                if (level.getBlockEntity(pos) instanceof SpecimenShelfBlockEntity shelf) {
+                    OreMineral[] all = OreMineral.values();
+                    OreMineral other = all[Math.floorMod((int) Weathering.hash(pos, seed), all.length)];
+                    shelf.place(MineralSpecimenItem.of(mineral));
+                    if (other != mineral) shelf.place(MineralSpecimenItem.of(other));
+                }
+            }
             case '/' -> {
                 if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity sign) {
                     var empty = net.minecraft.network.chat.CommonComponents.EMPTY;
-                    var lines = List.of(empty, net.minecraft.network.chat.Component.literal("Here lies"),
-                            net.minecraft.network.chat.Component.literal("the smith."), empty);
+                    String name = GRAVE_NAMES[Math.floorMod((int) Weathering.hash(pos, seed), GRAVE_NAMES.length)];
+                    var lines = List.of(empty, net.minecraft.network.chat.Component.literal("\u2020"),
+                            net.minecraft.network.chat.Component.literal(name), empty);
                     // Worldgen block entities have no level yet, and the sign's update call needs one.
                     sign.setLevel(level.getLevel());
                     sign.setText(new net.minecraft.world.level.block.entity.SignText(lines, lines, net.minecraft.world.item.DyeColor.BLACK, false),

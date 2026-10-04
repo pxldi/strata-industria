@@ -164,8 +164,12 @@ final class ModAdvancements extends AdvancementSubProvider {
                 JournalTrigger.TriggerInstance.of(Journal.PATTERN_RECORDED));
         goal(pattern, "t3/trip_hammer", ModItems.TRIP_HAMMER.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.TRIP_HAMMER));
-        goal(refine, "t3/tramway", dev.strataindustria.transport.rail.RailRegistry.MINE_TUB.get(),
+        AdvancementHolder tramway = goal(refine, "t3/tramway", dev.strataindustria.transport.rail.RailRegistry.MINE_TUB.get(),
                 JournalTrigger.TriggerInstance.of(Journal.TUB_ARRIVED));
+        goal(tramway, "t3/pony", dev.strataindustria.transport.rail.RailRegistry.HARNESS.get(),
+                JournalTrigger.TriggerInstance.of(Journal.PONY_HARNESSED));
+        goal(tramway, "t3/incline", dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH_ITEM.get(),
+                JournalTrigger.TriggerInstance.of(Journal.WINCH_HAULED));
         goal(refine, "t3/charter", dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.CHARTER_LINKED));
         goal(rotation, "t3/core_sample", ModItems.CORE_SAMPLE.get(), has(ModItems.CORE_SAMPLE.get()));

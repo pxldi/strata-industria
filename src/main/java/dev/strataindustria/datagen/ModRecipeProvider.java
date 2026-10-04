@@ -256,6 +256,13 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('C', StructureContent.FIBRE_CANVAS_ITEM.get())
                 .unlockedBy("has_fibre_canvas", has(StructureContent.FIBRE_CANVAS_ITEM.get()))
                 .save(output, key("fibre_canvas_carpet"));
+        shaped(RecipeCategory.BUILDING_BLOCKS, StructureContent.FIBRE_CANVAS_STAIRS_ITEM.get(), 4)
+                .pattern("C  ")
+                .pattern("CC ")
+                .pattern("CCC")
+                .define('C', StructureContent.FIBRE_CANVAS_ITEM.get())
+                .unlockedBy("has_fibre_canvas", has(StructureContent.FIBRE_CANVAS_ITEM.get()))
+                .save(output, key("fibre_canvas_stairs"));
         shaped(RecipeCategory.BUILDING_BLOCKS, StructureContent.PIT_PROP_ITEM.get(), 4)
                 .pattern("L")
                 .pattern("L")

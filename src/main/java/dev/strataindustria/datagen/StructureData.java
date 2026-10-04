@@ -296,21 +296,21 @@ final class StructureData {
                     .withPool(pool(1, item(Items.STICK, 8, 24)))
                     .withPool(pool(0.9f, item(ModItems.STRAW.get(), 8, 20)))
                     .withPool(pool(0.7f, item(ModItems.TWINE.get(), 2, 6)))
-                    .withPool(pool(0.6f, item(Items.APPLE, 4, 12)))
-                    .withPool(pool(0.5f, item(Items.BREAD, 4, 12)))
+                    .withPool(pool(0.4f, item(Items.APPLE, 2, 5)))
+                    .withPool(pool(0.4f, item(Items.BREAD, 2, 5)))
                     .withPool(pool(0.5f, item(Items.SPRUCE_LOG, 16, 32)))
                     .withPool(pool(0.8f, worn(ModItems.FIRESTARTER.get(), 0.2f, 0.4f)))
                     .withPool(pool(0.5f, worn(ModItems.STONE_AXE.get())))
                     .withPool(pool(0.5f, worn(ModItems.STONE_SHOVEL.get())))
                     .withPool(pool(0.6f, item(ModItems.ASH.get(), 2, 8)))
                     .withPool(pool(0.6f, item(Items.CLAY_BALL, 1, 2)))
-                    .withPool(pool(0.5f, ledger("charcoal_burners_clearing", 1))));
+                    .withPool(pool(0.25f, ledger("charcoal_burners_clearing", 1))));
             add(CampLoot.CLEARING_CACHE, () -> LootTable.lootTable()
                     .withPool(pool(1, ledger("charcoal_burners_clearing", 2)))
                     .withPool(pool(1, sherd("charcoal_burners")))
                     .withPool(pool(1, item(Items.FLINT, 4, 8)))
-                    .withPool(pool(0.8f, item(Items.TORCH, 8, 16)))
-                    .withPool(pool(0.6f, item(Items.BREAD, 8, 16)))
+                    .withPool(pool(0.8f, item(Items.TORCH, 4, 10)))
+                    .withPool(pool(0.4f, item(Items.BREAD, 2, 5)))
                     .withPool(pool(0.6f, item(Items.EMERALD, 1, 3)))
                     .withPool(pool(0.15f, item(Items.NAME_TAG, 1, 1)))
                     .withPool(book(context, 0.2f)));
@@ -319,10 +319,10 @@ final class StructureData {
             add(CampLoot.MINING_TENT, () -> LootTable.lootTable()
                     .withPool(LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
                             .when(LootItemRandomChanceCondition.randomChance(0.8f))
-                            .add(item(Items.BREAD, 8, 24).builder())
-                            .add(item(Items.BAKED_POTATO, 8, 24).builder())
-                            .add(item(Items.COOKED_MUTTON, 6, 16).builder()))
-                    .withPool(pool(0.7f, item(Items.TORCH, 16, 32)))
+                            .add(item(Items.BREAD, 2, 5).builder())
+                            .add(item(Items.BAKED_POTATO, 2, 5).builder())
+                            .add(item(Items.COOKED_MUTTON, 2, 5).builder()))
+                    .withPool(pool(0.7f, item(Items.TORCH, 4, 10)))
                     .withPool(pool(0.6f, item(ModItems.TWINE.get(), 2, 6)))
                     .withPool(pool(0.6f, item(ModItems.FIBRE_CLOTH.get(), 2, 6)))
                     .withPool(pool(0.4f, item(Items.FLINT, 2, 6)))
@@ -373,13 +373,13 @@ final class StructureData {
             // at most), the cache sunk in the bed the washer's pan and the way to native gold.
             add(CampLoot.PLACER_HUT, () -> LootTable.lootTable()
                     .withPool(LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
-                            .add(item(Items.COOKED_SALMON, 4, 10).builder())
-                            .add(item(Items.COOKED_COD, 4, 10).builder()))
-                    .withPool(pool(0.7f, item(Items.BREAD, 4, 12)))
+                            .add(item(Items.COOKED_SALMON, 2, 5).builder())
+                            .add(item(Items.COOKED_COD, 2, 5).builder()))
+                    .withPool(pool(0.4f, item(Items.BREAD, 2, 5)))
                     .withPool(pool(0.6f, item(Items.BOWL, 1, 3)))
                     .withPool(pool(0.6f, item(ModItems.TWINE.get(), 2, 8)))
                     .withPool(pool(0.6f, item(Items.FISHING_ROD, 1, 1)))
-                    .withPool(pool(0.6f, item(Items.TORCH, 4, 12))));
+                    .withPool(pool(0.6f, item(Items.TORCH, 4, 10))));
             add(CampLoot.PLACER_TIN, () -> LootTable.lootTable()
                     .withPool(pool(1, item(Items.GOLD_NUGGET, 2, 3))));
             add(CampLoot.PLACER_CACHE, () -> LootTable.lootTable()
@@ -402,10 +402,10 @@ final class StructureData {
                         .withPool(pool(0.25f, item(ModItems.UNFIRED_CRUCIBLE.get(), 1, 1)))
                         .withPool(pool(0.7f, item(ModItems.TWINE.get(), 4, 10)))
                         .withPool(pool(0.7f, item(ModItems.PLANT_FIBRE.get(), 4, 10)))
-                        .withPool(pool(0.6f, item(Items.BREAD, 8, 24)))
-                        .withPool(pool(0.6f, item(Items.COOKED_COD, 6, 16)))
-                        .withPool(pool(0.5f, item(Items.TORCH, 8, 24)))
-                        .withPool(pool(0.5f, ledger("prospector_camp", 1))));
+                        .withPool(pool(0.4f, item(Items.BREAD, 2, 5)))
+                        .withPool(pool(0.4f, item(Items.COOKED_COD, 2, 5)))
+                        .withPool(pool(0.5f, item(Items.TORCH, 4, 10)))
+                        .withPool(pool(0.25f, ledger("prospector_camp", 1))));
                 add(CampLoot.key(CampLoot.PROSPECTOR_CACHE, mineral), CampLoot.PROSPECTOR_CACHE + "/" + mineral.id(), () -> {
                     LootTable.Builder cache = LootTable.lootTable()
                             .withPool(pool(1, ledger("prospector_camp", 2)))
@@ -431,18 +431,18 @@ final class StructureData {
                     if (mineral != OreMineral.CASSITERITE) {
                         cart.withPool(pool(0.3f, item(ModItems.orePiece(OreMineral.CASSITERITE, OreGrade.NORMAL), 1, 2)));
                     }
-                    return cart.withPool(pool(0.4f, ledger("mining_camp", 1)));
+                    return cart.withPool(pool(0.25f, ledger("mining_camp", 1)));
                 });
 
                 // Collapsed adit cache (H = 2).
                 add(CampLoot.key(CampLoot.ADIT_CACHE, mineral), CampLoot.ADIT_CACHE + "/" + mineral.id(), () -> {
-                    LootTable.Builder cache = LootTable.lootTable().withPool(pool(0.8f, item(Items.TORCH, 8, 24)));
+                    LootTable.Builder cache = LootTable.lootTable().withPool(pool(0.8f, item(Items.TORCH, 4, 10)));
                     if (early(mineral)) cache.withPool(pool(0.7f, item(ModItems.orePiece(mineral, OreGrade.POOR), 6, 12)));
                     return cache.withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 4, 12)))
                             .withPool(pool(0.5f, worn(ModItems.STONE_PICKAXE.get())))
                             .withPool(pool(0.25f, notes(ADIT_NOTES)))
                             .withPool(pool(1, ledger("collapsed_adit", 2)))
-                            .withPool(pool(0.5f, item(Items.BREAD, 4, 10)));
+                            .withPool(pool(0.4f, item(Items.BREAD, 2, 5)));
                 });
 
                 // Hidden behind two cracked blocks in the miner's chamber.
@@ -510,6 +510,7 @@ final class StructureData {
         protected void generate() {
             dropSelf(StructureContent.FIBRE_CANVAS.get());
             dropSelf(StructureContent.FIBRE_CANVAS_CARPET.get());
+            dropSelf(StructureContent.FIBRE_CANVAS_STAIRS.get());
             dropSelf(StructureContent.PIT_PROP.get());
             dropSelf(StructureContent.SPECIMEN_SHELF.get());
             // A cracked brick mostly crumbles to nothing; sometimes a piece is worth grinding into grog.
@@ -567,7 +568,10 @@ final class StructureData {
     // ---------------------------------------------------------------- assets
 
     static void models(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        blockModels.createFullAndCarpetBlocks(StructureContent.FIBRE_CANVAS.get(), StructureContent.FIBRE_CANVAS_CARPET.get());
+        net.minecraft.data.BlockFamily canvasFamily = new net.minecraft.data.BlockFamily.Builder(StructureContent.FIBRE_CANVAS.get())
+                .stairs(StructureContent.FIBRE_CANVAS_STAIRS.get()).getFamily();
+        blockModels.family(StructureContent.FIBRE_CANVAS.get()).generateFor(canvasFamily)
+                .carpet(StructureContent.FIBRE_CANVAS_CARPET.get());
 
         // A round post along its axis; the model is hand-built in resources.
         var prop = StrataIndustria.id("block/pit_prop");
@@ -669,6 +673,7 @@ final class StructureData {
         SharedBlockData.lang(add);
         add.accept("block." + id + ".fibre_canvas", "Fibre Canvas");
         add.accept("block." + id + ".fibre_canvas_carpet", "Fibre Canvas Carpet");
+        add.accept("block." + id + ".fibre_canvas_stairs", "Fibre Canvas Stairs");
         add.accept("block." + id + ".pit_prop", "Pit Prop");
         add.accept("block." + id + ".cracked_fire_bricks", "Cracked Fire Bricks");
         add.accept("block." + id + ".slag_heap", "Slag Heap");

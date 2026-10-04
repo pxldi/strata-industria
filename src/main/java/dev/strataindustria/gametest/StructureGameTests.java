@@ -132,6 +132,12 @@ final class StructureGameTests {
         helper.assertTrue(level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED), "cache crate is not locked");
         var lock = ((dev.strataindustria.structure.CrateBlockEntity) level.getBlockEntity(crate)).puzzle();
         helper.assertTrue(lock != null && lock.steps().size() == 3, "no rock order puzzle on the crate");
+        BlockPos shelfPos = new BlockPos(minX + 3, groundY + 1, minZ + 2);
+        helper.assertTrue(level.getBlockEntity(shelfPos) instanceof dev.strataindustria.structure.SpecimenShelfBlockEntity shelf && !shelf.isEmpty(),
+                "specimen shelf in the tent is empty or missing");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 2, groundY + 3, minZ + 4)).is(dev.strataindustria.structure.StructureContent.FIBRE_CANVAS_STAIRS.get()),
+                "tent roof stairs missing");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 3, groundY + 4, minZ + 4)).is(BlockTags.LOGS), "ridge pole missing");
         for (var step : lock.steps()) {
             level.setBlock(step.pos(), net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(
                     net.minecraft.resources.Identifier.parse(step.block())).defaultBlockState(), 3);

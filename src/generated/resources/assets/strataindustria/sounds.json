@@ -3374,6 +3374,78 @@
     ],
     "subtitle": "subtitles.strataindustria.pit_kiln.straw"
   },
+  "pony.eat": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.horse.eat",
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.grass.break",
+        "pitch": 1.2,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.eat"
+  },
+  "pony.harness": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.armor.equip_leather",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.3,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "entity.horse.saddle",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.harness"
+  },
+  "pony.snort": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.horse.breathe",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "entity.horse.angry",
+        "pitch": 1.1,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.snort"
+  },
+  "pony.step": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.horse.step_wood",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "entity.horse.step",
+        "pitch": 0.8,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.step"
+  },
   "prospect": {
     "sounds": [
       {
@@ -4158,6 +4230,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.water_wheel.turn"
+  },
+  "winch.haul": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_door.open",
+        "pitch": 0.5,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.7,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.wood.step",
+        "pitch": 0.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.winch.haul"
   },
   "windmill.turn": {
     "sounds": [

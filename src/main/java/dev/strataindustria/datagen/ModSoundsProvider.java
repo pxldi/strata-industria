@@ -602,6 +602,23 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 4; i++) dump.with(sound("minecraft:dig/gravel" + i).pitch(0.8f).volume(0.9f));
         for (int i = 1; i <= 4; i++) dump.with(sound("minecraft:dig/stone" + i).pitch(0.9f).volume(0.5f));
         add(dev.strataindustria.transport.rail.RailRegistry.TIPPLE_DUMP, dump);
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_HARNESS, definition().subtitle(subtitle("pony.harness"))
+                .with(sound("minecraft:item.armor.equip_leather", event).pitch(0.9f).volume(0.8f))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.3f).volume(0.5f))
+                .with(sound("minecraft:entity.horse.saddle", event).pitch(1.0f).volume(0.6f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_STEP, definition().subtitle(subtitle("pony.step"))
+                .with(sound("minecraft:entity.horse.step_wood", event).pitch(0.9f).volume(0.7f))
+                .with(sound("minecraft:entity.horse.step", event).pitch(0.8f).volume(0.35f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_EAT, definition().subtitle(subtitle("pony.eat"))
+                .with(sound("minecraft:entity.horse.eat", event).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:block.grass.break", event).pitch(1.2f).volume(0.4f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_SNORT, definition().subtitle(subtitle("pony.snort"))
+                .with(sound("minecraft:entity.horse.breathe", event).pitch(0.8f).volume(0.9f))
+                .with(sound("minecraft:entity.horse.angry", event).pitch(1.1f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.WINCH_HAUL, definition().subtitle(subtitle("winch.haul"))
+                .with(sound("minecraft:block.wooden_door.open", event).pitch(0.5f).volume(0.45f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.7f).volume(0.4f))
+                .with(sound("minecraft:block.wood.step", event).pitch(0.6f).volume(0.5f)));
     }
 
     /** Pattern casting, from vanilla wood and sand samples. */

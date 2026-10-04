@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/incline_winch",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/incline_winch"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/incline_winch",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/incline_winch",
+      "y": 270
+    }
+  }
+}

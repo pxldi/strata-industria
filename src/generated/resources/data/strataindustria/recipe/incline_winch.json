@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "strataindustria:wooden_axle",
+    "G": "strataindustria:wooden_gear",
+    "P": "#minecraft:planks",
+    "R": "strataindustria:rope",
+    "W": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "R R",
+    "GAG",
+    "PWP"
+  ],
+  "result": {
+    "id": "strataindustria:incline_winch"
+  }
+}

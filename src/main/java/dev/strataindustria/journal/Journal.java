@@ -85,6 +85,8 @@ public final class Journal {
     // Outposts and transport (outposts spec 11)
     public static final String CHARTER_LINKED = "charter_linked";
     public static final String TUB_ARRIVED = "tub_arrived";
+    public static final String PONY_HARNESSED = "pony_harnessed";
+    public static final String WINCH_HAULED = "winch_hauled";
 
     /** Blocks of overhead span a consumer must be served across for the power line goal. */
     public static final int POWER_LINE_SPAN = 64;
