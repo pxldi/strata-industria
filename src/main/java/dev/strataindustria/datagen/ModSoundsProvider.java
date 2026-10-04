@@ -33,6 +33,13 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
         add(ModSounds.KNAP_FLINT, stone("knapping.flint", 1.7f, 0.8f));
+        // A known pattern cut again in one go: flakes falling in a rush.
+        SoundDefinition rush = definition().subtitle(subtitle("knapping.repeat"));
+        for (int i = 1; i <= 4; i++) {
+            rush.with(sound("minecraft:dig/gravel" + i).pitch(1.3f).volume(0.7f));
+            rush.with(sound("minecraft:dig/stone" + i).pitch(1.5f).volume(0.6f));
+        }
+        add(ModSounds.KNAP_REPEAT, rush);
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 
