@@ -20,6 +20,8 @@ public final class Smithing {
 
     private static final Map<String, Integer> MIN_HITS = new ConcurrentHashMap<>();
 
+    private static final Map<String, List<Integer>> SOLUTIONS = new ConcurrentHashMap<>();
+
     private Smithing() {}
 
     /** The recipe's target in this world: a hash of the seed and recipe id, or its default target. */
@@ -74,6 +76,48 @@ public final class Smithing {
             }
         }
         return 0;
+    }
+
+    /** The shortest hit sequence (as {@link HitType} ordinals) that finishes the target with every rule met; cached like {@link #minHits}. */
+    public static List<Integer> solve(int target, List<Rule> rules) {
+        StringBuilder key = new StringBuilder().append(target);
+        for (Rule rule : rules) key.append(',').append(rule.encode());
+        return SOLUTIONS.computeIfAbsent(key.toString(), k -> solveSearch(target, rules));
+    }
+
+    private static List<Integer> solveSearch(int target, List<Rule> rules) {
+        int types = HitType.VALUES.length + 1;
+        int states = (MAX_POSITION + 1) * types * types * types;
+        int[] from = new int[states];
+        int[] via = new int[states];
+        java.util.Arrays.fill(from, -2);
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+        int start = encode(0, 0, 0, 0, types);
+        from[start] = -1;
+        queue.add(start);
+        while (!queue.isEmpty()) {
+            int state = queue.poll();
+            int third = state % types, rest = state / types;
+            int second = rest % types;
+            rest /= types;
+            int last = rest % types;
+            int position = rest / types;
+            if (done(position, target, rules, type(last), type(second), type(third))) {
+                java.util.ArrayList<Integer> hits = new java.util.ArrayList<>();
+                for (int at = state; from[at] >= 0; at = from[at]) hits.add(0, via[at]);
+                return List.copyOf(hits);
+            }
+            for (HitType hit : HitType.VALUES) {
+                int next = position + hit.delta();
+                if (next < 0 || next > MAX_POSITION) continue;
+                int code = encode(next, hit.ordinal() + 1, last, second, types);
+                if (from[code] != -2) continue;
+                from[code] = state;
+                via[code] = hit.ordinal();
+                queue.add(code);
+            }
+        }
+        return List.of();
     }
 
     private static int encode(int position, int last, int second, int third, int types) {

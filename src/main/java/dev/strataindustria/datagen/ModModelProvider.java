@@ -69,6 +69,7 @@ final class ModModelProvider extends ModelProvider {
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         Tier5Models.register(blockModels, itemModels);
+        LogisticsData.models(blockModels, itemModels);
         tier6(blockModels, itemModels);
         for (Rock rock : Rock.values()) {
             blockModels.createTrivialCube(ModBlocks.RAW_ROCK.get(rock).get());
@@ -133,6 +134,7 @@ final class ModModelProvider extends ModelProvider {
 
         metals(itemModels);
         tier4(blockModels, itemModels);
+        prologue(blockModels, itemModels);
         ironAge(blockModels, itemModels);
         kinetics(blockModels, itemModels);
         windAndBelts(blockModels, itemModels);
@@ -212,6 +214,10 @@ final class ModModelProvider extends ModelProvider {
             castMold(itemModels, ModItems.MOLDS.get(type).get());
         }
         castMold(itemModels, ModItems.INGOT_MOLD.get());
+        flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get());
+        flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.SAND_FLASK.get());
+        for (var pattern : dev.strataindustria.registry.PatternRegistry.PATTERNS.values()) flatItem(itemModels, pattern.get());
+        for (var mold : dev.strataindustria.registry.PatternRegistry.SAND_MOLDS.values()) castMold(itemModels, mold.get());
     }
 
     /** A fired mold shows the cast metal in its cavity once it has been poured. */
@@ -450,6 +456,33 @@ final class ModModelProvider extends ModelProvider {
     }
 
     // Tier 4 spec 4.6 and 21.4: materials.
+    /** The brick kiln faces the player and its door glows while it fires; the casting table is a hand-built model. */
+    private static void prologue(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Block kiln = dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.get();
+        TextureMapping cold = new TextureMapping().put(TextureSlot.FRONT, blockTexture("brick_kiln_front"))
+                .put(TextureSlot.SIDE, blockTexture("brick_kiln_side")).put(TextureSlot.TOP, blockTexture("brick_kiln_top"));
+        var idle = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(kiln, cold, blockModels.modelOutput));
+        var lit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(kiln, "_active",
+                cold.copyAndUpdate(TextureSlot.FRONT, blockTexture("brick_kiln_front_active")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> state = PropertyDispatch.initial(
+                dev.strataindustria.ceramics.BrickKilnBlock.FACING, dev.strataindustria.ceramics.BrickKilnBlock.LIT);
+        for (boolean on : new boolean[] {false, true}) {
+            var base = on ? lit : idle;
+            state.select(net.minecraft.core.Direction.NORTH, on, base);
+            state.select(net.minecraft.core.Direction.EAST, on, base.with(BlockModelGenerators.Y_ROT_90));
+            state.select(net.minecraft.core.Direction.SOUTH, on, base.with(BlockModelGenerators.Y_ROT_180));
+            state.select(net.minecraft.core.Direction.WEST, on, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(kiln).with(state));
+        itemModels.itemModelOutput.accept(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/brick_kiln")));
+
+        var table = StrataIndustria.id("block/casting_table");
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.get(),
+                BlockModelGenerators.plainVariant(table)));
+        itemModels.itemModelOutput.accept(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_ITEM.get(), ItemModelUtils.plainModel(table));
+    }
+
     private static void tier4(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         heatable(itemModels, ModItems.STEEL_DOUBLE_INGOT.get());
         for (var item : java.util.List.of(Tier4Items.SULFUR, Tier4Items.SULFUR_DUST, Tier4Items.CHARCOAL_DUST, Tier4Items.COKE,

@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:item_pipe",
+    "strataindustria:inserter",
+    "strataindustria:copper_wire"
+  ],
+  "result": {
+    "id": "strataindustria:pipe_extractor"
+  }
+}

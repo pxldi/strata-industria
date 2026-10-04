@@ -87,7 +87,9 @@ final class ModRecipeProvider extends RecipeProvider {
 
         knapping();
         clayForming();
+        patterns();
         forge();
+        prologueMachines();
         fibre();
         stoneTools();
         fire();
@@ -135,6 +137,39 @@ final class ModRecipeProvider extends RecipeProvider {
         form(mold(MoldType.SWORD_BLADE), 1, "###..", "##..#", "#..##", "..###", ".####");
     }
 
+    // Pattern casting: a plank blank is carved on the clay grid, a flask is a plank frame round damp sand.
+    private void patterns() {
+        shapeless(RecipeCategory.MISC, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get(), 2)
+                .requires(ItemTags.PLANKS)
+                .unlockedBy("has_crucible", has(ModItems.CRUCIBLE.get()))
+                .save(output, key("pattern_blank"));
+        shaped(RecipeCategory.MISC, dev.strataindustria.registry.PatternRegistry.SAND_FLASK.get(), 2)
+                .pattern("P P")
+                .pattern("PSP")
+                .define('P', ItemTags.PLANKS)
+                .define('S', Items.SAND)
+                .unlockedBy("has_crucible", has(ModItems.CRUCIBLE.get()))
+                .save(output, key("sand_flask"));
+        carve("ingot", ".....", "#####", "#...#", "#####", ".....");
+        carve("gear", "#.#.#", ".....", "#...#", ".....", "#.#.#");
+        carve(MoldType.PICKAXE_HEAD.id(), "#...#", ".###.", "#####", "#####", "#####");
+        carve(MoldType.AXE_HEAD.id(), "#.###", "....#", ".....", "....#", "#.###");
+        carve(MoldType.SHOVEL_HEAD.id(), "#...#", "#...#", "#...#", "#...#", "##.##");
+        carve(MoldType.HOE_HEAD.id(), ".....", "..###", "#####", "#####", "#####");
+        carve(MoldType.KNIFE_BLADE.id(), ".####", "..###", "#..##", "##..#", "###..");
+        carve(MoldType.HAMMER_HEAD.id(), ".....", ".....", "##.##", "#####", "#####");
+        carve(MoldType.SAW_BLADE.id(), "#####", "#####", ".....", ".....", "#####");
+        carve(MoldType.SWORD_BLADE.id(), "###..", "##..#", "#..##", "..###", ".####");
+    }
+
+    private void carve(String shape, String... rows) {
+        int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
+        Item result = dev.strataindustria.registry.PatternRegistry.PATTERNS.get(shape).get();
+        output.accept(key("carving/" + shape + "_pattern"), new KnappingRecipe(
+                Ingredient.of(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get()), 1, pattern, true,
+                new ItemStackTemplate(result)), null);
+    }
+
     // Spec 4.5: seven bricks around a charcoal hearth.
     private void forge() {
         shaped(RecipeCategory.DECORATIONS, ModItems.FORGE.get())
@@ -145,6 +180,24 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('C', Items.CHARCOAL)
                 .unlockedBy("has_brick", has(Items.BRICK))
                 .save(output, key("forge"));
+    }
+
+    // Prologue machines: a ring of bricks makes the kiln, a stone top on brick legs makes the table.
+    private void prologueMachines() {
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get())
+                .pattern("BBB")
+                .pattern("B B")
+                .pattern("BBB")
+                .define('B', Items.BRICK)
+                .unlockedBy("has_forge", has(ModItems.FORGE.get()))
+                .save(output, key("brick_kiln"));
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_ITEM.get())
+                .pattern("SSS")
+                .pattern("B B")
+                .define('S', ItemTags.STONE_CRAFTING_MATERIALS)
+                .define('B', Items.BRICK)
+                .unlockedBy("has_crucible", has(ModItems.CRUCIBLE.get()))
+                .save(output, key("casting_table"));
     }
 
     private static Item mold(MoldType type) {
@@ -916,7 +969,9 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('A', axle)
                 .unlockedBy("has_wooden_gear", has(gear))
                 .save(output, key("saw_mill"));
+        // Any hammer head will do, stone included, and sticks carry it, so the first trip hammer needs no iron.
         List<Item> hammerHeads = new java.util.ArrayList<>();
+        hammerHeads.add(ModItems.STONE_HAMMER_HEAD.get());
         for (Metal metal : Metal.values()) {
             if ((metal.isBronze() || metal == Metal.WROUGHT_IRON) && metal.toolTypes().contains(MoldType.HAMMER_HEAD)) {
                 hammerHeads.add(ModItems.head(metal, MoldType.HAMMER_HEAD));
@@ -924,10 +979,10 @@ final class ModRecipeProvider extends RecipeProvider {
         }
         shaped(RecipeCategory.REDSTONE, ModItems.TRIP_HAMMER.get())
                 .pattern(" H ")
-                .pattern("RAR")
+                .pattern("SAS")
                 .pattern("PGP")
                 .define('H', Ingredient.of(hammerHeads.toArray(Item[]::new)))
-                .define('R', rod)
+                .define('S', Items.STICK)
                 .define('A', axle)
                 .define('P', ItemTags.PLANKS)
                 .define('G', gear)

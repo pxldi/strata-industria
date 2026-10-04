@@ -82,6 +82,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
         charcoalPile();
         dropSelf(ModBlocks.FORGE.get());
         dropSelf(ModBlocks.QUERN.get());
+        dropSelf(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.get());
+        dropSelf(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.get());
         // Spec 9.1: a stone anvil cannot be picked up and breaks back into two loose rocks.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
             Block anvil = entry.getValue().get();
@@ -212,6 +214,11 @@ final class ModBlockLoot extends BlockLootSubProvider {
     private void tier5() {
         for (var block : java.util.List.of(Tier5Blocks.LV_CABLE, Tier5Blocks.MV_CABLE, Tier5Blocks.KINETIC_DYNAMO, Tier5Blocks.LV_MACHINE_HULL, Tier5Blocks.TREE_TAP, Tier5Blocks.TRANSFORMER,
                 Tier5Blocks.TREATED_LOG, Tier5Blocks.UTILITY_POLE, Tier5Blocks.POLE_INSULATOR, Tier5Blocks.LIQUID_FUEL_BURNER, Tier5Blocks.ELECTRIC_PUMP, Tier5Blocks.EXTRUDER)) {
+            dropSelf(block.get());
+        }
+        for (var block : java.util.List.of(dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE, dev.strataindustria.logistics.Tier5Logistics.PIPE_EXTRACTOR,
+                dev.strataindustria.logistics.Tier5Logistics.FAST_PIPE_EXTRACTOR, dev.strataindustria.logistics.Tier5Logistics.STORAGE_CONTROLLER,
+                dev.strataindustria.logistics.Tier5Logistics.FLUID_FILTER)) {
             dropSelf(block.get());
         }
         // Spec 9.5: an upgraded machine drops with machine_tier = mv so it places back as MV.

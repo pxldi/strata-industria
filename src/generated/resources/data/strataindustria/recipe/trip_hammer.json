@@ -5,17 +5,18 @@
     "A": "strataindustria:wooden_axle",
     "G": "strataindustria:wooden_gear",
     "H": [
+      "strataindustria:stone_hammer_head",
       "strataindustria:bronze_hammer_head",
       "strataindustria:arsenical_bronze_hammer_head",
       "strataindustria:bismuth_bronze_hammer_head",
       "strataindustria:wrought_iron_hammer_head"
     ],
     "P": "#minecraft:planks",
-    "R": "strataindustria:wrought_iron_rod"
+    "S": "minecraft:stick"
   },
   "pattern": [
     " H ",
-    "RAR",
+    "SAS",
     "PGP"
   ],
   "result": {

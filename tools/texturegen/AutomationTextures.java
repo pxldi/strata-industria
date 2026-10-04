@@ -20,10 +20,10 @@ public final class AutomationTextures {
     static void px(BufferedImage im, int x, int y, int c) { TextureGen.px(im, x, y, c); }
 
     static void plate(BufferedImage im, long seed) {
-        Random r = new Random(seed);
+        double[][] g = TextureGen.V2.grain(seed);
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
-                int step = r.nextInt(6) == 0 ? 4 : r.nextInt(8) == 0 ? 2 : 3;
+                int step = g[y][x] > 0.82 ? 4 : g[y][x] < 0.14 ? 2 : 3;
                 if (x == 0 || y == 0) step = 4;
                 if (x == 15 || y == 15) step = 2;
                 px(im, x, y, iron(step));
@@ -309,6 +309,7 @@ public final class AutomationTextures {
     }
 
     public static void main(String[] args) throws IOException {
+        TextureGen.itemsV2 = true;
         TextureGen.save("block/inserter_base_side", baseSide());
         TextureGen.save("block/inserter_base_top", baseTop());
         TextureGen.save("block/inserter_base_bottom", baseBottom());

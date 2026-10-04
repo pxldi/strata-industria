@@ -38,17 +38,23 @@ public final class Knapping {
         return stack.is(Items.CLAY_BALL) || isFireClay(stack);
     }
 
+    /** A pattern blank: wood carved on the same grid. */
+    public static boolean isWood(ItemStack stack) {
+        return stack.is(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get());
+    }
+
     public static boolean isFireClay(ItemStack stack) {
         return stack.is(ModItems.FIRE_CLAY_BALL.get());
     }
 
     /** Anything that opens the grid: loose rocks, flint or clay. */
     public static boolean isKnappable(ItemStack stack) {
-        return isFlint(stack) || isClay(stack) || rockOf(stack).isPresent();
+        return isFlint(stack) || isClay(stack) || isWood(stack) || rockOf(stack).isPresent();
     }
 
     public static int openingCost(ItemStack stack) {
         if (isClay(stack)) return CLAY_OPENING_COST;
+        if (isWood(stack)) return 1;
         return isFlint(stack) ? FLINT_OPENING_COST : ROCK_OPENING_COST;
     }
 
@@ -61,22 +67,29 @@ public final class Knapping {
     public static Identifier gridTexture(ItemStack stack) {
         if (isFireClay(stack)) return StrataIndustria.id("textures/block/fire_clay.png");
         if (isClay(stack)) return StrataIndustria.id("textures/gui/knapping/clay.png");
+        if (isWood(stack)) return StrataIndustria.id("textures/gui/knapping/wood.png");
         return rockOf(stack)
                 .map(rock -> StrataIndustria.id("textures/block/" + rock.id() + ".png"))
                 .orElse(StrataIndustria.id("textures/gui/knapping/flint.png"));
     }
 
     public static SoundEvent strikeSound(ItemStack stack) {
+        if (isWood(stack)) return dev.strataindustria.registry.PatternRegistry.PATTERN_CARVE.get();
         if (isClay(stack)) return ModSounds.CLAY_SHAPE.get();
         return isFlint(stack) ? ModSounds.KNAP_FLINT.get() : ModSounds.KNAP_ROCK.get();
     }
 
     public static SoundEvent finishSound(ItemStack stack) {
+        if (isWood(stack)) return dev.strataindustria.registry.PatternRegistry.PATTERN_FINISH.get();
         return isClay(stack) ? ModSounds.CLAY_FINISH.get() : ModSounds.KNAP_FINISH.get();
     }
 
     /** Chips that fly off a strike: grey stone, dark flint, or brown clay crumbs. */
     public static int chipColour(ItemStack stack, float shade) {
+        if (isWood(stack)) {
+            int r = Math.round(0xa8 * shade), g = Math.round(0x82 * shade), b = Math.round(0x38 * shade);
+            return 0xFF000000 | r << 16 | g << 8 | b;
+        }
         if (isFireClay(stack)) {
             int r = Math.round(0xc8 * shade), g = Math.round(0xb8 * shade), b = Math.round(0x9a * shade);
             return 0xFF000000 | r << 16 | g << 8 | b;
@@ -102,7 +115,7 @@ public final class Knapping {
         ItemStack material = held.copyWithCount(1);
         player.openMenu(new SimpleMenuProvider(
                 (id, inventory, p) -> new KnappingMenu(id, inventory, material, hand),
-                Component.translatable("container." + StrataIndustria.MOD_ID + (isClay(material) ? ".clay_forming" : ".knapping"))),
+                Component.translatable("container." + StrataIndustria.MOD_ID + (isClay(material) ? ".clay_forming" : isWood(material) ? ".carving" : ".knapping"))),
                 buf -> {
                     ItemStack.STREAM_CODEC.encode(buf, material);
                     buf.writeBoolean(hand == InteractionHand.MAIN_HAND);

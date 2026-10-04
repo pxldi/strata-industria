@@ -1,0 +1,19 @@
+{
+  "type": "strataindustria:extruding",
+  "item_results": [
+    {
+      "count": 8,
+      "id": "strataindustria:item_pipe"
+    }
+  ],
+  "items": [
+    {
+      "ingredient": "strataindustria:brass_plate"
+    },
+    {
+      "ingredient": "minecraft:glass"
+    }
+  ],
+  "mode": "item_pipe",
+  "ticks": 100
+}

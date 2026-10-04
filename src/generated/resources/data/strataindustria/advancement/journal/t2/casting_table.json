@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t2/copper_ingot",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "casting_table_poured"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.casting_table.hint"
+    },
+    "icon": {
+      "id": "strataindustria:casting_table"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t2.casting_table"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

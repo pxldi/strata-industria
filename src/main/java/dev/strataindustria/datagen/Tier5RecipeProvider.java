@@ -54,6 +54,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         hammerAndExtruder();
         overheadLines();
         heatAndMotion();
+        logistics();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -516,6 +517,47 @@ final class Tier5RecipeProvider extends RecipeProvider {
         extrude("pipe", "copper_fluid_pipe", Tier4Items.COPPER_FLUID_PIPE.get(), 4, 100, Ingredient.of(ModItems.PLATES.get(Metal.COPPER).get()), 1);
         extrude("pipe", "bronze_fluid_pipe", Tier4Items.BRONZE_FLUID_PIPE.get(), 4, 100, tag(dev.strataindustria.registry.ModTags.Items.ANY_BRONZE_PLATES), 1);
         extrude("pipe", "steel_fluid_pipe", Tier4Items.STEEL_FLUID_PIPE.get(), 4, 100, Ingredient.of(ModItems.PLATES.get(Metal.STEEL).get()), 1);
+        extrude("item_pipe", "item_pipe", dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE_ITEM.get(), 8, 100,
+                Ingredient.of(ModItems.PLATES.get(Metal.BRASS).get()), 1, Ingredient.of(Items.GLASS), 1);
+    }
+
+    // Spec 12: pipes, the extractor, the controller and the fluid filter.
+    private void logistics() {
+        Item pipe = dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE_ITEM.get();
+        Item extractor = dev.strataindustria.logistics.Tier5Logistics.PIPE_EXTRACTOR_ITEM.get();
+        Item plate = ModItems.PLATES.get(Metal.BRASS).get();
+        shaped(RecipeCategory.REDSTONE, pipe, 6)
+                .pattern("PGP")
+                .define('P', plate)
+                .define('G', Items.GLASS)
+                .unlockedBy("has_brass_plate", has(plate))
+                .save(output, key("item_pipe"));
+        shapeless(RecipeCategory.REDSTONE, extractor)
+                .requires(pipe)
+                .requires(Tier4Items.INSERTER.get())
+                .requires(Tier5Items.COPPER_WIRE.get())
+                .unlockedBy("has_item_pipe", has(pipe))
+                .save(output, key("pipe_extractor"));
+        shapeless(RecipeCategory.REDSTONE, dev.strataindustria.logistics.Tier5Logistics.FAST_PIPE_EXTRACTOR_ITEM.get())
+                .requires(extractor)
+                .requires(Tier5Items.BASIC_CIRCUIT.get())
+                .requires(ModItems.PLATES.get(Metal.ALUMINIUM).get())
+                .unlockedBy("has_pipe_extractor", has(extractor))
+                .save(output, key("fast_pipe_extractor"));
+        shaped(RecipeCategory.REDSTONE, dev.strataindustria.logistics.Tier5Logistics.STORAGE_CONTROLLER_ITEM.get())
+                .pattern(" X ")
+                .pattern("CHC")
+                .pattern(" X ")
+                .define('X', Items.CHEST)
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('H', Tier5Items.LV_MACHINE_HULL.get())
+                .unlockedBy("has_basic_circuit", has(Tier5Items.BASIC_CIRCUIT.get()))
+                .save(output, key("storage_controller"));
+        shapeless(RecipeCategory.REDSTONE, dev.strataindustria.logistics.Tier5Logistics.FLUID_FILTER_ITEM.get())
+                .requires(Tier4Items.BRONZE_FLUID_PIPE.get())
+                .requires(Tier4Items.FILTER.get())
+                .unlockedBy("has_bronze_fluid_pipe", has(Tier4Items.BRONZE_FLUID_PIPE.get()))
+                .save(output, key("fluid_filter"));
     }
 
     /** An extruder recipe: {@code inputs} alternate ingredient and count. */

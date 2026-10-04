@@ -1,0 +1,219 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "body": "strataindustria:block/pipe_extractor_body",
+    "funnel": "strataindustria:block/pipe_extractor_funnel",
+    "mouth": "strataindustria:block/pipe_extractor_mouth_active",
+    "pipe": "strataindustria:block/item_pipe_core",
+    "particle": "strataindustria:block/pipe_extractor_body"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        3,
+        0
+      ],
+      "to": [
+        13,
+        13,
+        3
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ],
+          "texture": "#mouth",
+          "cullface": "north"
+        },
+        "south": {
+          "uv": [
+            3,
+            3,
+            13,
+            13
+          ],
+          "texture": "#funnel"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            3,
+            10
+          ],
+          "texture": "#funnel"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            3,
+            10
+          ],
+          "texture": "#funnel"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            10,
+            3
+          ],
+          "texture": "#funnel"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            10,
+            3
+          ],
+          "texture": "#funnel"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        3
+      ],
+      "to": [
+        12,
+        12,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#body"
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#body"
+        },
+        "east": {
+          "uv": [
+            0,
+            3,
+            9,
+            11
+          ],
+          "texture": "#body"
+        },
+        "west": {
+          "uv": [
+            0,
+            3,
+            9,
+            11
+          ],
+          "texture": "#body"
+        },
+        "up": {
+          "uv": [
+            3,
+            0,
+            11,
+            9
+          ],
+          "texture": "#body"
+        },
+        "down": {
+          "uv": [
+            3,
+            0,
+            11,
+            9
+          ],
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        5,
+        12
+      ],
+      "to": [
+        11,
+        11,
+        16
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe",
+          "cullface": "south"
+        },
+        "north": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "east": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "west": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "up": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "down": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:translucent"
+}

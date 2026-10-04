@@ -53,9 +53,9 @@ src/generated/resources/ generated assets and data (do not edit by hand)
   (`java tools/texturegen/TextureGen.java` from the repo root). Output is deterministic and
   written into `src/main/resources/assets/strataindustria/textures`; a preview sheet goes to
   `build/texturegen/preview.png`. Files in `HAND_MADE` are never overwritten.
-- Art style v2 (vanilla-native, `art/STYLE_GUIDE.md`): rocks, cobble and ore overlays already use it. The
+- Art style v2 (vanilla-native, `art/STYLE_GUIDE.md`): rocks, ores, tier 0-3 blocks and machines and items of tiers 0-3 use it (tier 4 and later still need their own pass). The
   helpers live in `TextureGen.V2` (grain field, share quantise, stamped ore clusters, hard item outline,
-  v2 ramps); the `*_V2` and `ORE_*` ramps are the v2 ones, the older ramps are reworked chunk by chunk.
+  v2 ramps); the `*_V2` and `ORE_*` ramps are the v2 ones, the older ramp names now carry v2 values for rock, metal, clay and brick colours; tier 4+ ramps are reworked chunk by chunk. `V2.bricks` and `V2.grain` replace the old blob noise.
   Check a new texture with `python3 art/tools/check_textures.py <rock|ore|item|machine|bricks> file.png`
   (composite ore overlays on their host rock first).
 - Structure blocks have their own generator, `tools/texturegen/StructureTextures.java`.

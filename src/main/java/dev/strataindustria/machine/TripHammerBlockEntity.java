@@ -13,6 +13,7 @@ import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
 import dev.strataindustria.smithing.HitType;
+import dev.strataindustria.smithing.Smithing;
 import dev.strataindustria.smithing.SmithingPattern;
 import dev.strataindustria.smithing.SmithingProgress;
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -119,6 +124,8 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
     private Status work(ServerLevel level) {
         if (!(level.getBlockEntity(anvilPos()) instanceof AnvilBlockEntity anvil)) return Status.NO_ANVIL;
         SmithingPattern pattern = items.get(PATTERN).get(ModDataComponents.SMITHING_PATTERN.get());
+        // Without a pattern the hammer still knows one job: pressing the slag out of a raw bloom.
+        if (pattern == null) pattern = bloomPattern(level);
         if (pattern == null) return Status.NO_PATTERN;
         Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
         if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
@@ -175,6 +182,17 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
             Journal.awardNear(level, worldPosition, Journal.TRIP_HAMMER);
         }
         return result == AnvilBlockEntity.MachineHit.REFUSED ? Status.ANVIL_BUSY : Status.WORKING;
+    }
+
+    /** The built-in bloom refining pattern: the shortest run that meets the recipe's rules. */
+    private static @Nullable SmithingPattern bloomPattern(ServerLevel level) {
+        ResourceKey<Recipe<?>> id = ResourceKey.create(Registries.RECIPE, StrataIndustria.id("anvil/bloom_refining"));
+        Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(id);
+        if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return null;
+        int target = Smithing.target(level, id, recipe);
+        List<Integer> hits = Smithing.solve(target, recipe.rules());
+        if (hits.isEmpty()) return null;
+        return new SmithingPattern(id, BuiltInRegistries.ITEM.getKey(Items.IRON_INGOT), target, hits, Smithing.craftQuality(hits.size(), hits.size()));
     }
 
     /** A hot workpiece for {@code recipe}: from the hammer's own slot, else from a forge beside the hammer or the anvil. */

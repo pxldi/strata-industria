@@ -38,7 +38,10 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(dev.strataindustria.registry.Tier5Blocks.STEAM_TURBINE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.COMBUSTION_GENERATOR.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.TRANSFORMER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ENERGY_ADAPTER.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.LIQUID_FUEL_BURNER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_HEATER.getKey())
-                .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_PUMP.getKey()).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_MOTOR.getKey());
+                .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_PUMP.getKey()).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_MOTOR.getKey())
+                .add(dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE.getKey()).add(dev.strataindustria.logistics.Tier5Logistics.PIPE_EXTRACTOR.getKey())
+                .add(dev.strataindustria.logistics.Tier5Logistics.FAST_PIPE_EXTRACTOR.getKey()).add(dev.strataindustria.logistics.Tier5Logistics.STORAGE_CONTROLLER.getKey())
+                .add(dev.strataindustria.logistics.Tier5Logistics.FLUID_FILTER.getKey());
         // Spec 5.4 and 8.3: treated wood is chopped, never burnt; insulators are pottery.
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.Tier5Blocks.TREATED_LOG.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.UTILITY_POLE.getKey());
@@ -187,7 +190,9 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LARGE_VESSEL.getKey()).add(ModBlocks.CRUCIBLE.getKey())
                 .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey()).add(ModBlocks.BRONZE_ANVIL.getKey())
-                .add(ModBlocks.WROUGHT_IRON_ANVIL.getKey());
+                .add(ModBlocks.WROUGHT_IRON_ANVIL.getKey())
+                .add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.getKey())
+                .add(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.getKey());
         for (var anvil : ModBlocks.STONE_ANVILS.values()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(anvil.getKey());
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.PIT_KILN.getKey()).add(ModBlocks.CHARCOAL_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());

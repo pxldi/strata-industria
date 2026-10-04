@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.journal.JournalContent;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
+import dev.strataindustria.logistics.Tier5Logistics;
 import dev.strataindustria.registry.Tier5Sounds;
 import dev.strataindustria.registry.Tier6Sounds;
 import dev.strataindustria.structure.SharedBlocks;
@@ -23,6 +24,8 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         tier5();
         tier6();
         shared();
+        prologue();
+        patterns();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -414,6 +417,35 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         return "subtitles." + StrataIndustria.MOD_ID + "." + name;
     }
 
+    /** Pattern casting, from vanilla wood and sand samples. */
+    private void patterns() {
+        SoundDefinition carve = definition().subtitle(subtitle("pattern.carve"));
+        for (int i = 1; i <= 4; i++) carve.with(sound("minecraft:dig/wood" + i).pitch(1.6f).volume(0.45f));
+        add(dev.strataindustria.registry.PatternRegistry.PATTERN_CARVE, carve);
+        SoundDefinition finish = definition().subtitle(subtitle("pattern.finish"));
+        for (int i = 1; i <= 4; i++) finish.with(sound("minecraft:dig/wood" + i).pitch(1.0f).volume(0.7f));
+        add(dev.strataindustria.registry.PatternRegistry.PATTERN_FINISH, finish);
+        SoundDefinition press = definition().subtitle(subtitle("pattern.press"));
+        for (int i = 1; i <= 4; i++) press.with(sound("minecraft:dig/sand" + i).pitch(0.8f).volume(0.8f));
+        for (int i = 1; i <= 2; i++) press.with(sound("minecraft:dig/wood" + i).pitch(0.7f).volume(0.5f));
+        add(dev.strataindustria.registry.PatternRegistry.PATTERN_PRESS, press);
+    }
+
+    /** The brick kiln and the casting table, from vanilla fire, stone and pottery samples. */
+    private void prologue() {
+        SoundDefinition work = definition().subtitle(subtitle("brick_kiln.work"));
+        for (int i = 1; i <= 3; i++) work.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.95f).volume(0.5f));
+        add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_WORK, work);
+        add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_DONE, definition().subtitle(subtitle("brick_kiln.done"))
+                .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.7f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        add(dev.strataindustria.registry.PrologueRegistry.TABLE_SET, stone("casting_table.set", 0.7f, 0.7f));
+        SoundDefinition knock = definition().subtitle(subtitle("casting_table.knock"));
+        for (int i = 1; i <= 4; i++) knock.with(sound("minecraft:dig/stone" + i).pitch(1.25f).volume(0.9f));
+        for (int i = 1; i <= 2; i++) knock.with(sound("minecraft:dig/stone" + i).pitch(1.5f).volume(0.6f));
+        add(dev.strataindustria.registry.PrologueRegistry.TABLE_KNOCK, knock);
+    }
+
     private static SoundDefinition stone(String subtitle, float pitch, float volume) {
         SoundDefinition definition = definition().subtitle("subtitles." + StrataIndustria.MOD_ID + "." + subtitle);
         for (int i = 1; i <= 4; i++) {
@@ -424,6 +456,15 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
 
     // Tier 5 spec 23.6: electric sounds, built from vanilla samples.
     private void tier5() {
+        add(Tier5Logistics.PIPE_EXTRACT, definition().subtitle(subtitle("block.item_pipe.extract"))
+                .with(sound("minecraft:block.dispenser.launch", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.2f))
+                .with(sound("minecraft:block.dispenser.launch", SoundDefinition.SoundType.EVENT).pitch(1.65f).volume(0.18f)));
+        add(Tier5Logistics.CONTROLLER_OPEN, definition().subtitle(subtitle("block.storage_controller.open"))
+                .with(sound("minecraft:block.note_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.6f)));
+        add(Tier5Logistics.CONTROLLER_CLOSE, definition().subtitle(subtitle("block.storage_controller.close"))
+                .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f)));
+        add(Tier5Logistics.CONTROLLER_STORE, definition().subtitle(subtitle("block.storage_controller.store"))
+                .with(sound("minecraft:ui.button.click", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.25f)));
         add(Tier5Sounds.ELECTRIC_OVERVOLTAGE, definition().subtitle(subtitle("electric.overvoltage"))
                 .with(sound("minecraft:entity.lightning_bolt.impact", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.3f))
                 .with(sound("minecraft:entity.lightning_bolt.impact", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));

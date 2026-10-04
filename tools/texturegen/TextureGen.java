@@ -36,14 +36,14 @@ public final class TextureGen {
 
     // Rocks. The *_V2 ramps (style guide v2, vanilla value band) colour the terrain blocks and ores; the
     // old ramps below stay for machines and items that have not been reworked yet (lane A, chunks A2+).
-    static final Ramp GRANITE = ramp(0, 0x3e3236, 0x5a464a, 0x7a6062, 0x9a7c78, 0xb89a90);
-    static final Ramp BASALT = ramp(0, 0x1f2226, 0x2c3036, 0x3b4048, 0x4c525a, 0x5f6670);
-    static final Ramp LIMESTONE = ramp(0, 0x6e6655, 0x8a8169, 0xa69c80, 0xc2b898, 0xd8cfaf);
-    static final Ramp SHALE = ramp(0, 0x262a32, 0x343944, 0x454b55, 0x575d66, 0x6a6f76);
-    static final Ramp SLATE = ramp(0, 0x2c322f, 0x3c4440, 0x4e5751, 0x626b64, 0x767f77);
-    static final Ramp MARBLE = ramp(0, 0x8c8a88, 0xaeaca8, 0xc8c6c0, 0xdcdad4, 0xecebe6);
-    static final Ramp GABBRO = ramp(0, 0x16181c, 0x22252a, 0x303338, 0x41444a, 0x55585c);
-    static final Ramp RHYOLITE = ramp(0, 0x6a5450, 0x84695f, 0x9c8072, 0xb59c8e, 0xc8b2a2);
+    static final Ramp GRANITE = ramp(0, 0x55494c, 0x6c5e60, 0x83726f, 0x978480, 0xad9a92);
+    static final Ramp BASALT = ramp(0, 0x2c2e34, 0x383b42, 0x45484f, 0x53565d, 0x64676c);
+    static final Ramp LIMESTONE = ramp(0, 0x8c8676, 0xa19a88, 0xb2ab97, 0xc1baa5, 0xd0cab6);
+    static final Ramp SHALE = ramp(0, 0x40444c, 0x50555e, 0x5f656e, 0x6f757e, 0x80868e);
+    static final Ramp SLATE = ramp(0, 0x3e4642, 0x4e5752, 0x5e6862, 0x6f7a73, 0x818c85);
+    static final Ramp MARBLE = ramp(0, 0xa09e9a, 0xb8b6b0, 0xcac8c2, 0xdad8d2, 0xe8e6e0);
+    static final Ramp GABBRO = ramp(0, 0x262830, 0x33363b, 0x41444a, 0x50535a, 0x61646b);
+    static final Ramp RHYOLITE = ramp(0, 0x7a625c, 0x917872, 0xa38a80, 0xb59d92, 0xc6b0a4);
     static final Ramp GRANITE_V2 = ramp(0, 0x55494c, 0x6c5e60, 0x83726f, 0x978480, 0xad9a92);
     static final Ramp BASALT_V2 = ramp(0, 0x2c2e34, 0x383b42, 0x45484f, 0x53565d, 0x64676c);
     static final Ramp LIMESTONE_V2 = ramp(0, 0x8c8676, 0xa19a88, 0xb2ab97, 0xc1baa5, 0xd0cab6);
@@ -52,28 +52,28 @@ public final class TextureGen {
     static final Ramp MARBLE_V2 = ramp(0, 0xa09e9a, 0xb8b6b0, 0xcac8c2, 0xdad8d2, 0xe8e6e0);
     static final Ramp GABBRO_V2 = ramp(0, 0x262830, 0x33363b, 0x41444a, 0x50535a, 0x61646b);
     static final Ramp RHYOLITE_V2 = ramp(0, 0x7a625c, 0x917872, 0xa38a80, 0xb59d92, 0xc6b0a4);
-    static final Ramp FLINT = ramp(0, 0x23252b, 0x383b44, 0x525764, 0x727986, 0x9aa0ac);
+    static final Ramp FLINT = ramp(0xe4e8ee, 0x2c2e36, 0x484c58, 0x6a707e, 0x9096a4, 0xbcc2cc);
     // Metals
-    static final Ramp COPPER = ramp(0xf6cf9a, 0x4a2218, 0x7a3a22, 0xa8562e, 0xcf7a3e, 0xeba66a);
-    static final Ramp TIN = ramp(0xeef1f5, 0x3a3d48, 0x5c6170, 0x838998, 0xaeb4c0, 0xd6dbe2);
-    static final Ramp BRONZE = ramp(0xf2e0a6, 0x4a3216, 0x75501f, 0xa0752e, 0xc79a45, 0xe3c273);
-    static final Ramp BISMUTH = ramp(0xf0e8f2, 0x3e3444, 0x5e5066, 0x85758c, 0xab9cb0, 0xcbc0cf);
-    static final Ramp ARSENICAL_BRONZE = ramp(0xf0d2b2, 0x46281a, 0x6e4128, 0x965c3c, 0xb87a52, 0xd8a072);
-    static final Ramp BISMUTH_BRONZE = ramp(0xf0dcc6, 0x48301e, 0x704c34, 0x96684c, 0xb68a6a, 0xd4ac8c);
-    static final Ramp SLAG = ramp(0, 0x2a2420, 0x3e3632, 0x544a44, 0x6e625a, 0x887c72);
+    static final Ramp COPPER = ramp(0xffe2bc, 0x4a2214, 0x82401f, 0xb85f2f, 0xe08040, 0xf4a868);
+    static final Ramp TIN = ramp(0xffffff, 0x383c48, 0x5e6474, 0x8890a0, 0xb4bcc8, 0xdce2ea);
+    static final Ramp BRONZE = ramp(0xfff0b8, 0x3a2510, 0x6b4a1c, 0x9c7030, 0xc8983e, 0xe8c060);
+    static final Ramp BISMUTH = ramp(0xfaf4fc, 0x403648, 0x665870, 0x8e7e98, 0xb4a4bc, 0xd4c8da);
+    static final Ramp ARSENICAL_BRONZE = ramp(0xf6d2b4, 0x3e2216, 0x6a3e24, 0x93583a, 0xb87852, 0xd89c70);
+    static final Ramp BISMUTH_BRONZE = ramp(0xf2dcc4, 0x3e2a1e, 0x694834, 0x91694c, 0xb48a68, 0xd2ac88);
+    static final Ramp SLAG = ramp(0xc8bcb0, 0x38302c, 0x58504a, 0x7a6e66, 0x988c82, 0xb4a89c);
     // Minerals
     static final Ramp MALACHITE = ramp(0, 0x163828, 0x1e4a36, 0x2e6b4a, 0x4a9466, 0x78bf8a);
     static final Ramp CASSITERITE = ramp(0xc8b8a8, 0x1e1614, 0x2a1e1a, 0x4a342a, 0x6e5444, 0x9a8070);
     static final Ramp TENNANTITE = ramp(0xc6d0d6, 0x1a1e24, 0x2a3038, 0x404852, 0x5c6672, 0x84909a);
     static final Ramp BISMUTHINITE = ramp(0xe2e6ee, 0x26282e, 0x3a3e48, 0x565c6a, 0x7a8292, 0xa4acba);
     // Organics and ceramics
-    static final Ramp WOOD = ramp(0, 0x3a2618, 0x5a3c24, 0x7a5634, 0x9c7448, 0xbc9462);
-    static final Ramp FIBRE = ramp(0, 0x2e3818, 0x3d4a22, 0x5a6b2e, 0x7a8c3c, 0x9dae52);
-    static final Ramp STRAW = ramp(0, 0x5a4a1e, 0x7c662a, 0xa08a3c, 0xc4ad56, 0xdcca78);
-    static final Ramp CLAY = ramp(0, 0x5a4c4c, 0x6a5a58, 0x8e7a74, 0xae9890, 0xc8b4aa);
-    static final Ramp CERAMIC = ramp(0, 0x5a2e22, 0x83432e, 0xa85e3e, 0xc77e56, 0xdda27a);
+    static final Ramp WOOD = ramp(0, 0x3f2f1c, 0x594328, 0x735a35, 0x8c7043, 0xa48854);
+    static final Ramp FIBRE = ramp(0, 0x38441c, 0x4e6028, 0x6a7e34, 0x8aa044, 0xaec25e);
+    static final Ramp STRAW = ramp(0, 0x6a5624, 0x8a7430, 0xb09a42, 0xd0b858, 0xe8d476);
+    static final Ramp CLAY = ramp(0, 0x5a5254, 0x7a7072, 0x9c9090, 0xbcb0ae, 0xd6cac6);
+    static final Ramp CERAMIC = ramp(0xeab08a, 0x4e2a22, 0x7c4234, 0xa65c46, 0xc47c5c, 0xdc9e78);
     static final Ramp CHARCOAL = ramp(0, 0x141416, 0x232327, 0x34343a, 0x4a4a52, 0x626270);
-    static final Ramp ASH = ramp(0, 0x4a4846, 0x64615e, 0x807c78, 0x9c9894, 0xb8b4ae);
+    static final Ramp ASH = ramp(0, 0x5a5856, 0x787572, 0x98948f, 0xb8b4ae, 0xd4d0ca);
     static final Ramp LEATHER = ramp(0, 0x3a2216, 0x553322, 0x744834, 0x92614a, 0xb07e62);
     static final Ramp PAPER = ramp(0, 0x6e6250, 0x948670, 0xb8aa8e, 0xd6caae, 0xece2c8);
 
@@ -330,6 +330,7 @@ public final class TextureGen {
         static final Ramp BRONZE_V2 = ramp(0xfff0b8, 0x3a2510, 0x6b4a1c, 0x9c7030, 0xc8983e, 0xe8c060);
         static final Ramp WOOD_V2 = ramp(0, 0x28190a, 0x493615, 0x684e1e, 0x896727, 0xa88238);
         static final Ramp FIRE_BRICK_V2 = ramp(0, 0x5e4a36, 0x7a6248, 0x927a58, 0xa68e68, 0xbaa27a);
+        static final Ramp BRICK_V2 = ramp(0, 0x7a443a, 0x8c5042, 0x9c5c4c, 0xac6a58, 0xba7a66);
         static final Ramp MORTAR_V2 = ramp(0, 0x6a645a, 0x6a645a, 0xaaa498, 0xc0baae, 0xc0baae);
         static final Ramp STEEL_V2 = ramp(0xd4d8da, 0x3a3c42, 0x5a5d64, 0x7a7d84, 0x959aa0, 0xb4b8bc);
         // A2: tier 0-2 item ramps (6 steps with a glint, vanilla item value band).
@@ -357,6 +358,17 @@ public final class TextureGen {
             double[][] out = new double[16][16];
             for (int y = 0; y < 16; y++)
                 for (int x = 0; x < 16; x++) out[y][x] = white * r.nextDouble() + lo * a[y][x] + mid * b[y][x];
+            return out;
+        }
+
+        /** Per-pixel grain field rank-normalised to 0-1, a drop-in for the old blob noise where thresholds are shares. */
+        static double[][] grain(long seed) {
+            double[][] f = terrainField(seed, 0.6);
+            Integer[] order = new Integer[256];
+            for (int i = 0; i < 256; i++) order[i] = i;
+            java.util.Arrays.sort(order, java.util.Comparator.comparingDouble(i -> f[i / 16][i % 16]));
+            double[][] out = new double[16][16];
+            for (int k = 0; k < 256; k++) out[order[k] / 16][order[k] % 16] = (k + 0.5) / 256;
             return out;
         }
 
@@ -393,6 +405,30 @@ public final class TextureGen {
         static BufferedImage paint(int[][] idx, Ramp p) {
             BufferedImage im = img();
             for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) px(im, x, y, p.get(idx[y][x] + 1));
+            return im;
+        }
+
+        /** Vanilla brick layout: 4 courses of 7 px bricks in half bond, light mortar, 2-3 tones per brick. */
+        static BufferedImage bricks(Ramp brick, long seed) {
+            Random r = new Random(seed);
+            Ramp m = MORTAR_V2;
+            BufferedImage im = img();
+            for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) px(im, x, y, m.get(3));
+            for (int course = 0; course < 4; course++) {
+                int y0 = course * 4, off = course % 2 == 0 ? 0 : 4;
+                for (int b = 0; b < 2; b++) {
+                    int x0 = (off + b * 8) % 16, tone = 2 + r.nextInt(3);
+                    for (int y = y0; y < y0 + 3; y++)
+                        for (int x = x0; x < x0 + 7; x++) {
+                            int s = tone + (y == y0 && r.nextDouble() < 0.6 ? 1 : 0) - (y == y0 + 2 && r.nextDouble() < 0.4 ? 1 : 0);
+                            s += (r.nextDouble() < 0.15 ? 1 : 0) - (r.nextDouble() < 0.12 ? 1 : 0);
+                            px(im, x % 16, y, brick.get(Math.max(1, Math.min(5, s))));
+                        }
+                }
+                for (int x = 0; x < 16; x++) px(im, x, y0 + 3, m.get(1));
+                for (int x = off - 1; x < off + 16; x += 8)
+                    for (int y = y0; y < y0 + 3; y++) px(im, Math.floorMod(x, 16), y, m.get(y == y0 + 2 ? 1 : 3));
+            }
             return im;
         }
 
@@ -1363,7 +1399,7 @@ public final class TextureGen {
 
     /** Smooth worked clay for the forming grid, with a few broad finger smears. */
     static BufferedImage claySurface() {
-        double[][] n = fractal(5151);
+        double[][] n = V2.grain(5151);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
@@ -1386,11 +1422,11 @@ public final class TextureGen {
      * the logs lay against the pot.
      */
     static BufferedImage ceramicWall(long seed, boolean band) {
-        double[][] n = fractal(seed);
+        double[][] n = V2.grain(seed);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.62 ? 4 : 3;
+                int step = n[y][x] > 0.84 ? 4 : 3;
                 if (y % 3 == 2 && (x + y) % 7 != 0) step = Math.min(step, 3) - (n[y][x] < 0.4 ? 1 : 0);
                 // Fire clouds towards the base.
                 if (y > 9 && n[(y + 5) % 16][(x + 3) % 16] > 0.6) step = 2;
@@ -1426,10 +1462,10 @@ public final class TextureGen {
 
     /** Plain ceramic in one or two steps: a base, a crucible floor. */
     static BufferedImage ceramicPlain(long seed, int low, int high) {
-        double[][] n = fractal(seed);
+        double[][] n = V2.grain(seed);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) px(im, x, y, CERAMIC.get(n[y][x] > 0.55 ? high : low));
+            for (int x = 0; x < 16; x++) px(im, x, y, CERAMIC.get(n[y][x] > 0.8 ? high : low));
         return im;
     }
 
@@ -1455,11 +1491,11 @@ public final class TextureGen {
 
     /** Bronze anvil body: cast bronze with a soft vertical sheen. */
     static BufferedImage bronzeAnvilBody() {
-        double[][] n = fractal(4141);
+        double[][] n = V2.grain(4141);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.6 ? 4 : n[y][x] < 0.35 ? 2 : 3;
+                int step = n[y][x] > 0.82 ? 4 : n[y][x] < 0.14 ? 2 : 3;
                 if (x == 3 || x == 4) step = Math.min(5, step + 1);
                 px(im, x, y, BRONZE.get(step));
             }
@@ -1468,13 +1504,13 @@ public final class TextureGen {
 
     /** Bronze anvil face: polished from use, lighter in the middle. */
     static BufferedImage bronzeAnvilTop() {
-        double[][] n = fractal(4242);
+        double[][] n = V2.grain(4242);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 double d = Math.abs(x - 7.5) / 8 + Math.abs(y - 7.5) / 16;
                 int step = d < 0.45 ? 5 : d < 0.75 ? 4 : 3;
-                if (n[y][x] < 0.3) step--;
+                if (n[y][x] < 0.12) step--;
                 px(im, x, y, BRONZE.get(Math.max(2, step)));
             }
         im.setRGB(7, 6, 0xff000000 | BRONZE.spec());
@@ -1658,11 +1694,11 @@ public final class TextureGen {
 
     /** Quern stone side: dressed granite with horizontal tooling marks and a worn top edge. */
     static BufferedImage quernSide() {
-        double[][] n = fractal(5151);
+        double[][] n = V2.grain(5151);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.62 ? 4 : n[y][x] < 0.38 ? 2 : 3;
+                int step = n[y][x] > 0.97 ? 5 : n[y][x] > 0.74 ? 4 : n[y][x] < 0.03 ? 1 : n[y][x] < 0.22 ? 2 : 3;
                 // Chisel marks run round the stone.
                 if ((y == 2 || y == 8 || y == 13) && (x * 7 + y) % 5 != 0) step = Math.max(2, step - 1);
                 if (y == 0 || y == 7 || y == 11) step = 4;
@@ -1674,14 +1710,14 @@ public final class TextureGen {
 
     /** Quern stone face: the grinding surface dressed with radial furrows, lighter where it is worn. */
     static BufferedImage quernFace(long seed, boolean hole) {
-        double[][] n = fractal(seed);
+        double[][] n = V2.grain(seed);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 double dx = x - 7.5, dy = y - 7.5;
                 double r = Math.sqrt(dx * dx + dy * dy);
                 double a = Math.atan2(dy, dx);
-                int step = n[y][x] > 0.6 ? 4 : 3;
+                int step = n[y][x] > 0.97 ? 5 : n[y][x] > 0.7 ? 4 : 3;
                 // Eight furrows, each a little skewed like real millstone dressing.
                 double sector = (a + r * 0.12) / (Math.PI / 4);
                 if (Math.abs(sector - Math.round(sector)) < 0.12 && r > 2.5) step = 2;
@@ -1716,11 +1752,11 @@ public final class TextureGen {
 
     /** Crucible wall: refractory clay, sooty towards the base where it sits in the coals. */
     static BufferedImage crucibleSide() {
-        double[][] n = fractal(8282);
+        double[][] n = V2.grain(8282);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.6 ? 4 : 3;
+                int step = n[y][x] > 0.82 ? 4 : 3;
                 if (x % 5 == 1 && n[y][x] < 0.5) step = 3;
                 // Thrown from coils: a thick lip at the rim, a shadowed seam under it and a faint coil line.
                 if (y < 2) step = 5;
@@ -1738,9 +1774,10 @@ public final class TextureGen {
 
     /** Crucible rim seen from above: lit on the near edges. */
     static BufferedImage crucibleTop() {
+        double[][] g = V2.grain(8283);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) px(im, x, y, CERAMIC.get((x < 3 || y < 3) ? 5 : 4));
+            for (int x = 0; x < 16; x++) px(im, x, y, CERAMIC.get(((x < 3 || y < 3) ? 4 : 3) + (g[y][x] > 0.75 ? 1 : 0)));
         return im;
     }
 
@@ -1853,23 +1890,7 @@ public final class TextureGen {
     // ---------------------------------------------------------------- forge (spec 4.5)
 
     /** Fired bricks in courses of four, mortar in ramp step 1, each brick lit along its top edge. */
-    static BufferedImage forgeBricks(long seed) {
-        BufferedImage im = img();
-        Random r = new Random(seed);
-        for (int y = 0; y < 16; y++) {
-            int course = y / 4, row = y % 4;
-            for (int x = 0; x < 16; x++) {
-                int joint = (x + (course % 2 == 1 ? 4 : 0)) % 8;
-                int c;
-                if (row == 3 || joint == 7) c = CERAMIC.get(1);
-                else if (row == 0) c = CERAMIC.get(4);
-                else if (joint == 6 || row == 2) c = CERAMIC.get(r.nextInt(5) == 0 ? 2 : 3);
-                else c = CERAMIC.get(r.nextInt(6) == 0 ? 4 : 3);
-                px(im, x, y, c);
-            }
-        }
-        return im;
-    }
+    static BufferedImage forgeBricks(long seed) { return V2.bricks(V2.BRICK_V2, seed); }
 
     /** Unlit hearth: cold charcoal lumps. */
     static BufferedImage forgeCoals() {
@@ -2337,7 +2358,7 @@ public final class TextureGen {
     static final Ramp MAGNETITE = ramp(0x9aa0aa, 0x141620, 0x20232c, 0x32353e, 0x4a4e58, 0x686c76);
     static final Ramp LIMONITE = ramp(0, 0x3a2410, 0x5a3a16, 0x80561e, 0xa6762c, 0xc69a48);
     static final Ramp FIRE_CLAY = ramp(0, 0x5e5a50, 0x7a7466, 0x9c9480, 0xbcb49c, 0xd6ceb4);
-    static final Ramp FIRE_BRICK = ramp(0, 0x6a5434, 0x8c7044, 0xae9058, 0xc8ac72, 0xe0c890);
+    static final Ramp FIRE_BRICK = ramp(0, 0x5e4a36, 0x7a6248, 0x927a58, 0xa68e68, 0xbaa27a);
     static final Ramp LIGNITE = ramp(0, 0x1a1410, 0x2a2018, 0x3c2e22, 0x52402e, 0x6a543c);
     // Earths for the tier 3 ground blocks, built per SG 3 (low contrast, cool darks, warm lights).
     static final Ramp MUD = ramp(0, 0x1a1818, 0x29241f, 0x383028, 0x483d32, 0x5c4e40);
@@ -2352,41 +2373,9 @@ public final class TextureGen {
     /** Heat band (SG 6), dark red to white, for the lit bloomery door. */
     static final int[] HEAT_BAND = {0x6e1e14, 0xa0281a, 0xd23a1e, 0xf07a22, 0xf8c23a, 0xfff4d0};
 
-    /** Soft lumpy soil in the fire clay ramp, with a couple of dark rootlets. */
+    /** Fire clay: smooth like vanilla clay, fine per-pixel grain in three tones, no clods. */
     static BufferedImage fireClayBlock() {
-        double[][] a = noise(2020, 4), b = noise(2021, 2);
-        double[][] n = new double[16][16];
-        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) n[y][x] = a[y][x] * 0.6 + b[y][x] * 0.4;
-        double lo = quantile(n, 0.22), hi = quantile(n, 0.8);
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) px(im, x, y, FIRE_CLAY.get(n[y][x] < lo ? 2 : n[y][x] < hi ? 3 : 4));
-        Random r = new Random(2020);
-        // Rounded clods, lit cap and shaded underside, spaced so they stay separate lumps.
-        String[][] clods = {{".44.", "4433", ".322"}, {"45.", "432", ".2."}, {".445.", "44333", ".3322"}};
-        List<int[]> placed = new ArrayList<>();
-        for (int attempts = 0; placed.size() < 7 && attempts < 500; attempts++) {
-            int x = r.nextInt(16), y = r.nextInt(16);
-            boolean clash = false;
-            for (int[] q : placed) {
-                int dx = Math.abs(Math.floorMod(q[0] - x + 8, 16) - 8), dy = Math.abs(Math.floorMod(q[1] - y + 8, 16) - 8);
-                if (dx < 6 && dy < 5) clash = true;
-            }
-            if (clash) continue;
-            placed.add(new int[] {x, y});
-            String[] c = clods[placed.size() % clods.length];
-            for (int j = 0; j < c.length; j++)
-                for (int i = 0; i < c[j].length(); i++)
-                    if (c[j].charAt(i) != '.') pxWrap(im, x + i, y + j, FIRE_CLAY.get(c[j].charAt(i) - '0'));
-        }
-        // Rootlets: two thin curling lines of step 1 fading to step 2.
-        int[][][] roots = {{{0, 0}, {1, 0}, {2, 1}, {3, 1}, {4, 1}, {5, 2}}, {{0, 0}, {0, 1}, {1, 2}, {1, 3}, {2, 3}}};
-        for (int k = 0; k < roots.length; k++) {
-            int x = r.nextInt(16), y = r.nextInt(16);
-            for (int i = 0; i < roots[k].length; i++)
-                pxWrap(im, x + roots[k][i][0], y + roots[k][i][1], FIRE_CLAY.get(i >= roots[k].length - 2 ? 2 : 1));
-        }
-        return im;
+        return V2.paint(V2.quantize(V2.terrainField(2020, 0.8), new int[] {0, 26, 52, 22, 0}), FIRE_CLAY);
     }
 
     /** The value below which the given fraction of the tile's samples fall. */
@@ -2401,29 +2390,7 @@ public final class TextureGen {
     static final int[][] FIRE_BRICK_JOINTS = {{2, 7, 12}, {4, 10, 15}, {1, 7, 12}, {4, 9, 15}};
 
     /** Pale fire bricks, four courses of small bricks, thin dark mortar (spec 20.2). */
-    static BufferedImage fireBricks() {
-        BufferedImage im = img();
-        Random r = new Random(3131);
-        for (int c = 0; c < 4; c++) {
-            int[] j = FIRE_BRICK_JOINTS[c];
-            for (int b = 0; b < j.length; b++) {
-                int start = j[b] + 1, w = Math.floorMod(j[(b + 1) % j.length] - start, 16);
-                int tone = r.nextInt(3) == 0 ? -1 : 0;
-                int fleck = r.nextInt(4) == 0 ? 1 + r.nextInt(Math.max(1, w - 2)) : -1;
-                for (int row = 0; row < 3; row++)
-                    for (int i = 0; i < w; i++) {
-                        int step = row == 0 ? 5 : 4;
-                        if (i == w - 1 || (row == 2 && i == w - 2)) step = row == 0 ? 4 : 3;
-                        step += tone;
-                        if (row == 1 && i == fleck) step = 3;
-                        pxWrap(im, start + i, c * 4 + row, FIRE_BRICK.get(Math.max(2, step)));
-                    }
-                for (int y = 0; y < 4; y++) pxWrap(im, j[b], c * 4 + y, FIRE_BRICK.get(1));
-            }
-            for (int x = 0; x < 16; x++) px(im, x, c * 4 + 3, FIRE_BRICK.get(1));
-        }
-        return im;
-    }
+    static BufferedImage fireBricks() { return V2.bricks(FIRE_BRICK, 3131); }
 
     /** Lignite: sedimentary beds in the lignite ramp, broken partings, woody fibre streaks, no specular. */
     static BufferedImage ligniteSeam() {
@@ -2546,7 +2513,7 @@ public final class TextureGen {
     }
 
     static BufferedImage placerSand() {
-        double[][] n = fractal(9191);
+        double[][] n = V2.grain(9191);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) px(im, x, y, SAND.get(n[y][x] < 0.42 ? 3 : 4));
@@ -2632,11 +2599,11 @@ public final class TextureGen {
 
     /** Wrought iron anvil body: forged iron, hammer-mark clusters, a dark scale edge. */
     static BufferedImage wroughtAnvilBody() {
-        double[][] n = fractal(5454), e = noise(5455, 4);
+        double[][] n = V2.grain(5454), e = noise(5455, 4);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.58 ? 4 : n[y][x] < 0.3 ? 2 : 3;
+                int step = n[y][x] > 0.78 ? 4 : n[y][x] < 0.2 ? 2 : 3;
                 int d = Math.min(Math.min(x, y), Math.min(15 - x, 15 - y));
                 if (d == 0) step = e[y][x] > 0.5 ? 1 : 2;
                 else if (d == 1 && e[y][x] > 0.6) step = 2;
@@ -2648,7 +2615,7 @@ public final class TextureGen {
 
     /** Wrought iron anvil face (visible columns 3-12): worked bright centre, hammer marks, scaled rim. */
     static BufferedImage wroughtAnvilTop() {
-        double[][] n = fractal(5656), e = noise(5657, 4);
+        double[][] n = V2.grain(5656), e = noise(5657, 4);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
@@ -2660,8 +2627,8 @@ public final class TextureGen {
                 else {
                     double d = Math.abs(x - 7.5) / 4 + Math.abs(y - 7.5) / 14;
                     step = d < 0.6 ? 4 : 3;
-                    if (n[y][x] > 0.64 && d < 0.9) step = 5;
-                    else if (n[y][x] < 0.3) step--;
+                    if (n[y][x] > 0.84 && d < 0.9) step = 5;
+                    else if (n[y][x] < 0.2) step--;
                 }
                 px(im, x, y, WROUGHT_IRON.get(step));
             }
@@ -2839,6 +2806,17 @@ public final class TextureGen {
             ".2222222221.",
     };
 
+    static final String[] DOUBLE_INGOT_V2 = {
+            "......5555s52...",
+            ".....444444421..",
+            "....4444444421..",
+            "...333333333321.",
+            "...121212121211.",
+            "...344444444321.",
+            "...333333333321.",
+            "...22222222221..",
+    };
+
     static void tier3() throws IOException {
         // Blocks (spec 20.2).
         save("block/fire_clay", fireClayBlock());
@@ -2898,13 +2876,14 @@ public final class TextureGen {
         heads.put("prospectors_pick_head", PROSPECTOR_HEAD);
         save("item/wrought_iron_plate", map(WROUGHT_IRON, PLATE));
         save("item/wrought_iron_rod", map(WROUGHT_IRON, ROD));
-        save("item/wrought_iron_double_ingot", map(WROUGHT_IRON, DOUBLE_INGOT));
-        for (var head : heads.entrySet()) save("item/wrought_iron_" + head.getKey(), map(WROUGHT_IRON, head.getValue()));
+        save("item/wrought_iron_double_ingot", map(WROUGHT_IRON, DOUBLE_INGOT_V2));
+        for (var head : heads.entrySet())
+            save("item/wrought_iron_" + head.getKey(), head.getKey().equals("pickaxe_head") ? pickaxeHeadV2(WROUGHT_IRON) : map(WROUGHT_IRON, head.getValue()));
         for (String kind : List.of("knife", "hammer", "saw", "prospectors_pick"))
-            save("item/wrought_iron_" + kind, tool(WROUGHT_IRON, WOOD, null, kind));
+            save("item/wrought_iron_" + kind, tool(WROUGHT_IRON, V2.WOOD_V2, null, kind));
         save("item/gold_plate", map(GOLD, PLATE));
         for (String head : List.of("pickaxe_head", "axe_head", "shovel_head", "hoe_head", "sword_blade"))
-            save("item/gold_" + head, map(GOLD, heads.get(head)));
+            save("item/gold_" + head, head.equals("pickaxe_head") ? pickaxeHeadV2(GOLD) : map(GOLD, heads.get(head)));
 
         saveRaw("gui/bloomery", bloomeryGui());
     }
@@ -5014,12 +4993,12 @@ public final class TextureGen {
     // ---------------------------------------------------------------- tier 4: steel and steam (spec 21)
 
     // Metal ramps (tier 4 spec 21.1).
-    static final Ramp STEEL = ramp(0xdfe4ea, 0x22262e, 0x3a404a, 0x5c636e, 0x848b96, 0xadb4be);
-    static final Ramp PIG_IRON = ramp(0xa8a098, 0x1c1a1a, 0x2e2a28, 0x45403c, 0x5e5852, 0x7a736a);
-    static final Ramp BRASS = ramp(0xf8ecb8, 0x4a3814, 0x7a5e1e, 0xa8862e, 0xd0ae48, 0xecd27a);
-    static final Ramp ZINC = ramp(0xe4ecee, 0x2e3238, 0x4a5058, 0x6e767e, 0x97a0a6, 0xbfc7cb);
-    static final Ramp LEAD = ramp(0xa8b0be, 0x1e2028, 0x2e3240, 0x444a5c, 0x5e6678, 0x7c8494);
-    static final Ramp SOLDER = ramp(0xe2e6e2, 0x34383a, 0x50565a, 0x737a7c, 0x9aa09e, 0xbec4c0);
+    static final Ramp STEEL = ramp(0xd4d8da, 0x30343c, 0x4e535c, 0x6e737c, 0x8e939c, 0xaeb3ba);
+    static final Ramp PIG_IRON = ramp(0xb0a8a0, 0x302c2a, 0x48423e, 0x625b54, 0x7c746c, 0x988f86);
+    static final Ramp BRASS = ramp(0xfff0b8, 0x4a3414, 0x7c5a22, 0xa88232, 0xcca64a, 0xe8c868);
+    static final Ramp ZINC = ramp(0xe8eef0, 0x383c44, 0x585e66, 0x7c848c, 0xa0a8ae, 0xc6cdd1);
+    static final Ramp LEAD = ramp(0xb4bccc, 0x2c303c, 0x424858, 0x5c647a, 0x7a8498, 0x9aa4b6);
+    static final Ramp SOLDER = ramp(0xe6eae6, 0x3c4042, 0x5a6064, 0x7e8588, 0xa4aaa8, 0xc8cec8);
     // Ore ramps (worldgen spec 14.1): sulfur stays a muted green-yellow, well off the heat band.
     static final Ramp BITUMINOUS_COAL = ramp(0, 0x121318, 0x1e2027, 0x2c2e37, 0x3e414c, 0x565a66);
     static final Ramp SPHALERITE = ramp(0, 0x1c1210, 0x2e1c14, 0x4a2e1a, 0x6e4622, 0x946632);
@@ -5092,8 +5071,8 @@ public final class TextureGen {
 
     // Coke oven ramps (spec 21.1).
     static final Ramp COKE = ramp(0, 0x18181c, 0x2a2a30, 0x3e3e46, 0x56565e, 0x727078);
-    static final Ramp COKE_OVEN_BRICK = ramp(0, 0x3e2a24, 0x583a30, 0x74503e, 0x906850, 0xa88466);
-    static final Ramp TREATED_WOOD = ramp(0, 0x24180e, 0x3a2616, 0x52361e, 0x6a4a2a, 0x82603a);
+    static final Ramp COKE_OVEN_BRICK = ramp(0, 0x4c342c, 0x674238, 0x84564a, 0xa06c58, 0xb8846c);
+    static final Ramp TREATED_WOOD = ramp(0, 0x2c1e10, 0x45301a, 0x5e4424, 0x7a5a30, 0x967642);
     static final Ramp CREOSOTE = ramp(0, 0x140c08, 0x24160c, 0x382212, 0x4c301a, 0x624024);
 
     /** Fired fire clay: a pale buff, warmer than the grey unfired clay so the two read apart (spec 21.1, adjusted). */
@@ -5111,7 +5090,7 @@ public final class TextureGen {
 
     /** Refractory crucible wall: smooth fire clay with faint coil lines, sooted where it sits in the coals. */
     static BufferedImage refractoryCrucibleSide() {
-        double[][] n = fractal(8383);
+        double[][] n = V2.grain(8383);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
@@ -5133,7 +5112,7 @@ public final class TextureGen {
 
     /** Inside: glazed dark by heat, with glassy drips of iron slag. */
     static BufferedImage refractoryCrucibleInside() {
-        double[][] n = fractal(9494);
+        double[][] n = V2.grain(9494);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) px(im, x, y, REFRACTORY.get(n[y][x] > 0.55 ? 2 : 1));
@@ -5143,7 +5122,7 @@ public final class TextureGen {
     }
 
     static BufferedImage refractoryPlain(long seed) {
-        double[][] n = fractal(seed);
+        double[][] n = V2.grain(seed);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) px(im, x, y, REFRACTORY.get(n[y][x] > 0.55 ? 3 : 2));
@@ -5513,7 +5492,7 @@ public final class TextureGen {
 
     /** Steel anvil body: rolled steel, fine-grained and even, with a crisp dark edge and a cool vertical sheen. */
     static BufferedImage steelAnvilBody() {
-        double[][] n = fractal(6161), e = noise(6162, 2);
+        double[][] n = V2.grain(6161), e = noise(6162, 2);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
@@ -5532,7 +5511,7 @@ public final class TextureGen {
 
     /** Steel anvil face (visible columns 3-12): a ground, bright working face with crisp edges and a polished horn. */
     static BufferedImage steelAnvilTop() {
-        double[][] n = fractal(6262), e = noise(6263, 2);
+        double[][] n = V2.grain(6262), e = noise(6263, 2);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
@@ -5636,7 +5615,7 @@ public final class TextureGen {
     /** Firebox top: a cast iron hot plate in a fire brick rim, where the boiler sits. */
     static BufferedImage fireboxTop() {
         BufferedImage im = fireBricks();
-        double[][] n = fractal(8411);
+        double[][] n = V2.grain(8411);
         for (int y = 2; y <= 13; y++)
             for (int x = 2; x <= 13; x++) {
                 int step = 3;
@@ -5724,7 +5703,7 @@ public final class TextureGen {
      */
     static BufferedImage bronzePlates(long seed) {
         BufferedImage im = img();
-        double[][] n = fractal(seed);
+        double[][] n = V2.grain(seed);
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 int row = y % 8;
@@ -5837,7 +5816,7 @@ public final class TextureGen {
      */
     static BufferedImage pipeSheet(Ramp metal, boolean flanged, long seed) {
         BufferedImage im = img();
-        double[][] n = fractal(seed);
+        double[][] n = V2.grain(seed);
         int[] across = {4, 5, 4, 3, 2};
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
@@ -5881,7 +5860,7 @@ public final class TextureGen {
     /** Gauge housing: turned brass, its cap a dome with a centre screw. */
     static BufferedImage gaugeHousing() {
         BufferedImage im = img();
-        double[][] n = fractal(8701);
+        double[][] n = V2.grain(8701);
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 double d = Math.hypot(x - 7.5, y - 7.5);
@@ -5997,7 +5976,7 @@ public final class TextureGen {
     /** Riveted wrought iron plate with a rivet row round the edge: the engine's bed. */
     static BufferedImage engineBase() {
         BufferedImage im = img();
-        double[][] n = fractal(8801);
+        double[][] n = V2.grain(8801);
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 int step = n[y][x] > 0.66 ? 4 : n[y][x] < 0.3 ? 2 : 3;
@@ -6017,7 +5996,7 @@ public final class TextureGen {
     /** The cylinder: brass lagging in vertical staves, held by two steel bands. */
     static BufferedImage engineCylinder() {
         BufferedImage im = img();
-        double[][] n = fractal(8802);
+        double[][] n = V2.grain(8802);
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 int step = x % 3 == 0 ? 2 : x % 3 == 1 ? 4 : 3;
@@ -6062,7 +6041,7 @@ public final class TextureGen {
     /** Cast flywheel iron: dark and grainy, with lit casting edges. */
     static BufferedImage engineFlywheel() {
         BufferedImage im = img();
-        double[][] n = fractal(8803);
+        double[][] n = V2.grain(8803);
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 int step = n[y][x] > 0.7 ? 4 : n[y][x] < 0.32 ? 2 : 3;
@@ -8055,13 +8034,13 @@ public final class TextureGen {
         save("item/washed_rich_galena", washedItem(GALENA, washedRich, 6, 3));
 
         // Metals (spec 4.1 and 21.4).
-        save("item/pig_iron_ingot", map(PIG_IRON, sandCast(INGOT)));
+        save("item/pig_iron_ingot", map(PIG_IRON, sandCast(INGOT_V2)));
         for (var e : List.of(java.util.Map.entry("steel", STEEL), java.util.Map.entry("zinc", ZINC), java.util.Map.entry("lead", LEAD),
                 java.util.Map.entry("brass", BRASS))) {
-            save("item/" + e.getKey() + "_ingot", map(e.getValue(), INGOT));
+            save("item/" + e.getKey() + "_ingot", map(e.getValue(), INGOT_V2));
             save("item/" + e.getKey() + "_nugget", map(e.getValue(), NUGGET));
         }
-        save("item/solder_ingot", map(SOLDER, INGOT));
+        save("item/solder_ingot", map(SOLDER, INGOT_V2));
         for (var e : List.of(java.util.Map.entry("steel", STEEL), java.util.Map.entry("brass", BRASS))) {
             save("item/" + e.getKey() + "_plate", map(e.getValue(), PLATE));
             save("item/" + e.getKey() + "_rod", map(e.getValue(), ROD));
@@ -8069,7 +8048,7 @@ public final class TextureGen {
         }
         for (Metal metal : METALS)
             if (metal.name().contains("bronze")) save("item/" + metal.name() + "_gear", gear(metal.ramp()));
-        save("item/steel_double_ingot", map(STEEL, DOUBLE_INGOT));
+        save("item/steel_double_ingot", map(STEEL, DOUBLE_INGOT_V2));
 
         // Steel tools: smithed heads, smooth handles with a brass ferrule (SG 5, tier 4+).
         java.util.Map<String, String[]> heads = new java.util.LinkedHashMap<>();
@@ -8081,9 +8060,9 @@ public final class TextureGen {
         heads.put("hammer_head", HAMMER_HEAD);
         heads.put("saw_blade", SAW_BLADE);
         heads.put("sword_blade", SWORD_BLADE);
-        for (var head : heads.entrySet()) save("item/steel_" + head.getKey(), map(STEEL, head.getValue()));
+        for (var head : heads.entrySet()) save("item/steel_" + head.getKey(), head.getKey().equals("pickaxe_head") ? pickaxeHeadV2(STEEL) : map(STEEL, head.getValue()));
         for (String kind : List.of("pickaxe", "axe", "shovel", "hoe", "knife", "hammer", "saw", "sword"))
-            save("item/steel_" + kind, tool(STEEL, WOOD, BRASS, kind));
+            save("item/steel_" + kind, tool(STEEL, V2.WOOD_V2, BRASS, kind));
 
         // Steel armour: plates laced onto leather (spec 14.3).
         saveRaw("entity/equipment/humanoid/steel", armourLayer(STEEL));
@@ -8329,6 +8308,7 @@ public final class TextureGen {
         save("item/quernstone", art(GRANITE_V2, QUERNSTONE_ITEM));
         itemsV2 = false;
 
+        itemsV2 = true;
         tier3();
         kinetics();
         machines();

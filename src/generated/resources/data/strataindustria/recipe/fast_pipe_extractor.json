@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:pipe_extractor",
+    "strataindustria:basic_circuit",
+    "strataindustria:aluminium_plate"
+  ],
+  "result": {
+    "id": "strataindustria:fast_pipe_extractor"
+  }
+}

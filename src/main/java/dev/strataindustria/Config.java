@@ -378,6 +378,21 @@ public final class Config {
         BUILDER.pop();
     }
 
+    static {
+        BUILDER.comment("Item pipes and storage (tier 5 spec 12).").push("logistics");
+    }
+
+    public static final ModConfigSpec.IntValue LOGISTICS_MAX_PIPE_NETWORK = BUILDER
+            .comment("Most pipe blocks one item pipe search looks through.")
+            .defineInRange("maxPipeNetwork", 512, 16, 8192);
+    public static final ModConfigSpec.IntValue LOGISTICS_MAX_STORAGE_INVENTORIES = BUILDER
+            .comment("Most inventories one storage controller indexes.")
+            .defineInRange("maxStorageInventories", 64, 1, 512);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}
