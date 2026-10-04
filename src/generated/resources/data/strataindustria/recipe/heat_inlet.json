@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:refractory_heat_duct",
+    "strataindustria:steel_plate",
+    "strataindustria:fire_bricks"
+  ],
+  "result": {
+    "id": "strataindustria:heat_inlet"
+  }
+}
