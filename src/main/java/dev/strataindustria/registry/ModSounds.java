@@ -14,6 +14,8 @@ public final class ModSounds {
     /** One strike while knapping flint: sharper and higher than rock. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FLINT = register("knapping.flint");
     /** The finished head comes free of the stone. */
+    /** A known pattern cut again in one go: a rush of flakes. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_REPEAT = register("knapping.repeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FINISH = register("knapping.finish");
 
     /** Pressing a lump of clay into shape. */

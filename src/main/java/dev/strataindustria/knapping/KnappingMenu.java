@@ -22,7 +22,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 /**
  * The 5x5 knapping grid. Each menu button id 0-24 strikes one cell out. The opening cost is taken on
  * the first strike, so closing before that costs nothing; closing an unfinished grid loses the
- * material. Taking the result closes the screen.
+ * material. Button id 25 repeats the player's last pattern from the same kind of material. Taking the
+ * result closes the screen.
  */
 public class KnappingMenu extends AbstractContainerMenu {
     public static final int GRID_X = 17;
@@ -31,12 +32,18 @@ public class KnappingMenu extends AbstractContainerMenu {
     public static final int RESULT_X = 134;
     public static final int RESULT_Y = 50;
     public static final int INVENTORY_Y = 114;
+    /** Menu button id of the repeat-last button; the grid cells are 0-24. */
+    public static final int REPEAT_BUTTON = 25;
+    public static final int REPEAT_X = 137;
+    public static final int REPEAT_Y = 80;
 
     private final ItemStack material;
     private final InteractionHand hand;
     private final int[] cells = new int[GridPattern.CELLS];
     private final DataSlot started = DataSlot.standalone();
     private final DataSlot finished = DataSlot.standalone();
+    /** Bit mask of the cells the repeat button leaves in place, or 0 when it cannot be used. */
+    private final DataSlot repeat = DataSlot.standalone();
     private final SimpleContainer result = new SimpleContainer(1);
     private RecipeHolder<KnappingRecipe> recipe;
 
@@ -52,6 +59,8 @@ public class KnappingMenu extends AbstractContainerMenu {
         for (int i = 0; i < cells.length; i++) addDataSlot(DataSlot.shared(cells, i));
         addDataSlot(started);
         addDataSlot(finished);
+        addDataSlot(repeat);
+        if (inventory.player instanceof ServerPlayer player) repeat.set(repeatMask(player));
 
         addSlot(new Slot(result, 0, RESULT_X, RESULT_Y) {
             @Override
@@ -84,6 +93,20 @@ public class KnappingMenu extends AbstractContainerMenu {
         return finished.get() != 0;
     }
 
+    /** The pattern the repeat button would cut, or 0 when this player has not knapped one from this material yet. */
+    public int repeatMask() {
+        return repeat.get();
+    }
+
+    private int repeatMask(ServerPlayer player) {
+        if (Knapping.isClay(material) || Knapping.isWood(material)) return 0;
+        int mask = KnappedPatterns.of(player).last(Knapping.isFlint(material));
+        if (mask == 0 || !(player.level() instanceof ServerLevel level)) return 0;
+        Optional<RecipeHolder<KnappingRecipe>> found = level.recipeAccess().getRecipeFor(ModRecipes.KNAPPING.get(), new KnappingInput(material, mask), level);
+        if (found.isEmpty()) return 0;
+        return player.hasInfiniteMaterials() || player.getItemInHand(hand).getCount() >= found.get().value().consume() ? mask : 0;
+    }
+
     public int keptMask() {
         int mask = 0;
         for (int i = 0; i < cells.length; i++) if (cells[i] != 0) mask |= 1 << i;
@@ -92,20 +115,38 @@ public class KnappingMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player clicker, int id) {
+        if (id == REPEAT_BUTTON) return repeatLast(clicker);
         if (id < 0 || id >= GridPattern.CELLS || cells[id] == 0 || isFinished()) return false;
-        if (!hasStarted()) {
-            ItemStack held = clicker.getItemInHand(hand);
-            int cost = Knapping.openingCost(material);
-            if (!ItemStack.isSameItem(held, material) || held.getCount() < cost) {
-                clicker.closeContainer();
-                return false;
-            }
-            if (!clicker.hasInfiniteMaterials()) held.shrink(cost);
-            started.set(1);
-        }
+        if (!start(clicker)) return false;
         cells[id] = 0;
         clicker.level().playSound(null, clicker.getX(), clicker.getY(), clicker.getZ(), Knapping.strikeSound(material),
                 SoundSource.PLAYERS, 0.7f, 0.85f + clicker.getRandom().nextFloat() * 0.3f);
+        updateResult(clicker);
+        return true;
+    }
+
+    /** Takes the opening cost on the first strike. Returns false, closing the grid, if the material is gone. */
+    private boolean start(Player clicker) {
+        if (hasStarted()) return true;
+        ItemStack held = clicker.getItemInHand(hand);
+        int cost = Knapping.openingCost(material);
+        if (!ItemStack.isSameItem(held, material) || held.getCount() < cost) {
+            clicker.closeContainer();
+            return false;
+        }
+        if (!clicker.hasInfiniteMaterials()) held.shrink(cost);
+        started.set(1);
+        return true;
+    }
+
+    /** The repeat button: cuts the player's last pattern from this material in one go, for the usual cost. */
+    private boolean repeatLast(Player clicker) {
+        int mask = repeat.get();
+        if (mask == 0 || hasStarted() || isFinished() || !(clicker instanceof ServerPlayer)) return false;
+        if (!start(clicker)) return false;
+        for (int i = 0; i < cells.length; i++) cells[i] = (mask >> i & 1) != 0 ? 1 : 0;
+        clicker.level().playSound(null, clicker.getX(), clicker.getY(), clicker.getZ(), ModSounds.KNAP_REPEAT.get(),
+                SoundSource.PLAYERS, 0.8f, 1.0f);
         updateResult(clicker);
         return true;
     }
@@ -131,6 +172,9 @@ public class KnappingMenu extends AbstractContainerMenu {
             if (extra > 0) taker.getItemInHand(hand).shrink(extra);
         }
         finished.set(1);
+        if (taker instanceof ServerPlayer player && recipe != null && !Knapping.isClay(material) && !Knapping.isWood(material)) {
+            KnappedPatterns.of(player).set(Knapping.isFlint(material), keptMask());
+        }
         if (taker instanceof ServerPlayer player && !Knapping.isWood(material)) Journal.award(player, Knapping.isClay(material) ? Journal.CLAY_FORMING : Journal.KNAP);
         taker.level().playSound(null, taker.getX(), taker.getY(), taker.getZ(), Knapping.finishSound(material),
                 SoundSource.PLAYERS, 0.8f, 1.0f);

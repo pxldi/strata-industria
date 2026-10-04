@@ -92,6 +92,8 @@ public final class Study {
             } else {
                 args.add(String.join(Journal.ARG_LIST, minerals));
             }
+        } else if (state.getBlock() instanceof dev.strataindustria.flora.IndicatorPlantBlock plant) {
+            key = KEY + "plant." + plant.plant().id();
         } else if (be instanceof BloomeryBlockEntity bloomery) {
             key = KEY + "bloomery." + bloomery.status().name().toLowerCase(Locale.ROOT);
         } else if (be instanceof BoilerBlockEntity boiler) {
@@ -124,7 +126,8 @@ public final class Study {
             if (lead.closed()) continue;
             Predicate<BlockState> subject = SUBJECTS.get(lead.path());
             boolean ownIcon = item != Items.AIR && lead.icon().equals(BuiltInRegistries.ITEM.getKey(item));
-            if (ownIcon || (subject != null && subject.test(state))) paths.add(lead.path());
+            boolean plant = state.getBlock() instanceof dev.strataindustria.flora.IndicatorPlantBlock p && lead.path().equals(p.plant().lead());
+            if (ownIcon || plant || (subject != null && subject.test(state))) paths.add(lead.path());
         }
         return paths;
     }

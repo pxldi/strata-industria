@@ -41,6 +41,7 @@ public record GroundCoverFeature() implements Feature {
         if (ctx == null) return false;
         int minX = (origin.getX() >> 4) << 4, minZ = (origin.getZ() >> 4) << 4;
         placeIndicators(level, ctx, minX, minZ);
+        dev.strataindustria.flora.IndicatorPlants.generate(level, ctx, minX, minZ);
         placeLooseRocks(level, ctx, random, minX, minZ);
         placeSticks(level, random, minX, minZ);
         return true;

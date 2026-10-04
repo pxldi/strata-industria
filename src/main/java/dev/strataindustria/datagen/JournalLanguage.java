@@ -275,6 +275,21 @@ final class JournalLanguage {
         lang.accept(observe + "too_hard.bronze", "It wants a bronze pick.");
         lang.accept(observe + "too_hard.wrought_iron", "It wants an iron pick.");
         lang.accept(observe + "too_hard.steel", "It wants a steel pick.");
+        lang.accept(observe + "plant.copper_flower", "A small blue flower, a kind of mint, growing in a patch on this hill. "
+                + "I have not seen it on the other hills.");
+        lang.accept(observe + "plant.horsetail", "Jointed grey stalks with a ring of thin needles at every joint, "
+                + "standing in a clump on the bank.");
+        lang.accept(observe + "plant.stunted_birch", "A birch that stopped at knee height. Its leaves have gone yellow, "
+                + "and so has every other one around it.");
+        lang.accept(observe + "plant.pink_thrift", "Pink pompoms on a mat of grass, in soil too thin for most things.");
+        lang.accept(observe + "plant.locoweed", "Violet flower spikes on bare granite. Nothing else grows close to them. "
+                + "I don't know what they are telling me.");
+        lang.accept(observe + "link.copper_flower", "Copper again, and the same little blue flower over it. "
+                + "I think they go together.");
+        lang.accept(observe + "link.horsetail", "Gold in the gravel, and horsetail on the bank above it.");
+        lang.accept(observe + "link.stunted_birch", "Zinc and lead under the yellow birches. "
+                + "Whatever is in that ground stunts the trees.");
+        lang.accept(observe + "link.pink_thrift", "Tin under the pink flowers. Same as the last time.");
     }
 
     private static void study(BiConsumer<String, String> lang, String study) {
@@ -289,6 +304,11 @@ final class JournalLanguage {
         lang.accept(study + "lead", "I looked the %s over closely. It has something to do with a question I have been asking.");
         lang.accept(study + "plain", "I looked the %s over closely. Nothing I did not already know.");
         lang.accept(study + "nothing_new", "Nothing new about the %s");
+        lang.accept(study + "plant.copper_flower", "%s. It grows in patches, and only on some hills. Worth looking under.");
+        lang.accept(study + "plant.horsetail", "%s. Likes wet gravel. It takes up more from the ground than most plants.");
+        lang.accept(study + "plant.stunted_birch", "%s. Something in the ground is poisoning it.");
+        lang.accept(study + "plant.pink_thrift", "%s. It grows where the soil is thin and the rock is not far below.");
+        lang.accept(study + "plant.locoweed", "%s. Cattle that eat it go strange. It must be taking something from the rock.");
 
         lang.accept(study + "bloomery.incomplete", "The %s is not finished. Fire bricks all round, a chimney, and open air "
                 + "above it.");

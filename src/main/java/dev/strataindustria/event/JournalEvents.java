@@ -64,7 +64,10 @@ public final class JournalEvents {
     static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (player.tickCount % ARMOUR_INTERVAL == 0 && wearsFullBronze(player)) Journal.award(player, Journal.BRONZE_ARMOUR);
-        if (player.tickCount % FIND_INTERVAL == 0) Observations.scan(player);
+        if (player.tickCount % FIND_INTERVAL == 0) {
+            Observations.scan(player);
+            dev.strataindustria.journal.PlantNotes.scan(player);
+        }
         if (player.tickCount % REMEMBER_INTERVAL == 0) Leads.remember(player);
     }
 
