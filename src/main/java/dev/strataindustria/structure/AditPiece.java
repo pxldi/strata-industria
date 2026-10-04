@@ -179,6 +179,13 @@ public class AditPiece extends StructurePiece {
             BoundingBox chunkBB, ChunkPos chunkPos, BlockPos referencePos) {
         GeologyContext geology = StructureGeology.of(level);
         int count = steps.length / STRIDE;
+        // Where the tunnel or its shaft comes up near the surface, any tree over it goes whole.
+        for (int i = 0; i < count; i++) {
+            int y = steps[i * STRIDE + 1];
+            if (y + 4 < surfaceY - 2) continue;
+            int x = steps[i * STRIDE], z = steps[i * STRIDE + 2];
+            TreeClearing.clear(level, chunkBB, x - 3, z - 3, x + 3, z + 3, y, surfaceY + 8, pos -> false);
+        }
         // The last horizontal steps are the worked face: dug, but not yet propped.
         int lastHorizontal = -1;
         for (int i = 0; i < count; i++) if ((steps[i * STRIDE + 4] & VERTICAL) == 0) lastHorizontal = i;
