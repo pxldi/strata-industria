@@ -94,8 +94,9 @@ public final class ModGameTests {
 
     static {
         ShapingGameTests.register(TESTS);
-        BoulderGameTests.register(TESTS);
+        FellingGameTests.register(TESTS);
         FlintStrikeGameTests.register(TESTS);
+        BoulderGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
         TESTS.put("smithing_shapes", ModGameTests::smithingShapes);
         TESTS.put("item_heat", ModGameTests::itemHeat);
@@ -148,6 +149,7 @@ public final class ModGameTests {
         PreviewExport.register(TESTS);
         CollectibleGameTests.register(TESTS);
         SharedBlockGameTests.register(TESTS);
+        BranchGameTests.register(TESTS);
     }
 
     private ModGameTests() {}
@@ -197,17 +199,23 @@ public final class ModGameTests {
     // Alloys (spec 7.2 and 7.4): the three example batches, a near miss, and slag at 90%.
 
     private static void alloyRules(GameTestHelper helper) {
-        Melt bronze = melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 9)
-                .plus(melt(ModItems.crushedOre(OreMineral.CASSITERITE, OreGrade.NORMAL), 1));
-        helper.assertValueEqual(bronze.total(), 350, "bronze batch units");
-        helper.assertValueEqual(Alloy.resultOf(bronze).orElse(null), Metal.BRONZE, "9 copper + 1 cassiterite");
+        Melt bronze = melt(Items.COPPER_INGOT, 3).plus(melt(ModItems.ingot(Metal.TIN), 1));
+        helper.assertValueEqual(bronze.total(), 400, "bronze batch units");
+        helper.assertValueEqual(Alloy.resultOf(bronze).orElse(null), Metal.BRONZE, "3 copper + 1 tin");
+        helper.assertValueEqual(Alloy.resultOf(melt(Items.COPPER_INGOT, 6).plus(melt(ModItems.ingot(Metal.TIN), 2))).orElse(null),
+                Metal.BRONZE, "any multiple works");
+        Melt nuggets = melt(ModItems.NUGGETS.get(Metal.COPPER).get(), 9).plus(melt(ModItems.NUGGETS.get(Metal.TIN).get(), 3));
+        helper.assertValueEqual(Alloy.resultOf(nuggets).orElse(null), Metal.BRONZE, "3 copper + 1 tin as nuggets");
+        helper.assertTrue(Alloy.resultOf(melt(Items.COPPER_INGOT, 2).plus(melt(ModItems.ingot(Metal.TIN), 1))).isEmpty(), "2 copper + 1 tin is no alloy");
+        Alloy.Missing missing = Alloy.BRONZE.missing(melt(Items.COPPER_INGOT, 3)).orElseThrow();
+        helper.assertValueEqual(missing.metal(), Metal.TIN, "bronze wants tin");
+        helper.assertValueEqual(missing.units(), 100, "one tin ingot");
 
-        Melt arsenical = melt(ModItems.crushedOre(OreMineral.TENNANTITE, OreGrade.NORMAL), 5)
-                .plus(melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 4));
-        helper.assertValueEqual(Alloy.resultOf(arsenical).orElse(null), Metal.ARSENICAL_BRONZE, "5 tennantite + 4 copper");
+        Melt arsenical = new Melt(Map.of(Metal.COPPER, 700, Metal.ARSENIC, 100));
+        helper.assertValueEqual(Alloy.resultOf(arsenical).orElse(null), Metal.ARSENICAL_BRONZE, "7 copper + 1 arsenic");
 
-        Melt bismuth = melt(Items.COPPER_INGOT, 3).plus(melt(ModItems.crushedOre(OreMineral.BISMUTHINITE, OreGrade.RICH), 1));
-        helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "3 copper ingots + 1 rich bismuthinite");
+        Melt bismuth = new Melt(Map.of(Metal.COPPER, 500, Metal.BISMUTH, 100));
+        helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "5 copper + 1 bismuth");
 
         Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13));
         helper.assertTrue(Alloy.resultOf(off).isEmpty(), "87% copper and 13% tin should be no known alloy");
