@@ -76,6 +76,8 @@ final class ModLanguageProvider extends LanguageProvider {
             String name = band.id().replace('_', ' ');
             add(StrataIndustria.MOD_ID + ".heat." + band.id(), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
         }
+        add(StrataIndustria.MOD_ID + ".knapping.repeat", "Repeat last: cut the same shape again. Costs the same material.");
+        add(StrataIndustria.MOD_ID + ".knapping.repeat.unknown", "Knap a shape from this material by hand first");
         add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s to start");
         add("container." + StrataIndustria.MOD_ID + ".clay_forming", "Clay Forming");
         addItem(ModItems.UNFIRED_SMALL_VESSEL, "Unfired Small Vessel");
@@ -174,6 +176,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
+        add(subtitles + "knapping.repeat", "Flakes fall quickly");
         add(subtitles + "firestarter.drill", "Bow drill whirs");
         add(subtitles + "fire_pit.ignite", "Fire catches");
         add(subtitles + "fire_pit.extinguish", "Fire goes out");

@@ -20,6 +20,8 @@ import net.minecraft.world.entity.player.Inventory;
 public class KnappingScreen extends AbstractContainerScreen<KnappingMenu> {
     private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/knapping.png");
     private static final int CELL = KnappingMenu.CELL;
+    /** Repeat-last button faces (normal, hovered, disabled) at the top of the sprite area right of the panel. */
+    private static final int REPEAT_U = 176, REPEAT_V = 0;
 
     private final RandomSource random = RandomSource.create();
     private final List<Chip> chips = new ArrayList<>();
@@ -47,11 +49,41 @@ public class KnappingScreen extends AbstractContainerScreen<KnappingMenu> {
             if (cy > 0 && !menu.isKept(cell - GridPattern.SIZE)) g.fill(x, y, x + CELL, y + 1, 0x40FFFFFF);
             if (cx > 0 && !menu.isKept(cell - 1)) g.fill(x, y, x + 1, y + CELL, 0x30FFFFFF);
             if (cell == hovered && !menu.isFinished()) g.fill(x, y, x + CELL, y + CELL, 0x40FFFFFF);
+            // Hovering the repeat button shows which cells it will strike out.
+            if (repeatReady() && overRepeat(mouseX, mouseY) && (menu.repeatMask() >> cell & 1) == 0) g.fill(x, y, x + CELL, y + CELL, 0x80C03020);
+        }
+
+        if (hasRepeat()) {
+            int u = REPEAT_U + (!repeatReady() ? 36 : overRepeat(mouseX, mouseY) ? 18 : 0);
+            g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos + KnappingMenu.REPEAT_X, topPos + KnappingMenu.REPEAT_Y, u, REPEAT_V, 18, 18, 256, 256);
         }
 
         for (Chip chip : chips) {
             int x = Math.round(chip.x), y = Math.round(chip.y);
             g.fill(x, y, x + chip.size, y + chip.size, chip.colour);
+        }
+    }
+
+    /** Clay and wood have the pattern casting; only stone and flint get a repeat button. */
+    private boolean hasRepeat() {
+        return !Knapping.isClay(menu.material()) && !Knapping.isWood(menu.material());
+    }
+
+    private boolean repeatReady() {
+        return hasRepeat() && menu.repeatMask() != 0 && !menu.hasStarted() && !menu.isFinished();
+    }
+
+    private boolean overRepeat(double mouseX, double mouseY) {
+        double x = mouseX - leftPos - KnappingMenu.REPEAT_X, y = mouseY - topPos - KnappingMenu.REPEAT_Y;
+        return hasRepeat() && x >= 0 && x < 18 && y >= 0 && y < 18;
+    }
+
+    @Override
+    protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractTooltip(g, mouseX, mouseY);
+        if (overRepeat(mouseX, mouseY)) {
+            g.setTooltipForNextFrame(Component.translatable(StrataIndustria.MOD_ID + (menu.repeatMask() != 0 ? ".knapping.repeat" : ".knapping.repeat.unknown")),
+                    mouseX, mouseY);
         }
     }
 
@@ -73,6 +105,12 @@ public class KnappingScreen extends AbstractContainerScreen<KnappingMenu> {
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
         int cell = hoveredCell(event.x(), event.y());
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && overRepeat(event.x(), event.y())) {
+            if (repeatReady() && minecraft.gameMode != null) {
+                minecraft.gameMode.handleInventoryButtonClick(menu.containerId, KnappingMenu.REPEAT_BUTTON);
+            }
+            return true;
+        }
         if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && cell >= 0) {
             if (menu.isKept(cell) && !menu.isFinished() && minecraft.gameMode != null) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, cell);

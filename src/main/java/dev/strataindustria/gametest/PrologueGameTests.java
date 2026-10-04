@@ -11,6 +11,7 @@ import dev.strataindustria.heat.Heat;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.CastingTableBlockEntity;
 import dev.strataindustria.knapping.KnappingInput;
+import dev.strataindustria.knapping.KnappingMenu;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.metal.CastMoldItem;
 import dev.strataindustria.metal.CrucibleBlockEntity;
@@ -44,6 +45,55 @@ final class PrologueGameTests {
         tests.put("brick_kiln", PrologueGameTests::brickKiln);
         tests.put("casting_table", PrologueGameTests::castingTable);
         tests.put("pattern_casting", PrologueGameTests::patternCasting);
+        tests.put("knapping_repeat", PrologueGameTests::knappingRepeat);
+    }
+
+    // After one hand-knapped shape, the grid offers to cut it again in one go for the same material.
+    private static void knappingRepeat(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        FakePlayer knapper = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "knapper"));
+        knapper.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT, 16));
+        int axe = dev.strataindustria.knapping.GridPattern.parse(List.of(".#...", "####.", "#####", "####.", ".#...")).getOrThrow();
+
+        // Nothing knapped yet: the button has nothing to repeat and refuses.
+        KnappingMenu first = openKnapping(knapper);
+        helper.assertValueEqual(first.repeatMask(), 0, "no repeat before the first hand knapping");
+        helper.assertTrue(!first.clickMenuButton(knapper, KnappingMenu.REPEAT_BUTTON), "repeat should refuse without a record");
+        helper.assertTrue(!first.hasStarted(), "a refused repeat starts nothing");
+
+        // Knap the axe head by hand, cell by cell, and take it.
+        for (int cell = 0; cell < 25; cell++) {
+            if ((axe >> cell & 1) == 0) helper.assertTrue(first.clickMenuButton(knapper, cell), "strike cell " + cell);
+        }
+        helper.assertTrue(first.getSlot(0).getItem().is(ModItems.STONE_AXE_HEAD.get()), "the hand-knapped shape should be an axe head");
+        first.getSlot(0).onTake(knapper, first.getSlot(0).getItem());
+        int afterFirst = knapper.getMainHandItem().getCount();
+        helper.assertValueEqual(afterFirst, 15, "flint spent on the first knapping");
+
+        // The next grid offers the same shape, and one click cuts it for the same cost.
+        KnappingMenu second = openKnapping(knapper);
+        helper.assertValueEqual(second.repeatMask(), axe, "repeat should offer the axe head");
+        helper.assertTrue(second.clickMenuButton(knapper, KnappingMenu.REPEAT_BUTTON), "repeat should be accepted");
+        helper.assertValueEqual(second.keptMask(), axe, "repeat should leave exactly the axe head");
+        helper.assertTrue(second.hasStarted(), "repeat starts the work");
+        helper.assertTrue(second.getSlot(0).getItem().is(ModItems.STONE_AXE_HEAD.get()), "repeat should present the axe head");
+        helper.assertValueEqual(knapper.getMainHandItem().getCount(), afterFirst - 1, "repeat takes the opening cost");
+        helper.assertTrue(!second.clickMenuButton(knapper, KnappingMenu.REPEAT_BUTTON), "repeat works once per grid");
+        second.getSlot(0).onTake(knapper, second.getSlot(0).getItem());
+
+        // Rock has its own record, and clay never repeats.
+        knapper.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.LOOSE_ROCK.get(dev.strataindustria.geology.Rock.BASALT).get(), 16));
+        helper.assertValueEqual(openKnapping(knapper).repeatMask(), 0, "flint knapping does not offer repeat for rock");
+        knapper.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.CLAY_BALL, 16));
+        helper.assertValueEqual(openKnapping(knapper).repeatMask(), 0, "clay has no repeat");
+        helper.succeed();
+    }
+
+    /** Builds the menu the way Knapping.tryOpen does; a FakePlayer cannot open screens. */
+    private static KnappingMenu openKnapping(FakePlayer player) {
+        KnappingMenu menu = new KnappingMenu(7, player.getInventory(), player.getMainHandItem().copyWithCount(1), InteractionHand.MAIN_HAND);
+        player.containerMenu = menu;
+        return menu;
     }
 
     private static ForgeBlockEntity lightForge(GameTestHelper helper, BlockPos forgePos) {
