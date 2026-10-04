@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 
-/** Wood ash: works like bone meal on crops and saplings (spec 4.4), and is kept for lye later. */
+/** Wood ash: works like bone meal on crops and saplings (spec 4.4). */
 public class AshItem extends Item {
     public AshItem(Properties properties) {
         super(properties);

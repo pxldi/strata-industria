@@ -180,7 +180,6 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "soaking_barrel.open", "Barrel lid scrapes open");
         add(subtitles + "soaking_barrel.fill", "Water splashes into barrel");
         add(subtitles + "soaking_barrel.done", "Barrel soak finishes");
-        add(subtitles + "hide.scrape", "Knife scrapes hide");
         add(subtitles + "washing_pan.swirl", "Pan swirls");
         add(subtitles + "washing_pan.find", "Something glints");
         add(subtitles + "anvil.weld_fail", "Weld refused");
@@ -886,7 +885,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.hide", "Raw Hide");
         add(journal + "t3.hide.hint", "Animals give raw hides now. Leather has to be tanned.");
         add(journal + "t3.leather", "Tanned Leather");
-        add(journal + "t3.leather.hint", "Soak hides in lye, scrape them with a knife, then soak them in tannin in a sealed barrel.");
+        add(journal + "t3.leather.hint", "Soak raw hides in tannin from bark, in a sealed barrel.");
         add(journal + "t3.iron_anvil", "Iron Anvil");
         add(journal + "t3.iron_anvil.hint", "Build an iron anvil from seven iron ingots. Stone anvils cannot work iron or steel.");
         add(journal + "t4.coal", "Black Rock");
@@ -1044,8 +1043,6 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.LEATHER_BELT, "Leather Belt");
         addBlock(ModBlocks.SOAKING_BARREL, "Soaking Barrel");
         addItem(ModItems.RAW_HIDE, "Raw Hide");
-        addItem(ModItems.LIMED_HIDE, "Limed Hide");
-        addItem(ModItems.SCRAPED_HIDE, "Scraped Hide");
         add("fluid_type." + id + ".lye", "Lye");
         add("fluid_type." + id + ".tannin", "Tannin");
         add("container." + id + ".soaking_barrel", "Soaking Barrel");

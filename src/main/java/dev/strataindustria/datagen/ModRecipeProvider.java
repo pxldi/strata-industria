@@ -1207,7 +1207,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 WashingRecipe.DEFAULT_TICKS), null);
     }
 
-    /** Tier 3 spec 12.1: the soaking barrel, its four soaks, and scraping limed hides with a knife. */
+    /** Tier 3 spec 12.1: the soaking barrel, tannin from bark and the one soak that turns a raw hide into leather. */
     private void tanning() {
         shaped(RecipeCategory.MISC, ModItems.SOAKING_BARREL.get())
                 .pattern("P P")
@@ -1217,21 +1217,10 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_raw_hide", has(ModItems.RAW_HIDE.get()))
                 .save(output, key("soaking_barrel"));
         FluidAmount water = new FluidAmount(Fluids.WATER, 1000);
-        soak("lye", Optional.of(Ingredient.of(ModItems.ASH.get())), 2, water,
-                Optional.empty(), Optional.of(new FluidAmount(ModFluids.LYE.get(), 1000)), 600);
         soak("tannin", Optional.of(Ingredient.of(ModItems.BARK.get())), 4, water,
                 Optional.empty(), Optional.of(new FluidAmount(ModFluids.TANNIN.get(), 1000)), 2400);
-        soak("limed_hide", Optional.of(Ingredient.of(ModItems.RAW_HIDE.get())), 1, new FluidAmount(ModFluids.LYE.get(), 250),
-                Optional.of(new ItemStackTemplate(ModItems.LIMED_HIDE.get())), Optional.empty(), 4000);
-        soak("leather", Optional.of(Ingredient.of(ModItems.SCRAPED_HIDE.get())), 1, new FluidAmount(ModFluids.TANNIN.get(), 250),
-                Optional.of(new ItemStackTemplate(Items.LEATHER, 2)), Optional.empty(), 8000);
-        Ingredient knife = tag(ModTags.Items.KNIVES);
-        var scraping = new ToolShapelessRecipe(new Recipe.CommonInfo(true),
-                new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
-                new ItemStackTemplate(ModItems.SCRAPED_HIDE.get()),
-                List.of(Ingredient.of(ModItems.LIMED_HIDE.get()), knife),
-                knife);
-        save(key("scraped_hide"), scraping, RecipeCategory.MISC, "has_limed_hide", has(ModItems.LIMED_HIDE.get()));
+        soak("leather", Optional.of(Ingredient.of(ModItems.RAW_HIDE.get())), 1, new FluidAmount(ModFluids.TANNIN.get(), 250),
+                Optional.of(new ItemStackTemplate(Items.LEATHER, 2)), Optional.empty(), 6000);
     }
 
     private void soak(String path, Optional<Ingredient> input, int count, FluidAmount fluid, Optional<ItemStackTemplate> result,

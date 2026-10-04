@@ -118,8 +118,6 @@ public final class ModItems {
             dev.strataindustria.power.LeatherBeltItem::new, p -> p.stacksTo(16));
     // Tier 3 spec 12.1: hides and the soaking barrel.
     public static final DeferredItem<Item> RAW_HIDE = ITEMS.registerSimpleItem("raw_hide");
-    public static final DeferredItem<Item> LIMED_HIDE = ITEMS.registerSimpleItem("limed_hide");
-    public static final DeferredItem<Item> SCRAPED_HIDE = ITEMS.registerSimpleItem("scraped_hide");
     public static final DeferredItem<BlockItem> SOAKING_BARREL = ITEMS.registerSimpleBlockItem(ModBlocks.SOAKING_BARREL);
     // Tier 3 spec 11: washing.
     public static final DeferredItem<dev.strataindustria.washing.WashingPanItem> WASHING_PAN = ITEMS.registerItem("washing_pan",

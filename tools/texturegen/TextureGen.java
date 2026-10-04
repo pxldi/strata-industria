@@ -4844,8 +4844,6 @@ public final class TextureGen {
         save("item/pulley", pulleyItem());
         save("item/leather_belt", leatherBeltItem());
         save("item/raw_hide", hideItem(0));
-        save("item/limed_hide", hideItem(1));
-        save("item/scraped_hide", hideItem(2));
         save("block/soaking_barrel_side", barrelSide());
         save("block/soaking_barrel_top_open", barrelTopOpen());
         save("block/soaking_barrel_inner", barrelInner());

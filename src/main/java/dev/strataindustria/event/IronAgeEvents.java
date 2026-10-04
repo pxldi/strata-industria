@@ -26,16 +26,6 @@ public final class IronAgeEvents {
         }
     }
 
-    /** Spec 12.1: scraping a limed hide with a knife makes itself heard. */
-    @SubscribeEvent
-    static void onCrafted(net.neoforged.neoforge.event.entity.player.PlayerEvent.ItemCraftedEvent event) {
-        if (!event.getCrafting().is(ModItems.SCRAPED_HIDE.get())) return;
-        var player = event.getEntity();
-        if (player.level().isClientSide()) return;
-        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), dev.strataindustria.registry.ModSounds.HIDE_SCRAPE.get(),
-                net.minecraft.sounds.SoundSource.PLAYERS, 0.8f, 0.9f + player.getRandom().nextFloat() * 0.2f);
-    }
-
     /** Spec 2: stripping a log with an axe peels off one piece of bark, for tannin. */
     @SubscribeEvent
     static void barkFromStripping(net.neoforged.neoforge.event.level.BlockEvent.BlockToolModificationEvent event) {

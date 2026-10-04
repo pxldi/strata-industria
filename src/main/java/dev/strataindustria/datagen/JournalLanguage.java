@@ -151,7 +151,7 @@ final class JournalLanguage {
         lead.add("t3/hide", "The animals I hunt could give me more than meat.",
                 "A raw hide, stiff and smelly. It will rot unless I treat it.");
         lead.add("t3/leather", "A raw hide rots. How do I turn it into leather that lasts?",
-                "Limed, scraped and soaked in tannin for days. Supple leather, finally.");
+                "Soaked in tannin from bark for days. Supple leather, finally.");
         // Tier 4: steel and steam
         lead.add("t4/coal", "Charcoal costs a forest. Is there black rock that burns?",
                 "Coal, cut from a deep seam. It burns long and hot, but smoky.");
@@ -224,7 +224,7 @@ final class JournalLanguage {
                 "Half full and holding. It will run a machine when the shaft stops.");
         lead.add("t5/electric_heat", "A firebox needs fuel and tending. Could the wire heat a crucible instead?",
                 "The coil glows and the crucible warms. No fuel to carry.");
-        lead.add("t5/sulfuric_acid", "Lye eats grease. Is there something that eats stone and metal?",
+        lead.add("t5/sulfuric_acid", "Ash and water cut grease. Is there something that eats stone and metal?",
                 "Acid, heavy and clear. It needs a tank and a steady hand.");
         lead.add("t5/electrolysis", "Could the wire pull water apart?",
                 "Two gases from one water, twice as much hydrogen as oxygen.");
