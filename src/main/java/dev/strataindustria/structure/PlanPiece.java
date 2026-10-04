@@ -241,6 +241,8 @@ public class PlanPiece extends StructurePiece {
             case '3' -> rock.loose(rock.bottom());
             case 'C' -> StructureContent.FIBRE_CANVAS.get().defaultBlockState();
             case '_' -> StructureContent.FIBRE_CANVAS_CARPET.get().defaultBlockState();
+            case '7' -> StructureContent.FIBRE_CANVAS_STAIRS.get().defaultBlockState().setValue(StairBlock.FACING, Direction.EAST);
+            case '8' -> StructureContent.FIBRE_CANVAS_STAIRS.get().defaultBlockState().setValue(StairBlock.FACING, Direction.WEST);
             case 'P' -> StructureContent.PIT_PROP.get().defaultBlockState();
             case '=' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.X);
             case '|' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z);
@@ -293,6 +295,7 @@ public class PlanPiece extends StructurePiece {
             case 'V' -> Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.SOUTH);
             case 'O' -> Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING, Direction.SOUTH);
             case '%' -> StructureContent.SPECIMEN_SHELF.get().defaultBlockState();
+            case '9' -> StructureContent.SPECIMEN_SHELF.get().defaultBlockState().setValue(SpecimenShelfBlock.FACING, Direction.SOUTH);
             case 'D' -> Blocks.PACKED_MUD.defaultBlockState();
             case '~' -> Blocks.HAY_BLOCK.defaultBlockState();
             case '@' -> SharedBlocks.SMOULDERING_LOG_PILE.get().defaultBlockState();
@@ -363,6 +366,15 @@ public class PlanPiece extends StructurePiece {
             case 'j' -> {
                 if (planId.equals("placer_workings/bank")) {
                     RandomizableContainer.setBlockEntityLootTable(level, random, pos, CampLoot.key(CampLoot.PLACER_TIN));
+                }
+            }
+            case '9' -> {
+                // The camp's own samples: the mineral it was dug for, and one it was mistaken for.
+                if (level.getBlockEntity(pos) instanceof SpecimenShelfBlockEntity shelf) {
+                    OreMineral[] all = OreMineral.values();
+                    OreMineral other = all[Math.floorMod((int) Weathering.hash(pos, seed), all.length)];
+                    shelf.place(MineralSpecimenItem.of(mineral));
+                    if (other != mineral) shelf.place(MineralSpecimenItem.of(other));
                 }
             }
             case '/' -> {
