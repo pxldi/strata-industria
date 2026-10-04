@@ -176,6 +176,11 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.ANVIL_WELD, definition().subtitle(subtitle("anvil.weld"))
                 .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.7f))
                 .with(sound("minecraft:random/anvil_land").pitch(1.1f).volume(0.4f)));
+        // A maker's mark struck into a finished piece: a sharp tick, a short ring and a puff of hiss.
+        add(ModSounds.ANVIL_STAMP, definition().subtitle(subtitle("anvil.stamp"))
+                .with(sound("minecraft:block.anvil.place", event).pitch(1.9f).volume(0.5f))
+                .with(sound("minecraft:block.note_block.iron_xylophone", event).pitch(1.5f).volume(0.45f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(1.6f).volume(0.2f)));
         add(ModSounds.ANVIL_WELD_FAIL, definition().subtitle(subtitle("anvil.weld_fail"))
                 .with(sound("minecraft:random/click").pitch(0.6f).volume(0.5f)));
         // Spec 20.6: mechanical power. These reuse vanilla events, retuned.

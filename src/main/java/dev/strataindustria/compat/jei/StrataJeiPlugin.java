@@ -12,6 +12,8 @@ import dev.strataindustria.registry.Tier4Recipes;
 import dev.strataindustria.registry.Tier5Items;
 import dev.strataindustria.registry.Tier5Recipes;
 import dev.strataindustria.smithing.AnvilBlock;
+import dev.strataindustria.smithing.AnvilRecipe;
+import dev.strataindustria.smithing.WeldingRecipe;
 import java.util.List;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -55,7 +57,6 @@ public final class StrataJeiPlugin implements IModPlugin {
                 new AlloyingCategory(gui),
                 new CastingCategory(gui),
                 new AnvilCategory(gui),
-                new WeldingCategory(gui),
                 new BloomeryCategory(gui),
                 new SawingCategory(gui),
                 new WashingCategory(gui),
@@ -79,8 +80,17 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addRecipes(JeiTypes.KNAPPING, knapping.stream().filter(h -> !KnappingCategory.isClay(h.value())).toList());
         registration.addRecipes(JeiTypes.CLAY_FORMING, knapping.stream().filter(h -> KnappingCategory.isClay(h.value())).toList());
         registration.addRecipes(JeiTypes.QUERN, ClientRecipes.byType(ModRecipes.QUERN.get()));
-        registration.addRecipes(JeiTypes.ANVIL, ClientRecipes.byType(ModRecipes.ANVIL.get()));
-        registration.addRecipes(JeiTypes.WELDING, ClientRecipes.byType(ModRecipes.WELDING.get()));
+        List<Processes.AnvilWork> anvilWork = new java.util.ArrayList<>();
+        for (RecipeHolder<AnvilRecipe> h : ClientRecipes.byType(ModRecipes.ANVIL.get())) {
+            AnvilRecipe r = h.value();
+            anvilWork.add(new Processes.AnvilWork(IngredientStacks.of(r.ingredient(), r.count()), List.of(), r.result().create(), r.blows()));
+        }
+        for (RecipeHolder<WeldingRecipe> h : ClientRecipes.byType(ModRecipes.WELDING.get())) {
+            WeldingRecipe r = h.value();
+            anvilWork.add(new Processes.AnvilWork(IngredientStacks.of(r.first(), 1), IngredientStacks.of(r.second(), 1), r.result().create(),
+                    dev.strataindustria.smithing.Smithing.WELD_BLOWS));
+        }
+        registration.addRecipes(JeiTypes.ANVIL, anvilWork);
         registration.addRecipes(JeiTypes.SAWING, ClientRecipes.byType(ModRecipes.SAWING.get()));
         registration.addRecipes(JeiTypes.WASHING, ClientRecipes.byType(ModRecipes.WASHING.get()));
         registration.addRecipes(JeiTypes.BARREL, ClientRecipes.byType(ModRecipes.BARREL.get()));
@@ -113,7 +123,6 @@ public final class StrataJeiPlugin implements IModPlugin {
                 .filter(i -> i instanceof BlockItem block && block.getBlock() instanceof AnvilBlock).toArray(Item[]::new);
         registration.addCraftingStation(JeiTypes.ANVIL, anvils);
         registration.addCraftingStation(JeiTypes.ANVIL, ModItems.TRIP_HAMMER.get(), Tier4Items.STEAM_HAMMER.get());
-        registration.addCraftingStation(JeiTypes.WELDING, anvils);
         registration.addCraftingStation(JeiTypes.BLOOMERY, ModItems.BLOOMERY.get(), ModItems.BELLOWS.get());
         registration.addCraftingStation(JeiTypes.SAWING, ModItems.SAW_MILL.get());
         registration.addCraftingStation(JeiTypes.WASHING, ModItems.WASHING_PAN.get(), ModItems.SLUICE.get());

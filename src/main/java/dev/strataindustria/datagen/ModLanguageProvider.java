@@ -161,6 +161,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "casting_table.knock", "Castings knocked out");
         add(subtitles + "anvil.dress", "Stone dressed");
         add(subtitles + "anvil.weld", "Metal welds");
+        add(subtitles + "anvil.stamp", "Mark struck");
         add(subtitles + "hand_crank.turn", "Crank creaks");
         add(subtitles + "water_wheel.turn", "Water wheel splashes");
         add(subtitles + "kinetic.overstress", "Machinery groans to a halt");
@@ -871,7 +872,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.charter", "Found an Outpost");
         add(journal + "t3.charter.hint", "A charter post holds an outpost once a line runs to it. Lay track to it and send a tub through.");
         add(journal + "t3.weld", "Forge Weld");
-        add(journal + "t3.weld.hint", "Heat two iron ingots, lay both on the anvil and strike them together into a double ingot.");
+        add(journal + "t3.weld.hint", "Heat two iron ingots, lay both on the anvil and strike them together into a double ingot. No flux needed.");
         add(journal + "t2.brick_kiln", "Brick Kiln");
         add(journal + "t2.brick_kiln.hint", "Build a brick kiln out of bricks, set it on a lit forge, and fire clay pieces in it.");
         add(journal + "t2.pattern_casting", "Pattern Casting");
@@ -1245,8 +1246,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "category.quern", "Grinding");
         add(k + "category.alloying", "Crucible Alloying");
         add(k + "category.casting", "Casting");
-        add(k + "category.anvil", "Anvil Smithing");
-        add(k + "category.welding", "Welding");
+        add(k + "category.anvil", "Anvil Work");
         add(k + "category.bloomery", "Bloomery");
         add(k + "category.sawing", "Saw Mill");
         add(k + "category.washing", "Ore Washing");

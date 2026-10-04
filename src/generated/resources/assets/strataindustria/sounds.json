@@ -79,6 +79,29 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.set"
   },
+  "anvil.stamp": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.iron_xylophone",
+        "pitch": 1.5,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.lava.extinguish",
+        "pitch": 1.6,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.stamp"
+  },
   "anvil.true_blow": {
     "sounds": [
       {
