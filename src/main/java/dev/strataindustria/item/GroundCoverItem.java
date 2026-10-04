@@ -1,6 +1,7 @@
 package dev.strataindustria.item;
 
 import dev.strataindustria.knapping.Knapping;
+import dev.strataindustria.knapping.Shaping;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.block.Block;
 
 /**
  * Block item for ground cover. It is only placed while sneaking, so a plain right-click is free for
- * the item's own use: loose rocks open the knapping grid.
+ * the item's own use: loose rocks are struck into tools. Sneaking in the air picks the shape.
  */
 public class GroundCoverItem extends BlockItem {
     public GroundCoverItem(Block block, Properties properties) {
@@ -31,8 +32,8 @@ public class GroundCoverItem extends BlockItem {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        if (player.isSecondaryUseActive() || !Knapping.isKnappable(held)) return super.use(level, player, hand);
-        if (player instanceof ServerPlayer serverPlayer) Knapping.tryOpen(serverPlayer, hand);
+        if (!Knapping.isKnappable(held)) return super.use(level, player, hand);
+        if (player instanceof ServerPlayer serverPlayer) Shaping.use(serverPlayer, hand);
         return InteractionResult.SUCCESS;
     }
 }

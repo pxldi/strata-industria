@@ -42,17 +42,14 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
         add(ModSounds.KNAP_FLINT, stone("knapping.flint", 1.7f, 0.8f));
-        // Crumbly stone gives way: gravel and a dull stone slip.
-        SoundDefinition crumble = definition().subtitle(subtitle("knapping.crumble"));
-        for (int i = 1; i <= 4; i++) crumble.with(sound("minecraft:dig/gravel" + i).pitch(0.8f).volume(0.7f));
-        add(ModSounds.KNAP_CRUMBLE, crumble);
-        // A known pattern cut again in one go: flakes falling in a rush.
-        SoundDefinition rush = definition().subtitle(subtitle("knapping.repeat"));
-        for (int i = 1; i <= 4; i++) {
-            rush.with(sound("minecraft:dig/gravel" + i).pitch(1.3f).volume(0.7f));
-            rush.with(sound("minecraft:dig/stone" + i).pitch(1.5f).volume(0.6f));
-        }
-        add(ModSounds.KNAP_REPEAT, rush);
+        // Flint rings a glassy note over the blow; the true blow is a heavier double crack.
+        add(ModSounds.SHAPING_CHIME, definition().subtitle(subtitle("shaping.chime"))
+                .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.0f).volume(0.5f)));
+        add(ModSounds.SHAPING_TRUE_BLOW, definition().subtitle(subtitle("shaping.true_blow"))
+                .with(sound("minecraft:block.stone.break", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.amethyst_block.hit", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.35f)));
+        add(ModSounds.SHAPING_GLINT, definition().subtitle(subtitle("shaping.glint"))
+                .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.22f)));
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 

@@ -2260,70 +2260,6 @@ public final class TextureGen {
         return im;
     }
 
-    /**
-     * Knapping screen, 176x196 on a 256x256 sheet: a 5x5 stone well at (17,18), arrow, large result
-     * slot at (134,50) and the player inventory from y 114. Positions match KnappingMenu.
-     */
-    static BufferedImage knappingGui() {
-        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        panel(im, 176, 196);
-        // The grid well sits one pixel outside the 80x80 cell area; the floor is darker, like a work surface.
-        well(im, 16, 17, 82, 82, 0x6f6f6f);
-        arrow(im, 104, 51);
-        // Large result slot like the crafting table's.
-        well(im, 129, 45, 26, 26, SLOT_FILL);
-        for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 114 + row * 18);
-        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 172);
-        repeatButton(im);
-        return im;
-    }
-
-    /** Repeat-last button faces (normal, hovered, disabled) at (176,0): a circular arrow, inked like the anvil's quick button. */
-    static void repeatButton(BufferedImage im) {
-        int[] faces = {0xa8a8a8, 0xc8c8d8, 0x6e6e6e};
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            fill(im, x0, 0, 18, 18, faces[b]);
-            fill(im, x0, 0, 18, 1, 0x000000);
-            fill(im, x0, 17, 18, 1, 0x000000);
-            fill(im, x0, 0, 1, 18, 0x000000);
-            fill(im, x0 + 17, 0, 1, 18, 0x000000);
-            fill(im, x0 + 1, 1, 16, 1, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 1, 1, 16, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 16, 16, 1, b == 2 ? 0x4a4a4a : 0x555555);
-            fill(im, x0 + 16, 1, 1, 16, b == 2 ? 0x4a4a4a : 0x555555);
-            int[] ink = b == 2 ? new int[] {0x5a5a5a, 0x7a7a7a} : new int[] {0x3a3d48, 0xf0a030};
-            boolean[][] mark = new boolean[18][18];
-            double cx = 8.5, cy = 9.5;
-            // Ring open at the top right, with an arrowhead where it ends.
-            for (int y = 3; y < 16; y++) {
-                for (int x = 3; x < 15; x++) {
-                    double d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
-                    double a = Math.toDegrees(Math.atan2(-(y + 0.5 - cy), x + 0.5 - cx));
-                    if (d >= 3.0 && d <= 4.7 && !(a > 5 && a < 65)) mark[y][x] = true;
-                }
-            }
-            int[][] head = {{11, 3}, {12, 3}, {13, 3}, {14, 3}, {12, 4}, {13, 4}, {14, 4}, {13, 5}, {14, 5}, {14, 6}};
-            for (int[] h : head) mark[h[1]][h[0]] = true;
-            for (int y = 0; y < 18; y++) {
-                for (int x = 0; x < 18; x++) {
-                    if (mark[y][x]) continue;
-                    boolean near = false;
-                    for (int dy = -1; dy <= 1; dy++)
-                        for (int dx = -1; dx <= 1; dx++) {
-                            int yy = y + dy, xx = x + dx;
-                            if (yy >= 0 && yy < 18 && xx >= 0 && xx < 18 && mark[yy][xx]) near = true;
-                        }
-                    if (near) im.setRGB(x0 + x, y, 0xff000000 | ink[0]);
-                }
-            }
-            for (int y = 0; y < 18; y++)
-                for (int x = 0; x < 18; x++)
-                    if (mark[y][x]) im.setRGB(x0 + x, y, 0xff000000 | ink[1]);
-        }
-    }
-
     // ---------------------------------------------------------------- heat glow
 
     /** Metal items that go in the forge: ingots, nuggets, plates, cast heads and blades, the tongs jaw. */
@@ -8218,7 +8154,6 @@ public final class TextureGen {
         for (String kind : List.of("axe", "knife", "shovel", "hoe", "hammer", "pickaxe"))
             save("item/stone_" + kind, tool(V2.FLINT_V2, V2.WOOD_V2, V2.FIBRE_V2, kind));
         save("gui/knapping/flint", flintSurface());
-        saveRaw("gui/knapping", knappingGui());
 
         // Fire (spec 3.5).
         itemsV2 = false;

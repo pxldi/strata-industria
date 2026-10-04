@@ -14,11 +14,14 @@ public final class ModSounds {
     /** One strike while knapping flint: sharper and higher than rock. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FLINT = register("knapping.flint");
     /** The finished head comes free of the stone. */
-    /** A known pattern cut again in one go: a rush of flakes. */
-    /** Crumbly stone breaking away beside the cell struck. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_CRUMBLE = register("knapping.crumble");
-    public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_REPEAT = register("knapping.repeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FINISH = register("knapping.finish");
+
+    /** A clean note over each flint blow; the same note rings again when the rhythm is in the groove. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_CHIME = register("shaping.chime");
+    /** A blow on the rebound: heavier, and it counts twice. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_TRUE_BLOW = register("shaping.true_blow");
+    /** The soft tick at the top of the rebound, to strike on. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_GLINT = register("shaping.glint");
 
     /** Pressing a lump of clay into shape. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CLAY_SHAPE = register("clay.shape");

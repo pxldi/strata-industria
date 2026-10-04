@@ -1,6 +1,6 @@
 package dev.strataindustria.casting;
 
-import dev.strataindustria.knapping.Knapping;
+import dev.strataindustria.knapping.Shaping;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 
-/** A plank cut to size. Right-click opens the same grid as clay forming; what is left is a carved pattern. */
+/** A plank cut to size. Right-click strikes it into the shape picked (sneak + right-click picks), the same as clay forming; the result is a carved pattern. */
 public class PatternBlankItem extends Item {
     public PatternBlankItem(Properties properties) {
         super(properties);
@@ -16,8 +16,7 @@ public class PatternBlankItem extends Item {
 
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
-        if (player.isSecondaryUseActive()) return InteractionResult.PASS;
-        if (player instanceof ServerPlayer server) Knapping.tryOpen(server, hand);
+        if (player instanceof ServerPlayer server) Shaping.use(server, hand);
         return InteractionResult.SUCCESS;
     }
 }

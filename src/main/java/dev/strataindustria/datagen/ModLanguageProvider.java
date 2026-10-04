@@ -74,7 +74,6 @@ final class ModLanguageProvider extends LanguageProvider {
         for (RockCategory category : RockCategory.values()) {
             add(knapped + "category." + category.getSerializedName(), category.getSerializedName().replace('_', ' '));
         }
-        add("container." + StrataIndustria.MOD_ID + ".knapping", "Knapping");
         addItem(ModItems.FIRESTARTER, "Firestarter");
         addBlock(ModBlocks.FIRE_PIT, "Fire Pit");
         add("container." + StrataIndustria.MOD_ID + ".fire_pit", "Fire Pit");
@@ -83,11 +82,12 @@ final class ModLanguageProvider extends LanguageProvider {
             String name = band.id().replace('_', ' ');
             add(StrataIndustria.MOD_ID + ".heat." + band.id(), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
         }
-        add(StrataIndustria.MOD_ID + ".knapping.repeat", "Repeat last: cut the same shape again. Costs the same material.");
-        add(StrataIndustria.MOD_ID + ".knapping.repeat.unknown", "Knap a shape from this material by hand first");
-        add(StrataIndustria.MOD_ID + ".knapping.crumbled", "It crumbled");
-        add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s to start");
-        add("container." + StrataIndustria.MOD_ID + ".clay_forming", "Clay Forming");
+        add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s for this shape");
+        add(StrataIndustria.MOD_ID + ".shaping.shape", "%s: %s blows, uses %s %s");
+        add(StrataIndustria.MOD_ID + ".shaping.progress", "%s  %s/%s");
+        add(StrataIndustria.MOD_ID + ".shaping.done", "%s");
+        add(StrataIndustria.MOD_ID + ".shaping.nothing", "Nothing to make from %s");
+        add(StrataIndustria.MOD_ID + ".shaping.hint", "Sneak + use (or scroll) picks the shape. Use strikes, hold to keep striking.");
         addItem(ModItems.UNFIRED_SMALL_VESSEL, "Unfired Small Vessel");
         addItem(ModItems.UNFIRED_LARGE_VESSEL, "Unfired Large Vessel");
         addItem(ModItems.UNFIRED_CRUCIBLE, "Unfired Crucible");
@@ -192,8 +192,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
-        add(subtitles + "knapping.repeat", "Flakes fall quickly");
-        add(subtitles + "knapping.crumble", "Stone crumbles");
+        add(subtitles + "shaping.chime", "Flint chimes");
+        add(subtitles + "shaping.true_blow", "Strike lands true");
+        add(subtitles + "shaping.glint", "Rebound ticks");
         add(subtitles + "crucible.fumes", "Fumes hiss");
         add(subtitles + "bell.ring", "Bell rings");
         add(subtitles + "cabinet.set", "Specimen set down");
@@ -785,7 +786,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.loose_rock", "A Rock to Start With");
         add(journal + "t0.loose_rock.hint", "Pick up a loose rock lying on the ground.");
         add(journal + "t0.knap", "First Edge");
-        add(journal + "t0.knap.hint", "Hold two loose rocks or one flint, use it, and strike away the waste until a tool head is left.");
+        add(journal + "t0.knap.hint", "Hold two loose rocks or one flint and use it to strike. Sneak and use picks which head. A few blows and it breaks free.");
         add(journal + "t0.stone_axe", "Stone Axe");
         add(journal + "t0.stone_axe.hint", "Bind a knapped axe head to a stick with twine.");
         add(journal + "t0.log", "Timber");
@@ -799,7 +800,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.clay", "Riverbank Clay");
         add(journal + "t0.clay.hint", "Gather five clay balls. Look along riverbanks and in swamps.");
         add(journal + "t1.clay_forming", "Shaped by Hand");
-        add(journal + "t1.clay_forming.hint", "Form something from clay: use five clay balls to open the forming grid.");
+        add(journal + "t1.clay_forming.hint", "Hold five clay balls and use them. Sneak and use picks what to form; strike a few times and it is done.");
         add(journal + "t1.pit_kiln", "Fired Pottery");
         add(journal + "t1.pit_kiln.hint", "Sneak and place unfired clay on the floor of a one-block pit, add 8 straw and 8 logs, then light it and let it burn out.");
         add(journal + "t1.charcoal", "Charcoal Burner");
@@ -877,7 +878,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.brick_kiln", "Brick Kiln");
         add(journal + "t2.brick_kiln.hint", "Build a brick kiln out of bricks, set it on a lit forge, and fire clay pieces in it.");
         add(journal + "t2.pattern_casting", "Pattern Casting");
-        add(journal + "t2.pattern_casting.hint", "Cut a plank blank from planks and carve it on the grid into a pattern. Press the pattern into a sand flask (right-click with a flask in your pack) to get a sand mold. A sand mold takes any metal, once.");
+        add(journal + "t2.pattern_casting.hint", "Cut a plank blank from planks and strike it into a pattern (sneak and use picks the shape). Press the pattern into a sand flask (right-click with a flask in your pack) to get a sand mold. A sand mold takes any metal, once.");
         add(journal + "t2.casting_table", "Casting Table");
         add(journal + "t2.casting_table.hint", "Lay fired molds on a casting table beside a crucible and pour. One pour fills every empty mold. Click the table to knock the castings out.");
         add(journal + "t2.bright_strike", "Struck Bright");
@@ -1205,7 +1206,6 @@ final class ModLanguageProvider extends LanguageProvider {
             addItem(dev.strataindustria.registry.PatternRegistry.PATTERNS.get(shape), name + " Pattern");
             addItem(dev.strataindustria.registry.PatternRegistry.SAND_MOLDS.get(shape), name + " Sand Mold");
         }
-        add("container." + id + ".carving", "Carving");
         add(id + ".pattern.need_flask", "You need a sand flask");
         addBlock(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN, "Brick Kiln");
         addBlock(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE, "Casting Table");
@@ -1287,9 +1287,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "kinetic.rated", "at %s RPM");
         add(k + "chance", "%s%% chance");
         add(k + "washing.sluice_only", "in a sluice");
-        add(k + "knapping.mirror", "or mirrored");
-        add(k + "knapping.grid", "Strike out the dark cells; what is left is the shape");
-        add(k + "knapping.grid_mirror", "Its mirror image works too");
+        add(k + "knapping.blows", "%s blows");
+        add(k + "knapping.pick", "Sneak + use picks the shape");
         add(k + "pit_kiln.fuel", "Under straw and logs");
         add(k + "charcoal_pit.cover", "Covered on every side");
         add(k + "alloying.share", "%s %s\u2013%s%%");

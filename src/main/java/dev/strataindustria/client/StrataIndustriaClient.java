@@ -18,7 +18,6 @@ import dev.strataindustria.client.screen.BloomeryScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
-import dev.strataindustria.client.screen.KnappingScreen;
 import dev.strataindustria.client.screen.SmallVesselScreen;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModMenus;
@@ -50,7 +49,6 @@ public final class StrataIndustriaClient {
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(ModMenus.KNAPPING.get(), KnappingScreen::new);
         event.register(dev.strataindustria.mark.MarkRegistry.MENU.get(), dev.strataindustria.client.screen.MarkScreen::new);
         event.register(ModMenus.FIRE_PIT.get(), FirePitScreen::new);
         event.register(ModMenus.SMALL_VESSEL.get(), SmallVesselScreen::new);

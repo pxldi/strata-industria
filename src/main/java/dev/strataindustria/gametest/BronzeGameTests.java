@@ -11,7 +11,6 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.knapping.Grain;
 import dev.strataindustria.knapping.KnappedFrom;
-import dev.strataindustria.knapping.KnappingMenu;
 import dev.strataindustria.metal.CrucibleBlockEntity;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
@@ -39,30 +38,13 @@ final class BronzeGameTests {
         tests.put("bronze_arsenical_pour_fumes", BronzeGameTests::arsenicalPour);
     }
 
-    /** How many of 120 fresh grids lose a second cell to one strike on the centre cell. */
-    private static int crumbles(ServerLevel level, Rock rock) {
-        int crumbled = 0;
-        for (int i = 0; i < 120; i++) {
-            FakePlayer knapper = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "knapper"));
-            ItemStack rocks = new ItemStack(ModItems.LOOSE_ROCK.get(rock).get(), 16);
-            knapper.setItemInHand(InteractionHand.MAIN_HAND, rocks);
-            KnappingMenu menu = new KnappingMenu(7, knapper.getInventory(), rocks.copyWithCount(1), InteractionHand.MAIN_HAND);
-            knapper.containerMenu = menu;
-            menu.clickMenuButton(knapper, 12);
-            if (Integer.bitCount(menu.keptMask()) < 24) crumbled++;
-        }
-        return crumbled;
-    }
-
-    // Crumbly stone sometimes loses a neighbouring cell, coarse and clean stone never does, and clean stone holds a better edge.
+    // Crumbly stone sheds more chips than clean or coarse stone, and clean stone holds a better edge.
     private static void rockGrain(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
         helper.assertValueEqual(Rock.LIMESTONE.grain(), Grain.CRUMBLY, "limestone grain");
         helper.assertValueEqual(Rock.BASALT.grain(), Grain.COARSE, "basalt grain");
         helper.assertValueEqual(Rock.RHYOLITE.grain(), Grain.CLEAN, "rhyolite grain");
-        helper.assertTrue(crumbles(level, Rock.LIMESTONE) > 0, "limestone should crumble now and then");
-        helper.assertValueEqual(crumbles(level, Rock.BASALT), 0, "basalt never crumbles");
-        helper.assertValueEqual(crumbles(level, Rock.RHYOLITE), 0, "rhyolite never crumbles");
+        helper.assertTrue(Grain.CRUMBLY.chipFactor() > Grain.COARSE.chipFactor(), "crumbly stone should shed more chips");
+        helper.assertTrue(Grain.CLEAN.strikePitch() > Grain.COARSE.strikePitch(), "clean stone should ring higher than coarse stone");
         helper.assertTrue(KnappedFrom.of(Rock.RHYOLITE).durabilityMultiplier() > Rock.RHYOLITE.category().durabilityMultiplier(),
                 "clean-grained stone should hold a better edge than its category alone");
         helper.assertValueEqual(KnappedFrom.of(Rock.BASALT).durabilityMultiplier(), Rock.BASALT.category().durabilityMultiplier(),

@@ -19,8 +19,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 /**
- * Knapping and clay forming: the 5x5 shape to leave, drawn in the material being worked (rock, flint or
- * clay, following the input slot as it cycles), the material and its cost, and the result.
+ * Knapping, clay forming and carving: the shape that comes out, drawn in the material being worked (rock, flint
+ * or clay, following the input slot as it cycles), the blows it takes, the material and its cost, and the result.
  */
 public class KnappingCategory extends StrataCategory<RecipeHolder<KnappingRecipe>> {
     private static final int CELL = 10, GRID = GridPattern.SIZE * CELL + 2;
@@ -61,22 +61,20 @@ public class KnappingCategory extends StrataCategory<RecipeHolder<KnappingRecipe
             int cx = cell % GridPattern.SIZE, cy = cell / GridPattern.SIZE;
             int x = 1 + cx * CELL, y = 1 + cy * CELL;
             if ((mask & (1 << cell)) == 0) {
-                // A struck-out cell: a dark hollow, lit along its lower edge.
+                // Waste: a dark hollow, lit along its lower edge.
                 g.fill(x, y, x + CELL, y + CELL, 0xFF2E2B29);
                 g.fill(x, y + CELL - 1, x + CELL, y + CELL, 0xFF4A4642);
                 continue;
             }
             g.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, (cx * 3) % 6, (cy * 3) % 6, CELL, CELL, 16, 16);
-            // The same edge shading as the knapping screen, so the kept shape reads as raised.
+            // Edge shading, so the shape reads as raised.
             if (cy < GridPattern.SIZE - 1 && !kept(mask, cell + GridPattern.SIZE)) g.fill(x, y + CELL - 2, x + CELL, y + CELL, 0x70000000);
             if (cx < GridPattern.SIZE - 1 && !kept(mask, cell + 1)) g.fill(x + CELL - 2, y, x + CELL, y + CELL, 0x50000000);
             if (cy > 0 && !kept(mask, cell - GridPattern.SIZE)) g.fill(x, y, x + CELL, y + 1, 0x40FFFFFF);
             if (cx > 0 && !kept(mask, cell - 1)) g.fill(x, y, x + 1, y + CELL, 0x30FFFFFF);
         }
-        if (recipe.mirror() && GridPattern.mirror(mask) != mask) {
-            // Below the arrow and clear of the 52 px grid.
-            centred(g, RecipeText.key("knapping.mirror"), 104, GRID - 10, TEXT_FAINT);
-        }
+        // Below the arrow and clear of the 52 px silhouette.
+        centred(g, RecipeText.key("knapping.blows", recipe.blows()), 104, GRID - 10, TEXT_FAINT);
     }
 
     private static boolean kept(int mask, int cell) {
@@ -86,8 +84,7 @@ public class KnappingCategory extends StrataCategory<RecipeHolder<KnappingRecipe
     @Override
     public void getTooltip(ITooltipBuilder tooltip, RecipeHolder<KnappingRecipe> holder, IRecipeSlotsView slots, double mouseX, double mouseY) {
         if (over(mouseX, mouseY, 0, 0, GRID, GRID)) {
-            tooltip.add(RecipeText.key("knapping.grid"));
-            if (holder.value().mirror()) tooltip.add(RecipeText.key("knapping.grid_mirror"));
+            tooltip.add(RecipeText.key("knapping.pick"));
         }
     }
 

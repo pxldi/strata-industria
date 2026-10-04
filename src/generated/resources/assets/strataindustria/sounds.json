@@ -2930,31 +2930,6 @@
     ],
     "subtitle": "subtitles.strataindustria.kinetic_dynamo.run"
   },
-  "knapping.crumble": {
-    "sounds": [
-      {
-        "name": "dig/gravel1",
-        "pitch": 0.8,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/gravel2",
-        "pitch": 0.8,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/gravel3",
-        "pitch": 0.8,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/gravel4",
-        "pitch": 0.8,
-        "volume": 0.7
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.knapping.crumble"
-  },
   "knapping.finish": {
     "sounds": [
       {
@@ -3000,51 +2975,6 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.knapping.flint"
-  },
-  "knapping.repeat": {
-    "sounds": [
-      {
-        "name": "dig/gravel1",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone1",
-        "pitch": 1.5,
-        "volume": 0.6
-      },
-      {
-        "name": "dig/gravel2",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone2",
-        "pitch": 1.5,
-        "volume": 0.6
-      },
-      {
-        "name": "dig/gravel3",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone3",
-        "pitch": 1.5,
-        "volume": 0.6
-      },
-      {
-        "name": "dig/gravel4",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone4",
-        "pitch": 1.5,
-        "volume": 0.6
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.knapping.repeat"
   },
   "knapping.rock": {
     "sounds": [
@@ -3749,6 +3679,44 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.saw_mill.saw"
+  },
+  "shaping.chime": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.shaping.chime"
+  },
+  "shaping.glint": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.9,
+        "volume": 0.22
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.shaping.glint"
+  },
+  "shaping.true_blow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 1.5,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.hit",
+        "pitch": 1.7,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.shaping.true_blow"
   },
   "sluice.wash": {
     "sounds": [

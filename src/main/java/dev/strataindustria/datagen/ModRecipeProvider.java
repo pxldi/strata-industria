@@ -109,7 +109,10 @@ final class ModRecipeProvider extends RecipeProvider {
         vanillaOverrides();
     }
 
-    // Tier 0-2 spec 3.2. Patterns are written top row first; '#' is kept stone.
+    /** Blows per shape (redesign L5): a tool head is four, a clay press or a carving is three. */
+    private static final int KNAP_BLOWS = 4, CLAY_BLOWS = 3, CARVE_BLOWS = 3;
+
+    // Tier 0-2 spec 3.2. Patterns are written top row first; '#' is the shape that comes out of the stone.
     private void knapping() {
         knap(ModItems.STONE_AXE_HEAD.get(), ".#...", "####.", "#####", "####.", ".#...");
         knap(ModItems.STONE_KNIFE_BLADE.get(), "#....", "##...", ".##..", "..##.", "...##");
@@ -120,11 +123,11 @@ final class ModRecipeProvider extends RecipeProvider {
         knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
         // Spec 10.1: a round stone with a hole, worth four loose rocks.
         int quernstone = GridPattern.parse(List.of(".###.", "#####", "##.##", "#####", ".###.")).getOrThrow();
-        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, quernstone, false,
+        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, 6, quernstone,
                 new ItemStackTemplate(ModItems.QUERNSTONE.get())), null);
     }
 
-    // Spec 4.1: the same grid, worked in five clay balls.
+    // Spec 4.1: the same strikes, worked in five clay balls.
     private void clayForming() {
         form(ModItems.UNFIRED_SMALL_VESSEL.get(), 1, ".....", ".###.", "#####", "#####", ".###.");
         form(ModItems.UNFIRED_LARGE_VESSEL.get(), 1, ".###.", "#####", "#####", "#####", ".###.");
@@ -141,7 +144,7 @@ final class ModRecipeProvider extends RecipeProvider {
         form(mold(MoldType.SWORD_BLADE), 1, "###..", "##..#", "#..##", "..###", ".####");
     }
 
-    // Pattern casting: a plank blank is carved on the clay grid, a flask is a plank frame round damp sand.
+    // Pattern casting: a plank blank is carved with the same strikes, a flask is a plank frame round damp sand.
     private void patterns() {
         shapeless(RecipeCategory.MISC, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get(), 2)
                 .requires(ItemTags.PLANKS)
@@ -170,7 +173,7 @@ final class ModRecipeProvider extends RecipeProvider {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
         Item result = dev.strataindustria.registry.PatternRegistry.PATTERNS.get(shape).get();
         output.accept(key("carving/" + shape + "_pattern"), new KnappingRecipe(
-                Ingredient.of(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get()), 1, pattern, true,
+                Ingredient.of(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get()), 1, CARVE_BLOWS, pattern,
                 new ItemStackTemplate(result)), null);
     }
 
@@ -210,7 +213,7 @@ final class ModRecipeProvider extends RecipeProvider {
 
     private void form(Item result, int count, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
-        var recipe = new KnappingRecipe(Ingredient.of(Items.CLAY_BALL), Knapping.CLAY_OPENING_COST, pattern, true,
+        var recipe = new KnappingRecipe(Ingredient.of(Items.CLAY_BALL), Knapping.CLAY_OPENING_COST, CLAY_BLOWS, pattern,
                 new ItemStackTemplate(result, count));
         output.accept(key("clay_forming/" + name(result)), recipe, null);
     }
@@ -218,12 +221,12 @@ final class ModRecipeProvider extends RecipeProvider {
     private void formFireClay(Item result, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
         output.accept(key("clay_forming/" + name(result)), new KnappingRecipe(Ingredient.of(ModItems.FIRE_CLAY_BALL.get()),
-                Knapping.CLAY_OPENING_COST, pattern, true, new ItemStackTemplate(result)), null);
+                Knapping.CLAY_OPENING_COST, CLAY_BLOWS, pattern, new ItemStackTemplate(result)), null);
     }
 
     private void knap(Item result, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
-        var recipe = new KnappingRecipe(tag(ModTags.Items.KNAPPABLE), 1, pattern, true, new ItemStackTemplate(result));
+        var recipe = new KnappingRecipe(tag(ModTags.Items.KNAPPABLE), 1, KNAP_BLOWS, pattern, new ItemStackTemplate(result));
         output.accept(key("knapping/" + name(result)), recipe, null);
     }
 
@@ -856,7 +859,7 @@ final class ModRecipeProvider extends RecipeProvider {
     private void ironAge() {
         int brick = GridPattern.parse(List.of("##.##", "##.##", ".....", "##.##", "##.##")).getOrThrow();
         output.accept(key("clay_forming/unfired_fire_brick"), new KnappingRecipe(Ingredient.of(ModItems.FIRE_CLAY_BALL.get()),
-                Knapping.CLAY_OPENING_COST, brick, true, new ItemStackTemplate(ModItems.UNFIRED_FIRE_BRICK.get(), 4)), null);
+                Knapping.CLAY_OPENING_COST, CLAY_BLOWS, brick, new ItemStackTemplate(ModItems.UNFIRED_FIRE_BRICK.get(), 4)), null);
         shapeless(RecipeCategory.MISC, ModItems.FIRE_CLAY_BALL.get(), 2)
                 .requires(Items.CLAY_BALL, 3)
                 .requires(ModItems.GROG.get())
