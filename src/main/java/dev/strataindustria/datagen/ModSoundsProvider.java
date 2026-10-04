@@ -28,6 +28,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         prologue();
         patterns();
         listening();
+        marks();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -449,6 +450,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ListeningSounds.STEAM_WHISTLE, definition().subtitle(subtitle("steam_whistle.blow"))
                 .with(sound("minecraft:block.note_block.flute", event).pitch(1.9f).volume(1.0f))
                 .with(sound("minecraft:block.fire.extinguish", event).pitch(1.7f).volume(0.4f)));
+    }
+
+    /** Maker's marks (uniqueness 2.2), from vanilla metal samples. */
+    private void marks() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.mark.MarkRegistry.STAMP_STRIKE, definition().subtitle(subtitle("mark.stamp"))
+                .with(sound("minecraft:block.anvil.place", event).pitch(1.5f).volume(0.6f))
+                .with(sound("minecraft:block.copper.hit", event).pitch(0.8f).volume(0.9f)));
+        add(dev.strataindustria.mark.MarkRegistry.MARK_CUT, definition().subtitle(subtitle("mark.cut"))
+                .with(sound("minecraft:block.copper.hit", event).pitch(1.7f).volume(0.5f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.8f).volume(0.35f)));
     }
 
     /** Pattern casting, from vanilla wood and sand samples. */

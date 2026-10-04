@@ -522,6 +522,15 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "steam_engine.knock", "Steam engine knocks");
         add(subtitles + "boiler.hiss", "Boiler hisses");
         add(subtitles + "steam_whistle.blow", "Steam whistle blows");
+        addItem(dev.strataindustria.mark.MarkRegistry.MAKER_PUNCH, "Maker's Punch");
+        add("container." + id + ".makers_mark", "Your mark");
+        add(id + ".mark.stamp", "Keep it");
+        add(id + ".mark.clear", "Clear");
+        add(id + ".mark.blank", "Cut at least one cell first");
+        add(id + ".mark.made_by", "Made by %s");
+        add(id + ".mark.mined", "%s blocks mined");
+        add(subtitles + "mark.stamp", "Mark stamped");
+        add(subtitles + "mark.cut", "Punch taps");
         add(engine + "no_steam", "No steam");
         add(engine + "low_pressure", "Steam pressure under 1 bar");
         add(engine + "running", "%s RPM on %s bar");

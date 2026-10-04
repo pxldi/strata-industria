@@ -216,6 +216,7 @@ final class ModModelProvider extends ModelProvider {
         castMold(itemModels, ModItems.INGOT_MOLD.get());
         flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get());
         flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.SAND_FLASK.get());
+        itemModels.generateFlatItem(dev.strataindustria.mark.MarkRegistry.MAKER_PUNCH.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
         for (var pattern : dev.strataindustria.registry.PatternRegistry.PATTERNS.values()) flatItem(itemModels, pattern.get());
         for (var mold : dev.strataindustria.registry.PatternRegistry.SAND_MOLDS.values()) castMold(itemModels, mold.get());
     }

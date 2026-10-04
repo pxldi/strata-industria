@@ -318,11 +318,21 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         input.shrink(recipe.value().count());
         if (input.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
         items.set(OUTPUT, out);
+        if (player != null) dev.strataindustria.mark.MakerMarks.stampOrAsk(out, player, worldPosition);
         if (player != null) SmithedRecipes.of(player).add(recipe.id().identifier());
         if (!quick) recordPattern(server, recipe, progress, target, craft, out);
         server.playSound(null, worldPosition, ModSounds.SMITH_DONE.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
         server.sendParticles(ParticleTypes.LAVA, worldPosition.getX() + 0.5, worldPosition.getY() + faceHeight() + 0.05, worldPosition.getZ() + 0.5,
                 4, 0.15, 0.0, 0.15, 0.0);
+    }
+
+    /** Stamps the piece waiting in the output, for a player who has just cut their first mark. */
+    public void stampOutput(Player player) {
+        ItemStack out = items.get(OUTPUT);
+        if (out.has(ModDataComponents.QUALITY.get()) && !out.has(dev.strataindustria.mark.MarkRegistry.STAMP.get())) {
+            dev.strataindustria.mark.MakerMarks.stamp(out, player);
+            setChanged();
+        }
     }
 
     // ------------------------------------------------------------------ smithing patterns (tier 3 spec 9.5)

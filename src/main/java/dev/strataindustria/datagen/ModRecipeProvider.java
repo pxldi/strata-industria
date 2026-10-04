@@ -698,6 +698,14 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('R', Tier4Items.BRONZE_FLUID_PIPE.get())
                 .unlockedBy("has_bronze_fluid_pipe", has(Tier4Items.BRONZE_FLUID_PIPE.get()))
                 .save(output, key("mechanical_pump"));
+        shaped(RecipeCategory.TOOLS, dev.strataindustria.mark.MarkRegistry.MAKER_PUNCH.get())
+                .pattern("I")
+                .pattern("I")
+                .pattern("S")
+                .define('I', ModItems.ingot(Metal.BRONZE))
+                .define('S', Items.STICK)
+                .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
+                .save(output, key("maker_punch"));
         shaped(RecipeCategory.REDSTONE, dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get())
                 .pattern(" R ")
                 .pattern("PRP")

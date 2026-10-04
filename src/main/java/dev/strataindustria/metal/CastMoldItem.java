@@ -92,6 +92,7 @@ public class CastMoldItem extends Item {
         }
 
         ItemStack cast = castOf(mold, heat, level.getGameTime());
+        dev.strataindustria.mark.MakerMarks.stampCasting(mold, cast, player);
         boolean broke = breaks(mold, level.getRandom());
         ItemStack emptied = ItemStack.EMPTY;
         if (broke) {

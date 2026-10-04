@@ -109,6 +109,7 @@ public class CastingTableBlockEntity extends BlockEntity {
             float heat = Heat.get(mold, server);
             if (heat >= CrucibleBlockEntity.mixMeltingPoint(contents)) continue;
             ItemStack cast = CastMoldItem.castOf(mold, heat, server.getGameTime());
+            dev.strataindustria.mark.MakerMarks.stampCasting(mold, cast, player);
             if (CastMoldItem.breaks(mold, server.getRandom())) {
                 molds.set(i, ItemStack.EMPTY);
                 server.playSound(null, worldPosition, ModSounds.MOLD_BREAK.get(), SoundSource.BLOCKS, 0.9f, 1.0f);
