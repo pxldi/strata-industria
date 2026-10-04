@@ -44,7 +44,7 @@ public final class FootEvents {
             handled = cutBlaze(player, held, level, pos, event.getFace());
         } else {
             Rock rock = rockOf(held);
-            if (rock != null) handled = stack(player, held, rock, level, pos);
+            if (rock != null && player.isSecondaryUseActive()) handled = stack(player, held, rock, level, pos);
         }
         if (handled) {
             event.setCanceled(true);
@@ -52,26 +52,24 @@ public final class FootEvents {
         }
     }
 
-    /** Which rock a loose rock item is, or null for any other item. */
+    /** Which rock a rock shard item is, or null for any other item. */
     static @Nullable Rock rockOf(ItemStack stack) {
         for (Rock rock : Rock.values()) {
-            if (stack.is(ModItems.LOOSE_ROCK.get(rock).get())) return rock;
+            if (stack.is(ModItems.ROCK_SHARD.get(rock).get())) return rock;
         }
         return null;
     }
 
-    private static boolean isLooseRock(BlockState state) {
-        for (Rock rock : Rock.values()) {
-            if (state.is(ModBlocks.LOOSE_ROCK.get(rock).get())) return true;
-        }
-        return false;
-    }
-
-    /** Four loose rocks onto a loose rock start a cairn; four more on a cairn raise it, up to three courses. */
-    public static boolean stack(Player player, ItemStack held, Rock rock, Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
+    /**
+     * Four rock shards, sneak-used on the ground, start a cairn on top of it; four more on the cairn raise it, up
+     * to three courses. {@code clicked} is the block that was clicked.
+     */
+    public static boolean stack(Player player, ItemStack held, Rock rock, Level level, BlockPos clicked) {
+        BlockState state = level.getBlockState(clicked);
         boolean onCairn = state.is(FootRegistry.CAIRN.get());
-        if (!onCairn && !isLooseRock(state)) return false;
+        BlockPos pos = onCairn ? clicked : clicked.above();
+        if (!onCairn && !(level.getBlockState(pos).canBeReplaced() && level.getBlockState(pos).getFluidState().isEmpty()
+                && state.isFaceSturdy(level, clicked, Direction.UP))) return false;
         if (onCairn && state.getValue(CairnBlock.HEIGHT) >= 3) return false;
         if (!player.hasInfiniteMaterials() && held.getCount() < CairnBlock.ROCKS_PER_COURSE) return false;
         if (level instanceof ServerLevel server) {

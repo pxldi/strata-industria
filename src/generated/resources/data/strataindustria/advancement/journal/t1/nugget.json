@@ -1,5 +1,5 @@
 {
-  "parent": "strataindustria:journal/t0/loose_rock",
+  "parent": "strataindustria:journal/t0/boulder",
   "criteria": {
     "done": {
       "conditions": {

@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * The field journal (spec 3.6 and 11): a tree of goal advancements from the first loose rock onwards, which the
+ * The field journal (spec 3.6 and 11): a tree of goal advancements from the first boulder onwards, which the
  * leads notebook ({@link Leads}) reads as its leads. Goals that no vanilla trigger covers fire a named
  * {@link JournalTrigger} event.
  */

@@ -9,7 +9,7 @@
             "type": "minecraft:random_chance",
             "chance": 0.2
           },
-          "name": "strataindustria:loose_limestone"
+          "name": "strataindustria:limestone_shard"
         }
       ],
       "rolls": 1

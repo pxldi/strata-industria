@@ -53,6 +53,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.amethyst_block.hit", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.35f)));
         add(ModSounds.SHAPING_GLINT, definition().subtitle(subtitle("shaping.glint"))
                 .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.22f)));
+        // Boulders: a heavy knock with a dry crack under it, a deep break, and shards skittering off.
+        add(ModSounds.BOULDER_STRIKE, stone("boulder.strike", 0.8f, 1.0f));
+        add(ModSounds.BOULDER_CRACK, definition().subtitle(subtitle("boulder.crack"))
+                .with(sound("minecraft:block.stone.break", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f))
+                .with(sound("minecraft:block.basalt.break", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.5f)));
+        add(ModSounds.BOULDER_SPLIT, definition().subtitle(subtitle("boulder.split"))
+                .with(sound("minecraft:block.stone.break", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(1.0f))
+                .with(sound("minecraft:block.deepslate_bricks.break", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.9f)));
+        SoundDefinition shards = definition().subtitle(subtitle("boulder.shards"));
+        for (int i = 1; i <= 4; i++) shards.with(sound("minecraft:dig/gravel" + i).pitch(1.5f).volume(0.7f));
+        add(ModSounds.BOULDER_SHARDS, shards);
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 

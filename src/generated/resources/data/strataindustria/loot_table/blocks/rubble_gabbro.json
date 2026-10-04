@@ -9,7 +9,7 @@
             "type": "minecraft:random_chance",
             "chance": 0.2
           },
-          "name": "strataindustria:loose_gabbro"
+          "name": "strataindustria:gabbro_shard"
         }
       ],
       "rolls": 1

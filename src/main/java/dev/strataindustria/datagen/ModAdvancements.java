@@ -66,9 +66,9 @@ final class ModAdvancements extends AdvancementSubProvider {
         StructureData.places(output, root);
 
         // Tier 0: stone
-        AdvancementHolder looseRock = goal(root, "t0/loose_rock", ModItems.LOOSE_ROCK.values().iterator().next().get(),
-                InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.LOOSE_ROCKS)));
-        AdvancementHolder knap = goal(looseRock, "t0/knap", ModItems.STONE_AXE_HEAD.get(), JournalTrigger.TriggerInstance.of(Journal.KNAP));
+        AdvancementHolder boulder = goal(root, "t0/boulder", ModItems.ROCK_SHARD.values().iterator().next().get(),
+                InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.ROCK_SHARDS)));
+        AdvancementHolder knap = goal(boulder, "t0/knap", ModItems.STONE_AXE_HEAD.get(), JournalTrigger.TriggerInstance.of(Journal.KNAP));
         AdvancementHolder stoneAxe = goal(knap, "t0/stone_axe", ModItems.STONE_AXE.get(), has(ModItems.STONE_AXE.get()));
         AdvancementHolder log = goal(stoneAxe, "t0/log", Items.OAK_LOG,
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ItemTags.LOGS)));
@@ -86,7 +86,7 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder charcoal = goal(fire, "t1/charcoal", Items.CHARCOAL, has(Items.CHARCOAL));
         AdvancementHolder forge = goal(charcoal, "t1/forge", ModItems.FORGE.get(),
                 ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.FORGE.get()));
-        goal(looseRock, "t1/nugget", ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get(),
+        goal(boulder, "t1/nugget", ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get(),
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.SMALL_ORES)));
         AdvancementHolder crucible = goal(kiln, "t1/crucible", ModItems.CRUCIBLE.get(),
                 InventoryChangeTrigger.TriggerInstance.hasItems(ModItems.CRUCIBLE.get(), ModItems.INGOT_MOLD.get()));

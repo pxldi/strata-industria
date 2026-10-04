@@ -32,7 +32,7 @@ final class FlintStrikeGameTests {
         FakePlayer player = new FakePlayer(helper.getLevel(), new GameProfile(UUID.randomUUID(), "striker"));
         player.setPos(helper.absoluteVec(new Vec3(2.5, 1.0, 3.5)));
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.FLINT, 3));
-        if (rock) player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModItems.LOOSE_ROCK.get(Rock.values()[0]).get()));
+        if (rock) player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(ModItems.ROCK_SHARD.get(Rock.values()[0]).get()));
         return player;
     }
 

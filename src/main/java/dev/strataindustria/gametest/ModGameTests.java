@@ -95,6 +95,7 @@ public final class ModGameTests {
         FellingGameTests.register(TESTS);
         FlintStrikeGameTests.register(TESTS);
         FirePitFiringGameTests.register(TESTS);
+        BoulderGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
         TESTS.put("smithing_shapes", ModGameTests::smithingShapes);
         TESTS.put("item_heat", ModGameTests::itemHeat);

@@ -25,7 +25,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 /**
- * Lights a fire by striking flint on a rock (redesign L9). Flint in one hand, a loose rock in the other,
+ * Lights a fire by striking flint on a rock (redesign L9). Flint in one hand, a rock shard in the other,
  * use on anything {@link Ignitable}. Each strike throws sparks, rings a little higher than the last and
  * leaves a thread of smoke; the third catches. Nothing is spent and a strike never fails: the tinder only
  * forgets the sparks after a long pause.
@@ -52,7 +52,7 @@ public final class FlintStrike {
     }
 
     public static boolean isRock(ItemStack stack) {
-        return stack.is(ModTags.Items.LOOSE_ROCKS);
+        return stack.is(ModTags.Items.ROCK_SHARDS);
     }
 
     /** How many strikes the player has put into the block at {@code pos} so far. */

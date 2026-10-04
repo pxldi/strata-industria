@@ -75,13 +75,14 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             tag(stoneLike).addTag(ModTags.Blocks.ROCKS);
         }
 
-        var looseRocks = tag(ModTags.Blocks.LOOSE_ROCKS);
+        var boulders = tag(ModTags.Blocks.BOULDERS);
         var cobbled = tag(Tags.Blocks.COBBLESTONES);
         var pickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
         var ores = tag(Tags.Blocks.ORES);
         var needsCopper = tag(ModTags.Blocks.NEEDS_COPPER_TOOL);
         for (Rock rock : Rock.values()) {
-            looseRocks.add(ModBlocks.LOOSE_ROCK.get(rock).getKey());
+            boulders.add(ModBlocks.BOULDER.get(rock).getKey());
+            pickaxe.add(ModBlocks.BOULDER.get(rock).getKey());
             cobbled.add(ModBlocks.COBBLED_ROCK.get(rock).getKey());
             pickaxe.add(ModBlocks.COBBLED_ROCK.get(rock).getKey());
             for (OreMineral mineral : OreMineral.inRockValues()) {

@@ -70,18 +70,14 @@ final class ModRecipeProvider extends RecipeProvider {
     @Override
     protected void buildRecipes() {
         for (Rock rock : Rock.values()) {
-            var loose = ModItems.LOOSE_ROCK.get(rock).get();
+            var shard = ModItems.ROCK_SHARD.get(rock).get();
             var cobbled = ModItems.COBBLED_ROCK.get(rock).get();
             shaped(RecipeCategory.BUILDING_BLOCKS, cobbled)
                     .pattern("RR")
                     .pattern("RR")
-                    .define('R', loose)
-                    .unlockedBy("has_loose_rock", has(loose))
+                    .define('R', shard)
+                    .unlockedBy("has_rock_shard", has(shard))
                     .save(output, key("cobbled_" + rock.id()));
-            shapeless(RecipeCategory.MISC, loose, 4)
-                    .requires(cobbled)
-                    .unlockedBy("has_cobbled_rock", has(cobbled))
-                    .save(output, key("loose_" + rock.id() + "_from_cobbled"));
         }
 
         knapping();
@@ -122,9 +118,9 @@ final class ModRecipeProvider extends RecipeProvider {
         knap(ModItems.STONE_HAMMER_HEAD.get(), "#####", "#####", "..#..", ".....", ".....");
         knap(ModItems.STONE_SPEAR_HEAD.get(), "..#..", ".###.", ".###.", "..#..", "..#..");
         knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
-        // Spec 10.1: a round stone with a hole, worth four loose rocks.
+        // Spec 10.1: a round stone with a hole, worth four rock shards.
         int quernstone = GridPattern.parse(List.of(".###.", "#####", "##.##", "#####", ".###.")).getOrThrow();
-        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, 6, quernstone,
+        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.ROCK_SHARDS), 4, 6, quernstone,
                 new ItemStackTemplate(ModItems.QUERNSTONE.get())), null);
     }
 
@@ -886,8 +882,8 @@ final class ModRecipeProvider extends RecipeProvider {
 
         // Spec 9.4: flux from the quern, welding, and the iron anvil.
         grind("flux_from_sand", Ingredient.of(Items.SAND), ModItems.FLUX.get(), 2);
-        grind("flux_from_limestone", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
-        grind("flux_from_marble", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
+        grind("flux_from_limestone", Ingredient.of(ModItems.ROCK_SHARD.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
+        grind("flux_from_marble", Ingredient.of(ModItems.ROCK_SHARD.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
         output.accept(key("welding/wrought_iron_double_ingot"), new WeldingRecipe(Ingredient.of(Items.IRON_INGOT),
                 Ingredient.of(Items.IRON_INGOT), new ItemStackTemplate(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get())), null);
         // Two anvils: the iron anvil is built straight from ingots, so it needs no welding to get started. It

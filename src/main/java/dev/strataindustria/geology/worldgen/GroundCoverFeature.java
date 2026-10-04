@@ -4,14 +4,11 @@ import com.mojang.serialization.MapCodec;
 import dev.strataindustria.Config;
 import dev.strataindustria.geology.GeologyContext;
 import dev.strataindustria.geology.OreMineral;
-import dev.strataindustria.geology.Rock;
-import dev.strataindustria.geology.StrataSampler;
 import dev.strataindustria.geology.VeinCells;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.util.Noise;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -23,8 +20,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 /**
- * Surface pass: ore indicators above shallow veins (worldgen spec 6.1), loose rocks of the local top
- * rock, flint and fallen sticks (6.2). Only writes inside the current chunk.
+ * Surface pass: ore indicators above shallow veins (worldgen spec 6.1) and boulders of the local top rock
+ * (redesign R1, {@link BoulderPlacement}). Only writes inside the current chunk.
  */
 public record GroundCoverFeature() implements Feature {
     public static final GroundCoverFeature INSTANCE = new GroundCoverFeature();
@@ -42,8 +39,7 @@ public record GroundCoverFeature() implements Feature {
         int minX = (origin.getX() >> 4) << 4, minZ = (origin.getZ() >> 4) << 4;
         placeIndicators(level, ctx, minX, minZ);
         dev.strataindustria.flora.IndicatorPlants.generate(level, ctx, minX, minZ);
-        placeLooseRocks(level, ctx, random, minX, minZ);
-        placeSticks(level, random, minX, minZ);
+        BoulderPlacement.place(level, ctx, random, minX, minZ);
         return true;
     }
 
@@ -64,32 +60,6 @@ public record GroundCoverFeature() implements Feature {
                 OreMineral mineral = vein.type().pickMineral(Noise.unit(Noise.hash(h, 3)));
                 placeOnSurface(level, x, z, ModBlocks.SMALL_ORES.get(mineral).get().defaultBlockState());
             }
-        }
-    }
-
-    private static void placeLooseRocks(WorldGenLevel level, GeologyContext ctx, RandomSource random, int minX, int minZ) {
-        StrataSampler sampler = ctx.sampler();
-        int count = 6 + random.nextInt(7);
-        for (int i = 0; i < count; i++) {
-            int x = minX + random.nextInt(16), z = minZ + random.nextInt(16);
-            int surface = level.getHeight(Heightmap.Types.OCEAN_FLOOR, x, z);
-            Rock rock = sampler.column(x, z, surface).province().top();
-            placeOnSurface(level, x, z, ModBlocks.LOOSE_ROCK.get(rock).get().defaultBlockState());
-            float flintChance = rock == Rock.LIMESTONE ? 0.25f : 0.08f;
-            if (random.nextFloat() < flintChance) {
-                int fx = minX + random.nextInt(16), fz = minZ + random.nextInt(16);
-                placeOnSurface(level, fx, fz, ModBlocks.LOOSE_FLINT.get().defaultBlockState());
-            }
-        }
-    }
-
-    private static void placeSticks(WorldGenLevel level, RandomSource random, int minX, int minZ) {
-        BlockPos centre = new BlockPos(minX + 8, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, minX + 8, minZ + 8), minZ + 8);
-        boolean forest = level.getBiome(centre).is(BiomeTags.IS_FOREST) || level.getBiome(centre).is(BiomeTags.IS_TAIGA)
-                || level.getBiome(centre).is(BiomeTags.IS_JUNGLE);
-        int count = forest ? 4 : (random.nextInt(3) == 0 ? 1 : 0);
-        for (int i = 0; i < count; i++) {
-            placeOnSurface(level, minX + random.nextInt(16), minZ + random.nextInt(16), ModBlocks.LOOSE_STICK.get().defaultBlockState());
         }
     }
 
