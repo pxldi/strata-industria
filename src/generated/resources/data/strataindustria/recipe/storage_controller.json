@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "H": "strataindustria:lv_machine_hull",
+    "X": "minecraft:chest"
+  },
+  "pattern": [
+    " X ",
+    "CHC",
+    " X "
+  ],
+  "result": {
+    "id": "strataindustria:storage_controller"
+  }
+}

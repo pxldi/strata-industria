@@ -16,4 +16,12 @@ public interface FluidPort {
      * (0 for anything but steam), and returns how much it took, or would take when simulating.
      */
     int fill(Direction side, Fluid fluid, int amount, float pressure, boolean simulate);
+
+    /**
+     * Like {@link #fill} for a push that knows how hot the fluid is, in degrees C. Most ports do not care;
+     * a port that passes fluid on (the fluid filter) must hold it to its own temperature rating.
+     */
+    default int fillHot(Direction side, Fluid fluid, int amount, float pressure, float temperature, boolean simulate) {
+        return fill(side, fluid, amount, pressure, simulate);
+    }
 }

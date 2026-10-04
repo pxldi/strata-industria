@@ -1,0 +1,26 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "strataindustria:block/fluid_filter",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "strataindustria:block/fluid_filter",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/fluid_filter"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/fluid_filter"
+    },
+    "facing=up": {
+      "model": "strataindustria:block/fluid_filter",
+      "x": 90
+    },
+    "facing=west": {
+      "model": "strataindustria:block/fluid_filter",
+      "y": 90
+    }
+  }
+}

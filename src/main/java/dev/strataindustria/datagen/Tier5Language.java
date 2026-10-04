@@ -52,6 +52,7 @@ final class Tier5Language {
         lang.accept("item." + id + ".ceramic_insulator", "Ceramic Insulator");
         lang.accept("item." + id + ".acsr_conductor", "ACSR Conductor");
         lang.accept(id + ".soaking_barrel.fluid.creosote", "Creosote");
+        LogisticsData.language(lang);
         String span = id + ".span.";
         lang.accept(span + "started", "Span started. Use the conductor on a second insulator");
         lang.accept(span + "joined", "Span strung (%s conductors used)");
@@ -150,6 +151,7 @@ final class Tier5Language {
         lang.accept(machine + "mode_cable_lv", "Mode: LV cable (2 wire and 1 rubber make 3)");
         lang.accept(machine + "mode_cable_mv", "Mode: MV cable (2 wire and 2 rubber make 3)");
         lang.accept(machine + "mode_pipe", "Mode: fluid pipe (1 plate makes 4)");
+        lang.accept(machine + "mode_item_pipe", "Mode: item pipe (1 brass ingot and 1 glass make 8)");
         lang.accept(machine + "mode_gear", "Mode: gears (one ingot makes one)");
 
         // Spec 6.5: diagnostics and status lines.

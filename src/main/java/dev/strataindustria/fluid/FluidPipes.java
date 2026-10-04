@@ -88,6 +88,18 @@ public final class FluidPipes {
         return new Network(pipes, ports, gauges, maxTemperature, throughput, start);
     }
 
+    /** How much of {@code amount} mB the network's ports would take right now, without moving any. */
+    public static int room(Level level, Network network, Fluid fluid, int amount, float temperature, float pressure) {
+        if (network.isEmpty() || amount <= 0 || temperature > network.maxTemperature()) return 0;
+        amount = Math.min(amount, network.throughput());
+        int total = 0;
+        for (Endpoint e : network.ports()) {
+            if (level.getBlockEntity(e.pos()) instanceof FluidPort port) total += Math.max(0, port.fillHot(e.side(), fluid, amount, pressure, temperature, true));
+            if (total >= amount) return amount;
+        }
+        return total;
+    }
+
     /**
      * Pushes up to {@code amount} mB into the network, split evenly among the ports that take it. Fluid
      * hotter than the network's weakest pipe is refused, with red dust at the pipe by the source.
@@ -111,7 +123,7 @@ public final class FluidPipes {
             Endpoint e = ports.get(i);
             if (level.getBlockEntity(e.pos()) instanceof FluidPort port) {
                 handlers[i] = port;
-                room[i] = Math.max(0, port.fill(e.side(), fluid, amount, pressure, true));
+                room[i] = Math.max(0, port.fillHot(e.side(), fluid, amount, pressure, temperature, true));
             }
         }
         // Even split: ports that want less than their share give the rest to the others.
@@ -134,7 +146,7 @@ public final class FluidPipes {
         }
         int moved = 0;
         for (int i = 0; i < n; i++) {
-            if (give[i] > 0 && handlers[i] != null) moved += handlers[i].fill(ports.get(i).side(), fluid, give[i], pressure, false);
+            if (give[i] > 0 && handlers[i] != null) moved += handlers[i].fillHot(ports.get(i).side(), fluid, give[i], pressure, temperature, false);
         }
         if (moved > 0) {
             for (BlockPos pipe : network.gauges()) {

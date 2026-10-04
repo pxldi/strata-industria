@@ -216,6 +216,11 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 Tier5Blocks.TREATED_LOG, Tier5Blocks.UTILITY_POLE, Tier5Blocks.POLE_INSULATOR, Tier5Blocks.LIQUID_FUEL_BURNER, Tier5Blocks.ELECTRIC_PUMP, Tier5Blocks.EXTRUDER)) {
             dropSelf(block.get());
         }
+        for (var block : java.util.List.of(dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE, dev.strataindustria.logistics.Tier5Logistics.PIPE_EXTRACTOR,
+                dev.strataindustria.logistics.Tier5Logistics.FAST_PIPE_EXTRACTOR, dev.strataindustria.logistics.Tier5Logistics.STORAGE_CONTROLLER,
+                dev.strataindustria.logistics.Tier5Logistics.FLUID_FILTER)) {
+            dropSelf(block.get());
+        }
         // Spec 9.5: an upgraded machine drops with machine_tier = mv so it places back as MV.
         for (var holder : Tier5Blocks.upgradable()) {
             Block block = holder.get();

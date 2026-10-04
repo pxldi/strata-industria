@@ -1,0 +1,79 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "pipe": "strataindustria:block/item_pipe_core",
+    "arm": "strataindustria:block/item_pipe_arm",
+    "particle": "strataindustria:block/item_pipe_core"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        5,
+        5
+      ],
+      "to": [
+        11,
+        11,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "south": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "east": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "west": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "up": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        },
+        "down": {
+          "uv": [
+            4,
+            8,
+            12,
+            16
+          ],
+          "texture": "#pipe"
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:translucent"
+}

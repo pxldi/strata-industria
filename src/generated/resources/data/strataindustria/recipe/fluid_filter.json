@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:bronze_fluid_pipe",
+    "strataindustria:filter"
+  ],
+  "result": {
+    "id": "strataindustria:fluid_filter"
+  }
+}

@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.journal.JournalContent;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
+import dev.strataindustria.logistics.Tier5Logistics;
 import dev.strataindustria.registry.Tier5Sounds;
 import dev.strataindustria.registry.Tier6Sounds;
 import dev.strataindustria.structure.StructureContent;
@@ -438,6 +439,15 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
 
     // Tier 5 spec 23.6: electric sounds, built from vanilla samples.
     private void tier5() {
+        add(Tier5Logistics.PIPE_EXTRACT, definition().subtitle(subtitle("block.item_pipe.extract"))
+                .with(sound("minecraft:block.dispenser.launch", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.2f))
+                .with(sound("minecraft:block.dispenser.launch", SoundDefinition.SoundType.EVENT).pitch(1.65f).volume(0.18f)));
+        add(Tier5Logistics.CONTROLLER_OPEN, definition().subtitle(subtitle("block.storage_controller.open"))
+                .with(sound("minecraft:block.note_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.6f)));
+        add(Tier5Logistics.CONTROLLER_CLOSE, definition().subtitle(subtitle("block.storage_controller.close"))
+                .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f)));
+        add(Tier5Logistics.CONTROLLER_STORE, definition().subtitle(subtitle("block.storage_controller.store"))
+                .with(sound("minecraft:ui.button.click", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.25f)));
         add(Tier5Sounds.ELECTRIC_OVERVOLTAGE, definition().subtitle(subtitle("electric.overvoltage"))
                 .with(sound("minecraft:entity.lightning_bolt.impact", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.3f))
                 .with(sound("minecraft:entity.lightning_bolt.impact", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));
