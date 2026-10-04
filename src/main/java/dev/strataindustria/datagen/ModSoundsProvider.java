@@ -537,6 +537,39 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         return definition;
     }
 
+    /** The telegraph (outposts spec 9.1): brass and wood clicks, a sounder that clacks down and ticks up, chalk on slate. */
+    private void telegraphSounds(SoundDefinition.SoundType event) {
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.KEY_DOWN, definition().subtitle(subtitle("telegraph.key"))
+                .with(sound("minecraft:block.lever.click", event).pitch(1.7f).volume(0.6f))
+                .with(sound("minecraft:block.wooden_button.click_on", event).pitch(1.4f).volume(0.5f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(2.0f).volume(0.25f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.KEY_UP, definition().subtitle(subtitle("telegraph.key_up"))
+                .with(sound("minecraft:block.wooden_button.click_off", event).pitch(1.5f).volume(0.5f))
+                .with(sound("minecraft:block.lever.click", event).pitch(1.3f).volume(0.3f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.SOUNDER_CLACK, definition().subtitle(subtitle("telegraph.sounder"))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.55f).volume(0.7f))
+                .with(sound("minecraft:block.wooden_trapdoor.close", event).pitch(1.6f).volume(0.6f))
+                .with(sound("minecraft:block.note_block.hat", event).pitch(1.0f).volume(0.35f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.SOUNDER_LIFT, definition().subtitle(subtitle("telegraph.sounder_lift"))
+                .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.9f).volume(0.35f))
+                .with(sound("minecraft:block.wooden_button.click_off", event).pitch(1.9f).volume(0.3f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.WIRE_STRUNG, definition().subtitle(subtitle("telegraph.wire_strung"))
+                .with(sound("minecraft:item.lead.tied", event).pitch(1.4f).volume(0.8f))
+                .with(sound("minecraft:block.tripwire.attach", event).pitch(1.3f).volume(0.6f))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.8f).volume(0.3f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.WIRE_SNAP, definition().subtitle(subtitle("telegraph.wire_snap"))
+                .with(sound("minecraft:item.lead.break", event).pitch(1.2f).volume(0.8f))
+                .with(sound("minecraft:block.tripwire.detach", event).pitch(1.0f).volume(0.6f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.DROP_HUNG, definition().subtitle(subtitle("telegraph.drop_hung"))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.6f).volume(0.5f))
+                .with(sound("minecraft:block.tripwire.click_on", event).pitch(1.6f).volume(0.5f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.LINE_OPEN, definition().subtitle(subtitle("telegraph.line_open"))
+                .with(sound("minecraft:block.note_block.bell", event).pitch(1.7f).volume(0.5f))
+                .with(sound("minecraft:block.note_block.chime", event).pitch(1.2f).volume(0.4f))
+                .with(sound("minecraft:block.lever.click", event).pitch(0.9f).volume(0.4f)));
+        add(dev.strataindustria.transport.telegraph.TelegraphRegistry.CHALK, brush("dispatch_board.update", 1.5f, 0.5f));
+    }
+
     private static String subtitle(String name) {
         return "subtitles." + StrataIndustria.MOD_ID + "." + name;
     }
@@ -823,6 +856,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.chain.place", event).pitch(0.9f).volume(0.5f))
                 .with(sound("minecraft:entity.item.pickup", event).pitch(0.8f).volume(0.4f))
                 .with(sound("minecraft:block.barrel.close", event).pitch(1.2f).volume(0.3f)));
+        telegraphSounds(event);
         add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
                 .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
                 .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))

@@ -41,6 +41,8 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
     private final Supplier<ItemStack> segment = RotorRenderer.rotorStack("acsr_segment");
     /** The same piece glowing a dull orange, drawn when the line is at its limit (uniqueness 7.1). */
     private final Supplier<ItemStack> hotSegment = RotorRenderer.rotorStack("acsr_segment_hot");
+    /** The thin dark wire of the telegraph (outposts spec 9.1), hung from a second clamp just under the power spans. */
+    private final Supplier<ItemStack> wireSegment = RotorRenderer.rotorStack("telegraph_segment");
 
     public PoleInsulatorRenderer(BlockEntityRendererProvider.Context context) {
         this.itemModelResolver = context.itemModelResolver();
@@ -69,6 +71,17 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
         }
         state.start = from.subtract(pos.getX(), pos.getY(), pos.getZ());
         state.strain = insulator.strain();
+        state.wireEnds.clear();
+        Vec3 wireFrom = PoleInsulatorBlockEntity.wireTip(pos, insulator.getBlockState());
+        for (BlockPos other : insulator.wires()) {
+            if (other.asLong() < pos.asLong()) continue;
+            BlockState otherState = level.getBlockState(other);
+            if (!(otherState.getBlock() instanceof PoleInsulatorBlock)) continue;
+            state.wireEnds.add(PoleInsulatorBlockEntity.wireTip(other, otherState).subtract(wireFrom));
+        }
+        state.wireStart = wireFrom.subtract(pos.getX(), pos.getY(), pos.getZ());
+        state.wire.clear();
+        if (!state.wireEnds.isEmpty()) itemModelResolver.updateForTopItem(state.wire, wireSegment.get(), ItemDisplayContext.NONE, level, null, 0);
         state.piece.clear();
         if (!state.ends.isEmpty()) {
             ItemStack stack = state.strain >= 3 ? hotSegment.get() : segment.get();
@@ -78,18 +91,23 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
 
     @Override
     public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
-        if (state.ends.isEmpty() || state.piece.isEmpty()) return;
         // A loaded line hangs lower; at its limit it also glows, which shows at night.
         double sag = SAG * (1.0 + 0.5 * state.strain);
         int light = state.strain >= 3 ? LightCoordsUtil.FULL_BRIGHT : state.lightCoords;
-        for (Vec3 span : state.ends) {
+        if (!state.piece.isEmpty()) draw(state.piece, state.ends, state.start, sag, light, pose, collector);
+        // Telegraph wire is light and slack, and hangs a little deeper than the heavy spans.
+        if (!state.wire.isEmpty()) draw(state.wire, state.wireEnds, state.wireStart, SAG * 1.6, state.lightCoords, pose, collector);
+    }
+
+    private static void draw(ItemStackRenderState model, List<Vec3> spans, Vec3 start, double sag, int light, PoseStack pose, SubmitNodeCollector collector) {
+        for (Vec3 span : spans) {
             double length = span.length();
             if (length < 1.0e-3) continue;
             int pieces = Math.max(2, (int) Math.ceil(length * 1.5));
-            Vec3 previous = state.start;
+            Vec3 previous = start;
             for (int i = 1; i <= pieces; i++) {
                 double t = i / (double) pieces;
-                Vec3 next = state.start.add(span.x * t, span.y * t - 4 * sag * length * t * (1 - t), span.z * t);
+                Vec3 next = start.add(span.x * t, span.y * t - 4 * sag * length * t * (1 - t), span.z * t);
                 Vec3 along = next.subtract(previous);
                 double piece = along.length();
                 if (piece > 1.0e-4) {
@@ -100,7 +118,7 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
                     pose.translate(mid.x, mid.y, mid.z);
                     pose.mulPose(new Matrix4f().rotation(facing));
                     pose.scale(1.0f, 1.0f, (float) piece);
-                    state.piece.submit(pose, collector, light, OverlayTexture.NO_OVERLAY, 0);
+                    model.submit(pose, collector, light, OverlayTexture.NO_OVERLAY, 0);
                     pose.popPose();
                 }
                 previous = next;
@@ -115,7 +133,10 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
 
     public static final class State extends BlockEntityRenderState {
         final ItemStackRenderState piece = new ItemStackRenderState();
+        final ItemStackRenderState wire = new ItemStackRenderState();
         final List<Vec3> ends = new ArrayList<>();
+        final List<Vec3> wireEnds = new ArrayList<>();
+        Vec3 wireStart = Vec3.ZERO;
         BlockPos origin = BlockPos.ZERO;
         int strain;
         Vec3 start = Vec3.ZERO;

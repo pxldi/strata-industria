@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/power_line",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "telegraph_call"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.telegraph.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:telegraph_key"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.telegraph"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

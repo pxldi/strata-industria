@@ -105,6 +105,15 @@ public class PoleInsulatorBlock extends BaseEntityBlock {
         return ElectricNetworks.report(level, pos, player) ? InteractionResult.SUCCESS : InteractionResult.PASS;
     }
 
+    /** A key, sounder or board standing near without a pole takes this one for its drop wire (outposts spec 9.1). */
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
+        super.onPlace(state, level, pos, oldState, movedByPiston);
+        if (level instanceof net.minecraft.server.level.ServerLevel server && !oldState.is(state.getBlock())) {
+            dev.strataindustria.transport.telegraph.TelegraphLine.insulatorPlaced(server, pos);
+        }
+    }
+
     /** A line at its limit throws the odd faint spark off the clamp (uniqueness 7.1). */
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
