@@ -43,6 +43,7 @@ final class Tier4GameTests {
         tests.put("tier4_alloy_rules", Tier4GameTests::alloyRules);
         tests.put("tier4_coke_oven", Tier4GameTests::cokeOven);
         tests.put("tier4_crucible_steel", Tier4GameTests::crucibleSteel);
+        tests.put("tier4_zinc_and_brass", Tier4GameTests::zincAndBrass);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -177,6 +178,65 @@ final class Tier4GameTests {
         helper.assertTrue(cast != null && cast.total() == 100, "the mold should hold 100 units, got " + cast);
         helper.assertValueEqual(CastMoldItem.castMetal(cast), Metal.STEEL, "cast metal");
         helper.succeed();
+    }
+
+    // Spec 5.3, 4.2, 7 and 23: crushed sphalerite roasts to calcine in a forge slot; 3 calcine with 2 coke
+    // dust does not fully reduce and says so; a third dust finishes it and the spare carbon burns off;
+    // two copper ingots in the zinc make brass.
+    private static void zincAndBrass(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos forgePos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(forgePos, ModBlocks.FORGE.get().defaultBlockState(), Block.UPDATE_ALL);
+        ForgeBlockEntity forge = (ForgeBlockEntity) level.getBlockEntity(forgePos);
+        forge.setItem(ForgeBlockEntity.FUEL_SLOT, new ItemStack(Items.CHARCOAL, 16));
+        BlockState forgeState = level.getBlockState(forgePos);
+        helper.assertTrue(((ForgeBlock) forgeState.getBlock()).ignite(level, forgePos, forgeState), "the forge should light");
+        for (int tick = 0; tick < 4000 && forge.temperature() < 1300; tick++) {
+            ForgeBlockEntity.serverTick(level, forgePos, level.getBlockState(forgePos), forge);
+        }
+        helper.assertTrue(forge.temperature() >= 1300, "a charcoal forge should pass 1300 °C, got " + forge.temperature());
+
+        ItemStack crushed = new ItemStack(ModItems.crushedOre(OreMineral.SPHALERITE, OreGrade.NORMAL), 2);
+        forge.setItem(ForgeBlockEntity.FIRST_HEAT_SLOT, crushed);
+        long now = level.getGameTime();
+        for (int step = 0; step < 400 && !forge.getItem(ForgeBlockEntity.FIRST_HEAT_SLOT).is(Tier4Items.zincCalcine(OreGrade.NORMAL)); step++) {
+            now += 10;
+            forge.heatItems(level, now);
+        }
+        ItemStack calcine = forge.getItem(ForgeBlockEntity.FIRST_HEAT_SLOT);
+        helper.assertTrue(calcine.is(Tier4Items.zincCalcine(OreGrade.NORMAL)) && calcine.getCount() == 2,
+                "two crushed sphalerite should roast to two zinc calcine, got " + calcine);
+
+        BlockPos cruciblePos = forgePos.above();
+        level.setBlock(cruciblePos, ModBlocks.CRUCIBLE.get().defaultBlockState(), Block.UPDATE_ALL);
+        CrucibleBlockEntity crucible = (CrucibleBlockEntity) level.getBlockEntity(cruciblePos);
+        helper.assertTrue(CrucibleBlockEntity.accepts(calcine, false), "a clay crucible takes calcine");
+        crucible.setItem(0, new ItemStack(Tier4Items.zincCalcine(OreGrade.NORMAL), 3));
+        crucible.setItem(1, new ItemStack(Tier4Items.COKE_DUST.get(), 2));
+        heat(level, forgePos, forge, cruciblePos, crucible, () -> crucible.data().get(CrucibleBlockEntity.DATA_STATUS)
+                == dev.strataindustria.metal.CrucibleStatus.CALCINE_SHORT.ordinal());
+        helper.assertValueEqual(crucible.getItem(0).getCount(), 1, "calcine left waiting for carbon (needs 12, has 10)");
+        helper.assertValueEqual(crucible.melt().units().getOrDefault(Metal.ZINC, 0), 70, "zinc from two reduced calcine");
+        helper.assertValueEqual(crucible.melt().units().getOrDefault(Metal.CARBON, 0), 2, "carbon kept for the last calcine");
+
+        crucible.setItem(1, new ItemStack(Tier4Items.COKE_DUST.get()));
+        heat(level, forgePos, forge, cruciblePos, crucible, () -> crucible.getItem(0).isEmpty() && crucible.getItem(1).isEmpty()
+                && !crucible.melt().units().containsKey(Metal.CARBON));
+        helper.assertValueEqual(crucible.melt().total(), 105, "zinc from three normal calcine, spare carbon burned off");
+        helper.assertValueEqual(crucible.result().orElse(null), Metal.ZINC, "calcine and dust pour zinc");
+
+        crucible.setItem(0, new ItemStack(Items.COPPER_INGOT, 2));
+        heat(level, forgePos, forge, cruciblePos, crucible, () -> crucible.getItem(0).isEmpty() && crucible.isMolten());
+        helper.assertValueEqual(crucible.result().orElse(null), Metal.BRASS, "105 zinc + 200 copper");
+        helper.succeed();
+    }
+
+    private static void heat(ServerLevel level, BlockPos forgePos, ForgeBlockEntity forge, BlockPos cruciblePos, CrucibleBlockEntity crucible,
+            java.util.function.BooleanSupplier done) {
+        for (int tick = 0; tick < 20000 && !done.getAsBoolean(); tick++) {
+            ForgeBlockEntity.serverTick(level, forgePos, level.getBlockState(forgePos), forge);
+            CrucibleBlockEntity.serverTick(level, cruciblePos, level.getBlockState(cruciblePos), crucible);
+        }
     }
 
     private static void run(ServerLevel level, BlockPos pos, CokeOvenBlockEntity oven, int ticks) {

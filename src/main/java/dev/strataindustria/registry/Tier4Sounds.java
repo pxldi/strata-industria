@@ -15,6 +15,13 @@ public final class Tier4Sounds {
     /** Spare carbon flares off a melt with no iron to hold it. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CARBON_BURN = register("crucible.carbon_burn");
 
+    /** Hiss and sulfurous fizz of ore roasting in a forge slot. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ROASTING_SIZZLE = register("roasting.sizzle");
+    /** A roasted piece settles into chalky calcine. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ROASTING_DONE = register("roasting.done");
+    /** Calcine gives up its zinc to the carbon in a melt. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CALCINE_REDUCE = register("crucible.calcine_reduce");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

@@ -2,6 +2,7 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.ceramics.RefractoryCrucibleBlock;
 import dev.strataindustria.coking.CokeOvenBlock;
+import dev.strataindustria.smithing.AnvilBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -49,6 +50,15 @@ public final class Tier4Blocks {
             p -> new StairBlock(TREATED_PLANKS.get().defaultBlockState(), p), Tier4Blocks::treated);
     public static final DeferredBlock<FenceBlock> TREATED_FENCE = ModBlocks.BLOCKS.registerBlock("treated_fence", FenceBlock::new,
             p -> treated(p).forceSolidOn());
+
+    /** Tier 4 spec 14.4: the steel anvil, anvil tier 5 and the tier 4 exit item. */
+    public static final DeferredBlock<AnvilBlock> STEEL_ANVIL = ModBlocks.BLOCKS.registerBlock("steel_anvil", p -> new AnvilBlock(5, false, p),
+            p -> p.mapColor(MapColor.METAL)
+                    .strength(5.0f, 1200.0f)
+                    .sound(SoundType.ANVIL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.IMMOVEABLE));
 
     private static Block.Properties cokeOven(Block.Properties p) {
         return p.mapColor(MapColor.TERRACOTTA_BROWN)

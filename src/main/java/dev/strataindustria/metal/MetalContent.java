@@ -28,6 +28,8 @@ public final class MetalContent {
     public static final int RAW_VANILLA_UNITS = 28;
     public static final int BLOOMERY_SLAG_UNITS = 10;
     public static final int CARBON_DUST_UNITS = 5;
+    /** Tier 4 spec 4.4: zinc calcine gives up its zinc to carbon at this heat. */
+    public static final int CALCINE_REDUCTION = 950;
 
     private static Map<Item, Melt> fixed;
 
@@ -67,6 +69,13 @@ public final class MetalContent {
             // Tier 4 spec 4.2: charcoal and coke dust carry carbon into an iron melt.
             map.put(dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS, 0));
             map.put(dev.strataindustria.registry.Tier4Items.COKE_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS, 0));
+            // Tier 4 spec 4.4: roasted sphalerite carries its full crushed value of zinc.
+            for (OreGrade grade : OreGrade.values()) {
+                int units = OreMineral.SPHALERITE.crushedUnits(grade);
+                map.put(dev.strataindustria.registry.Tier4Items.zincCalcine(grade), new Melt(Map.of(Metal.ZINC, units), units * grade.quality()));
+            }
+            map.put(dev.strataindustria.registry.Tier4Items.SMALL_ZINC_CALCINE.get(),
+                    new Melt(Map.of(Metal.ZINC, OreMineral.SMALL_ORE_UNITS), 0));
             // Tier 3 spec 5.4: bloomery slag still holds some iron.
             map.put(ModItems.BLOOMERY_SLAG.get(), Melt.of(Metal.WROUGHT_IRON, BLOOMERY_SLAG_UNITS, 0));
             // Spec 4.2: vanilla raw ores from loot count as raw normal ore.
@@ -103,6 +112,17 @@ public final class MetalContent {
         Quality quality = stack.get(ModDataComponents.QUALITY.get());
         if (quality != null) melt = new Melt(melt.units(), melt.total() * quality.material());
         return Optional.of(melt);
+    }
+
+    /** Roasted zinc ore, which needs carbon in the melt before it will give up its zinc (tier 4 spec 4.2). */
+    public static boolean isCalcine(ItemStack stack) {
+        return stack.is(dev.strataindustria.registry.Tier4Items.SMALL_ZINC_CALCINE.get())
+                || dev.strataindustria.registry.Tier4Items.ZINC_CALCINES.values().stream().anyMatch(c -> stack.is(c.get()));
+    }
+
+    /** Carbon a calcine piece takes from the melt: a tenth of its zinc, rounded up. */
+    public static int carbonFor(Melt calcine) {
+        return (calcine.units().getOrDefault(Metal.ZINC, 0) + 9) / 10;
     }
 
     public static boolean hasMetal(ItemStack stack) {
