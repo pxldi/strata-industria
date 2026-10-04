@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.LargeVesselItem;
 import dev.strataindustria.ceramics.MoldType;
@@ -103,6 +104,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FIRE_BRICK_SLAB = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_BRICK_SLAB);
     public static final DeferredItem<BlockItem> FIRE_BRICK_STAIRS = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_BRICK_STAIRS);
     public static final DeferredItem<BlockItem> FIRE_BRICK_WALL = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_BRICK_WALL);
+    public static final DeferredItem<BlockItem> BLOOMERY = ITEMS.registerSimpleBlockItem(ModBlocks.BLOOMERY);
+    /** Spec 5.4: a spongy lump of iron and slag, straight from the bloomery. */
+    public static final DeferredItem<Item> RAW_BLOOM = ITEMS.registerSimpleItem("raw_bloom", p -> p.stacksTo(1));
+    public static final DeferredItem<Item> BLOOMERY_SLAG = ITEMS.registerSimpleItem("bloomery_slag");
     // Tier 3 deposits (spec 4.3).
     public static final DeferredItem<Item> LIGNITE = ITEMS.registerSimpleItem("lignite");
     public static final DeferredItem<BlockItem> LIGNITE_SEAM = ITEMS.registerSimpleBlockItem(ModBlocks.LIGNITE_SEAM);

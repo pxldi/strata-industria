@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/bloomery",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:raw_bloom"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.bloom.hint"
+    },
+    "icon": {
+      "id": "strataindustria:raw_bloom"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.bloom"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

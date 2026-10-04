@@ -120,6 +120,13 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "anvil.hit", "Hammer rings");
         add(subtitles + "prospect", "Pick taps rock");
         add(subtitles + "journal.open", "Pages turn");
+        add(subtitles + "bloomery.light", "Bloomery catches");
+        add(subtitles + "bloomery.roar", "Bloomery roars");
+        add(subtitles + "bloomery.charge", "Bloomery charged");
+        add(subtitles + "bloomery.done", "Bloom settles");
+        add(subtitles + "bloomery.extract", "Bloom pulled out");
+        add(subtitles + "raw_bloom.hit", "Bloom thuds");
+        add(subtitles + "wrought_iron.hit", "Iron rings");
         add(subtitles + "anvil.done", "Piece finished");
         add(subtitles + "anvil.dress", "Stone dressed");
         add(subtitles + "quern.load", "Quern loaded");
@@ -201,6 +208,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "hitCooling", "Cooling per hit on iron");
         add(config + "heat", "Item Heat");
         add(config + "burnPlayer", "Hot items burn bare hands");
+        add(config + "bloomery", "Bloomery");
+        add(config + "runTicks", "Bloomery run time");
         add(config + "journal", "Field Journal");
         add(config + "giveOnJoin", "Give a journal on first join");
     }
@@ -231,6 +240,34 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".ore.fire_clay", "fire clay");
         add(id + ".prospect.rich", ", rich ore nearby");
         add(id + ".crucible.no_iron", "Iron does not melt this hot");
+
+        // Spec 5: the bloomery.
+        addBlock(ModBlocks.BLOOMERY, "Bloomery");
+        addItem(ModItems.RAW_BLOOM, "Raw Bloom");
+        addItem(ModItems.BLOOMERY_SLAG, "Bloomery Slag");
+        String bloomery = id + ".bloomery.";
+        add("container." + id + ".bloomery", "Bloomery");
+        add(bloomery + "status.incomplete", "Structure incomplete");
+        add(bloomery + "status.empty", "Empty");
+        add(bloomery + "status.charged", "Charged, ready to light");
+        add(bloomery + "status.needs_charcoal", "Needs %s more charcoal");
+        add(bloomery + "status.heating", "Heating (%s °C)");
+        add(bloomery + "status.too_cool", "Too cool: needs 1200 °C");
+        add(bloomery + "status.burning", "Burning (%s%%)");
+        add(bloomery + "status.ready", "Bloom ready: use a pickaxe");
+        add(bloomery + "problem.brick", "Needs fire bricks");
+        add(bloomery + "problem.air", "Needs to be open");
+        add(bloomery + "at", "at %s, %s, %s");
+        add(bloomery + "hint", "Bricks around and under the chamber.");
+        add(bloomery + "charge", "Ore %s/%s, charcoal %s/%s");
+        add(bloomery + "draught", "Chimney %s, bellows %s: %s °C");
+        add(bloomery + "yield", "Yield %s%%, %s blooms");
+        add(bloomery + "no_yield", "Too cool for a bloom");
+        add(bloomery + "not_iron", "Only iron-bearing items go in a bloomery");
+        add(bloomery + "lignite", "Lignite burns too cool for a bloomery");
+        add(bloomery + "busy", "Not while it burns or holds a bloom");
+        add(bloomery + "full", "The bloomery is full");
+        add(bloomery + "bloom_units", "%s units of iron");
     }
 
     /** Spec 11: the field journal's goals and hints. */
@@ -291,8 +328,26 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.prospectors_pick.hint", "Strike rock with a prospector's pick to learn what ore lies nearby.");
         add(journal + "t2.bronze_anvil", "Bronze Anvil");
         add(journal + "t2.bronze_anvil.hint", "Build a bronze anvil, the last tool of the bronze age.");
-        add(journal + "t3.iron", "Tier 3: Iron");
-        add(journal + "t3.iron.hint", "Bronze cannot melt iron. You will need a bloomery.");
+        add(journal + "t3.fire_clay", "Tier 3: Iron");
+        add(journal + "t3.fire_clay.hint", "Bronze cannot melt iron. You will need a bloomery, and it is built of fire bricks. "
+                + "Dig fire clay from the pale beds near the surface in shale and slate.");
+        add(journal + "t3.fire_brick", "Fire Brick");
+        add(journal + "t3.fire_brick.hint", "Form fire clay into bricks and fire them in a pit kiln.");
+        add(journal + "t3.iron_ore", "Iron Ore");
+        add(journal + "t3.iron_ore.hint", "Iron hides in shale and slate, under swamps, and deep in dark igneous rock. "
+                + "Your prospector's pick can find it.");
+        add(journal + "t3.bloomery", "Bloomery");
+        add(journal + "t3.bloomery.hint", "A bloomery is a chimney of fire bricks with a door in front. Two levels are enough to start.");
+        add(journal + "t3.bloom", "Iron Bloom");
+        add(journal + "t3.bloom.hint", "Charge the bloomery with iron ore and charcoal, light it, and wait for the bloom.");
+        add(journal + "t3.refine", "Wrought Iron");
+        add(journal + "t3.refine.hint", "Hammer a hot bloom on a bronze anvil to squeeze out the slag.");
+        add(journal + "t3.iron_pickaxe", "Iron Pickaxe");
+        add(journal + "t3.iron_pickaxe.hint", "Smith a wrought iron pickaxe head and fit it to a handle.");
+        add(journal + "t3.bucket", "Bucket");
+        add(journal + "t3.bucket.hint", "Wrought iron is finally enough for a bucket.");
+        add(journal + "t3.furnace", "Furnace");
+        add(journal + "t3.furnace.hint", "Eight fire bricks make a furnace.");
     }
 
     /** Spec 9: anvils, the smithing screen, and tongs. */

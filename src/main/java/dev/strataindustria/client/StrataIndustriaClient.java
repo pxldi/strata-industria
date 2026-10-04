@@ -6,6 +6,7 @@ import dev.strataindustria.client.render.PitKilnRenderer;
 import dev.strataindustria.client.render.QuernRenderer;
 import dev.strataindustria.client.render.AnvilRenderer;
 import dev.strataindustria.client.screen.AnvilScreen;
+import dev.strataindustria.client.screen.BloomeryScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
@@ -44,6 +45,7 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
         event.register(ModMenus.ANVIL.get(), AnvilScreen::new);
+        event.register(ModMenus.BLOOMERY.get(), BloomeryScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

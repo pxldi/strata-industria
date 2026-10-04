@@ -3,6 +3,10 @@ package dev.strataindustria.smithing;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.strataindustria.bloomery.BloomeryBlockEntity;
+import dev.strataindustria.metal.Melt;
+import dev.strataindustria.metal.MetalContent;
+import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModRecipes;
 import java.util.List;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,6 +14,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
@@ -57,6 +62,11 @@ public record AnvilRecipe(Ingredient ingredient, int count, ItemStackTemplate re
 
     @Override
     public ItemStack assemble(SingleRecipeInput input) {
+        // Bloom refining (tier 3 spec 9.3): a full bloom gives the ingot, a partial one a nugget per 10 units.
+        Melt bloom = input.item().get(ModDataComponents.BLOOM_CONTENTS.get());
+        if (bloom != null && bloom.total() < BloomeryBlockEntity.BLOOM_UNITS) {
+            return new ItemStack(Items.IRON_NUGGET, Math.max(1, bloom.total() / MetalContent.NUGGET_UNITS));
+        }
         return result.create();
     }
 

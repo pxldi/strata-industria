@@ -65,6 +65,17 @@ public final class ModSounds {
     /** A stick held in the flames catches as a torch. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_TORCH = register("fire_pit.torch");
 
+    /** Tier 3 spec 20.6: the bloomery catching, roaring, taking a charge, finishing and giving up a bloom. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOMERY_LIGHT = register("bloomery.light");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOMERY_ROAR = register("bloomery.roar");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOMERY_CHARGE = register("bloomery.charge");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOMERY_DONE = register("bloomery.done");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOOMERY_EXTRACT = register("bloomery.extract");
+    /** A hammer on a raw bloom: a dull thud as the slag squeezes out. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> RAW_BLOOM_HIT = register("raw_bloom.hit");
+    /** A hammer on wrought iron: heavier and lower than bronze. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> WROUGHT_IRON_HIT = register("wrought_iron.hit");
+
     /** Pages of the field journal turning. */
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");
 

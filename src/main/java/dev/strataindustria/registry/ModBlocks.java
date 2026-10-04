@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.bloomery.BloomeryBlock;
 import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.smithing.AnvilBlock;
 import dev.strataindustria.StrataIndustria;
@@ -138,6 +139,10 @@ public final class ModBlocks {
             p -> new StairBlock(FIRE_BRICKS.get().defaultBlockState(), p), ModBlocks::fireBrick);
     public static final DeferredBlock<WallBlock> FIRE_BRICK_WALL = BLOCKS.registerBlock("fire_brick_wall", WallBlock::new,
             p -> fireBrick(p).forceSolidOn());
+
+    /** Bloomery controller (spec 5.1): a fire brick block with a door. Light 13 while it burns. */
+    public static final DeferredBlock<BloomeryBlock> BLOOMERY = BLOCKS.registerBlock("bloomery", BloomeryBlock::new,
+            p -> fireBrick(p).lightLevel(state -> state.getValue(BloomeryBlock.LIT) ? 13 : 0));
 
     // Tier 3 spec 4.3: deposits that are a single block, whatever the rock around them.
     public static final DeferredBlock<Block> LIGNITE_SEAM = BLOCKS.registerSimpleBlock("lignite_seam", p -> p

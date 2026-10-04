@@ -181,6 +181,19 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- bloomery
+    static {
+        BUILDER.comment("The bloomery.").push("bloomery");
+    }
+
+    public static final ModConfigSpec.IntValue BLOOMERY_BURN_TICKS = BUILDER
+            .comment("Ticks a bloomery run takes at 1200 °C or hotter, before bellows shorten it.")
+            .defineInRange("runTicks", 12000, 200, 240000);
+
+    static {
+        BUILDER.pop();
+    }
+
     // ---------------------------------------------------------------- journal
     static {
         BUILDER.comment("The field journal.").push("journal");

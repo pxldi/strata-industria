@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t3/iron_ore",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "bloomery_built"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.bloomery.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:bloomery"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.bloomery"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
