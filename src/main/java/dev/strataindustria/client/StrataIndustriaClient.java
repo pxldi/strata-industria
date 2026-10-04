@@ -110,6 +110,9 @@ public final class StrataIndustriaClient {
         // Tier 4 spec 21.4: the blower's fan turns behind its grille.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.BLOWER.get(), context -> new RotorRenderer<>(context,
                 "blower_fan", state -> state.getValue(dev.strataindustria.ironworks.BlowerBlock.FACING), 0));
+        // Tier 4 spec 21.4: the fluid level behind a tank's glass.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.FLUID_TANK.get(),
+                dev.strataindustria.client.render.FluidTankRenderer::new);
         // Tier 4 spec 21.4: the steam hammer's ram drops with each blow.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.STEAM_HAMMER.get(),
                 dev.strataindustria.client.render.SteamHammerRenderer::new);

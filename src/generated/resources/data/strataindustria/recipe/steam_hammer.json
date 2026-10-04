@@ -6,7 +6,7 @@
     "I": "strataindustria:wrought_iron_plate",
     "P": "strataindustria:steel_plate",
     "R": "strataindustria:steel_rod",
-    "V": "strataindustria:bronze_fluid_pipe"
+    "V": "strataindustria:valve"
   },
   "pattern": [
     "PVP",

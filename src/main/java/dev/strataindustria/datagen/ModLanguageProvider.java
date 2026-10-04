@@ -410,6 +410,14 @@ final class ModLanguageProvider extends LanguageProvider {
         add(boiler + "water", "Water %s / %s mB");
         add(boiler + "steam", "Steam %s / %s mB");
         add(boiler + "integrity", "Integrity %s%%");
+        addBlock(Tier4Blocks.VALVE, "Valve");
+        add(id + ".valve.held_shut", "Opened, but a redstone signal holds it shut");
+        addBlock(Tier4Blocks.FLUID_TANK, "Fluid Tank");
+        add(id + ".fluid_tank.empty", "Empty, holds %s mB (%s tanks)");
+        add(id + ".fluid_tank.holds", "%s / %s mB of %s (%s tanks)");
+        add(subtitles + "valve.open", "Valve opens");
+        add(subtitles + "valve.close", "Valve shuts");
+        add(subtitles + "fluid_tank.fill", "Tank fills");
         String gauge = id + ".pressure_gauge.";
         add(gauge + "empty", "Nothing flowing");
         add(gauge + "pressure", "Steam at %s bar");

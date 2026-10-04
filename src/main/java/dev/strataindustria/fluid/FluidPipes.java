@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import org.jspecify.annotations.Nullable;
 
@@ -67,7 +68,9 @@ public final class FluidPipes {
         int maxTemperature = Integer.MAX_VALUE, throughput = Integer.MAX_VALUE;
         while (!queue.isEmpty() && pipes.size() < MAX_PIPES) {
             BlockPos pos = queue.poll();
-            if (!(level.getBlockState(pos).getBlock() instanceof FluidPipeBlock pipe)) continue;
+            BlockState state = level.getBlockState(pos);
+            // A shut valve is a wall: nothing passes it.
+            if (!(state.getBlock() instanceof FluidPipeBlock pipe) || !ValveBlock.passes(state)) continue;
             pipes.add(pos);
             if (pipe instanceof PressureGaugeBlock) gauges.add(pos);
             maxTemperature = Math.min(maxTemperature, pipe.maxTemperature());

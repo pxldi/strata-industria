@@ -3,6 +3,7 @@
     "strataindustria:copper_fluid_pipe",
     "strataindustria:bronze_fluid_pipe",
     "strataindustria:steel_fluid_pipe",
-    "strataindustria:pressure_gauge"
+    "strataindustria:pressure_gauge",
+    "strataindustria:valve"
   ]
 }

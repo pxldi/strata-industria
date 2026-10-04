@@ -539,6 +539,21 @@ final class ModRecipeProvider extends RecipeProvider {
                 .requires(ModItems.RODS.get(Metal.BRASS).get())
                 .unlockedBy("has_brass_plate", has(brassPlate))
                 .save(output, key("pressure_gauge"));
+        // Spec 9.3: the valve and the fluid tank.
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.VALVE.get())
+                .requires(Tier4Items.BRONZE_FLUID_PIPE.get())
+                .requires(brassPlate)
+                .requires(ModItems.RODS.get(Metal.BRASS).get())
+                .unlockedBy("has_brass_plate", has(brassPlate))
+                .save(output, key("valve"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.FLUID_TANK.get())
+                .pattern("PGP")
+                .pattern("G G")
+                .pattern("PGP")
+                .define('P', ModItems.PLATES.get(Metal.COPPER).get())
+                .define('G', Items.GLASS)
+                .unlockedBy("has_copper_fluid_pipe", has(Tier4Items.COPPER_FLUID_PIPE.get()))
+                .save(output, key("fluid_tank"));
         shaped(RecipeCategory.DECORATIONS, Tier4Items.BRONZE_BOILER.get())
                 .pattern("PPP")
                 .pattern("PGP")
@@ -567,13 +582,13 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
                 .unlockedBy("has_bronze_boiler", has(Tier4Items.BRONZE_BOILER.get()))
                 .save(output, key("steam_engine"));
-        // Spec 10.5: the steam hammer, around a wrought iron anvil. The valve is a bronze pipe until valves exist.
+        // Spec 10.5: the steam hammer, around a wrought iron anvil.
         shaped(RecipeCategory.REDSTONE, Tier4Items.STEAM_HAMMER.get())
                 .pattern("PVP")
                 .pattern(" R ")
                 .pattern("IAI")
                 .define('P', ModItems.PLATES.get(Metal.STEEL).get())
-                .define('V', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .define('V', Tier4Items.VALVE.get())
                 .define('R', ModItems.RODS.get(Metal.STEEL).get())
                 .define('I', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
                 .define('A', ModItems.WROUGHT_IRON_ANVIL.get())
