@@ -273,6 +273,41 @@ public final class AutomationTextures {
         return im;
     }
 
+    /** The diverter's brass lip along the open side and its end posts: a plate with a bevelled top edge and rivets. */
+    static BufferedImage diverterSide() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(13250);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = r.nextInt(7) == 0 ? 4 : 3;
+                if (y == 0) step = 5;
+                else if (y == 1) step = 4;
+                else if (y == 15) step = 1;
+                else if (y == 14) step = 2;
+                px(im, x, y, brass(step));
+            }
+        for (int x : new int[] {2, 7, 13}) { px(im, x, 4, brass(5)); px(im, x + 1, 4, brass(2)); px(im, x, 5, brass(1)); }
+        return im;
+    }
+
+    /** The paddle's bar: brass with a lit top edge and a dark underside; the hinge pin is the dark pixel at the top. */
+    static BufferedImage diverterPaddle() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(13260);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = r.nextInt(6) == 0 ? 2 : 3;
+                if (x == 0 || y == 0) step = 5;
+                if (x == 1 && y > 0) step = 4;
+                if (x == 15 || y == 15) step = 1;
+                px(im, x, y, brass(step));
+            }
+        px(im, 0, 1, iron(1));
+        px(im, 1, 1, iron(3));
+        for (int y = 3; y < 11; y += 2) px(im, 1, y, brass(2));
+        return im;
+    }
+
     public static void main(String[] args) throws IOException {
         TextureGen.save("block/inserter_base_side", baseSide());
         TextureGen.save("block/inserter_base_top", baseTop());
@@ -288,6 +323,8 @@ public final class AutomationTextures {
         TextureGen.save("block/conveyor_belt_side", beltSide());
         TextureGen.save("block/conveyor_belt_bed", beltBed());
         TextureGen.save("block/conveyor_belt_hub", beltHub());
+        TextureGen.save("block/belt_diverter_side", diverterSide());
+        TextureGen.save("block/belt_diverter_paddle", diverterPaddle());
         System.out.println("automation textures written");
     }
 }

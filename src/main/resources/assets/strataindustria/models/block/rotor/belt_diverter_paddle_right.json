@@ -1,0 +1,76 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/belt_diverter_paddle",
+    "paddle": "strataindustria:block/belt_diverter_paddle"
+  },
+  "elements": [
+    {
+      "from": [
+        1.75,
+        5.1,
+        2.5
+      ],
+      "to": [
+        3.25,
+        6.6,
+        13.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#paddle",
+          "uv": [
+            0,
+            0,
+            1.5,
+            11
+          ]
+        },
+        "down": {
+          "texture": "#paddle",
+          "uv": [
+            0,
+            0,
+            1.5,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#paddle",
+          "uv": [
+            0,
+            0,
+            11,
+            1.5
+          ]
+        },
+        "west": {
+          "texture": "#paddle",
+          "uv": [
+            0,
+            0,
+            11,
+            1.5
+          ]
+        },
+        "north": {
+          "texture": "#paddle",
+          "uv": [
+            0,
+            0,
+            1.5,
+            1.5
+          ]
+        },
+        "south": {
+          "texture": "#paddle",
+          "uv": [
+            0,
+            0,
+            1.5,
+            1.5
+          ]
+        }
+      }
+    }
+  ]
+}

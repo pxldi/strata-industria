@@ -93,6 +93,7 @@ final class Tier4GameTests {
         tests.put("tier4_conveyor_line", Tier4GameTests::conveyorLine);
         tests.put("tier4_conveyor_slopes", Tier4GameTests::conveyorSlopes);
         tests.put("tier4_conveyor_queue", Tier4GameTests::conveyorQueue);
+        tests.put("tier4_belt_diverter", Tier4GameTests::beltDiverter);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -1323,6 +1324,70 @@ final class Tier4GameTests {
         for (int i = 0; i < hopper.getContainerSize(); i++) total += hopper.getItem(i).getCount();
         helper.assertTrue(total >= 1, "with the end open the line runs on into the hopper");
         helper.assertTrue(!belt.canPlaceItem(0, new ItemStack(Items.STICK)) || belt.entryFree(), "and the back clears again");
+        helper.succeed();
+    }
+
+    // Belt diverter (spec 13.2): in a line of belts, coal matching its filter is pushed off the right side into
+    // a chest and iron nuggets carry on to the end chest; with no filter nothing is diverted; sneak-placing
+    // pushes left; a diverter with nothing at its side lets matches pass; a full side holds the item.
+    private static void beltDiverter(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(3, 1, 5));
+        level.setBlock(base, Tier4Blocks.IRON_GEARBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos b0 = base.east(), div = b0.north(), b2 = div.north(), endPos = b2.north(), rightPos = div.east(), leftPos = div.west();
+        var facing = dev.strataindustria.automation.ConveyorBlock.FACING;
+        level.setBlock(b0, Tier4Blocks.CONVEYOR_BELT.get().defaultBlockState().setValue(facing, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(div, Tier4Blocks.BELT_DIVERTER.get().defaultBlockState().setValue(facing, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(b2, Tier4Blocks.CONVEYOR_BELT.get().defaultBlockState().setValue(facing, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(endPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        drive(level, base.west(), Direction.EAST, b0);
+        List<BlockPos> line = List.of(b0, div, b2);
+        var diverter = (dev.strataindustria.automation.BeltDiverterBlockEntity) level.getBlockEntity(div);
+        var first = (dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(b0);
+        var end = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(endPos);
+        helper.assertTrue(((dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(b2)).kinetic().rpm() >= 32, "the diverter joins the drive of the line");
+        helper.assertValueEqual(dev.strataindustria.automation.BeltDiverterBlock.pushSide(level.getBlockState(div)), Direction.EAST, "it pushes right of travel");
+
+        ItemStack filter = new ItemStack(Tier4Items.FILTER.get());
+        filter.set(dev.strataindustria.registry.Tier4DataComponents.FILTER_CONTENTS.get(),
+                dev.strataindustria.automation.FilterContents.EMPTY.withEntry(0, Items.COAL));
+        helper.assertTrue(!diverter.diverts(new ItemStack(Items.COAL)), "with no filter nothing is diverted");
+        diverter.setFilter(filter);
+        helper.assertTrue(level.getBlockState(div).getValue(dev.strataindustria.automation.BeltDiverterBlock.FILTERED), "a fitted filter shows its tag");
+
+        // Nothing at the side yet: the coal passes.
+        first.accept(new ItemStack(Items.COAL));
+        beltTicks(level, line, 50);
+        helper.assertTrue(end.getItem(0).is(Items.COAL), "with nothing at its side a matching item passes");
+        end.clearContent();
+
+        level.setBlock(rightPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        var side = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(rightPos);
+        first.accept(new ItemStack(Items.COAL));
+        beltTicks(level, line, 20);
+        first.accept(new ItemStack(Items.IRON_NUGGET));
+        beltTicks(level, line, 60);
+        helper.assertTrue(side.getItem(0).is(Items.COAL) && side.getItem(0).getCount() == 1, "the coal is pushed into the chest at its right");
+        helper.assertTrue(end.getItem(0).is(Items.IRON_NUGGET) && end.getItem(1).isEmpty(), "the nugget carries on to the end alone");
+        helper.assertTrue(diverter.lastPush() > 0, "the push is stamped for the paddle");
+
+        // A full side chest holds the coal on the diverter and stops what is behind it.
+        for (int i = 0; i < side.getContainerSize(); i++) side.setItem(i, new ItemStack(Items.STICK, 64));
+        first.accept(new ItemStack(Items.COAL));
+        beltTicks(level, line, 60);
+        helper.assertTrue(diverter.hasCargo() && end.getItem(1).isEmpty(), "a full side holds the matching item");
+        side.clearContent();
+        beltTicks(level, line, 10);
+        helper.assertTrue(side.getItem(0).is(Items.COAL), "and it goes as soon as there is room");
+
+        // Sneak-placed diverters push left.
+        level.setBlock(div, level.getBlockState(div).setValue(dev.strataindustria.automation.BeltDiverterBlock.LEFT, true), Block.UPDATE_ALL);
+        level.setBlock(leftPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        var leftChest = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(leftPos);
+        first.accept(new ItemStack(Items.COAL));
+        beltTicks(level, line, 60);
+        helper.assertTrue(leftChest.getItem(0).is(Items.COAL), "a left diverter pushes to its left");
+        helper.assertTrue(diverter.setFilter(ItemStack.EMPTY) == filter, "the filter comes back out");
         helper.succeed();
     }
 

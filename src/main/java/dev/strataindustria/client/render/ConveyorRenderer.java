@@ -2,6 +2,8 @@ package dev.strataindustria.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import dev.strataindustria.automation.BeltDiverterBlock;
+import dev.strataindustria.automation.BeltDiverterBlockEntity;
 import dev.strataindustria.automation.ConveyorBlock;
 import dev.strataindustria.automation.ConveyorBlockEntity;
 import java.util.function.Supplier;
@@ -23,13 +25,16 @@ import org.jspecify.annotations.Nullable;
 /**
  * A conveyor belt's moving top (tier 4 spec 13.1, 21): the leather surface is one of four render-only
  * models, each with the cross ribs shifted a pixel along, picked from the network's speed so the ribs run
- * at the speed of the items and stand still when the belt stops. The items it carries ride on top.
+ * at the speed of the items and stand still when the belt stops. The items it carries ride on top. A belt
+ * diverter (spec 13.2) also gets its brass paddle, which flicks across the belt when it pushes an item off.
  */
 public class ConveyorRenderer implements BlockEntityRenderer<ConveyorBlockEntity, ConveyorRenderer.State> {
     private static final int FRAMES = 4;
     private final ItemModelResolver itemModelResolver;
     /** Top models by slope then frame. */
     private final Supplier<ItemStack>[][] tops;
+    private final Supplier<ItemStack> paddleRight = RotorRenderer.rotorStack("belt_diverter_paddle_right");
+    private final Supplier<ItemStack> paddleLeft = RotorRenderer.rotorStack("belt_diverter_paddle_left");
 
     @SuppressWarnings("unchecked")
     public ConveyorRenderer(BlockEntityRendererProvider.Context context) {
@@ -58,6 +63,16 @@ public class ConveyorRenderer implements BlockEntityRenderer<ConveyorBlockEntity
         state.frame = belt.speed() > 0.0f ? (int) Math.floorMod((long) Math.floor(travelled), (long) FRAMES) : 0;
         state.top.clear();
         itemModelResolver.updateForTopItem(state.top, tops[state.slope.ordinal()][state.frame].get(), ItemDisplayContext.NONE, belt.getLevel(), null, 0);
+        state.paddle.clear();
+        state.hasPaddle = false;
+        if (belt instanceof BeltDiverterBlockEntity diverter && belt.getLevel() != null) {
+            state.hasPaddle = true;
+            state.left = blockState.getValue(BeltDiverterBlock.LEFT);
+            float t = (belt.getLevel().getGameTime() + partialTick - diverter.lastPush()) / BeltDiverterBlockEntity.FLICK_TICKS;
+            // Out across the belt and back, a quick sweep of about 85 degrees.
+            state.paddleAngle = t >= 0.0f && t <= 1.0f ? (float) (85.0 * Math.sin(Math.PI * t)) : 0.0f;
+            itemModelResolver.updateForTopItem(state.paddle, (state.left ? paddleLeft : paddleRight).get(), ItemDisplayContext.NONE, belt.getLevel(), null, 0);
+        }
         float[] at = belt.positions(partialTick);
         for (int i = 0; i < ConveyorBlockEntity.SLOTS; i++) {
             state.items[i].clear();
@@ -77,6 +92,16 @@ public class ConveyorRenderer implements BlockEntityRenderer<ConveyorBlockEntity
         pose.rotateDegrees(Axis.YP, state.yaw);
         pose.translate(-0.5, 0.0, -0.5);
         if (!state.top.isEmpty()) state.top.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+        if (state.hasPaddle && !state.paddle.isEmpty()) {
+            // The paddle hinges on the rail opposite the push side, 2.5 px in from the front; it rests along the rail and sweeps across.
+            double hingeX = state.left ? 13.5 / 16.0 : 2.5 / 16.0;
+            pose.pushPose();
+            pose.translate(hingeX, 0.0, 2.5 / 16.0);
+            pose.rotateDegrees(Axis.YP, state.left ? -state.paddleAngle : state.paddleAngle);
+            pose.translate(-hingeX, 0.0, -2.5 / 16.0);
+            state.paddle.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+            pose.popPose();
+        }
         for (int i = 0; i < ConveyorBlockEntity.SLOTS; i++) {
             if (!state.has[i] || state.items[i].isEmpty()) continue;
             float t = Math.min(state.at[i], 1.0f);
@@ -105,6 +130,9 @@ public class ConveyorRenderer implements BlockEntityRenderer<ConveyorBlockEntity
 
     public static final class State extends BlockEntityRenderState {
         final ItemStackRenderState top = new ItemStackRenderState();
+        final ItemStackRenderState paddle = new ItemStackRenderState();
+        boolean hasPaddle, left;
+        float paddleAngle;
         final ItemStackRenderState[] items = {new ItemStackRenderState(), new ItemStackRenderState(), new ItemStackRenderState(), new ItemStackRenderState()};
         final float[] at = new float[ConveyorBlockEntity.SLOTS];
         final boolean[] has = new boolean[ConveyorBlockEntity.SLOTS];

@@ -593,6 +593,13 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('G', ModItems.GEARS.get(Metal.BRASS).get())
                 .unlockedBy("has_brass_gear", has(ModItems.GEARS.get(Metal.BRASS).get()))
                 .save(output, key("conveyor_belt"));
+        // Spec 13.2: the belt diverter.
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.BELT_DIVERTER.get())
+                .requires(Tier4Items.CONVEYOR_BELT.get())
+                .requires(ModItems.GEARS.get(Metal.BRASS).get())
+                .requires(ModItems.PLATES.get(Metal.BRASS).get())
+                .unlockedBy("has_conveyor_belt", has(Tier4Items.CONVEYOR_BELT.get()))
+                .save(output, key("belt_diverter"));
         shapeless(RecipeCategory.REDSTONE, Tier4Items.FILTER.get())
                 .requires(Items.PAPER)
                 .requires(ModItems.PLATES.get(Metal.BRASS).get())

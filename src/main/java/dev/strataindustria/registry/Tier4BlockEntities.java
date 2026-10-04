@@ -86,6 +86,9 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.automation.ConveyorBlockEntity>> CONVEYOR_BELT =
             ModBlockEntities.BLOCK_ENTITIES.register("conveyor_belt", () -> new BlockEntityType<>(dev.strataindustria.automation.ConveyorBlockEntity::new,
                     Tier4Blocks.CONVEYOR_BELT.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.automation.BeltDiverterBlockEntity>> BELT_DIVERTER =
+            ModBlockEntities.BLOCK_ENTITIES.register("belt_diverter", () -> new BlockEntityType<>(dev.strataindustria.automation.BeltDiverterBlockEntity::new,
+                    Tier4Blocks.BELT_DIVERTER.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.automation.ChuteBlockEntity>> CHUTE =
             ModBlockEntities.BLOCK_ENTITIES.register("chute", () -> new BlockEntityType<>(dev.strataindustria.automation.ChuteBlockEntity::new,
                     Tier4Blocks.CHUTE.get()));

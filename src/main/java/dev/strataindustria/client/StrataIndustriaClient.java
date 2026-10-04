@@ -132,6 +132,8 @@ public final class StrataIndustriaClient {
         // Tier 4 spec 13.1: the conveyor belt's moving top and its cargo.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.CONVEYOR_BELT.get(),
                 dev.strataindustria.client.render.ConveyorRenderer::new);
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.BELT_DIVERTER.get(),
+                dev.strataindustria.client.render.ConveyorRenderer::new);
         // Tier 4 spec 13.3: what a chute holds lies in its tube.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.CHUTE.get(),
                 dev.strataindustria.client.render.ChuteRenderer::new);

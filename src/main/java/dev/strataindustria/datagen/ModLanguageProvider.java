@@ -333,6 +333,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.CHUTE, "Chute");
         addBlock(Tier4Blocks.INSERTER, "Inserter");
         addBlock(Tier4Blocks.CONVEYOR_BELT, "Conveyor Belt");
+        addBlock(Tier4Blocks.BELT_DIVERTER, "Belt Diverter");
         add(id + ".conveyor.flat", "Belt laid flat");
         add(id + ".conveyor.up", "Belt rises towards its end");
         add(id + ".conveyor.down", "Belt falls towards its end");
@@ -355,6 +356,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "chute.drop", "Chute clatters");
         add(subtitles + "block.inserter.swing", "Inserter whirrs");
         add(subtitles + "block.conveyor.run", "Conveyor rumbles");
+        add(subtitles + "block.belt_diverter.push", "Diverter flicks an item aside");
         add(subtitles + "filter.configure", "Filter set");
         addBlock(Tier4Blocks.STEEL_BOILER_SHELL, "Steel Boiler Shell");
         addBlock(Tier4Blocks.BOILER_FLUID_PORT, "Boiler Fluid Port");

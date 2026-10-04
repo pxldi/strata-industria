@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:conveyor_belt",
+    "strataindustria:brass_gear",
+    "strataindustria:brass_plate"
+  ],
+  "result": {
+    "id": "strataindustria:belt_diverter"
+  }
+}

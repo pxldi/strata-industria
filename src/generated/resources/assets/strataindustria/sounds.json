@@ -168,6 +168,29 @@
     ],
     "subtitle": "subtitles.strataindustria.block.assembler.work"
   },
+  "block.belt_diverter.push": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_button.click_on",
+        "pitch": 0.8,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_button.click_on",
+        "pitch": 0.95,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.6,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.belt_diverter.push"
+  },
   "block.bender.press": {
     "sounds": [
       {

@@ -218,6 +218,11 @@ public class ConveyorBlock extends BaseEntityBlock implements KineticBlock {
         if (level.getBlockEntity(pos) instanceof ConveyorBlockEntity belt) belt.carry(entity);
     }
 
+    /** The block entity type of this belt, for the ticker. */
+    protected BlockEntityType<? extends ConveyorBlockEntity> beltType() {
+        return Tier4BlockEntities.CONVEYOR_BELT.get();
+    }
+
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new ConveyorBlockEntity(pos, state);
@@ -225,6 +230,6 @@ public class ConveyorBlock extends BaseEntityBlock implements KineticBlock {
 
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        return createTickerHelper(type, Tier4BlockEntities.CONVEYOR_BELT.get(), ConveyorBlockEntity::tick);
+        return createTickerHelper(type, beltType(), ConveyorBlockEntity::tick);
     }
 }

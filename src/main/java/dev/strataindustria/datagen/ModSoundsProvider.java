@@ -355,6 +355,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.5f))
                 .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.45f))
                 .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.5f)));
+        add(Tier4Sounds.BELT_DIVERTER_PUSH, definition().subtitle(subtitle("block.belt_diverter.push"))
+                .with(sound("minecraft:block.wooden_button.click_on", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.6f))
+                .with(sound("minecraft:block.wooden_button.click_on", SoundDefinition.SoundType.EVENT).pitch(0.95f).volume(0.55f))
+                .with(sound("minecraft:block.chain.hit", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.25f)));
         add(Tier4Sounds.FILTER_CONFIGURE, definition().subtitle(subtitle("filter.configure"))
                 .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(1.1f))
                 .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(1.25f)));
