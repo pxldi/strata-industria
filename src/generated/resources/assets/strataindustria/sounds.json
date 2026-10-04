@@ -2253,6 +2253,46 @@
     ],
     "subtitle": "subtitles.strataindustria.gear.tick"
   },
+  "grid.buzz": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.5,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.redstone_torch.burnout",
+        "pitch": 0.5,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.4,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.grid.buzz"
+  },
+  "grid.hum": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 0.55,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 0.58,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.grid.hum"
+  },
   "hand_crank.turn": {
     "sounds": [
       {
@@ -2913,6 +2953,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.ledger.stamp"
+  },
+  "leyden_jar.strike": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.lightning_bolt.impact",
+        "pitch": 1.6,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.copper_bulb.turn_on",
+        "pitch": 0.6,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.power_select",
+        "pitch": 2.0,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.leyden_jar.strike"
   },
   "mark.cut": {
     "sounds": [
@@ -3614,6 +3677,51 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.steam_whistle.blow"
+  },
+  "stethoscope.silent": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 1.6,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.stethoscope.silent"
+  },
+  "stethoscope.steady": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.warden.heartbeat",
+        "pitch": 1.6,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 0.9,
+        "volume": 0.12
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.stethoscope.steady"
+  },
+  "stethoscope.strained": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.warden.heartbeat",
+        "pitch": 2.0,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.8,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.stethoscope.strained"
   },
   "tap.knock": {
     "sounds": [

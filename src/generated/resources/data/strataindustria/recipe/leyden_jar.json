@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "minecraft:glass_bottle",
+    "C": "strataindustria:copper_rod",
+    "P": "strataindustria:lead_plate"
+  },
+  "pattern": [
+    "C",
+    "B",
+    "P"
+  ],
+  "result": {
+    "id": "strataindustria:leyden_jar"
+  }
+}

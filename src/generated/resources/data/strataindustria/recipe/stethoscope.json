@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": "strataindustria:lead_plate",
+    "R": "strataindustria:rubber",
+    "S": "strataindustria:copper_rod"
+  },
+  "pattern": [
+    "S S",
+    "RSR",
+    " RP"
+  ],
+  "result": {
+    "id": "strataindustria:stethoscope"
+  }
+}

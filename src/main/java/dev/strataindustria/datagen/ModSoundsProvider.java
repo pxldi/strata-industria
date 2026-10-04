@@ -2,6 +2,7 @@ package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.journal.JournalContent;
+import dev.strataindustria.grid.GridSounds;
 import dev.strataindustria.listening.ListeningSounds;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
@@ -23,6 +24,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
     @Override
     public void registerSounds() {
         tier5();
+        grid();
         tier6();
         shared();
         prologue();
@@ -721,6 +723,30 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier5Sounds.TRANSFORMER_SWITCH, definition().subtitle(subtitle("block.transformer.switch"))
                 .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.9f))
                 .with(sound("minecraft:block.iron_trapdoor.close", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f)));
+    }
+
+    /** Mains hum, the stethoscope and the Leyden jars (uniqueness 2.1, 7.1, 7.3), from vanilla beacon, warden, chain and lightning samples. */
+    private void grid() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(GridSounds.MAINS_HUM, definition().subtitle(subtitle("grid.hum"))
+                .with(sound("minecraft:block.beacon.ambient", event).pitch(0.55f).volume(0.5f))
+                .with(sound("minecraft:block.beacon.ambient", event).pitch(0.58f).volume(0.45f)));
+        add(GridSounds.MAINS_BUZZ, definition().subtitle(subtitle("grid.buzz"))
+                .with(sound("minecraft:block.beacon.ambient", event).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.redstone_torch.burnout", event).pitch(0.5f).volume(0.3f))
+                .with(sound("minecraft:block.beacon.ambient", event).pitch(1.4f).volume(0.3f)));
+        add(GridSounds.LISTEN_STEADY, definition().subtitle(subtitle("stethoscope.steady"))
+                .with(sound("minecraft:entity.warden.heartbeat", event).pitch(1.6f).volume(0.5f))
+                .with(sound("minecraft:block.beacon.ambient", event).pitch(0.9f).volume(0.12f)));
+        add(GridSounds.LISTEN_STRAINED, definition().subtitle(subtitle("stethoscope.strained"))
+                .with(sound("minecraft:entity.warden.heartbeat", event).pitch(2.0f).volume(0.55f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.8f).volume(0.3f)));
+        add(GridSounds.LISTEN_SILENT, definition().subtitle(subtitle("stethoscope.silent"))
+                .with(sound("minecraft:block.lever.click", event).pitch(1.6f).volume(0.4f)));
+        add(GridSounds.LEYDEN_STRIKE, definition().subtitle(subtitle("leyden_jar.strike"))
+                .with(sound("minecraft:entity.lightning_bolt.impact", event).pitch(1.6f).volume(0.5f))
+                .with(sound("minecraft:block.copper_bulb.turn_on", event).pitch(0.6f).volume(0.7f))
+                .with(sound("minecraft:block.beacon.power_select", event).pitch(2.0f).volume(0.3f)));
     }
 
     /** The shared structure blocks (structures v2 section 5), built from vanilla wood, fire, chain and gravel sounds. */

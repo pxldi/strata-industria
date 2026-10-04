@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "charge=0": {
+      "model": "strataindustria:block/leyden_jar_0"
+    },
+    "charge=1": {
+      "model": "strataindustria:block/leyden_jar_1"
+    },
+    "charge=2": {
+      "model": "strataindustria:block/leyden_jar_2"
+    },
+    "charge=3": {
+      "model": "strataindustria:block/leyden_jar_3"
+    },
+    "charge=4": {
+      "model": "strataindustria:block/leyden_jar_4"
+    }
+  }
+}

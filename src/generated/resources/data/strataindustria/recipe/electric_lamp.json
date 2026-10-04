@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": "minecraft:glass",
+    "R": "strataindustria:rubber",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    "G",
+    "W",
+    "R"
+  ],
+  "result": {
+    "id": "strataindustria:electric_lamp"
+  }
+}

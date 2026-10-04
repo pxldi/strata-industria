@@ -100,6 +100,7 @@ final class ModRecipeProvider extends RecipeProvider {
         ironAge();
         tier4();
         new Tier5RecipeProvider(recipeContext, advancementContext).buildRecipes();
+        new GridData.Recipes(recipeContext, advancementContext).buildRecipes();
         new StructureData.CollectibleRecipes(recipeContext, advancementContext).buildRecipes();
         new SharedBlockData.Recipes(recipeContext, advancementContext).buildRecipes();
         new FootData.Recipes(recipeContext, advancementContext).buildRecipes();

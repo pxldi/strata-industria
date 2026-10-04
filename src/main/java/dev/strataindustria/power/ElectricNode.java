@@ -37,6 +37,11 @@ public interface ElectricNode {
         return List.of();
     }
 
+    /** Whether this node is somewhere the grid can be heard humming (uniqueness 7.1): pole insulators and some cables. */
+    default boolean hums() {
+        return false;
+    }
+
     /** Whether the block this node belongs to has been removed from the world. */
     default boolean removed() {
         return this instanceof BlockEntity be && be.isRemoved();

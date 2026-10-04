@@ -23,6 +23,12 @@ public class CableBlockEntity extends BlockEntity implements ElectricConductor {
         return true;
     }
 
+    /** One cable in ten hums, so a long run of cable sounds like a wire and not a swarm (uniqueness 7.1). */
+    @Override
+    public boolean hums() {
+        return Math.floorMod(worldPosition.hashCode(), 10) == 0;
+    }
+
     @Override
     public ElectricTier cableTier() {
         return getBlockState().getBlock() instanceof CableBlock cable ? cable.tier() : ElectricTier.LV;

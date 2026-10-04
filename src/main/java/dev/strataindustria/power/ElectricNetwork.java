@@ -19,7 +19,7 @@ import org.jspecify.annotations.Nullable;
 public final class ElectricNetwork {
     /** What the network did for one device on its last tick. */
     public record Report(ElectricStatus status, double requested, double drawn, double loss, double fraction) {
-        static final Report NONE = new Report(ElectricStatus.NO_SOURCE, 0, 0, 0, 0);
+        public static final Report NONE = new Report(ElectricStatus.NO_SOURCE, 0, 0, 0, 0);
     }
 
     private record Member<T extends ElectricNode>(PortKey pos, T node) {}
@@ -55,8 +55,20 @@ public final class ElectricNetwork {
     private double supply, demand, delivered, stored, storageCapacity;
     private boolean capped, wasOvervoltage;
 
+    /** Ticks between the hum of one point; points are spread over this many buckets (uniqueness 7.1). */
+    public static final int HUM_PERIOD = 40;
+    /** A jump in demand of at least this many J/t on an already busy network makes lamps dip (uniqueness 7.1). */
+    public static final double DIP_STEP = 8.0;
+    public static final int DIP_TICKS = 12;
+    private final List<List<BlockPos>> humBuckets = new ArrayList<>();
+    private final List<LoadListener> listeners = new ArrayList<>();
+    private double previousDemand = -1, smoothLoad, fraction = 1.0;
+    private int loadLevel = -1, dip;
+    private boolean strained;
+
     ElectricNetwork(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, Map<Link, Double> spans, boolean tooLarge) {
         this.keys = Collections.unmodifiableSet(nodes.keySet());
+        for (int i = 0; i < HUM_PERIOD; i++) humBuckets.add(new ArrayList<>());
         Set<BlockPos> positions = new java.util.LinkedHashSet<>();
         for (PortKey key : nodes.keySet()) positions.add(key.pos());
         this.members = Collections.unmodifiableSet(positions);
@@ -73,6 +85,8 @@ public final class ElectricNetwork {
                 if (node instanceof ElectricSource source) generators.add(new Member<>(pos, source));
                 if (node instanceof ElectricConsumer consumer) consumers.add(new Member<>(pos, consumer));
             }
+            if (node.hums()) humBuckets.get(Math.floorMod(pos.pos().hashCode(), HUM_PERIOD)).add(pos.pos());
+            if (node instanceof LoadListener listener) listeners.add(listener);
             if (node instanceof ElectricConductor cable && (weakest == null || cable.cableTier().ordinal() < weakest.ordinal())) {
                 weakest = cable.cableTier();
             }
@@ -155,6 +169,7 @@ public final class ElectricNetwork {
             for (var m : storages) reports.put(m.pos(), report);
             boolean started = status == ElectricStatus.CABLE_OVERVOLTAGE && !wasOvervoltage;
             wasOvervoltage = status == ElectricStatus.CABLE_OVERVOLTAGE;
+            settleLoad(0, false, 0);
             return started;
         }
         wasOvervoltage = false;
@@ -221,7 +236,70 @@ public final class ElectricNetwork {
             reports.put(m.pos(), new Report(status, request, ElectricShare.gross(given, loss), loss, result.fraction()));
         }
         share(liveStorage, result, storageOut, maxLoss);
+        boolean starved = result.fraction() < 0.999;
+        noteDemand(demand, supply);
+        settleLoad(supply > 0 ? Math.min(1.0, delivered / supply) : 0, starved || capped, result.fraction());
         return false;
+    }
+
+    /**
+     * Smooths the load into a level for the line visuals and tells the blocks when it changes (uniqueness 7.1). A
+     * network short of power or held back by its weakest cable counts as at its limit.
+     */
+    private void settleLoad(double load, boolean atLimit, double fraction) {
+        strained = atLimit;
+        this.fraction = fraction;
+        if (dip > 0) dip--;
+        double target = atLimit ? 1.0 : Math.min(1.0, load * 0.9);
+        smoothLoad += (target - smoothLoad) * 0.1;
+        int level = smoothLoad >= 0.85 ? 3 : smoothLoad >= 0.6 ? 2 : smoothLoad >= 0.3 ? 1 : 0;
+        if (level != loadLevel) {
+            loadLevel = level;
+            for (LoadListener listener : listeners) listener.gridLoad(level);
+        }
+    }
+
+    /** Records this tick's demand; a big jump on an already busy network makes lamps dip. A fresh network never dips on its first tick. */
+    public void noteDemand(double demand, double supply) {
+        if (previousDemand >= 0 && demand - previousDemand >= DIP_STEP && demand >= supply * 0.5) dip = DIP_TICKS;
+        previousDemand = demand;
+    }
+
+    /** Positions that hum when {@code time} falls on {@code bucket} (uniqueness 7.1). */
+    public List<BlockPos> humPoints(long time) {
+        return humBuckets.get((int) Math.floorMod(time, (long) HUM_PERIOD));
+    }
+
+    /** How much of the sources' output the consumers are taking, smoothed: 0 to 1. */
+    public double load() {
+        return smoothLoad;
+    }
+
+    /** 0 calm, 1 busy, 2 heavy, 3 at its limit. */
+    public int loadLevel() {
+        return Math.max(0, loadLevel);
+    }
+
+    /** Short of power, or held back by the weakest cable, on the last tick. */
+    public boolean strained() {
+        return strained;
+    }
+
+    /** Share of its request every consumer got on the last tick; lamps follow it. */
+    public double fraction() {
+        return fraction;
+    }
+
+    /** For a few ticks after a big jump in demand on a busy network, lamps dip. */
+    public boolean dipping() {
+        return dip > 0;
+    }
+
+    /** Every storage block on the network, for lightning and anything else that charges them directly. */
+    public List<ElectricStorage> storages() {
+        List<ElectricStorage> list = new ArrayList<>();
+        for (var m : storages) list.add(m.node());
+        return list;
     }
 
     /** Storage discharges in proportion to what each offered and charges evenly among blocks with room (spec 6.1). */
