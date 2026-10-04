@@ -1,0 +1,97 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "strataindustria:block/pressure_gauge_0"
+      },
+      "when": {
+        "reading": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/pressure_gauge_1"
+      },
+      "when": {
+        "reading": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/pressure_gauge_2"
+      },
+      "when": {
+        "reading": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/pressure_gauge_3"
+      },
+      "when": {
+        "reading": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/pressure_gauge_4"
+      },
+      "when": {
+        "reading": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/bronze_fluid_pipe_arm"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/bronze_fluid_pipe_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/bronze_fluid_pipe_arm",
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/bronze_fluid_pipe_arm",
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/bronze_fluid_pipe_arm",
+        "x": 270
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/bronze_fluid_pipe_arm",
+        "x": 90
+      },
+      "when": {
+        "down": "true"
+      }
+    }
+  ]
+}

@@ -4,6 +4,8 @@ import com.mojang.authlib.GameProfile;
 import dev.strataindustria.coking.CokeOvenBlock;
 import dev.strataindustria.coking.CokeOvenBlockEntity;
 import dev.strataindustria.coking.CokeOvenStructure;
+import dev.strataindustria.fluid.FluidPipes;
+import dev.strataindustria.fluid.PressureGaugeBlock;
 import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.forge.ForgeBlockEntity;
 import dev.strataindustria.geology.OreGrade;
@@ -27,7 +29,14 @@ import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Blocks;
+import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Items;
+import dev.strataindustria.steam.BoilerBlockEntity;
+import dev.strataindustria.steam.FireboxBlockEntity;
+import dev.strataindustria.steam.MechanicalPumpBlock;
+import dev.strataindustria.steam.MechanicalPumpBlockEntity;
+import dev.strataindustria.steam.SteamEngineBlock;
+import dev.strataindustria.steam.SteamEngineBlockEntity;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -52,6 +61,11 @@ final class Tier4GameTests {
         tests.put("tier4_crucible_steel", Tier4GameTests::crucibleSteel);
         tests.put("tier4_zinc_and_brass", Tier4GameTests::zincAndBrass);
         tests.put("tier4_iron_transmission", Tier4GameTests::ironTransmission);
+        tests.put("tier4_boiler_raises_steam", Tier4GameTests::boilerRaisesSteam);
+        tests.put("tier4_boiler_dry_firing", Tier4GameTests::boilerDryFiring);
+        tests.put("tier4_fluid_pipes", Tier4GameTests::fluidPipes);
+        tests.put("tier4_steam_engine", Tier4GameTests::steamEngine);
+        tests.put("tier4_mechanical_pump", Tier4GameTests::mechanicalPump);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -267,6 +281,212 @@ final class Tier4GameTests {
         Kinetic wooden = (Kinetic) level.getBlockEntity(axlePos);
         helper.assertValueEqual(wooden.kinetic().status(), KineticState.Status.OVERSPEED, "a wooden axle at 128 RPM");
         helper.succeed();
+    }
+
+    // Spec 8.1, 10.1, 10.2 and 10.4: a coal firebox under a full bronze boiler. The water takes
+    // 600 HU per bucket (4800 HU, 160 ticks at 30 HU/t) to warm, then makes 15 mB of steam a tick
+    // until the 4000 mB buffer is full at 4 bar, and with nothing taking steam the safety valve vents.
+    private static void boilerRaisesSteam(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        BlockPos boilerPos = fireboxPos.above();
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        firebox.setItem(0, new ItemStack(Items.COAL, 4));
+        boiler.prime(BoilerBlockEntity.WATER_CAPACITY, false);
+
+        // From cold the fire climbs 5 °C a second; the boiler takes nothing below 300 °C.
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 200);
+        helper.assertTrue(firebox.burning(), "the firebox should light its coal");
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.TOO_COOL, "boiler status on a firebox under 300 °C");
+        helper.assertValueEqual(firebox.status(), FireboxBlockEntity.Status.IDLE, "firebox status while the boiler refuses its heat");
+
+        firebox.preheat(1400.0f);
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 150);
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.HEATING, "boiler status during warm-up");
+        helper.assertValueEqual(boiler.steam(), 0, "steam during warm-up");
+        helper.assertValueEqual(firebox.taken(), 30, "HU/t the boiler takes from a coal firebox");
+
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 30);
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.RUNNING, "boiler status once warm");
+        helper.assertTrue(boiler.steam() > 0 && boiler.steam() % 15 == 0, "steam comes 15 mB a tick, got " + boiler.steam());
+
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 300);
+        helper.assertValueEqual(boiler.steam(), BoilerBlockEntity.STEAM_CAPACITY, "steam buffer when nothing takes steam");
+        helper.assertValueEqual(boiler.pressure(), BoilerBlockEntity.RATED_PRESSURE, "pressure of a full buffer");
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.VENTING, "boiler status with a full buffer");
+        helper.assertTrue(boiler.water() < BoilerBlockEntity.WATER_CAPACITY - BoilerBlockEntity.STEAM_CAPACITY,
+                "venting still boils water away, " + boiler.water() + " mB left");
+        helper.succeed();
+    }
+
+    // Spec 10.4: below 10% water with the fire lit the shell loses 1% a second; water on it then bursts
+    // to steam for 20%; a bronze plate patches 10%; at zero it cracks.
+    private static void boilerDryFiring(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        BlockPos boilerPos = fireboxPos.above();
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+        firebox.preheat(1500.0f);
+        boiler.prime(400, true);
+
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 100);
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.DRY_FIRING, "boiler status at 5% water");
+        float afterFiring = boiler.integrity();
+        helper.assertTrue(afterFiring > 94.0f && afterFiring < 96.0f, "integrity after 5 s of dry firing, got " + afterFiring);
+
+        int taken = boiler.fill(Direction.NORTH, net.minecraft.world.level.material.Fluids.WATER, 1000, 0, false);
+        helper.assertValueEqual(taken, 1000, "water a pipe can add");
+        helper.assertTrue(Math.abs(boiler.integrity() - (afterFiring - BoilerBlockEntity.BURST_DAMAGE)) < 0.01f, "integrity after the steam burst");
+        helper.assertValueEqual(boiler.fill(Direction.UP, net.minecraft.world.level.material.Fluids.WATER, 1000, 0, true), 0,
+                "the top face is the steam outlet and takes no water");
+
+        float before = boiler.integrity();
+        helper.assertTrue(boiler.repair(), "a damaged boiler takes a plate");
+        helper.assertTrue(Math.abs(boiler.integrity() - (before + BoilerBlockEntity.PLATE_REPAIR)) < 0.01f, "integrity after a plate");
+
+        boiler.prime(0, true);
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 2100);
+        helper.assertTrue(level.getBlockState(boilerPos).is(Tier4Blocks.CRACKED_BRONZE_BOILER.get()), "a boiler fired dry to zero integrity cracks");
+        helper.succeed();
+    }
+
+    // Spec 9.2: pipes carry what is pushed into them up to the slowest pipe's throughput and refuse fluid
+    // hotter than their rating; a gauge in the line shows the flow.
+    private static void fluidPipes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos source = helper.absolutePos(new BlockPos(0, 1, 1));
+        BlockPos boilerPos = source.east(4);
+        for (int i = 1; i <= 3; i++) level.setBlock(source.east(i), Tier4Blocks.COPPER_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+
+        FluidPipes.Network network = FluidPipes.find(level, source, Direction.EAST);
+        helper.assertValueEqual(network.pipes().size(), 3, "pipes in the line");
+        helper.assertValueEqual(network.ports().size(), 1, "ports the line reaches");
+        FluidPipes.Push water = FluidPipes.push(level, network, net.minecraft.world.level.material.Fluids.WATER, 500, 20.0f, 0.0f);
+        helper.assertValueEqual(water.moved(), 100, "water a copper line carries in a tick");
+        helper.assertValueEqual(boiler.water(), 100, "water in the boiler");
+
+        FluidPipes.Push hot = FluidPipes.push(level, network, Tier4Fluids.STEAM.get(), 100, 250.0f, 10.0f);
+        helper.assertTrue(hot.refused() && hot.moved() == 0, "copper pipe refuses 250 °C steam");
+
+        for (int i = 1; i <= 3; i++) level.setBlock(source.east(i), Tier4Blocks.STEEL_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(source.east(2), Tier4Blocks.PRESSURE_GAUGE.get().defaultBlockState(), Block.UPDATE_ALL);
+        network = FluidPipes.find(level, source, Direction.EAST);
+        helper.assertValueEqual(network.throughput(), 200, "a bronze-rated gauge limits a steel line");
+        water = FluidPipes.push(level, network, net.minecraft.world.level.material.Fluids.WATER, 500, 20.0f, 0.0f);
+        helper.assertValueEqual(water.moved(), 200, "water through steel pipe and the gauge");
+        helper.assertValueEqual(level.getBlockState(source.east(2)).getValue(PressureGaugeBlock.READING), 4, "gauge needle at a full flow");
+        helper.succeed();
+    }
+
+    // Spec 10.5: a warm boiler on a hot firebox feeds an engine through a copper pipe. The engine waits
+    // for 1 bar, turns at 16 RPM until the boiler reaches 2 bar, then holds 32 RPM on the boiler's 15 mB
+    // a tick; with the pipe gone it stops.
+    private static void steamEngine(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(2, 1, 1));
+        BlockPos boilerPos = fireboxPos.above();
+        BlockPos pipePos = boilerPos.above();
+        BlockPos enginePos = pipePos.south();
+        BlockPos axlePos = enginePos.south();
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pipePos, Tier4Blocks.COPPER_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(enginePos, Tier4Blocks.STEAM_ENGINE.get().defaultBlockState().setValue(SteamEngineBlock.FACING, Direction.SOUTH),
+                Block.UPDATE_ALL);
+        level.setBlock(axlePos, Tier4Blocks.IRON_AXLE.get().defaultBlockState().setValue(AxleBlock.AXIS, Direction.Axis.Z), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        SteamEngineBlockEntity engine = (SteamEngineBlockEntity) level.getBlockEntity(enginePos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+        firebox.preheat(1500.0f);
+        boiler.prime(BoilerBlockEntity.WATER_CAPACITY, true);
+
+        engine(level, fireboxPos, firebox, boilerPos, boiler, enginePos, engine, 40);
+        helper.assertValueEqual(engine.sourceSpeed(), 0.0f, "engine speed below 1 bar");
+        helper.assertTrue(boiler.steam() > 0, "the boiler builds steam while the engine waits");
+
+        engine(level, fireboxPos, firebox, boilerPos, boiler, enginePos, engine, 60);
+        helper.assertValueEqual(engine.sourceSpeed(), SteamEngineBlockEntity.HALF_SPEED, "engine speed between 1 and 2 bar");
+
+        // About 200 ticks to climb from 1 to 2 bar at half speed; a full boiler lasts some 530 ticks.
+        engine(level, fireboxPos, firebox, boilerPos, boiler, enginePos, engine, 250);
+        helper.assertValueEqual(engine.sourceSpeed(), SteamEngineBlockEntity.FULL_SPEED, "engine speed on a running boiler");
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.RUNNING, "boiler status while driving the engine");
+        helper.assertTrue(boiler.pressure() >= SteamEngineBlockEntity.HOLD_PRESSURE, "boiler holds pressure under load, got " + boiler.pressure());
+        KineticNetworks.rebuildNow(level, axlePos);
+        Kinetic axle = (Kinetic) level.getBlockEntity(axlePos);
+        helper.assertValueEqual(Math.round(axle.kinetic().rpm()), 32, "axle RPM on the engine");
+
+        level.setBlock(pipePos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        for (int i = 0; i < 20; i++) SteamEngineBlockEntity.serverTick(level, enginePos, level.getBlockState(enginePos), engine);
+        helper.assertValueEqual(engine.sourceSpeed(), 0.0f, "engine speed with its steam cut off");
+        helper.succeed();
+    }
+
+    // Spec 9.3: a cranked pump at 16 RPM lifts 25 mB a tick from the water in front of it into the pipe
+    // behind; a lone source runs dry after a bucket and is gone.
+    private static void mechanicalPump(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pumpPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        BlockPos intake = pumpPos.north();
+        BlockPos crankPos = pumpPos.west();
+        BlockPos boilerPos = pumpPos.south(2);
+        level.setBlock(pumpPos, Tier4Blocks.MECHANICAL_PUMP.get().defaultBlockState().setValue(MechanicalPumpBlock.FACING, Direction.NORTH),
+                Block.UPDATE_ALL);
+        level.setBlock(pumpPos.south(), Tier4Blocks.COPPER_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        MechanicalPumpBlockEntity pump = (MechanicalPumpBlockEntity) level.getBlockEntity(pumpPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+
+        pump(level, pumpPos, pump, 1);
+        helper.assertValueEqual(pump.status(), MechanicalPumpBlockEntity.Status.NOT_TURNING, "pump status without a shaft turning");
+
+        HandCrankBlockEntity crank = (HandCrankBlockEntity) level.getBlockEntity(crankPos);
+        crank.crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "engineer")));
+        KineticNetworks.rebuildNow(level, pumpPos);
+        pump(level, pumpPos, pump, 1);
+        helper.assertValueEqual(pump.status(), MechanicalPumpBlockEntity.Status.NO_WATER, "pump status with nothing at the intake");
+
+        level.setBlock(intake, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
+        pump(level, pumpPos, pump, 1);
+        helper.assertValueEqual(pump.status(), MechanicalPumpBlockEntity.Status.PUMPING, "pump status on a water source");
+        helper.assertValueEqual(pump.lastMoved(), MechanicalPumpBlockEntity.RATE, "mB a tick at 16 RPM");
+
+        pump(level, pumpPos, pump, 39);
+        helper.assertValueEqual(boiler.water(), MechanicalPumpBlockEntity.SOURCE_AMOUNT, "water pumped from one source");
+        helper.assertTrue(level.getFluidState(intake).isEmpty(), "a lone source is used up after a bucket");
+        helper.succeed();
+    }
+
+    private static void engine(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos boilerPos, BoilerBlockEntity boiler,
+            BlockPos enginePos, SteamEngineBlockEntity engine, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            BoilerBlockEntity.serverTick(level, boilerPos, level.getBlockState(boilerPos), boiler);
+            SteamEngineBlockEntity.serverTick(level, enginePos, level.getBlockState(enginePos), engine);
+        }
+    }
+
+    private static void pump(ServerLevel level, BlockPos pos, MechanicalPumpBlockEntity pump, int ticks) {
+        for (int i = 0; i < ticks; i++) MechanicalPumpBlockEntity.serverTick(level, pos, level.getBlockState(pos), pump);
+    }
+
+    private static void steam(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos boilerPos, BoilerBlockEntity boiler,
+            int ticks) {
+        for (int i = 0; i < ticks && level.getBlockEntity(boilerPos) == boiler; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            BoilerBlockEntity.serverTick(level, boilerPos, level.getBlockState(boilerPos), boiler);
+        }
     }
 
     private static void heat(ServerLevel level, BlockPos forgePos, ForgeBlockEntity forge, BlockPos cruciblePos, CrucibleBlockEntity crucible,

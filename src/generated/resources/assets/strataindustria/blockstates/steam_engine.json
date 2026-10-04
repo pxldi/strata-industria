@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/steam_engine",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/steam_engine"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/steam_engine",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/steam_engine",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "particle": "strataindustria:block/mechanical_pump_side",
+    "north": "strataindustria:block/mechanical_pump_front",
+    "south": "strataindustria:block/mechanical_pump_back",
+    "east": "strataindustria:block/mechanical_pump_side",
+    "west": "strataindustria:block/mechanical_pump_side",
+    "up": "strataindustria:block/mechanical_pump_top",
+    "down": "strataindustria:block/mechanical_pump_top"
+  }
+}

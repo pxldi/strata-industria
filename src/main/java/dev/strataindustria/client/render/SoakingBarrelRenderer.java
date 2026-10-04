@@ -5,6 +5,7 @@ import dev.strataindustria.tanning.SoakingBarrelBlock;
 import dev.strataindustria.tanning.SoakingBarrelBlockEntity;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -28,7 +29,7 @@ public class SoakingBarrelRenderer implements BlockEntityRenderer<SoakingBarrelB
     private static final float FLOOR = 1.0f / 16.0f, RIM = 15.0f / 16.0f;
 
     private final ItemModelResolver itemModelResolver;
-    private final Map<SoakingBarrelBlockEntity.TankFluid, ItemStack> surfaces = new EnumMap<>(SoakingBarrelBlockEntity.TankFluid.class);
+    private final Map<SoakingBarrelBlockEntity.TankFluid, Supplier<ItemStack>> surfaces = new EnumMap<>(SoakingBarrelBlockEntity.TankFluid.class);
 
     public SoakingBarrelRenderer(BlockEntityRendererProvider.Context context) {
         this.itemModelResolver = context.itemModelResolver();
@@ -48,10 +49,10 @@ public class SoakingBarrelRenderer implements BlockEntityRenderer<SoakingBarrelB
             ModelFeatureRenderer.@Nullable CrumblingOverlay crumbling) {
         BlockEntityRenderer.super.extractRenderState(barrel, state, partialTick, cameraPos, crumbling);
         state.item.clear();
-        ItemStack surface = surfaces.get(SoakingBarrelBlockEntity.TankFluid.of(barrel.fluid()));
+        Supplier<ItemStack> surface = surfaces.get(SoakingBarrelBlockEntity.TankFluid.of(barrel.fluid()));
         if (surface == null || barrel.amount() <= 0 || barrel.getBlockState().getValue(SoakingBarrelBlock.SEALED)) return;
         state.height = FLOOR + (RIM - FLOOR) * Math.min(1.0f, barrel.amount() / (float) SoakingBarrelBlockEntity.CAPACITY);
-        itemModelResolver.updateForTopItem(state.item, surface, ItemDisplayContext.NONE, barrel.getLevel(), null, 0);
+        itemModelResolver.updateForTopItem(state.item, surface.get(), ItemDisplayContext.NONE, barrel.getLevel(), null, 0);
     }
 
     @Override

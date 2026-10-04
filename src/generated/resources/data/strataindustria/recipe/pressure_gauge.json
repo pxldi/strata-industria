@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:brass_plate",
+    "strataindustria:brass_plate",
+    "minecraft:glass",
+    "strataindustria:brass_rod"
+  ],
+  "result": {
+    "id": "strataindustria:pressure_gauge"
+  }
+}

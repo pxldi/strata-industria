@@ -35,6 +35,7 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -505,6 +506,93 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.IRON_STEP_UP_GEARBOX.get()).with(ironFacing));
         itemModels.itemModelOutput.accept(Tier4Items.IRON_STEP_UP_GEARBOX.get(),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/iron_step_up_gearbox")));
+        steam(blockModels, itemModels);
+    }
+
+    // Spec 8.1, 9.2, 9.3 and 10.2: the firebox and boiler face the player; pipes join on any face.
+    private static void steam(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Block firebox = Tier4Blocks.FIREBOX.get();
+        TextureMapping cold = new TextureMapping().put(TextureSlot.FRONT, blockTexture("firebox_front"))
+                .put(TextureSlot.SIDE, blockTexture("firebox_side")).put(TextureSlot.TOP, blockTexture("firebox_top"));
+        var unlit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(firebox, cold, blockModels.modelOutput));
+        var lit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(firebox, "_lit",
+                cold.copyAndUpdate(TextureSlot.FRONT, blockTexture("firebox_front_lit")), blockModels.modelOutput));
+        var hot = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(firebox, "_lit_hot",
+                cold.copyAndUpdate(TextureSlot.FRONT, blockTexture("firebox_front_lit_hot")), blockModels.modelOutput));
+        PropertyDispatch.C3<MultiVariant, net.minecraft.core.Direction, Boolean, Boolean> fireboxState = PropertyDispatch.initial(
+                dev.strataindustria.steam.FireboxBlock.FACING, dev.strataindustria.steam.FireboxBlock.LIT, dev.strataindustria.steam.FireboxBlock.HOT);
+        for (boolean on : new boolean[] {false, true}) {
+            for (boolean white : new boolean[] {false, true}) {
+                var base = !on ? unlit : white ? hot : lit;
+                horizontal(fireboxState, on, white, base);
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(firebox).with(fireboxState));
+        itemModels.itemModelOutput.accept(Tier4Items.FIREBOX.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/firebox")));
+
+        for (var boiler : java.util.List.of(Tier4Blocks.BRONZE_BOILER, Tier4Blocks.CRACKED_BRONZE_BOILER)) {
+            String name = boiler.getId().getPath();
+            TextureMapping faces = new TextureMapping().put(TextureSlot.FRONT, blockTexture(name + "_front"))
+                    .put(TextureSlot.SIDE, blockTexture(name + "_side")).put(TextureSlot.TOP, blockTexture(name + "_top"));
+            var model = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(boiler.get(), faces, blockModels.modelOutput));
+            PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> facing = PropertyDispatch.initial(dev.strataindustria.steam.BoilerBlock.FACING);
+            facing.select(net.minecraft.core.Direction.NORTH, model);
+            facing.select(net.minecraft.core.Direction.EAST, model.with(BlockModelGenerators.Y_ROT_90));
+            facing.select(net.minecraft.core.Direction.SOUTH, model.with(BlockModelGenerators.Y_ROT_180));
+            facing.select(net.minecraft.core.Direction.WEST, model.with(BlockModelGenerators.Y_ROT_270));
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(boiler.get()).with(facing));
+            itemModels.itemModelOutput.accept(boiler.get().asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
+        }
+
+        for (var pipe : java.util.List.of(Tier4Blocks.COPPER_FLUID_PIPE, Tier4Blocks.BRONZE_FLUID_PIPE, Tier4Blocks.STEEL_FLUID_PIPE)) {
+            String name = pipe.getId().getPath();
+            MultiPartGenerator parts = MultiPartGenerator.multiPart(pipe.get())
+                    .with(BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_core")));
+            arms(parts, StrataIndustria.id("block/" + name + "_arm"));
+            blockModels.blockStateOutput.accept(parts);
+            itemModels.itemModelOutput.accept(pipe.get().asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
+        }
+        MultiPartGenerator gauge = MultiPartGenerator.multiPart(Tier4Blocks.PRESSURE_GAUGE.get());
+        for (int reading = 0; reading <= 4; reading++) {
+            gauge.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.PressureGaugeBlock.READING, reading),
+                    BlockModelGenerators.plainVariant(StrataIndustria.id("block/pressure_gauge_" + reading)));
+        }
+        arms(gauge, StrataIndustria.id("block/bronze_fluid_pipe_arm"));
+        blockModels.blockStateOutput.accept(gauge);
+        itemModels.itemModelOutput.accept(Tier4Items.PRESSURE_GAUGE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/pressure_gauge")));
+
+        // Spec 9.3 and 10.5: hand-built models facing north; the engine's flywheel is drawn by its renderer.
+        for (var machine : java.util.List.of(Tier4Blocks.MECHANICAL_PUMP, Tier4Blocks.STEAM_ENGINE)) {
+            var model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + machine.getId().getPath()));
+            PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> facing = PropertyDispatch.initial(HorizontalDirectionalBlock.FACING);
+            facing.select(net.minecraft.core.Direction.NORTH, model);
+            facing.select(net.minecraft.core.Direction.EAST, model.with(BlockModelGenerators.Y_ROT_90));
+            facing.select(net.minecraft.core.Direction.SOUTH, model.with(BlockModelGenerators.Y_ROT_180));
+            facing.select(net.minecraft.core.Direction.WEST, model.with(BlockModelGenerators.Y_ROT_270));
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(machine.get()).with(facing));
+        }
+        itemModels.itemModelOutput.accept(Tier4Items.MECHANICAL_PUMP.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/mechanical_pump")));
+        itemModels.itemModelOutput.accept(Tier4Items.STEAM_ENGINE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/steam_engine_item")));
+    }
+
+    /** A pipe arm, modelled pointing north, on each face the pipe joins. */
+    private static void arms(MultiPartGenerator parts, net.minecraft.resources.Identifier arm) {
+        var north = BlockModelGenerators.plainVariant(arm);
+        var props = dev.strataindustria.fluid.FluidPipeBlock.PROPERTIES;
+        parts.with(BlockModelGenerators.condition(props.get(net.minecraft.core.Direction.NORTH), true), north);
+        parts.with(BlockModelGenerators.condition(props.get(net.minecraft.core.Direction.EAST), true), north.with(BlockModelGenerators.Y_ROT_90));
+        parts.with(BlockModelGenerators.condition(props.get(net.minecraft.core.Direction.SOUTH), true), north.with(BlockModelGenerators.Y_ROT_180));
+        parts.with(BlockModelGenerators.condition(props.get(net.minecraft.core.Direction.WEST), true), north.with(BlockModelGenerators.Y_ROT_270));
+        parts.with(BlockModelGenerators.condition(props.get(net.minecraft.core.Direction.UP), true), north.with(BlockModelGenerators.X_ROT_270));
+        parts.with(BlockModelGenerators.condition(props.get(net.minecraft.core.Direction.DOWN), true), north.with(BlockModelGenerators.X_ROT_90));
+    }
+
+    private static <A extends Comparable<A>, B extends Comparable<B>> void horizontal(
+            PropertyDispatch.C3<MultiVariant, net.minecraft.core.Direction, A, B> dispatch, A a, B b, MultiVariant base) {
+        dispatch.select(net.minecraft.core.Direction.NORTH, a, b, base);
+        dispatch.select(net.minecraft.core.Direction.EAST, a, b, base.with(BlockModelGenerators.Y_ROT_90));
+        dispatch.select(net.minecraft.core.Direction.SOUTH, a, b, base.with(BlockModelGenerators.Y_ROT_180));
+        dispatch.select(net.minecraft.core.Direction.WEST, a, b, base.with(BlockModelGenerators.Y_ROT_270));
     }
 
     /**

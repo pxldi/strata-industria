@@ -256,6 +256,132 @@
     ],
     "subtitle": "subtitles.strataindustria.bloomery.roar"
   },
+  "boiler.crack": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.item.break",
+        "pitch": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.crack"
+  },
+  "boiler.dry_fire": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.chain.break",
+        "pitch": 0.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.dry_fire"
+  },
+  "boiler.heat": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.ambient",
+        "pitch": 0.6,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.chain.step",
+        "pitch": 0.6,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.heat"
+  },
+  "boiler.low_water": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.didgeridoo",
+        "pitch": 0.8,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.low_water"
+  },
+  "boiler.repair": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.use",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.use",
+        "pitch": 1.3,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.repair"
+  },
+  "boiler.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.lava.ambient",
+        "pitch": 0.6,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.lava.ambient",
+        "pitch": 0.5,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.8,
+        "volume": 0.15
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.run"
+  },
+  "boiler.steam_burst": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.generic.extinguish_fire",
+        "pitch": 0.5,
+        "volume": 1.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.steam_burst"
+  },
+  "boiler.vent": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.flute",
+        "pitch": 1.8,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.vent"
+  },
   "clay.finish": {
     "sounds": [
       {
@@ -496,6 +622,48 @@
     ],
     "subtitle": "subtitles.strataindustria.fire_pit.torch"
   },
+  "firebox.burn": {
+    "sounds": [
+      {
+        "name": "block/furnace/fire_crackle1",
+        "pitch": 0.85,
+        "volume": 0.8
+      },
+      {
+        "name": "block/furnace/fire_crackle2",
+        "pitch": 0.85,
+        "volume": 0.8
+      },
+      {
+        "name": "block/furnace/fire_crackle3",
+        "pitch": 0.85,
+        "volume": 0.8
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 0.7,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.firebox.burn"
+  },
+  "firebox.light": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.firecharge.use",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "item.firecharge.use",
+        "pitch": 1.1,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.firebox.light"
+  },
   "firestarter.drill": {
     "sounds": [
       {
@@ -520,6 +688,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.firestarter.drill"
+  },
+  "fluid_pipe.refuse": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.6,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.5,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fluid_pipe.refuse"
   },
   "forge.ignite": {
     "sounds": [
@@ -718,6 +903,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.knapping.rock"
+  },
+  "mechanical_pump.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.piston.extend",
+        "pitch": 0.5,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.piston.extend",
+        "pitch": 0.55,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_inside",
+        "pitch": 0.7,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.mechanical_pump.run"
   },
   "millstone.grind": {
     "sounds": [
@@ -1089,6 +1297,57 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.soaking_barrel.seal"
+  },
+  "steam_engine.chuff": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 0.65,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.3,
+        "volume": 0.25
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.5,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steam_engine.chuff"
+  },
+  "steam_engine.start": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 0.8,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steam_engine.start"
+  },
+  "steam_engine.stop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 0.6,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steam_engine.stop"
   },
   "ui.journal.place": {
     "sounds": [

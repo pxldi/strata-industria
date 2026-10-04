@@ -65,6 +65,8 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.SLUICE.get(), dev.strataindustria.client.screen.SluiceScreen::new);
         event.register(ModMenus.SOAKING_BARREL.get(), dev.strataindustria.client.screen.SoakingBarrelScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.COKE_OVEN.get(), dev.strataindustria.client.screen.CokeOvenScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.FIREBOX.get(), dev.strataindustria.client.screen.FireboxScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.BRONZE_BOILER.get(), dev.strataindustria.client.screen.BoilerScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -90,6 +92,9 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.KINETIC_DYNAMO.get(), context -> new RotorRenderer<>(context,
                 "kinetic_dynamo_armature", state -> state.getValue(dev.strataindustria.electric.KineticDynamoBlock.FACING), 0));
         // Tier 4 spec 11.7: iron axles turn like the wooden ones.
+        // Tier 4 spec 10.5: the steam engine's flywheel turns on the shaft it drives.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.STEAM_ENGINE.get(), context -> new RotorRenderer<>(context,
+                "steam_engine_flywheel", state -> state.getValue(dev.strataindustria.steam.SteamEngineBlock.FACING), 0));
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.IRON_TRANSMISSION.get(), context -> new RotorRenderer<>(context,
                 "iron_axle", state -> state.hasProperty(AxleBlock.AXIS)
                         ? Direction.fromAxisAndDirection(state.getValue(AxleBlock.AXIS), Direction.AxisDirection.POSITIVE)

@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "facing=east,hot=false,lit=false": {
+      "model": "strataindustria:block/firebox",
+      "y": 90
+    },
+    "facing=east,hot=false,lit=true": {
+      "model": "strataindustria:block/firebox_lit",
+      "y": 90
+    },
+    "facing=east,hot=true,lit=false": {
+      "model": "strataindustria:block/firebox",
+      "y": 90
+    },
+    "facing=east,hot=true,lit=true": {
+      "model": "strataindustria:block/firebox_lit_hot",
+      "y": 90
+    },
+    "facing=north,hot=false,lit=false": {
+      "model": "strataindustria:block/firebox"
+    },
+    "facing=north,hot=false,lit=true": {
+      "model": "strataindustria:block/firebox_lit"
+    },
+    "facing=north,hot=true,lit=false": {
+      "model": "strataindustria:block/firebox"
+    },
+    "facing=north,hot=true,lit=true": {
+      "model": "strataindustria:block/firebox_lit_hot"
+    },
+    "facing=south,hot=false,lit=false": {
+      "model": "strataindustria:block/firebox",
+      "y": 180
+    },
+    "facing=south,hot=false,lit=true": {
+      "model": "strataindustria:block/firebox_lit",
+      "y": 180
+    },
+    "facing=south,hot=true,lit=false": {
+      "model": "strataindustria:block/firebox",
+      "y": 180
+    },
+    "facing=south,hot=true,lit=true": {
+      "model": "strataindustria:block/firebox_lit_hot",
+      "y": 180
+    },
+    "facing=west,hot=false,lit=false": {
+      "model": "strataindustria:block/firebox",
+      "y": 270
+    },
+    "facing=west,hot=false,lit=true": {
+      "model": "strataindustria:block/firebox_lit",
+      "y": 270
+    },
+    "facing=west,hot=true,lit=false": {
+      "model": "strataindustria:block/firebox",
+      "y": 270
+    },
+    "facing=west,hot=true,lit=true": {
+      "model": "strataindustria:block/firebox_lit_hot",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t4/boiler",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "steam_engine"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.steam_engine.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:steam_engine"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.steam_engine"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

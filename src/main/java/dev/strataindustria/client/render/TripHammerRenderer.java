@@ -2,9 +2,9 @@ package dev.strataindustria.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.machine.TripHammerBlock;
 import dev.strataindustria.machine.TripHammerBlockEntity;
+import java.util.function.Supplier;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -14,10 +14,8 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
@@ -28,12 +26,10 @@ public class TripHammerRenderer implements BlockEntityRenderer<TripHammerBlockEn
     private static final float LIFT = 24.0f;
 
     private final ItemModelResolver itemModelResolver;
-    private final ItemStack arm;
+    private final Supplier<ItemStack> arm = RotorRenderer.rotorStack("trip_hammer_arm");
 
     public TripHammerRenderer(BlockEntityRendererProvider.Context context) {
         this.itemModelResolver = context.itemModelResolver();
-        this.arm = new ItemStack(Items.STICK);
-        this.arm.set(DataComponents.ITEM_MODEL, StrataIndustria.id("rotor/trip_hammer_arm"));
     }
 
     @Override
@@ -48,7 +44,7 @@ public class TripHammerRenderer implements BlockEntityRenderer<TripHammerBlockEn
         long time = hammer.getLevel() == null ? 0 : hammer.getLevel().getGameTime();
         state.lift = LIFT * (1.0f - hammer.swing(time, partialTick));
         state.yaw = 180.0f - hammer.getBlockState().getValue(TripHammerBlock.FACING).toYRot();
-        itemModelResolver.updateForTopItem(state.item, arm, ItemDisplayContext.NONE, hammer.getLevel(), null, 0);
+        itemModelResolver.updateForTopItem(state.item, arm.get(), ItemDisplayContext.NONE, hammer.getLevel(), null, 0);
     }
 
     @Override
