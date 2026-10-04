@@ -36,7 +36,6 @@ public final class Journal {
     public static final String BRONZE_ARMOUR = "bronze_armour";
     public static final String BLOOMERY_BUILT = "bloomery_built";
     public static final String BLOOM_REFINED = "bloom_refined";
-    public static final String PATTERN_RECORDED = "pattern_recorded";
     public static final String BRIGHT_STRIKE = "bright_strike";
     public static final String ROTATION = "rotation";
     public static final String WATER_POWER = "water_power";

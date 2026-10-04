@@ -1,6 +1,9 @@
 package dev.strataindustria.machine;
 
 import dev.strataindustria.registry.ModMenus;
+import dev.strataindustria.smithing.ShapeMachine;
+import dev.strataindustria.smithing.ShapeSelector;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -13,9 +16,9 @@ import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-/** Trip hammer screen: the recorded pattern, a slot for hot workpieces, and the status and network lines. */
+/** Trip hammer screen: the shape button, a slot for hot workpieces, and the status and network lines. */
 public class TripHammerMenu extends AbstractContainerMenu {
-    public static final int PATTERN_X = 44, INPUT_X = 80, SLOT_Y = 35;
+    public static final int SHAPE_X = 44, INPUT_X = 80, SLOT_Y = 35;
     public static final int INVENTORY_Y = 84;
 
     private final Container container;
@@ -32,17 +35,6 @@ public class TripHammerMenu extends AbstractContainerMenu {
         this.container = container;
         this.data = data;
         this.pos = pos;
-        addSlot(new Slot(container, TripHammerBlockEntity.PATTERN, PATTERN_X, SLOT_Y) {
-            @Override
-            public boolean mayPlace(ItemStack stack) {
-                return TripHammerBlockEntity.isRecordedPattern(stack);
-            }
-
-            @Override
-            public int getMaxStackSize() {
-                return 1;
-            }
-        });
         addSlot(new Slot(container, TripHammerBlockEntity.INPUT, INPUT_X, SLOT_Y));
         addStandardInventorySlots(inventory, 8, INVENTORY_Y);
         addDataSlots(data);
@@ -55,7 +47,17 @@ public class TripHammerMenu extends AbstractContainerMenu {
     public TripHammerBlockEntity.Status status() {
         int s = data.get(TripHammerBlockEntity.DATA_STATUS);
         TripHammerBlockEntity.Status[] values = TripHammerBlockEntity.Status.values();
-        return s >= 0 && s < values.length ? values[s] : TripHammerBlockEntity.Status.NO_PATTERN;
+        return s >= 0 && s < values.length ? values[s] : TripHammerBlockEntity.Status.WAITING;
+    }
+
+    /** What the shape button shows: the item the working shape makes. */
+    public ItemStack shape() {
+        return ShapeSelector.displayStack(data.get(TripHammerBlockEntity.DATA_SHAPE));
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        return player instanceof ServerPlayer server && ShapeMachine.press(container, server, id);
     }
 
     public int hitsDone() {
@@ -72,11 +74,9 @@ public class TripHammerMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
-        if (index < 2) {
-            if (!moveItemStackTo(stack, 2, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (TripHammerBlockEntity.isRecordedPattern(stack)) {
-            if (!moveItemStackTo(stack, 0, 1, false)) return ItemStack.EMPTY;
-        } else if (!moveItemStackTo(stack, 1, 2, false)) {
+        if (index < 1) {
+            if (!moveItemStackTo(stack, 1, slots.size(), true)) return ItemStack.EMPTY;
+        } else if (!moveItemStackTo(stack, 0, 1, false)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);

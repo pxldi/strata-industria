@@ -100,12 +100,9 @@ final class Tier5Language {
         lang.accept(block + "extruder", "Extruder");
         lang.accept("container." + id + ".power_hammer", "Power Hammer");
         String hammer = id + ".power_hammer.";
-        lang.accept(hammer + "status.no_pattern", "Needs a recorded pattern");
-        lang.accept(hammer + "status.outdated_pattern", "Outdated pattern: record it again");
         lang.accept(hammer + "status.waiting", "Waiting for a workpiece");
-        lang.accept(hammer + "status.wrong_piece", "This does not fit the pattern or weld");
+        lang.accept(hammer + "status.wrong_piece", "This does not fit the shape or weld");
         lang.accept(hammer + "status.output_full", "Output full");
-        lang.accept(hammer + "status.no_flux", "Needs flux to weld");
         lang.accept(hammer + "status.no_power", "No power");
         lang.accept(hammer + "status.low_power", "Low power: waiting (%s%%)");
         lang.accept(hammer + "status.heating", "Heating (%s °C / %s °C)");
@@ -114,8 +111,6 @@ final class Tier5Language {
         lang.accept(hammer + "status.overvoltage", "Overvoltage");
         lang.accept(hammer + "status.too_far", "Too far from a source");
         lang.accept(hammer + "temperature", "Piece: %s of %s °C");
-        lang.accept(hammer + "slot.pattern", "Recorded smithing pattern");
-        lang.accept(hammer + "slot.flux", "Flux, for welding");
         lang.accept(hammer + "slot.input", "Workpieces, cold or hot");
         lang.accept(hammer + "slot.second", "Second piece, to weld");
         lang.accept(hammer + "slot.piece", "On the anvil");

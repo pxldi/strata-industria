@@ -53,7 +53,9 @@ import org.jspecify.annotations.Nullable;
  * back half done. Hammer machines build on this class and strike through {@link #machineBlow}.
  */
 public class AnvilBlockEntity extends BaseContainerBlockEntity {
-    public static final int INPUT = 0, OUTPUT = 1, SECOND = 2, FLUX = 3, PATTERN = 4, SLOTS = 5;
+    public static final int INPUT = 0, OUTPUT = 1, SECOND = 2, SLOTS = 5;
+    /** Slots 3 and 4 held flux and a pattern before the hammer machines got a shape button. They stay empty, so saved machines still load. */
+    private static final int RETIRED_FIRST = 3, RETIRED_LAST = 4;
     /** The progress key of the weld shape, which belongs to no recipe. */
     public static final ResourceKey<Recipe<?>> WELD_KEY = ResourceKey.create(Registries.RECIPE, StrataIndustria.id("anvil/weld"));
 
@@ -65,7 +67,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     }
 
     /** Why a weld cannot happen, or READY (tier 3 spec 9.4). NONE when there is nothing to weld. */
-    public enum WeldStatus { NONE, READY, NO_RECIPE, TOO_WEAK, OUTPUT_FULL, TOO_COLD, NO_FLUX, NO_HAMMER;
+    public enum WeldStatus { NONE, READY, NO_RECIPE, TOO_WEAK, OUTPUT_FULL, TOO_COLD, NO_HAMMER;
         public String key() {
             return StrataIndustria.MOD_ID + ".anvil.weld." + name().toLowerCase(java.util.Locale.ROOT);
         }
@@ -299,7 +301,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         Optional<Metal> metal = metalOf(input);
         Shape s = shape.get();
         if (s.weld()) {
-            WeldStatus weld = weldStatus(player, false);
+            WeldStatus weld = weldStatus(player);
             return switch (weld) {
                 case TOO_WEAK -> Status.TOO_WEAK;
                 case OUTPUT_FULL -> Status.OUTPUT_FULL;
@@ -453,7 +455,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         double x = worldPosition.getX() + 0.5, y = worldPosition.getY() + faceHeight() + 0.05, z = worldPosition.getZ() + 0.5;
         boolean allBright = progress.bright() >= progress.blows();
         if (shape.weld()) {
-            doWeld(server, player, false);
+            doWeld(server, player);
         } else {
             int craft = machineCraft >= 0 ? machineCraft : Smithing.craftQuality(progress.bright(), progress.blows());
             float temperature = Heat.get(input, now);
@@ -483,9 +485,21 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         }
     }
 
+    /** Hands back whatever a machine saved in its retired flux and pattern slots, once, when it first ticks. */
+    public final void spillRetired(ServerLevel server) {
+        for (int i = RETIRED_FIRST; i <= RETIRED_LAST; i++) {
+            if (i >= items.size() || items.get(i).isEmpty()) continue;
+            net.minecraft.world.level.block.Block.popResource(server, worldPosition.above(), items.get(i));
+            items.set(i, ItemStack.EMPTY);
+            setChanged();
+        }
+    }
+
     /** The glint at the top of the hammer's rebound, a soft tick to strike on. */
     public static void serverTick(net.minecraft.world.level.Level level, BlockPos pos, BlockState state, AnvilBlockEntity anvil) {
-        if (!anvil.glintPending || !(level instanceof ServerLevel server)) return;
+        if (!(level instanceof ServerLevel server)) return;
+        anvil.spillRetired(server);
+        if (!anvil.glintPending) return;
         long now = server.getGameTime();
         if (now - anvil.lastBlowTick < Smithing.BEAT_TICKS) return;
         anvil.glintPending = false;
@@ -547,33 +561,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         }
     }
 
-    // ------------------------------------------------------------------ shape cards for hammer machines
-
-    public static boolean isBlankPattern(ItemStack stack) {
-        return stack.is(ModItems.SMITHING_PATTERN.get()) && !stack.has(ModDataComponents.SMITHING_PATTERN.get());
-    }
-
-    /** Sneak + a blank pattern on the anvil: the card takes the shape that is picked. */
-    public boolean record(ServerPlayer player, ItemStack pattern) {
-        if (!(level instanceof ServerLevel server) || !isBlankPattern(pattern)) return false;
-        Optional<Shape> shape = current(server);
-        if (shape.isEmpty() || shape.get().weld()) return false;
-        ItemStack card = pattern.copyWithCount(1);
-        card.set(ModDataComponents.SMITHING_PATTERN.get(),
-                new SmithingPattern(shape.get().key(), BuiltInRegistries.ITEM.getKey(shape.get().result().getItem())));
-        if (!player.getAbilities().instabuild) pattern.shrink(1);
-        if (!player.getInventory().add(card)) net.minecraft.world.level.block.Block.popResource(server, worldPosition.above(), card);
-        server.playSound(null, worldPosition, SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS, 0.8f, 1.1f);
-        player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".anvil.recorded", shape.get().result().getHoverName()));
-        Journal.award(player, Journal.PATTERN_RECORDED);
-        return true;
-    }
-
     // ------------------------------------------------------------------ welding (tier 3 spec 9.4)
-
-    public static boolean isFlux(ItemStack stack) {
-        return stack.is(ModItems.FLUX.get());
-    }
 
     /** Two partial blooms with at most a full bloom between them press into one. */
     private static boolean bloomMerge(ItemStack a, ItemStack b) {
@@ -605,11 +593,6 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     }
 
     public WeldStatus weldStatus(@org.jspecify.annotations.Nullable Player player) {
-        return weldStatus(player, true);
-    }
-
-    /** Welding needs flux in a machine's flux slot; striking by hand does not. */
-    public WeldStatus weldStatus(@org.jspecify.annotations.Nullable Player player, boolean needFlux) {
         ItemStack a = input(), b = items.get(SECOND);
         if (a.isEmpty() || b.isEmpty()) return WeldStatus.NONE;
         if (weldResult().isEmpty()) return WeldStatus.NO_RECIPE;
@@ -618,19 +601,18 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         if (!items.get(OUTPUT).isEmpty()) return WeldStatus.OUTPUT_FULL;
         int needed = weldingTemperature(a, b);
         if (level != null && (Heat.get(a, level) < needed || Heat.get(b, level) < needed)) return WeldStatus.TOO_COLD;
-        if (needFlux && !isFlux(items.get(FLUX))) return WeldStatus.NO_FLUX;
         if (player != null && hammer(player).isEmpty()) return WeldStatus.NO_HAMMER;
         return WeldStatus.READY;
     }
 
-    /** One weld by a machine: the same rules, no hammer worn. False when the pieces are not ready. */
+    /** One weld by a machine: the same rules, no hammer worn and no flux. False when the pieces are not ready. */
     public boolean machineWeld() {
         if (!(level instanceof ServerLevel server) || weldStatus(null) != WeldStatus.READY) return false;
-        doWeld(server, null, true);
+        doWeld(server, null);
         return true;
     }
 
-    private void doWeld(ServerLevel server, @org.jspecify.annotations.Nullable ServerPlayer player, boolean useFlux) {
+    private void doWeld(ServerLevel server, @org.jspecify.annotations.Nullable ServerPlayer player) {
         ItemStack a = input(), b = items.get(SECOND);
         ItemStack out = weldResult().orElseThrow();
         long now = server.getGameTime();
@@ -642,7 +624,6 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         Heat.set(out, Math.max(Heat.get(a, now), Heat.get(b, now)), now);
         a.shrink(1);
         b.shrink(1);
-        if (useFlux) items.get(FLUX).shrink(1);
         if (a.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
         if (b.isEmpty()) items.set(SECOND, ItemStack.EMPTY);
         items.set(OUTPUT, out);
@@ -686,8 +667,6 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return switch (slot) {
             case INPUT, SECOND -> true;
-            case FLUX -> isFlux(stack);
-            case PATTERN -> stack.is(ModItems.SMITHING_PATTERN.get());
             default -> false;
         };
     }

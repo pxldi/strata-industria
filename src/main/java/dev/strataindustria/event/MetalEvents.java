@@ -8,7 +8,6 @@ import dev.strataindustria.metal.Melt;
 import dev.strataindustria.metal.Quality;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
-import dev.strataindustria.smithing.SmithingPattern;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -36,12 +35,6 @@ public final class MetalEvents {
         if (bloom != null) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".bloomery.bloom_units", bloom.total())
                     .withStyle(ChatFormatting.GRAY));
-        }
-        SmithingPattern pattern = stack.get(ModDataComponents.SMITHING_PATTERN.get());
-        if (pattern != null) {
-            event.getToolTip().add(1, pattern.tooltip().copy().withStyle(ChatFormatting.GRAY));
-        } else if (stack.is(ModItems.SMITHING_PATTERN.get())) {
-            event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".pattern.blank").withStyle(ChatFormatting.DARK_GRAY));
         }
         if (isSulfide(stack)) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".ore.sulfide").withStyle(ChatFormatting.DARK_GRAY));

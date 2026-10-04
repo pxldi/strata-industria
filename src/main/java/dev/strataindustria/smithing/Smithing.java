@@ -48,6 +48,11 @@ public final class Smithing {
         return Mth.clamp(Math.round(MAX_CRAFT * bright / (float) blows), 0, MAX_CRAFT);
     }
 
+    /** The note at {@code index} on the scale, wrapping round: what the shape button plays as it steps through shapes. */
+    public static float scaleNote(int index) {
+        return NOTES[Math.floorMod(index, NOTES.length)];
+    }
+
     /** Pitch of the note for a blow when {@code done} of {@code total} blows are already in; the finish takes the home note. */
     public static float notePitch(int done, int total, boolean finish, boolean bright) {
         float pitch = finish ? HOME : NOTES[Mth.clamp(done * NOTES.length / Math.max(1, total), 0, NOTES.length - 1)];

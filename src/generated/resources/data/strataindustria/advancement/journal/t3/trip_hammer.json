@@ -1,5 +1,5 @@
 {
-  "parent": "strataindustria:journal/t3/pattern",
+  "parent": "strataindustria:journal/t3/weld",
   "criteria": {
     "done": {
       "conditions": {

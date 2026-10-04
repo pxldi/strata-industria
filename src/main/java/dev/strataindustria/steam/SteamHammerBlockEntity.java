@@ -10,14 +10,14 @@ import dev.strataindustria.heat.HeatPipeBlock;
 import dev.strataindustria.heat.HeatPort;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModDataComponents;
-import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4BlockEntities;
 import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
 import dev.strataindustria.smithing.Smithing;
-import dev.strataindustria.smithing.SmithingPattern;
+import dev.strataindustria.smithing.ShapeMachine;
+import dev.strataindustria.smithing.ShapeSelector;
 import dev.strataindustria.smithing.SmithingProgress;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
@@ -30,6 +30,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
@@ -42,12 +44,12 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The steam hammer (tier 4 spec 10.5): the trip hammer's tier 4 mirror with a tier 5 anvil built in. It
- * replays a recorded smithing pattern on workpieces from its input slot, heating each one itself from a
+ * works the shape picked with its screen's button on workpieces from its input slot, heating each one itself from a
  * firebox below or heat pipes, so it never hands a cooling piece back. One blow per 5 ticks at 2 bar or
  * more, per 10 ticks at 1 to 2 bar, for 10 mB of steam a tick while it works.
  */
-public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyContainer, FluidPort, HeatConsumer, HeatPort {
-    /** The replayed pattern sits in the anvil's own pattern slot; these two follow the anvil's slots. */
+public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyContainer, FluidPort, HeatConsumer, HeatPort, ShapeMachine {
+    /** These two follow the anvil's slots. */
     public static final int QUEUE = AnvilBlockEntity.SLOTS, RESULT = AnvilBlockEntity.SLOTS + 1, HAMMER_SLOTS = AnvilBlockEntity.SLOTS + 2;
     public static final int TIER = 5;
     public static final int FAST_TICKS = 5, SLOW_TICKS = 10;
@@ -63,10 +65,10 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     public static final double FACE = 7.0 / 16.0;
 
     public static final int DATA_STATUS = 0, DATA_HITS = 1, DATA_TOTAL = 2, DATA_PIECE_TEMPERATURE = 3, DATA_WORKING = 4, DATA_HEAT = 5,
-            DATA_HEAT_TEMPERATURE = 6, DATA_LIMIT = 7, DATA_STEAM = 8, DATA_PRESSURE = 9, DATA_COUNT = 10;
+            DATA_HEAT_TEMPERATURE = 6, DATA_LIMIT = 7, DATA_STEAM = 8, DATA_PRESSURE = 9, DATA_SHAPE = 10, DATA_COUNT = 11;
 
     public enum Status {
-        NO_PATTERN, OUTDATED_PATTERN, WAITING, WRONG_PIECE, OUTPUT_FULL, NO_STEAM, TOO_COLD, HEATING, WORKING;
+        WAITING, WRONG_PIECE, OUTPUT_FULL, NO_STEAM, TOO_COLD, HEATING, WORKING;
 
         public String key() {
             return StrataIndustria.MOD_ID + ".steam_hammer.status." + name().toLowerCase(java.util.Locale.ROOT);
@@ -80,7 +82,8 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     private static final int[] FACE_SLOTS = {QUEUE, RESULT};
 
     private final HeatIntake intake = new HeatIntake(MIN_TEMPERATURE, HEAT);
-    private Status status = Status.NO_PATTERN;
+    private Status status = Status.WAITING;
+    private final ShapeSelector shape = new ShapeSelector();
     private int steam;
     private float pressure;
     private int sinceSteam = STEAM_TIMEOUT;
@@ -101,6 +104,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
                 case DATA_TOTAL -> hitsTotal;
                 case DATA_PIECE_TEMPERATURE -> piece.isEmpty() || level == null ? 0 : Math.round(Heat.get(piece, level));
                 case DATA_WORKING -> workingTemperature(piece.isEmpty() ? getItem(QUEUE) : piece);
+                case DATA_SHAPE -> shapeId();
                 case DATA_HEAT -> intake.heat();
                 case DATA_HEAT_TEMPERATURE -> Math.round(intake.temperature());
                 case DATA_LIMIT -> intake.limit();
@@ -158,30 +162,32 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     }
 
     private Status work(ServerLevel level) {
+        spillRetired(level);
         if (!moveResult(level)) return Status.OUTPUT_FULL;
-        SmithingPattern pattern = getItem(PATTERN).get(ModDataComponents.SMITHING_PATTERN.get());
-        if (pattern == null) return Status.NO_PATTERN;
-        Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
-        if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
-        hitsTotal = blowsFor(recipe, input().isEmpty() ? getItem(QUEUE) : input());
-
         ItemStack piece = input();
+        ItemStack queued = getItem(QUEUE);
+        Optional<RecipeHolder<AnvilRecipe>> holder = shape.resolve(level, shapePiece());
+        if (holder.isEmpty()) return piece.isEmpty() && queued.isEmpty() ? Status.WAITING : Status.WRONG_PIECE;
+        AnvilRecipe recipe = holder.get().value();
+        ResourceKey<Recipe<?>> key = holder.get().id();
+        hitsTotal = blowsFor(recipe, piece.isEmpty() ? queued : piece);
+
         if (piece.isEmpty()) {
             hitsDone = 0;
-            ItemStack queued = getItem(QUEUE);
             if (queued.isEmpty()) return Status.WAITING;
-            if (!recipe.matches(new SingleRecipeInput(queued), level)) return Status.WRONG_PIECE;
             if (queued.getCount() < recipe.count()) return Status.WAITING;
             setItem(INPUT, queued.split(recipe.count()));
-            if (!select(pattern.recipe())) return Status.WRONG_PIECE;
+            if (!select(key)) return Status.WRONG_PIECE;
             timer = 0;
             piece = input();
         }
         SmithingProgress progress = piece.get(ModDataComponents.SMITHING_PROGRESS.get());
-        if (!recipe.matches(new SingleRecipeInput(piece), level) || progress != null && !progress.recipe().equals(pattern.recipe())) {
-            return Status.WRONG_PIECE;
+        if (progress != null && !progress.recipe().equals(key)) {
+            // The shape was changed halfway: the work starts over on the new one.
+            piece.remove(ModDataComponents.SMITHING_PROGRESS.get());
+            progress = null;
         }
-        if (progress == null && !select(pattern.recipe())) return Status.WRONG_PIECE;
+        if (progress == null && !select(key)) return Status.WRONG_PIECE;
         hitsDone = progress == null ? 0 : progress.blows();
         if (hitsDone >= hitsTotal) return Status.WRONG_PIECE;
 
@@ -298,8 +304,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     @Override
     public int heatDemand(float temperature) {
         // It draws while it has a piece to work or one waiting.
-        boolean wanted = status != Status.NO_PATTERN && status != Status.OUTDATED_PATTERN && status != Status.OUTPUT_FULL
-                && (!input().isEmpty() || !getItem(QUEUE).isEmpty());
+        boolean wanted = status != Status.OUTPUT_FULL && status != Status.WRONG_PIECE && (!input().isEmpty() || !getItem(QUEUE).isEmpty());
         return intake.demand(temperature, wanted);
     }
 
@@ -315,13 +320,24 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
 
     // ------------------------------------------------------------------ container
 
-    public static boolean isRecordedPattern(ItemStack stack) {
-        return stack.is(ModItems.SMITHING_PATTERN.get()) && stack.has(ModDataComponents.SMITHING_PATTERN.get());
+    @Override
+    public ShapeSelector shapes() {
+        return shape;
+    }
+
+    @Override
+    public ItemStack shapePiece() {
+        return input().isEmpty() ? getItem(QUEUE) : input();
+    }
+
+    /** What the shape button shows: the item the working shape makes. */
+    private int shapeId() {
+        if (!(level instanceof ServerLevel server)) return 0;
+        return ShapeSelector.displayId(shape.resolve(server, shapePiece()).orElse(null));
     }
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        if (slot == PATTERN) return isRecordedPattern(stack);
         return slot == QUEUE;
     }
 
@@ -353,6 +369,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     @Override
     protected void loadAdditional(ValueInput in) {
         super.loadAdditional(in);
+        shape.load(in);
         steam = in.getIntOr("steam", 0);
         timer = in.getIntOr("timer", 0);
         lastHit = in.getLongOr("last_hit", -100L);
@@ -361,6 +378,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     @Override
     protected void saveAdditional(ValueOutput out) {
         super.saveAdditional(out);
+        shape.save(out);
         out.putInt("steam", steam);
         out.putInt("timer", timer);
         out.putLong("last_hit", lastHit);

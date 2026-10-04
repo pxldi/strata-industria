@@ -9,11 +9,11 @@ import dev.strataindustria.power.KineticNetworks;
 import dev.strataindustria.power.KineticState;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModDataComponents;
-import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
 import dev.strataindustria.smithing.Smithing;
-import dev.strataindustria.smithing.SmithingPattern;
+import dev.strataindustria.smithing.ShapeMachine;
+import dev.strataindustria.smithing.ShapeSelector;
 import dev.strataindustria.smithing.SmithingProgress;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +22,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -52,19 +49,21 @@ import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
 /**
- * The trip hammer (spec 8.4): it replays a recorded smithing pattern on the anvil in front of it. It
+ * The trip hammer (spec 8.4): it works the shape picked with its screen's button on the anvil in front of it. It
  * takes hot workpieces from a forge beside it or the anvil, or from hoppers, and strikes once per 10
  * ticks at 16 RPM. A workpiece that cools goes back to the forge with its progress.
  */
-public class TripHammerBlockEntity extends BaseContainerBlockEntity implements KineticConsumer, WorldlyContainer {
-    public static final int PATTERN = 0, INPUT = 1;
+public class TripHammerBlockEntity extends BaseContainerBlockEntity implements KineticConsumer, WorldlyContainer, ShapeMachine {
+    /** Slot 0 held a pattern before the shape button. It stays empty, so a saved hammer still loads. */
+    private static final int RETIRED = 0;
+    public static final int INPUT = 1;
     public static final int IMPACT = 8, MIN_SPEED = 8;
     public static final float TICKS_PER_HIT = 10.0f;
     private static final float SWING_TICKS = 8.0f;
-    public static final int DATA_STATUS = 0, DATA_HITS = 1, DATA_TOTAL = 2, DATA_COUNT = 3;
+    public static final int DATA_STATUS = 0, DATA_HITS = 1, DATA_TOTAL = 2, DATA_SHAPE = 3, DATA_COUNT = 4;
 
     public enum Status {
-        NO_ANVIL, NO_PATTERN, NOT_TURNING, TOO_SLOW, WAITING, WORKING, OUTPUT_FULL, ANVIL_BUSY, OUTDATED_PATTERN;
+        NO_ANVIL, NOT_TURNING, TOO_SLOW, WAITING, WORKING, OUTPUT_FULL, ANVIL_BUSY;
 
         public String key() {
             return StrataIndustria.MOD_ID + ".trip_hammer." + name().toLowerCase(java.util.Locale.ROOT);
@@ -75,7 +74,10 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
 
     private NonNullList<ItemStack> items = NonNullList.withSize(2, ItemStack.EMPTY);
     private final KineticState kinetic = new KineticState();
-    private Status status = Status.NO_PATTERN;
+    private Status status = Status.WAITING;
+    private final ShapeSelector shape = new ShapeSelector();
+    /** The shape this hammer last set on the anvil, so a change of shape restarts its own work and never somebody's hand work. */
+    private @Nullable ResourceKey<Recipe<?>> workingKey;
     private float timer;
     private int hitsDone;
     private int hitsTotal;
@@ -89,6 +91,7 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
                 case DATA_STATUS -> status.ordinal();
                 case DATA_HITS -> hitsDone;
                 case DATA_TOTAL -> hitsTotal;
+                case DATA_SHAPE -> shapeId();
                 default -> 0;
             };
         }
@@ -121,14 +124,12 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
     }
 
     private Status work(ServerLevel level) {
+        if (!items.get(RETIRED).isEmpty()) {
+            Block.popResource(level, worldPosition.above(), items.get(RETIRED));
+            items.set(RETIRED, ItemStack.EMPTY);
+            setChanged();
+        }
         if (!(level.getBlockEntity(anvilPos()) instanceof AnvilBlockEntity anvil)) return Status.NO_ANVIL;
-        SmithingPattern pattern = items.get(PATTERN).get(ModDataComponents.SMITHING_PATTERN.get());
-        // Without a pattern the hammer still knows one job: pressing the slag out of a raw bloom.
-        if (pattern == null) pattern = bloomPattern(level);
-        if (pattern == null) return Status.NO_PATTERN;
-        Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
-        if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
-        hitsTotal = AnvilBlockEntity.blowsFor(recipe, anvil.input().isEmpty() ? items.get(INPUT) : anvil.input());
 
         // A finished piece goes into a container under the anvil, or onto the anvil top.
         ItemStack done = anvil.getItem(AnvilBlockEntity.OUTPUT);
@@ -141,19 +142,30 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
         ItemStack piece = anvil.getItem(AnvilBlockEntity.INPUT);
         if (piece.isEmpty()) {
             hitsDone = 0;
+            hitsTotal = 0;
             if (rpm < MIN_SPEED) return rpm <= 0 ? Status.NOT_TURNING : Status.TOO_SLOW;
-            ItemStack fetched = fetch(level, anvil, recipe);
-            if (fetched.isEmpty()) return Status.WAITING;
-            anvil.setItem(AnvilBlockEntity.INPUT, fetched);
-            if (!anvil.select(pattern.recipe())) return Status.ANVIL_BUSY;
+            Fetched fetched = fetch(level);
+            if (fetched == null) return Status.WAITING;
+            hitsTotal = AnvilBlockEntity.blowsFor(fetched.holder().value(), fetched.stack());
+            anvil.setItem(AnvilBlockEntity.INPUT, fetched.stack());
+            if (!anvil.select(fetched.holder().id())) return Status.ANVIL_BUSY;
+            workingKey = fetched.holder().id();
             timer = 0;
             return Status.WORKING;
         }
+        Optional<RecipeHolder<AnvilRecipe>> holder = shape.resolve(level, piece);
+        if (holder.isEmpty()) return Status.ANVIL_BUSY;
+        ResourceKey<Recipe<?>> key = holder.get().id();
+        hitsTotal = AnvilBlockEntity.blowsFor(holder.get().value(), piece);
         SmithingProgress progress = piece.get(ModDataComponents.SMITHING_PROGRESS.get());
-        if (!recipe.matches(new SingleRecipeInput(piece), level) || progress != null && !progress.recipe().equals(pattern.recipe())) {
-            return Status.ANVIL_BUSY;
+        if (progress != null && !progress.recipe().equals(key)) {
+            // Only work this hammer began restarts when its shape changes.
+            if (!progress.recipe().equals(workingKey)) return Status.ANVIL_BUSY;
+            piece.remove(ModDataComponents.SMITHING_PROGRESS.get());
+            progress = null;
         }
-        if (progress == null && !anvil.select(pattern.recipe())) return Status.ANVIL_BUSY;
+        if (progress == null && !anvil.select(key)) return Status.ANVIL_BUSY;
+        workingKey = key;
         hitsDone = progress == null ? 0 : progress.blows();
         if (rpm < MIN_SPEED) return rpm <= 0 ? Status.NOT_TURNING : Status.TOO_SLOW;
         if (hitsDone >= hitsTotal) return Status.ANVIL_BUSY;
@@ -179,35 +191,34 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
         return result == AnvilBlockEntity.MachineHit.REFUSED ? Status.ANVIL_BUSY : Status.WORKING;
     }
 
-    /** The built-in bloom refining shape: without a pattern the hammer still presses the slag out of a raw bloom. */
-    private static @Nullable SmithingPattern bloomPattern(ServerLevel level) {
-        ResourceKey<Recipe<?>> id = ResourceKey.create(Registries.RECIPE, StrataIndustria.id("anvil/bloom_refining"));
-        if (level.recipeAccess().byKey(id).isEmpty()) return null;
-        return new SmithingPattern(id, BuiltInRegistries.ITEM.getKey(Items.IRON_INGOT));
-    }
+    /** A workpiece taken off its shelf, with the shape it will be worked into. */
+    private record Fetched(ItemStack stack, RecipeHolder<AnvilRecipe> holder) {}
 
-    /** A hot workpiece for {@code recipe}: from the hammer's own slot, else from a forge beside the hammer or the anvil. */
-    private ItemStack fetch(ServerLevel level, AnvilBlockEntity anvil, AnvilRecipe recipe) {
+    /** A hot workpiece the shape takes: from the hammer's own slot, else from a forge beside the hammer or the anvil. */
+    private @Nullable Fetched fetch(ServerLevel level) {
         ItemStack own = items.get(INPUT);
-        if (ready(level, own, recipe)) {
+        Optional<RecipeHolder<AnvilRecipe>> holder = ready(level, own);
+        if (holder.isPresent()) {
             setChanged();
-            return own.split(recipe.count());
+            return new Fetched(own.split(holder.get().value().count()), holder.get());
         }
         for (ForgeBlockEntity forge : forges(level)) {
             for (int i = ForgeBlockEntity.FIRST_HEAT_SLOT; i < ForgeBlockEntity.FIRST_HEAT_SLOT + ForgeBlockEntity.HEAT_SLOTS; i++) {
                 ItemStack stack = forge.getItem(i);
-                if (!ready(level, stack, recipe)) continue;
-                ItemStack taken = stack.split(recipe.count());
+                holder = ready(level, stack);
+                if (holder.isEmpty()) continue;
+                ItemStack taken = stack.split(holder.get().value().count());
                 forge.setChanged();
-                return taken;
+                return new Fetched(taken, holder.get());
             }
         }
-        return ItemStack.EMPTY;
+        return null;
     }
 
-    private static boolean ready(ServerLevel level, ItemStack stack, AnvilRecipe recipe) {
-        return !stack.isEmpty() && stack.getCount() >= recipe.count() && recipe.matches(new SingleRecipeInput(stack), level)
-                && Heat.get(stack, level) >= AnvilBlockEntity.workingTemperature(stack);
+    /** The shape for a hot stack that has enough of it, or empty when it will not do. */
+    private Optional<RecipeHolder<AnvilRecipe>> ready(ServerLevel level, ItemStack stack) {
+        if (stack.isEmpty() || Heat.get(stack, level) < AnvilBlockEntity.workingTemperature(stack)) return Optional.empty();
+        return shape.resolve(level, stack).filter(holder -> stack.getCount() >= holder.value().count());
     }
 
     private boolean returnToForge(ServerLevel level, AnvilBlockEntity anvil, ItemStack piece) {
@@ -295,8 +306,22 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
 
     // ------------------------------------------------------------------ container
 
-    public static boolean isRecordedPattern(ItemStack stack) {
-        return stack.is(ModItems.SMITHING_PATTERN.get()) && stack.has(ModDataComponents.SMITHING_PATTERN.get());
+    @Override
+    public ShapeSelector shapes() {
+        return shape;
+    }
+
+    /** The piece on the anvil, else the one waiting in the hammer. */
+    @Override
+    public ItemStack shapePiece() {
+        if (level != null && level.getBlockEntity(anvilPos()) instanceof AnvilBlockEntity anvil && !anvil.input().isEmpty()) return anvil.input();
+        return items.get(INPUT);
+    }
+
+    /** What the shape button shows: the item the working shape makes. */
+    private int shapeId() {
+        if (!(level instanceof ServerLevel server)) return 0;
+        return ShapeSelector.displayId(shape.resolve(server, shapePiece()).orElse(null));
     }
 
     @Override
@@ -316,7 +341,7 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return slot == INPUT || isRecordedPattern(stack);
+        return slot == INPUT;
     }
 
     @Override
@@ -354,6 +379,7 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
         super.loadAdditional(in);
         items = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
         ContainerHelper.loadAllItems(in, items);
+        shape.load(in);
         timer = in.getFloatOr("timer", 0.0f);
         lastHit = in.getLongOr("last_hit", -100L);
         kinetic.load(in);
@@ -363,6 +389,7 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
     protected void saveAdditional(ValueOutput out) {
         super.saveAdditional(out);
         ContainerHelper.saveAllItems(out, items);
+        shape.save(out);
         out.putFloat("timer", timer);
         out.putLong("last_hit", lastHit);
         kinetic.save(out);

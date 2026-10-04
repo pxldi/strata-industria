@@ -1505,11 +1505,7 @@ final class Tier4GameTests {
                 .findFirst().orElseThrow(() -> helper.assertionException("no steel plate recipe"));
         int total = dev.strataindustria.smithing.AnvilBlockEntity.blowsFor(plate.value(), ingot);
         int craft = 2;
-        ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
-        helper.assertTrue(!hammer.canPlaceItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern),
-                "a blank pattern does not go in");
-        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(), net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate)));
-        hammer.setItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern);
+        hammer.shapes().choose(plate.id());
         int queue = dev.strataindustria.steam.SteamHammerBlockEntity.QUEUE, result = dev.strataindustria.steam.SteamHammerBlockEntity.RESULT;
         hammer.setItem(queue, ingot.copyWithCount(plate.value().count() * 2));
 
@@ -1534,7 +1530,7 @@ final class Tier4GameTests {
                 + ", status " + hammer.status());
         helper.assertTrue(ticks <= total * 5 + 2, total + " blows at 2 bar took " + ticks + " ticks");
         var quality = hammer.getItem(result).get(ModDataComponents.QUALITY.get());
-        helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the pattern's craft part " + craft + ", got " + quality);
+        helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the machine's craft part " + craft + ", got " + quality);
 
         // Half pressure: the second, cold ingot heats again, then one blow per 10 ticks.
         int working = 0;

@@ -90,8 +90,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> WROUGHT_IRON_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.WROUGHT_IRON_ANVIL);
     /** Tier 3 spec 9.4: welding flux, ground from sand or carbonate rock. */
     public static final DeferredItem<Item> FLUX = ITEMS.registerSimpleItem("flux");
-    /** Tier 3 spec 9.5: blank until it records a smithing sequence on the anvil. */
-    public static final DeferredItem<Item> SMITHING_PATTERN = ITEMS.registerSimpleItem("smithing_pattern", p -> p.stacksTo(16));
+    static {
+        // Smithing patterns are gone (hammer machines have a shape button); old ones in a world turn into paper.
+        ITEMS.addAlias(StrataIndustria.id("smithing_pattern"), net.minecraft.resources.Identifier.withDefaultNamespace("paper"));
+    }
     public static final DeferredItem<Item> TONGS_JAW = ITEMS.registerSimpleItem("tongs_jaw", p -> p.stacksTo(16));
     public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", p -> p.durability(250));
     // Tier 3 spec 7 and 8: mechanical power and machines.

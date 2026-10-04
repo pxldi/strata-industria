@@ -516,10 +516,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.STEAM_HAMMER, "Steam Hammer");
         add("container." + id + ".steam_hammer", "Steam Hammer");
         String steamHammer = id + ".steam_hammer.";
-        add(steamHammer + "status.no_pattern", "Needs a recorded pattern");
-        add(steamHammer + "status.outdated_pattern", "Outdated pattern: record it again");
         add(steamHammer + "status.waiting", "Waiting for a workpiece");
-        add(steamHammer + "status.wrong_piece", "The pattern does not fit this piece");
+        add(steamHammer + "status.wrong_piece", "The shape does not fit this piece");
         add(steamHammer + "status.output_full", "Output full");
         add(steamHammer + "status.no_steam", "Needs steam at 1 bar or more");
         add(steamHammer + "status.too_cold", "Workpiece too cold");
@@ -529,7 +527,6 @@ final class ModLanguageProvider extends LanguageProvider {
         add(steamHammer + "steam.slow", "Steam: %s bar, half speed");
         add(steamHammer + "steam.full", "Steam: %s bar");
         add(steamHammer + "buffer", "Steam: %s / %s mB");
-        add(steamHammer + "slot.pattern", "Recorded smithing pattern");
         add(steamHammer + "slot.input", "Workpieces, cold or hot");
         add(steamHammer + "slot.piece", "On the anvil");
         add(steamHammer + "slot.result", "Finished pieces");
@@ -868,7 +865,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.wash.hint", "Scoop placer gravel from a river bed with a washing pan and swirl it standing in water.");
         add(journal + "t3.core_sample", "Core Sample");
         add(journal + "t3.core_sample.hint", "Turn a core sampler and press Drill to read the ground 64 blocks down.");
-        add(journal + "t3.trip_hammer.hint", "Put a hot raw bloom in a trip hammer, or give it a recorded pattern and a forge beside its anvil.");
+        add(journal + "t3.trip_hammer.hint", "Put a hot workpiece in a trip hammer, or leave hot pieces in a forge beside its anvil. Pick the shape with the button on its screen.");
         add(journal + "t3.charter", "Found an Outpost");
         add(journal + "t3.charter.hint", "A charter post holds an outpost once a line runs to it. Lay track to it and send a tub through.");
         add(journal + "t3.weld", "Forge Weld");
@@ -881,8 +878,6 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.casting_table.hint", "Lay fired molds on a casting table beside a crucible and pour. One pour fills every empty mold. Click the table to knock the castings out.");
         add(journal + "t2.bright_strike", "Struck Bright");
         add(journal + "t2.bright_strike.hint", "Finish a piece without letting the metal dull. Strike while it glows, and go back to the forge when it fades.");
-        add(journal + "t3.pattern", "Smithing Pattern");
-        add(journal + "t3.pattern.hint", "Pick a shape on the anvil, then sneak and use a blank pattern on it. A hammer machine will work that shape.");
         add(journal + "t3.hide", "Raw Hide");
         add(journal + "t3.hide.hint", "Animals give raw hides now. Leather has to be tanned.");
         add(journal + "t3.leather", "Tanned Leather");
@@ -919,7 +914,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.heat_network.hint", "Lay four or more heat pipes from a burning firebox to a boiler or a heat inlet. Copper pipe holds the heat down to 1000 °C.");
         add(journal + "t4.steam_engine", "Steam Power");
         add(journal + "t4.steam_hammer", "Hammer with Steam");
-        add(journal + "t4.steam_hammer.hint", "Give a steam hammer a recorded pattern, steam at the back and heat from below, and let it smith steel.");
+        add(journal + "t4.steam_hammer.hint", "Pick a shape on a steam hammer, give it steam at the back and heat from below, and let it smith steel.");
         add(journal + "t4.steam_engine.hint", "Pipe a boiler's steam into the back of a steam engine. At 2 bar it turns a shaft at 32 RPM.");
         add(journal + "t4.crusher", "Crushing Power");
         add(journal + "t4.crusher.hint", "Drive a crusher at 16 RPM or more. Ore comes out crushed, sometimes with a second piece and a bit of another mineral.");
@@ -956,7 +951,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t5.assembler", "Assemble a Part");
         add(journal + "t5.assembler.hint", "Load an assembler with the parts of one of its recipes and let it run.");
         add(journal + "t5.power_hammer", "Hammer with Electricity");
-        add(journal + "t5.power_hammer.hint", "Give a power hammer a recorded pattern, or two ingots and flux to weld. It heats the work itself.");
+        add(journal + "t5.power_hammer.hint", "Pick a shape on a power hammer, or give it two ingots to weld. It heats the work itself.");
         add(journal + "t5.battery", "Store Energy");
         add(journal + "t5.battery.hint", "Charge a battery box to half. Dynamos and generators fill it when nothing else needs power.");
         add(journal + "t5.electric_heat", "Heat with Electricity");
@@ -1013,7 +1008,6 @@ final class ModLanguageProvider extends LanguageProvider {
         add(status + "no_plan", "Nothing to make from that");
         add(status + "bright", "Struck bright");
         add(status + "progress", "%s of %s blows");
-        add(status + "recorded", "Pattern set: %s");
 
         // Spec 7 and 8: mechanical power and machines.
         addBlock(ModBlocks.WOODEN_AXLE, "Wooden Axle");
@@ -1127,21 +1121,19 @@ final class ModLanguageProvider extends LanguageProvider {
         for (OreGrade grade : OreGrade.values()) add(id + ".grade." + grade.getSerializedName(), grade.getSerializedName());
         String hammer = id + ".trip_hammer.";
         add(hammer + "no_anvil", "No anvil in front");
-        add(hammer + "no_pattern", "Needs a pattern or a raw bloom");
         add(hammer + "not_turning", "Needs a turning shaft");
         add(hammer + "too_slow", "Too slow: needs %s RPM");
         add(hammer + "waiting", "Waiting for a hot workpiece");
         add(hammer + "working", "Working (%s / %s hits)");
         add(hammer + "output_full", "Output full");
         add(hammer + "anvil_busy", "Something else is on the anvil");
-        add(hammer + "outdated_pattern", "Outdated pattern: record it again");
 
         // Spec 9.4 and 9.5: welding, flux and patterns.
         addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");
         addItem(ModItems.FLUX, "Flux");
-        addItem(ModItems.SMITHING_PATTERN, "Smithing Pattern");
-        add(id + ".pattern.recorded", "Makes %s");
-        add(id + ".pattern.blank", "Sneak + use on an anvil with a shape picked to set it");
+        add(id + ".machine.shape", "Shape: %s");
+        add(id + ".machine.shape.none", "none");
+        add(id + ".machine.shape.hint", "Click for the next shape, right click for the one before");
     }
 
     /** Spec 6 to 8: metal names, the crucible screen, molds, cast parts and tools. */
