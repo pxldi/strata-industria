@@ -48,6 +48,7 @@ final class Tier3GameTests {
     static void register(Map<String, Consumer<GameTestHelper>> tests) {
         tests.put("bloomery_run", Tier3GameTests::bloomeryRun);
         tests.put("trip_hammer", Tier3GameTests::tripHammer);
+        tests.put("trip_hammer_bloom", Tier3GameTests::tripHammerBloom);
         tests.put("step_up_gearbox_facings", Tier3GameTests::stepUpGearboxFacings);
         tests.put("overspeed_segment", Tier3GameTests::overspeedSegment);
     }
@@ -165,6 +166,45 @@ final class Tier3GameTests {
         helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "the chest should hold a copper plate, got " + out
                 + ", hammer status " + hammer.status());
         helper.assertTrue(hammer.getItem(TripHammerBlockEntity.INPUT).isEmpty(), "the ingot should be used up");
+        helper.succeed();
+    }
+
+    /** A trip hammer with no pattern refines a hot raw bloom in one heat. */
+    private static void tripHammerBloom(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos anvilPos = helper.absolutePos(new BlockPos(4, 1, 3));
+        BlockPos hammerPos = anvilPos.south();
+        BlockPos crankPos = hammerPos.south();
+        level.setBlock(anvilPos.below(), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(anvilPos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(hammerPos, ModBlocks.TRIP_HAMMER.get().defaultBlockState().setValue(TripHammerBlock.FACING, Direction.NORTH),
+                Block.UPDATE_ALL);
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.NORTH),
+                Block.UPDATE_ALL);
+        BlockPos topCrankPos = hammerPos.above();
+        level.setBlock(topCrankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.DOWN),
+                Block.UPDATE_ALL);
+        TripHammerBlockEntity hammer = (TripHammerBlockEntity) level.getBlockEntity(hammerPos);
+
+        ItemStack bloom = new ItemStack(ModItems.RAW_BLOOM.get());
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, BloomeryBlockEntity.BLOOM_UNITS, 0));
+        Heat.set(bloom, 1200.0f, level.getGameTime());
+        hammer.setItem(TripHammerBlockEntity.INPUT, bloom);
+
+        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
+        ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(smith);
+        ((HandCrankBlockEntity) level.getBlockEntity(topCrankPos)).crank(smith);
+        KineticNetworks.rebuildNow(level, hammerPos);
+        for (int tick = 0; tick < 1500; tick++) {
+            TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
+        }
+        Container chest = (Container) level.getBlockEntity(anvilPos.below());
+        ItemStack out = ItemStack.EMPTY;
+        for (int slot = 0; slot < chest.getContainerSize(); slot++) {
+            if (!chest.getItem(slot).isEmpty()) out = chest.getItem(slot);
+        }
+        helper.assertTrue(out.is(Items.IRON_INGOT), "the chest should hold an iron ingot, got " + out + ", hammer status " + hammer.status());
+        helper.assertTrue(hammer.getItem(TripHammerBlockEntity.INPUT).isEmpty(), "the bloom should be used up");
         helper.succeed();
     }
 

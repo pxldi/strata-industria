@@ -276,7 +276,9 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get()).hit(type);
         input.set(ModDataComponents.SMITHING_PROGRESS.get(), progress);
         // Tier 3 spec 9.2: iron loses heat to every blow, so careless work means a trip back to the forge.
-        if (metalOf(input).map(m -> m.tier() >= 3).orElse(false)) {
+        // The trip hammer works a bloom in a single heat; by hand it takes reheats.
+        boolean machineBloom = player == null && input.has(ModDataComponents.BLOOM_CONTENTS.get());
+        if (!machineBloom && metalOf(input).map(m -> m.tier() >= 3).orElse(false)) {
             Heat.set(input, Heat.get(input, server) - Config.SMITHING_HIT_COOLING.get(), server.getGameTime());
         }
 

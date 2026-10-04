@@ -934,7 +934,9 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('A', axle)
                 .unlockedBy("has_wooden_gear", has(gear))
                 .save(output, key("saw_mill"));
+        // Any hammer head will do, stone included, and sticks carry it, so the first trip hammer needs no iron.
         List<Item> hammerHeads = new java.util.ArrayList<>();
+        hammerHeads.add(ModItems.STONE_HAMMER_HEAD.get());
         for (Metal metal : Metal.values()) {
             if ((metal.isBronze() || metal == Metal.WROUGHT_IRON) && metal.toolTypes().contains(MoldType.HAMMER_HEAD)) {
                 hammerHeads.add(ModItems.head(metal, MoldType.HAMMER_HEAD));
@@ -942,10 +944,10 @@ final class ModRecipeProvider extends RecipeProvider {
         }
         shaped(RecipeCategory.REDSTONE, ModItems.TRIP_HAMMER.get())
                 .pattern(" H ")
-                .pattern("RAR")
+                .pattern("SAS")
                 .pattern("PGP")
                 .define('H', Ingredient.of(hammerHeads.toArray(Item[]::new)))
-                .define('R', rod)
+                .define('S', Items.STICK)
                 .define('A', axle)
                 .define('P', ItemTags.PLANKS)
                 .define('G', gear)
