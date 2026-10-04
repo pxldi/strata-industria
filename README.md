@@ -37,7 +37,9 @@ support (IntelliJ IDEA recommended).
 ```
 
 Generated resources are committed. After changing anything under `datagen/`, run
-`./gradlew runData` and commit `src/generated`. CI fails if they are out of date.
+`./gradlew runData` and commit `src/generated`. On pull requests from this repository, CI
+regenerates them and commits the result to the branch if they are out of date (pull before your
+next push); on `main` and on forks it fails instead.
 
 ### Project layout
 
