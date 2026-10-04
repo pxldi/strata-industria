@@ -4,10 +4,10 @@
     "amount": 250,
     "fluid": "strataindustria:tannin"
   },
-  "ingredient": "strataindustria:scraped_hide",
+  "ingredient": "strataindustria:raw_hide",
   "result": {
     "count": 2,
     "id": "minecraft:leather"
   },
-  "ticks": 8000
+  "ticks": 6000
 }

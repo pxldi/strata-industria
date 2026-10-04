@@ -36,10 +36,12 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> CLAY_SHAPE = register("clay.shape");
     /** The formed piece comes away from the leftover clay. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CLAY_FINISH = register("clay.finish");
-    /** Straw thatch laid on a pit kiln. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> KILN_STRAW = register("pit_kiln.straw");
     /** A log stacked on a pit kiln. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KILN_LOG = register("pit_kiln.log");
+    /** A clay piece is set on the fire pit hearth. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> POTTERY_SET = register("fire_pit.set");
+    /** A piece comes out of the heat fired and rings. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> POTTERY_RING = register("fire_pit.ring");
     /** The kiln burns out and the pots are fired. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KILN_FIRED = register("pit_kiln.fired");
 
@@ -127,7 +129,6 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_OPEN = register("soaking_barrel.open");
     public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_FILL = register("soaking_barrel.fill");
     public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_DONE = register("soaking_barrel.done");
-    public static final DeferredHolder<SoundEvent, SoundEvent> HIDE_SCRAPE = register("hide.scrape");
     public static final DeferredHolder<SoundEvent, SoundEvent> WINDMILL_TURN = register("windmill.turn");
     public static final DeferredHolder<SoundEvent, SoundEvent> BELT_ATTACH = register("belt.attach");
     public static final DeferredHolder<SoundEvent, SoundEvent> WASHING_PAN_SWIRL = register("washing_pan.swirl");

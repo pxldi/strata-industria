@@ -1,5 +1,6 @@
 package dev.strataindustria.fire;
 
+import dev.strataindustria.ceramics.KilnFiring;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModSounds;
@@ -38,7 +39,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * The first fire (tier 0-2 spec 3.5): a ring of stones around a bed of sticks. Placed unlit; lit with
- * flint struck on a rock, a torch or flint and steel once it has fuel. A lit pit turns a stick into a torch.
+ * flint struck on a rock, a torch or flint and steel once it has fuel. A lit pit turns a stick into a torch,
+ * and up to four unfired clay pieces stand beside the fire until the heat has fired them.
  */
 public class FirePitBlock extends BaseEntityBlock implements Ignitable {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -86,6 +88,17 @@ public class FirePitBlock extends BaseEntityBlock implements Ignitable {
             }
             return InteractionResult.SUCCESS;
         }
+        // Unfired clay goes on the hearth beside the fire; the heat does the rest.
+        if (KilnFiring.isFireable(stack) && level.getBlockEntity(pos) instanceof FirePitBlockEntity pit) {
+            if (level.isClientSide()) return pit.hearth().stream().anyMatch(ItemStack::isEmpty) ? InteractionResult.SUCCESS : InteractionResult.TRY_WITH_EMPTY_HAND;
+            ItemStack held = player.hasInfiniteMaterials() ? stack.copy() : stack;
+            int spot = pit.placeOnHearth(held);
+            if (spot < 0) return InteractionResult.TRY_WITH_EMPTY_HAND;
+            // Each piece set down sounds a step higher.
+            long count = pit.hearth().stream().filter(piece -> !piece.isEmpty()).count();
+            level.playSound(null, pos, ModSounds.POTTERY_SET.get(), SoundSource.BLOCKS, 0.8f, 0.85f + 0.1f * count);
+            return InteractionResult.SUCCESS;
+        }
         if (!lit && (stack.is(Items.TORCH) || stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE))) {
             if (!canIgnite(level, pos, state)) return InteractionResult.FAIL;
             if (!level.isClientSide() && ignite(level, pos, state)) {
@@ -99,9 +112,17 @@ public class FirePitBlock extends BaseEntityBlock implements Ignitable {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof FirePitBlockEntity pit) {
-            player.openMenu(pit);
+        if (!(level.getBlockEntity(pos) instanceof FirePitBlockEntity pit)) return InteractionResult.SUCCESS;
+        // Sneak with an empty hand takes the last piece back off the hearth.
+        if (player.isSecondaryUseActive() && !pit.hearthEmpty()) {
+            if (!level.isClientSide()) {
+                ItemStack taken = pit.takeFromHearth();
+                if (!player.addItem(taken)) Block.popResource(level, pos.above(), taken);
+                level.playSound(null, pos, ModSounds.POTTERY_SET.get(), SoundSource.BLOCKS, 0.6f, 1.3f);
+            }
+            return InteractionResult.SUCCESS;
         }
+        if (!level.isClientSide()) player.openMenu(pit);
         return InteractionResult.SUCCESS;
     }
 
@@ -146,6 +167,15 @@ public class FirePitBlock extends BaseEntityBlock implements Ignitable {
     @Override
     public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
         if (!state.getValue(LIT)) return;
+        if (level.getBlockEntity(pos) instanceof FirePitBlockEntity pit) {
+            // Clay heating on the hearth throws off a little heat shimmer and the odd spark.
+            for (int i = 0; i < FirePitBlockEntity.HEARTH_SPOTS; i++) {
+                if (!pit.isFiring(i) || random.nextInt(4) != 0) continue;
+                level.addParticle(random.nextInt(3) == 0 ? ParticleTypes.SMALL_FLAME : ParticleTypes.SMOKE,
+                        pos.getX() + FirePitBlockEntity.HEARTH_X[i] + (random.nextDouble() - 0.5) * 0.15, pos.getY() + 0.3,
+                        pos.getZ() + FirePitBlockEntity.HEARTH_Z[i] + (random.nextDouble() - 0.5) * 0.15, 0, 0.02, 0);
+            }
+        }
         double x = pos.getX() + 0.5, y = pos.getY() + 0.25, z = pos.getZ() + 0.5;
         if (random.nextInt(8) == 0) {
             level.playLocalSound(x, y, z, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS,

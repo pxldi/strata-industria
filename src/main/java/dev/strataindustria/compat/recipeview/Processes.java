@@ -76,7 +76,7 @@ public final class Processes {
     }
 
     public static List<Firing> kilnFiring() {
-        int ticks = safe(Config.KILN_BURN_TICKS::getAsInt, 6000);
+        int ticks = safe(Config.FIRING_TICKS::getAsInt, 900);
         List<Firing> out = new ArrayList<>();
         dev.strataindustria.ceramics.KilnFiring.all().forEach((in, fired) -> out.add(new Firing(new ItemStack(in), new ItemStack(fired), ticks)));
         out.sort(Comparator.comparing(f -> id(f.input().getItem())));

@@ -5,7 +5,6 @@ import dev.strataindustria.block.BoulderBlock;
 import dev.strataindustria.bloomery.BloomeryBlock;
 import dev.strataindustria.knapping.Boulders;
 import dev.strataindustria.ceramics.MoldType;
-import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.client.HeatGlow;
 import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.forge.ForgeBlock;
@@ -184,37 +183,17 @@ final class ModModelProvider extends ModelProvider {
         }
     }
 
-    // Spec 4.1 to 4.3. The kiln's thatch, logs and fire are hand-built layers; the pieces set out in
-    // it are drawn by its block entity renderer.
+    // Spec 4.1 to 4.3: the crucible and the unfired pieces. Pieces on the fire pit hearth are drawn by its block entity renderer.
     private static void clay(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        MultiPartGenerator kiln = MultiPartGenerator.multiPart(ModBlocks.PIT_KILN.get())
-                .with(BlockModelGenerators.plainVariant(StrataIndustria.id("block/pit_kiln_base")));
-        for (int straw = 1; straw <= PitKilnBlock.MAX_LAYERS; straw++) {
-            kiln.with(BlockModelGenerators.condition().term(PitKilnBlock.STRAW, straw),
-                    BlockModelGenerators.plainVariant(StrataIndustria.id("block/pit_kiln_thatch_" + straw)));
-        }
-        for (int log = 1; log <= PitKilnBlock.MAX_LAYERS; log++) {
-            Integer[] atLeast = new Integer[PitKilnBlock.MAX_LAYERS - log];
-            for (int i = 0; i < atLeast.length; i++) atLeast[i] = log + 1 + i;
-            kiln.with(BlockModelGenerators.condition().term(PitKilnBlock.LOGS, log, atLeast),
-                    BlockModelGenerators.plainVariant(StrataIndustria.id("block/pit_kiln_log_" + log)));
-        }
-        kiln.with(BlockModelGenerators.condition(PitKilnBlock.LIT, true),
-                BlockModelGenerators.plainVariant(StrataIndustria.id("block/pit_kiln_fire")));
-        blockModels.blockStateOutput.accept(kiln);
+        var crucibleModel = StrataIndustria.id("block/crucible");
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.CRUCIBLE.get(), BlockModelGenerators.plainVariant(crucibleModel)));
+        // Flat item art, so the unfired and fired pieces share one silhouette (style guide 5).
+        flatItem(itemModels, ModBlocks.CRUCIBLE.get().asItem());
 
-        for (var block : java.util.List.of(ModBlocks.LARGE_VESSEL, ModBlocks.CRUCIBLE)) {
-            var model = StrataIndustria.id("block/" + block.getId().getPath());
-            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block.get(), BlockModelGenerators.plainVariant(model)));
-            // Flat item art, so the unfired and fired pieces share one silhouette (style guide 5).
-            flatItem(itemModels, block.get().asItem());
-        }
-
-        for (var item : java.util.List.of(ModItems.UNFIRED_SMALL_VESSEL, ModItems.UNFIRED_LARGE_VESSEL, ModItems.UNFIRED_CRUCIBLE,
+        for (var item : java.util.List.of(ModItems.UNFIRED_CRUCIBLE,
                 ModItems.UNFIRED_INGOT_MOLD, ModItems.UNFIRED_BRICK)) {
             flatItem(itemModels, item.get());
         }
-        flatItem(itemModels, ModItems.SMALL_VESSEL.get());
         for (MoldType type : MoldType.values()) {
             flatItem(itemModels, ModItems.UNFIRED_MOLDS.get(type).get());
             castMold(itemModels, ModItems.MOLDS.get(type).get());
@@ -1047,8 +1026,6 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SOAKING_BARREL.get()).with(barrel));
         itemModels.itemModelOutput.accept(ModItems.SOAKING_BARREL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/soaking_barrel_sealed")));
         flatItem(itemModels, ModItems.RAW_HIDE.get());
-        flatItem(itemModels, ModItems.LIMED_HIDE.get());
-        flatItem(itemModels, ModItems.SCRAPED_HIDE.get());
     }
 
     /** Tier 6: crude oil in the world, the oil buckets, bitumen, plastics and synthetic rubber. */

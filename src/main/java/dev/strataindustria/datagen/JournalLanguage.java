@@ -66,8 +66,8 @@ final class JournalLanguage {
         // Tier 1: fire and clay
         lead.add("t1/clay_forming", "Clay takes any shape I give it. What should I shape first?",
                 "Pinched and smoothed into a pot. Raw clay crumbles, though; it needs fire.");
-        lead.add("t1/pit_kiln", "A campfire only cracks raw clay. How do I fire it evenly?",
-                "Buried in straw and logs, the pots baked all night. They ring now when I tap them.");
+        lead.add("t1/fired_pottery", "Raw clay slumps in the rain. What makes it hard?",
+                "Left by a hot fire, the pots dried to stone. They ring when I tap them.");
         lead.add("t1/charcoal", "Wood burns too fast and too cool for real work. Can I make a better fuel?",
                 "Smothered under earth, the wood charred black and light. It burns hot and clean.");
         lead.add("t1/forge", "Charcoal on an open fire throws its heat away. I need something to hold it in.",
@@ -79,7 +79,7 @@ final class JournalLanguage {
         // Tier 2: copper and bronze
         lead.add("t2/melt", "Will my forge get hot enough to melt ore in the crucible?",
                 "The ore slumped and ran. I watched a pool of molten metal shine back at me.");
-        lead.add("t2/brick_kiln", "A pit kiln takes a night and a pile of logs for a few pots. Is there a quicker way?",
+        lead.add("t2/brick_kiln", "The fire pit takes a long while for a few pots. Is there a quicker way?",
                 "A small brick oven that stands on the forge. A load of pots is done in half a minute.");
         lead.add("t2/pattern_casting", "Every mold I make by hand is a day of clay. Can I carve the shape once and use it again?",
                 "A plank carved to the shape, pressed into damp sand. The sand mold takes one pour and goes, the plank stays.");
@@ -151,7 +151,7 @@ final class JournalLanguage {
         lead.add("t3/hide", "The animals I hunt could give me more than meat.",
                 "A raw hide, stiff and smelly. It will rot unless I treat it.");
         lead.add("t3/leather", "A raw hide rots. How do I turn it into leather that lasts?",
-                "Limed, scraped and soaked in tannin for days. Supple leather, finally.");
+                "Soaked in tannin from bark for days. Supple leather, finally.");
         // Tier 4: steel and steam
         lead.add("t4/coal", "Charcoal costs a forest. Is there black rock that burns?",
                 "Coal, cut from a deep seam. It burns long and hot, but smoky.");
@@ -224,7 +224,7 @@ final class JournalLanguage {
                 "Half full and holding. It will run a machine when the shaft stops.");
         lead.add("t5/electric_heat", "A firebox needs fuel and tending. Could the wire heat a crucible instead?",
                 "The coil glows and the crucible warms. No fuel to carry.");
-        lead.add("t5/sulfuric_acid", "Lye eats grease. Is there something that eats stone and metal?",
+        lead.add("t5/sulfuric_acid", "Ash and water cut grease. Is there something that eats stone and metal?",
                 "Acid, heavy and clear. It needs a tank and a steady hand.");
         lead.add("t5/electrolysis", "Could the wire pull water apart?",
                 "Two gases from one water, twice as much hydrogen as oxygen.");

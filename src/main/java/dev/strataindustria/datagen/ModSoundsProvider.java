@@ -81,6 +81,12 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:fire/fire").pitch(1.2f).volume(0.6f)));
         add(ModSounds.FIRE_PIT_EXTINGUISH, definition().subtitle(subtitle("fire_pit.extinguish"))
                 .with(sound("minecraft:random/fizz")));
+        add(ModSounds.POTTERY_SET, definition().subtitle(subtitle("fire_pit.set"))
+                .with(sound("minecraft:block.decorated_pot.place", SoundDefinition.SoundType.EVENT).pitch(1.1f))
+                .with(sound("minecraft:block.gravel.place", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f)));
+        add(ModSounds.POTTERY_RING, definition().subtitle(subtitle("fire_pit.ring"))
+                .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.2f))
+                .with(sound("minecraft:block.decorated_pot.insert", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.6f)));
         add(ModSounds.FIRE_PIT_TORCH, definition().subtitle(subtitle("fire_pit.torch"))
                 .with(sound("minecraft:fire/ignite").pitch(1.3f).volume(0.7f)));
 
@@ -91,9 +97,6 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition finish = definition().subtitle(subtitle("clay.finish"));
         for (int i = 1; i <= 3; i++) finish.with(sound("minecraft:mob/slime/big" + i).pitch(1.1f).volume(0.5f));
         add(ModSounds.CLAY_FINISH, finish);
-        SoundDefinition straw = definition().subtitle(subtitle("pit_kiln.straw"));
-        for (int i = 1; i <= 6; i++) straw.with(sound("minecraft:step/grass" + i).pitch(0.9f));
-        add(ModSounds.KILN_STRAW, straw);
         SoundDefinition log = definition().subtitle(subtitle("pit_kiln.log"));
         for (int i = 1; i <= 4; i++) log.with(sound("minecraft:dig/wood" + i).pitch(0.8f));
         add(ModSounds.KILN_LOG, log);
@@ -233,8 +236,6 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.9f)));
         add(ModSounds.SOAKING_BARREL_DONE, definition().subtitle(subtitle("soaking_barrel.done"))
                 .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).volume(0.6f).pitch(0.8f)));
-        add(ModSounds.HIDE_SCRAPE, definition().subtitle(subtitle("hide.scrape"))
-                .with(sound("minecraft:entity.sheep.shear", SoundDefinition.SoundType.EVENT).pitch(1.2f)));
         add(ModSounds.SLUICE_WASH, definition().subtitle(subtitle("sluice.wash"))
                 .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).volume(0.6f)));
         add(ModSounds.WASHING_PAN_SWIRL, definition().subtitle(subtitle("washing_pan.swirl"))

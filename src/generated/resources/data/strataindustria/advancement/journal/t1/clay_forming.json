@@ -14,7 +14,7 @@
       "translate": "journal.strataindustria.t1.clay_forming.hint"
     },
     "icon": {
-      "id": "strataindustria:unfired_small_vessel"
+      "id": "strataindustria:unfired_crucible"
     },
     "show_toast": false,
     "title": {

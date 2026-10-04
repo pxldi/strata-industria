@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
-/** What each unfired clay piece becomes in a pit kiln (spec 4.2). */
+/** What each unfired clay piece becomes on the fire pit or in the brick kiln. */
 public final class KilnFiring {
     private static Map<Item, Item> results;
 
@@ -16,8 +16,6 @@ public final class KilnFiring {
     private static Map<Item, Item> results() {
         if (results == null) {
             Map<Item, Item> map = new IdentityHashMap<>();
-            map.put(ModItems.UNFIRED_SMALL_VESSEL.get(), ModItems.SMALL_VESSEL.get());
-            map.put(ModItems.UNFIRED_LARGE_VESSEL.get(), ModItems.LARGE_VESSEL.get());
             map.put(ModItems.UNFIRED_CRUCIBLE.get(), ModItems.CRUCIBLE.get());
             map.put(ModItems.UNFIRED_INGOT_MOLD.get(), ModItems.INGOT_MOLD.get());
             map.put(ModItems.UNFIRED_BRICK.get(), Items.BRICK);

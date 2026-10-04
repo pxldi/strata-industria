@@ -51,7 +51,7 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addRecipeCategories(
                 new KnappingCategory(gui, false),
                 new KnappingCategory(gui, true),
-                new PitKilnCategory(gui),
+                new FiringCategory(gui),
                 new CharcoalPitCategory(gui),
                 new QuernCategory(gui),
                 new AlloyingCategory(gui),
@@ -103,7 +103,7 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addRecipes(JeiTypes.EXTRUDING, ClientRecipes.byType(Tier5Recipes.EXTRUDING.get()));
         registration.addRecipes(JeiTypes.OIL_STILL, ClientRecipes.byType(dev.strataindustria.registry.Tier6Recipes.OIL_STILL.get()));
 
-        registration.addRecipes(JeiTypes.PIT_KILN, Processes.kilnFiring());
+        registration.addRecipes(JeiTypes.FIRING, Processes.kilnFiring());
         registration.addRecipes(JeiTypes.CHARCOAL_PIT, Processes.charcoalPit());
         registration.addRecipes(JeiTypes.ALLOYING, Processes.alloying());
         registration.addRecipes(JeiTypes.CASTING, Processes.casting());
@@ -114,7 +114,7 @@ public final class StrataJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addCraftingStation(JeiTypes.PIT_KILN, ModItems.STRAW.get(), dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get(), Tier4Items.KILN.get());
+        registration.addCraftingStation(JeiTypes.FIRING, ModItems.FIRE_PIT.get(), dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get(), Tier4Items.KILN.get());
         registration.addCraftingStation(JeiTypes.CHARCOAL_PIT, net.minecraft.world.item.Items.FLINT);
         registration.addCraftingStation(JeiTypes.QUERN, ModItems.QUERN.get(), ModItems.MILLSTONE.get());
         registration.addCraftingStation(JeiTypes.ALLOYING, ModItems.CRUCIBLE.get(), Tier4Items.REFRACTORY_CRUCIBLE.get(), Tier4Items.SMELTER.get(), ModItems.FORGE.get());

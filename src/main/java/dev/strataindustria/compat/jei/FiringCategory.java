@@ -10,10 +10,10 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
-/** Firing unfired clay in a pit kiln under straw and logs. */
-public class PitKilnCategory extends StrataCategory<Processes.Firing> {
-    public PitKilnCategory(IGuiHelper gui) {
-        super(JeiTypes.PIT_KILN, "pit_kiln", gui.createDrawableItemLike(ModItems.UNFIRED_SMALL_VESSEL.get()), 130, 62);
+/** Firing unfired clay on the hearth stones of a fire pit. */
+public class FiringCategory extends StrataCategory<Processes.Firing> {
+    public FiringCategory(IGuiHelper gui) {
+        super(JeiTypes.FIRING, "firing", gui.createDrawableItemLike(ModItems.UNFIRED_CRUCIBLE.get()), 130, 62);
     }
 
     @Override
@@ -31,6 +31,6 @@ public class PitKilnCategory extends StrataCategory<Processes.Firing> {
     @Override
     public void draw(Processes.Firing firing, IRecipeSlotsView slots, GuiGraphicsExtractor g, double mouseX, double mouseY) {
         time(g, firing.ticks(), 10, 40);
-        text(g, RecipeText.key("pit_kiln.fuel"), 10, 40 + LINE + 1, TEXT_FAINT);
+        text(g, RecipeText.key("firing.fuel"), 10, 40 + LINE + 1, TEXT_FAINT);
     }
 }
