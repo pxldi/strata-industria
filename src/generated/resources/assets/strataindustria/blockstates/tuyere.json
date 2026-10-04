@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/tuyere",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/tuyere"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/tuyere",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/tuyere",
+      "y": 270
+    }
+  }
+}

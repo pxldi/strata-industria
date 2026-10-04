@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t4/steam_engine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "blast_furnace"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.blast_furnace.hint"
+    },
+    "icon": {
+      "id": "strataindustria:blast_furnace_controller"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.blast_furnace"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

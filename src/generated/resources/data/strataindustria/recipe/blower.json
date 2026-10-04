@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "G": "strataindustria:brass_gear",
+    "L": "minecraft:leather",
+    "P": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "PGP",
+    "L L",
+    "PAP"
+  ],
+  "result": {
+    "id": "strataindustria:blower"
+  }
+}

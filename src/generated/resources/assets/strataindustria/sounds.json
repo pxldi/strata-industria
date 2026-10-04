@@ -101,6 +101,44 @@
     ],
     "subtitle": "subtitles.strataindustria.belt.attach"
   },
+  "blast_furnace.roar": {
+    "sounds": [
+      {
+        "name": "block/furnace/fire_crackle1",
+        "pitch": 0.4
+      },
+      {
+        "name": "block/furnace/fire_crackle2",
+        "pitch": 0.4
+      },
+      {
+        "name": "block/furnace/fire_crackle3",
+        "pitch": 0.4
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 0.35,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.blast_furnace.roar"
+  },
+  "blast_furnace.tap": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.empty_lava",
+        "pitch": 0.8
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.empty_lava",
+        "pitch": 0.9,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.blast_furnace.tap"
+  },
   "block.cracked_fire_bricks.break": {
     "sounds": [
       {
@@ -272,6 +310,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.bloomery.roar"
+  },
+  "blower.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.elytra.flying",
+        "pitch": 1.4,
+        "volume": 0.12
+      },
+      {
+        "type": "event",
+        "name": "entity.horse.breathe",
+        "pitch": 0.6,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.blower.run"
   },
   "boiler.crack": {
     "sounds": [
@@ -1085,6 +1140,16 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.mold.knock"
+  },
+  "multiblock.form": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_door.close",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.multiblock.form"
   },
   "pit_kiln.fired": {
     "sounds": [
