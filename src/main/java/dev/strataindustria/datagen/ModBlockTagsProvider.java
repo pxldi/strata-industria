@@ -192,6 +192,10 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             fibrePlants.add(plant.builtInRegistryHolder().key());
         }
         tag(ModTags.Blocks.MINEABLE_WITH_KNIFE).addTag(ModTags.Blocks.FIBRE_PLANTS).addTag(BlockTags.LEAVES);
+        for (var plant : dev.strataindustria.flora.FloraBlocks.PLANTS.values()) {
+            tag(BlockTags.SWORD_INSTANTLY_MINES).add(plant.getKey());
+            tag(BlockTags.REPLACEABLE_BY_TREES).add(plant.getKey());
+        }
         tag(ModTags.Blocks.MINEABLE_WITH_HAMMER);
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LARGE_VESSEL.getKey()).add(ModBlocks.CRUCIBLE.getKey())
