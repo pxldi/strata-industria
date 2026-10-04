@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/outpost_charter",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/outpost_charter"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/outpost_charter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/outpost_charter",
+      "y": 270
+    }
+  }
+}

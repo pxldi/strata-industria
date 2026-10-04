@@ -50,7 +50,7 @@ final class JournalLanguage {
         lead.add("t0/loose_rock", "Bare hands won't get me far. Is there anything lying around I could use?",
                 "A fist-sized rock, picked off the ground. It is a start.");
         lead.add("t0/knap", "If I strike one rock against another, could I chip out an edge?",
-                "Flake by flake, a rough head came free. Sharp enough to cut, if I am careful.");
+                "Flake by flake, a rough head came free. Sharp enough to cut, if I am careful. Limestone and shale crumble; rhyolite and flint flake clean.");
         lead.add("t0/stone_axe", "A blade is no good without something to hold it by. How do I haft it?",
                 "Lashed to a stick, the head bites into wood. My first real tool.");
         lead.add("t0/log", "The trees here would give me timber, if I had a way to fell them.",
@@ -138,6 +138,8 @@ final class JournalLanguage {
                 "The bellows breathe in time with the shaft, and the coals roar white.");
         lead.add("t3/saw_mill", "Splitting planks by hand is slow and wasteful. Could a turning blade do better?",
                 "The saw mill rips a log into planks in moments, with the bark left over.");
+        lead.add("t3/charter", "The tin is a long walk off. Could I keep a mine going out there?",
+                "Charter set at the tin workings. The line runs; the place keeps working while I'm home.");
         lead.add("t3/weld", "One ingot is too small for the bigger tools. Could two be joined while hot?",
                 "Hammered together white hot, two ingots became one. The seam does not show.");
         lead.add("t3/pattern", "I smith the same pieces again and again. Could the anvil remember my hits?",

@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:knapping",
+  "consume": 5,
+  "ingredient": "minecraft:clay_ball",
+  "pattern": [
+    "..#..",
+    ".###.",
+    ".###.",
+    "#####",
+    "#####"
+  ],
+  "result": {
+    "id": "strataindustria:unfired_bell_mold"
+  }
+}

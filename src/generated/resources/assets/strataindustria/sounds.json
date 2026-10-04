@@ -102,6 +102,15 @@
     ],
     "subtitle": "subtitles.strataindustria.battery_box.charge"
   },
+  "bell.ring": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bell.use"
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bell.ring"
+  },
   "bellows.pump": {
     "sounds": [
       {
@@ -1546,6 +1555,39 @@
     ],
     "subtitle": "subtitles.strataindustria.brick_kiln.work"
   },
+  "cabinet.set": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.close",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.glass.hit",
+        "pitch": 1.7,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.cabinet.set"
+  },
+  "cabinet.shelf": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 1.2,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.cabinet.shelf"
+  },
   "cairn.stack": {
     "sounds": [
       {
@@ -1640,6 +1682,61 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.casting_table.set"
+  },
+  "charter.deed": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "ui.cartography_table.take_result",
+        "pitch": 1.5,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.charter.deed"
+  },
+  "charter.line_cut": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.break",
+        "pitch": 0.6,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "entity.leash_knot.break",
+        "pitch": 0.7,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.charter.line_cut"
+  },
+  "charter.place": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.place",
+        "pitch": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 0.7,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 1.2,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.charter.place"
   },
   "chute.drop": {
     "sounds": [
@@ -1865,6 +1962,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.crucible.carbon_burn"
+  },
+  "crucible.fumes": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.lava.extinguish",
+        "pitch": 1.8,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crucible.fumes"
   },
   "crucible.melt": {
     "sounds": [
@@ -2613,6 +2727,31 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.kinetic_dynamo.run"
+  },
+  "knapping.crumble": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel4",
+        "pitch": 0.8,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.knapping.crumble"
   },
   "knapping.finish": {
     "sounds": [

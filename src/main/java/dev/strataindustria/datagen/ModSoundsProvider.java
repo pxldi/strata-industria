@@ -31,10 +31,16 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         marks();
         ledger();
         foot();
+        transport();
+        bronze();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
         add(ModSounds.KNAP_FLINT, stone("knapping.flint", 1.7f, 0.8f));
+        // Crumbly stone gives way: gravel and a dull stone slip.
+        SoundDefinition crumble = definition().subtitle(subtitle("knapping.crumble"));
+        for (int i = 1; i <= 4; i++) crumble.with(sound("minecraft:dig/gravel" + i).pitch(0.8f).volume(0.7f));
+        add(ModSounds.KNAP_CRUMBLE, crumble);
         // A known pattern cut again in one go: flakes falling in a rush.
         SoundDefinition rush = definition().subtitle(subtitle("knapping.repeat"));
         for (int i = 1; i <= 4; i++) {
@@ -474,6 +480,37 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(dev.strataindustria.mark.MarkRegistry.MARK_CUT, definition().subtitle(subtitle("mark.cut"))
                 .with(sound("minecraft:block.copper.hit", event).pitch(1.7f).volume(0.5f))
                 .with(sound("minecraft:block.chain.hit", event).pitch(1.8f).volume(0.35f)));
+    }
+
+    /** Outposts and transport (outposts spec 14), from vanilla wood, paper and metal samples. */
+    private void transport() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.registry.TransportSounds.CHARTER_PLACE, definition().subtitle(subtitle("charter.place"))
+                .with(sound("minecraft:block.wood.place", event).pitch(0.8f).volume(1.0f))
+                .with(sound("minecraft:block.wood.hit", event).pitch(0.7f).volume(0.8f))
+                .with(sound("minecraft:item.book.page_turn", event).pitch(1.2f).volume(0.5f)));
+        add(dev.strataindustria.registry.TransportSounds.CHARTER_LINE_CUT, definition().subtitle(subtitle("charter.line_cut"))
+                .with(sound("minecraft:block.chain.break", event).pitch(0.6f).volume(0.45f))
+                .with(sound("minecraft:entity.leash_knot.break", event).pitch(0.7f).volume(0.5f)));
+        add(dev.strataindustria.registry.TransportSounds.CHARTER_DEED, definition().subtitle(subtitle("charter.deed"))
+                .with(sound("minecraft:item.book.page_turn", event).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:ui.cartography_table.take_result", event).pitch(1.5f).volume(0.3f)));
+    }
+
+    /** Bronze age touches (uniqueness 4.2, 4.3), from vanilla fire and fizz samples. */
+    private void bronze() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.cabinet.CabinetRegistry.SET, definition().subtitle(subtitle("cabinet.set"))
+                .with(sound("minecraft:block.wooden_trapdoor.close", event).pitch(1.5f).volume(0.5f))
+                .with(sound("minecraft:block.glass.hit", event).pitch(1.7f).volume(0.3f)));
+        add(dev.strataindustria.cabinet.CabinetRegistry.SHELF, definition().subtitle(subtitle("cabinet.shelf"))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:block.wood.hit", event).pitch(1.2f).volume(0.4f)));
+        add(dev.strataindustria.bronze.BronzeRegistry.BELL_RING, definition().subtitle(subtitle("bell.ring"))
+                .with(sound("minecraft:block.bell.use", event).volume(1.0f)));
+        add(dev.strataindustria.bronze.BronzeRegistry.FUMES, definition().subtitle(subtitle("crucible.fumes"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.5f).volume(0.5f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(1.8f).volume(0.4f)));
     }
 
     /** The builder's ledger (uniqueness 2.5), from vanilla book, wood and metal samples. */

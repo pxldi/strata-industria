@@ -541,6 +541,8 @@ final class ModModelProvider extends ModelProvider {
         castMold(itemModels, Tier4Items.REFRACTORY_INGOT_MOLD.get());
         castMold(itemModels, Tier4Items.REFRACTORY_GEAR_MOLD.get());
         castMold(itemModels, Tier4Items.GEAR_MOLD.get());
+        flatItem(itemModels, dev.strataindustria.bronze.BronzeRegistry.UNFIRED_BELL_MOLD.get());
+        castMold(itemModels, dev.strataindustria.bronze.BronzeRegistry.BELL_MOLD.get());
 
         // Spec 4.4 and 14.4: zinc calcines, and the steel anvil in the shared anvil model.
         for (var calcine : Tier4Items.ZINC_CALCINES.values()) flatItem(itemModels, calcine.get());
@@ -747,10 +749,39 @@ final class ModModelProvider extends ModelProvider {
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/steam_whistle"))));
         itemModels.itemModelOutput.accept(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get(),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/steam_whistle")));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Integer> cabinet = PropertyDispatch.initial(
+                dev.strataindustria.cabinet.SpecimenCabinetBlock.FACING, dev.strataindustria.cabinet.SpecimenCabinetBlock.FILL);
+        for (int fill = 0; fill <= dev.strataindustria.cabinet.SpecimenCabinetBlock.MAX_FILL; fill++) {
+            MultiVariant model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/specimen_cabinet_" + fill));
+            cabinet.select(net.minecraft.core.Direction.NORTH, fill, model);
+            cabinet.select(net.minecraft.core.Direction.EAST, fill, model.with(BlockModelGenerators.Y_ROT_90));
+            cabinet.select(net.minecraft.core.Direction.SOUTH, fill, model.with(BlockModelGenerators.Y_ROT_180));
+            cabinet.select(net.minecraft.core.Direction.WEST, fill, model.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET.get()).with(cabinet));
+        itemModels.itemModelOutput.accept(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/specimen_cabinet_0")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.bronze.BronzeRegistry.BELL.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/bell"))));
+        itemModels.itemModelOutput.accept(dev.strataindustria.bronze.BronzeRegistry.BELL_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/bell")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/fume_hood"))));
+        itemModels.itemModelOutput.accept(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/fume_hood")));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.get(),
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/builders_crate"))));
         itemModels.itemModelOutput.accept(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE_ITEM.get(),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/builders_crate")));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> charterFacing = PropertyDispatch.initial(HorizontalDirectionalBlock.FACING);
+        var charter = BlockModelGenerators.plainVariant(StrataIndustria.id("block/outpost_charter"));
+        charterFacing.select(net.minecraft.core.Direction.NORTH, charter);
+        charterFacing.select(net.minecraft.core.Direction.EAST, charter.with(BlockModelGenerators.Y_ROT_90));
+        charterFacing.select(net.minecraft.core.Direction.SOUTH, charter.with(BlockModelGenerators.Y_ROT_180));
+        charterFacing.select(net.minecraft.core.Direction.WEST, charter.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.get()).with(charterFacing));
+        itemModels.itemModelOutput.accept(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/outpost_charter")));
         processing(blockModels, itemModels);
         blastFurnace(blockModels, itemModels);
     }

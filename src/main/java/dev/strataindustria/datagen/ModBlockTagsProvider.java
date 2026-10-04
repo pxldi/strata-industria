@@ -135,6 +135,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey())
                 .add(Tier4Blocks.MECHANICAL_PUMP.getKey()).add(Tier4Blocks.STEAM_ENGINE.getKey())
                 .add(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE.getKey())
+                .add(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD.getKey())
+                .add(dev.strataindustria.bronze.BronzeRegistry.BELL.getKey())
                 .add(Tier4Blocks.CRUSHER.getKey()).add(Tier4Blocks.REFRACTORY_CASING.getKey())
                 .add(Tier4Blocks.BLAST_FURNACE_CONTROLLER.getKey()).add(Tier4Blocks.TUYERE.getKey()).add(Tier4Blocks.CHARGING_HATCH.getKey())
                 .add(Tier4Blocks.TAP_HATCH.getKey()).add(Tier4Blocks.BLOWER.getKey()).add(Tier4Blocks.CONVERTER_CONTROLLER.getKey())
@@ -211,6 +213,9 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         // Outposts and transport spec 4: tier 2 on foot.
         tag(BlockTags.CLIMBABLE).add(dev.strataindustria.transport.foot.FootRegistry.ROPE_LADDER.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.foot.FootRegistry.CAIRN.getKey());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey())
+                .add(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET.getKey());
         // Structures v2 shared blocks.
         tag(BlockTags.MINEABLE_WITH_AXE).add(SharedBlocks.CRATE.getKey()).add(SharedBlocks.ORE_CART.getKey())
                 .add(SharedBlocks.TOOL_RACK.getKey()).add(SharedBlocks.WINDLASS.getKey()).add(SharedBlocks.SLUICE_BOX.getKey())
