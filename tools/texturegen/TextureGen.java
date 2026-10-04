@@ -24,7 +24,7 @@ public final class TextureGen {
     static final Path OUT = Path.of("src/main/resources/assets/strataindustria/textures");
     static final Map<String, BufferedImage> PREVIEW = new LinkedHashMap<>();
     static final java.util.Set<String> HAND_MADE = java.util.Set.of(
-            "block/granite", "block/basalt", "block/limestone", "item/plant_fibre", "item/stone_axe");
+            "item/plant_fibre", "item/stone_axe");
 
     // ---------------------------------------------------------------- palette (5-step ramps)
 
@@ -34,7 +34,8 @@ public final class TextureGen {
 
     static Ramp ramp(int spec, int... c) { return new Ramp(c, spec); }
 
-    // Rocks
+    // Rocks. The *_V2 ramps (style guide v2, vanilla value band) colour the terrain blocks and ores; the
+    // old ramps below stay for machines and items that have not been reworked yet (lane A, chunks A2+).
     static final Ramp GRANITE = ramp(0, 0x3e3236, 0x5a464a, 0x7a6062, 0x9a7c78, 0xb89a90);
     static final Ramp BASALT = ramp(0, 0x1f2226, 0x2c3036, 0x3b4048, 0x4c525a, 0x5f6670);
     static final Ramp LIMESTONE = ramp(0, 0x6e6655, 0x8a8169, 0xa69c80, 0xc2b898, 0xd8cfaf);
@@ -43,6 +44,14 @@ public final class TextureGen {
     static final Ramp MARBLE = ramp(0, 0x8c8a88, 0xaeaca8, 0xc8c6c0, 0xdcdad4, 0xecebe6);
     static final Ramp GABBRO = ramp(0, 0x16181c, 0x22252a, 0x303338, 0x41444a, 0x55585c);
     static final Ramp RHYOLITE = ramp(0, 0x6a5450, 0x84695f, 0x9c8072, 0xb59c8e, 0xc8b2a2);
+    static final Ramp GRANITE_V2 = ramp(0, 0x55494c, 0x6c5e60, 0x83726f, 0x978480, 0xad9a92);
+    static final Ramp BASALT_V2 = ramp(0, 0x2c2e34, 0x383b42, 0x45484f, 0x53565d, 0x64676c);
+    static final Ramp LIMESTONE_V2 = ramp(0, 0x8c8676, 0xa19a88, 0xb2ab97, 0xc1baa5, 0xd0cab6);
+    static final Ramp SHALE_V2 = ramp(0, 0x40444c, 0x50555e, 0x5f656e, 0x6f757e, 0x80868e);
+    static final Ramp SLATE_V2 = ramp(0, 0x3e4642, 0x4e5752, 0x5e6862, 0x6f7a73, 0x818c85);
+    static final Ramp MARBLE_V2 = ramp(0, 0xa09e9a, 0xb8b6b0, 0xcac8c2, 0xdad8d2, 0xe8e6e0);
+    static final Ramp GABBRO_V2 = ramp(0, 0x262830, 0x33363b, 0x41444a, 0x50535a, 0x61646b);
+    static final Ramp RHYOLITE_V2 = ramp(0, 0x7a625c, 0x917872, 0xa38a80, 0xb59d92, 0xc6b0a4);
     static final Ramp FLINT = ramp(0, 0x23252b, 0x383b44, 0x525764, 0x727986, 0x9aa0ac);
     // Metals
     static final Ramp COPPER = ramp(0xf6cf9a, 0x4a2218, 0x7a3a22, 0xa8562e, 0xcf7a3e, 0xeba66a);
@@ -71,23 +80,40 @@ public final class TextureGen {
     record Rock(String name, Ramp ramp, String category) {}
 
     static final List<Rock> ROCKS = List.of(
-            new Rock("limestone", LIMESTONE, "sedimentary"),
-            new Rock("shale", SHALE, "sedimentary"),
-            new Rock("slate", SLATE, "metamorphic"),
-            new Rock("marble", MARBLE, "metamorphic"),
-            new Rock("granite", GRANITE, "intrusive"),
-            new Rock("gabbro", GABBRO, "intrusive"),
-            new Rock("basalt", BASALT, "extrusive"),
-            new Rock("rhyolite", RHYOLITE, "extrusive"));
+            new Rock("limestone", LIMESTONE_V2, "sedimentary"),
+            new Rock("shale", SHALE_V2, "sedimentary"),
+            new Rock("slate", SLATE_V2, "metamorphic"),
+            new Rock("marble", MARBLE_V2, "metamorphic"),
+            new Rock("granite", GRANITE_V2, "intrusive"),
+            new Rock("gabbro", GABBRO_V2, "intrusive"),
+            new Rock("basalt", BASALT_V2, "extrusive"),
+            new Rock("rhyolite", RHYOLITE_V2, "extrusive"));
 
     record Mineral(String name, Ramp ramp, boolean metallic) {}
 
+    // Mineral ramps for ore blocks (style guide v2: brighter and more saturated than the host rock).
+    // They also colour the ore items built from {@code Mineral}; the other ramps above are untouched.
+    static final Ramp ORE_COPPER = ramp(0xfad2a6, 0x5a2a18, 0x8e4426, 0xc0652f, 0xe08848, 0xf2b07a);
+    static final Ramp ORE_MALACHITE = ramp(0, 0x123a2a, 0x1d5a3e, 0x2e8058, 0x4caa78, 0x86d4a0);
+    static final Ramp ORE_TENNANTITE = ramp(0xe0eaf0, 0x2a3038, 0x4a5560, 0x6c7a88, 0x92a2b0, 0xbccad4);
+    static final Ramp ORE_CASSITERITE = ramp(0xe4cca8, 0x2a1c16, 0x4a3226, 0x76523a, 0xa07a58, 0xc8a47c);
+    static final Ramp ORE_BISMUTHINITE = ramp(0xeef0fa, 0x3a3e4c, 0x5a6074, 0x8088a0, 0xa8b0c6, 0xcdd4e4);
+    static final Ramp ORE_HEMATITE = ramp(0, 0x4a1e18, 0x7a3226, 0xa04a34, 0xc06a4a, 0xd89070);
+    static final Ramp ORE_MAGNETITE = ramp(0xc8d0e0, 0x1c1e28, 0x343846, 0x505668, 0x707890, 0x98a0b8);
+    static final Ramp ORE_GOLD = ramp(0xfff6c0, 0x5a3a10, 0x94641a, 0xc8921e, 0xe8bc34, 0xf8e070);
+    static final Ramp ORE_LIMONITE = ramp(0, 0x4a2c0e, 0x7a4a18, 0xa8701e, 0xc89030, 0xe0b050);
+    static final Ramp ORE_SPHALERITE = ramp(0, 0x2a1810, 0x4e2c14, 0x7a4a1a, 0xa8701e, 0xd09a36);
+    static final Ramp ORE_GALENA = ramp(0xeef2f8, 0x30343e, 0x525a68, 0x7a8494, 0xa0aab8, 0xc8d0dc);
+    static final Ramp ORE_COAL = ramp(0, 0x0c0c0e, 0x18181c, 0x26262c, 0x3c3c44, 0x5a5a66);
+    static final Ramp ORE_SULFUR = ramp(0, 0x5a5214, 0x867a1c, 0xb4a428, 0xd8c83c, 0xf0e46a);
+
+
     static final List<Mineral> MINERALS = List.of(
-            new Mineral("native_copper", COPPER, true),
-            new Mineral("malachite", MALACHITE, false),
-            new Mineral("tennantite", TENNANTITE, true),
-            new Mineral("cassiterite", CASSITERITE, true),
-            new Mineral("bismuthinite", BISMUTHINITE, true));
+            new Mineral("native_copper", ORE_COPPER, true),
+            new Mineral("malachite", ORE_MALACHITE, false),
+            new Mineral("tennantite", ORE_TENNANTITE, true),
+            new Mineral("cassiterite", ORE_CASSITERITE, true),
+            new Mineral("bismuthinite", ORE_BISMUTHINITE, true));
 
     record Metal(String name, Ramp ramp, boolean vanillaIngot) {}
 
@@ -204,96 +230,54 @@ public final class TextureGen {
 
     // ---------------------------------------------------------------- rocks
 
+    /**
+     * Terrain block in the v2 style: per-pixel grain smeared along the rock's bedding, quantised by share so
+     * every rock has the density of vanilla stone (style guide 5).
+     */
     static BufferedImage rock(Rock rock) {
         long seed = rock.name().hashCode() * 31L;
         Ramp p = rock.ramp();
-        BufferedImage im = img();
-        Random r = new Random(seed);
+        Random r = new Random(seed ^ 0x5eedL);
+        double[][] f = V2.terrainField(seed);
         switch (rock.category()) {
-            case "intrusive" -> {
-                double[][] n = fractal(seed);
-                for (int y = 0; y < 16; y++)
-                    for (int x = 0; x < 16; x++) px(im, x, y, p.get(n[y][x] < 0.42 ? 2 : n[y][x] < 0.6 ? 3 : 4));
-                for (int i = 0; i < 9; i++) speck(im, r, r.nextInt(16), r.nextInt(16), p.get(5), p.get(4), 1 + r.nextInt(2));
-                for (int i = 0; i < 9; i++) speck(im, r, r.nextInt(16), r.nextInt(16), p.get(1), p.get(2), 1 + r.nextInt(2));
+            case "intrusive" -> f = V2.smear(f, 1, 0, 0.25);      // coarse crystals, little grain direction
+            case "extrusive" -> f = V2.smear(f, 0, 1, 0.35);      // columnar: vertical grain
+            case "sedimentary" -> {                              // horizontal bedding grain plus faint beds
+                f = V2.smear(f, 1, 0, 0.5);
+                for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) f[y][x] += (y / 5) % 2 == 1 ? 0.08 : 0;
             }
-            case "extrusive" -> {
-                double[][] n = noise(seed, 8);
-                for (int y = 0; y < 16; y++)
-                    for (int x = 0; x < 16; x++) px(im, x, y, p.get(n[y][x] < 0.35 ? 2 : n[y][x] < 0.75 ? 3 : 4));
-                for (int i = 0; i < 4; i++) {
-                    int x = r.nextInt(16), y = r.nextInt(16);
-                    pxWrap(im, x, y, p.get(1));
-                    pxWrap(im, x + 1, y, p.get(1));
-                    pxWrap(im, x, y + 1, p.get(4));
-                    pxWrap(im, x + 1, y + 1, p.get(4));
-                }
-            }
-            case "sedimentary" -> {
-                int[] beds = new int[16];
-                int tone = 3, y = 0;
-                while (y < 16) {
-                    int h = 3 + r.nextInt(3);
-                    for (int i = 0; i < h && y < 16; i++, y++) beds[y] = tone;
-                    tone = tone == 3 ? (r.nextBoolean() ? 4 : 2) : 3;
-                }
-                double[][] n = noise(seed, 4);
-                for (y = 0; y < 16; y++)
-                    for (int x = 0; x < 16; x++) {
-                        int s = beds[y] + (n[y][x] > 0.8 ? 1 : n[y][x] < 0.15 ? -1 : 0);
-                        px(im, x, y, p.get(Math.max(2, Math.min(4, s))));
-                    }
-                // Broken parting lines between beds.
-                for (y = 1; y < 16; y++) {
-                    if (beds[y] == beds[y - 1]) continue;
-                    int x = r.nextInt(16);
-                    int len = 5 + r.nextInt(6);
-                    for (int i = 0; i < len; i++) pxWrap(im, x + i, y, p.get(1));
-                    int x2 = x + len + 2 + r.nextInt(3);
-                    for (int i = 0; i < 3; i++) pxWrap(im, x2 + i, y, p.get(2));
-                }
+            case "metamorphic" -> f = V2.smear(V2.smear(f, 1, 1, 0.4), 1, 1, 0.3);  // diagonal foliation
+            default -> throw new IllegalArgumentException(rock.category());
+        }
+        BufferedImage im = V2.paint(V2.quantize(f, V2.TERRAIN_SHARES), p);
+        switch (rock.category()) {
+            case "intrusive" -> {  // feldspar flecks and mafic specks, single pixels
+                for (int i = 0; i < 5; i++) pxWrap(im, r.nextInt(16), r.nextInt(16), r.nextBoolean() ? p.get(5) : p.get(1));
             }
             case "metamorphic" -> {
-                boolean marble = rock.name().equals("marble");
-                double[][] n = noise(seed, 8);
-                for (int yy = 0; yy < 16; yy++)
-                    for (int x = 0; x < 16; x++) {
-                        // Diagonal foliation: bands along x + y.
-                        int band = Math.floorMod(yy * 4 - x, 16) / 4;
-                        double v = n[yy][x] * (marble ? 0.6 : 0.35) + (marble ? 0.4 : (band % 2 == 0 ? 0.55 : 0.3));
-                        px(im, x, yy, p.get(marble ? (v < 0.5 ? 3 : 4) : (v < 0.42 ? 2 : v < 0.62 ? 3 : 4)));
-                    }
-                if (marble) {
-                    // Two thin grey veins running diagonally.
+                if (rock.name().equals("marble")) {  // two thin diagonal veins a step darker
                     for (int v = 0; v < 2; v++) {
-                        int x = r.nextInt(16), y0 = 0;
-                        for (int yy = 0; yy < 16; yy++) {
-                            pxWrap(im, x, y0 + yy, p.get(yy % 5 == 0 ? 1 : 2));
-                            if (r.nextInt(3) == 0) x += r.nextBoolean() ? 1 : -1;
-                            else x += 1;
-                        }
+                        int x = r.nextInt(16), y0 = r.nextInt(16);
+                        for (int k = 0; k < 6; k++) pxWrap(im, x + k, y0 + k, p.get(k % 3 == 2 ? 3 : 2));
                     }
-                } else {
-                    // Slate: thin parallel sheets with dark cleavage lines.
-                    for (int i = 0; i < 5; i++) {
-                        int y0 = r.nextInt(16), x0 = r.nextInt(16), len = 4 + r.nextInt(5);
-                        for (int k = 0; k < len; k++) pxWrap(im, x0 + 2 * k, y0 - k, p.get(1));
+                } else {              // slate: a few dark cleavage dashes
+                    for (int v = 0; v < 3; v++) {
+                        int x = r.nextInt(16), y0 = r.nextInt(16);
+                        for (int k = 0; k < 3; k++) pxWrap(im, x + k, y0 + k, p.get(1));
                     }
                 }
             }
-            default -> throw new IllegalArgumentException(rock.category());
+            default -> { }
         }
         return im;
     }
 
-    /** Cobble: rounded clusters with dark gaps (style guide 7). */
+    /** Cobble: rounded stones with dark gaps, vanilla's layout, per-pixel grain on each stone (style guide 5). */
     static BufferedImage cobbled(Rock rock) {
         Ramp p = rock.ramp();
         BufferedImage im = img();
-        // Fill with gap colour, then paint stones on a jittered grid.
         for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) px(im, x, y, p.get(1));
         Random r = new Random(rock.name().hashCode() * 17L);
-        int[][] owner = new int[16][16];
         int[][] centres = new int[9][2];
         for (int i = 0; i < 9; i++) {
             centres[i][0] = (i % 3) * 5 + 2 + r.nextInt(3);
@@ -301,82 +285,157 @@ public final class TextureGen {
         }
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
-                int best = 0, second = 0;
+                int best = 0;
                 double bd = 1e9, sd = 1e9;
                 for (int i = 0; i < 9; i++) {
                     for (int ox = -16; ox <= 16; ox += 16)
                         for (int oy = -16; oy <= 16; oy += 16) {
                             double dx = x - centres[i][0] - ox, dy = y - centres[i][1] - oy;
                             double d = Math.sqrt(dx * dx + dy * dy);
-                            if (d < bd) { sd = bd; second = best; bd = d; best = i; }
-                            else if (d < sd) { sd = d; second = i; }
+                            if (d < bd) { sd = bd; best = i; bd = d; }
+                            else if (d < sd) sd = d;
                         }
                 }
-                owner[y][x] = best;
                 if (sd - bd < 1.0) continue; // gap
-                // Lit from the top-left: pixels up-left of the centre are lighter.
+                // Lit from the top-left; every stone gets a speckle of its own tone.
                 int cx = centres[best][0], cy = centres[best][1];
                 double rel = ((x - cx + 24) % 16 - 8 + (y - cy + 24) % 16 - 8);
-                int step = rel < -2 ? 4 : rel > 2 ? 2 : 3;
-                if (bd < 1.2 && r.nextInt(3) == 0) step = 5;
-                px(im, x, y, p.get(step));
+                int step = rel < -2 ? 4 : rel > 3 ? 2 : 3;
+                double g = r.nextDouble();
+                step += g < 0.18 ? 1 : g > 0.84 ? -1 : 0;
+                px(im, x, y, p.get(Math.max(2, Math.min(5, step))));
             }
         return im;
     }
 
-    // ---------------------------------------------------------------- ores
+    // ---------------------------------------------------------------- v2 helpers (style guide v2)
 
-    /** Mineral overlay per grade: grain count and size show the grade (style guide 7). */
-    static BufferedImage oreOverlay(Mineral m, String grade) {
-        BufferedImage im = img();
-        Random r = new Random((m.name() + grade).hashCode());
-        int small, large;
-        switch (grade) {
-            case "poor" -> { small = 3; large = 0; }
-            case "normal" -> { small = 4; large = 1; }
-            default -> { small = 5; large = 3; }
+    /**
+     * Ports of the helpers in {@code art/tools/gen_samples_v2.py}: grain fields, share quantising,
+     * stamped ore clusters and the hard dark item outline. Later art chunks (items, machines) reuse them.
+     */
+    static final class V2 {
+        /** Share of pixels per ramp step, dark to light: 4, 22, 44, 24, 6 percent. */
+        static final int[] TERRAIN_SHARES = {4, 22, 44, 24, 6};
+
+        // Ramps from the guide's section 4 that items and machines will need (steps 1-5, glint as spec).
+        static final Ramp BRONZE_V2 = ramp(0xfff0b8, 0x3a2510, 0x6b4a1c, 0x9c7030, 0xc8983e, 0xe8c060);
+        static final Ramp WOOD_V2 = ramp(0, 0x28190a, 0x493615, 0x684e1e, 0x896727, 0xa88238);
+        static final Ramp FIRE_BRICK_V2 = ramp(0, 0x5e4a36, 0x7a6248, 0x927a58, 0xa68e68, 0xbaa27a);
+        static final Ramp MORTAR_V2 = ramp(0, 0x6a645a, 0x6a645a, 0xaaa498, 0xc0baae, 0xc0baae);
+        static final Ramp STEEL_V2 = ramp(0xd4d8da, 0x3a3c42, 0x5a5d64, 0x7a7d84, 0x959aa0, 0xb4b8bc);
+
+        /** 50% per-pixel noise + 30% tileable noise at period 4 + 20% at period 2. */
+        static double[][] terrainField(long seed) {
+            Random r = new Random(seed);
+            double[][] a = noise(seed + 11, 4), b = noise(seed + 12, 2);
+            double[][] out = new double[16][16];
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) out[y][x] = 0.5 * r.nextDouble() + 0.3 * a[y][x] + 0.2 * b[y][x];
+            return out;
         }
-        List<int[]> placed = new ArrayList<>();
-        int attempts = 0;
-        for (int i = 0; i < small + large && attempts < 400; attempts++) {
-            boolean big = i < large;
-            int size = big ? 3 : (grade.equals("poor") && i == 0 ? 1 : 2);
-            int x = 1 + r.nextInt(14 - size), y = 1 + r.nextInt(14 - size);
-            boolean clash = false;
-            for (int[] q : placed) if (Math.abs(q[0] - x) < size + 2 && Math.abs(q[1] - y) < size + 2) clash = true;
-            if (clash) continue;
-            placed.add(new int[] {x, y, size});
-            drawGrain(im, m, x, y, size, grade.equals("rich") && big);
-            i++;
+
+        /** Directional wrapped smear: gives stone its streaky grain. */
+        static double[][] smear(double[][] f, int dx, int dy, double w) {
+            double[][] out = new double[16][16];
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    double a = f[Math.floorMod(y - dy, 16)][Math.floorMod(x - dx, 16)];
+                    double b = f[Math.floorMod(y + dy, 16)][Math.floorMod(x + dx, 16)];
+                    out[y][x] = f[y][x] * (1 - w) + (a + b) * w / 2;
+                }
+            return out;
         }
-        return im;
+
+        /** Ramp step index (0-based) per pixel by share of pixels, dark to light; exact and deterministic. */
+        static int[][] quantize(double[][] f, int[] shares) {
+            Integer[] order = new Integer[256];
+            for (int i = 0; i < 256; i++) order[i] = i;
+            java.util.Arrays.sort(order, java.util.Comparator.comparingDouble(i -> f[i / 16][i % 16]));
+            int total = 0;
+            for (int s : shares) total += s;
+            int[][] idx = new int[16][16];
+            int pos = 0;
+            double acc = 0;
+            for (int step = 0; step < shares.length; step++) {
+                acc += 256.0 * shares[step] / total;
+                int end = step == shares.length - 1 ? 256 : (int) Math.round(acc);
+                for (; pos < end; pos++) idx[order[pos] / 16][order[pos] % 16] = step;
+            }
+            return idx;
+        }
+
+        static BufferedImage paint(int[][] idx, Ramp p) {
+            BufferedImage im = img();
+            for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) px(im, x, y, p.get(idx[y][x] + 1));
+            return im;
+        }
+
+        /** Item outline colour: the neighbour darkened to 32%, hue kept. */
+        static int outlineCol(int c) { return scale(c, 0.32); }
+
+        /** 1 px outline round the silhouette on all four sides, near black, colour from the bordering pixel. */
+        static BufferedImage outline(BufferedImage in) {
+            BufferedImage out = img();
+            out.getGraphics().drawImage(in, 0, 0, null);
+            int[][] dirs = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    if (opaque(in, x, y)) continue;
+                    for (int[] d : dirs)
+                        if (opaque(in, x + d[0], y + d[1])) { px(out, x, y, outlineCol(rgb(in, x + d[0], y + d[1]))); break; }
+                }
+            return out;
+        }
+
+        // Hand-shaped mineral clusters (ramp steps, '.' = host rock): highlight top-left, shadow and a dark
+        // rim bottom-right, like vanilla ore specks.
+        static final String[][] SMALL = {{"45", "32"}, {"54.", "431"}, {".5", "43", "21"}, {"45.", ".321"}};
+        static final String[][] MEDIUM = {{".45.", "4432", ".21."}, {"45.", "4432", ".321"}, {".54", "4431", "321."}, {"54..", "4432", ".321"}};
+        static final String[][] LARGE = {{".455.", "44432", "43321", ".21.."}, {"..45.", ".4443", "44332", ".321."}, {".54..", "44543", "33321", "..21."}};
+
+        /** Mineral overlay: poor = 3 small, normal = 3 medium + 2 small, rich = 2 large + 3 medium + 2 small. */
+        static BufferedImage ore(Mineral m, String grade) {
+            Random r = new Random((m.name() + "/" + grade).hashCode() * 131L);
+            String[][][] plan = switch (grade) {
+                case "poor" -> new String[][][] {SMALL, SMALL, SMALL};
+                case "normal" -> new String[][][] {MEDIUM, MEDIUM, MEDIUM, SMALL, SMALL};
+                default -> new String[][][] {LARGE, LARGE, MEDIUM, MEDIUM, MEDIUM, SMALL, SMALL};
+            };
+            Ramp p = m.ramp();
+            BufferedImage im = img();
+            boolean[][] taken = new boolean[16][16];
+            for (String[][] pool : plan) {
+                String[] shape = pool[r.nextInt(pool.length)];
+                int h = shape.length, w = 0;
+                for (String row : shape) w = Math.max(w, row.length());
+                int ox = 0, oy = 0;
+                boolean fits = false;
+                for (int t = 0; t < 300 && !fits; t++) {
+                    ox = 1 + r.nextInt(15 - w);
+                    oy = 1 + r.nextInt(15 - h);
+                    fits = true;
+                    for (int y = Math.max(0, oy - 1); y < Math.min(16, oy + h + 1); y++)
+                        for (int x = Math.max(0, ox - 1); x < Math.min(16, ox + w + 1); x++) if (taken[y][x]) fits = false;
+                }
+                if (!fits) continue;
+                boolean glint = pool == LARGE && m.metallic() && p.spec() != 0;
+                for (int y = 0; y < h; y++)
+                    for (int x = 0; x < shape[y].length(); x++) {
+                        char ch = shape[y].charAt(x);
+                        if (ch == '.') continue;
+                        int c = p.get(ch - '0');
+                        if (glint && ch == '5') { c = p.spec(); glint = false; }
+                        px(im, ox + x, oy + y, c);
+                    }
+                for (int y = oy; y < oy + h; y++) for (int x = ox; x < ox + w; x++) taken[y][x] = true;
+            }
+            return im;
+        }
     }
 
-    static void drawGrain(BufferedImage im, Mineral m, int x, int y, int size, boolean bright) {
-        Ramp p = m.ramp();
-        int lift = bright ? 1 : 0;
-        if (size == 1) {
-            px(im, x, y, p.get(4 + lift));
-            px(im, x + 1, y, p.get(3));
-            return;
-        }
-        if (size == 2) {
-            px(im, x, y, p.get(4 + lift));
-            px(im, x + 1, y, p.get(3 + lift));
-            px(im, x, y + 1, p.get(3));
-            px(im, x + 1, y + 1, p.get(2));
-            return;
-        }
-        // 3x3 rounded grain
-        px(im, x + 1, y, p.get(4 + lift));
-        px(im, x, y + 1, p.get(4 + lift));
-        px(im, x + 1, y + 1, m.metallic() && p.spec() != 0 ? p.spec() : p.get(5));
-        px(im, x + 2, y + 1, p.get(3));
-        px(im, x + 1, y + 2, p.get(2));
-        px(im, x + 2, y + 2, p.get(1 + lift));
-        px(im, x, y + 2, p.get(2));
-        px(im, x + 2, y, p.get(3));
-    }
+    /** Mineral overlay per grade: stamped clusters, grade shown by cluster count and size (style guide 6). */
+    static BufferedImage oreOverlay(Mineral m, String grade) { return V2.ore(m, grade); }
 
     static BufferedImage composite(BufferedImage base, BufferedImage overlay) {
         BufferedImage out = img();
@@ -2172,84 +2231,13 @@ public final class TextureGen {
     static final Ramp SAND = ramp(0, 0x8a7656, 0xa69068, 0xc0aa7c, 0xd4c092, 0xe6d6ac);
 
     static final List<Mineral> T3_MINERALS = List.of(
-            new Mineral("hematite", HEMATITE, false),
-            new Mineral("magnetite", MAGNETITE, true),
-            new Mineral("native_gold", GOLD, true),
-            new Mineral("limonite", LIMONITE, false));
+            new Mineral("hematite", ORE_HEMATITE, false),
+            new Mineral("magnetite", ORE_MAGNETITE, true),
+            new Mineral("native_gold", ORE_GOLD, true),
+            new Mineral("limonite", ORE_LIMONITE, false));
 
     /** Heat band (SG 6), dark red to white, for the lit bloomery door. */
     static final int[] HEAT_BAND = {0x6e1e14, 0xa0281a, 0xd23a1e, 0xf07a22, 0xf8c23a, 0xfff4d0};
-
-    /**
-     * Stamps a small pattern: digits are ramp steps, 's' is the specular colour when {@code spec}
-     * is set and step {@code fallback} otherwise, '.' is left alone.
-     */
-    static void stamp(BufferedImage im, Ramp a, String[] rows, int x0, int y0, boolean spec, int fallback) {
-        for (int y = 0; y < rows.length; y++)
-            for (int x = 0; x < rows[y].length(); x++) {
-                char ch = rows[y].charAt(x);
-                if (ch >= '1' && ch <= '5') px(im, x0 + x, y0 + y, a.get(ch - '0'));
-                else if (ch == 's') px(im, x0 + x, y0 + y, spec && a.spec() != 0 ? a.spec() : a.get(fallback));
-            }
-    }
-
-    /**
-     * An ore overlay built from per-mineral piece shapes (tiny, small, large). Grade by count and
-     * size (SG 7): poor 3 mostly tiny, normal 5 with one large, rich 8 with three large. The first
-     * piece gets the single specular pixel of a metallic mineral.
-     */
-    static BufferedImage pieceOverlay(Mineral m, String grade, String[][] shapes, int fallback) {
-        Random r = new Random((m.name() + "/" + grade).hashCode() * 131L);
-        int[] kinds = switch (grade) {
-            case "poor" -> new int[] {1, 0, 0};
-            case "normal" -> new int[] {2, 1, 1, 1, 0};
-            default -> new int[] {2, 2, 2, 1, 1, 1, 0, 0};
-        };
-        // Random placement with spacing; start over until every piece fits.
-        for (int trial = 0; trial < 500; trial++) {
-            BufferedImage im = placePieces(m, r, kinds, shapes, fallback, trial < 250 ? 2 : 1);
-            if (im != null) return im;
-        }
-        throw new IllegalStateException("could not place " + m.name() + " " + grade);
-    }
-
-    static BufferedImage placePieces(Mineral m, Random r, int[] kinds, String[][] shapes, int fallback, int gap) {
-        BufferedImage im = img();
-        List<int[]> placed = new ArrayList<>();
-        int i = 0;
-        for (int attempts = 0; i < kinds.length && attempts < 400; attempts++) {
-            String[] s = shapes[kinds[i]];
-            int w = s[0].length(), h = s.length;
-            int x = 1 + r.nextInt(15 - w), y = 1 + r.nextInt(15 - h);
-            boolean clash = false;
-            for (int[] q : placed)
-                if (x < q[0] + q[2] + gap && q[0] < x + w + gap && y < q[1] + q[3] + gap && q[1] < y + h + gap) clash = true;
-            if (clash) continue;
-            placed.add(new int[] {x, y, w, h});
-            stamp(im, m.ramp(), s, x, y, m.metallic() && i == 0, fallback);
-            i++;
-        }
-        return i < kinds.length ? null : im;
-    }
-
-    /** Hematite: flat red-brown lenses lying along the bedding, matte. */
-    static final String[][] HEMATITE_LENSES = {
-            {"443", ".32"},
-            {"4443.", ".3322"},
-            {".4543..", "4443332", "..2221."},
-    };
-    /** Magnetite: small blocky black crystals lit on their top-left faces. */
-    static final String[][] MAGNETITE_CRYSTALS = {
-            {"s3", "31"},
-            {"s43", "431", "311"},
-            {"5443", "4s32", "4321", "3211"},
-    };
-    /** Native gold: thin bright wires and flakes, a few pixels each. */
-    static final String[][] GOLD_WIRES = {
-            {"54", ".3"},
-            {"..s", ".43", "43."},
-            {"...45", "..s3.", ".434.", "43.3."},
-    };
 
     /** Soft lumpy soil in the fire clay ramp, with a couple of dark rootlets. */
     static BufferedImage fireClayBlock() {
@@ -2743,15 +2731,15 @@ public final class TextureGen {
         save("block/fire_clay", fireClayBlock());
         save("block/fire_bricks", fireBricks());
         save("block/lignite_seam", ligniteSeam());
-        Mineral bogLimonite = new Mineral("bog_limonite", LIMONITE, false);
+        Mineral bogLimonite = new Mineral("bog_limonite", ORE_LIMONITE, false);
         for (String grade : List.of("poor", "normal", "rich"))
             save("block/bog_iron_" + grade, composite(mud(), oreOverlay(bogLimonite, grade)));
         save("block/placer_gravel", placerGravel());
         save("block/placer_sand", placerSand());
         for (String grade : List.of("poor", "normal", "rich")) {
-            save("block/ore/hematite_" + grade, pieceOverlay(T3_MINERALS.get(0), grade, HEMATITE_LENSES, 5));
-            save("block/ore/magnetite_" + grade, pieceOverlay(T3_MINERALS.get(1), grade, MAGNETITE_CRYSTALS, 5));
-            save("block/ore/native_gold_" + grade, pieceOverlay(T3_MINERALS.get(2), grade, GOLD_WIRES, 5));
+            save("block/ore/hematite_" + grade, oreOverlay(T3_MINERALS.get(0), grade));
+            save("block/ore/magnetite_" + grade, oreOverlay(T3_MINERALS.get(1), grade));
+            save("block/ore/native_gold_" + grade, oreOverlay(T3_MINERALS.get(2), grade));
         }
         save("block/bloomery_front", bloomeryFront(-1));
         saveRaw("block/bloomery_front_lit", bloomeryFrontLit());
@@ -4926,35 +4914,10 @@ public final class TextureGen {
     static final Ramp SULFUR = ramp(0, 0x3c3820, 0x5c5630, 0x827a40, 0xa69c54, 0xc6bc72);
 
     static final List<Mineral> T4_MINERALS = List.of(
-            new Mineral("sphalerite", SPHALERITE, false),
-            new Mineral("galena", GALENA, true),
-            new Mineral("bituminous_coal", BITUMINOUS_COAL, false),
-            new Mineral("sulfur", SULFUR, false));
-
-    /** Sphalerite, "black jack": blocky dark grains with a resinous amber core. */
-    static final String[][] SPHALERITE_GRAINS = {
-            {"24", "12"},
-            {"221", "254", "121"},
-            {".221", "2254", "2441", "1211"},
-    };
-    /** Galena: crisp cubes, lit top-left faces, shadowed bottom-right. */
-    static final String[][] GALENA_CUBES = {
-            {"s4", "41"},
-            {"554", "531", "411"},
-            {"5554", "5331", "5331", "4111"},
-    };
-    /** Bituminous coal: thin horizontal seams, a lit top edge and one glassy glint each. */
-    static final String[][] COAL_STREAKS = {
-            {"54", "11"},
-            {"4544", "1121"},
-            {"445444", "111211"},
-    };
-    /** Native sulfur: crusty, rounded-angular crystal clusters, a little larger than other grains. */
-    static final String[][] SULFUR_CRUSTS = {
-            {"45", "32"},
-            {".54.", "4543", "3322"},
-            {".545.", "45543", "34433", ".222."},
-    };
+            new Mineral("sphalerite", ORE_SPHALERITE, false),
+            new Mineral("galena", ORE_GALENA, true),
+            new Mineral("bituminous_coal", ORE_COAL, false),
+            new Mineral("sulfur", ORE_SULFUR, false));
 
     /** A soft conical heap of powder (coke, charcoal, slag and sulfur dust). */
     static final String[] DUST_HEAP = {
@@ -7956,10 +7919,10 @@ public final class TextureGen {
         save("block/steel_anvil_top", steelAnvilTop());
         // Ores (worldgen spec 14.2 and 14.3).
         for (String grade : List.of("poor", "normal", "rich")) {
-            save("block/ore/sphalerite_" + grade, pieceOverlay(T4_MINERALS.get(0), grade, SPHALERITE_GRAINS, 4));
-            save("block/ore/galena_" + grade, pieceOverlay(T4_MINERALS.get(1), grade, GALENA_CUBES, 5));
-            save("block/ore/bituminous_coal_" + grade, pieceOverlay(T4_MINERALS.get(2), grade, COAL_STREAKS, 5));
-            save("block/ore/sulfur_" + grade, pieceOverlay(T4_MINERALS.get(3), grade, SULFUR_CRUSTS, 5));
+            save("block/ore/sphalerite_" + grade, oreOverlay(T4_MINERALS.get(0), grade));
+            save("block/ore/galena_" + grade, oreOverlay(T4_MINERALS.get(1), grade));
+            save("block/ore/bituminous_coal_" + grade, oreOverlay(T4_MINERALS.get(2), grade));
+            save("block/ore/sulfur_" + grade, oreOverlay(T4_MINERALS.get(3), grade));
         }
         for (Mineral m : T4_MINERALS) save("block/small_" + m.name(), pebbles(m));
         String[] washedPoor = washedPile(CRUSHED_SMALL), washedNormal = washedPile(CRUSHED_NORMAL), washedRich = washedPile(CRUSHED_RICH);
