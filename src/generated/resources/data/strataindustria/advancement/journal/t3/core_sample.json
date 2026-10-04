@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/rotation",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:core_sample"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.core_sample.hint"
+    },
+    "icon": {
+      "id": "strataindustria:core_sample"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.core_sample"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

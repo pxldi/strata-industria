@@ -17,7 +17,7 @@ import net.minecraft.resources.Identifier;
 public class CoreSampleScreen extends Screen {
     private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/core_sample.png");
     public static final int WIDTH = 220, HEIGHT = 172;
-    public static final int STRIP_X = 13, STRIP_Y = 19, STRIP_W = 18, ROW_H = 2;
+    public static final int STRIP_X = 13, STRIP_Y = 20, STRIP_W = 18, ROW_H = 2;
     public static final int TEXT_X = 44, TEXT_Y = 22, TEXT_LINES = 13, LINE_H = 10;
     private static final int TEXT = 0xFF3A3530, HEADING = 0xFF6A4A28, FAINT = 0xFF8A8078;
 
