@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/slag_metal_ingot",
+    "layer1": "strataindustria:item/glow/slag_metal_ingot"
+  }
+}

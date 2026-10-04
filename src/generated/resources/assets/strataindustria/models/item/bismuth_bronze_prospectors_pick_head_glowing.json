@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/bismuth_bronze_prospectors_pick_head",
+    "layer1": "strataindustria:item/glow/bismuth_bronze_prospectors_pick_head"
+  }
+}

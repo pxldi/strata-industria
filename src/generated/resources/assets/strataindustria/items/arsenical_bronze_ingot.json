@@ -1,6 +1,23 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "strataindustria:item/arsenical_bronze_ingot"
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/arsenical_bronze_ingot"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/arsenical_bronze_ingot_glowing",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -1
+        },
+        {
+          "type": "strataindustria:heat_glow"
+        }
+      ]
+    },
+    "property": "strataindustria:glowing"
   }
 }
