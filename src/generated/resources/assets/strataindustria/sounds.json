@@ -1392,6 +1392,29 @@
     ],
     "subtitle": "subtitles.strataindustria.journal.place"
   },
+  "washer.wash": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "pitch": 0.8,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "pitch": 0.9,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.gravel.hit",
+        "pitch": 0.7,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.washer.wash"
+  },
   "washing_pan.find": {
     "sounds": [
       {
