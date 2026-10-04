@@ -457,6 +457,15 @@ public final class Config {
     public static final ModConfigSpec.IntValue TRANSPORT_MAX_TICKETED_CONSISTS = BUILDER
             .comment("Driverless consists one owner can have moving at once. Each keeps nine chunks loaded around it.")
             .defineInRange("maxTicketedConsists", 4, 1, 32);
+    public static final ModConfigSpec.IntValue TRANSPORT_ROPEWAY_SPAN_WOOD = BUILDER
+            .comment("Longest span of a ropeway between wooden towers, in blocks.")
+            .defineInRange("ropewaySpanWood", 24, 4, 128);
+    public static final ModConfigSpec.IntValue TRANSPORT_ROPEWAY_SPAN_STEEL = BUILDER
+            .comment("Longest span of a ropeway between steel towers and stations, in blocks.")
+            .defineInRange("ropewaySpanSteel", 40, 4, 128);
+    public static final ModConfigSpec.IntValue TRANSPORT_ROPEWAY_MAX_LENGTH = BUILDER
+            .comment("Longest ropeway, in blocks of line from the drive station to the return.")
+            .defineInRange("ropewayMaxLength", 1024, 16, 4096);
 
     static {
         BUILDER.pop();
