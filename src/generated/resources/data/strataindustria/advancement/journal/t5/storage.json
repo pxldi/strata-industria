@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/item_pipe",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "storage"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.storage.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:storage_controller"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.storage"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

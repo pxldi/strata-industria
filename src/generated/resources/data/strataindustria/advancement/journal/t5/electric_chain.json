@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/storage",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "electric_chain"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.electric_chain.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:electrolyser"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.electric_chain"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

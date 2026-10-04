@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t5/first_machine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "power_hammer"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.power_hammer.hint"
+    },
+    "icon": {
+      "id": "strataindustria:power_hammer"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.power_hammer"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

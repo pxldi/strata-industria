@@ -1,6 +1,7 @@
 package dev.strataindustria.electric;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.registry.Tier5Blocks;
@@ -51,6 +52,7 @@ public class MvUpgradeKitItem extends Item {
             level.playSound(null, pos, Tier5Sounds.MACHINE_UPGRADE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
             if (!player.hasInfiniteMaterials()) context.getItemInHand().shrink(1);
             player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".machine.upgraded_now", ElectricTier.MV.label()));
+            if (player instanceof net.minecraft.server.level.ServerPlayer server) Journal.award(server, Journal.MV_UPGRADE);
         }
         return InteractionResult.SUCCESS;
     }

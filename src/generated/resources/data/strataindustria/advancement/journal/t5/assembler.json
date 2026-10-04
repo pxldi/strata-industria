@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t5/first_machine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "assembler"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.assembler.hint"
+    },
+    "icon": {
+      "id": "strataindustria:assembler"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.assembler"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

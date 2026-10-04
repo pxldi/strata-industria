@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t4/automated_chain",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "cinnabar_mined"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.cinnabar.hint"
+    },
+    "icon": {
+      "id": "minecraft:redstone"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.cinnabar"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

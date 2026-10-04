@@ -6,12 +6,16 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.journal.JournalTrigger;
+import dev.strataindustria.logistics.Tier5Logistics;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.Tier4Items;
+import dev.strataindustria.registry.Tier5Blocks;
+import dev.strataindustria.registry.Tier5Items;
+
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.advancements.Advancement;
@@ -209,8 +213,52 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(blastFurnace, "t4/converter", Tier4Items.CONVERTER_CONTROLLER.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.CONVERTER));
         // Spec 15, goal 74 and spec 13.6: a machine finishes a long run fed and emptied by automation. Closes tier 4.
-        goal(engine, "t4/automated_chain", Tier4Items.INSERTER.get(), AdvancementType.GOAL,
+        AdvancementHolder automated = goal(engine, "t4/automated_chain", Tier4Items.INSERTER.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.AUTOMATED_CHAIN));
+        tier5(automated);
+    }
+
+    /** Tier 5 spec 15: goals 75 to 100. Opens when tier 4 closes; exit goals are 93, 94, 96, 98 and 100. */
+    private void tier5(AdvancementHolder tier4Exit) {
+        // Goal 75: a bucket of latex, or a tap that pushed latex into a pipe.
+        AdvancementHolder latex = Advancement.Builder.advancement()
+                .parent(tier4Exit)
+                .display(Tier5Items.LATEX_BUCKET.get(), title("t5.latex"), hint("t5.latex"), AdvancementType.TASK, false, false, false)
+                .addCriterion("bucket", has(Tier5Items.LATEX_BUCKET.get()))
+                .addCriterion("piped", JournalTrigger.TriggerInstance.of(Journal.LATEX_PIPED))
+                .requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR)
+                .save(output, Journal.goal("t5/latex").toString());
+        goal(latex, "t5/rubber", Tier5Items.RUBBER.get(), has(Tier5Items.RUBBER.get()));
+        AdvancementHolder cinnabar = goal(tier4Exit, "t5/cinnabar", Items.REDSTONE,
+                JournalTrigger.TriggerInstance.of(Journal.CINNABAR_MINED));
+        AdvancementHolder redAlloy = goal(cinnabar, "t5/red_alloy", ModItems.ingot(Metal.RED_ALLOY), has(ModItems.ingot(Metal.RED_ALLOY)));
+        AdvancementHolder wire = goal(tier4Exit, "t5/wire", Tier5Items.COPPER_WIRE.get(), has(Tier5Items.COPPER_WIRE.get()));
+        goal(redAlloy, "t5/circuit", Tier5Items.BASIC_CIRCUIT.get(), has(Tier5Items.BASIC_CIRCUIT.get()));
+        AdvancementHolder dynamo = goal(wire, "t5/dynamo", Tier5Items.KINETIC_DYNAMO.get(), JournalTrigger.TriggerInstance.of(Journal.DYNAMO));
+        AdvancementHolder cable = goal(dynamo, "t5/cable", Tier5Items.LV_CABLE.get(),
+                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier5Blocks.LV_CABLE.get()));
+        AdvancementHolder machine = goal(cable, "t5/first_machine", Tier5Items.ELECTRIC_FURNACE.get(),
+                JournalTrigger.TriggerInstance.of(Journal.FIRST_MACHINE));
+        goal(dynamo, "t5/turbine", Tier5Items.STEAM_TURBINE.get(), JournalTrigger.TriggerInstance.of(Journal.TURBINE));
+        goal(machine, "t5/macerator", Tier5Items.MACERATOR.get(), JournalTrigger.TriggerInstance.of(Journal.MACERATOR));
+        AdvancementHolder assembler = goal(machine, "t5/assembler", Tier5Items.ASSEMBLER.get(), JournalTrigger.TriggerInstance.of(Journal.ASSEMBLER));
+        goal(machine, "t5/power_hammer", Tier5Items.POWER_HAMMER.get(), JournalTrigger.TriggerInstance.of(Journal.POWER_HAMMER));
+        AdvancementHolder battery = goal(cable, "t5/battery", Tier5Items.BATTERY_BOX.get(), JournalTrigger.TriggerInstance.of(Journal.BATTERY));
+        goal(machine, "t5/electric_heat", Tier5Items.ELECTRIC_HEATER.get(), JournalTrigger.TriggerInstance.of(Journal.ELECTRIC_HEAT));
+        AdvancementHolder acid = goal(assembler, "t5/sulfuric_acid", Tier5Items.SULFURIC_ACID_BUCKET.get(),
+                JournalTrigger.TriggerInstance.of(Journal.SULFURIC_ACID));
+        goal(acid, "t5/electrolysis", Tier5Items.ELECTROLYSER.get(), JournalTrigger.TriggerInstance.of(Journal.ELECTROLYSIS));
+        AdvancementHolder alumina = goal(acid, "t5/alumina", Tier5Items.ALUMINA.get(), has(Tier5Items.ALUMINA.get()));
+        goal(alumina, "t5/aluminium", ModItems.ingot(Metal.ALUMINIUM), AdvancementType.GOAL, has(ModItems.ingot(Metal.ALUMINIUM)));
+        AdvancementHolder mv = goal(assembler, "t5/mv", Tier5Items.MV_UPGRADE_KIT.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.MV_UPGRADE));
+        AdvancementHolder transformer = goal(mv, "t5/transformer", Tier5Items.TRANSFORMER.get(), JournalTrigger.TriggerInstance.of(Journal.TRANSFORMER));
+        goal(transformer, "t5/power_line", Tier5Items.POLE_INSULATOR.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.POWER_LINE));
+        AdvancementHolder pipe = goal(machine, "t5/item_pipe", Tier5Logistics.ITEM_PIPE_ITEM.get(), JournalTrigger.TriggerInstance.of(Journal.ITEM_PIPE));
+        AdvancementHolder storage = goal(pipe, "t5/storage", Tier5Logistics.STORAGE_CONTROLLER_ITEM.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.STORAGE));
+        goal(battery, "t5/ore_scanner", Tier5Items.ORE_SCANNER.get(), JournalTrigger.TriggerInstance.of(Journal.ORE_SCAN));
+        goal(storage, "t5/electric_chain", Tier5Items.ELECTROLYSER.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.ELECTRIC_CHAIN));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

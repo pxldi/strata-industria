@@ -2,6 +2,7 @@ package dev.strataindustria.power;
 
 import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.Tier5Sounds;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -115,6 +116,13 @@ public final class ElectricNetworks {
     public static ElectricNetwork.Report report(Level level, BlockPos pos) {
         ElectricNetwork network = networkAt(level, pos);
         return network == null ? ElectricNetwork.Report.NONE : network.report(pos);
+    }
+
+    /** Journal goal 96, checked every five seconds by a consumer that is running: its power crossed 64 or more blocks of span. */
+    public static void spanGoal(ServerLevel level, BlockPos pos) {
+        if (level.getGameTime() % 100 != 0) return;
+        ElectricNetwork network = networkAt(level, pos);
+        if (network != null && network.spanBlocks(pos) >= Journal.POWER_LINE_SPAN) Journal.awardNear(level, pos, Journal.POWER_LINE);
     }
 
     /** Most ports any block has. */

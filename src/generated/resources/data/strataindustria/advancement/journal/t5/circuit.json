@@ -1,0 +1,34 @@
+{
+  "parent": "strataindustria:journal/t5/red_alloy",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:basic_circuit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.circuit.hint"
+    },
+    "icon": {
+      "id": "strataindustria:basic_circuit"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.circuit"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

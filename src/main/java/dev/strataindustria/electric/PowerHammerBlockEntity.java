@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.forge.ForgeLimits;
 import dev.strataindustria.heat.Heat;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricConsumer;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
@@ -355,6 +356,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
             Heat.set(worked, Math.max(Heat.get(worked, now), temperature), now);
         } else {
             hitsDone = 0;
+            Journal.awardNear(level, worldPosition, Journal.POWER_HAMMER);
         }
         return Status.WORKING;
     }
@@ -397,6 +399,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         if (++timer < hitTicks()) return Status.WELDING;
         timer = 0;
         if (!machineWeld()) return Status.WRONG_PIECE;
+        Journal.awardNear(level, worldPosition, Journal.POWER_HAMMER);
         struck(level, now);
         return Status.WELDING;
     }

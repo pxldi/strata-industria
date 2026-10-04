@@ -99,6 +99,7 @@ public class OreScannerItem extends Item {
         level.playSound(null, player.getX(), player.getY(), player.getZ(), Tier5Sounds.ORE_SCANNER_DONE.get(), SoundSource.PLAYERS, 0.8f, 1.0f);
         PacketDistributor.sendToPlayer(player, new ScannerPayloads.Open());
         Journal.award(player, Journal.PROSPECT);
+        Journal.award(player, Journal.ORE_SCAN);
         return stack;
     }
 
