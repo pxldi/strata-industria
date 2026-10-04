@@ -60,7 +60,7 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
     public static final int DATA_STATUS = 0, DATA_HITS = 1, DATA_TOTAL = 2, DATA_COUNT = 3;
 
     public enum Status {
-        NO_ANVIL, NO_PATTERN, NOT_TURNING, TOO_SLOW, WAITING, WORKING, OUTPUT_FULL, ANVIL_BUSY;
+        NO_ANVIL, NO_PATTERN, NOT_TURNING, TOO_SLOW, WAITING, WORKING, OUTPUT_FULL, ANVIL_BUSY, OUTDATED_PATTERN;
 
         public String key() {
             return StrataIndustria.MOD_ID + ".trip_hammer." + name().toLowerCase(java.util.Locale.ROOT);
@@ -122,6 +122,8 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
         if (pattern == null) return Status.NO_PATTERN;
         Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
         if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
+        // Targets changed since recording (config smithing.randomTargets): the hits would never finish (spec 9.5).
+        if (pattern.target() != dev.strataindustria.smithing.Smithing.target(level, pattern.recipe(), recipe)) return Status.OUTDATED_PATTERN;
         hitsTotal = pattern.hits().size();
 
         // A finished piece goes into a container under the anvil, or onto the anvil top.

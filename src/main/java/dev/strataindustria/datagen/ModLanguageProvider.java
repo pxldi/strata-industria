@@ -566,6 +566,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(hammer + "working", "Working (%s / %s hits)");
         add(hammer + "output_full", "Output full");
         add(hammer + "anvil_busy", "Something else is on the anvil");
+        add(hammer + "outdated_pattern", "Outdated pattern: record it again");
 
         // Spec 9.4 and 9.5: welding, flux and patterns.
         addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");

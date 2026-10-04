@@ -1012,6 +1012,7 @@
   "strataindustria.trip_hammer.no_anvil": "No anvil in front",
   "strataindustria.trip_hammer.no_pattern": "Needs a recorded pattern",
   "strataindustria.trip_hammer.not_turning": "Needs a turning shaft",
+  "strataindustria.trip_hammer.outdated_pattern": "Outdated pattern: record it again",
   "strataindustria.trip_hammer.output_full": "Output full",
   "strataindustria.trip_hammer.too_slow": "Too slow: needs %s RPM",
   "strataindustria.trip_hammer.waiting": "Waiting for a hot workpiece",

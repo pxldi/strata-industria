@@ -48,6 +48,7 @@ final class Tier3GameTests {
     static void register(Map<String, Consumer<GameTestHelper>> tests) {
         tests.put("bloomery_run", Tier3GameTests::bloomeryRun);
         tests.put("trip_hammer", Tier3GameTests::tripHammer);
+        tests.put("step_up_gearbox_facings", Tier3GameTests::stepUpGearboxFacings);
     }
 
     // Bloomery (tier 3 spec 5): a two-level chimney with no bellows burns at 1200 °C, which makes
@@ -163,6 +164,36 @@ final class Tier3GameTests {
         helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "the chest should hold a copper plate, got " + out
                 + ", hammer status " + hammer.status());
         helper.assertTrue(hammer.getItem(TripHammerBlockEntity.INPUT).isEmpty(), "the ingot should be used up");
+        helper.succeed();
+    }
+
+    // Step-up gearbox (tier 3 spec 7.3): the axle behind it turns at twice the crank's speed whichever
+    // way it faces and whichever block the network is measured from.
+
+    private static void stepUpGearboxFacings(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos centre = helper.absolutePos(new BlockPos(4, 1, 4));
+        FakePlayer miller = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "miller"));
+        for (Direction facing : Direction.Plane.HORIZONTAL) {
+            BlockPos crankPos = centre.relative(facing.getOpposite());
+            BlockPos axlePos = centre.relative(facing);
+            for (BlockPos start : List.of(crankPos, centre, axlePos)) {
+                level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, facing),
+                        Block.UPDATE_ALL);
+                level.setBlock(centre, ModBlocks.STEP_UP_GEARBOX.get().defaultBlockState()
+                        .setValue(dev.strataindustria.power.StepUpGearboxBlock.FACING, facing), Block.UPDATE_ALL);
+                level.setBlock(axlePos, ModBlocks.WOODEN_AXLE.get().defaultBlockState()
+                        .setValue(dev.strataindustria.power.AxleBlock.AXIS, facing.getAxis()), Block.UPDATE_ALL);
+                ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(miller);
+                KineticNetworks.rebuildNow(level, start);
+                var axle = (dev.strataindustria.power.Kinetic) level.getBlockEntity(axlePos);
+                var gearbox = (dev.strataindustria.power.Kinetic) level.getBlockEntity(centre);
+                String where = "facing " + facing + ", measured from " + start.subtract(centre);
+                helper.assertValueEqual(Math.round(gearbox.kinetic().rpm()), 16, "gearbox RPM, " + where);
+                helper.assertValueEqual(Math.round(axle.kinetic().rpm()), 32, "axle RPM, " + where);
+                for (BlockPos pos : List.of(crankPos, centre, axlePos)) level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }
         helper.succeed();
     }
 }
