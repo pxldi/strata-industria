@@ -242,7 +242,8 @@ public final class TextureGen {
         long seed = rock.name().hashCode() * 31L;
         Ramp p = rock.ramp();
         Random r = new Random(seed ^ 0x5eedL);
-        double[][] f = V2.terrainField(seed);
+        // Intrusive rocks have almost no grain direction, so the period-4 noise would show as a grid: lean on per-pixel noise.
+        double[][] f = V2.terrainField(seed, rock.category().equals("intrusive") ? 0.8 : 0.68);
         switch (rock.category()) {
             case "intrusive" -> f = V2.smear(f, 1, 0, 0.25);      // coarse crystals, little grain direction
             case "extrusive" -> f = V2.smear(f, 0, 1, 0.35);      // columnar: vertical grain
@@ -346,12 +347,16 @@ public final class TextureGen {
         static final Ramp STRAW_V2 = ramp(0, 0x6a5624, 0x8a7430, 0xb09a42, 0xd0b858, 0xe8d476);
 
         /** 50% per-pixel noise + 30% tileable noise at period 4 + 20% at period 2. */
-        static double[][] terrainField(long seed) {
+        static double[][] terrainField(long seed) { return terrainField(seed, 0.5); }
+
+        /** Same field with a chosen share of per-pixel noise; the rest is split 3:2 between period 4 and 2. */
+        static double[][] terrainField(long seed, double white) {
+            double lo = (1 - white) * 0.6, mid = (1 - white) * 0.4;
             Random r = new Random(seed);
             double[][] a = noise(seed + 11, 4), b = noise(seed + 12, 2);
             double[][] out = new double[16][16];
             for (int y = 0; y < 16; y++)
-                for (int x = 0; x < 16; x++) out[y][x] = 0.5 * r.nextDouble() + 0.3 * a[y][x] + 0.2 * b[y][x];
+                for (int x = 0; x < 16; x++) out[y][x] = white * r.nextDouble() + lo * a[y][x] + mid * b[y][x];
             return out;
         }
 
