@@ -30,6 +30,8 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
     public static final int FUEL_STACK = 16;
     public static final float MAX_TEMPERATURE = 1350.0f;
     static final float HEAT_PER_TICK = 8.0f / 20;
+    /** Extra degrees a bellows adds over what the fuel can reach. */
+    public static final float BELLOWS_BONUS = 150.0f;
     static final float COOL_PER_TICK = 4.0f / 20;
     /** Above this the coals glow and give light. */
     public static final float GLOW_FROM = 400.0f;
@@ -98,17 +100,21 @@ public class ForgeBlockEntity extends BaseContainerBlockEntity {
     public static void serverTick(Level level, BlockPos pos, BlockState state, ForgeBlockEntity forge) {
         boolean lit = state.getValue(ForgeBlock.LIT);
         float before = forge.temperature;
+        // A bellows (spec 8.3): 150 °C hotter, heats 1.5 times as fast and burns fuel 1.5 times as fast.
+        boolean blown = lit && ForgeAir.blown(level, pos);
+        float cap = forge.burnCap + (blown ? BELLOWS_BONUS : 0.0f);
         if (lit) {
             if (forge.burnLeft > 0) forge.burnLeft--;
+            if (blown && forge.burnLeft > 0 && level.getGameTime() % 2 == 0) forge.burnLeft--;
             if (forge.burnLeft <= 0 && !forge.takeFuel()) {
                 ForgeBlock.setLit(level, pos, state, false);
                 lit = false;
             }
         }
-        if (lit && forge.temperature < forge.burnCap) {
-            forge.temperature = Math.min(forge.burnCap, forge.temperature + HEAT_PER_TICK);
+        if (lit && forge.temperature < cap) {
+            forge.temperature = Math.min(cap, forge.temperature + HEAT_PER_TICK * (blown ? 1.5f : 1.0f));
         } else if (lit) {
-            forge.temperature = Math.max(forge.burnCap, forge.temperature - COOL_PER_TICK);
+            forge.temperature = Math.max(cap, forge.temperature - COOL_PER_TICK);
         } else forge.temperature = Math.max(Heat.AMBIENT, forge.temperature - COOL_PER_TICK);
 
         boolean glow = forge.temperature >= GLOW_FROM;

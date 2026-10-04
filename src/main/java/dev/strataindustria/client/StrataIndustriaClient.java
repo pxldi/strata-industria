@@ -5,6 +5,12 @@ import dev.strataindustria.client.hud.FirestarterHud;
 import dev.strataindustria.client.render.PitKilnRenderer;
 import dev.strataindustria.client.render.QuernRenderer;
 import dev.strataindustria.client.render.AnvilRenderer;
+import dev.strataindustria.client.render.RotorRenderer;
+import dev.strataindustria.client.screen.MillstoneScreen;
+import dev.strataindustria.power.AxleBlock;
+import dev.strataindustria.power.HandCrankBlock;
+import dev.strataindustria.power.WaterWheelBlock;
+import net.minecraft.core.Direction;
 import dev.strataindustria.client.screen.AnvilScreen;
 import dev.strataindustria.client.screen.BloomeryScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
@@ -46,12 +52,24 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
         event.register(ModMenus.ANVIL.get(), AnvilScreen::new);
         event.register(ModMenus.BLOOMERY.get(), BloomeryScreen::new);
+        event.register(ModMenus.MILLSTONE.get(), MillstoneScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANVIL.get(), AnvilRenderer::new);
+        // Tier 3 spec 7: rotors spin at their network's speed.
+        event.registerBlockEntityRenderer(ModBlockEntities.KINETIC_TRANSMISSION.get(), context -> new RotorRenderer<>(context, "wooden_axle",
+                state -> state.hasProperty(AxleBlock.AXIS)
+                        ? Direction.fromAxisAndDirection(state.getValue(AxleBlock.AXIS), Direction.AxisDirection.POSITIVE)
+                        : null, 0));
+        event.registerBlockEntityRenderer(ModBlockEntities.HAND_CRANK.get(), context -> new RotorRenderer<>(context, "hand_crank",
+                state -> state.getValue(HandCrankBlock.FACING).getOpposite(), 0));
+        event.registerBlockEntityRenderer(ModBlockEntities.WATER_WHEEL.get(), context -> new RotorRenderer<>(context, "water_wheel",
+                state -> Direction.fromAxisAndDirection(state.getValue(WaterWheelBlock.AXIS), Direction.AxisDirection.POSITIVE), 1));
+        event.registerBlockEntityRenderer(ModBlockEntities.MILLSTONE.get(), context -> new RotorRenderer<>(context, "millstone_runner",
+                state -> Direction.UP, 0));
     }
 
     private static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {

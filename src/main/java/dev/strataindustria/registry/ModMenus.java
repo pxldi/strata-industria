@@ -7,6 +7,7 @@ import dev.strataindustria.fire.FirePitMenu;
 import dev.strataindustria.forge.ForgeMenu;
 import dev.strataindustria.metal.CrucibleMenu;
 import dev.strataindustria.knapping.KnappingMenu;
+import dev.strataindustria.machine.MillstoneMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -36,6 +37,9 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<BloomeryMenu>> BLOOMERY =
             MENUS.register("bloomery", () -> IMenuTypeExtension.create(BloomeryMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MillstoneMenu>> MILLSTONE =
+            MENUS.register("millstone", () -> IMenuTypeExtension.create(MillstoneMenu::new));
 
     private ModMenus() {}
 }

@@ -1,5 +1,10 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.machine.BellowsBlockEntity;
+import dev.strataindustria.machine.MillstoneBlockEntity;
+import dev.strataindustria.power.HandCrankBlockEntity;
+import dev.strataindustria.power.KineticBlockEntity;
+import dev.strataindustria.power.WaterWheelBlockEntity;
 import dev.strataindustria.bloomery.BloomeryBlockEntity;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.LargeVesselBlockEntity;
@@ -49,6 +54,20 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloomeryBlockEntity>> BLOOMERY =
             BLOCK_ENTITIES.register("bloomery", () -> new BlockEntityType<>(BloomeryBlockEntity::new, ModBlocks.BLOOMERY.get()));
+
+    // Tier 3 spec 7 and 8: axles and gearboxes share one block entity type.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticBlockEntity>> KINETIC_TRANSMISSION =
+            BLOCK_ENTITIES.register("kinetic_transmission", () -> new BlockEntityType<>(
+                    (pos, state) -> new KineticBlockEntity(ModBlockEntities.KINETIC_TRANSMISSION.get(), pos, state),
+                    ModBlocks.WOODEN_AXLE.get(), ModBlocks.WOODEN_GEARBOX.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandCrankBlockEntity>> HAND_CRANK =
+            BLOCK_ENTITIES.register("hand_crank", () -> new BlockEntityType<>(HandCrankBlockEntity::new, ModBlocks.HAND_CRANK.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaterWheelBlockEntity>> WATER_WHEEL =
+            BLOCK_ENTITIES.register("water_wheel", () -> new BlockEntityType<>(WaterWheelBlockEntity::new, ModBlocks.WATER_WHEEL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MillstoneBlockEntity>> MILLSTONE =
+            BLOCK_ENTITIES.register("millstone", () -> new BlockEntityType<>(MillstoneBlockEntity::new, ModBlocks.MILLSTONE.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BellowsBlockEntity>> BELLOWS =
+            BLOCK_ENTITIES.register("bellows", () -> new BlockEntityType<>(BellowsBlockEntity::new, ModBlocks.BELLOWS.get()));
 
     private ModBlockEntities() {}
 }

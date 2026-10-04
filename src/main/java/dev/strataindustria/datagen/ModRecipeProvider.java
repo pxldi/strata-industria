@@ -392,6 +392,8 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_smithing_pattern", has(pattern))
                 .save(output, key("smithing_pattern_wipe"));
 
+        kinetics();
+
         // Spec 2: the furnace returns in tier 3, built from fire bricks.
         shaped(RecipeCategory.DECORATIONS, Items.FURNACE)
                 .pattern("FFF")
@@ -400,6 +402,70 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('F', fireBrick)
                 .unlockedBy("has_fire_brick", has(fireBrick))
                 .save(output.withConditions(new ConfigCondition("vanilla.gateFurnace", true)), key("furnace_from_fire_bricks"));
+    }
+
+    // Spec 14.3: mechanical power and the first machines.
+    private void kinetics() {
+        Item axle = ModItems.WOODEN_AXLE.get(), gear = ModItems.WOODEN_GEAR.get(), rod = ModItems.WROUGHT_IRON_ROD.get();
+        shaped(RecipeCategory.REDSTONE, axle, 4)
+                .pattern("P")
+                .pattern("P")
+                .pattern("P")
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_planks", has(ItemTags.PLANKS))
+                .save(output, key("wooden_axle"));
+        shaped(RecipeCategory.MISC, gear, 2)
+                .pattern(" S ")
+                .pattern("SPS")
+                .pattern(" S ")
+                .define('S', Items.STICK)
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_wooden_axle", has(axle))
+                .save(output, key("wooden_gear"));
+        shaped(RecipeCategory.REDSTONE, ModItems.WOODEN_GEARBOX.get())
+                .pattern("PGP")
+                .pattern("GAG")
+                .pattern("PGP")
+                .define('P', ItemTags.PLANKS)
+                .define('G', gear)
+                .define('A', axle)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("wooden_gearbox"));
+        shapeless(RecipeCategory.REDSTONE, ModItems.HAND_CRANK.get())
+                .requires(axle)
+                .requires(Items.STICK, 2)
+                .requires(ItemTags.PLANKS)
+                .unlockedBy("has_wooden_axle", has(axle))
+                .save(output, key("hand_crank"));
+        shaped(RecipeCategory.REDSTONE, ModItems.WATER_WHEEL.get())
+                .pattern("PSP")
+                .pattern("SRS")
+                .pattern("PSP")
+                .define('P', ItemTags.PLANKS)
+                .define('S', Items.STICK)
+                .define('R', rod)
+                .unlockedBy("has_wrought_iron_rod", has(rod))
+                .save(output, key("water_wheel"));
+        shaped(RecipeCategory.REDSTONE, ModItems.MILLSTONE.get())
+                .pattern(" A ")
+                .pattern("QGQ")
+                .pattern("PPP")
+                .define('A', axle)
+                .define('Q', ModItems.QUERNSTONE.get())
+                .define('G', gear)
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("millstone"));
+        // Leather comes from tanning later in tier 3; until then vanilla leather does.
+        shaped(RecipeCategory.REDSTONE, ModItems.BELLOWS.get())
+                .pattern("PPP")
+                .pattern("LLL")
+                .pattern("PRP")
+                .define('P', ItemTags.PLANKS)
+                .define('L', Items.LEATHER)
+                .define('R', rod)
+                .unlockedBy("has_wrought_iron_rod", has(rod))
+                .save(output, key("bellows"));
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {

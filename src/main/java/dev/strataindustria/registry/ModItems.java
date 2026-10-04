@@ -94,6 +94,14 @@ public final class ModItems {
     public static final DeferredItem<Item> SMITHING_PATTERN = ITEMS.registerSimpleItem("smithing_pattern", p -> p.stacksTo(16));
     public static final DeferredItem<Item> TONGS_JAW = ITEMS.registerSimpleItem("tongs_jaw", p -> p.stacksTo(16));
     public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", p -> p.durability(250));
+    // Tier 3 spec 7 and 8: mechanical power and machines.
+    public static final DeferredItem<BlockItem> WOODEN_AXLE = ITEMS.registerSimpleBlockItem(ModBlocks.WOODEN_AXLE);
+    public static final DeferredItem<Item> WOODEN_GEAR = ITEMS.registerSimpleItem("wooden_gear");
+    public static final DeferredItem<BlockItem> WOODEN_GEARBOX = ITEMS.registerSimpleBlockItem(ModBlocks.WOODEN_GEARBOX);
+    public static final DeferredItem<BlockItem> HAND_CRANK = ITEMS.registerSimpleBlockItem(ModBlocks.HAND_CRANK);
+    public static final DeferredItem<BlockItem> WATER_WHEEL = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_WHEEL);
+    public static final DeferredItem<BlockItem> MILLSTONE = ITEMS.registerSimpleBlockItem(ModBlocks.MILLSTONE);
+    public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(ModBlocks.BELLOWS);
     // Quern (spec 10.1).
     public static final DeferredItem<Item> QUERNSTONE = ITEMS.registerSimpleItem("quernstone", p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> QUERN = ITEMS.registerSimpleBlockItem(ModBlocks.QUERN);

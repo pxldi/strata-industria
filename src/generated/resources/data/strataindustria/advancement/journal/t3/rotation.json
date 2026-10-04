@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t3/refine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "rotation"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.rotation.hint"
+    },
+    "icon": {
+      "id": "strataindustria:wooden_axle"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.rotation"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
