@@ -129,8 +129,6 @@ final class ModRecipeProvider extends RecipeProvider {
 
     // Spec 4.1: the same strikes, worked in five clay balls.
     private void clayForming() {
-        form(ModItems.UNFIRED_SMALL_VESSEL.get(), 1, ".....", ".###.", "#####", "#####", ".###.");
-        form(ModItems.UNFIRED_LARGE_VESSEL.get(), 1, ".###.", "#####", "#####", "#####", ".###.");
         form(ModItems.UNFIRED_CRUCIBLE.get(), 1, "##.##", "#...#", "#...#", "#...#", "#####");
         form(ModItems.UNFIRED_INGOT_MOLD.get(), 1, ".....", "#####", "#...#", "#####", ".....");
         form(ModItems.UNFIRED_BRICK.get(), 4, "##.##", "##.##", ".....", "##.##", "##.##");

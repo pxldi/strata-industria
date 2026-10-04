@@ -39,7 +39,7 @@ public final class JeiTypes {
 
     /** Striking and welding share one page: both are work at the anvil. */
     public static final IRecipeType<Processes.AnvilWork> ANVIL = IRecipeType.create(StrataIndustria.id("anvil"), Processes.AnvilWork.class);
-    public static final IRecipeType<Processes.Firing> PIT_KILN = IRecipeType.create(StrataIndustria.id("pit_kiln"), Processes.Firing.class);
+    public static final IRecipeType<Processes.Firing> FIRING = IRecipeType.create(StrataIndustria.id("firing"), Processes.Firing.class);
     public static final IRecipeType<Processes.CharcoalPit> CHARCOAL_PIT = IRecipeType.create(StrataIndustria.id("charcoal_pit"), Processes.CharcoalPit.class);
     public static final IRecipeType<Processes.Alloying> ALLOYING = IRecipeType.create(StrataIndustria.id("alloying"), Processes.Alloying.class);
     public static final IRecipeType<Processes.Casting> CASTING = IRecipeType.create(StrataIndustria.id("casting"), Processes.Casting.class);

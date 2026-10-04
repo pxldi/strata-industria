@@ -79,10 +79,10 @@ final class ModAdvancements extends AdvancementSubProvider {
                 ItemPredicate.Builder.item().of(items, Items.CLAY_BALL).withCount(MinMaxBounds.Ints.atLeast(5))));
 
         // Tier 1: fire and clay
-        AdvancementHolder forming = goal(clay, "t1/clay_forming", ModItems.UNFIRED_SMALL_VESSEL.get(),
+        AdvancementHolder forming = goal(clay, "t1/clay_forming", ModItems.UNFIRED_CRUCIBLE.get(),
                 JournalTrigger.TriggerInstance.of(Journal.CLAY_FORMING));
-        AdvancementHolder kiln = goal(forming, "t1/pit_kiln", ModItems.SMALL_VESSEL.get(),
-                JournalTrigger.TriggerInstance.of(Journal.PIT_KILN_FIRED));
+        AdvancementHolder kiln = goal(forming, "t1/fired_pottery", ModItems.CRUCIBLE.get(),
+                JournalTrigger.TriggerInstance.of(Journal.POTTERY_FIRED));
         AdvancementHolder charcoal = goal(fire, "t1/charcoal", Items.CHARCOAL, has(Items.CHARCOAL));
         AdvancementHolder forge = goal(charcoal, "t1/forge", ModItems.FORGE.get(),
                 ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.FORGE.get()));

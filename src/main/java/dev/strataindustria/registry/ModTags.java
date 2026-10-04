@@ -57,10 +57,8 @@ public final class ModTags {
         public static final TagKey<Item> SMALL_ORES = tag("small_ores");
         /** Anything that opens the knapping grid: loose rocks and flint. */
         public static final TagKey<Item> KNAPPABLE = tag("knappable");
-        /** Unfired clay pieces that can be set out in a pit kiln. */
-        public static final TagKey<Item> PIT_KILN_FIREABLE = tag("pit_kiln/fireable");
-        /** Pieces that fill a whole pit kiln on their own: vessels and the crucible. */
-        public static final TagKey<Item> PIT_KILN_LARGE = tag("pit_kiln/large");
+        /** Unfired clay pieces that fire on the fire pit or in the brick kiln. */
+        public static final TagKey<Item> FIREABLE = tag("fireable");
         public static final TagKey<Item> AXES = tag("tools/axes");
         public static final TagKey<Item> KNIVES = tag("tools/knives");
         public static final TagKey<Item> HAMMERS = tag("tools/hammers");

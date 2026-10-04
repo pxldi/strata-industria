@@ -5,8 +5,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.ceramics.PitKilnBlock;
-import dev.strataindustria.ceramics.PitKilnBlockEntity;
 import dev.strataindustria.charcoal.CharcoalPileBlock;
 import dev.strataindustria.charcoal.LogPileBlock;
 import dev.strataindustria.charcoal.LogPileBlockEntity;
@@ -78,7 +76,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
  * Game tests for the tier 0 to 2 core flows (spec 17): knapping and clay forming patterns, alloy rules,
- * the smithing solver and minigame, item heat, the pit kiln, the charcoal pit, and melting and casting.
+ * the smithing solver and minigame, item heat, firing on the fire pit, the charcoal pit, and melting and casting.
  * Each test builds what it needs on a small stone platform and drives the block entities' tickers
  * directly, so hour-long burns finish within one game tick.
  */
@@ -95,10 +93,10 @@ public final class ModGameTests {
     static {
         ShapingGameTests.register(TESTS);
         FlintStrikeGameTests.register(TESTS);
+        FirePitFiringGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
         TESTS.put("smithing_shapes", ModGameTests::smithingShapes);
         TESTS.put("item_heat", ModGameTests::itemHeat);
-        TESTS.put("pit_kiln", ModGameTests::pitKiln);
         TESTS.put("easy_defaults", ModGameTests::easyDefaults);
         TESTS.put("charcoal_pit", ModGameTests::charcoalPit);
         TESTS.put("charcoal_pit_exposed", ModGameTests::charcoalPitExposed);
@@ -261,41 +259,6 @@ public final class ModGameTests {
         helper.succeed();
     }
 
-    // Pit kiln (spec 4.2): a crucible under straw and logs in a pit comes out fired.
-
-    private static void pitKiln(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        for (Direction side : Direction.Plane.HORIZONTAL) level.setBlock(pos.relative(side), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
-
-        ItemStack piece = new ItemStack(ModItems.UNFIRED_CRUCIBLE.get());
-        helper.assertTrue(PitKilnBlock.placeNew(level, pos, piece), "the crucible should be set out");
-        BlockState state = level.getBlockState(pos)
-                .setValue(PitKilnBlock.STRAW, PitKilnBlock.MAX_LAYERS).setValue(PitKilnBlock.LOGS, PitKilnBlock.MAX_LAYERS);
-        level.setBlock(pos, state, Block.UPDATE_ALL);
-        PitKilnBlock kilnBlock = (PitKilnBlock) state.getBlock();
-        helper.assertTrue(kilnBlock.canIgnite(level, pos, state), "a thatched kiln in a pit should light");
-        helper.assertTrue(kilnBlock.ignite(level, pos, state), "the kiln should catch");
-
-        PitKilnBlockEntity kiln = (PitKilnBlockEntity) level.getBlockEntity(pos);
-        for (int tick = 0; tick < 3000 && level.getBlockState(pos).getValue(PitKilnBlock.LIT); tick++) {
-            PitKilnBlockEntity.serverTick(level, pos, level.getBlockState(pos), kiln);
-        }
-        BlockState done = level.getBlockState(pos);
-        helper.assertTrue(!done.getValue(PitKilnBlock.LIT), "the kiln should have burnt out");
-        helper.assertValueEqual(done.getValue(PitKilnBlock.STRAW), 0, "straw left");
-        helper.assertTrue(kiln.items().get(0).is(ModItems.CRUCIBLE.get()), "the crucible should be fired, got " + kiln.items().get(0));
-
-        // An open side keeps a fresh kiln from lighting.
-        BlockPos open = helper.absolutePos(new BlockPos(1, 1, 1));
-        PitKilnBlock.placeNew(level, open, new ItemStack(ModItems.UNFIRED_BRICK.get()));
-        BlockState exposed = level.getBlockState(open)
-                .setValue(PitKilnBlock.STRAW, PitKilnBlock.MAX_LAYERS).setValue(PitKilnBlock.LOGS, PitKilnBlock.MAX_LAYERS);
-        level.setBlock(open, exposed, Block.UPDATE_ALL);
-        helper.assertTrue(!kilnBlock.canIgnite(level, open, exposed), "a kiln without walls should not light");
-        helper.succeed();
-    }
-
     // Prologue defaults: hot items do not burn, fired molds last, the kiln fires in about two minutes.
 
     private static void easyDefaults(GameTestHelper helper) {
@@ -304,7 +267,7 @@ public final class ModGameTests {
         for (int i = 0; i < 200; i++) {
             helper.assertTrue(!CastMoldItem.breaks(mold, helper.getLevel().getRandom()), "a fired mold should not break");
         }
-        helper.assertTrue(Config.KILN_BURN_TICKS.getAsInt() <= 3000, "the pit kiln should be short");
+        helper.assertTrue(Config.FIRING_TICKS.getAsInt() <= 3000, "firing on the fire pit should be short");
         helper.succeed();
     }
 

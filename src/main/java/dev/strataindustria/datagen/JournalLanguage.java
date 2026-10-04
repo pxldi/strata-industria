@@ -66,8 +66,8 @@ final class JournalLanguage {
         // Tier 1: fire and clay
         lead.add("t1/clay_forming", "Clay takes any shape I give it. What should I shape first?",
                 "Pinched and smoothed into a pot. Raw clay crumbles, though; it needs fire.");
-        lead.add("t1/pit_kiln", "A campfire only cracks raw clay. How do I fire it evenly?",
-                "Buried in straw and logs, the pots baked all night. They ring now when I tap them.");
+        lead.add("t1/fired_pottery", "Raw clay slumps in the rain. What makes it hard?",
+                "Left by a hot fire, the pots dried to stone. They ring when I tap them.");
         lead.add("t1/charcoal", "Wood burns too fast and too cool for real work. Can I make a better fuel?",
                 "Smothered under earth, the wood charred black and light. It burns hot and clean.");
         lead.add("t1/forge", "Charcoal on an open fire throws its heat away. I need something to hold it in.",
@@ -79,7 +79,7 @@ final class JournalLanguage {
         // Tier 2: copper and bronze
         lead.add("t2/melt", "Will my forge get hot enough to melt ore in the crucible?",
                 "The ore slumped and ran. I watched a pool of molten metal shine back at me.");
-        lead.add("t2/brick_kiln", "A pit kiln takes a night and a pile of logs for a few pots. Is there a quicker way?",
+        lead.add("t2/brick_kiln", "The fire pit takes a long while for a few pots. Is there a quicker way?",
                 "A small brick oven that stands on the forge. A load of pots is done in half a minute.");
         lead.add("t2/pattern_casting", "Every mold I make by hand is a day of clay. Can I carve the shape once and use it again?",
                 "A plank carved to the shape, pressed into damp sand. The sand mold takes one pour and goes, the plank stays.");

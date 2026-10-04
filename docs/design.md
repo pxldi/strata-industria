@@ -91,9 +91,8 @@ Exit condition: having a campfire, stone tools and a stash of clay.
 **Goal:** control heat.
 
 - **Clay forming**: a knapping-like grid with clay to shape vessels, crucibles, ingot molds, tool-head molds, bricks.
-- **Pit kiln**: place unfired pottery on the ground, cover with straw and logs, light it. Takes a few in-game hours. Simple, visible, satisfying.
+- **Firing**: stand unfired pottery on the hearth beside a hot fire pit (up to four pieces). It glows and rings when done.
 - **Charcoal pit**: stack logs, cover with dirt, light. Yields charcoal by volume. First "multiblock" in spirit, no GUI.
-- **Storage vessel**: early storage with a small inventory, also preserves food better.
 - **Forge (basic)**: a small charcoal-fired hearth that heats items to working temperature. Introduces the temperature system and the temperature colour on item tooltips.
 - **Prospecting I**: by hand, look at loose surface rocks and ore nuggets ("surface indicators") that hint at veins below.
 

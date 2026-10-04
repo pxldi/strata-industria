@@ -9,8 +9,6 @@ import dev.strataindustria.power.KineticBlockEntity;
 import dev.strataindustria.power.WaterWheelBlockEntity;
 import dev.strataindustria.bloomery.BloomeryBlockEntity;
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.ceramics.LargeVesselBlockEntity;
-import dev.strataindustria.ceramics.PitKilnBlockEntity;
 import dev.strataindustria.charcoal.LogPileBlockEntity;
 import dev.strataindustria.fire.FirePitBlockEntity;
 import dev.strataindustria.forge.ForgeBlockEntity;
@@ -28,12 +26,6 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FirePitBlockEntity>> FIRE_PIT =
             BLOCK_ENTITIES.register("fire_pit", () -> new BlockEntityType<>(FirePitBlockEntity::new, ModBlocks.FIRE_PIT.get()));
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PitKilnBlockEntity>> PIT_KILN =
-            BLOCK_ENTITIES.register("pit_kiln", () -> new BlockEntityType<>(PitKilnBlockEntity::new, ModBlocks.PIT_KILN.get()));
-
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LargeVesselBlockEntity>> LARGE_VESSEL =
-            BLOCK_ENTITIES.register("large_vessel", () -> new BlockEntityType<>(LargeVesselBlockEntity::new, ModBlocks.LARGE_VESSEL.get()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LogPileBlockEntity>> LOG_PILE =
             BLOCK_ENTITIES.register("log_pile", () -> new BlockEntityType<>(LogPileBlockEntity::new, ModBlocks.LOG_PILE.get()));

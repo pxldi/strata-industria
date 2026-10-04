@@ -3,7 +3,7 @@
   "criteria": {
     "done": {
       "conditions": {
-        "event": "pit_kiln_fired"
+        "event": "pottery_fired"
       },
       "trigger": "strataindustria:journal"
     }
@@ -11,14 +11,14 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": "journal.strataindustria.t1.pit_kiln.hint"
+      "translate": "journal.strataindustria.t1.fired_pottery.hint"
     },
     "icon": {
-      "id": "strataindustria:small_vessel"
+      "id": "strataindustria:crucible"
     },
     "show_toast": false,
     "title": {
-      "translate": "journal.strataindustria.t1.pit_kiln"
+      "translate": "journal.strataindustria.t1.fired_pottery"
     }
   },
   "requirements": [

@@ -201,13 +201,13 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         }
         tag(ModTags.Blocks.MINEABLE_WITH_HAMMER);
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LARGE_VESSEL.getKey()).add(ModBlocks.CRUCIBLE.getKey())
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.CRUCIBLE.getKey())
                 .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey()).add(ModBlocks.BRONZE_ANVIL.getKey())
                 .add(ModBlocks.WROUGHT_IRON_ANVIL.getKey())
                 .add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.getKey())
                 .add(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.getKey());
         for (var anvil : ModBlocks.STONE_ANVILS.values()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(anvil.getKey());
-        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.PIT_KILN.getKey()).add(ModBlocks.CHARCOAL_PILE.getKey());
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.CHARCOAL_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(StructureContent.PIT_PROP.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey());
