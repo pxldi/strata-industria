@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:refractory_casing",
+    "strataindustria:bronze_fluid_pipe",
+    "strataindustria:copper_plate"
+  ],
+  "result": {
+    "id": "strataindustria:tuyere"
+  }
+}

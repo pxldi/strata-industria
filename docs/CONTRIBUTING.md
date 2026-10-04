@@ -57,6 +57,8 @@ src/generated/resources/ generated assets and data (do not edit by hand)
 - Tier 5 (electric) textures come from `tools/texturegen/ElectricTextures.java`, which reuses
   `TextureGen`'s helpers; its javadoc has the run command. It also adds the latex strip to
   `gui/soaking_barrel.png`, so run it after `TextureGen`.
+- Tier 6 (industrial) textures come from `tools/texturegen/Tier6Textures.java`
+  (`java tools/texturegen/Tier6Textures.java`).
 
 ### Sounds
 

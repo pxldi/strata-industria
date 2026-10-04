@@ -69,6 +69,7 @@ final class ModModelProvider extends ModelProvider {
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         Tier5Models.register(blockModels, itemModels);
+        tier6(blockModels, itemModels);
         for (Rock rock : Rock.values()) {
             blockModels.createTrivialCube(ModBlocks.RAW_ROCK.get(rock).get());
             blockModels.createTrivialCube(ModBlocks.COBBLED_ROCK.get(rock).get());
@@ -574,6 +575,73 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(Tier4Items.MECHANICAL_PUMP.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/mechanical_pump")));
         itemModels.itemModelOutput.accept(Tier4Items.STEAM_ENGINE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/steam_engine_item")));
         processing(blockModels, itemModels);
+        blastFurnace(blockModels, itemModels);
+    }
+
+    // Spec 12.1 and 21.4: the blast furnace's parts are refractory casing with their own front; the
+    // controller and tap glow while it runs. The blower is a hand-built housing whose fan the renderer turns.
+    private static void blastFurnace(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        blockModels.createTrivialCube(Tier4Blocks.REFRACTORY_CASING.get());
+        var casing = blockTexture("refractory_casing");
+        Block controller = Tier4Blocks.BLAST_FURNACE_CONTROLLER.get();
+        TextureMapping cold = new TextureMapping().put(TextureSlot.FRONT, blockTexture("blast_furnace_controller_front"))
+                .put(TextureSlot.SIDE, casing).put(TextureSlot.TOP, casing);
+        var coldModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(controller, cold, blockModels.modelOutput));
+        var litModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(controller, "_lit",
+                cold.copyAndUpdate(TextureSlot.FRONT, blockTexture("blast_furnace_controller_front_lit")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> controllerState = PropertyDispatch.initial(
+                dev.strataindustria.ironworks.BlastFurnaceBlock.FACING, dev.strataindustria.ironworks.BlastFurnaceBlock.LIT);
+        for (boolean on : new boolean[] {false, true}) facing(controllerState, on, on ? litModel : coldModel);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(controller).with(controllerState));
+
+        Block tap = Tier4Blocks.TAP_HATCH.get();
+        TextureMapping plugged = new TextureMapping().put(TextureSlot.FRONT, blockTexture("tap_hatch_front"))
+                .put(TextureSlot.SIDE, casing).put(TextureSlot.TOP, casing);
+        var pluggedModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(tap, plugged, blockModels.modelOutput));
+        var hotModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(tap, "_hot",
+                plugged.copyAndUpdate(TextureSlot.FRONT, blockTexture("tap_hatch_front_hot")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> tapState = PropertyDispatch.initial(
+                dev.strataindustria.ironworks.TapHatchBlock.FACING, dev.strataindustria.ironworks.TapHatchBlock.HOT);
+        for (boolean on : new boolean[] {false, true}) facing(tapState, on, on ? hotModel : pluggedModel);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(tap).with(tapState));
+
+        Block tuyere = Tier4Blocks.TUYERE.get();
+        var tuyereModel = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(tuyere, new TextureMapping()
+                .put(TextureSlot.FRONT, blockTexture("tuyere_front")).put(TextureSlot.SIDE, blockTexture("tuyere_side"))
+                .put(TextureSlot.TOP, casing), blockModels.modelOutput));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> tuyereState =
+                PropertyDispatch.initial(dev.strataindustria.ironworks.FurnacePartBlock.FACING);
+        tuyereState.select(net.minecraft.core.Direction.NORTH, tuyereModel);
+        tuyereState.select(net.minecraft.core.Direction.EAST, tuyereModel.with(BlockModelGenerators.Y_ROT_90));
+        tuyereState.select(net.minecraft.core.Direction.SOUTH, tuyereModel.with(BlockModelGenerators.Y_ROT_180));
+        tuyereState.select(net.minecraft.core.Direction.WEST, tuyereModel.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(tuyere).with(tuyereState));
+
+        Block hatch = Tier4Blocks.CHARGING_HATCH.get();
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(hatch, BlockModelGenerators.plainVariant(
+                ModelTemplates.CUBE_BOTTOM_TOP.create(hatch, new TextureMapping().put(TextureSlot.TOP, blockTexture("charging_hatch_top"))
+                        .put(TextureSlot.SIDE, blockTexture("charging_hatch_side")).put(TextureSlot.BOTTOM, casing), blockModels.modelOutput))));
+
+        var blower = BlockModelGenerators.plainVariant(StrataIndustria.id("block/blower"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> blowerState =
+                PropertyDispatch.initial(dev.strataindustria.ironworks.BlowerBlock.FACING);
+        blowerState.select(net.minecraft.core.Direction.NORTH, blower);
+        blowerState.select(net.minecraft.core.Direction.EAST, blower.with(BlockModelGenerators.Y_ROT_90));
+        blowerState.select(net.minecraft.core.Direction.SOUTH, blower.with(BlockModelGenerators.Y_ROT_180));
+        blowerState.select(net.minecraft.core.Direction.WEST, blower.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.BLOWER.get()).with(blowerState));
+        itemModels.itemModelOutput.accept(Tier4Items.BLOWER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/blower_item")));
+
+        flatItem(itemModels, Tier4Items.SLAG.get());
+        flatItem(itemModels, Tier4Items.SLAG_DUST.get());
+    }
+
+    private static <A extends Comparable<A>> void facing(PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, A> dispatch,
+            A a, MultiVariant base) {
+        dispatch.select(net.minecraft.core.Direction.NORTH, a, base);
+        dispatch.select(net.minecraft.core.Direction.EAST, a, base.with(BlockModelGenerators.Y_ROT_90));
+        dispatch.select(net.minecraft.core.Direction.SOUTH, a, base.with(BlockModelGenerators.Y_ROT_180));
+        dispatch.select(net.minecraft.core.Direction.WEST, a, base.with(BlockModelGenerators.Y_ROT_270));
     }
 
     // Spec 11.2 to 11.4: ore processing machines face the player; the front shows the works, moving while active.
@@ -686,6 +754,12 @@ final class ModModelProvider extends ModelProvider {
         flatItem(itemModels, ModItems.RAW_HIDE.get());
         flatItem(itemModels, ModItems.LIMED_HIDE.get());
         flatItem(itemModels, ModItems.SCRAPED_HIDE.get());
+    }
+
+    /** Tier 6: crude oil in the world, the oil buckets, bitumen, plastics and synthetic rubber. */
+    private static void tier6(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        blockModels.createAirLikeBlock(dev.strataindustria.registry.Tier6Blocks.CRUDE_OIL.get(), blockTexture("fluid/crude_oil_still"));
+        for (var item : dev.strataindustria.registry.Tier6Items.flatItems()) flatItem(itemModels, item.get());
     }
 
     private static void flatItem(ItemModelGenerators itemModels, Item item) {

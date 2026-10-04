@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.registry.Tier5Sounds;
+import dev.strataindustria.registry.Tier6Sounds;
 import dev.strataindustria.structure.StructureContent;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.SoundDefinition;
@@ -18,6 +19,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
     @Override
     public void registerSounds() {
         tier5();
+        tier6();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -288,6 +290,34 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.5f))
                 .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.45f))
                 .with(sound("minecraft:block.gravel.hit", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
+        // Spec 21.7: the blower's fan, the blast furnace's roar and tap, and the clunk of a finished multiblock.
+        add(Tier4Sounds.BLOWER_RUN, definition().subtitle(subtitle("blower.run"))
+                .with(sound("minecraft:item.elytra.flying", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.12f))
+                .with(sound("minecraft:entity.horse.breathe", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f)));
+        SoundDefinition furnaceRoar = definition().subtitle(subtitle("blast_furnace.roar"));
+        for (int i = 1; i <= 3; i++) furnaceRoar.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.4f).volume(1.0f));
+        furnaceRoar.with(sound("minecraft:fire/fire").pitch(0.35f).volume(0.9f));
+        add(Tier4Sounds.BLAST_FURNACE_ROAR, furnaceRoar);
+        add(Tier4Sounds.BLAST_FURNACE_TAP, definition().subtitle(subtitle("blast_furnace.tap"))
+                .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
+                .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.9f)));
+        add(Tier4Sounds.MULTIBLOCK_FORM, definition().subtitle(subtitle("multiblock.form"))
+                .with(sound("minecraft:block.iron_door.close", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
+    }
+
+    /** Tier 6 spec 24.6: crude oil buckets use the lava bucket sounds, pitched down and thickened. */
+    private void tier6() {
+        add(Tier6Sounds.CRUDE_OIL_BUCKET_FILL, definition().subtitle(subtitle("item.bucket.fill_crude_oil"))
+                .with(sound("minecraft:item.bucket.fill_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
+                .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.5f)));
+        add(Tier6Sounds.CRUDE_OIL_BUCKET_EMPTY, definition().subtitle(subtitle("item.bucket.empty_crude_oil"))
+                .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
+                .with(sound("minecraft:block.mud.place", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f)));
+        // A slow, thick bubble breaking on a seep.
+        add(Tier6Sounds.CRUDE_OIL_BUBBLE, definition().subtitle(subtitle("block.crude_oil.bubble"))
+                .with(sound("minecraft:block.bubble_column.bubble_pop", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
+                .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f))
+                .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.3f)));
     }
 
     private static String subtitle(String name) {

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:refractory_casing",
+    "strataindustria:wrought_iron_plate",
+    "minecraft:iron_bars"
+  ],
+  "result": {
+    "id": "strataindustria:tap_hatch"
+  }
+}

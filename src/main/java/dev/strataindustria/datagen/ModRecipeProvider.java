@@ -539,6 +539,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('R', Tier4Items.BRONZE_FLUID_PIPE.get())
                 .unlockedBy("has_crusher", has(Tier4Items.CRUSHER.get()))
                 .save(output, key("washer"));
+        blastFurnace();
         // Spec 10.4: a cracked boiler is good for four of its plates.
         shapeless(RecipeCategory.MISC, ModItems.PLATES.get(Metal.BRONZE).get(), 4)
                 .requires(Tier4Items.CRACKED_BRONZE_BOILER.get())
@@ -1060,6 +1061,59 @@ final class ModRecipeProvider extends RecipeProvider {
             crush((carbonate ? "flux_from_" : "gravel_from_") + name(cobbled), Ingredient.of(cobbled), result, List.of());
         }
         crush("sand_from_gravel", Ingredient.of(Items.GRAVEL), new ItemStackTemplate(Items.SAND), List.of());
+    }
+
+    /**
+     * Tier 4 spec 12.1 and 11.6: the blast furnace parts and the blower. Until the heat network and the
+     * chute exist, the tuyere's copper collar is a copper plate and the charging hatch takes a hopper.
+     */
+    private void blastFurnace() {
+        Item plate = ModItems.PLATES.get(Metal.WROUGHT_IRON).get();
+        Item casing = Tier4Items.REFRACTORY_CASING.get();
+        shapeless(RecipeCategory.BUILDING_BLOCKS, casing)
+                .requires(ModItems.FIRE_BRICKS.get())
+                .requires(plate, 2)
+                .unlockedBy("has_fire_bricks", has(ModItems.FIRE_BRICKS.get()))
+                .save(output, key("refractory_casing"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.BLAST_FURNACE_CONTROLLER.get())
+                .pattern("CGC")
+                .pattern("CFC")
+                .pattern("CCC")
+                .define('C', casing)
+                .define('G', Tier4Items.PRESSURE_GAUGE.get())
+                .define('F', Tier4Items.FIREBOX.get())
+                .unlockedBy("has_refractory_casing", has(casing))
+                .save(output, key("blast_furnace_controller"));
+        shapeless(RecipeCategory.DECORATIONS, Tier4Items.TUYERE.get())
+                .requires(casing)
+                .requires(Tier4Items.BRONZE_FLUID_PIPE.get())
+                .requires(ModItems.PLATES.get(Metal.COPPER).get())
+                .unlockedBy("has_refractory_casing", has(casing))
+                .save(output, key("tuyere"));
+        shapeless(RecipeCategory.DECORATIONS, Tier4Items.CHARGING_HATCH.get())
+                .requires(casing)
+                .requires(Items.HOPPER)
+                .unlockedBy("has_refractory_casing", has(casing))
+                .save(output, key("charging_hatch"));
+        shapeless(RecipeCategory.DECORATIONS, Tier4Items.TAP_HATCH.get())
+                .requires(casing)
+                .requires(plate)
+                .requires(Items.IRON_BARS)
+                .unlockedBy("has_refractory_casing", has(casing))
+                .save(output, key("tap_hatch"));
+        shaped(RecipeCategory.REDSTONE, Tier4Items.BLOWER.get())
+                .pattern("PGP")
+                .pattern("L L")
+                .pattern("PAP")
+                .define('P', plate)
+                .define('G', ModItems.GEARS.get(Metal.BRASS).get())
+                .define('L', Items.LEATHER)
+                .define('A', Tier4Items.IRON_AXLE.get())
+                .unlockedBy("has_iron_axle", has(Tier4Items.IRON_AXLE.get()))
+                .save(output, key("blower"));
+        // Spec 11.2: the crusher gets three dust from slag, the quern two.
+        crush("slag_dust_from_slag", Ingredient.of(Tier4Items.SLAG.get()), new ItemStackTemplate(Tier4Items.SLAG_DUST.get(), 3), List.of());
+        grind("slag_dust_from_slag", Ingredient.of(Tier4Items.SLAG.get()), Tier4Items.SLAG_DUST.get(), 2);
     }
 
     private void crush(String path, Ingredient input, ItemStackTemplate result, List<WashingRecipe.Chance> chances) {

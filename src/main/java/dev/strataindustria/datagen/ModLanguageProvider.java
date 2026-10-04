@@ -35,6 +35,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(ModCreativeTabs.MAIN_TAB_TITLE, "Strata Industria");
         StructureData.lang(this::add);
         Tier5Language.add(this::add);
+        Tier6Data.lang(this::add);
         recipeViewer();
 
         addItem(ModItems.PLANT_FIBRE, "Plant Fibre");
@@ -242,6 +243,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "runTicks", "Bloomery run time");
         add(config + "journal", "Field Journal");
         add(config + "steam", "Steam");
+        add(config + "blastFurnace", "Blast Furnace");
         add(config + "giveOnJoin", "Give a journal on first join");
     }
 
@@ -399,6 +401,44 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "washer.wash", "Washer sloshes");
         add(id + ".machine.no_water", "Needs water: pipe it in");
         add(id + ".washer.water", "Water: %s / %s mB");
+
+        // Spec 12.1 and 11.6: the blast furnace and the blower.
+        addBlock(Tier4Blocks.REFRACTORY_CASING, "Refractory Casing");
+        addBlock(Tier4Blocks.BLAST_FURNACE_CONTROLLER, "Blast Furnace Controller");
+        addBlock(Tier4Blocks.TUYERE, "Tuyere");
+        addBlock(Tier4Blocks.CHARGING_HATCH, "Charging Hatch");
+        addBlock(Tier4Blocks.TAP_HATCH, "Tap Hatch");
+        addBlock(Tier4Blocks.BLOWER, "Blower");
+        addItem(Tier4Items.SLAG, "Slag");
+        addItem(Tier4Items.SLAG_DUST, "Slag Dust");
+        add("container." + id + ".blast_furnace", "Blast Furnace");
+        String furnace = id + ".blast_furnace.";
+        add(furnace + "status.incomplete", "Structure incomplete");
+        add(furnace + "status.no_air", "No air blast");
+        add(furnace + "status.needs_fuel", "Needs coke");
+        add(furnace + "status.heating", "Heating hearth (%s%%)");
+        add(furnace + "status.needs_iron", "Needs iron");
+        add(furnace + "status.needs_flux", "Needs flux");
+        add(furnace + "status.output_full", "Output full");
+        add(furnace + "status.running", "Running, air from %s blower(s)");
+        add(furnace + "problem.needs_casing", "Refractory casing: layer %s, %s");
+        add(furnace + "problem.needs_refractory", "Refractory block: layer %s, %s");
+        add(furnace + "problem.needs_air", "Clear the shaft: layer %s, %s");
+        add(furnace + "problem.needs_charging_hatch", "Charging hatch: layer %s, %s");
+        add(furnace + "problem.needs_tap_hatch", "Tap hatch: layer %s, an edge");
+        add(furnace + "problem.needs_tuyere", "Tuyere: layer %s, an edge");
+        String[] spots = {"front left", "front", "front right", "middle left", "middle", "middle right", "back left", "back", "back right"};
+        for (int i = 0; i < spots.length; i++) add(furnace + "spot." + i, spots[i]);
+        add(furnace + "iron", "Iron: %s / %s units");
+        add(furnace + "fuel", "Coke: %s / %s");
+        add(furnace + "flux", "Flux: %s / %s");
+        add(furnace + "hearth", "Hearth heat: %s%%");
+        add(subtitles + "blower.run", "Blower whooshes");
+        add(subtitles + "blast_furnace.roar", "Blast furnace roars");
+        add(subtitles + "blast_furnace.tap", "Pig iron pours");
+        add(subtitles + "multiblock.form", "Structure complete");
+        add(config + "ticksPerIngot", "Ticks per pig iron ingot");
+        add(config + "warmupTicks", "Hearth warm-up (ticks)");
     }
 
     private void ironAge() {
@@ -590,6 +630,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.steam_engine.hint", "Pipe a boiler's steam into the back of a steam engine. At 2 bar it turns a shaft at 32 RPM.");
         add(journal + "t4.crusher", "Crushing Power");
         add(journal + "t4.crusher.hint", "Drive a crusher at 16 RPM or more. Ore comes out crushed, sometimes with a second piece and a bit of another mineral.");
+        add(journal + "t4.blast_furnace", "Blast Furnace");
+        add(journal + "t4.blast_furnace.hint", "Build a five-high refractory furnace, blow air into its tuyere and charge it with iron ore, coke and flux. Tap the pig iron.");
         add(journal + "t4.steel_anvil", "Steel Anvil");
         add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }

@@ -48,6 +48,17 @@ public final class Tier4BlockEntities {
             ModBlockEntities.BLOCK_ENTITIES.register("washer", () -> new BlockEntityType<>(dev.strataindustria.processing.WasherBlockEntity::new,
                     Tier4Blocks.WASHER.get()));
 
+    // Spec 12.1 and 11.6: the blast furnace, its hatches, and the blower.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.BlastFurnaceBlockEntity>> BLAST_FURNACE =
+            ModBlockEntities.BLOCK_ENTITIES.register("blast_furnace", () -> new BlockEntityType<>(dev.strataindustria.ironworks.BlastFurnaceBlockEntity::new,
+                    Tier4Blocks.BLAST_FURNACE_CONTROLLER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.FurnaceHatchBlockEntity>> FURNACE_HATCH =
+            ModBlockEntities.BLOCK_ENTITIES.register("furnace_hatch", () -> new BlockEntityType<>(dev.strataindustria.ironworks.FurnaceHatchBlockEntity::new,
+                    Tier4Blocks.CHARGING_HATCH.get(), Tier4Blocks.TAP_HATCH.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.BlowerBlockEntity>> BLOWER =
+            ModBlockEntities.BLOCK_ENTITIES.register("blower", () -> new BlockEntityType<>(dev.strataindustria.ironworks.BlowerBlockEntity::new,
+                    Tier4Blocks.BLOWER.get()));
+
     public static void init() {}
 
     private Tier4BlockEntities() {}

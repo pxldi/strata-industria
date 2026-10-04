@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "strataindustria:block/tuyere_front",
+    "side": "strataindustria:block/tuyere_side",
+    "top": "strataindustria:block/refractory_casing"
+  }
+}

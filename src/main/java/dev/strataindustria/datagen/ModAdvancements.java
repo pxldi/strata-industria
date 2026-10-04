@@ -189,6 +189,8 @@ final class ModAdvancements extends AdvancementSubProvider {
                 JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
         // Spec 15, goal 69: a powered crusher finishes something.
         goal(engine, "t4/crusher", Tier4Items.CRUSHER.get(), JournalTrigger.TriggerInstance.of(Journal.CRUSHER));
+        // Spec 15, goal 66: a blast furnace taps pig iron.
+        goal(engine, "t4/blast_furnace", Tier4Items.BLAST_FURNACE_CONTROLLER.get(), JournalTrigger.TriggerInstance.of(Journal.BLAST_FURNACE));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

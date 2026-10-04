@@ -73,6 +73,7 @@ final class Tier4GameTests {
         tests.put("tier4_mechanical_pump", Tier4GameTests::mechanicalPump);
         tests.put("tier4_crusher", Tier4GameTests::crusher);
         tests.put("tier4_washer", Tier4GameTests::washer);
+        tests.put("tier4_blast_furnace", Tier4GameTests::blastFurnace);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -537,6 +538,85 @@ final class Tier4GameTests {
         helper.assertValueEqual(washer.status(), ProcessingBlockEntity.Status.NO_WATER, "washer status with 50 mB left");
         helper.assertValueEqual(washer.getItem(0).getCount(), 2, "the rest waits for water");
         helper.succeed();
+    }
+
+    // Spec 12.1 and 23: with one blower, 16 crushed normal hematite (560 units), 3 coke and 3 flux give 5 pig
+    // iron and 2 slag at 200 ticks an ingot once the hearth is hot, with 60 units and half a slag carried over.
+    private static void blastFurnace(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        // The hearth is the test floor's layer, so all five layers fit inside the test area.
+        BlockPos controllerPos = helper.absolutePos(new BlockPos(4, 0, 2));
+        BlockPos centre = controllerPos.south();
+        BlockState casing = Tier4Blocks.REFRACTORY_CASING.get().defaultBlockState();
+        for (int y = 0; y <= 4; y++)
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos pos = centre.offset(dx, y, dz);
+                    boolean shaft = dx == 0 && dz == 0 && y >= 1 && y <= 3;
+                    BlockState state = shaft ? Blocks.AIR.defaultBlockState() : y >= 2 ? ModBlocks.FIRE_BRICKS.get().defaultBlockState() : casing;
+                    level.setBlock(pos, state, Block.UPDATE_ALL);
+                }
+        BlockPos tuyerePos = centre.west(), tapPos = centre.east(), hatchPos = centre.above(4), blowerPos = tuyerePos.west();
+        level.setBlock(controllerPos, Tier4Blocks.BLAST_FURNACE_CONTROLLER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlastFurnaceBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(tuyerePos, Tier4Blocks.TUYERE.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.FurnacePartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(tapPos, Tier4Blocks.TAP_HATCH.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.TapHatchBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(blowerPos, Tier4Blocks.BLOWER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlowerBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        var furnace = (dev.strataindustria.ironworks.BlastFurnaceBlockEntity) level.getBlockEntity(controllerPos);
+
+        smelt(level, controllerPos, furnace, 1);
+        helper.assertValueEqual(furnace.status(), dev.strataindustria.ironworks.BlastFurnaceBlockEntity.Status.INCOMPLETE, "status without a charging hatch");
+        helper.assertValueEqual(furnace.checkStructure().problem(), dev.strataindustria.ironworks.BlastFurnaceStructure.Problem.NEEDS_CHARGING_HATCH,
+                "the missing block named");
+        level.setBlock(hatchPos, Tier4Blocks.CHARGING_HATCH.get().defaultBlockState(), Block.UPDATE_ALL);
+        furnace.checkStructure();
+        smelt(level, controllerPos, furnace, 1);
+        helper.assertValueEqual(furnace.status(), dev.strataindustria.ironworks.BlastFurnaceBlockEntity.Status.NO_AIR, "status with a still blower");
+
+        drive(level, blowerPos.west(), Direction.EAST, blowerPos);
+        smelt(level, controllerPos, furnace, 1);
+        helper.assertValueEqual(furnace.air(), 1, "one blower's worth of air");
+        helper.assertValueEqual(furnace.status(), dev.strataindustria.ironworks.BlastFurnaceBlockEntity.Status.NEEDS_FUEL, "status with no coke");
+
+        // Burden goes in through the charging hatch, as from a hopper.
+        var hatch = (dev.strataindustria.ironworks.FurnaceHatchBlockEntity) level.getBlockEntity(hatchPos);
+        ItemStack ore = new ItemStack(ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL), 16);
+        helper.assertTrue(hatch.canPlaceItemThroughFace(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.ORE, ore, Direction.UP),
+                "the charging hatch takes ore");
+        helper.assertTrue(!hatch.canPlaceItemThroughFace(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.FUEL, ore, Direction.UP),
+                "ore does not go in the fuel slot");
+        hatch.setItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.ORE, ore);
+        hatch.setItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.FUEL, new ItemStack(Tier4Items.COKE.get(), 3));
+        hatch.setItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.FLUX, new ItemStack(ModItems.FLUX.get(), 3));
+        smelt(level, controllerPos, furnace, 1);
+        helper.assertValueEqual(furnace.iron(), 560, "iron units from 16 crushed normal hematite");
+        helper.assertValueEqual(furnace.status(), dev.strataindustria.ironworks.BlastFurnaceBlockEntity.Status.HEATING, "a cold hearth heats first");
+        helper.assertTrue(level.getBlockState(controllerPos).getValue(dev.strataindustria.ironworks.BlastFurnaceBlock.LIT), "the peephole glows");
+
+        furnace.heatUp();
+        smelt(level, controllerPos, furnace, 199);
+        helper.assertValueEqual(furnace.getItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.PIG_IRON).getCount(), 0, "nothing after 199 ticks");
+        helper.assertTrue(level.getBlockState(tapPos).getValue(dev.strataindustria.ironworks.TapHatchBlock.HOT), "the tap glows while running");
+        smelt(level, controllerPos, furnace, 801);
+        var tap = (dev.strataindustria.ironworks.FurnaceHatchBlockEntity) level.getBlockEntity(tapPos);
+        helper.assertValueEqual(tap.getItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.PIG_IRON).getCount(), 5, "pig iron at the tap");
+        helper.assertTrue(tap.getItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.PIG_IRON).is(ModItems.ingot(Metal.PIG_IRON)), "it is pig iron");
+        helper.assertValueEqual(tap.getItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.SLAG).getCount(), 2, "slag at the tap");
+        helper.assertTrue(tap.canTakeItemThroughFace(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.PIG_IRON, ItemStack.EMPTY, Direction.DOWN),
+                "a hopper can take pig iron from the tap");
+        helper.assertValueEqual(furnace.iron(), 60, "iron units carried over");
+        smelt(level, controllerPos, furnace, 1);
+        helper.assertValueEqual(furnace.status(), dev.strataindustria.ironworks.BlastFurnaceBlockEntity.Status.NEEDS_IRON, "status with 60 units left");
+        helper.succeed();
+    }
+
+    private static void smelt(ServerLevel level, BlockPos pos, dev.strataindustria.ironworks.BlastFurnaceBlockEntity furnace, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            dev.strataindustria.ironworks.BlastFurnaceBlockEntity.serverTick(level, pos, level.getBlockState(pos), furnace);
+        }
     }
 
     /** A steam engine at {@code pos} with its shaft toward {@code facing}, given 2.5 bar steam once so it runs at 32 RPM. */

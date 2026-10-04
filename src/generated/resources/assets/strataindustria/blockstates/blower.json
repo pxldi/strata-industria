@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/blower",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/blower"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/blower",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/blower",
+      "y": 270
+    }
+  }
+}

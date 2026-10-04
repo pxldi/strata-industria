@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:crushing",
+  "ingredient": "strataindustria:slag",
+  "result": {
+    "count": 3,
+    "id": "strataindustria:slag_dust"
+  }
+}

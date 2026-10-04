@@ -140,6 +140,34 @@ public final class Tier4Blocks {
                             .strength(2.5f, 4.0f)
                             .sound(SoundType.WOOD));
 
+    // Spec 12.1: the blast furnace's casing, controller and wall parts, and the blower that feeds it air.
+    public static final DeferredBlock<Block> REFRACTORY_CASING = ModBlocks.BLOCKS.registerSimpleBlock("refractory_casing", Tier4Blocks::refractory);
+    public static final DeferredBlock<dev.strataindustria.ironworks.BlastFurnaceBlock> BLAST_FURNACE_CONTROLLER =
+            ModBlocks.BLOCKS.registerBlock("blast_furnace_controller", dev.strataindustria.ironworks.BlastFurnaceBlock::new,
+                    p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ironworks.BlastFurnaceBlock.LIT) ? 10 : 0));
+    public static final DeferredBlock<dev.strataindustria.ironworks.FurnacePartBlock> TUYERE = ModBlocks.BLOCKS.registerBlock("tuyere",
+            dev.strataindustria.ironworks.FurnacePartBlock::new, Tier4Blocks::refractory);
+    public static final DeferredBlock<dev.strataindustria.ironworks.ChargingHatchBlock> CHARGING_HATCH = ModBlocks.BLOCKS.registerBlock(
+            "charging_hatch", dev.strataindustria.ironworks.ChargingHatchBlock::new, Tier4Blocks::refractory);
+    public static final DeferredBlock<dev.strataindustria.ironworks.TapHatchBlock> TAP_HATCH = ModBlocks.BLOCKS.registerBlock("tap_hatch",
+            dev.strataindustria.ironworks.TapHatchBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ironworks.TapHatchBlock.HOT) ? 9 : 0));
+    public static final DeferredBlock<dev.strataindustria.ironworks.BlowerBlock> BLOWER = ModBlocks.BLOCKS.registerBlock("blower",
+            dev.strataindustria.ironworks.BlowerBlock::new, p -> p.mapColor(MapColor.METAL)
+                    .strength(3.5f, 6.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(HEAVY_METAL));
+
+    /** Fire brick held in iron: as tough as the bricks, with their sound. */
+    private static Block.Properties refractory(Block.Properties p) {
+        return p.mapColor(MapColor.COLOR_ORANGE)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .strength(3.0f, 8.0f)
+                .requiresCorrectToolForDrops()
+                .sound(FIRE_BRICK_SOUND);
+    }
+
     private static Block.Properties boiler(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BROWN)
                 .strength(4.0f, 8.0f)

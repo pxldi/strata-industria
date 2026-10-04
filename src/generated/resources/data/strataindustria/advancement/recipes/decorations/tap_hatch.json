@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_refractory_casing": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:refractory_casing"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:tap_hatch"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_refractory_casing"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:tap_hatch"
+    ]
+  }
+}
