@@ -41,6 +41,9 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamEngineBlockEntity>> STEAM_ENGINE =
             ModBlockEntities.BLOCK_ENTITIES.register("steam_engine", () -> new BlockEntityType<>(SteamEngineBlockEntity::new,
                     Tier4Blocks.STEAM_ENGINE.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.processing.CrusherBlockEntity>> CRUSHER =
+            ModBlockEntities.BLOCK_ENTITIES.register("crusher", () -> new BlockEntityType<>(dev.strataindustria.processing.CrusherBlockEntity::new,
+                    Tier4Blocks.CRUSHER.get()));
 
     public static void init() {}
 

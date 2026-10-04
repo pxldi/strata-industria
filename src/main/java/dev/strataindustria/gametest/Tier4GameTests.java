@@ -33,6 +33,9 @@ import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.steam.BoilerBlockEntity;
 import dev.strataindustria.steam.FireboxBlockEntity;
+import dev.strataindustria.processing.CrusherBlockEntity;
+import dev.strataindustria.processing.ProcessingBlock;
+import dev.strataindustria.processing.ProcessingBlockEntity;
 import dev.strataindustria.steam.MechanicalPumpBlock;
 import dev.strataindustria.steam.MechanicalPumpBlockEntity;
 import dev.strataindustria.steam.SteamEngineBlock;
@@ -66,6 +69,7 @@ final class Tier4GameTests {
         tests.put("tier4_fluid_pipes", Tier4GameTests::fluidPipes);
         tests.put("tier4_steam_engine", Tier4GameTests::steamEngine);
         tests.put("tier4_mechanical_pump", Tier4GameTests::mechanicalPump);
+        tests.put("tier4_crusher", Tier4GameTests::crusher);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -466,6 +470,54 @@ final class Tier4GameTests {
         helper.assertValueEqual(boiler.water(), MechanicalPumpBlockEntity.SOURCE_AMOUNT, "water pumped from one source");
         helper.assertTrue(level.getFluidState(intake).isEmpty(), "a lone source is used up after a bucket");
         helper.succeed();
+    }
+
+    // Spec 11.2: a cranked crusher at 16 RPM works its three inputs side by side, 80 ticks each. Ore comes
+    // out crushed, rock as gravel, and coal is refused.
+    private static void crusher(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos crusherPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        BlockPos crankPos = crusherPos.west();
+        level.setBlock(crusherPos, Tier4Blocks.CRUSHER.get().defaultBlockState().setValue(ProcessingBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        CrusherBlockEntity crusher = (CrusherBlockEntity) level.getBlockEntity(crusherPos);
+        crusher.setItem(0, new ItemStack(ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL), 2));
+        crusher.setItem(1, new ItemStack(ModItems.COBBLED_ROCK.get(dev.strataindustria.geology.Rock.GRANITE).get()));
+        crusher.setItem(2, new ItemStack(Items.COAL));
+
+        crush(level, crusherPos, crusher, 1);
+        helper.assertValueEqual(crusher.status(), ProcessingBlockEntity.Status.NOT_TURNING, "crusher status without a shaft turning");
+
+        HandCrankBlockEntity crank = (HandCrankBlockEntity) level.getBlockEntity(crankPos);
+        crank.crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "engineer")));
+        KineticNetworks.rebuildNow(level, crusherPos);
+        crush(level, crusherPos, crusher, 79);
+        helper.assertValueEqual(crusher.status(), ProcessingBlockEntity.Status.WORKING, "crusher status at 16 RPM");
+        helper.assertValueEqual(crusher.finishedCount(), 0, "items done after 79 ticks");
+        helper.assertTrue(level.getBlockState(crusherPos).getValue(ProcessingBlock.ACTIVE), "the front shows the jaws moving");
+        crush(level, crusherPos, crusher, 1);
+        helper.assertValueEqual(crusher.finishedCount(), 2, "ore and rock both done after 80 ticks");
+        helper.assertTrue(count(crusher, ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL)) >= 1, "crushed hematite out");
+        helper.assertValueEqual(count(crusher, Items.GRAVEL), 1, "gravel from cobbled granite");
+        helper.assertValueEqual(crusher.getItem(2).getCount(), 1, "coal stays in its slot");
+        helper.assertTrue(!crusher.canPlaceItem(0, new ItemStack(Items.COAL)), "a hopper cannot put coal in");
+
+        crush(level, crusherPos, crusher, 80);
+        helper.assertTrue(crusher.getItem(0).isEmpty(), "second ore piece crushed");
+        crush(level, crusherPos, crusher, 1);
+        helper.assertValueEqual(crusher.status(), ProcessingBlockEntity.Status.NO_RECIPE, "status with only coal left");
+        helper.assertTrue(!level.getBlockState(crusherPos).getValue(ProcessingBlock.ACTIVE), "the jaws stop");
+        helper.succeed();
+    }
+
+    private static void crush(ServerLevel level, BlockPos pos, CrusherBlockEntity crusher, int ticks) {
+        for (int i = 0; i < ticks; i++) ProcessingBlockEntity.serverTick(level, pos, level.getBlockState(pos), crusher);
+    }
+
+    private static int count(CrusherBlockEntity machine, net.minecraft.world.item.Item item) {
+        int n = 0;
+        for (int i = 0; i < machine.getContainerSize(); i++) if (machine.getItem(i).is(item)) n += machine.getItem(i).getCount();
+        return n;
     }
 
     private static void engine(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos boilerPos, BoilerBlockEntity boiler,

@@ -69,6 +69,7 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> PRESSURE_GAUGE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.PRESSURE_GAUGE);
     public static final DeferredItem<BlockItem> MECHANICAL_PUMP = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.MECHANICAL_PUMP);
     public static final DeferredItem<BlockItem> STEAM_ENGINE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEAM_ENGINE);
+    public static final DeferredItem<BlockItem> CRUSHER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CRUSHER);
     public static final DeferredItem<BlockItem> IRON_STEP_UP_GEARBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_STEP_UP_GEARBOX);
 
     // Spec 4.4 and 5.3: roasted sphalerite, by grade, and the small piece from a surface indicator.

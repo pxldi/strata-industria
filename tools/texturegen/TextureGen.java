@@ -6042,6 +6042,111 @@ public final class TextureGen {
         return im;
     }
 
+    // ---------------------------------------------------------------- tier 4: crusher (spec 21.2)
+
+    /** Crusher side: engineBase() style riveted wrought iron plate with an iron shaft boss in the centre. */
+    static BufferedImage crusherSide() {
+        BufferedImage im = engineBase();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                if (d > 4.6 && d <= 5.4) px(im, x, y, WROUGHT_IRON.get(1));
+                else if (d <= 4.6 && d > 2.8) px(im, x, y, WROUGHT_IRON.get(x + y < 15 ? 5 : 3));
+                else if (d <= 2.8 && d > 1.6) px(im, x, y, WROUGHT_IRON.get(x + y < 15 ? 2 : 4));
+                else if (d <= 1.6) px(im, x, y, WROUGHT_IRON.get(1));
+            }
+        px(im, 4, 4, WROUGHT_IRON.get(5));
+        px(im, 6, 6, WROUGHT_IRON.get(2));
+        return im;
+    }
+
+    /** Crusher top: wrought iron rim, dark hopper, two toothed steel jaw edges seen from above. */
+    static BufferedImage crusherTop() {
+        BufferedImage im = engineBase();
+        for (int y = 2; y <= 13; y++)
+            for (int x = 2; x <= 13; x++) {
+                boolean edge = x == 2 || y == 2 || x == 13 || y == 13;
+                if (edge) px(im, x, y, WROUGHT_IRON.get(x == 2 || y == 2 ? 5 : 2));
+                else px(im, x, y, PIG_IRON.get(1));
+            }
+        // inner shadow below/right of the top-left rim
+        for (int i = 3; i <= 12; i++) { px(im, i, 3, 0x0e0c0c); px(im, 3, i, 0x0e0c0c); }
+        for (int y = 4; y <= 11; y++) {
+            for (int x = 4; x <= 5; x++) px(im, x, y, STEEL.get(x == 4 ? 4 : 3));
+            px(im, 6, y, y % 2 == 0 ? STEEL.get(5) : STEEL.get(2));
+            for (int x = 10; x <= 11; x++) px(im, x, y, STEEL.get(x == 10 ? 4 : 2));
+            px(im, 9, y, y % 2 == 1 ? STEEL.get(4) : STEEL.get(1));
+        }
+        px(im, 6, 6, STEEL.spec());
+        for (int[] r : new int[][] {{1, 1}, {13, 1}, {1, 13}, {13, 13}}) px(im, r[0], r[1], WROUGHT_IRON.get(5));
+        return im;
+    }
+
+    /** One crusher front frame: shift d pulls the jaws together; f < 0 is the idle still frame. */
+    static BufferedImage crusherFront(int d, boolean grit, int f) {
+        BufferedImage im = engineBase();
+        for (int[] r : new int[][] {{2, 2}, {12, 2}, {2, 12}, {12, 12}}) rivet(im, r[0], r[1]);
+        // window frame
+        for (int y = 3; y <= 12; y++)
+            for (int x = 3; x <= 12; x++) {
+                boolean edge = x == 3 || y == 3 || x == 12 || y == 12;
+                if (edge) px(im, x, y, STEEL.get(x == 3 || y == 3 ? 2 : 4));
+                else px(im, x, y, PIG_IRON.get(1));
+            }
+        // interior x4..11, y4..11 : lit sill on the first row for depth
+        for (int x = 4; x <= 11; x++) px(im, x, 4, 0x0e0c0c);
+        for (int y = 5; y <= 11; y++) {
+            for (int x = 4 + d; x <= 5 + d; x++) px(im, x, y, STEEL.get(x == 4 + d ? 4 : 3));
+            int tl = 6 + d;
+            if (y % 2 == 1 && tl <= 11 - d - 2) px(im, tl, y, STEEL.get(5));
+            for (int x = 10 - d; x <= 11 - d; x++) px(im, x, y, STEEL.get(x == 10 - d ? 4 : 2));
+            int tr = 9 - d;
+            if (y % 2 == 0 && tr >= 6 + d + 2) px(im, tr, y, STEEL.get(4));
+        }
+        if (d == 0) px(im, 4, 6, STEEL.spec());
+        if (grit) {
+            int[][] g = {{7, 0}, {8, 3}, {7, 5}, {8, 2}};
+            int[] cols = {PIG_IRON.get(4), BARK.get(4), PIG_IRON.get(5), BARK.get(5)};
+            for (int k = 0; k < g.length; k++) {
+                int y = 5 + (g[k][1] + f * 2 + k) % 7;
+                int x = g[k][0] + ((f + k) % 2 == 0 ? 0 : (k % 2 == 0 ? 1 : -1));
+                px(im, Math.max(6 + d, Math.min(9 - d, x)), y, cols[k]);
+            }
+        }
+        return im;
+    }
+
+    static BufferedImage crusherFrontActive() {
+        BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+        int[] shift = {0, 1, 2, 1};
+        for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(crusherFront(shift[f], true, f), 0, f * 16, null);
+        return strip;
+    }
+
+    /** Crusher screen, 176x176: three lanes (input, arrow, two outputs each) over a taller inventory. */
+    static BufferedImage crusherGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 176);
+        for (int y : new int[] {18, 36, 54}) {
+            slot(im, 30, y);
+            arrow(im, 56, y);
+        }
+        for (int x : new int[] {98, 116, 134})
+            for (int y : new int[] {27, 45}) slot(im, x, y);
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 94 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 152);
+        return im;
+    }
+
+    static void crusher() throws IOException {
+        save("block/crusher_side", crusherSide());
+        save("block/crusher_top", crusherTop());
+        save("block/crusher_front", crusherFront(0, false, 0));
+        saveAnimated("block/crusher_front_active", crusherFrontActive(), 2);
+        saveRaw("gui/crusher", crusherGui());
+    }
+
     static void engines() throws IOException {
         save("block/steam_engine_base", engineBase());
         save("block/steam_engine_cylinder", engineCylinder());
@@ -6052,6 +6157,7 @@ public final class TextureGen {
         save("block/mechanical_pump_side", pumpSide());
         save("block/mechanical_pump_back", pumpBack());
         save("block/mechanical_pump_top", bronzePlates(8814));
+        crusher();
     }
 
     static void steam() throws IOException {
