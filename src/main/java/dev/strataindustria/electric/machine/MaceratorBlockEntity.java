@@ -41,7 +41,7 @@ public class MaceratorBlockEntity extends ElectricMachineBlockEntity {
     }
 
     /** The crushing recipe with its second-piece chance raised to the macerator's. */
-    static Processing maceration(CrushingRecipe recipe) {
+    public static Processing maceration(CrushingRecipe recipe) {
         ItemStack main = recipe.result().create();
         List<WashingRecipe.Chance> chances = new ArrayList<>();
         for (WashingRecipe.Chance chance : recipe.chances()) {
