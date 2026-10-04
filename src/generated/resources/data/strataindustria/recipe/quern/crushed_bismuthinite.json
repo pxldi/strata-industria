@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "strataindustria:bismuthinite",
+  "result": {
+    "id": "strataindustria:crushed_bismuthinite"
+  }
+}

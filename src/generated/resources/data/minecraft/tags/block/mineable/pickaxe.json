@@ -51,6 +51,12 @@
     "strataindustria:rhyolite_bismuthinite_ore",
     "strataindustria:large_vessel",
     "strataindustria:crucible",
-    "strataindustria:forge"
+    "strataindustria:forge",
+    "strataindustria:quern",
+    "strataindustria:bronze_anvil",
+    "strataindustria:granite_anvil",
+    "strataindustria:gabbro_anvil",
+    "strataindustria:basalt_anvil",
+    "strataindustria:rhyolite_anvil"
   ]
 }

@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "minecraft:bone",
+  "result": {
+    "count": 4,
+    "id": "minecraft:bone_meal"
+  }
+}

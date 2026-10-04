@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/bronze_anvil",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "strataindustria:block/bronze_anvil",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "strataindustria:block/bronze_anvil"
+    },
+    "facing=west": {
+      "model": "strataindustria:block/bronze_anvil",
+      "y": 90
+    }
+  }
+}

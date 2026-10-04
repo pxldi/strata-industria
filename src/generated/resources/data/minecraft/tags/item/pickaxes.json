@@ -1,8 +1,11 @@
 {
   "values": [
     "strataindustria:stone_pickaxe",
+    "strataindustria:bronze_prospectors_pick",
     "strataindustria:bronze_pickaxe",
+    "strataindustria:arsenical_bronze_prospectors_pick",
     "strataindustria:arsenical_bronze_pickaxe",
+    "strataindustria:bismuth_bronze_prospectors_pick",
     "strataindustria:bismuth_bronze_pickaxe"
   ]
 }

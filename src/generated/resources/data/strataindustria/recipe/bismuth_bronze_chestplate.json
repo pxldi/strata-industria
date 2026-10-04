@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "strataindustria:fibre_cloth",
+    "P": "strataindustria:bismuth_bronze_plate"
+  },
+  "pattern": [
+    "P P",
+    "PCP",
+    " P "
+  ],
+  "result": {
+    "id": "strataindustria:bismuth_bronze_chestplate"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "strataindustria:bronze"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "strataindustria:bronze"
+      }
+    ]
+  }
+}

@@ -8,6 +8,8 @@ import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
+import dev.strataindustria.quern.QuernBlock;
+import dev.strataindustria.smithing.AnvilBlock;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModDataComponents;
@@ -38,6 +40,7 @@ final class ModModelProvider extends ModelProvider {
     static final ModelTemplate ORE_TEMPLATE = template("template_ore", ROCK, ORE);
     static final ModelTemplate LOOSE_ROCK_TEMPLATE = template("template_loose_rock", ROCK);
     static final ModelTemplate SMALL_ORE_TEMPLATE = template("template_small_ore", ORE);
+    static final ModelTemplate STONE_ANVIL_TEMPLATE = template("template_stone_anvil", TextureSlot.SIDE, TextureSlot.TOP);
     static final ModelTemplate GROUND_FLAT_TEMPLATE = template("template_ground_flat", TextureSlot.TEXTURE);
 
     ModModelProvider(PackOutput output) {
@@ -113,6 +116,37 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(ModItems.FORGE.get(), ItemModelUtils.plainModel(forge));
 
         metals(itemModels);
+
+        // Spec 9.1: stone anvils are the raw rock with a dressed face; the bronze anvil turns like a vanilla anvil.
+        for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
+            Block anvil = entry.getValue().get();
+            var model = STONE_ANVIL_TEMPLATE.create(anvil, new TextureMapping()
+                    .put(TextureSlot.SIDE, blockTexture(entry.getKey().id()))
+                    .put(TextureSlot.TOP, blockTexture(entry.getKey().id() + "_anvil_top")), blockModels.modelOutput);
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(anvil, BlockModelGenerators.plainVariant(model)));
+        }
+        var bronzeAnvil = BlockModelGenerators.plainVariant(StrataIndustria.id("block/bronze_anvil"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> anvilFacing = PropertyDispatch.initial(AnvilBlock.FACING);
+        anvilFacing.select(net.minecraft.core.Direction.SOUTH, bronzeAnvil);
+        anvilFacing.select(net.minecraft.core.Direction.WEST, bronzeAnvil.with(BlockModelGenerators.Y_ROT_90));
+        anvilFacing.select(net.minecraft.core.Direction.NORTH, bronzeAnvil.with(BlockModelGenerators.Y_ROT_180));
+        anvilFacing.select(net.minecraft.core.Direction.EAST, bronzeAnvil.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.BRONZE_ANVIL.get()).with(anvilFacing));
+        itemModels.itemModelOutput.accept(ModItems.BRONZE_ANVIL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bronze_anvil")));
+        flatItem(itemModels, ModItems.TONGS_JAW.get());
+        itemModels.generateFlatItem(ModItems.TONGS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+
+        // Spec 10.1: the runner stone and its handle turn a quarter at a time as the quern is worked.
+        MultiPartGenerator quern = MultiPartGenerator.multiPart(ModBlocks.QUERN.get())
+                .with(BlockModelGenerators.plainVariant(StrataIndustria.id("block/quern_base")));
+        var runner = BlockModelGenerators.plainVariant(StrataIndustria.id("block/quern_runner"));
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 0), runner);
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 1), runner.with(BlockModelGenerators.Y_ROT_90));
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 2), runner.with(BlockModelGenerators.Y_ROT_180));
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 3), runner.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(quern);
+        itemModels.itemModelOutput.accept(ModItems.QUERN.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/quern")));
+        flatItem(itemModels, ModItems.QUERNSTONE.get());
         flatItem(itemModels, ModItems.PLANT_FIBRE.get());
         flatItem(itemModels, ModItems.STRAW.get());
         flatItem(itemModels, ModItems.TWINE.get());
@@ -184,6 +218,13 @@ final class ModModelProvider extends ModelProvider {
             }
             if (!metal.isToolMetal()) continue;
             flatItem(itemModels, ModItems.PLATES.get(metal).get());
+            if (!metal.isVanilla()) {
+                for (var piece : ModItems.ARMOUR.get(metal).values()) flatItem(itemModels, piece.get());
+            }
+            if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
+                flatItem(itemModels, ModItems.PROSPECTOR_HEADS.get(metal).get());
+                itemModels.generateFlatItem(ModItems.PROSPECTORS_PICKS.get(metal).get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+            }
             for (MoldType type : MoldType.values()) {
                 flatItem(itemModels, ModItems.head(metal, type));
                 if (ModItems.TOOLS.get(metal).get(type) instanceof net.neoforged.neoforge.registries.DeferredItem<?> tool) {

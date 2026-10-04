@@ -1,0 +1,23 @@
+{
+  "type": "strataindustria:anvil",
+  "count": 2,
+  "default_target": 100,
+  "ingredient": "minecraft:copper_ingot",
+  "result": {
+    "id": "strataindustria:copper_sword_blade"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "bend",
+      "where": "second_last"
+    },
+    {
+      "hit": "bend",
+      "where": "third_last"
+    }
+  ]
+}
