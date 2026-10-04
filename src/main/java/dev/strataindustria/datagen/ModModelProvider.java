@@ -484,6 +484,26 @@ final class ModModelProvider extends ModelProvider {
         for (var calcine : Tier4Items.ZINC_CALCINES.values()) flatItem(itemModels, calcine.get());
         flatItem(itemModels, Tier4Items.SMALL_ZINC_CALCINE.get());
         metalAnvil(blockModels, itemModels, Tier4Blocks.STEEL_ANVIL.get(), Tier4Items.STEEL_ANVIL.get(), "steel_anvil");
+
+        // Spec 11.7: iron transmission, in the wooden parts' models.
+        for (var block : java.util.List.of(Tier4Blocks.IRON_AXLE, Tier4Blocks.IRON_GEARBOX)) {
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block.get(),
+                    BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + block.getId().getPath()))));
+        }
+        itemModels.itemModelOutput.accept(Tier4Items.IRON_AXLE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/rotor/iron_axle")));
+        itemModels.itemModelOutput.accept(Tier4Items.IRON_GEARBOX.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/iron_gearbox")));
+        var ironStepUp = BlockModelGenerators.plainVariant(StrataIndustria.id("block/iron_step_up_gearbox"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> ironFacing =
+                PropertyDispatch.initial(dev.strataindustria.power.StepUpGearboxBlock.FACING);
+        ironFacing.select(net.minecraft.core.Direction.NORTH, ironStepUp);
+        ironFacing.select(net.minecraft.core.Direction.EAST, ironStepUp.with(BlockModelGenerators.Y_ROT_90));
+        ironFacing.select(net.minecraft.core.Direction.SOUTH, ironStepUp.with(BlockModelGenerators.Y_ROT_180));
+        ironFacing.select(net.minecraft.core.Direction.WEST, ironStepUp.with(BlockModelGenerators.Y_ROT_270));
+        ironFacing.select(net.minecraft.core.Direction.UP, ironStepUp.with(BlockModelGenerators.X_ROT_270));
+        ironFacing.select(net.minecraft.core.Direction.DOWN, ironStepUp.with(BlockModelGenerators.X_ROT_90));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.IRON_STEP_UP_GEARBOX.get()).with(ironFacing));
+        itemModels.itemModelOutput.accept(Tier4Items.IRON_STEP_UP_GEARBOX.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/iron_step_up_gearbox")));
     }
 
     /**
