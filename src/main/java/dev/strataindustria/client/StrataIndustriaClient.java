@@ -4,6 +4,8 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.client.hud.FirestarterHud;
 import dev.strataindustria.client.render.PitKilnRenderer;
 import dev.strataindustria.client.render.QuernRenderer;
+import dev.strataindustria.client.render.AnvilRenderer;
+import dev.strataindustria.client.screen.AnvilScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
@@ -37,11 +39,13 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.SMALL_VESSEL.get(), SmallVesselScreen::new);
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
+        event.register(ModMenus.ANVIL.get(), AnvilScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.ANVIL.get(), AnvilRenderer::new);
     }
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {

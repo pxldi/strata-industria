@@ -14,6 +14,8 @@ import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernRecipe;
+import dev.strataindustria.smithing.AnvilRecipe;
+import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import java.util.List;
@@ -69,6 +71,7 @@ final class ModRecipeProvider extends RecipeProvider {
         planks();
         metals();
         quern();
+        smithing();
         vanillaOverrides();
     }
 
@@ -210,6 +213,57 @@ final class ModRecipeProvider extends RecipeProvider {
                 List.of(tag(logs), tool),
                 tool);
         save(key(name(planks) + suffix), recipe, RecipeCategory.BUILDING_BLOCKS, "has_logs", has(logs));
+    }
+
+    // Spec 9.3: what an anvil makes from one ingot (two for a sword blade), and the rules that finish it.
+    private void smithing() {
+        for (Metal metal : Metal.values()) {
+            if (!metal.isToolMetal()) continue;
+            Item ingot = ModItems.ingot(metal);
+            String m = metal.id();
+            anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 60,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+            anvil(m + "_pickaxe_head", ingot, 1, ModItems.head(metal, MoldType.PICKAXE_HEAD), 85,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+            anvil(m + "_axe_head", ingot, 1, ModItems.head(metal, MoldType.AXE_HEAD), 75,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.UPSET, Rule.Where.THIRD_LAST));
+            anvil(m + "_shovel_head", ingot, 1, ModItems.head(metal, MoldType.SHOVEL_HEAD), 50,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+            anvil(m + "_hoe_head", ingot, 1, ModItems.head(metal, MoldType.HOE_HEAD), 65,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
+            anvil(m + "_knife_blade", ingot, 1, ModItems.head(metal, MoldType.KNIFE_BLADE), 95,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+            anvil(m + "_hammer_head", ingot, 1, ModItems.head(metal, MoldType.HAMMER_HEAD), 70,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.SHRINK, Rule.Where.NOT_LAST));
+            anvil(m + "_saw_blade", ingot, 1, ModItems.head(metal, MoldType.SAW_BLADE), 55,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST));
+            anvil(m + "_sword_blade", ingot, 2, ModItems.head(metal, MoldType.SWORD_BLADE), 100,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.THIRD_LAST));
+            anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 80,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+        }
+        shaped(RecipeCategory.DECORATIONS, ModItems.BRONZE_ANVIL.get())
+                .pattern("PPP")
+                .pattern(" I ")
+                .pattern("III")
+                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
+                .define('I', ModTags.Items.ANY_BRONZE_INGOTS)
+                .unlockedBy("has_bronze_plate", has(ModTags.Items.ANY_BRONZE_PLATES))
+                .save(output, key("bronze_anvil"));
+        shapeless(RecipeCategory.TOOLS, ModItems.TONGS.get())
+                .requires(ModItems.TONGS_JAW.get())
+                .requires(Items.STICK, 2)
+                .unlockedBy("has_tongs_jaw", has(ModItems.TONGS_JAW.get()))
+                .save(output, key("tongs"));
+    }
+
+    private static Rule rule(Rule.Kind kind, Rule.Where where) {
+        return Rule.of(kind, where);
+    }
+
+    private void anvil(String path, Item input, int count, Item result, int defaultTarget, Rule... rules) {
+        output.accept(key("anvil/" + path), new AnvilRecipe(Ingredient.of(input), count, new ItemStackTemplate(result),
+                List.of(rules), defaultTarget), null);
     }
 
     // Spec 10.1: the quern, and what it grinds.

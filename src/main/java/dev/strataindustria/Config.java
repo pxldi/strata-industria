@@ -134,6 +134,19 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- smithing
+    static {
+        BUILDER.comment("Anvil smithing.").push("smithing");
+    }
+
+    public static final ModConfigSpec.BooleanValue SMITHING_RANDOM_TARGETS = BUILDER
+            .comment("Each world gets its own smithing targets. Off uses each recipe's default target.")
+            .define("randomTargets", true);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

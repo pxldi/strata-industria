@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.smithing.SmithingProgress;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.Temperature;
 import dev.strataindustria.knapping.KnappedFrom;
@@ -30,6 +31,12 @@ public final class ModDataComponents {
             COMPONENTS.registerComponentType("quality", b -> b
                     .persistent(Quality.CODEC)
                     .networkSynchronized(Quality.STREAM_CODEC));
+
+    /** Spec 9.2: an unfinished smithing workpiece. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SmithingProgress>> SMITHING_PROGRESS =
+            COMPONENTS.registerComponentType("smithing_progress", b -> b
+                    .persistent(SmithingProgress.CODEC)
+                    .networkSynchronized(SmithingProgress.STREAM_CODEC));
 
     /** Spec 7.4: what went into a slag metal ingot. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Melt>> SLAG =

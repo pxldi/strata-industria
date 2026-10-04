@@ -77,6 +77,10 @@ public final class ModItems {
     public static final DeferredItem<CastMoldItem> INGOT_MOLD = ITEMS.registerItem("ingot_mold", p -> new CastMoldItem(null, p),
             p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> FORGE = ITEMS.registerSimpleBlockItem(ModBlocks.FORGE);
+    // Smithing (spec 9).
+    public static final DeferredItem<BlockItem> BRONZE_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.BRONZE_ANVIL);
+    public static final DeferredItem<Item> TONGS_JAW = ITEMS.registerSimpleItem("tongs_jaw", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", p -> p.durability(250));
     // Quern (spec 10.1).
     public static final DeferredItem<Item> QUERNSTONE = ITEMS.registerSimpleItem("quernstone", p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> QUERN = ITEMS.registerSimpleBlockItem(ModBlocks.QUERN);

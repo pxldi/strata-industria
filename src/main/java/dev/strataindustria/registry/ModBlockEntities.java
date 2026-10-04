@@ -8,6 +8,7 @@ import dev.strataindustria.fire.FirePitBlockEntity;
 import dev.strataindustria.forge.ForgeBlockEntity;
 import dev.strataindustria.metal.CrucibleBlockEntity;
 import dev.strataindustria.quern.QuernBlockEntity;
+import dev.strataindustria.smithing.AnvilBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -34,6 +35,13 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<QuernBlockEntity>> QUERN =
             BLOCK_ENTITIES.register("quern", () -> new BlockEntityType<>(QuernBlockEntity::new, ModBlocks.QUERN.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AnvilBlockEntity>> ANVIL =
+            BLOCK_ENTITIES.register("anvil", () -> {
+                java.util.List<net.minecraft.world.level.block.Block> anvils = new java.util.ArrayList<>();
+                ModBlocks.STONE_ANVILS.values().forEach(b -> anvils.add(b.get()));
+                anvils.add(ModBlocks.BRONZE_ANVIL.get());
+                return new BlockEntityType<>(AnvilBlockEntity::new, anvils.toArray(new net.minecraft.world.level.block.Block[0]));
+            });
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
             BLOCK_ENTITIES.register("crucible", () -> new BlockEntityType<>(CrucibleBlockEntity::new, ModBlocks.CRUCIBLE.get()));
 

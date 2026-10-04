@@ -6,6 +6,7 @@ import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.quern.QuernRecipe;
+import dev.strataindustria.smithing.AnvilRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -36,6 +37,12 @@ public final class ModRecipes {
             TYPES.register("quern", () -> RecipeType.simple(StrataIndustria.id("quern")));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<QuernRecipe>> QUERN_SERIALIZER =
             SERIALIZERS.register("quern", () -> QuernRecipe.SERIALIZER);
+
+    /** Anvil smithing (spec 9.2). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<AnvilRecipe>> ANVIL =
+            TYPES.register("anvil", () -> RecipeType.simple(StrataIndustria.id("anvil")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AnvilRecipe>> ANVIL_SERIALIZER =
+            SERIALIZERS.register("anvil", () -> AnvilRecipe.SERIALIZER);
 
     private ModRecipes() {}
 }

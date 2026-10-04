@@ -92,6 +92,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.ASH, "Ash");
         addBlock(ModBlocks.FORGE, "Forge");
         addBlock(ModBlocks.QUERN, "Quern");
+        smithing();
         addItem(ModItems.QUERNSTONE, "Quernstone");
         add("container." + StrataIndustria.MOD_ID + ".forge", "Forge");
         metals();
@@ -113,6 +114,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "forge.ignite", "Forge catches");
         add(subtitles + "crucible.melt", "Metal melts");
         add(subtitles + "quern.grind", "Quern grinds");
+        add(subtitles + "anvil.hit", "Hammer rings");
+        add(subtitles + "anvil.done", "Piece finished");
+        add(subtitles + "anvil.dress", "Stone dressed");
         add(subtitles + "quern.load", "Quern loaded");
         add(subtitles + "quern.done", "Quern spills ground");
         add(subtitles + "crucible.pour", "Molten metal pours");
@@ -180,6 +184,43 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "casting", "Casting");
         add(config + "ingotMoldBreak", "Ingot mold break chance");
         add(config + "toolMoldBreak", "Tool mold break chance");
+        add(config + "smithing", "Smithing");
+        add(config + "randomTargets", "Random targets per world");
+    }
+
+    /** Spec 9: anvils, the smithing screen, and tongs. */
+    private void smithing() {
+        String id = StrataIndustria.MOD_ID;
+        for (var entry : ModBlocks.STONE_ANVILS.entrySet()) addBlock(entry.getValue(), title(entry.getKey().id()) + " Anvil");
+        addBlock(ModBlocks.BRONZE_ANVIL, "Bronze Anvil");
+        addItem(ModItems.TONGS_JAW, "Tongs Jaw");
+        addItem(ModItems.TONGS, "Tongs");
+        add("container." + id + ".anvil", "Anvil");
+        String status = id + ".anvil.status.";
+        add(status + "empty", "Put a heated workpiece in");
+        add(status + "choose", "Pick what to make");
+        add(status + "ready", "Hits so far: %s");
+        add(status + "too_cold", "Too cold to work");
+        add(status + "no_hammer", "Needs a hammer in your hotbar");
+        add(status + "too_weak", "This anvil cannot work that metal");
+        add(status + "output_full", "Take the finished piece out first");
+        add(status + "not_enough", "Needs more of that metal");
+        add(status + "no_plan", "Nothing can be smithed from that");
+        add(id + ".anvil.out_of_range", "That would overwork it");
+        add(id + ".anvil.rules", "Rules");
+        add(id + ".anvil.recent", "Last hits");
+        add(id + ".anvil.rule", "%s %s");
+        for (var hit : dev.strataindustria.smithing.HitType.values()) {
+            add(id + ".anvil.hit." + hit.id(), title(hit.id()) + " (%s)");
+        }
+        for (var kind : dev.strataindustria.smithing.Rule.Kind.values()) {
+            add(id + ".anvil.kind." + kind.getSerializedName(), title(kind.getSerializedName()));
+        }
+        add(id + ".anvil.where.last", "last");
+        add(id + ".anvil.where.second_last", "second last");
+        add(id + ".anvil.where.third_last", "third last");
+        add(id + ".anvil.where.not_last", "not last");
+        add(id + ".anvil.where.any", "any of the last three");
     }
 
     /** Spec 6 to 8: metal names, the crucible screen, molds, cast parts and tools. */
