@@ -61,7 +61,7 @@ public class ConveyorBlockEntity extends KineticBlockEntity implements KineticCo
     }
 
     private BlockState state() {
-        return level == null ? getBlockState() : level.getBlockState(worldPosition);
+        return level == null || !level.hasChunkAt(worldPosition) ? getBlockState() : level.getBlockState(worldPosition);
     }
 
     // ------------------------------------------------------------------ drive
@@ -216,6 +216,7 @@ public class ConveyorBlockEntity extends KineticBlockEntity implements KineticCo
             return level.getBlockEntity(nextBelt) instanceof ConveyorBlockEntity belt && belt.accept(stack);
         }
         BlockPos front = pos.relative(facing).above(state.getValue(ConveyorBlock.SLOPE).highEnd() ? 1 : 0);
+        if (!level.hasChunkAt(front)) return false;
         BlockState there = level.getBlockState(front);
         if (there.getBlock() instanceof ConveyorBlock) {
             // A belt crossing the end takes items on its back or side, never head-on.

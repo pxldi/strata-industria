@@ -135,6 +135,12 @@ public class ConveyorBlock extends BaseEntityBlock implements KineticBlock {
         return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 
+    /** The state at {@code pos}, or air when its chunk is not loaded: neighbour lookups must never force a chunk to load (it would stall saving and unloading). */
+    private static BlockState stateAt(BlockGetter level, BlockPos pos) {
+        if (level instanceof net.minecraft.world.level.LevelReader reader && !reader.hasChunkAt(pos)) return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        return level.getBlockState(pos);
+    }
+
     /** Where a belt at {@code pos} hands its items on: the next belt of its line, or null when the line ends here. */
     public static @Nullable BlockPos next(BlockGetter level, BlockPos pos, BlockState state) {
         Direction facing = state.getValue(FACING);
@@ -142,7 +148,7 @@ public class ConveyorBlock extends BaseEntityBlock implements KineticBlock {
         for (int dy : new int[] {rise, rise - 1, rise + 1}) {
             if (dy < -1 || dy > 1) continue;
             BlockPos at = pos.relative(facing).above(dy);
-            BlockState there = level.getBlockState(at);
+            BlockState there = stateAt(level, at);
             if (!(there.getBlock() instanceof ConveyorBlock) || there.getValue(FACING) != facing) continue;
             // The belts meet when this one's end height equals the next one's start height.
             int next = there.getValue(SLOPE) == Slope.DOWN ? 1 : 0;
@@ -157,7 +163,7 @@ public class ConveyorBlock extends BaseEntityBlock implements KineticBlock {
         Direction back = state.getValue(FACING).getOpposite();
         for (int dy = -1; dy <= 1; dy++) {
             BlockPos at = pos.relative(back).above(dy);
-            BlockState there = level.getBlockState(at);
+            BlockState there = stateAt(level, at);
             if (there.getBlock() instanceof ConveyorBlock && there.getValue(FACING) == state.getValue(FACING)
                     && pos.equals(next(level, at, there))) {
                 found.add(at);
@@ -175,7 +181,7 @@ public class ConveyorBlock extends BaseEntityBlock implements KineticBlock {
             List<BlockPos> before = previous(level, at, here);
             if (before.isEmpty()) break;
             at = before.getFirst();
-            here = level.getBlockState(at);
+            here = stateAt(level, at);
             length++;
         }
         at = pos;
@@ -184,7 +190,7 @@ public class ConveyorBlock extends BaseEntityBlock implements KineticBlock {
             BlockPos after = next(level, at, here);
             if (after == null) break;
             at = after;
-            here = level.getBlockState(at);
+            here = stateAt(level, at);
             length++;
         }
         return length;
