@@ -110,6 +110,7 @@ public final class ModGameTests {
         TESTS.put("sluice_washing", ModGameTests::sluiceWashing);
         TESTS.put("step_up_gearbox", ModGameTests::stepUpGearbox);
         TESTS.put("soaking_barrel", ModGameTests::soakingBarrel);
+        Tier3GameTests.register(TESTS);
         Tier4GameTests.register(TESTS);
     }
 
