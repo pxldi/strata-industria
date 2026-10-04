@@ -544,7 +544,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(bloomery + "at", "at %s, %s, %s");
         add(bloomery + "hint", "Bricks around and under the chamber.");
         add(bloomery + "charge", "Ore %s/%s, charcoal %s/%s");
-        add(bloomery + "draught", "Chimney %s, bellows %s: %s °C");
+        add(bloomery + "draught", "Flue %s, bellows %s: %s °C");
         add(bloomery + "yield", "Yield %s%%, %s blooms");
         add(bloomery + "no_yield", "Too cool for a bloom");
         add(bloomery + "not_iron", "Only iron-bearing items go in a bloomery");

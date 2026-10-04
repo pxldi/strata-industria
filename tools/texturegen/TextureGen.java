@@ -1566,6 +1566,13 @@ public final class TextureGen {
             for (int x = 0; x < 16; x++) {
                 int step = n[y][x] > 0.6 ? 4 : 3;
                 if (x % 5 == 1 && n[y][x] < 0.5) step = 3;
+                // Thrown from coils: a thick lip at the rim, a shadowed seam under it and a faint coil line.
+                if (y < 2) step = 5;
+                else if (y == 2) step = 2;
+                else if (y == 7 && (x + 2) % 7 != 0) step = 2;
+                else if (y == 6 && x % 2 == 0) step = Math.max(step, 4);
+                else if (x == 0) step = 5;
+                else if (x >= 14) step = Math.max(2, step - 1);
                 int c = CERAMIC.get(step);
                 if (y > 11 + (int) Math.round(n[y][x] * 2)) c = CHARCOAL.get(n[y][x] > 0.5 ? 4 : 3);
                 px(im, x, y, c);
