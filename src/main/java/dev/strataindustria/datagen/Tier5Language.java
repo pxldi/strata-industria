@@ -56,6 +56,7 @@ final class Tier5Language {
         lang.accept(block + "bender", "Bender");
         lang.accept(block + "lathe", "Lathe");
         lang.accept(block + "mixer", "Mixer");
+        lang.accept(block + "assembler", "Assembler");
         lang.accept(block + "electrolyser", "Electrolyser");
         lang.accept(block + "steam_turbine", "Steam Turbine");
         lang.accept(block + "combustion_generator", "Combustion Generator");
@@ -130,6 +131,7 @@ final class Tier5Language {
         lang.accept(subtitles + "block.bender.press", "Bender presses");
         lang.accept(subtitles + "block.lathe.cut", "Lathe cuts");
         lang.accept(subtitles + "block.mixer.stir", "Mixer sloshes");
+        lang.accept(subtitles + "block.assembler.work", "Assembler whirs");
         lang.accept(subtitles + "block.electrolyser.bubble", "Electrolyser bubbles");
         lang.accept(subtitles + "block.steam_turbine.run", "Steam turbine whines");
         lang.accept(subtitles + "block.steam_turbine.spin_down", "Steam turbine spins down");

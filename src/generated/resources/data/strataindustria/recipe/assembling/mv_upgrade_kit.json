@@ -1,0 +1,25 @@
+{
+  "type": "strataindustria:assembling",
+  "item_results": [
+    {
+      "id": "strataindustria:mv_upgrade_kit"
+    }
+  ],
+  "items": [
+    {
+      "count": 2,
+      "ingredient": "strataindustria:aluminium_plate"
+    },
+    {
+      "count": 2,
+      "ingredient": "strataindustria:basic_circuit"
+    },
+    {
+      "ingredient": "strataindustria:mv_cable"
+    },
+    {
+      "ingredient": "strataindustria:electric_motor"
+    }
+  ],
+  "ticks": 200
+}

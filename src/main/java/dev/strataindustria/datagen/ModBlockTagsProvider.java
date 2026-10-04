@@ -32,7 +32,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_FURNACE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.MACERATOR.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.WIREMILL.getKey()).add(dev.strataindustria.registry.Tier5Blocks.BENDER.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.LATHE.getKey())
-                .add(dev.strataindustria.registry.Tier5Blocks.MIXER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ELECTROLYSER.getKey())
+                .add(dev.strataindustria.registry.Tier5Blocks.MIXER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ASSEMBLER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ELECTROLYSER.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.STEAM_TURBINE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.COMBUSTION_GENERATOR.getKey());
         for (RockCategory category : RockCategory.values()) {
             var categoryTag = tag(ModTags.Blocks.rocks(category));

@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 
 /**
- * A fluid machine's screen (spec 10.1, 11.1 and 11.2): two item inputs, the item outputs, the tanks, the
+ * A fluid machine's screen (spec 10.1, 11.1 and 11.2): the item inputs, the item outputs, the tanks, the
  * power bar, the status line and the auto-eject toggle (button 0).
  */
 public class ChemicalMachineMenu extends AbstractContainerMenu {
@@ -47,9 +47,9 @@ public class ChemicalMachineMenu extends AbstractContainerMenu {
         this.container = container;
         this.data = data;
         this.pos = pos;
-        for (int i = 0; i < ChemicalMachineLayout.ITEM_INPUTS; i++) {
+        for (int i = 0; i < layout.itemInputs(); i++) {
             int slot = i;
-            addSlot(new Slot(container, slot, layout.inputSlotX(i), ChemicalMachineLayout.SLOT_Y) {
+            addSlot(new Slot(container, slot, layout.inputSlotX(i), layout.inputSlotY(i)) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
                     return container.canPlaceItem(slot, stack);
@@ -57,7 +57,7 @@ public class ChemicalMachineMenu extends AbstractContainerMenu {
             });
         }
         for (int i = 0; i < layout.itemOutputs(); i++) {
-            addSlot(new Slot(container, ChemicalMachineLayout.ITEM_INPUTS + i, layout.outputSlotX(i), ChemicalMachineLayout.SLOT_Y) {
+            addSlot(new Slot(container, layout.itemInputs() + i, layout.outputSlotX(i), layout.outputSlotY()) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
                     return false;
@@ -72,6 +72,7 @@ public class ChemicalMachineMenu extends AbstractContainerMenu {
         return switch (layout) {
             case MIXER -> Tier5Menus.MIXER.get();
             case ELECTROLYSER -> Tier5Menus.ELECTROLYSER.get();
+            case ASSEMBLER -> Tier5Menus.ASSEMBLER.get();
         };
     }
 
@@ -140,7 +141,7 @@ public class ChemicalMachineMenu extends AbstractContainerMenu {
         int machine = layout.slots();
         if (index < machine) {
             if (!moveItemStackTo(stack, machine, slots.size(), true)) return ItemStack.EMPTY;
-        } else if (!moveItemStackTo(stack, 0, ChemicalMachineLayout.ITEM_INPUTS, false)) {
+        } else if (!moveItemStackTo(stack, 0, layout.itemInputs(), false)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);

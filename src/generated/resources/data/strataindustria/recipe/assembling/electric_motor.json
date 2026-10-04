@@ -1,0 +1,25 @@
+{
+  "type": "strataindustria:assembling",
+  "item_results": [
+    {
+      "id": "strataindustria:electric_motor"
+    }
+  ],
+  "items": [
+    {
+      "count": 2,
+      "ingredient": "strataindustria:steel_plate"
+    },
+    {
+      "count": 4,
+      "ingredient": "strataindustria:copper_wire"
+    },
+    {
+      "ingredient": "strataindustria:steel_rod"
+    },
+    {
+      "ingredient": "strataindustria:magnet"
+    }
+  ],
+  "ticks": 200
+}

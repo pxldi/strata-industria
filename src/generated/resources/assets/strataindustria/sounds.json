@@ -139,6 +139,35 @@
     ],
     "subtitle": "subtitles.strataindustria.blast_furnace.tap"
   },
+  "block.assembler.work": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.dispenser.dispense",
+        "pitch": 1.5,
+        "volume": 0.25
+      },
+      {
+        "type": "event",
+        "name": "block.dispenser.dispense",
+        "pitch": 1.7,
+        "volume": 0.2
+      },
+      {
+        "type": "event",
+        "name": "block.piston.extend",
+        "pitch": 2.0,
+        "volume": 0.12
+      },
+      {
+        "type": "event",
+        "name": "block.comparator.click",
+        "pitch": 1.4,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.assembler.work"
+  },
   "block.bender.press": {
     "sounds": [
       {

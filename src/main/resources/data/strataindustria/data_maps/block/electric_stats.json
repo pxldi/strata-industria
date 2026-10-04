@@ -104,6 +104,21 @@
         "mv": 2
       },
       "buffer_ticks": 20
+    },
+    "strataindustria:assembler": {
+      "draw": {
+        "lv": 16,
+        "mv": 64
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
+      "buffer_ticks": 20
     }
   }
 }

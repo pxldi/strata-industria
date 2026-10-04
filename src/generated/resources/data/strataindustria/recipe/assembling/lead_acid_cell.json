@@ -1,0 +1,24 @@
+{
+  "type": "strataindustria:assembling",
+  "fluids": [
+    {
+      "amount": 250,
+      "fluid": "strataindustria:sulfuric_acid"
+    }
+  ],
+  "item_results": [
+    {
+      "id": "strataindustria:lead_acid_cell"
+    }
+  ],
+  "items": [
+    {
+      "count": 2,
+      "ingredient": "strataindustria:lead_plate"
+    },
+    {
+      "ingredient": "strataindustria:copper_wire"
+    }
+  ],
+  "ticks": 100
+}

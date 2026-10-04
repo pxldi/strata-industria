@@ -52,6 +52,7 @@ final class Tier5Models {
         machine(blockModels, itemModels, Tier5Blocks.WIREMILL.get(), "wiremill");
         machine(blockModels, itemModels, Tier5Blocks.BENDER.get(), "bender");
         machine(blockModels, itemModels, Tier5Blocks.MIXER.get(), "mixer");
+        machine(blockModels, itemModels, Tier5Blocks.ASSEMBLER.get(), "assembler");
         machine(blockModels, itemModels, Tier5Blocks.ELECTROLYSER.get(), "electrolyser");
         lathe(blockModels, itemModels);
         generator(blockModels, itemModels, Tier5Blocks.STEAM_TURBINE.get(), "steam_turbine", false);

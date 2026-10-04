@@ -9,6 +9,7 @@ import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
 import dev.strataindustria.electric.machine.ChemicalMachineBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
+import dev.strataindustria.electric.machine.AssemblerBlockEntity;
 import dev.strataindustria.electric.machine.ElectrolyserBlockEntity;
 import dev.strataindustria.electric.machine.MixerBlockEntity;
 import dev.strataindustria.electric.machine.BenderBlockEntity;
@@ -94,9 +95,12 @@ public final class Tier5Blocks {
     public static final DeferredBlock<ChemicalMachineBlock<ElectrolyserBlockEntity>> ELECTROLYSER = ModBlocks.BLOCKS.registerBlock(
             "electrolyser", p -> new ChemicalMachineBlock<>(Tier5BlockEntities.ELECTROLYSER, ElectrolyserBlockEntity::new, p), Tier5Blocks::machine);
 
+    public static final DeferredBlock<ChemicalMachineBlock<AssemblerBlockEntity>> ASSEMBLER = ModBlocks.BLOCKS.registerBlock(
+            "assembler", p -> new ChemicalMachineBlock<>(Tier5BlockEntities.ASSEMBLER, AssemblerBlockEntity::new, p), Tier5Blocks::machine);
+
     /** Spec 9.5: every machine that comes in LV and MV; the kit upgrades these and they drop with their tier. */
     public static java.util.List<DeferredBlock<? extends Block>> upgradable() {
-        return java.util.List.of(BATTERY_BOX, ELECTRIC_FURNACE, MACERATOR, WIREMILL, BENDER, LATHE, MIXER, ELECTROLYSER, STEAM_TURBINE,
+        return java.util.List.of(BATTERY_BOX, ELECTRIC_FURNACE, MACERATOR, WIREMILL, BENDER, LATHE, MIXER, ELECTROLYSER, ASSEMBLER, STEAM_TURBINE,
                 COMBUSTION_GENERATOR);
     }
 
