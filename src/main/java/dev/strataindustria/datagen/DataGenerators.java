@@ -32,6 +32,7 @@ public final class DataGenerators {
                 new RegistrySetBuilder()
                         .add(Province.REGISTRY, GeologyData::provinces)
                         .add(VeinType.REGISTRY, GeologyData::veins)
+                        .add(dev.strataindustria.multiblock.Multiblock.REGISTRY, MultiblockData::multiblocks)
                         .add(Registries.FEATURE, GeologyData::features)
                         .add(Registries.PLACED_FEATURE, GeologyData::placedFeatures)
                         .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GeologyData::biomeModifiers)

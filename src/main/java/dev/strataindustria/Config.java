@@ -423,6 +423,18 @@ public final class Config {
         BUILDER.pop();
     }
 
+    static {
+        BUILDER.comment("Rail vehicles (outposts spec 5, 6 and 13).").push("transport");
+    }
+
+    public static final ModConfigSpec.IntValue TRANSPORT_MAX_CONSIST_T3 = BUILDER
+            .comment("Tubs that can follow the lead of a wooden tramway consist.")
+            .defineInRange("maxConsistT3", 4, 1, 16);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

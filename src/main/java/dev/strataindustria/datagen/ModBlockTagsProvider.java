@@ -213,6 +213,13 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         // Outposts and transport spec 4: tier 2 on foot.
         tag(BlockTags.CLIMBABLE).add(dev.strataindustria.transport.foot.FootRegistry.ROPE_LADDER.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.foot.FootRegistry.CAIRN.getKey());
+        // Tier 3: the wooden tramway.
+        for (var rail : java.util.List.of(dev.strataindustria.transport.rail.RailRegistry.WOODEN_RAIL, dev.strataindustria.transport.rail.RailRegistry.TUB_STOP,
+                dev.strataindustria.transport.rail.RailRegistry.TIPPLE_RAIL, dev.strataindustria.transport.rail.RailRegistry.RAIL_BUFFER)) {
+            tag(BlockTags.RAILS).add(rail.getKey());
+            tag(dev.strataindustria.transport.rail.RailRegistry.TRACK).add(rail.getKey());
+            tag(BlockTags.MINEABLE_WITH_AXE).add(rail.getKey());
+        }
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey())
                 .add(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET.getKey());

@@ -43,9 +43,9 @@ final class LedgerGameTests {
     }
 
     /** What one standard build of {@code plan} takes, by item. */
-    private static Map<Item, Integer> needs(Plan plan, BlockPos controller) {
+    private static Map<Item, Integer> needs(ServerLevel level, Plan plan, BlockPos controller) {
         Map<Item, Integer> needs = new LinkedHashMap<>();
-        for (Plan.Part part : plan.parts(controller, Direction.NORTH)) needs.merge(part.state().getBlock().asItem(), 1, Integer::sum);
+        for (Plan.Part part : plan.parts(level, controller, Direction.NORTH)) needs.merge(part.state().getBlock().asItem(), 1, Integer::sum);
         return needs;
     }
 
@@ -75,7 +75,7 @@ final class LedgerGameTests {
         ServerLevel level = helper.getLevel();
         FakePlayer player = builder(level);
         BlockPos door = place(level, Plan.COKE_OVEN, helper.absolutePos(new BlockPos(4, 2, 5)));
-        Plan.COKE_OVEN.parts(door, Direction.NORTH).forEach(part -> level.setBlock(part.pos(), part.state(), Block.UPDATE_ALL));
+        Plan.COKE_OVEN.parts(level, door, Direction.NORTH).forEach(part -> level.setBlock(part.pos(), part.state(), Block.UPDATE_ALL));
         BlockState state = level.getBlockState(door);
         helper.assertTrue(Plan.COKE_OVEN.complete(level, door, Direction.NORTH), "the hand-built oven is whole");
         helper.assertTrue(!Ledgers.knows(player, Plan.COKE_OVEN), "nothing entered yet");
@@ -83,8 +83,8 @@ final class LedgerGameTests {
         helper.assertTrue(Ledgers.knows(player, Plan.COKE_OVEN), "a whole oven is entered");
         helper.assertTrue(!Ledgers.knows(player, Plan.BLAST_FURNACE), "only that one");
 
-        Map<Item, Integer> needs = needs(Plan.COKE_OVEN, door);
-        Plan.COKE_OVEN.parts(door, Direction.NORTH).forEach(part -> level.removeBlock(part.pos(), false));
+        Map<Item, Integer> needs = needs(level, Plan.COKE_OVEN, door);
+        Plan.COKE_OVEN.parts(level, door, Direction.NORTH).forEach(part -> level.removeBlock(part.pos(), false));
         helper.assertTrue(!Plan.COKE_OVEN.complete(level, door, Direction.NORTH), "gutted");
         BuilderCrateBlockEntity crate = stock(level, helper.absolutePos(new BlockPos(1, 2, 5)), needs);
         int before = held(crate);
@@ -112,18 +112,18 @@ final class LedgerGameTests {
             // One row of the test area per plan would not fit five layers, so run them in turn at the same spot.
             BlockPos controller = place(level, plan, helper.absolutePos(new BlockPos(4, plan == Plan.STEEL_BOILER ? 1 : plan == Plan.COKE_OVEN ? 2 : 0, 5)));
             Ledgers.learn(player, plan);
-            Map<Item, Integer> needs = needs(plan, controller);
+            Map<Item, Integer> needs = needs(level, plan, controller);
             // The hearth sits in the test floor, so dig it out first.
-            plan.parts(controller, Direction.NORTH).forEach(part -> level.removeBlock(part.pos(), false));
+            plan.parts(level, controller, Direction.NORTH).forEach(part -> level.removeBlock(part.pos(), false));
             BuilderCrateBlockEntity crate = stock(level, helper.absolutePos(new BlockPos(0, 0, 0)), needs);
             Stamping job = Stamping.start(player, plan, controller, Direction.NORTH);
             helper.assertTrue(job != null, plan + " starts");
             int placed = job.runToEnd();
-            helper.assertTrue(plan.complete(level, controller, Direction.NORTH), plan + " should be whole after stamping, placed " + placed + ", missing " + plan.parts(controller, Direction.NORTH).stream()
+            helper.assertTrue(plan.complete(level, controller, Direction.NORTH), plan + " should be whole after stamping, placed " + placed + ", missing " + plan.parts(level, controller, Direction.NORTH).stream()
                     .filter(part -> !level.getBlockState(part.pos()).is(part.state().getBlock())).map(part -> part.pos().subtract(controller) + "=" + level.getBlockState(part.pos()).getBlock()).toList());
             helper.assertValueEqual(held(crate), 0, plan + " leaves nothing over");
             // Clear it for the next plan.
-            plan.parts(controller, Direction.NORTH).forEach(part -> level.removeBlock(part.pos(), false));
+            plan.parts(level, controller, Direction.NORTH).forEach(part -> level.removeBlock(part.pos(), false));
             level.removeBlock(controller, false);
             index++;
         }
@@ -136,13 +136,13 @@ final class LedgerGameTests {
         ServerLevel level = helper.getLevel();
         FakePlayer player = builder(level);
         BlockPos door = place(level, Plan.COKE_OVEN, helper.absolutePos(new BlockPos(4, 2, 5)));
-        stock(level, helper.absolutePos(new BlockPos(1, 2, 5)), needs(Plan.COKE_OVEN, door));
+        stock(level, helper.absolutePos(new BlockPos(1, 2, 5)), needs(level, Plan.COKE_OVEN, door));
         LedgerEvents.use(player, Plan.COKE_OVEN, door, level.getBlockState(door));
         helper.assertTrue(!Stamping.active(level, door), "no entry, no stamping");
 
         Ledgers.learn(player, Plan.COKE_OVEN);
         Map<Item, Integer> few = new LinkedHashMap<>();
-        few.put(needs(Plan.COKE_OVEN, door).keySet().iterator().next(), 5);
+        few.put(needs(level, Plan.COKE_OVEN, door).keySet().iterator().next(), 5);
         BuilderCrateBlockEntity crate = stock(level, helper.absolutePos(new BlockPos(1, 2, 5)), few);
         Stamping job = Stamping.start(player, Plan.COKE_OVEN, door, Direction.NORTH);
         helper.assertTrue(job != null, "starts with an entry");

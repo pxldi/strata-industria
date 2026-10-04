@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:tub_stop"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wooden_rail": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:wooden_rail"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wooden_rail"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:tub_stop"
+    ]
+  }
+}

@@ -37,6 +37,7 @@ final class ModLanguageProvider extends LanguageProvider {
         Tier5Language.add(this::add);
         GridData.lang(this::add);
         FootData.lang(this::add);
+        RailData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
         recipeViewer();
@@ -616,6 +617,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".ledger.short", "Out of blocks. %s more %s needed.");
         add(id + ".ledger.done", "Stamped. %s blocks placed.");
         add(id + ".ledger.done_in_the_way", "Stamped %s blocks. %s spots had other blocks in them.");
+        add(id + ".multiblock.incomplete", "Structure incomplete: %s at %s");
+        add(id + ".multiblock.empty_space", "empty space");
         add(id + ".ledger.tooltip.enter", "Use on a finished multiblock to enter it.");
         add(id + ".ledger.tooltip.stamp", "Use on an unfinished one to place it from crates nearby.");
         add(subtitles + "ledger.entry", "Ledger written");

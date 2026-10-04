@@ -74,6 +74,8 @@ public final class StrataIndustria {
         dev.strataindustria.ledger.LedgerRegistry.init();
         dev.strataindustria.transport.foot.FootRegistry.init();
         dev.strataindustria.transport.foot.FootRegistry.register(modEventBus);
+        dev.strataindustria.transport.rail.RailRegistry.init();
+        dev.strataindustria.transport.rail.RailRegistry.register(modEventBus);
         dev.strataindustria.bronze.BronzeRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.register(modEventBus);

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": "#minecraft:planks",
+    "R": "strataindustria:wooden_rail",
+    "W": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "W W",
+    " R ",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:tipple_rail"
+  }
+}
