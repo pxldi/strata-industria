@@ -6,6 +6,7 @@
     "strataindustria:rail_buffer",
     "strataindustria:steel_track",
     "strataindustria:station_track",
-    "strataindustria:steel_buffer"
+    "strataindustria:steel_buffer",
+    "strataindustria:route_switch"
   ]
 }

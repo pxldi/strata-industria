@@ -149,6 +149,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
             dropSelf(block.get());
         }
         dropSelf(dev.strataindustria.transport.rail.TramRegistry.TROLLEY_BRACKET.get());
+        dropSelf(dev.strataindustria.transport.signal.SignalRegistry.BLOCK_SIGNAL.get());
+        dropSelf(dev.strataindustria.transport.signal.SignalRegistry.ROUTE_SWITCH.get());
         for (var block : java.util.List.of(dev.strataindustria.transport.telegraph.TelegraphRegistry.KEY, dev.strataindustria.transport.telegraph.TelegraphRegistry.SOUNDER,
                 dev.strataindustria.transport.telegraph.TelegraphRegistry.BOARD)) {
             dropSelf(block.get());

@@ -102,6 +102,7 @@ final class ModRecipeProvider extends RecipeProvider {
         new RailwayData.Recipes(recipeContext, advancementContext).buildRecipes();
         new RopewayData.Recipes(recipeContext, advancementContext).buildRecipes();
         new TramData.Recipes(recipeContext, advancementContext).buildRecipes();
+        new SignalData.Recipes(recipeContext, advancementContext).buildRecipes();
         new TelegraphData.Recipes(recipeContext, advancementContext).buildRecipes();
         vanillaOverrides();
     }

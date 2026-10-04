@@ -152,6 +152,7 @@ public final class ModGameTests {
         CordGameTests.register(TESTS);
         TelegraphGameTests.register(TESTS);
         TramGameTests.register(TESTS);
+        SignalGameTests.register(TESTS);
     }
 
     private ModGameTests() {}

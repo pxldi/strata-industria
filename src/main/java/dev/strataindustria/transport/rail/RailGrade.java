@@ -39,7 +39,7 @@ public enum RailGrade {
         if (!state.is(RailRegistry.TRACK)) return null;
         if (state.is(RailRegistry.TIPPLE_RAIL.get())) return NEUTRAL;
         return state.is(RailwayRegistry.STEEL_TRACK.get()) || state.is(RailwayRegistry.STATION_TRACK.get())
-                || state.is(RailwayRegistry.STEEL_BUFFER.get()) ? STEEL : WOOD;
+                || state.is(RailwayRegistry.STEEL_BUFFER.get()) || state.is(dev.strataindustria.transport.signal.SignalRegistry.ROUTE_SWITCH.get()) ? STEEL : WOOD;
     }
 
     /** True when every block of {@code route} that is loaded is steel track, so the line may count as a railway. */

@@ -38,6 +38,11 @@ public class TubStopBlockEntity extends BlockEntity {
     private int contentHash;
     private Vec3 arrival = Vec3.ZERO;
     private boolean pulsed;
+    /** The rule and seconds in force for the consist standing here: the stop's own, or the timetable's line for it. */
+    private StopRule activeRule = StopRule.WAIT;
+    private int activeSeconds = StopData.DEFAULT_SECONDS;
+    /** A lead on a timetable that goes on to another stop carries on through instead of reversing. */
+    private boolean carryOn;
 
     public TubStopBlockEntity(BlockPos pos, BlockState state) {
         super(RailRegistry.TUB_STOP_ENTITY.get(), pos, state);
@@ -91,9 +96,22 @@ public class TubStopBlockEntity extends BlockEntity {
         lastChange = heldSince;
         contentHash = contentHash(lead.consist());
         pulsed = false;
+        activeRule = rule;
+        activeSeconds = seconds;
+        carryOn = false;
+        var table = lead.timetable();
+        if (table != null) {
+            var line = table.arrive();
+            if (line.rule().isPresent()) {
+                activeRule = line.rule().get();
+                activeSeconds = StopData.cleanSeconds(line.seconds());
+            }
+            carryOn = table.carriesOn();
+        }
         lead.holdAt(worldPosition);
         server.playSound(null, worldPosition, RailRegistry.TUB_STOP_BRAKE.get(), SoundSource.BLOCKS, 0.8f, 0.9f + 0.2f * server.getRandom().nextFloat());
         TramwayRoutes.arrived(server, lead, worldPosition);
+        if (table != null) lead.timetableArrived(server, name);
         server.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
     }
 
@@ -122,12 +140,12 @@ public class TubStopBlockEntity extends BlockEntity {
     }
 
     private boolean ruleMet(ServerLevel server, List<MineTubEntity> consist, long now) {
-        return switch (rule) {
-            case WAIT -> now - heldSince >= seconds * 20L;
+        return switch (activeRule) {
+            case WAIT -> now - heldSince >= activeSeconds * 20L;
             case FULL -> consist.stream().allMatch(tub -> tub.cannotTakeMore(server));
             case EMPTY -> consist.stream().allMatch(MineTubEntity::isEmpty);
             case REDSTONE -> false;
-            case IDLE -> now - lastChange >= seconds * 20L;
+            case IDLE -> now - lastChange >= activeSeconds * 20L;
         };
     }
 
@@ -135,7 +153,7 @@ public class TubStopBlockEntity extends BlockEntity {
     private void release(ServerLevel server, MineTubEntity lead) {
         Vec3 direction = arrival;
         if (direction.lengthSqr() < 1.0E-4) direction = lead.railAxis(worldPosition);
-        else if (reverse) direction = direction.scale(-1);
+        else if (reverse && !carryOn) direction = direction.scale(-1);
         held = null;
         pulsed = false;
         lead.release(worldPosition, direction.normalize().scale(START_PUSH));

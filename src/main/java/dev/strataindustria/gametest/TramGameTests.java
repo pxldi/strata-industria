@@ -63,12 +63,12 @@ final class TramGameTests {
 
     // ---------------------------------------------------------------- setup
 
-    private static BlockPos at(GameTestHelper helper, int x) {
+    static BlockPos at(GameTestHelper helper, int x) {
         return helper.absolutePos(new BlockPos(x, Y, ROW));
     }
 
     @SuppressWarnings("unchecked")
-    private static void lay(GameTestHelper helper, int x, Block block) {
+    static void lay(GameTestHelper helper, int x, Block block) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = at(helper, x);
         level.setBlock(pos.below(), net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
@@ -79,11 +79,11 @@ final class TramGameTests {
         level.setBlock(pos, state, Block.UPDATE_ALL);
     }
 
-    private static void steel(GameTestHelper helper, int from, int to) {
+    static void steel(GameTestHelper helper, int from, int to) {
         for (int x = from; x <= to; x++) lay(helper, x, RailwayRegistry.STEEL_TRACK.get());
     }
 
-    private static TubStopBlockEntity station(GameTestHelper helper, int x, StopRule rule, int seconds) {
+    static TubStopBlockEntity station(GameTestHelper helper, int x, StopRule rule, int seconds) {
         lay(helper, x, RailwayRegistry.STATION_TRACK.get());
         BlockPos pos = at(helper, x);
         TubStopBlockEntity stop = (TubStopBlockEntity) helper.getLevel().getBlockEntity(pos);
@@ -104,7 +104,7 @@ final class TramGameTests {
     }
 
     /** Wire from x = 1 to x = 7 over the track and a battery box of {@code tier} at the foot of the first pole. */
-    private static BatteryBoxBlockEntity line(GameTestHelper helper, ElectricTier tier, double stored) {
+    static BatteryBoxBlockEntity line(GameTestHelper helper, ElectricTier tier, double stored) {
         ServerLevel level = helper.getLevel();
         BlockPos a = bracket(helper, 1), b = bracket(helper, 7);
         helper.assertTrue(TrolleyWires.problem(level, a, b) == null, "a clear span: " + TrolleyWires.problem(level, a, b));
@@ -118,14 +118,14 @@ final class TramGameTests {
     }
 
     /** A tram, brake off, standing at x. */
-    private static ElectricTramEntity tram(GameTestHelper helper, double x) {
+    static ElectricTramEntity tram(GameTestHelper helper, double x) {
         ElectricTramEntity tram = helper.spawn(TramRegistry.ELECTRIC_TRAM_ENTITY.get(), new BlockPos((int) Math.floor(x), Y, ROW));
         tram.setPos(helper.absolutePos(new BlockPos(0, Y, ROW)).getX() + x, tram.getY(), tram.getZ());
         tram.setParked(false);
         return tram;
     }
 
-    private static double flat(MineTubEntity vehicle) {
+    static double flat(MineTubEntity vehicle) {
         return vehicle.getDeltaMovement().horizontalDistance();
     }
 
@@ -284,9 +284,10 @@ final class TramGameTests {
         ElectricTramEntity tram = tram(helper, 1.5);
         helper.runAfterDelay(160, () -> {
             try {
+                // Trams running in the cells beside this one may prove the same two charters over a different stretch of track.
                 var links = plan.index.linksOf(plan.home.id());
-                helper.assertValueEqual(links.size(), 1, "one link from the home charter");
-                helper.assertTrue(links.get(0).kind() == LinkKind.TRAM, "a tram line: " + links.get(0).kind());
+                helper.assertTrue(!links.isEmpty(), "a link from the home charter");
+                helper.assertTrue(links.stream().allMatch(link -> link.kind() == LinkKind.TRAM), "a tram line: " + links.get(0).kind());
                 helper.assertValueEqual(plan.index.bestTier(plan.home.id()), 5, "tier five");
                 helper.assertTrue(tram.isHeldAt(at(helper, 7)), "it stands at the far station");
             } finally {

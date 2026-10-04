@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "strataindustria:steel_rod",
+    "r": "minecraft:redstone_lamp"
+  },
+  "pattern": [
+    " r ",
+    " D ",
+    " D "
+  ],
+  "result": {
+    "count": 2,
+    "id": "strataindustria:block_signal"
+  }
+}
