@@ -18,7 +18,7 @@ public final class StructureTextures {
     static final Path OUT = Path.of("src/main/resources/assets/strataindustria/textures");
 
     // Ramps, dark to light (style guide 3).
-    static final int[] CANVAS = {0x403c30, 0x625c4a, 0x867e66, 0xaaa286, 0xcac4a8};
+    static final int[] CANVAS = {0x5e5642, 0x8a7e62, 0xb0a47e, 0xccc09a, 0xe0d6b4};
     // TextureGen.V2.WOOD_V2 pulled 40% towards grey: seasoned, weathered timber.
     static final int[] WOOD = {0x231a11, 0x423623, 0x5e4f32, 0x7c6841, 0x9a8356};
     static final int[] PAPER = {0x4e4838, 0x76705a, 0xa29a80, 0xc8c0a2, 0xe2dabe};
@@ -42,7 +42,8 @@ public final class StructureTextures {
                 save("block/cracked_fire_bricks_sooted", crackedBricks(true)),
                 save("block/slag_heap", slagHeap()),
         };
-        save("gui/survey_notes", page());
+        save("gui/survey_notes", page(true));
+        save("gui/survey_ledger", page(false));
         save("gui/survey_arrows", arrows());
         writePreview(preview);
     }
@@ -105,37 +106,28 @@ public final class StructureTextures {
     // ---------------------------------------------------------------- fibre canvas
 
     /**
-     * Coarse plain weave: two-pixel threads crossing over and under, each thread lit on its top-left
-     * pixel. A few darker weathering stains break up the repeat. Tiles seamlessly.
+     * Fine linen canvas, low contrast like vanilla cloth: a one-pixel checker of two close tones for the
+     * weave, per-pixel grain on top, and a stitched seam across the middle of the face (dark seam row, a
+     * dotted row of lit stitches above it). Tiles seamlessly.
      */
     static BufferedImage canvas() {
         BufferedImage im = img(16, 16);
+        double[][] g = TextureGen.V2.grain(8801);
         for (int y = 0; y < 16; y++) {
             for (int x = 0; x < 16; x++) {
-                // 4x4 cells of two threads each, alternating between running across and running down.
-                boolean across = (((x >> 2) + (y >> 2)) & 1) == 0;
-                int side = across ? y & 1 : x & 1;      // 0 = the thread's lit edge
-                int end = across ? x & 3 : y & 3;       // 3 = where the threads dip under the next cell
-                int step = side == 0 ? 3 : 2;
-                if (end == 3) step--;
-                if (end == 0 && side == 0) step = 4;
-                im.setRGB(x, y, 0xFF000000 | CANVAS[step]);
+                int step = ((x + y) & 1) == 0 ? 2 : 3;
+                if (g[y][x] > 0.88) step++;
+                else if (g[y][x] < 0.12) step--;
+                im.setRGB(x, y, 0xFF000000 | CANVAS[Math.max(1, Math.min(4, step))]);
             }
         }
-        // Fine per-pixel grain on top of the weave, as vanilla cloth has.
-        double[][] g = TextureGen.V2.grain(8801);
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                int step = indexOf(CANVAS, rgb(im, x, y));
-                if (g[y][x] > 0.9) step++;
-                else if (g[y][x] < 0.1) step--;
-                im.setRGB(x, y, 0xFF000000 | CANVAS[Math.max(0, Math.min(4, step))]);
-            }
-        // Stains: soft clusters one step darker, so the repeat does not show.
-        int[][] stains = {{2, 9}, {3, 9}, {2, 10}, {12, 3}, {13, 3}, {9, 13}, {10, 14}};
-        for (int[] st : stains) {
-            int step = indexOf(CANVAS, rgb(im, st[0], st[1]));
-            im.setRGB(st[0], st[1], 0xFF000000 | CANVAS[Math.max(1, step - 1)]);
+        // A few slub threads: short darker runs along the weave.
+        int[][] slubs = {{2, 2}, {3, 2}, {4, 2}, {10, 12}, {11, 12}, {12, 12}, {13, 5}, {13, 6}};
+        for (int[] st : slubs) im.setRGB(st[0], st[1], 0xFF000000 | CANVAS[1]);
+        // The seam: a dark row with lit stitches in the row above.
+        for (int x = 0; x < 16; x++) {
+            im.setRGB(x, 9, 0xFF000000 | CANVAS[1]);
+            im.setRGB(x, 8, 0xFF000000 | CANVAS[(x & 3) < 2 ? 4 : 2]);
         }
         return im;
     }
@@ -384,7 +376,7 @@ public final class StructureTextures {
      * One parchment page in a 256x256 sheet: vanilla-style 1 px bevel in the paper ramp, soft fibre
      * flecks, a vertical fold, worn corners, and a compass rose drawn in faded ink where the arrow goes.
      */
-    static BufferedImage page() {
+    static BufferedImage page(boolean withRose) {
         BufferedImage im = img(256, 256);
         Random r = new Random(5);
         for (int y = 0; y < PAGE_H; y++) {
@@ -435,7 +427,7 @@ public final class StructureTextures {
             px(im, c[0] + 2 * c[2], c[1], PAPER[0]);
             px(im, c[0], c[1] + 2 * c[3], PAPER[0]);
         }
-        rose(im);
+        if (withRose) rose(im);
         return im;
     }
 

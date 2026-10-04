@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -61,6 +62,11 @@ public class PlanPiece extends StructurePiece {
     static final int TREE_PAD = 2;
     /** How far above a building trees and terrain are cleared. */
     static final int HEADROOM = 8;
+
+    /** Plain old names for the bloomery grave. */
+    private static final String[] GRAVE_NAMES = {"Aldric", "Berta", "Cuno", "Dietmar", "Edda", "Falk", "Gerda", "Hartwig", "Ilse",
+            "Jorn", "Kunigund", "Lorenz", "Mechthild", "Norbert", "Odo", "Pia", "Quirin", "Rolf", "Sigrid", "Tilman", "Ulf", "Vera",
+            "Wendel", "Yrsa"};
 
     private final String planId;
     private final Plan plan;
@@ -269,7 +275,7 @@ public class PlanPiece extends StructurePiece {
             case '>' -> named("terracotta");
             case '`' -> Blocks.AIR.defaultBlockState();
             case '/' -> BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(wood.name().toLowerCase(java.util.Locale.ROOT) + "_sign"))
-                    .defaultBlockState();
+                    .defaultBlockState().setValue(StandingSignBlock.ROTATION, 4);
             case 'u', 'j', 'X' -> SharedBlocks.CRATE.get().defaultBlockState();
             case 'T' -> wood.trapdoor();
             case 't' -> wood.trapdoor().setValue(TrapDoorBlock.OPEN, true).setValue(TrapDoorBlock.FACING, Direction.WEST);
@@ -306,7 +312,7 @@ public class PlanPiece extends StructurePiece {
         };
         if (state == null) return;
         level.setBlock(pos, state.rotate(rotation), Block.UPDATE_CLIENTS);
-        if (c == 'k') fences.add(pos.immutable());
+        if (c == 'k' || c == 'w') fences.add(pos.immutable());
         fill(level, random, pos, c, rock);
         if (c == 'm' && Weathering.chance(pos.above(), seed, 0.5) && level.getBlockState(pos.above()).isAir()) {
             level.setBlock(pos.above(), Blocks.MOSS_CARPET.defaultBlockState(), Block.UPDATE_CLIENTS);
@@ -362,8 +368,9 @@ public class PlanPiece extends StructurePiece {
             case '/' -> {
                 if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity sign) {
                     var empty = net.minecraft.network.chat.CommonComponents.EMPTY;
-                    var lines = List.of(empty, net.minecraft.network.chat.Component.literal("Here lies"),
-                            net.minecraft.network.chat.Component.literal("the smith."), empty);
+                    String name = GRAVE_NAMES[Math.floorMod((int) Weathering.hash(pos, seed), GRAVE_NAMES.length)];
+                    var lines = List.of(empty, net.minecraft.network.chat.Component.literal("\u2020"),
+                            net.minecraft.network.chat.Component.literal(name), empty);
                     // Worldgen block entities have no level yet, and the sign's update call needs one.
                     sign.setLevel(level.getLevel());
                     sign.setText(new net.minecraft.world.level.block.entity.SignText(lines, lines, net.minecraft.world.item.DyeColor.BLACK, false),
