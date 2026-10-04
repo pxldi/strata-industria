@@ -113,6 +113,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "pit_kiln.log", "Log stacked");
         add(subtitles + "pit_kiln.fired", "Kiln burns out");
         add(subtitles + "heat.quench", "Hot metal hisses");
+        add(subtitles + "heat.sear", "Skin sears");
         add(subtitles + "forge.ignite", "Forge catches");
         add(subtitles + "crucible.melt", "Metal melts");
         add(subtitles + "quern.grind", "Quern grinds");
@@ -190,6 +191,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "toolMoldBreak", "Tool mold break chance");
         add(config + "smithing", "Smithing");
         add(config + "randomTargets", "Random targets per world");
+        add(config + "heat", "Item Heat");
+        add(config + "burnPlayer", "Hot items burn bare hands");
         add(config + "journal", "Field Journal");
         add(config + "giveOnJoin", "Give a journal on first join");
     }
@@ -263,6 +266,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.BRONZE_ANVIL, "Bronze Anvil");
         addItem(ModItems.TONGS_JAW, "Tongs Jaw");
         addItem(ModItems.TONGS, "Tongs");
+        add("item." + id + ".tongs.tooltip", "In the off hand: hold hot metal without burns");
+        add("heat." + id + ".too_hot", "Too hot to hold bare-handed. Tongs in your off hand would help.");
+        add("death.attack." + id + ".hot_item", "%1$s held on to hot metal for too long");
+        add("death.attack." + id + ".hot_item.player", "%1$s held on to hot metal for too long while fighting %2$s");
         add("container." + id + ".anvil", "Anvil");
         String status = id + ".anvil.status.";
         add(status + "empty", "Put a heated workpiece in");
