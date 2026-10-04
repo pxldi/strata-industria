@@ -94,7 +94,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         return 1.0;
     }
 
-    protected int tier() {
+    protected int anvilTier() {
         return getBlockState().getBlock() instanceof AnvilBlock anvil ? anvil.tier() : 2;
     }
 
@@ -170,7 +170,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         Optional<RecipeHolder<AnvilRecipe>> recipe = selected();
         if (recipe.isEmpty()) return Status.CHOOSE;
         Optional<Metal> metal = metalOf(input);
-        if (metal.isPresent() && metal.get().tier() > tier()) return Status.TOO_WEAK;
+        if (metal.isPresent() && metal.get().tier() > anvilTier()) return Status.TOO_WEAK;
         if (input.getCount() < recipe.get().value().count()) return Status.NOT_ENOUGH;
         if (!items.get(OUTPUT).isEmpty()) return Status.OUTPUT_FULL;
         if (level != null && metal.isPresent() && Heat.get(input, level) < workingTemperature(input)) return Status.TOO_COLD;
@@ -317,7 +317,11 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     }
 
     private Optional<ItemStack> weldResult() {
-        ItemStack a = input(), b = items.get(SECOND);
+        return weldResult(input(), items.get(SECOND));
+    }
+
+    /** What welding {@code a} to {@code b} would make, if anything. */
+    protected Optional<ItemStack> weldResult(ItemStack a, ItemStack b) {
         if (a.isEmpty() || b.isEmpty() || !(level instanceof ServerLevel server)) return Optional.empty();
         if (bloomMerge(a, b)) {
             ItemStack bloom = new ItemStack(ModItems.RAW_BLOOM.get());
@@ -335,12 +339,12 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         return Math.max(metalOf(a).map(Metal::weldingTemperature).orElse(0), metalOf(b).map(Metal::weldingTemperature).orElse(0));
     }
 
-    public WeldStatus weldStatus(Player player) {
+    public WeldStatus weldStatus(@org.jspecify.annotations.Nullable Player player) {
         ItemStack a = input(), b = items.get(SECOND);
         if (a.isEmpty() || b.isEmpty()) return WeldStatus.NONE;
         if (weldResult().isEmpty()) return WeldStatus.NO_RECIPE;
         int metalTier = Math.max(metalOf(a).map(Metal::tier).orElse(0), metalOf(b).map(Metal::tier).orElse(0));
-        if (metalTier > tier()) return WeldStatus.TOO_WEAK;
+        if (metalTier > anvilTier()) return WeldStatus.TOO_WEAK;
         if (!items.get(OUTPUT).isEmpty()) return WeldStatus.OUTPUT_FULL;
         int needed = weldingTemperature(a, b);
         if (level != null && (Heat.get(a, level) < needed || Heat.get(b, level) < needed)) return WeldStatus.TOO_COLD;
@@ -359,6 +363,17 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
             }
             return;
         }
+        doWeld(server, player);
+    }
+
+    /** One weld by a machine: the same rules, no hammer worn. False when the pieces are not ready. */
+    public boolean machineWeld() {
+        if (!(level instanceof ServerLevel server) || weldStatus(null) != WeldStatus.READY) return false;
+        doWeld(server, null);
+        return true;
+    }
+
+    private void doWeld(ServerLevel server, @org.jspecify.annotations.Nullable ServerPlayer player) {
         ItemStack a = input(), b = items.get(SECOND);
         ItemStack out = weldResult().orElseThrow();
         long now = server.getGameTime();
@@ -374,8 +389,10 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         if (a.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
         if (b.isEmpty()) items.set(SECOND, ItemStack.EMPTY);
         items.set(OUTPUT, out);
-        hammer(player).hurtAndBreak(1, server, player,
-                broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
+        if (player != null) {
+            hammer(player).hurtAndBreak(1, server, player,
+                    broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
+        }
         server.playSound(null, worldPosition, ModSounds.ANVIL_WELD.get(), SoundSource.BLOCKS, 0.9f, 0.95f + server.getRandom().nextFloat() * 0.1f);
         server.sendParticles(ParticleTypes.ELECTRIC_SPARK, worldPosition.getX() + 0.5, worldPosition.getY() + 1.05, worldPosition.getZ() + 0.5,
                 10, 0.15, 0.05, 0.15, 0.15);

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "D": "strataindustria:draw_plate",
+    "H": "strataindustria:lv_machine_hull",
+    "K": "strataindustria:mv_upgrade_kit",
+    "M": "strataindustria:electric_motor"
+  },
+  "pattern": [
+    " D ",
+    "CHM",
+    " K "
+  ],
+  "result": {
+    "id": "strataindustria:extruder"
+  }
+}

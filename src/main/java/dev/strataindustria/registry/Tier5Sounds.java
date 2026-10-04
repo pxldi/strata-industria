@@ -61,6 +61,13 @@ public final class Tier5Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ASSEMBLER_WORK = register("block.assembler.work");
     public static final DeferredHolder<SoundEvent, SoundEvent> ELECTROLYSER_BUBBLE = register("block.electrolyser.bubble");
 
+    /** Spec 23.6: a heavy hydraulic push and a squeeze, each item. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> EXTRUDER_PRESS = register("block.extruder.press");
+    /** A fast electric thump with an anvil ring, each hit. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> POWER_HAMMER_STRIKE = register("block.power_hammer.strike");
+    /** A rising induction whine while the workpiece heats. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> POWER_HAMMER_INDUCTION = register("block.power_hammer.induction");
+
     /** Spec 23.6: a wire twang and a clamp click when a span is strung. */
     public static final DeferredHolder<SoundEvent, SoundEvent> POLE_INSULATOR_CONNECT = register("block.pole_insulator.connect");
     /** A slack wire flopping down when a span is cut. */

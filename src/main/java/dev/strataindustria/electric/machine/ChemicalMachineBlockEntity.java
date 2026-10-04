@@ -89,7 +89,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
     private final ContainerData data = new ContainerData() {
         @Override
         public int get(int index) {
-            if (index >= ChemicalMachineLayout.TANKS) {
+            if (index >= ChemicalMachineLayout.TANKS && index < ChemicalMachineLayout.MODE) {
                 int tank = (index - ChemicalMachineLayout.TANKS) / 2;
                 if (tank >= layout.tanks()) return 0;
                 return (index - ChemicalMachineLayout.TANKS) % 2 == 0 ? (amount[tank] > 0 ? BuiltInRegistries.FLUID.getId(fluid[tank]) : 0) : amount[tank];
@@ -101,6 +101,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
                 case ChemicalMachineLayout.EJECT -> autoEject ? 1 : 0;
                 case ChemicalMachineLayout.PROGRESS -> needed <= 0 ? 0 : Math.round(Math.min(1.0f, progress / needed) * 1000);
                 case ChemicalMachineLayout.FULL_FLUID -> BuiltInRegistries.FLUID.getId(fullFluid);
+                case ChemicalMachineLayout.MODE -> modeIndex();
                 default -> 0;
             };
         }
@@ -130,6 +131,24 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
 
     /** Played every 40 ticks while the machine runs. */
     protected abstract SoundEvent workSound();
+
+    /** Played when an operation finishes; the chemistry machines pop. */
+    protected SoundEvent finishSound() {
+        return SoundEvents.BUBBLE_COLUMN_BUBBLE_POP;
+    }
+
+    /** Whether this machine runs {@code recipe} right now; a machine with modes runs only its current mode's. */
+    protected boolean runs(ChemicalRecipe recipe) {
+        return true;
+    }
+
+    /** The mode button's current setting; machines without one ignore it. */
+    protected int modeIndex() {
+        return 0;
+    }
+
+    /** Menu button 1: switches a machine with modes to its next mode. */
+    public void toggleMode() {}
 
     // ------------------------------------------------------------------ tick
 
@@ -208,7 +227,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
             consume(io, batch);
             produce(level, io, batch);
             finished++;
-            level.playSound(null, worldPosition, SoundEvents.BUBBLE_COLUMN_BUBBLE_POP, SoundSource.BLOCKS, 0.3f, 1.2f);
+            level.playSound(null, worldPosition, finishSound(), SoundSource.BLOCKS, 0.3f, 1.2f);
         }
         if (level.getGameTime() % 40 == 0) {
             float pitch = 0.7f + 0.3f * power + (tier == ElectricTier.MV ? 0.1f : 0.0f);
@@ -230,7 +249,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
     private @Nullable ChemicalRecipe find(ServerLevel level, ElectricTier tier, int batch) {
         for (ChemicalRecipe recipe : recipes(level)) {
             ChemicalIo io = recipe.io();
-            if (io.minTier().ordinal() > tier.ordinal()) continue;
+            if (io.minTier().ordinal() > tier.ordinal() || !runs(recipe)) continue;
             if (hasInputs(io, batch)) return recipe;
         }
         return null;

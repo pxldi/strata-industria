@@ -1,0 +1,138 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "strataindustria:block/power_hammer_ram",
+    "ram": "strataindustria:block/power_hammer_ram"
+  },
+  "elements": [
+    {
+      "name": "ram_head",
+      "from": [
+        5,
+        7,
+        5
+      ],
+      "to": [
+        11,
+        10,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            13,
+            6,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            13,
+            6,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#ram",
+          "uv": [
+            6,
+            13,
+            12,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#ram",
+          "uv": [
+            6,
+            13,
+            12,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#ram",
+          "uv": [
+            0,
+            0,
+            6,
+            6
+          ]
+        },
+        "down": {
+          "texture": "#ram",
+          "uv": [
+            6,
+            0,
+            12,
+            6
+          ]
+        }
+      }
+    },
+    {
+      "name": "piston_rod",
+      "from": [
+        7,
+        10,
+        7
+      ],
+      "to": [
+        9,
+        13,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#ram",
+          "uv": [
+            14,
+            0,
+            16,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#ram",
+          "uv": [
+            14,
+            0,
+            16,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#ram",
+          "uv": [
+            14,
+            0,
+            16,
+            3
+          ]
+        },
+        "west": {
+          "texture": "#ram",
+          "uv": [
+            14,
+            0,
+            16,
+            3
+          ]
+        },
+        "up": {
+          "texture": "#ram",
+          "uv": [
+            14,
+            0,
+            16,
+            2
+          ]
+        }
+      }
+    }
+  ]
+}

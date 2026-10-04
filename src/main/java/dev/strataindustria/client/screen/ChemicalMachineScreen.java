@@ -31,6 +31,8 @@ public class ChemicalMachineScreen extends AbstractContainerScreen<ChemicalMachi
             Map.entry("water", 0x3F76E4), Map.entry("sulfuric_acid", 0xD8C85A), Map.entry("sulfur_dioxide", 0xC9C49A),
             Map.entry("oxygen", 0x9EDCE6), Map.entry("hydrogen", 0xC4DAF4), Map.entry("chlorine", 0xB4B45E), Map.entry("brine", 0x6E8C84),
             Map.entry("lye", 0xC8C0A8), Map.entry("latex", 0xEFE6D0), Map.entry("steam", 0xDCE4EA));
+    private static final Identifier[] MODES = {sprite("extruder_cable_lv"), sprite("extruder_cable_mv"), sprite("extruder_pipe")};
+    private static final String[] MODE_KEYS = {"mode_cable_lv", "mode_cable_mv", "mode_pipe"};
     private final Identifier background;
 
     public ChemicalMachineScreen(ChemicalMachineMenu menu, Inventory inventory, Component title) {
@@ -54,6 +56,17 @@ public class ChemicalMachineScreen extends AbstractContainerScreen<ChemicalMachi
         int ex = leftPos + ChemicalMachineLayout.EJECT_X, ey = topPos + ChemicalMachineLayout.EJECT_Y, size = ChemicalMachineLayout.EJECT_SIZE;
         g.blitSprite(RenderPipelines.GUI_TEXTURED, menu.autoEject() ? EJECT_ON : EJECT_OFF, ex, ey, size, size);
         if (overEject(mouseX, mouseY)) g.blitSprite(RenderPipelines.GUI_TEXTURED, EJECT_HIGHLIGHTED, ex, ey, size, size);
+        if (menu.layout().hasMode()) {
+            int mx = leftPos + ChemicalMachineLayout.MODE_X, my = topPos + ChemicalMachineLayout.MODE_Y;
+            g.blitSprite(RenderPipelines.GUI_TEXTURED, MODES[Math.floorMod(menu.mode(), MODES.length)], mx, my, size, size);
+            if (overMode(mouseX, mouseY)) g.blitSprite(RenderPipelines.GUI_TEXTURED, EJECT_HIGHLIGHTED, mx, my, size, size);
+        }
+    }
+
+    private boolean overMode(double mouseX, double mouseY) {
+        if (!menu.layout().hasMode()) return false;
+        double x = mouseX - leftPos - ChemicalMachineLayout.MODE_X, y = mouseY - topPos - ChemicalMachineLayout.MODE_Y;
+        return x >= 0 && x < ChemicalMachineLayout.EJECT_SIZE && y >= 0 && y < ChemicalMachineLayout.EJECT_SIZE;
     }
 
     private static int colour(Fluid fluid) {
@@ -121,6 +134,12 @@ public class ChemicalMachineScreen extends AbstractContainerScreen<ChemicalMachi
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && overMode(event.x(), event.y()) && minecraft.gameMode != null) {
+            minecraft.gameMode.handleInventoryButtonClick(menu.containerId, ChemicalMachineMenu.BUTTON_MODE);
+            minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                    net.minecraft.sounds.SoundEvents.UI_BUTTON_CLICK, 1.0f));
+            return true;
+        }
         if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && overEject(event.x(), event.y()) && minecraft.gameMode != null) {
             minecraft.gameMode.handleInventoryButtonClick(menu.containerId, ChemicalMachineMenu.BUTTON_EJECT);
             minecraft.getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
@@ -142,6 +161,8 @@ public class ChemicalMachineScreen extends AbstractContainerScreen<ChemicalMachi
             g.setTooltipForNextFrame(line, mouseX, mouseY);
         } else if (overBar(mouseX, mouseY)) {
             g.setTooltipForNextFrame(Component.translatable(prefix + "buffer", Math.round(menu.buffer() * 100)), mouseX, mouseY);
+        } else if (overMode(mouseX, mouseY)) {
+            g.setTooltipForNextFrame(Component.translatable(prefix + MODE_KEYS[Math.floorMod(menu.mode(), MODE_KEYS.length)]), mouseX, mouseY);
         } else if (overEject(mouseX, mouseY)) {
             g.setTooltipForNextFrame(Component.translatable(prefix + (menu.autoEject() ? "eject_on" : "eject_off")), mouseX, mouseY);
         }

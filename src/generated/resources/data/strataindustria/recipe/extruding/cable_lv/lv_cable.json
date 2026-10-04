@@ -1,0 +1,20 @@
+{
+  "type": "strataindustria:extruding",
+  "item_results": [
+    {
+      "count": 3,
+      "id": "strataindustria:lv_cable"
+    }
+  ],
+  "items": [
+    {
+      "count": 2,
+      "ingredient": "strataindustria:copper_wire"
+    },
+    {
+      "ingredient": "strataindustria:rubber"
+    }
+  ],
+  "mode": "cable_lv",
+  "ticks": 100
+}
