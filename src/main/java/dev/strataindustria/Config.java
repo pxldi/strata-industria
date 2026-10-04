@@ -75,6 +75,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue REMOVE_BLAST_FURNACE = BUILDER
             .comment("Remove the vanilla blast furnace recipe.")
             .define("removeBlastFurnace", true);
+    public static final ModConfigSpec.BooleanValue STRIPPING_DROPS_BARK = BUILDER
+            .comment("Stripping a log with an axe drops a piece of bark.")
+            .define("strippingDropsBark", true);
     public static final ModConfigSpec.BooleanValue HIDES_INSTEAD_OF_LEATHER = BUILDER
             .comment("Animals drop raw hides instead of leather; leather is tanned in a soaking barrel.")
             .define("hidesInsteadOfLeather", true);
@@ -192,6 +195,15 @@ public final class Config {
     public static final ModConfigSpec.IntValue BLOOMERY_BURN_TICKS = BUILDER
             .comment("Ticks a bloomery run takes at 1200 °C or hotter, before bellows shorten it.")
             .defineInRange("runTicks", 12000, 200, 240000);
+    public static final ModConfigSpec.IntValue BLOOMERY_MIN_TEMPERATURE = BUILDER
+            .comment("Lowest temperature, in °C, at which a bloomery makes a bloom.")
+            .defineInRange("minTemperature", 1200, 800, 1600);
+    public static final ModConfigSpec.IntValue BLOOMERY_FULL_YIELD_TEMPERATURE = BUILDER
+            .comment("Temperature, in °C, from which a bloomery gives its full yield.")
+            .defineInRange("fullYieldTemperature", 1300, 800, 1800);
+    public static final ModConfigSpec.DoubleValue BLOOMERY_LOW_YIELD = BUILDER
+            .comment("Share of the yield a bloomery gives below the full yield temperature.")
+            .defineInRange("lowYield", 0.85, 0.1, 1.0);
 
     static {
         BUILDER.pop();
@@ -205,6 +217,31 @@ public final class Config {
     public static final ModConfigSpec.IntValue KINETIC_MAX_NETWORK = BUILDER
             .comment("Most kinetic blocks one network may have; a larger network stops.")
             .defineInRange("maxNetworkSize", 512, 16, 4096);
+    public static final ModConfigSpec.IntValue KINETIC_WOODEN_SPEED_LIMIT = BUILDER
+            .comment("RPM above which wooden parts overspeed and the network stops.")
+            .defineInRange("woodenSpeedLimit", 64, 8, 1024);
+
+    static {
+        BUILDER.pop();
+    }
+
+    // ---------------------------------------------------------------- sluice and barrel
+    static {
+        BUILDER.comment("The sluice.").push("sluice");
+    }
+
+    public static final ModConfigSpec.IntValue SLUICE_TICKS_PER_ITEM = BUILDER
+            .comment("Ticks a sluice takes to wash one item.")
+            .defineInRange("ticksPerItem", 60, 1, 6000);
+
+    static {
+        BUILDER.pop();
+        BUILDER.comment("The soaking barrel.").push("barrel");
+    }
+
+    public static final ModConfigSpec.IntValue BARREL_RAIN_FILL = BUILDER
+            .comment("Millibuckets of rain an open soaking barrel collects per tick. 0 turns rain filling off.")
+            .defineInRange("rainFillPerTick", 1, 0, 100);
 
     static {
         BUILDER.pop();
