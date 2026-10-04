@@ -315,6 +315,9 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(Tier4Items.SMALL_ZINC_CALCINE, "Small Zinc Calcine");
         add("fluid_type." + id + ".sulfur_dioxide", "Sulfur Dioxide");
         addBlock(Tier4Blocks.STEEL_ANVIL, "Steel Anvil");
+        addBlock(Tier4Blocks.IRON_AXLE, "Iron Axle");
+        addBlock(Tier4Blocks.IRON_GEARBOX, "Iron Gearbox");
+        addBlock(Tier4Blocks.IRON_STEP_UP_GEARBOX, "Iron Step-up Gearbox");
         add(id + ".ore.sulfide", "Sulfide ore: roast it in a forge before melting");
     }
 
