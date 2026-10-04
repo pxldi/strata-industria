@@ -19,6 +19,13 @@ import dev.strataindustria.heat.Heat;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.KnappingInput;
 import dev.strataindustria.knapping.KnappingRecipe;
+import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.machine.MillstoneBlockEntity;
+import dev.strataindustria.power.AxleBlock;
+import dev.strataindustria.power.HandCrankBlock;
+import dev.strataindustria.power.HandCrankBlockEntity;
+import dev.strataindustria.power.KineticNetworks;
+import dev.strataindustria.power.KineticState;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Alloy;
 import dev.strataindustria.metal.CastMoldItem;
@@ -98,6 +105,7 @@ public final class ModGameTests {
         TESTS.put("charcoal_pit_exposed", ModGameTests::charcoalPitExposed);
         TESTS.put("crucible_casting", ModGameTests::crucibleCasting);
         TESTS.put("anvil_smithing", ModGameTests::anvilSmithing);
+        TESTS.put("kinetic_network", ModGameTests::kineticNetwork);
     }
 
     private ModGameTests() {}
@@ -481,6 +489,43 @@ public final class ModGameTests {
         Quality quality = out.get(ModDataComponents.QUALITY.get());
         helper.assertTrue(quality != null && quality.craft() == 10, "a perfect smith should give +10 craft quality, got " + quality);
         helper.assertTrue(anvil.getItem(AnvilBlockEntity.INPUT).isEmpty(), "the ingot should be used up");
+        helper.succeed();
+    }
+
+    // Mechanical power (tier 3 spec 7 and 8.1): a hand crank turns a millstone through an axle; a
+    // bellows added to the same network overstresses it.
+
+    private static void kineticNetwork(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos millPos = helper.absolutePos(new BlockPos(4, 1, 4));
+        BlockPos axlePos = millPos.north();
+        BlockPos crankPos = axlePos.north();
+        level.setBlock(millPos, ModBlocks.MILLSTONE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(axlePos, ModBlocks.WOODEN_AXLE.get().defaultBlockState().setValue(AxleBlock.AXIS, Direction.Axis.Z), Block.UPDATE_ALL);
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.SOUTH),
+                Block.UPDATE_ALL);
+        MillstoneBlockEntity mill = (MillstoneBlockEntity) level.getBlockEntity(millPos);
+        HandCrankBlockEntity crank = (HandCrankBlockEntity) level.getBlockEntity(crankPos);
+
+        KineticNetworks.rebuildNow(level, millPos);
+        helper.assertValueEqual(mill.kinetic().status(), KineticState.Status.IDLE, "network before cranking");
+
+        crank.crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "miller")));
+        KineticNetworks.rebuildNow(level, millPos);
+        helper.assertValueEqual(mill.kinetic().status(), KineticState.Status.RUNNING, "network while cranking");
+        helper.assertValueEqual(Math.round(mill.kinetic().rpm()), 16, "millstone RPM");
+        helper.assertValueEqual(mill.kinetic().load(), 64, "load of one millstone at 16 RPM");
+
+        mill.setItem(MillstoneBlockEntity.INPUT, new ItemStack(Items.BONE));
+        for (int tick = 0; tick < 40; tick++) MillstoneBlockEntity.serverTick(level, millPos, level.getBlockState(millPos), mill);
+        ItemStack out = mill.getItem(MillstoneBlockEntity.OUTPUT);
+        helper.assertTrue(out.is(Items.BONE_MEAL) && out.getCount() == 4, "40 ticks at 16 RPM should grind a bone, got " + out);
+
+        BlockPos bellowsPos = millPos.east();
+        level.setBlock(bellowsPos, ModBlocks.BELLOWS.get().defaultBlockState().setValue(BellowsBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        KineticNetworks.rebuildNow(level, millPos);
+        helper.assertValueEqual(mill.kinetic().status(), KineticState.Status.OVERSTRESSED, "network with a bellows added");
+        helper.assertValueEqual(Math.round(mill.kinetic().rpm()), 0, "an overstressed network stands still");
         helper.succeed();
     }
 }

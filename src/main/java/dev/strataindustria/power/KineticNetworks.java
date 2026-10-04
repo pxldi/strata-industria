@@ -53,6 +53,12 @@ public final class KineticNetworks {
         }
     }
 
+    /** Recompute the network through {@code pos} right away, for game tests. */
+    public static void rebuildNow(ServerLevel level, BlockPos pos) {
+        DIRTY.remove(level.dimension());
+        rebuild(level, pos, new HashSet<>());
+    }
+
     private static void rebuild(ServerLevel level, BlockPos start, Set<BlockPos> done) {
         if (!level.isLoaded(start) || !(level.getBlockEntity(start) instanceof Kinetic first)) return;
         int max = Config.KINETIC_MAX_NETWORK.get();
