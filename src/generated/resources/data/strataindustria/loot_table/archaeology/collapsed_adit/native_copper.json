@@ -20,7 +20,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "minecraft:miner_pottery_sherd",
+          "name": "strataindustria:collapsed_adit_pottery_sherd",
           "weight": 5
         },
         {
