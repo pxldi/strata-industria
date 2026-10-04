@@ -80,6 +80,7 @@ final class Tier4GameTests {
         tests.put("tier4_converter_preheat", Tier4GameTests::converterPreheat);
         tests.put("tier4_kiln", Tier4GameTests::kiln);
         tests.put("tier4_roaster", Tier4GameTests::roaster);
+        tests.put("tier4_smelter", Tier4GameTests::smelter);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -934,6 +935,50 @@ final class Tier4GameTests {
         helper.assertValueEqual(roaster.gas(), dev.strataindustria.roasting.RoasterBlockEntity.CAPACITY, "the tank is full");
         helper.assertValueEqual(roaster.status(), dev.strataindustria.roasting.RoasterBlockEntity.Status.VENTING, "the rest is vented");
         helper.succeed();
+    }
+
+    // Spec 8.7: a smelter on a coke firebox heats with no forge, melts two copper ingots, and with auto-pour
+    // casts both by itself: pour, cool, knock out, and take the next mold from the stock.
+    private static void smelter(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(2, 1, 2)), smelterPos = fireboxPos.above();
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(smelterPos, Tier4Blocks.SMELTER.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        var smelter = (dev.strataindustria.metal.SmelterBlockEntity) level.getBlockEntity(smelterPos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+        firebox.preheat(1600.0f);
+        Item copper = ModItems.ingot(dev.strataindustria.material.Metal.COPPER);
+        helper.assertTrue(smelter.canPlaceItem(0, new ItemStack(ModItems.ingot(dev.strataindustria.material.Metal.WROUGHT_IRON))),
+                "the smelter takes iron, like a refractory crucible");
+        helper.assertTrue(!smelter.canPlaceItem(dev.strataindustria.metal.SmelterBlockEntity.OUTPUT_SLOT, new ItemStack(copper)),
+                "nothing goes into the output");
+        smelter.setItem(0, new ItemStack(copper, 2));
+        smelter.setItem(dev.strataindustria.metal.SmelterBlockEntity.STOCK_SLOT, new ItemStack(ModItems.INGOT_MOLD.get(), 2));
+        helper.assertTrue(smelter.autoPour(), "auto-pour starts on");
+
+        smelt(level, fireboxPos, firebox, smelterPos, smelter, 1);
+        helper.assertValueEqual(smelter.status(), dev.strataindustria.metal.CrucibleStatus.NO_HEAT, "status before the heat arrives");
+        smelt(level, fireboxPos, firebox, smelterPos, smelter, 20);
+        helper.assertValueEqual(firebox.taken(), 30, "a coke firebox gives the smelter its full 30 HU/t");
+        helper.assertTrue(smelter.getItem(dev.strataindustria.metal.CrucibleBlockEntity.MOLD_SLOT).is(ModItems.INGOT_MOLD.get()),
+                "a mold comes out of the stock");
+        int out = dev.strataindustria.metal.SmelterBlockEntity.OUTPUT_SLOT;
+        int tick = 0;
+        for (; tick < 8000 && smelter.getItem(out).getCount() < 2; tick++) smelt(level, fireboxPos, firebox, smelterPos, smelter, 1);
+        helper.assertTrue(smelter.getItem(out).is(copper) && smelter.getItem(out).getCount() == 2,
+                "two copper ingots cast by themselves, got " + smelter.getItem(out) + " after " + tick + " ticks");
+        helper.assertTrue(smelter.melt().isEmpty(), "the pot is empty");
+        helper.assertTrue(smelter.getItem(out).getCount() == 2, "the castings stack though they came out at different heats");
+        helper.succeed();
+    }
+
+    private static void smelt(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos smelterPos,
+            dev.strataindustria.metal.SmelterBlockEntity smelter, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            dev.strataindustria.metal.SmelterBlockEntity.serverTick(level, smelterPos, level.getBlockState(smelterPos), smelter);
+        }
     }
 
     private static void roast(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos roasterPos,

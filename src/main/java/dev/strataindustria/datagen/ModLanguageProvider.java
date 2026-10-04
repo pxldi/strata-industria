@@ -357,6 +357,17 @@ final class ModLanguageProvider extends LanguageProvider {
         add(roaster + "status.roasting", "Roasting");
         add(roaster + "status.venting", "Venting sulfur dioxide");
         add(roaster + "tank", "Sulfur Dioxide %s / %s mB");
+        addBlock(Tier4Blocks.SMELTER, "Smelter");
+        add("container." + id + ".smelter", "Smelter");
+        String smelter = id + ".smelter.";
+        add(smelter + "auto_on", "Auto-pour: On");
+        add(smelter + "auto_off", "Auto-pour: Off");
+        add(smelter + "cooling", "%s °C");
+        add(smelter + "slot.mold", "Mold being filled");
+        add(smelter + "slot.stock", "Spare empty molds (up to 16)");
+        add(smelter + "slot.cooling", "Filled mold cooling");
+        add(smelter + "slot.output", "Castings");
+        add(id + ".crucible.status.no_heat", "Needs heat from a firebox or heat pipes");
         add("fluid_type." + id + ".steam", "Steam");
         add("container." + id + ".firebox", "Firebox");
         add("container." + id + ".bronze_boiler", "Bronze Boiler");
@@ -373,6 +384,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(heatLine + "preheat", "Preheat");
         add(heatLine + "kiln", "Heat");
         add(heatLine + "roaster", "Heat");
+        add(heatLine + "smelter", "Heat");
         add(heatLine + "none", "%s: no heat");
         add(heatLine + "cold", "%s: %3$s of %2$s °C");
         add(heatLine + "limited", "%s: pipes cap %s °C");
@@ -405,6 +417,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "heat_pipe.tick", "Heat pipe ticks");
         add(subtitles + "kiln.work", "Kiln roars");
         add(subtitles + "kiln.done", "Kiln batch fired");
+        add(subtitles + "smelter.pour", "Smelter pours");
+        add(subtitles + "smelter.bubble", "Molten metal bubbles");
         add(subtitles + "fluid_pipe.refuse", "Pipe clanks");
         add(subtitles + "boiler.heat", "Boiler creaks");
         add(subtitles + "boiler.run", "Boiler rumbles");

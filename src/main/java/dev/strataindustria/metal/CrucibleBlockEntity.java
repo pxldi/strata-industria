@@ -46,7 +46,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     /** Ticks to melt one item at its melting point; halved for every 200 °C above. */
     public static final float MELT_TICKS = 100.0f;
     public static final int POUR_PER_TICK = 10;
-    static final float FORGE_RATE = 0.030f;
+    protected static final float FORGE_RATE = 0.030f;
 
     public static final int DATA_TEMPERATURE = 0;
     public static final int DATA_STATUS = 1;
@@ -64,7 +64,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     /** How long the screen shows that spare carbon burned off. */
     static final int BURN_OFF_TICKS = 100;
 
-    private NonNullList<ItemStack> items = NonNullList.withSize(INPUT_SLOTS + 1, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.withSize(slotCount(), ItemStack.EMPTY);
     private final float[] progress = new float[INPUT_SLOTS];
     private Melt melt = Melt.EMPTY;
     private float temperature = Heat.AMBIENT;
@@ -115,6 +115,35 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
 
     public CrucibleBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
+    }
+
+    /** Where the pot's heat comes from this tick: whether there is a source, its temperature, and how fast it heats. */
+    protected record HeatSource(boolean present, float target, float rate) {
+        static final HeatSource NONE = new HeatSource(false, Heat.AMBIENT, Heat.AMBIENT_RATE);
+    }
+
+    /** How many slots the block entity has; the smelter adds mold handling past the crucible's ten. */
+    protected int slotCount() {
+        return INPUT_SLOTS + 1;
+    }
+
+    /** A crucible takes its heat from a forge directly below. */
+    protected HeatSource heatSource(Level level, BlockPos pos) {
+        return level.getBlockEntity(pos.below()) instanceof ForgeBlockEntity forge ? new HeatSource(true, forge.temperature(), FORGE_RATE) : HeatSource.NONE;
+    }
+
+    /** The status shown when nothing is heating the pot. */
+    protected CrucibleStatus noHeatStatus() {
+        return CrucibleStatus.NO_FORGE;
+    }
+
+    /** Whether a pour is still running (metal set aside and flowing into the mold). */
+    public boolean pouring() {
+        return pourLeft > 0;
+    }
+
+    protected NonNullList<ItemStack> items() {
+        return items;
     }
 
     /** The clay crucible's capacity. */
@@ -182,12 +211,13 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, CrucibleBlockEntity crucible) {
-        boolean forgeBelow = level.getBlockEntity(pos.below()) instanceof ForgeBlockEntity;
-        float target = level.getBlockEntity(pos.below()) instanceof ForgeBlockEntity forge ? forge.temperature() : Heat.AMBIENT;
+        HeatSource source = crucible.heatSource(level, pos);
+        boolean forgeBelow = source.present();
+        float target = source.target();
         int max = crucible.maxTemperature();
         crucible.forgeTooHot = target > max;
         target = Math.min(target, max);
-        float rate = forgeBelow ? FORGE_RATE : Heat.AMBIENT_RATE;
+        float rate = source.rate();
         float before = crucible.temperature;
         crucible.temperature = (float) (target + (crucible.temperature - target) * Math.exp(-rate / 20.0));
 
@@ -325,7 +355,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         }
         if (carbonWaiting) return CrucibleStatus.CARBON_WAITING;
         if (redstoneWaiting) return CrucibleStatus.REDSTONE_WAITING;
-        if (!forgeBelow) return CrucibleStatus.NO_FORGE;
+        if (!forgeBelow) return noHeatStatus();
         if (atLimit) return CrucibleStatus.AT_LIMIT;
         return temperature > Heat.AMBIENT + 10 ? CrucibleStatus.HEATING : CrucibleStatus.COLD;
     }
@@ -364,10 +394,14 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         melt = after;
         poured = Melt.EMPTY;
         if (level != null) {
-            level.playSound(null, worldPosition, ModSounds.CRUCIBLE_POUR.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
+            level.playSound(null, worldPosition, pourSound(), SoundSource.BLOCKS, 0.8f, 1.0f);
         }
         setChanged();
         return true;
+    }
+
+    protected net.minecraft.sounds.SoundEvent pourSound() {
+        return ModSounds.CRUCIBLE_POUR.get();
     }
 
     private boolean pour(Level level, BlockPos pos) {

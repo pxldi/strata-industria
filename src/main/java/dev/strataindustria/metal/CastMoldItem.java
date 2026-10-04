@@ -11,6 +11,7 @@ import dev.strataindustria.registry.ModSounds;
 import java.util.Optional;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -78,36 +79,55 @@ public class CastMoldItem extends Item {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         float heat = Heat.get(mold, level);
-        Metal metal = castMetal(contents);
         if (heat >= CrucibleBlockEntity.mixMeltingPoint(contents)) {
             player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".mold.still_molten"));
             return InteractionResult.FAIL;
         }
 
-        ItemStack cast;
-        if (gear) cast = ModItems.GEARS.containsKey(metal) ? new ItemStack(ModItems.GEARS.get(metal).get()) : new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
-        else cast = type == null ? new ItemStack(ModItems.ingot(metal)) : new ItemStack(ModItems.head(metal, type));
-        if (cast.is(ModItems.ingot(Metal.SLAG_METAL))) cast.set(ModDataComponents.SLAG.get(), contents);
-        if (type != null) cast.set(ModDataComponents.QUALITY.get(), new Quality(contents.quality(), Quality.CAST));
-        Heat.set(cast, heat, level.getGameTime());
-
-        double breakChance = refractory ? Config.REFRACTORY_MOLD_BREAK.getAsDouble()
-                : type == null && !gear ? Config.INGOT_MOLD_BREAK.getAsDouble() : Config.TOOL_MOLD_BREAK.getAsDouble();
-        boolean broke = level.getRandom().nextDouble() < breakChance;
+        ItemStack cast = castOf(mold, heat, level.getGameTime());
+        boolean broke = breaks(mold, level.getRandom());
         ItemStack emptied = ItemStack.EMPTY;
         if (broke) {
             level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.MOLD_BREAK.get(), SoundSource.PLAYERS, 0.9f, 1.0f);
             player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".mold.broke"));
         } else {
-            emptied = mold.copy();
-            emptied.remove(ModDataComponents.CAST_CONTENTS.get());
-            emptied.remove(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE);
+            emptied = emptied(mold);
             level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.MOLD_KNOCK.get(), SoundSource.PLAYERS, 0.8f,
                     0.9f + level.getRandom().nextFloat() * 0.2f);
         }
         player.setItemInHand(hand, emptied);
         if (!player.addItem(cast)) net.minecraft.world.level.block.Block.popResource(level, player.blockPosition(), cast);
         return InteractionResult.SUCCESS;
+    }
+
+    /** What a filled mold gives when knocked out at {@code heat}: an ingot, tool head or gear as hot as the mold. */
+    public static ItemStack castOf(ItemStack mold, float heat, long now) {
+        CastMoldItem item = (CastMoldItem) mold.getItem();
+        Melt contents = mold.getOrDefault(ModDataComponents.CAST_CONTENTS.get(), Melt.EMPTY);
+        Metal metal = castMetal(contents);
+        ItemStack cast;
+        if (item.gear) cast = ModItems.GEARS.containsKey(metal) ? new ItemStack(ModItems.GEARS.get(metal).get()) : new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
+        else cast = item.type == null ? new ItemStack(ModItems.ingot(metal)) : new ItemStack(ModItems.head(metal, item.type));
+        if (cast.is(ModItems.ingot(Metal.SLAG_METAL))) cast.set(ModDataComponents.SLAG.get(), contents);
+        if (item.type != null) cast.set(ModDataComponents.QUALITY.get(), new Quality(contents.quality(), Quality.CAST));
+        Heat.set(cast, heat, now);
+        return cast;
+    }
+
+    /** Whether the mold cracks as the casting is knocked out of it. */
+    public static boolean breaks(ItemStack mold, RandomSource random) {
+        CastMoldItem item = (CastMoldItem) mold.getItem();
+        double breakChance = item.refractory ? Config.REFRACTORY_MOLD_BREAK.getAsDouble()
+                : item.type == null && !item.gear ? Config.INGOT_MOLD_BREAK.getAsDouble() : Config.TOOL_MOLD_BREAK.getAsDouble();
+        return random.nextDouble() < breakChance;
+    }
+
+    /** The mold with its casting knocked out, ready to fill again. */
+    public static ItemStack emptied(ItemStack mold) {
+        ItemStack emptied = mold.copy();
+        emptied.remove(ModDataComponents.CAST_CONTENTS.get());
+        emptied.remove(net.minecraft.core.component.DataComponents.MAX_STACK_SIZE);
+        return emptied;
     }
 
     /** Tooltip line for a filled mold: "Bronze, 100 units". */

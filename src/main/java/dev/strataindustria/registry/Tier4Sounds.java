@@ -32,6 +32,10 @@ public final class Tier4Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> KILN_WORK = register("kiln.work");
     /** A batch comes out of the kiln fired: ceramic clinks as it cools. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KILN_DONE = register("kiln.done");
+    /** The smelter pours into its mold: a thick pour with a hiss. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SMELTER_POUR = register("smelter.pour");
+    /** Slow bubbling from a smelter's molten pot. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SMELTER_BUBBLE = register("smelter.bubble");
     /** A pipe refuses fluid too hot for it. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FLUID_PIPE_REFUSE = register("fluid_pipe.refuse");
     /** Water warming in a boiler: a rising hiss and creaking metal. */

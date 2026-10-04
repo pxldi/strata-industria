@@ -93,6 +93,8 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> KILN = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.KILN);
     // Spec 8.5: the roaster.
     public static final DeferredItem<BlockItem> ROASTER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.ROASTER);
+    // Spec 8.7: the smelter.
+    public static final DeferredItem<BlockItem> SMELTER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.SMELTER);
     public static final DeferredItem<Item> SLAG_WOOL = ModItems.ITEMS.registerSimpleItem("slag_wool");
     /** Spec 4.6: ground slag, a fertiliser worth two bone meal. */
     public static final DeferredItem<dev.strataindustria.ironworks.SlagDustItem> SLAG_DUST = ModItems.ITEMS.registerItem("slag_dust",

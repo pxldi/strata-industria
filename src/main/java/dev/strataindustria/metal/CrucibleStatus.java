@@ -6,7 +6,9 @@ public enum CrucibleStatus {
     // Tier 4 spec 3 and 4.2.
     AT_LIMIT, CARBON_WAITING, CARBON_BURNED, CALCINE_SHORT,
     // Tier 5 spec 4.2.
-    REDSTONE_WAITING;
+    REDSTONE_WAITING,
+    // Tier 4 spec 8.7: the smelter's heat comes over the heat network.
+    NO_HEAT;
 
     public String key() {
         return "strataindustria.crucible.status." + name().toLowerCase(java.util.Locale.ROOT);

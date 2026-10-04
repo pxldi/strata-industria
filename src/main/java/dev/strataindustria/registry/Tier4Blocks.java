@@ -190,6 +190,11 @@ public final class Tier4Blocks {
             dev.strataindustria.roasting.RoasterBlock::new,
             p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.roasting.RoasterBlock.LIT) ? 8 : 0));
 
+    // Spec 8.7: the smelter.
+    public static final DeferredBlock<dev.strataindustria.metal.SmelterBlock> SMELTER = ModBlocks.BLOCKS.registerBlock("smelter",
+            dev.strataindustria.metal.SmelterBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.metal.SmelterBlock.LIT) ? 12 : 0));
+
     private static int heatGlow(BlockState state) {
         return state.getValue(dev.strataindustria.heat.HeatPipeBlock.HOT) ? 6 : 0;
     }

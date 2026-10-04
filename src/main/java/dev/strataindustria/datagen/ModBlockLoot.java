@@ -132,6 +132,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
     private void crucible() {
         crucible(ModBlocks.CRUCIBLE.get());
         crucible(Tier4Blocks.REFRACTORY_CRUCIBLE.get());
+        // The smelter keeps its load and melt like a crucible does.
+        crucible(Tier4Blocks.SMELTER.get());
     }
 
     private void crucible(Block block) {
