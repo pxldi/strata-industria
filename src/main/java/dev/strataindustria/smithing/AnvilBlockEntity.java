@@ -316,7 +316,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     }
 
     /** The higher of the two pieces' welding temperatures. */
-    private static int weldingTemperature(ItemStack a, ItemStack b) {
+    public static int weldingTemperature(ItemStack a, ItemStack b) {
         return Math.max(metalOf(a).map(Metal::weldingTemperature).orElse(0), metalOf(b).map(Metal::weldingTemperature).orElse(0));
     }
 

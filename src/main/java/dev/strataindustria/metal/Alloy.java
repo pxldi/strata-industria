@@ -45,6 +45,10 @@ public enum Alloy {
         return result;
     }
 
+    public Metal base() {
+        return base;
+    }
+
     public Metal added() {
         return added;
     }
