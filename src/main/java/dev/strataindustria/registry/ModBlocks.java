@@ -3,6 +3,7 @@ package dev.strataindustria.registry;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.block.GroundCoverBlock;
 import dev.strataindustria.block.OreBlock;
+import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -33,6 +34,15 @@ public final class ModBlocks {
             p -> new GroundCoverBlock(Block.box(1, 0, 1, 15, 1, 15), p), ModBlocks::groundCover);
     public static final DeferredBlock<GroundCoverBlock> LOOSE_FLINT = BLOCKS.registerBlock("loose_flint",
             p -> new GroundCoverBlock(Block.box(4, 0, 4, 12, 1, 12), p), ModBlocks::groundCover);
+
+    /** Tier 0 fire (spec 3.5). Light 15 while lit. */
+    public static final DeferredBlock<FirePitBlock> FIRE_PIT = BLOCKS.registerBlock("fire_pit", FirePitBlock::new,
+            p -> p.mapColor(MapColor.PODZOL)
+                    .strength(0.5f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .lightLevel(state -> state.getValue(FirePitBlock.LIT) ? 15 : 0)
+                    .pushReaction(PushReaction.POPPED));
 
     static {
         for (Rock rock : Rock.values()) {

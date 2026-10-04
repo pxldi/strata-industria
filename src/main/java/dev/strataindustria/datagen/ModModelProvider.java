@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -12,6 +13,7 @@ import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
@@ -75,6 +77,15 @@ final class ModModelProvider extends ModelProvider {
 
         groundFlat(blockModels, ModBlocks.LOOSE_STICK.get(), "loose_stick");
         groundFlat(blockModels, ModBlocks.LOOSE_FLINT.get(), "loose_flint");
+
+        // Fire pit: hand-built models in resources (stone ring, sticks, campfire flames when lit).
+        var firePit = StrataIndustria.id("block/fire_pit");
+        PropertyDispatch.C1<MultiVariant, Boolean> firePitLit = PropertyDispatch.initial(FirePitBlock.LIT);
+        firePitLit.select(false, BlockModelGenerators.plainVariant(firePit));
+        firePitLit.select(true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fire_pit_lit")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.FIRE_PIT.get()).with(firePitLit));
+        itemModels.itemModelOutput.accept(ModItems.FIRE_PIT.get(), ItemModelUtils.plainModel(firePit));
+        itemModels.generateFlatItem(ModItems.FIRESTARTER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
         flatItem(itemModels, ModItems.PLANT_FIBRE.get());
         flatItem(itemModels, ModItems.STRAW.get());

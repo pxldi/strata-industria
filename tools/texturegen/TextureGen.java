@@ -864,6 +864,111 @@ public final class TextureGen {
         return im;
     }
 
+    // ---------------------------------------------------------------- fire
+
+    static final Ramp FIELD_STONE = ramp(0, 0x34363a, 0x4a4c50, 0x63656a, 0x7d7f83, 0x98999c);
+    /** Embers: charcoal shot through with the heat-glow colours (style guide 6), only for the lit bed. */
+    static final int[] EMBER_GLOW = {0x6e1e14, 0xa0281a, 0xd23a1e, 0xf07a22};
+
+    /** Rounded fieldstones with dark gaps, for the ring around the fire pit. */
+    static BufferedImage fieldStones() {
+        double[][] n = fractal(4242);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int i = 2 + (int) Math.round(n[y][x] * 2.2);
+                px(im, x, y, FIELD_STONE.get(Math.max(1, Math.min(5, i))));
+            }
+        Random r = new Random(4242);
+        for (int k = 0; k < 6; k++) speck(im, r, r.nextInt(16), r.nextInt(16), FIELD_STONE.get(5), FIELD_STONE.get(1), 2 + r.nextInt(2));
+        return im;
+    }
+
+    /** Stick bark: lengthwise grain with a few knots. */
+    static BufferedImage stickWood() {
+        BufferedImage im = img();
+        Random r = new Random(77);
+        for (int y = 0; y < 16; y++) {
+            int base = (y % 4 == 0) ? 2 : (y % 4 == 3 ? 4 : 3);
+            for (int x = 0; x < 16; x++) {
+                int step = base + (r.nextInt(7) == 0 ? (r.nextBoolean() ? 1 : -1) : 0);
+                px(im, x, y, WOOD.get(Math.max(1, Math.min(5, step))));
+            }
+        }
+        for (int k = 0; k < 3; k++) {
+            int x = r.nextInt(14), y = r.nextInt(14);
+            px(im, x, y, WOOD.get(1));
+            px(im, x + 1, y, WOOD.get(2));
+        }
+        return im;
+    }
+
+    /** Cold ash bed with a few charcoal lumps. */
+    static BufferedImage ashBed() {
+        double[][] n = fractal(313);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int i = 2 + (int) Math.round(n[y][x] * 2.0);
+                px(im, x, y, ASH.get(Math.max(1, Math.min(4, i))));
+            }
+        Random r = new Random(313);
+        for (int k = 0; k < 7; k++) speck(im, r, r.nextInt(16), r.nextInt(16), CHARCOAL.get(4), CHARCOAL.get(1), 2);
+        return im;
+    }
+
+    /** The lit bed: charcoal with glowing cracks, brighter towards the middle. */
+    static BufferedImage emberBed() {
+        double[][] n = fractal(919);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double centre = 1.0 - Math.hypot(x - 7.5, y - 7.5) / 10.6;
+                double v = n[y][x] * 0.6 + centre * 0.6;
+                int c;
+                if (v > 0.98) c = EMBER_GLOW[3];
+                else if (v > 0.88) c = EMBER_GLOW[2];
+                else if (v > 0.78) c = EMBER_GLOW[1];
+                else if (v > 0.70) c = EMBER_GLOW[0];
+                else c = CHARCOAL.get(1 + (int) Math.round(v * 4));
+                px(im, x, y, c);
+            }
+        return im;
+    }
+
+    /** A hand drill: spindle stood on a hearth board, a twine wrap, a charred notch. */
+    static final String[] FIRESTARTER = {
+            "................",
+            "................",
+            ".......45.......",
+            ".......43.......",
+            ".......43.......",
+            "......ab3a......",
+            "......bad3......",
+            ".......ab.......",
+            ".......43.......",
+            ".......43.......",
+            ".......32.......",
+            "..444553x5554...",
+            "..33333223333...",
+            "..22222222222...",
+            "................",
+            "................",
+    };
+
+    static BufferedImage firestarter() {
+        String[] rows = FIRESTARTER.clone();
+        BufferedImage im = img();
+        for (int y = 0; y < rows.length; y++)
+            for (int x = 0; x < rows[y].length(); x++) {
+                char ch = rows[y].charAt(x);
+                if (ch >= '1' && ch <= '5') px(im, x, y, WOOD.get(ch - '0'));
+                else if (ch >= 'a' && ch <= 'e') px(im, x, y, STRAW.get(ch - 'a' + 2));
+                else if (ch == 'x') px(im, x, y, CHARCOAL.get(1));
+            }
+        return outline(im);
+    }
+
     // ---------------------------------------------------------------- GUI
 
     static final int GUI_FACE = 0xc6c6c6, GUI_LIGHT = 0xffffff, GUI_SHADOW = 0x555555, GUI_EDGE = 0x000000;
@@ -921,6 +1026,48 @@ public final class TextureGen {
             if (d <= 2) for (int i = 0; i < 15; i++) im.setRGB(x + i, y + j, c);
             for (int i = 15; i < 22 - d; i++) im.setRGB(x + i, y + j, c);
         }
+    }
+
+    static final String[] FLAME_SILHOUETTE = {
+            "......#.......",
+            ".....##.......",
+            ".....###......",
+            "....####.#....",
+            "....#######...",
+            "...########...",
+            "..#########...",
+            "..##########..",
+            ".###########..",
+            ".############.",
+            ".############.",
+            "##############",
+            ".############.",
+            "..##########..",
+    };
+
+    /** Fire pit screen, 176x166: cooking slot over the flames, fuel below, heat gauge on the right. */
+    static BufferedImage firePitGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        slot(im, 80, 18);
+        slot(im, 80, 54);
+        for (int y = 0; y < FLAME_SILHOUETTE.length; y++)
+            for (int x = 0; x < 14; x++)
+                if (FLAME_SILHOUETTE[y].charAt(x) == '#') im.setRGB(81 + x, 37 + y, 0xff000000 | SLOT_FILL);
+        // Cooking progress bar.
+        well(im, 99, 23, 24, 6, 0x2a2a2a);
+        // Heat gauge: 0 to 700 degrees over 54 px, with a notch where cooking starts (200).
+        well(im, 150, 16, 12, 56, 0x2a2a2a);
+        int cookY = 17 + 54 - Math.round(200 / 700f * 54);
+        fill(im, 147, cookY, 3, 1, GUI_SHADOW);
+        for (int t = 100; t < 700; t += 100) {
+            int y = 17 + 54 - Math.round(t / 700f * 54);
+            if (t != 200) fill(im, 148, y, 2, 1, SLOT_FILL);
+        }
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 84 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 142);
+        return im;
     }
 
     /**
@@ -1016,6 +1163,14 @@ public final class TextureGen {
             save("item/stone_" + kind, tool(FLINT, WOOD, FIBRE, kind));
         save("gui/knapping/flint", flintSurface());
         saveRaw("gui/knapping", knappingGui());
+
+        // Fire (spec 3.5).
+        save("block/fire_pit_stones", fieldStones());
+        save("block/fire_pit_wood", stickWood());
+        save("block/fire_pit_ash", ashBed());
+        save("block/fire_pit_embers", emberBed());
+        save("item/firestarter", firestarter());
+        saveRaw("gui/fire_pit", firePitGui());
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");
