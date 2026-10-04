@@ -68,6 +68,7 @@ final class ModModelProvider extends ModelProvider {
 
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Tier5Models.register(blockModels, itemModels);
         tier6(blockModels, itemModels);
         for (Rock rock : Rock.values()) {
             blockModels.createTrivialCube(ModBlocks.RAW_ROCK.get(rock).get());

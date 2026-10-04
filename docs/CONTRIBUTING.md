@@ -24,6 +24,7 @@ src/main/java/dev/strataindustria/
   registry/              DeferredRegisters and registrations
     Mod*.java            tiers 0-3 and shared registers (blocks, items, fluids, sounds, ...)
     Tier4*.java          tier 4 registrations, registered into the shared DeferredRegisters
+    Tier5*.java          tier 5 (electric) registrations, the same way
   datagen/               data generators: models, lang, tags, recipes, loot, sounds, advancements
   gametest/              GameTests (ModGameTests = tiers 0-2, Tier3GameTests, Tier4GameTests)
   client/                renderers, screens, HUD (client only)
@@ -52,8 +53,11 @@ src/generated/resources/ generated assets and data (do not edit by hand)
   (`java tools/texturegen/TextureGen.java` from the repo root). Output is deterministic and
   written into `src/main/resources/assets/strataindustria/textures`; a preview sheet goes to
   `build/texturegen/preview.png`. Files in `HAND_MADE` are never overwritten.
-- Structure blocks have their own generator, `tools/texturegen/StructureTextures.java`, and so does tier 6
-  (`tools/texturegen/Tier6Textures.java`).
+- Structure blocks have their own generator, `tools/texturegen/StructureTextures.java`.
+- Tier 5 (electric) textures come from `tools/texturegen/ElectricTextures.java`, which reuses
+  `TextureGen`'s helpers; its javadoc has the run command.
+- Tier 6 (industrial) textures come from `tools/texturegen/Tier6Textures.java`
+  (`java tools/texturegen/Tier6Textures.java`).
 
 ### Sounds
 
@@ -72,6 +76,15 @@ src/generated/resources/ generated assets and data (do not edit by hand)
 - Rotor models live in `models/block/rotor/*` with item definitions in `items/rotor/*`, drawn
   with `RotorRenderer.rotorStack(name)`.
 - `PoseStack` has no `mulPose(Quaternionf)` in 26.x; use `mulPose(new Matrix4f().rotation(q))`.
+
+### Electricity
+
+- Electric blocks are block entities implementing the interfaces in `power/`: `ElectricConductor`
+  (cables), `ElectricSource`, `ElectricConsumer` and `ElectricStorage`. Mark the network dirty with
+  `ElectricNetworks.markDirty` in `onLoad` and `setRemoved`; the network finds the block by its faces
+  (`connectsElectric`). Per-tick sharing lives in `ElectricNetwork.tick`, the arithmetic in `ElectricShare`.
+- Devices read what the network did for them with `ElectricNetworks.report(level, pos)` and show it on
+  their `status` blockstate (`StatusLight`). Sneak + empty hand shows `ElectricNetworks.line`.
 
 ### Field journal
 

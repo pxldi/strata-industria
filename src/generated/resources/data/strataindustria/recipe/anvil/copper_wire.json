@@ -1,0 +1,23 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 90,
+  "ingredient": "minecraft:copper_ingot",
+  "result": {
+    "count": 3,
+    "id": "strataindustria:copper_wire"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "draw",
+      "where": "second_last"
+    },
+    {
+      "hit": "draw",
+      "where": "third_last"
+    }
+  ]
+}

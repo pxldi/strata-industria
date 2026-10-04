@@ -151,7 +151,7 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
                 continue;
             }
             working = true;
-            if (shown.isEmpty()) shown = input;
+            if (shown.isEmpty()) shown = input.copyWithCount(1);
             progress[i] += rpm / 16.0f;
             if (progress[i] >= baseTicks()) {
                 progress[i] = 0;

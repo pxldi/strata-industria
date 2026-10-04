@@ -32,6 +32,10 @@ final class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider registries) {
+        // Tier 5 spec 16.6: common tags so other mods' copper wire and lead plates are interchangeable.
+        tag(common("wires/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_WIRE.getKey());
+        tag(common("rods/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_ROD.getKey());
+        tag(common("plates/lead")).add(dev.strataindustria.registry.Tier5Items.LEAD_PLATE.getKey());
         // Tier 6 spec 17.6: plastics and synthetic rubber.
         tag(Tier6Tags.Items.C_POLYETHYLENE).add(Tier6Items.POLYETHYLENE_PELLET.getKey()).add(Tier6Items.POLYETHYLENE_SHEET.getKey());
         tag(Tier6Tags.Items.C_PVC).add(Tier6Items.PVC_PELLET.getKey()).add(Tier6Items.PVC_SHEET.getKey());
@@ -167,5 +171,9 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(ItemTags.MINING_ENCHANTABLE).addTag(ModTags.Items.SAWS);
         tag(ItemTags.MINING_LOOT_ENCHANTABLE).addTag(ModTags.Items.SAWS);
         tag(ItemTags.DURABILITY_ENCHANTABLE).addTag(ModTags.Items.SAWS);
+    }
+
+    private static net.minecraft.tags.TagKey<net.minecraft.world.item.Item> common(String path) {
+        return net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath("c", path));
     }
 }

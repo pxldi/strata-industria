@@ -3,6 +3,7 @@ package dev.strataindustria.datagen;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
+import dev.strataindustria.registry.Tier5Sounds;
 import dev.strataindustria.registry.Tier6Sounds;
 import dev.strataindustria.structure.StructureContent;
 import net.minecraft.data.PackOutput;
@@ -17,6 +18,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
 
     @Override
     public void registerSounds() {
+        tier5();
         tier6();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
@@ -315,5 +317,23 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
             definition.with(sound("minecraft:dig/stone" + i).pitch(pitch).volume(volume));
         }
         return definition;
+    }
+
+    // Tier 5 spec 23.6: electric sounds, built from vanilla samples.
+    private void tier5() {
+        add(Tier5Sounds.ELECTRIC_OVERVOLTAGE, definition().subtitle(subtitle("electric.overvoltage"))
+                .with(sound("minecraft:entity.lightning_bolt.impact", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.3f))
+                .with(sound("minecraft:entity.lightning_bolt.impact", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));
+        add(Tier5Sounds.ELECTRIC_SPARK, definition().subtitle(subtitle("electric.spark"))
+                .with(sound("minecraft:block.redstone_torch.burnout", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f))
+                .with(sound("minecraft:block.redstone_torch.burnout", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f))
+                .with(sound("minecraft:block.redstone_torch.burnout", SoundDefinition.SoundType.EVENT).pitch(1.45f).volume(0.3f)));
+        add(Tier5Sounds.KINETIC_DYNAMO_RUN, definition().subtitle(subtitle("kinetic_dynamo.run"))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.4f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.35f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.35f)));
+        add(Tier5Sounds.BATTERY_BOX_CHARGE, definition().subtitle(subtitle("battery_box.charge"))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.15f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.12f)));
     }
 }

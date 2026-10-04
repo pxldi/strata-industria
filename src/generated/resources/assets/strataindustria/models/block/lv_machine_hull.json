@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "strataindustria:block/casing/lv_bottom",
+    "side": "strataindustria:block/lv_machine_hull_front",
+    "top": "strataindustria:block/casing/lv_top"
+  }
+}

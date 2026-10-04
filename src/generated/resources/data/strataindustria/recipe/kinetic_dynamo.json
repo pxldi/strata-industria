@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "I": "strataindustria:wrought_iron_plate",
+    "L": "strataindustria:lv_cable",
+    "W": "strataindustria:copper_wire",
+    "X": "strataindustria:magnet"
+  },
+  "pattern": [
+    "IXI",
+    "WAW",
+    "ILI"
+  ],
+  "result": {
+    "id": "strataindustria:kinetic_dynamo"
+  }
+}
