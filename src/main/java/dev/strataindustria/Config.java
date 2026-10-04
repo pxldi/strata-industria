@@ -221,7 +221,7 @@ public final class Config {
             .comment("Most kinetic blocks one network may have; a larger network stops.")
             .defineInRange("maxNetworkSize", 512, 16, 4096);
     public static final ModConfigSpec.IntValue KINETIC_WOODEN_SPEED_LIMIT = BUILDER
-            .comment("RPM above which wooden parts overspeed and the network stops.")
+            .comment("RPM above which wooden parts overspeed; the part of the network turning faster stops.")
             .defineInRange("woodenSpeedLimit", 64, 8, 1024);
 
     static {

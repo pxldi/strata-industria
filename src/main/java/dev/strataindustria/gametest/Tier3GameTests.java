@@ -49,6 +49,7 @@ final class Tier3GameTests {
         tests.put("bloomery_run", Tier3GameTests::bloomeryRun);
         tests.put("trip_hammer", Tier3GameTests::tripHammer);
         tests.put("step_up_gearbox_facings", Tier3GameTests::stepUpGearboxFacings);
+        tests.put("overspeed_segment", Tier3GameTests::overspeedSegment);
     }
 
     // Bloomery (tier 3 spec 5): a two-level chimney with no bellows burns at 1200 °C, which makes
@@ -193,6 +194,35 @@ final class Tier3GameTests {
                 helper.assertValueEqual(Math.round(axle.kinetic().rpm()), 32, "axle RPM, " + where);
                 for (BlockPos pos : List.of(crankPos, centre, axlePos)) level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
+        }
+        helper.succeed();
+    }
+
+    // Overspeed (tier 3 spec 7.1): three step-up gearboxes take a crank's 16 RPM to 128. Only the axle
+    // past the 64 RPM limit stops; the slower part of the network keeps turning.
+
+    private static void overspeedSegment(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos crankPos = helper.absolutePos(new BlockPos(1, 1, 4));
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.EAST),
+                Block.UPDATE_ALL);
+        List<BlockPos> axles = new java.util.ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            BlockPos gearbox = crankPos.east(1 + 2 * i);
+            level.setBlock(gearbox, ModBlocks.STEP_UP_GEARBOX.get().defaultBlockState()
+                    .setValue(dev.strataindustria.power.StepUpGearboxBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+            level.setBlock(gearbox.east(), ModBlocks.WOODEN_AXLE.get().defaultBlockState()
+                    .setValue(dev.strataindustria.power.AxleBlock.AXIS, Direction.Axis.X), Block.UPDATE_ALL);
+            axles.add(gearbox.east());
+        }
+        ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "miller")));
+        KineticNetworks.rebuildNow(level, crankPos);
+        int[] expected = {32, 64, 0};
+        for (int i = 0; i < 3; i++) {
+            var axle = ((dev.strataindustria.power.Kinetic) level.getBlockEntity(axles.get(i))).kinetic();
+            helper.assertValueEqual(Math.round(axle.rpm()), expected[i], "RPM of axle " + (i + 1));
+            helper.assertValueEqual(axle.status(), i < 2 ? dev.strataindustria.power.KineticState.Status.RUNNING
+                    : dev.strataindustria.power.KineticState.Status.OVERSPEED, "status of axle " + (i + 1));
         }
         helper.succeed();
     }
