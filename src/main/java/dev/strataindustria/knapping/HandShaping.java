@@ -5,8 +5,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.strataindustria.StrataIndustria;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -46,6 +48,14 @@ public final class HandShaping {
     long lastBlow = Long.MIN_VALUE;
     boolean glintPending;
     Vec3 spot = Vec3.ZERO;
+
+    // The pieces shown on the surface (see ShapingView).
+    UUID workpiece;
+    UUID ghost;
+    long lastActive;
+    long relaxAt = Long.MIN_VALUE;
+    int viewBlows, viewTotal;
+    ItemStack viewMaterial, viewResult;
 
     private HandShaping(Map<String, String> last, boolean hinted) {
         this.last = new HashMap<>(last);

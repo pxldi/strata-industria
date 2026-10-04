@@ -56,6 +56,10 @@ final class ShapingGameTests {
         return helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(player.blockPosition()).inflate(8), e -> e.getItem().is(item));
     }
 
+    private static int pieces(GameTestHelper helper, FakePlayer player) {
+        return helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.Display.ItemDisplay.class, new AABB(player.blockPosition()).inflate(8)).size();
+    }
+
     private static Set<Item> results(ServerLevel level, ItemStack material) {
         Set<Item> out = new HashSet<>();
         for (RecipeHolder<KnappingRecipe> shape : Shaping.shapes(level, material)) out.add(shape.value().assemble(new net.minecraft.world.item.crafting.SingleRecipeInput(material)).getItem());
@@ -86,16 +90,20 @@ final class ShapingGameTests {
     // Four spaced blows make an axe head from flint: nothing is spent until the last one, then the head hops free.
     private static void strikes(GameTestHelper helper) {
         FakePlayer player = player(helper, new ItemStack(Items.FLINT, 16));
+        Shaping.cycle(player, HAND, 0);
+        helper.assertValueEqual(pieces(helper, player), 2, "picking a shape shows the piece and a ghost of the result");
         long t = 0;
         for (int blow = 1; blow <= 3; blow++, t += GAP) {
             Shaping.strike(player, HAND, t);
             helper.assertValueEqual(Shaping.blows(player), blow, "blows after click " + blow);
             helper.assertValueEqual(player.getMainHandItem().getCount(), 16, "a half-shaped piece costs nothing");
             helper.assertTrue(dropped(helper, player, ModItems.STONE_AXE_HEAD.get()).isEmpty(), "no head before the last blow");
+            helper.assertValueEqual(pieces(helper, player), 2, "the piece and the growing result show on the surface");
         }
         Shaping.strike(player, HAND, t);
         List<ItemEntity> heads = dropped(helper, player, ModItems.STONE_AXE_HEAD.get());
         helper.assertValueEqual(heads.size(), 1, "the head drops on the last blow");
+        helper.assertValueEqual(pieces(helper, player), 0, "the pieces go when the head is done");
         helper.assertTrue(heads.get(0).getItem().get(ModDataComponents.KNAPPED_FROM.get()).equals(new KnappedFrom(KnappedFrom.FLINT)), "the head remembers its flint");
         helper.assertValueEqual(player.getMainHandItem().getCount(), 15, "one flint spent");
         helper.assertValueEqual(Shaping.blows(player), 0, "the next piece starts fresh");

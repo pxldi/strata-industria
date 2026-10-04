@@ -33,6 +33,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.util.FakePlayer;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 
@@ -127,7 +128,10 @@ public final class Shaping {
         Optional<RecipeHolder<KnappingRecipe>> current = current(player, held);
         for (int i = 0; i < shapes.size(); i++) if (current.isPresent() && shapes.get(i).id().equals(current.get().id())) now = i;
         RecipeHolder<KnappingRecipe> next = shapes.get(Math.floorMod(now + delta, shapes.size()));
-        select(HandShaping.of(player), Knapping.kind(held), next);
+        HandShaping state = HandShaping.of(player);
+        select(state, Knapping.kind(held), next);
+        state.spot = spot(player);
+        ShapingView.show(level, state, held, next.value().assemble(new SingleRecipeInput(held.copyWithCount(1))), 0, next.value().blows(), 0.0f, level.getGameTime());
         level.playSound(null, player.blockPosition(), SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.PLAYERS, 0.3f, 1.4f);
         player.sendOverlayMessage(shapeLine(next, held));
     }
@@ -184,6 +188,8 @@ public final class Shaping {
 
         ItemStack result = recipe.assemble(new SingleRecipeInput(held.copyWithCount(1)));
         feedback(level, player, held, state, before, total, trueBlow, done);
+        if (done) ShapingView.clear(level, state);
+        else ShapingView.show(level, state, held, result, state.blows, total, 1.0f, now);
         if (done) {
             if (!player.hasInfiniteMaterials()) held.shrink(cost);
             pop(level, state.spot, result);
@@ -241,13 +247,27 @@ public final class Shaping {
         level.addFreshEntity(entity);
     }
 
+    @SubscribeEvent
+    static void onLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !(player.level() instanceof ServerLevel level)) return;
+        HandShaping state = HandShaping.existing(player);
+        if (state != null) ShapingView.clear(level, state);
+    }
+
     /** The glint at the top of the rebound, a soft tick to strike on. */
     @SubscribeEvent
     static void onPlayerTick(PlayerTickEvent.Post event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         HandShaping state = HandShaping.existing(player);
-        if (state == null || !state.glintPending) return;
+        if (state == null) return;
         long now = player.level().getGameTime();
+        if (state.workpiece != null || state.ghost != null) {
+            if (!(player.level() instanceof ServerLevel view)) return;
+            boolean away = !Knapping.isKnappable(player.getMainHandItem()) && !Knapping.isKnappable(player.getOffhandItem());
+            if (away || now - state.lastActive > ShapingView.LINGER_TICKS) ShapingView.clear(view, state);
+            else if (state.relaxAt != Long.MIN_VALUE && now >= state.relaxAt) ShapingView.relax(view, state, now);
+        }
+        if (!state.glintPending) return;
         if (now - state.lastBlow < Smithing.BEAT_TICKS) return;
         state.glintPending = false;
         if (!(player.level() instanceof ServerLevel level)) return;
