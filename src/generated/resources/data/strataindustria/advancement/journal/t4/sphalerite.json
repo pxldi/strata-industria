@@ -1,0 +1,38 @@
+{
+  "parent": "strataindustria:journal/t3/iron_anvil",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "strataindustria:small_sphalerite",
+              "strataindustria:poor_sphalerite",
+              "strataindustria:sphalerite",
+              "strataindustria:rich_sphalerite"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.sphalerite.hint"
+    },
+    "icon": {
+      "id": "strataindustria:sphalerite"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.sphalerite"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

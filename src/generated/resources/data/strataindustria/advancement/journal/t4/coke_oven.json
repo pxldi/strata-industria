@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t4/coal",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "coke_oven_built"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.coke_oven.hint"
+    },
+    "icon": {
+      "id": "strataindustria:coke_oven_door"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.coke_oven"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "strataindustria:block/treated_slab"
+    },
+    "type=double": {
+      "model": "strataindustria:block/treated_planks"
+    },
+    "type=top": {
+      "model": "strataindustria:block/treated_slab_top"
+    }
+  }
+}

@@ -2,6 +2,7 @@ package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.registry.ModSounds;
+import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.structure.StructureContent;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.SoundDefinition;
@@ -196,6 +197,19 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(StructureContent.SLAG_HEAP_STEP, definition().subtitle("subtitles.block.generic.footsteps")
                 .with(sound("minecraft:block.gravel.step", SoundDefinition.SoundType.EVENT).weight(3))
                 .with(sound("minecraft:block.amethyst_block.step", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.3f)));
+
+        // Tier 4 coke oven (spec 21): a low smouldering crackle, coke clinking down when a charge is done,
+        // and thick oil glugging into a bucket.
+        SoundDefinition smoulder = definition().subtitle(subtitle("coke_oven.working"));
+        for (int i = 1; i <= 2; i++) smoulder.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.5f).volume(0.7f));
+        smoulder.with(sound("minecraft:fire/fire").pitch(0.45f).volume(0.5f));
+        add(Tier4Sounds.COKE_OVEN_WORKING, smoulder);
+        add(Tier4Sounds.COKE_OVEN_DONE, definition().subtitle(subtitle("coke_oven.done"))
+                .with(sound("minecraft:block.basalt.place", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.8f))
+                .with(sound("minecraft:block.basalt.break", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.6f)));
+        add(Tier4Sounds.CREOSOTE_FILL, definition().subtitle(subtitle("creosote.fill"))
+                .with(sound("minecraft:item.bucket.fill_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
+                .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f)));
     }
 
     private static String subtitle(String name) {

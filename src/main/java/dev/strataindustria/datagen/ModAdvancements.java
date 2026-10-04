@@ -10,6 +10,7 @@ import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.registry.Tier4Items;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.advancements.Advancement;
@@ -146,8 +147,19 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(refine, "t3/wash", ModItems.WASHING_PAN.get(), JournalTrigger.TriggerInstance.of(Journal.WASH));
         AdvancementHolder hide = goal(waterPower, "t3/hide", ModItems.RAW_HIDE.get(), has(ModItems.RAW_HIDE.get()));
         goal(hide, "t3/leather", Items.LEATHER, AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.LEATHER));
-        goal(weld, "t3/iron_anvil", ModItems.WROUGHT_IRON_ANVIL.get(), AdvancementType.GOAL,
+        AdvancementHolder ironAnvil = goal(weld, "t3/iron_anvil", ModItems.WROUGHT_IRON_ANVIL.get(), AdvancementType.GOAL,
                 ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.WROUGHT_IRON_ANVIL.get()));
+
+        // Tier 4 spec 15.
+        AdvancementHolder coal = goal(ironAnvil, "t4/coal", Items.COAL, has(Items.COAL));
+        AdvancementHolder cokeOven = goal(coal, "t4/coke_oven", Tier4Items.COKE_OVEN_DOOR.get(),
+                JournalTrigger.TriggerInstance.of(Journal.COKE_OVEN_BUILT));
+        goal(cokeOven, "t4/coke", Tier4Items.COKE.get(), has(Tier4Items.COKE.get()));
+        goal(cokeOven, "t4/creosote", Tier4Items.TREATED_PLANKS.get(), has(Tier4Items.TREATED_PLANKS.get()));
+        List<ItemLike> sphalerite = new ArrayList<>();
+        sphalerite.add(ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get());
+        for (OreGrade grade : OreGrade.values()) sphalerite.add(ModItems.orePiece(OreMineral.SPHALERITE, grade));
+        goal(ironAnvil, "t4/sphalerite", ModItems.orePiece(OreMineral.SPHALERITE, OreGrade.NORMAL), anyOf(sphalerite));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

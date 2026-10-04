@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t4/coke_oven",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:coke"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.coke.hint"
+    },
+    "icon": {
+      "id": "strataindustria:coke"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.coke"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_coke_oven_brick": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:coke_oven_brick"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:coke_oven_bricks"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_coke_oven_brick"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:coke_oven_bricks"
+    ]
+  }
+}

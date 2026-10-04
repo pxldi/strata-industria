@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "strataindustria:coke_oven_brick",
+    "I": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "BIB",
+    "I I",
+    "BIB"
+  ],
+  "result": {
+    "id": "strataindustria:coke_oven_door"
+  }
+}
