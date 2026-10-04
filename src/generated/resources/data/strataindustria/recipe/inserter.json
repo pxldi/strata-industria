@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "G": "strataindustria:brass_gear",
+    "P": "strataindustria:wrought_iron_plate",
+    "R": "strataindustria:treated_stick"
+  },
+  "pattern": [
+    " R ",
+    " G ",
+    "PAP"
+  ],
+  "result": {
+    "id": "strataindustria:inserter"
+  }
+}

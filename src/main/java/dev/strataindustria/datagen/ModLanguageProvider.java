@@ -331,6 +331,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.BRONZE_BOILER, "Bronze Boiler");
         addBlock(Tier4Blocks.CRACKED_BRONZE_BOILER, "Cracked Bronze Boiler");
         addBlock(Tier4Blocks.CHUTE, "Chute");
+        addBlock(Tier4Blocks.INSERTER, "Inserter");
         addItem(Tier4Items.FILTER, "Filter");
         add("container." + id + ".filter", "Filter");
         String filter = id + ".filter.";
@@ -347,6 +348,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(filter + "item_hint", "%s (right-click for its tags)");
         add(filter + "tag_entry", "Anything in #%s (right-click for the next)");
         add(subtitles + "chute.drop", "Chute clatters");
+        add(subtitles + "block.inserter.swing", "Inserter whirrs");
         add(subtitles + "filter.configure", "Filter set");
         addBlock(Tier4Blocks.STEEL_BOILER_SHELL, "Steel Boiler Shell");
         addBlock(Tier4Blocks.BOILER_FLUID_PORT, "Boiler Fluid Port");
