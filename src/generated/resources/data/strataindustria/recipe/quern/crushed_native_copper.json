@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "strataindustria:native_copper",
+  "result": {
+    "id": "strataindustria:crushed_native_copper"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "strataindustria:anvil",
+  "count": 2,
+  "default_target": 100,
+  "ingredient": "strataindustria:bronze_ingot",
+  "result": {
+    "id": "strataindustria:bronze_sword_blade"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "bend",
+      "where": "second_last"
+    },
+    {
+      "hit": "bend",
+      "where": "third_last"
+    }
+  ]
+}

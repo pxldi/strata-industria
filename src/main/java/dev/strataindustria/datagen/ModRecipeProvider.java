@@ -6,11 +6,16 @@ import dev.strataindustria.crafting.ConfigCondition;
 import dev.strataindustria.crafting.KnappedToolRecipe;
 import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
+import dev.strataindustria.geology.OreGrade;
+import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.material.Metal;
+import dev.strataindustria.quern.QuernRecipe;
+import dev.strataindustria.smithing.AnvilRecipe;
+import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import java.util.List;
@@ -26,6 +31,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
@@ -65,6 +71,8 @@ final class ModRecipeProvider extends RecipeProvider {
         fire();
         planks();
         metals();
+        quern();
+        smithing();
         vanillaOverrides();
     }
 
@@ -77,6 +85,10 @@ final class ModRecipeProvider extends RecipeProvider {
         knap(ModItems.STONE_HAMMER_HEAD.get(), "#####", "#####", "..#..", ".....", ".....");
         knap(ModItems.STONE_SPEAR_HEAD.get(), "..#..", ".###.", ".###.", "..#..", "..#..");
         knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
+        // Spec 10.1: a round stone with a hole, worth four loose rocks.
+        int quernstone = GridPattern.parse(List.of(".###.", "#####", "##.##", "#####", ".###.")).getOrThrow();
+        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, quernstone, false,
+                new ItemStackTemplate(ModItems.QUERNSTONE.get())), null);
     }
 
     // Spec 4.1: the same grid, worked in five clay balls.
@@ -204,6 +216,136 @@ final class ModRecipeProvider extends RecipeProvider {
         save(key(name(planks) + suffix), recipe, RecipeCategory.BUILDING_BLOCKS, "has_logs", has(logs));
     }
 
+    // Spec 9.3: what an anvil makes from one ingot (two for a sword blade), and the rules that finish it.
+    private void smithing() {
+        for (Metal metal : Metal.values()) {
+            if (!metal.isToolMetal()) continue;
+            Item ingot = ModItems.ingot(metal);
+            String m = metal.id();
+            anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 60,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+            anvil(m + "_pickaxe_head", ingot, 1, ModItems.head(metal, MoldType.PICKAXE_HEAD), 85,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+            anvil(m + "_axe_head", ingot, 1, ModItems.head(metal, MoldType.AXE_HEAD), 75,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.UPSET, Rule.Where.THIRD_LAST));
+            anvil(m + "_shovel_head", ingot, 1, ModItems.head(metal, MoldType.SHOVEL_HEAD), 50,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+            anvil(m + "_hoe_head", ingot, 1, ModItems.head(metal, MoldType.HOE_HEAD), 65,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
+            anvil(m + "_knife_blade", ingot, 1, ModItems.head(metal, MoldType.KNIFE_BLADE), 95,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+            anvil(m + "_hammer_head", ingot, 1, ModItems.head(metal, MoldType.HAMMER_HEAD), 70,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.SHRINK, Rule.Where.NOT_LAST));
+            anvil(m + "_saw_blade", ingot, 1, ModItems.head(metal, MoldType.SAW_BLADE), 55,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST));
+            anvil(m + "_sword_blade", ingot, 2, ModItems.head(metal, MoldType.SWORD_BLADE), 100,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.THIRD_LAST));
+            anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 80,
+                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+            if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
+                Item head = ModItems.PROSPECTOR_HEADS.get(metal).get();
+                anvil(m + "_prospectors_pick_head", ingot, 1, head, 90,
+                        rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+                Item pick = ModItems.PROSPECTORS_PICKS.get(metal).get();
+                save(key(name(pick)), new MetalToolRecipe(new Recipe.CommonInfo(true),
+                        new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.EQUIPMENT, ""), new ItemStackTemplate(pick),
+                        List.of(Ingredient.of(head), Ingredient.of(Items.STICK))), RecipeCategory.TOOLS, "has_" + name(head), has(head));
+            }
+            armour(metal);
+        }
+        shaped(RecipeCategory.DECORATIONS, ModItems.BRONZE_ANVIL.get())
+                .pattern("PPP")
+                .pattern(" I ")
+                .pattern("III")
+                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
+                .define('I', ModTags.Items.ANY_BRONZE_INGOTS)
+                .unlockedBy("has_bronze_plate", has(ModTags.Items.ANY_BRONZE_PLATES))
+                .save(output, key("bronze_anvil"));
+        shapeless(RecipeCategory.TOOLS, ModItems.TONGS.get())
+                .requires(ModItems.TONGS_JAW.get())
+                .requires(Items.STICK, 2)
+                .unlockedBy("has_tongs_jaw", has(ModItems.TONGS_JAW.get()))
+                .save(output, key("tongs"));
+    }
+
+    // Spec 8.4: armour from plates over fibre cloth, 14 plates a set.
+    private void armour(Metal metal) {
+        Item plate = ModItems.PLATES.get(metal).get();
+        Item cloth = ModItems.FIBRE_CLOTH.get();
+        var pieces = ModItems.ARMOUR.get(metal);
+        // Shapes from the spec table: helmet, chestplate, leggings, boots.
+        String[][] shapes = {{"PPP", " C "}, {"P P", "PCP", " P "}, {"PCP", "P P"}, {"PCP"}};
+        var types = ModItems.armourTypes();
+        for (int i = 0; i < types.length; i++) {
+            Item piece = pieces.get(types[i]).get();
+            var builder = shaped(RecipeCategory.COMBAT, piece).define('P', plate).define('C', cloth);
+            for (String row : shapes[i]) builder.pattern(row);
+            String path = metal.isVanilla() ? metal.id() + "_" + types[i].getName() + "_from_plates" : name(piece);
+            builder.unlockedBy("has_plate", has(plate)).save(output, key(path));
+        }
+    }
+
+    private static Rule rule(Rule.Kind kind, Rule.Where where) {
+        return Rule.of(kind, where);
+    }
+
+    private void anvil(String path, Item input, int count, Item result, int defaultTarget, Rule... rules) {
+        output.accept(key("anvil/" + path), new AnvilRecipe(Ingredient.of(input), count, new ItemStackTemplate(result),
+                List.of(rules), defaultTarget), null);
+    }
+
+    // Spec 10.1: the quern, and what it grinds.
+    private void quern() {
+        shaped(RecipeCategory.DECORATIONS, ModItems.QUERN.get())
+                .pattern("S")
+                .pattern("Q")
+                .pattern("Q")
+                .define('S', Items.STICK)
+                .define('Q', ModItems.QUERNSTONE.get())
+                .unlockedBy("has_quernstone", has(ModItems.QUERNSTONE.get()))
+                .save(output, key("quern"));
+        for (OreMineral mineral : OreMineral.values()) {
+            for (OreGrade grade : OreGrade.values()) {
+                Item crushed = ModItems.crushedOre(mineral, grade);
+                grind(name(crushed), Ingredient.of(ModItems.orePiece(mineral, grade)), crushed, 1);
+            }
+        }
+        grind("bone_meal", Ingredient.of(Items.BONE), Items.BONE_MEAL, 4);
+        // Every vanilla flower that crafts into a dye gives two of it.
+        flower(Items.DANDELION, Items.DYE.pick(DyeColor.YELLOW));
+        flower(Items.POPPY, Items.DYE.pick(DyeColor.RED));
+        flower(Items.BLUE_ORCHID, Items.DYE.pick(DyeColor.LIGHT_BLUE));
+        flower(Items.ALLIUM, Items.DYE.pick(DyeColor.MAGENTA));
+        flower(Items.AZURE_BLUET, Items.DYE.pick(DyeColor.LIGHT_GRAY));
+        flower(Items.RED_TULIP, Items.DYE.pick(DyeColor.RED));
+        flower(Items.ORANGE_TULIP, Items.DYE.pick(DyeColor.ORANGE));
+        flower(Items.WHITE_TULIP, Items.DYE.pick(DyeColor.LIGHT_GRAY));
+        flower(Items.PINK_TULIP, Items.DYE.pick(DyeColor.PINK));
+        flower(Items.OXEYE_DAISY, Items.DYE.pick(DyeColor.LIGHT_GRAY));
+        flower(Items.CORNFLOWER, Items.DYE.pick(DyeColor.BLUE));
+        flower(Items.LILY_OF_THE_VALLEY, Items.DYE.pick(DyeColor.WHITE));
+        flower(Items.WITHER_ROSE, Items.DYE.pick(DyeColor.BLACK));
+        flower(Items.SUNFLOWER, Items.DYE.pick(DyeColor.YELLOW));
+        flower(Items.LILAC, Items.DYE.pick(DyeColor.MAGENTA));
+        flower(Items.ROSE_BUSH, Items.DYE.pick(DyeColor.RED));
+        flower(Items.PEONY, Items.DYE.pick(DyeColor.PINK));
+        flower(Items.TORCHFLOWER, Items.DYE.pick(DyeColor.ORANGE));
+        flower(Items.PITCHER_PLANT, Items.DYE.pick(DyeColor.CYAN));
+        flower(Items.PINK_PETALS, Items.DYE.pick(DyeColor.PINK));
+        flower(Items.CLOSED_EYEBLOSSOM, Items.DYE.pick(DyeColor.GRAY));
+        flower(Items.OPEN_EYEBLOSSOM, Items.DYE.pick(DyeColor.ORANGE));
+        flower(Items.WILDFLOWERS, Items.DYE.pick(DyeColor.YELLOW));
+        flower(Items.CACTUS_FLOWER, Items.DYE.pick(DyeColor.PINK));
+    }
+
+    private void flower(Item flower, Item dye) {
+        grind(name(dye) + "_from_" + name(flower), Ingredient.of(flower), dye, 2);
+    }
+
+    private void grind(String path, Ingredient input, Item result, int count) {
+        output.accept(key("quern/" + path), new QuernRecipe(input, new ItemStackTemplate(result, count), QuernRecipe.DEFAULT_TICKS), null);
+    }
+
     // Spec 6.1 and 8.1: nuggets, and metal tools from a cast head and a stick.
     private void metals() {
         for (Metal metal : Metal.values()) {
@@ -251,6 +393,18 @@ final class ModRecipeProvider extends RecipeProvider {
         RecipeOutput stoneTools = whenOff("vanilla.removeStoneTools");
         vanillaToolSet(stoneTools, ItemTags.STONE_TOOL_MATERIALS, "has_cobblestone",
                 Items.STONE_PICKAXE, Items.STONE_AXE, Items.STONE_SHOVEL, Items.STONE_HOE, Items.STONE_SWORD, Items.STONE_SPEAR);
+
+        // Copper armour comes from plates while the switch is on.
+        RecipeOutput copperArmour = whenOff("vanilla.replaceCopperGear");
+        Criterion<?> hasCopper = has(ItemTags.COPPER_TOOL_MATERIALS);
+        shaped(RecipeCategory.COMBAT, Items.COPPER_HELMET).define('X', Items.COPPER_INGOT).pattern("XXX").pattern("X X")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_HELMET));
+        shaped(RecipeCategory.COMBAT, Items.COPPER_CHESTPLATE).define('X', Items.COPPER_INGOT).pattern("X X").pattern("XXX").pattern("XXX")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_CHESTPLATE));
+        shaped(RecipeCategory.COMBAT, Items.COPPER_LEGGINGS).define('X', Items.COPPER_INGOT).pattern("XXX").pattern("X X").pattern("X X")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_LEGGINGS));
+        shaped(RecipeCategory.COMBAT, Items.COPPER_BOOTS).define('X', Items.COPPER_INGOT).pattern("X X").pattern("X X")
+                .unlockedBy("has_copper_ingot", hasCopper).save(copperArmour, vanillaKey(Items.COPPER_BOOTS));
 
         // Copper tools come from cast heads; the copper spear has no mold and keeps its recipe.
         // Armour is handled with the plates.

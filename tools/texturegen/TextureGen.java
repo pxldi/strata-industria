@@ -1235,6 +1235,287 @@ public final class TextureGen {
         return im;
     }
 
+    /** Stone anvil face: the rock dressed flat, a smoother worked centre with a chiselled border. */
+    static BufferedImage stoneAnvilTop(Rock rock) {
+        BufferedImage im = rock(rock);
+        Ramp p = rock.ramp();
+        double[][] n = fractal(rock.name().hashCode() * 7L + 3);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                boolean edge = x == 0 || y == 0 || x == 15 || y == 15;
+                boolean border = x == 1 || y == 1 || x == 14 || y == 14;
+                if (edge) px(im, x, y, p.get(y == 0 || x == 0 ? 4 : 2));
+                else if (border) px(im, x, y, p.get((x + y) % 3 == 0 ? 2 : 3));
+                else if (x >= 3 && x <= 12 && y >= 3 && y <= 12) px(im, x, y, p.get(n[y][x] > 0.62 ? 5 : 4));
+            }
+        // A few bright hammer marks on the working face.
+        px(im, 5, 6, p.get(5));
+        px(im, 9, 4, p.get(5));
+        px(im, 10, 10, p.get(5));
+        return im;
+    }
+
+    /** Bronze anvil body: cast bronze with a soft vertical sheen. */
+    static BufferedImage bronzeAnvilBody() {
+        double[][] n = fractal(4141);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.6 ? 4 : n[y][x] < 0.35 ? 2 : 3;
+                if (x == 3 || x == 4) step = Math.min(5, step + 1);
+                px(im, x, y, BRONZE.get(step));
+            }
+        return im;
+    }
+
+    /** Bronze anvil face: polished from use, lighter in the middle. */
+    static BufferedImage bronzeAnvilTop() {
+        double[][] n = fractal(4242);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.abs(x - 7.5) / 8 + Math.abs(y - 7.5) / 16;
+                int step = d < 0.45 ? 5 : d < 0.75 ? 4 : 3;
+                if (n[y][x] < 0.3) step--;
+                px(im, x, y, BRONZE.get(Math.max(2, step)));
+            }
+        im.setRGB(7, 6, 0xff000000 | BRONZE.spec());
+        return im;
+    }
+
+    static final String[] TONGS_JAW_ITEM = {
+            "................",
+            "................",
+            "................",
+            "...45......45...",
+            "...443....443...",
+            "....43....43....",
+            ".....43..43.....",
+            "......4334......",
+            "......3s23......",
+            ".....32..32.....",
+            "....32....32....",
+            "...32......32...",
+            "................",
+            "................",
+            "................",
+            "................",
+    };
+
+    /** Tongs: bronze jaws and pivot at the top right, two wooden handles running down to the bottom left. */
+    static final String[] TONGS_ITEM = {
+            "................",
+            "............45..",
+            "..........4453..",
+            "..........43....",
+            ".........s3..45.",
+            "........432.443.",
+            ".......d3.443...",
+            "......dc.432....",
+            ".....dc.d3......",
+            "....dc.dc.......",
+            "...dc.dc........",
+            "..dc.dc.........",
+            ".dc.dc..........",
+            ".c..c...........",
+            "................",
+            "................",
+    };
+
+    static BufferedImage tongs() {
+        return map(BRONZE, WOOD, TONGS_ITEM);
+    }
+
+    // ---------------------------------------------------------------- armour (spec 8.4)
+
+    /**
+     * Fills a face of an armour layer with overlapping plates: bands three pixels tall, lit along
+     * their top edge, with seams that step over band to band and a rivet now and then.
+     */
+    static void plates(BufferedImage im, Ramp a, int x0, int y0, int w, int h, int fromRow, int toRow, long seed) {
+        Random r = new Random(seed);
+        for (int y = Math.max(0, fromRow); y < Math.min(h, toRow); y++) {
+            int band = (y - fromRow) / 3, inBand = (y - fromRow) % 3;
+            for (int x = 0; x < w; x++) {
+                int step = inBand == 0 ? 4 : inBand == 1 ? 3 : 2;
+                if ((x + band * 2) % 4 == 3) step = Math.max(1, step - 1);
+                if (inBand == 0 && x == w - 1) step = 3;
+                int c = a.get(step);
+                if (inBand == 1 && (x + band * 2) % 4 == 1 && r.nextInt(3) == 0) c = a.spec() != 0 ? a.spec() : a.get(5);
+                im.setRGB(x0 + x, y0 + y, 0xff000000 | c);
+            }
+        }
+    }
+
+    /** Fibre cloth padding peeking out under the plates. */
+    static void padding(BufferedImage im, int x0, int y0, int w, int fromRow, int toRow) {
+        for (int y = fromRow; y < toRow; y++)
+            for (int x = 0; x < w; x++) im.setRGB(x0 + x, y0 + y, 0xff000000 | FIBRE.get(((x + y) & 1) == 0 ? 3 : 2));
+    }
+
+    /** The helmet, chestplate and boots layer (64 x 32, vanilla humanoid layout). */
+    static BufferedImage armourLayer(Ramp a) {
+        BufferedImage im = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
+        // Helmet: top, then right, front, left and back of the head.
+        plates(im, a, 8, 0, 8, 8, 0, 8, 1);
+        for (int f = 0; f < 4; f++) plates(im, a, f * 8, 8, 8, 8, 0, 6, 2 + f);
+        // Cheek guards at the front corners, and a nose guard over an open face.
+        for (int f = 0; f < 4; f++) {
+            int x0 = f * 8;
+            for (int y = 14; y < 16; y++)
+                for (int x = 0; x < 8; x++) {
+                    boolean guard = f == 1 ? (x < 2 || x > 5) : f == 3 ? false : (f == 0 ? x > 4 : x < 3);
+                    if (guard) im.setRGB(x0 + x, y, 0xff000000 | a.get(y == 14 ? 3 : 2));
+                }
+        }
+        for (int y = 12; y < 15; y++) im.setRGB(11, y, 0xff000000 | a.get(y == 12 ? 4 : 3));
+        for (int y = 12; y < 15; y++) im.setRGB(12, y, 0xff000000 | a.get(2));
+        for (int y = 12; y < 14; y++)
+            for (int x = 8; x < 16; x++) if (x < 10 || x > 13) im.setRGB(x, y, 0xff000000 | a.get(3));
+        // Chestplate: body top, then right, front, left and back; the bottom rows are padding.
+        plates(im, a, 20, 16, 8, 4, 0, 4, 7);
+        int[][] body = {{16, 4}, {20, 8}, {28, 4}, {32, 8}};
+        for (int[] face : body) {
+            plates(im, a, face[0], 20, face[1], 12, 0, 10, face[0]);
+            padding(im, face[0], 20, face[1], 10, 12);
+        }
+        // Pauldrons on the arms.
+        plates(im, a, 44, 16, 4, 4, 0, 4, 9);
+        for (int f = 0; f < 4; f++) {
+            plates(im, a, 40 + f * 4, 20, 4, 12, 0, 5, 10 + f);
+            padding(im, 40 + f * 4, 20, 4, 5, 6);
+        }
+        // Boots: the lower legs, with a cloth cuff.
+        for (int f = 0; f < 4; f++) {
+            padding(im, f * 4, 20, 4, 6, 7);
+            plates(im, a, f * 4, 20, 4, 12, 7, 12, 20 + f);
+        }
+        plates(im, a, 8, 16, 4, 4, 0, 4, 24);
+        return im;
+    }
+
+    /** The leggings layer: a belt over the hips and plated thighs. */
+    static BufferedImage leggingsLayer(Ramp a) {
+        BufferedImage im = new BufferedImage(64, 32, BufferedImage.TYPE_INT_ARGB);
+        int[][] body = {{16, 4}, {20, 8}, {28, 4}, {32, 8}};
+        for (int[] face : body) {
+            padding(im, face[0], 20, face[1], 8, 10);
+            for (int x = 0; x < face[1]; x++) {
+                im.setRGB(face[0] + x, 30, 0xff000000 | a.get(4));
+                im.setRGB(face[0] + x, 31, 0xff000000 | a.get(2));
+            }
+        }
+        im.setRGB(23, 30, 0xff000000 | (a.spec() != 0 ? a.spec() : a.get(5)));
+        for (int f = 0; f < 4; f++) {
+            plates(im, a, f * 4, 20, 4, 12, 0, 9, 30 + f);
+            padding(im, f * 4, 20, 4, 9, 10);
+        }
+        plates(im, a, 4, 16, 4, 4, 0, 4, 34);
+        return im;
+    }
+
+    static final String[] HELMET_ITEM = {
+            "................",
+            "................",
+            "................",
+            "....44455544....",
+            "...4444444443...",
+            "..443333333332..",
+            "..43........32..",
+            "..43........32..",
+            "..432......332..",
+            "...3........2...",
+            "................",
+    };
+    static final String[] CHESTPLATE_ITEM = {
+            "..445....544...",
+            ".4444455444433.",
+            ".4444444444433.",
+            "..34444444433..",
+            "...444444443...",
+            "...333333332...",
+            "...444444443...",
+            "...333333332...",
+            "...ccccccccb...",
+            "...cbcbcbcbb...",
+    };
+    static final String[] LEGGINGS_ITEM = {
+            "..cccccccccb..",
+            "..4444554443..",
+            "..4433..3332..",
+            "..443....332..",
+            "..333....222..",
+            "..443....332..",
+            "..333....222..",
+            "..cbc....cbb..",
+    };
+    static final String[] BOOTS_ITEM = {
+            "..cbc....cbc...",
+            "..443....443...",
+            "..443....443...",
+            "..4433...44433.",
+            ".44333..443332.",
+            ".33222..332221.",
+    };
+
+    /** Quern stone side: dressed granite with horizontal tooling marks and a worn top edge. */
+    static BufferedImage quernSide() {
+        double[][] n = fractal(5151);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.62 ? 4 : n[y][x] < 0.38 ? 2 : 3;
+                // Chisel marks run round the stone.
+                if ((y == 2 || y == 8 || y == 13) && (x * 7 + y) % 5 != 0) step = Math.max(2, step - 1);
+                if (y == 0 || y == 7 || y == 11) step = 4;
+                if (y == 6 || y == 10 || y == 15) step = 2;
+                px(im, x, y, GRANITE.get(step));
+            }
+        return im;
+    }
+
+    /** Quern stone face: the grinding surface dressed with radial furrows, lighter where it is worn. */
+    static BufferedImage quernFace(long seed, boolean hole) {
+        double[][] n = fractal(seed);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x - 7.5, dy = y - 7.5;
+                double r = Math.sqrt(dx * dx + dy * dy);
+                double a = Math.atan2(dy, dx);
+                int step = n[y][x] > 0.6 ? 4 : 3;
+                // Eight furrows, each a little skewed like real millstone dressing.
+                double sector = (a + r * 0.12) / (Math.PI / 4);
+                if (Math.abs(sector - Math.round(sector)) < 0.12 && r > 2.5) step = 2;
+                if (r > 6.8) step = Math.min(step, 3);
+                if (r < 4.2 && !hole) step = Math.max(step, 4);
+                if (hole && r < 1.9) step = 1;
+                else if (hole && r < 2.9) step = 2;
+                px(im, x, y, GRANITE.get(step));
+            }
+        return im;
+    }
+
+    /** A plain quernstone item: a round slab with its centre hole, seen at an angle. */
+    static final String[] QUERNSTONE_ITEM = {
+            "................",
+            "................",
+            "................",
+            "................",
+            ".....444445.....",
+            "...4455555554...",
+            "..445554455543..",
+            "..445542245543..",
+            "..344554455433..",
+            "..33444444443...",
+            "..2333333333322.",
+            "...22333333322..",
+            ".....2222222....",
+            "................",
+            "................",
+            "................",
+    };
+
     /** Crucible wall: refractory clay, sooty towards the base where it sits in the coals. */
     static BufferedImage crucibleSide() {
         double[][] n = fractal(8282);
@@ -1444,6 +1725,118 @@ public final class TextureGen {
         for (int row = 0; row < 3; row++)
             for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 128 + row * 18);
         for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 186);
+        return im;
+    }
+
+    /** Anvil (spec 9.2): workpiece, plans, work bar, eight hit buttons, rule and recent-hit boxes. */
+    static BufferedImage anvilGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 234);
+        slot(im, 8, 27);
+        slot(im, 152, 27);
+        for (int i = 0; i < 12; i++) slot(im, 30 + (i % 6) * 18, 18 + (i / 6) * 18);
+        well(im, 25, 26, 4, 18, 0x2a2a2a);
+        // A small arrow from the plans to the finished piece.
+        for (int j = 0; j < 7; j++) {
+            int d = Math.abs(j - 3);
+            for (int i = 0; i < 9 - d; i++) if (i < 5 ? d <= 1 : true) im.setRGB(139 + i, 32 + j, 0xff000000 | SLOT_FILL);
+        }
+        // Work bar: 0 to 150 with a notch every 25.
+        well(im, 12, 60, 152, 8, 0x2a2a2a);
+        for (int t = 25; t < 150; t += 25) fill(im, 13 + t, 68, 1, 2, t % 50 == 0 ? GUI_SHADOW : SLOT_FILL);
+        for (int i = 0; i < 3; i++) {
+            well(im, 8 + i * 20, 106, 18, 18, SLOT_FILL);
+            well(im, 116 + i * 18, 106, 18, 18, SLOT_FILL);
+        }
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 152 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 210);
+
+        // Sprites: button faces (normal, hovered, disabled), then the hit icons.
+        int[] faces = {0xa8a8a8, 0xc8c8d8, 0x6e6e6e};
+        for (int b = 0; b < 3; b++) {
+            int x0 = 176 + b * 18;
+            fill(im, x0, 0, 18, 18, faces[b]);
+            fill(im, x0, 0, 18, 1, 0x000000);
+            fill(im, x0, 17, 18, 1, 0x000000);
+            fill(im, x0, 0, 1, 18, 0x000000);
+            fill(im, x0 + 17, 0, 1, 18, 0x000000);
+            fill(im, x0 + 1, 1, 16, 1, b == 2 ? 0x8a8a8a : 0xffffff);
+            fill(im, x0 + 1, 1, 1, 16, b == 2 ? 0x8a8a8a : 0xffffff);
+            fill(im, x0 + 1, 16, 16, 1, b == 2 ? 0x4a4a4a : 0x555555);
+            fill(im, x0 + 16, 1, 1, 16, b == 2 ? 0x4a4a4a : 0x555555);
+        }
+        int[] red = {0x5a1a10, 0xa0281a, 0xe0603a};
+        int[] green = {0x1e4a1e, 0x3a8a3a, 0x7ac07a};
+        for (int i = 0; i < 8; i++) {
+            BufferedImage icon = hitIcon(i < 4 ? red : green, i < 4, i % 4);
+            im.getGraphics().drawImage(icon, 176 + (i % 4) * 16, 18 + (i / 4) * 16, null);
+        }
+        im.getGraphics().drawImage(anyHitIcon(), 240, 18, null);
+        return im;
+    }
+
+    /**
+     * A hit icon: chevrons pointing the way the hit moves the workpiece, one to three by strength;
+     * the fourth of each group (draw, shrink) is a big chevron against a stop bar.
+     */
+    static BufferedImage hitIcon(int[] c, boolean left, int strength) {
+        // Drawn pointing left, then mirrored for the right-hand group.
+        BufferedImage im = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        java.util.function.BiConsumer<Integer, Integer> chevron = (tip, size) -> {
+            for (int k = -size; k <= size; k++) {
+                int x = tip + Math.abs(k), y = 8 + k;
+                im.setRGB(x, y, 0xff000000 | c[1]);
+                im.setRGB(x + 1, y, 0xff000000 | (k < 0 ? c[2] : c[1]));
+                if (x + 2 < 16) im.setRGB(x + 2, y, 0xff000000 | c[0]);
+            }
+        };
+        if (strength < 3) {
+            int n = strength + 1;
+            int start = (16 - ((n - 1) * 4 + 5)) / 2;
+            for (int j = 0; j < n; j++) chevron.accept(start + j * 4, 4);
+        } else {
+            chevron.accept(6, 5);
+            for (int y = 2; y <= 13; y++) {
+                im.setRGB(3, y, 0xff000000 | c[1]);
+                im.setRGB(4, y, 0xff000000 | c[0]);
+            }
+        }
+        if (left) return im;
+        BufferedImage mirrored = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) mirrored.setRGB(15 - x, y, im.getRGB(x, y));
+        return mirrored;
+    }
+
+    /** "Any hit" for rules: a small grey hammer. */
+    static BufferedImage anyHitIcon() {
+        String[] rows = {
+                "................",
+                "................",
+                "......5554......",
+                ".....455443.....",
+                ".....444433.....",
+                "......2332......",
+                ".......a........",
+                ".......b........",
+                ".......a........",
+                ".......b........",
+                ".......a........",
+                ".......b........",
+                "................",
+                "................",
+                "................",
+                "................",
+        };
+        BufferedImage im = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        Ramp metal = ramp(0, 0x3a3d48, 0x5c6170, 0x838998, 0xaeb4c0, 0xd6dbe2);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                char ch = rows[y].charAt(x);
+                if (ch >= '1' && ch <= '5') im.setRGB(x, y, 0xff000000 | metal.get(ch - '0'));
+                else if (ch == 'a') im.setRGB(x, y, 0xff000000 | WOOD.get(4));
+                else if (ch == 'b') im.setRGB(x, y, 0xff000000 | WOOD.get(3));
+            }
         return im;
     }
 
@@ -1714,7 +2107,35 @@ public final class TextureGen {
             }
         }
         save("item/slag_metal_ingot", map(SLAG, INGOT));
+        for (Metal metal : METALS) {
+            String n = metal.name();
+            if (!n.contains("bronze")) continue;
+            saveRaw("entity/equipment/humanoid/" + n, armourLayer(metal.ramp()));
+            saveRaw("entity/equipment/humanoid_leggings/" + n, leggingsLayer(metal.ramp()));
+            save("item/" + n + "_helmet", map(metal.ramp(), FIBRE, HELMET_ITEM));
+            save("item/" + n + "_chestplate", map(metal.ramp(), FIBRE, CHESTPLATE_ITEM));
+            save("item/" + n + "_leggings", map(metal.ramp(), FIBRE, LEGGINGS_ITEM));
+            save("item/" + n + "_boots", map(metal.ramp(), FIBRE, BOOTS_ITEM));
+            save("item/" + n + "_prospectors_pick_head", map(metal.ramp(), PROSPECTOR_HEAD));
+            save("item/" + n + "_prospectors_pick", tool(metal.ramp(), WOOD, null, "prospectors_pick"));
+        }
         saveRaw("gui/crucible", crucibleGui());
+
+        saveRaw("gui/anvil", anvilGui());
+        for (Rock rock : ROCKS) {
+            if (rock.category().equals("intrusive") || rock.category().equals("extrusive"))
+                save("block/" + rock.name() + "_anvil_top", stoneAnvilTop(rock));
+        }
+        save("block/bronze_anvil", bronzeAnvilBody());
+        save("block/bronze_anvil_top", bronzeAnvilTop());
+        save("item/tongs_jaw", map(BRONZE, TONGS_JAW_ITEM));
+        save("item/tongs", tongs());
+
+        // Quern (spec 10.1).
+        save("block/quern_side", quernSide());
+        save("block/quern_top", quernFace(5252, false));
+        save("block/quern_runner", quernFace(5353, true));
+        save("item/quernstone", art(GRANITE, QUERNSTONE_ITEM));
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");

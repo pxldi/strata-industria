@@ -102,6 +102,16 @@ final class ModItemTagsProvider extends ItemTagsProvider {
                 tag(ModTags.Items.ANY_BRONZE_PLATES).add(ModItems.PLATES.get(metal).getKey());
             }
             if (!metal.isToolMetal()) continue;
+            if (!metal.isVanilla()) {
+                var armour = ModItems.ARMOUR.get(metal);
+                tag(ItemTags.HEAD_ARMOR).add(key(armour.get(net.minecraft.world.item.equipment.ArmorType.HELMET).get()));
+                tag(ItemTags.CHEST_ARMOR).add(key(armour.get(net.minecraft.world.item.equipment.ArmorType.CHESTPLATE).get()));
+                tag(ItemTags.LEG_ARMOR).add(key(armour.get(net.minecraft.world.item.equipment.ArmorType.LEGGINGS).get()));
+                tag(ItemTags.FOOT_ARMOR).add(key(armour.get(net.minecraft.world.item.equipment.ArmorType.BOOTS).get()));
+            }
+            if (ModItems.PROSPECTORS_PICKS.containsKey(metal)) {
+                tag(ItemTags.PICKAXES).add(ModItems.PROSPECTORS_PICKS.get(metal).getKey());
+            }
             for (MoldType type : MoldType.values()) {
                 Item tool = ModItems.tool(metal, type);
                 if (metal.isVanilla() && tool.builtInRegistryHolder().key().identifier().getNamespace().equals("minecraft")) continue;

@@ -1,5 +1,7 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.quern.QuernBlock;
+import dev.strataindustria.smithing.AnvilBlock;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.block.GroundCoverBlock;
 import dev.strataindustria.block.OreBlock;
@@ -29,6 +31,8 @@ public final class ModBlocks {
 
     /** Raw rock, the stone that replaces vanilla stone. */
     public static final Map<Rock, DeferredBlock<Block>> RAW_ROCK = new EnumMap<>(Rock.class);
+    /** Stone anvils dressed from raw igneous rock (spec 9.1); only igneous rocks have one. */
+    public static final Map<Rock, DeferredBlock<AnvilBlock>> STONE_ANVILS = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredBlock<Block>> COBBLED_ROCK = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredBlock<GroundCoverBlock>> LOOSE_ROCK = new EnumMap<>(Rock.class);
     /** Ore blocks for every (rock, mineral) pair; the grade is a blockstate. */
@@ -73,6 +77,25 @@ public final class ModBlocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.POPPED));
 
+    /** Hand quern (spec 10.1). */
+    public static final DeferredBlock<QuernBlock> QUERN = BLOCKS.registerBlock("quern",
+            QuernBlock::new,
+            p -> p.mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.POPPED));
+
+    /** Bronze anvil (spec 9.1): tier 3, the tier 2 exit item. */
+    public static final DeferredBlock<AnvilBlock> BRONZE_ANVIL = BLOCKS.registerBlock("bronze_anvil", p -> new AnvilBlock(3, false, p),
+            p -> p.mapColor(MapColor.COLOR_ORANGE)
+                    .strength(5.0f, 1200.0f)
+                    .sound(SoundType.ANVIL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.IMMOVEABLE));
+
     /** Logs stacked for a charcoal pit (spec 4.4). */
     public static final DeferredBlock<LogPileBlock> LOG_PILE = BLOCKS.registerBlock("log_pile", LogPileBlock::new,
             p -> p.mapColor(MapColor.WOOD)
@@ -103,6 +126,15 @@ public final class ModBlocks {
                     .strength(rock.hardness(), rock.hardness() * 4)
                     .requiresCorrectToolForDrops()
                     .sound(SoundType.STONE)));
+            if (rock.category().isIgneous()) {
+                STONE_ANVILS.put(rock, BLOCKS.registerBlock(rock.id() + "_anvil", p -> new AnvilBlock(2, true, p), p -> p
+                        .mapColor(rock.mapColor())
+                        .instrument(NoteBlockInstrument.BASEDRUM)
+                        .strength(rock.hardness(), rock.hardness() * 4)
+                        .requiresCorrectToolForDrops()
+                        .sound(SoundType.STONE)
+                        .pushReaction(PushReaction.IMMOVEABLE)));
+            }
             COBBLED_ROCK.put(rock, BLOCKS.registerSimpleBlock("cobbled_" + rock.id(), p -> p
                     .mapColor(rock.mapColor())
                     .instrument(NoteBlockInstrument.BASEDRUM)

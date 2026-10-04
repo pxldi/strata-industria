@@ -1,0 +1,7 @@
+{
+  "parent": "strataindustria:block/template_stone_anvil",
+  "textures": {
+    "side": "strataindustria:block/rhyolite",
+    "top": "strataindustria:block/rhyolite_anvil_top"
+  }
+}

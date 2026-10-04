@@ -73,6 +73,16 @@ final class ModBlockLoot extends BlockLootSubProvider {
         crucible();
         charcoalPile();
         dropSelf(ModBlocks.FORGE.get());
+        dropSelf(ModBlocks.QUERN.get());
+        // Spec 9.1: a stone anvil cannot be picked up and breaks back into two loose rocks.
+        for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
+            Block anvil = entry.getValue().get();
+            add(anvil, LootTable.lootTable().withPool(applyExplosionCondition(anvil, LootPool.lootPool()
+                    .setRolls(ContextIntProviders.exactly(1))
+                    .add(LootItem.lootTableItem(ModItems.LOOSE_ROCK.get(entry.getKey()).get())
+                            .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))))));
+        }
+        dropSelf(ModBlocks.BRONZE_ANVIL.get());
     }
 
     /** The crucible keeps its pieces, its melt and its heat when picked up, like a shulker box. */

@@ -91,6 +91,9 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.CHARCOAL_PILE, "Charcoal Pile");
         addItem(ModItems.ASH, "Ash");
         addBlock(ModBlocks.FORGE, "Forge");
+        addBlock(ModBlocks.QUERN, "Quern");
+        smithing();
+        addItem(ModItems.QUERNSTONE, "Quernstone");
         add("container." + StrataIndustria.MOD_ID + ".forge", "Forge");
         metals();
         String kiln = StrataIndustria.MOD_ID + ".pit_kiln.";
@@ -110,6 +113,13 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "heat.quench", "Hot metal hisses");
         add(subtitles + "forge.ignite", "Forge catches");
         add(subtitles + "crucible.melt", "Metal melts");
+        add(subtitles + "quern.grind", "Quern grinds");
+        add(subtitles + "anvil.hit", "Hammer rings");
+        add(subtitles + "prospect", "Pick taps rock");
+        add(subtitles + "anvil.done", "Piece finished");
+        add(subtitles + "anvil.dress", "Stone dressed");
+        add(subtitles + "quern.load", "Quern loaded");
+        add(subtitles + "quern.done", "Quern spills ground");
         add(subtitles + "crucible.pour", "Molten metal pours");
         add(subtitles + "mold.knock", "Cast knocked out");
         add(subtitles + "mold.break", "Mold cracks");
@@ -175,6 +185,43 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "casting", "Casting");
         add(config + "ingotMoldBreak", "Ingot mold break chance");
         add(config + "toolMoldBreak", "Tool mold break chance");
+        add(config + "smithing", "Smithing");
+        add(config + "randomTargets", "Random targets per world");
+    }
+
+    /** Spec 9: anvils, the smithing screen, and tongs. */
+    private void smithing() {
+        String id = StrataIndustria.MOD_ID;
+        for (var entry : ModBlocks.STONE_ANVILS.entrySet()) addBlock(entry.getValue(), title(entry.getKey().id()) + " Anvil");
+        addBlock(ModBlocks.BRONZE_ANVIL, "Bronze Anvil");
+        addItem(ModItems.TONGS_JAW, "Tongs Jaw");
+        addItem(ModItems.TONGS, "Tongs");
+        add("container." + id + ".anvil", "Anvil");
+        String status = id + ".anvil.status.";
+        add(status + "empty", "Put a heated workpiece in");
+        add(status + "choose", "Pick what to make");
+        add(status + "ready", "Hits so far: %s");
+        add(status + "too_cold", "Too cold to work");
+        add(status + "no_hammer", "Needs a hammer in your hotbar");
+        add(status + "too_weak", "This anvil cannot work that metal");
+        add(status + "output_full", "Take the finished piece out first");
+        add(status + "not_enough", "Needs more of that metal");
+        add(status + "no_plan", "Nothing can be smithed from that");
+        add(id + ".anvil.out_of_range", "That would overwork it");
+        add(id + ".anvil.rules", "Rules");
+        add(id + ".anvil.recent", "Last hits");
+        add(id + ".anvil.rule", "%s %s");
+        for (var hit : dev.strataindustria.smithing.HitType.values()) {
+            add(id + ".anvil.hit." + hit.id(), title(hit.id()) + " (%s)");
+        }
+        for (var kind : dev.strataindustria.smithing.Rule.Kind.values()) {
+            add(id + ".anvil.kind." + kind.getSerializedName(), title(kind.getSerializedName()));
+        }
+        add(id + ".anvil.where.last", "last");
+        add(id + ".anvil.where.second_last", "second last");
+        add(id + ".anvil.where.third_last", "third last");
+        add(id + ".anvil.where.not_last", "not last");
+        add(id + ".anvil.where.any", "any of the last three");
     }
 
     /** Spec 6 to 8: metal names, the crucible screen, molds, cast parts and tools. */
@@ -191,6 +238,15 @@ final class ModLanguageProvider extends LanguageProvider {
             }
             if (!metal.isToolMetal()) continue;
             addItem(ModItems.PLATES.get(metal), name + " Plate");
+            if (!metal.isVanilla()) {
+                for (var piece : ModItems.ARMOUR.get(metal).entrySet()) {
+                    add(piece.getValue().get(), name + " " + title(piece.getKey().getName()));
+                }
+            }
+            if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
+                addItem(ModItems.PROSPECTOR_HEADS.get(metal), name + " Prospector's Pick Head");
+                addItem(ModItems.PROSPECTORS_PICKS.get(metal), name + " Prospector's Pick");
+            }
             for (MoldType type : MoldType.values()) {
                 addItem(ModItems.HEADS.get(metal).get(type), name + " " + title(type.id()));
                 var tool = ModItems.TOOLS.get(metal).get(type);
@@ -220,6 +276,15 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".mold.contents", "Holds %s (%s units)");
         add(id + ".mold.still_molten", "The metal is still molten. Let it cool first");
         add(id + ".mold.broke", "The mold cracked apart");
+        String prospect = id + ".prospect.";
+        add(prospect + "nothing", "No ore nearby");
+        String[][] sizes = {{"traces", "Traces of %s", "traces of %s"}, {"small", "Small %s", "small %s"},
+                {"medium", "Medium %s", "medium %s"}, {"large", "Large %s", "large %s"}, {"very_large", "Very large %s", "very large %s"}};
+        for (String[] size : sizes) {
+            add(prospect + size[0], size[1]);
+            add(prospect + size[0] + ".more", size[2]);
+        }
+        for (OreMineral mineral : OreMineral.values()) add(id + ".ore." + mineral.id(), mineral.id().replace('_', ' '));
         add(id + ".metal.slag_note", "Remelts to most of the metal that went in");
         for (String grade : new String[] {"crude", "rough", "standard", "fine", "masterwork"}) {
             add(id + ".quality." + grade, title(grade) + " quality");
