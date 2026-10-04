@@ -43,9 +43,10 @@ public class ForgeMenu extends AbstractContainerMenu {
         });
         for (int i = 0; i < ForgeBlockEntity.HEAT_SLOTS; i++) {
             addSlot(new Slot(container, ForgeBlockEntity.FIRST_HEAT_SLOT + i, HEAT_X + i * 18, HEAT_Y) {
+                // Two at most, so a pair of ingots heats as one stack for a sword blade (spec 9.3).
                 @Override
                 public int getMaxStackSize() {
-                    return 1;
+                    return 2;
                 }
             });
         }
