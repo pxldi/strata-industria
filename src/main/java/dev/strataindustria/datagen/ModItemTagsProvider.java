@@ -85,12 +85,15 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(Tags.Items.STRINGS).add(ModItems.TWINE.getKey());
 
         var large = tag(ModTags.Items.PIT_KILN_LARGE);
-        for (var item : java.util.List.of(ModItems.UNFIRED_SMALL_VESSEL, ModItems.UNFIRED_LARGE_VESSEL, ModItems.UNFIRED_CRUCIBLE)) {
+        for (var item : java.util.List.of(ModItems.UNFIRED_SMALL_VESSEL, ModItems.UNFIRED_LARGE_VESSEL, ModItems.UNFIRED_CRUCIBLE,
+                Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE)) {
             large.add(item.getKey());
         }
         var fireable = tag(ModTags.Items.PIT_KILN_FIREABLE).addTag(ModTags.Items.PIT_KILN_LARGE)
                 .add(ModItems.UNFIRED_INGOT_MOLD.getKey()).add(ModItems.UNFIRED_BRICK.getKey())
-                .add(ModItems.UNFIRED_FIRE_BRICK.getKey()).add(Tier4Items.UNFIRED_COKE_OVEN_BRICK.getKey());
+                .add(ModItems.UNFIRED_FIRE_BRICK.getKey()).add(Tier4Items.UNFIRED_COKE_OVEN_BRICK.getKey())
+                .add(Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.getKey()).add(Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.getKey())
+                .add(Tier4Items.UNFIRED_GEAR_MOLD.getKey());
         for (MoldType type : MoldType.values()) fireable.add(ModItems.UNFIRED_MOLDS.get(type).getKey());
 
         // Our tools join the vanilla tool tags, which also makes them enchantable like vanilla tools.

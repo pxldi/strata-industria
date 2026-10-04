@@ -24,16 +24,41 @@ import org.jspecify.annotations.Nullable;
  * casting out. The casting comes out as hot as the mold, and the mold sometimes cracks.
  */
 public class CastMoldItem extends Item {
+    /** Tier 4 spec 3: clay molds take only metal that melts at or below this. */
+    public static final int CLAY_MOLD_LIMIT = 1300;
+
     private final @Nullable MoldType type;
+    private final boolean gear;
+    private final boolean refractory;
 
     public CastMoldItem(@Nullable MoldType type, Properties properties) {
-        super(properties);
-        this.type = type;
+        this(type, false, false, properties);
     }
 
-    /** The tool part this mold casts; null for the ingot mold. */
+    /** A gear mold casts {@code <metal>_gear}; a refractory mold takes any metal, iron and steel included. */
+    public CastMoldItem(@Nullable MoldType type, boolean gear, boolean refractory, Properties properties) {
+        super(properties);
+        this.type = type;
+        this.gear = gear;
+        this.refractory = refractory;
+    }
+
+    /** The tool part this mold casts; null for ingot and gear molds. */
     public @Nullable MoldType type() {
         return type;
+    }
+
+    public boolean isGear() {
+        return gear;
+    }
+
+    public boolean isRefractory() {
+        return refractory;
+    }
+
+    /** Whether the mold can take metal that melts at {@code meltingPoint}. */
+    public boolean takes(int meltingPoint) {
+        return refractory || meltingPoint <= CLAY_MOLD_LIMIT;
     }
 
     public int units() {
@@ -59,12 +84,15 @@ public class CastMoldItem extends Item {
             return InteractionResult.FAIL;
         }
 
-        ItemStack cast = type == null ? new ItemStack(ModItems.ingot(metal)) : new ItemStack(ModItems.head(metal, type));
-        if (metal == Metal.SLAG_METAL) cast.set(ModDataComponents.SLAG.get(), contents);
+        ItemStack cast;
+        if (gear) cast = ModItems.GEARS.containsKey(metal) ? new ItemStack(ModItems.GEARS.get(metal).get()) : new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
+        else cast = type == null ? new ItemStack(ModItems.ingot(metal)) : new ItemStack(ModItems.head(metal, type));
+        if (cast.is(ModItems.ingot(Metal.SLAG_METAL))) cast.set(ModDataComponents.SLAG.get(), contents);
         if (type != null) cast.set(ModDataComponents.QUALITY.get(), new Quality(contents.quality(), Quality.CAST));
         Heat.set(cast, heat, level.getGameTime());
 
-        double breakChance = type == null ? Config.INGOT_MOLD_BREAK.getAsDouble() : Config.TOOL_MOLD_BREAK.getAsDouble();
+        double breakChance = refractory ? Config.REFRACTORY_MOLD_BREAK.getAsDouble()
+                : type == null && !gear ? Config.INGOT_MOLD_BREAK.getAsDouble() : Config.TOOL_MOLD_BREAK.getAsDouble();
         boolean broke = level.getRandom().nextDouble() < breakChance;
         ItemStack emptied = ItemStack.EMPTY;
         if (broke) {

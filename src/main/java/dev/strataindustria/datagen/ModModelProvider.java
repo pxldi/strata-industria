@@ -467,6 +467,18 @@ final class ModModelProvider extends ModelProvider {
                 .fence(Tier4Blocks.TREATED_FENCE.get())
                 .getFamily();
         blockModels.family(Tier4Blocks.TREATED_PLANKS.get()).generateFor(treated);
+
+        // Spec 6.1: the refractory crucible has the clay crucible's shape; its molds work like the clay ones.
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.REFRACTORY_CRUCIBLE.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/refractory_crucible"))));
+        flatItem(itemModels, Tier4Items.REFRACTORY_CRUCIBLE.get());
+        for (var item : java.util.List.of(Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE, Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD,
+                Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD, Tier4Items.UNFIRED_GEAR_MOLD)) {
+            flatItem(itemModels, item.get());
+        }
+        castMold(itemModels, Tier4Items.REFRACTORY_INGOT_MOLD.get());
+        castMold(itemModels, Tier4Items.REFRACTORY_GEAR_MOLD.get());
+        castMold(itemModels, Tier4Items.GEAR_MOLD.get());
     }
 
     /**

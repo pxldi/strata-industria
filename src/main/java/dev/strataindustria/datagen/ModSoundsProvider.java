@@ -207,6 +207,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.COKE_OVEN_DONE, definition().subtitle(subtitle("coke_oven.done"))
                 .with(sound("minecraft:block.basalt.place", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.8f))
                 .with(sound("minecraft:block.basalt.break", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.6f)));
+        // Spare carbon flaring off a melt: a soft sputtering whoosh.
+        add(Tier4Sounds.CARBON_BURN, definition().subtitle(subtitle("crucible.carbon_burn"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.4f))
+                .with(sound("minecraft:item.firecharge.use", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f)));
         add(Tier4Sounds.CREOSOTE_FILL, definition().subtitle(subtitle("creosote.fill"))
                 .with(sound("minecraft:item.bucket.fill_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
                 .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f)));

@@ -1138,7 +1138,11 @@ public final class TextureGen {
     static final Ramp CAST_METAL = ramp(0xe6dccb, 0x3a3430, 0x5a524a, 0x81766a, 0xa69a8a, 0xc8bca8);
 
     static BufferedImage filledMold(String[] cavity) {
-        BufferedImage im = mold(CERAMIC, cavity);
+        return filledMold(CERAMIC, cavity);
+    }
+
+    static BufferedImage filledMold(Ramp body, String[] cavity) {
+        BufferedImage im = mold(body, cavity);
         int cx = 4, cy = 5;
         java.util.function.BiPredicate<Integer, Integer> in = (x, y) ->
                 y >= 0 && y < cavity.length && x >= 0 && x < cavity[y].length() && cavity[y].charAt(x) == '#';
@@ -1158,7 +1162,11 @@ public final class TextureGen {
 
     /** The ingot mold with cast metal in it: the cavity's floor pixels turn to metal, lit at the bottom. */
     static BufferedImage filledIngotMold() {
-        BufferedImage im = art(CERAMIC, INGOT_MOLD_ITEM);
+        return filledIngotMold(CERAMIC);
+    }
+
+    static BufferedImage filledIngotMold(Ramp body) {
+        BufferedImage im = art(body, INGOT_MOLD_ITEM);
         for (int y = 7; y <= 9; y++)
             for (int x = 4; x <= 11; x++) {
                 char ch = INGOT_MOLD_ITEM[y].charAt(x);
@@ -1724,10 +1732,10 @@ public final class TextureGen {
         for (int y = 0; y < FLAME_SILHOUETTE.length; y++)
             for (int x = 0; x < 14; x++)
                 if (FLAME_SILHOUETTE[y].charAt(x) == '#') im.setRGB(81 + x, 40 + y, 0xff000000 | SLOT_FILL);
-        // Gauge: 0 to 1500 degrees over 58 px, a notch every 250.
+        // Gauge: 0 to 1750 degrees over 58 px, a notch every 250.
         well(im, 150, 16, 12, 60, 0x2a2a2a);
-        for (int t = 250; t < 1500; t += 250) {
-            int y = 17 + 58 - Math.round(t / 1500f * 58);
+        for (int t = 250; t < 1750; t += 250) {
+            int y = 17 + 58 - Math.round(t / 1750f * 58);
             fill(im, 147, y, 3, 1, t % 500 == 0 ? GUI_SHADOW : SLOT_FILL);
         }
         for (int row = 0; row < 3; row++)
@@ -1750,10 +1758,10 @@ public final class TextureGen {
         well(im, 65, 17, 10, 54, 0x2a2a2a);
         for (int u = 1; u < 4; u++) fill(im, 75, 17 + 1 + Math.round(52 - u * 13f), 2, 1, SLOT_FILL);
         well(im, 71, 83, 32, 6, 0x2a2a2a);
-        // Gauge: 0 to 1500 degrees over 52 px, a notch every 250.
+        // Gauge: 0 to 1750 degrees over 52 px, a notch every 250.
         well(im, 159, 17, 10, 54, 0x2a2a2a);
-        for (int t = 250; t < 1500; t += 250) {
-            int y = 18 + 52 - Math.round(t / 1500f * 52);
+        for (int t = 250; t < 1750; t += 250) {
+            int y = 18 + 52 - Math.round(t / 1750f * 52);
             fill(im, 156, y, 3, 1, t % 500 == 0 ? GUI_SHADOW : SLOT_FILL);
         }
         for (int row = 0; row < 3; row++)
@@ -5005,6 +5013,60 @@ public final class TextureGen {
     static final Ramp TREATED_WOOD = ramp(0, 0x24180e, 0x3a2616, 0x52361e, 0x6a4a2a, 0x82603a);
     static final Ramp CREOSOTE = ramp(0, 0x140c08, 0x24160c, 0x382212, 0x4c301a, 0x624024);
 
+    /** Fired fire clay: a pale buff, warmer than the grey unfired clay so the two read apart (spec 21.1, adjusted). */
+    static final Ramp REFRACTORY = ramp(0, 0x5c4c3c, 0x7c6a54, 0x9c886c, 0xb8a486, 0xd0bea0);
+
+    /** A gear cavity: eight teeth round a raised hub. */
+    static final String[] GEAR_CAVITY = {
+            "..#..#..",
+            ".######.",
+            "###..###",
+            "###..###",
+            ".######.",
+            "..#..#..",
+    };
+
+    /** Refractory crucible wall: smooth fire clay with faint coil lines, sooted where it sits in the coals. */
+    static BufferedImage refractoryCrucibleSide() {
+        double[][] n = fractal(8383);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.62 ? 4 : 3;
+                if (y % 4 == 3 && (x + y) % 6 != 0) step = 3 - (n[y][x] < 0.42 ? 1 : 0);
+                int c = REFRACTORY.get(step);
+                if (y > 12 + (int) Math.round(n[y][x] * 2)) c = COKE.get(n[y][x] > 0.5 ? 4 : 3);
+                px(im, x, y, c);
+            }
+        return im;
+    }
+
+    static BufferedImage refractoryCrucibleTop() {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, REFRACTORY.get((x < 3 || y < 3) ? 5 : 4));
+        return im;
+    }
+
+    /** Inside: glazed dark by heat, with glassy drips of iron slag. */
+    static BufferedImage refractoryCrucibleInside() {
+        double[][] n = fractal(9494);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, REFRACTORY.get(n[y][x] > 0.55 ? 2 : 1));
+        Random r = new Random(9494);
+        for (int k = 0; k < 4; k++) speck(im, r, r.nextInt(16), r.nextInt(16), SLAG.get(4), PIG_IRON.get(1), 2);
+        return im;
+    }
+
+    static BufferedImage refractoryPlain(long seed) {
+        double[][] n = fractal(seed);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, REFRACTORY.get(n[y][x] > 0.55 ? 3 : 2));
+        return im;
+    }
+
     /** Vertical joints per course of the large coke oven bricks: three courses, bricks 7-9 px long. */
     static final int[][] COKE_OVEN_JOINTS = {{3, 11}, {7, 15}, {0, 8}};
     static final int[] COKE_OVEN_COURSE_TOP = {0, 5, 10}, COKE_OVEN_COURSE_H = {5, 5, 6};
@@ -5411,6 +5473,23 @@ public final class TextureGen {
         save("item/creosote_bucket", map(WROUGHT_IRON, CREOSOTE, CREOSOTE_BUCKET));
         save("item/treated_stick", art(TREATED_WOOD, TREATED_STICK));
         saveRaw("gui/coke_oven", cokeOvenGui());
+
+        // Refractory ceramics (spec 21.2 and 21.4): the clay silhouettes in fire clay, then the refractory ramp.
+        save("block/refractory_crucible_side", refractoryCrucibleSide());
+        save("block/refractory_crucible_top", refractoryCrucibleTop());
+        save("block/refractory_crucible_inside", refractoryCrucibleInside());
+        save("block/refractory_crucible_bottom", refractoryPlain(7474));
+        save("item/unfired_refractory_crucible", art(FIRE_CLAY, CRUCIBLE_ITEM));
+        save("item/refractory_crucible", art(REFRACTORY, CRUCIBLE_ITEM));
+        save("item/unfired_refractory_ingot_mold", art(FIRE_CLAY, INGOT_MOLD_ITEM));
+        save("item/refractory_ingot_mold", art(REFRACTORY, INGOT_MOLD_ITEM));
+        save("item/refractory_ingot_mold_filled", filledIngotMold(REFRACTORY));
+        save("item/unfired_refractory_gear_mold", mold(FIRE_CLAY, GEAR_CAVITY));
+        save("item/refractory_gear_mold", mold(REFRACTORY, GEAR_CAVITY));
+        save("item/refractory_gear_mold_filled", filledMold(REFRACTORY, GEAR_CAVITY));
+        save("item/unfired_gear_mold", mold(CLAY, GEAR_CAVITY));
+        save("item/gear_mold", mold(CERAMIC, GEAR_CAVITY));
+        save("item/gear_mold_filled", filledMold(CERAMIC, GEAR_CAVITY));
     }
 
     static void save(String path, BufferedImage im) throws IOException {

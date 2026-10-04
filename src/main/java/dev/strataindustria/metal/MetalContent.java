@@ -27,6 +27,7 @@ public final class MetalContent {
     /** A vanilla raw iron, copper or gold from loot: as much as a raw normal hematite. */
     public static final int RAW_VANILLA_UNITS = 28;
     public static final int BLOOMERY_SLAG_UNITS = 10;
+    public static final int CARBON_DUST_UNITS = 5;
 
     private static Map<Item, Melt> fixed;
 
@@ -63,6 +64,9 @@ public final class MetalContent {
             map.put(ModItems.WROUGHT_IRON_ROD.get(), Melt.of(Metal.WROUGHT_IRON, ROD_UNITS, 0));
             map.put(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), Melt.of(Metal.WROUGHT_IRON, 2 * INGOT_UNITS, 0));
             map.put(ModItems.STEEL_DOUBLE_INGOT.get(), Alloy.parts(Metal.STEEL, 2 * INGOT_UNITS));
+            // Tier 4 spec 4.2: charcoal and coke dust carry carbon into an iron melt.
+            map.put(dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS, 0));
+            map.put(dev.strataindustria.registry.Tier4Items.COKE_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS, 0));
             // Tier 3 spec 5.4: bloomery slag still holds some iron.
             map.put(ModItems.BLOOMERY_SLAG.get(), Melt.of(Metal.WROUGHT_IRON, BLOOMERY_SLAG_UNITS, 0));
             // Spec 4.2: vanilla raw ores from loot count as raw normal ore.

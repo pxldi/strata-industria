@@ -397,6 +397,23 @@
     ],
     "subtitle": "subtitles.strataindustria.creosote.fill"
   },
+  "crucible.carbon_burn": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.4,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "item.firecharge.use",
+        "pitch": 1.6,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crucible.carbon_burn"
+  },
   "crucible.melt": {
     "sounds": [
       {

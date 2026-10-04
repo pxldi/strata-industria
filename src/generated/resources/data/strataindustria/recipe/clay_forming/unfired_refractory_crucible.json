@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:knapping",
+  "consume": 5,
+  "ingredient": "strataindustria:fire_clay_ball",
+  "pattern": [
+    "##.##",
+    "#...#",
+    "#...#",
+    "#...#",
+    "#####"
+  ],
+  "result": {
+    "id": "strataindustria:unfired_refractory_crucible"
+  }
+}
