@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:copper_heat_pipe"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.heat_network"
     }

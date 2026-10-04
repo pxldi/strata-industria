@@ -175,6 +175,8 @@ final class JournalLanguage {
                 "Plates soldered into pipe. Now I can carry fluids wherever I need them.");
         lead.add("t4/boiler", "Water swells into steam when it boils. Could I trap that force?",
                 "A bronze boiler over a firebox, and the gauge needle climbing.");
+        lead.add("t4/heat_network", "Every machine burns its own fire. Could one fire feed them all through pipes?",
+                "Heat ran down the pipe from the firebox and warmed a boiler two rooms away.");
         lead.add("t4/steam_engine", "Steam pushes hard. Could it turn a shaft faster than any river?",
                 "The engine hisses and the shaft spins. Steam power at last.");
         lead.add("t4/crusher", "Steam is strong enough to crush rock. Could it break ore finer than a millstone?",
