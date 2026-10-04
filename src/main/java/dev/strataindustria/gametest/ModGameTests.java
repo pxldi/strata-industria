@@ -132,7 +132,6 @@ public final class ModGameTests {
         MultiblockGameTests.register(TESTS);
         FootGameTests.register(TESTS);
         RailGameTests.register(TESTS);
-        BranchGameTests.register(TESTS);
         PonyGameTests.register(TESTS);
         RailwayGameTests.register(TESTS);
         OutpostGameTests.register(TESTS);
@@ -145,6 +144,7 @@ public final class ModGameTests {
         PreviewExport.register(TESTS);
         CollectibleGameTests.register(TESTS);
         SharedBlockGameTests.register(TESTS);
+        BranchGameTests.register(TESTS);
     }
 
     private ModGameTests() {}
