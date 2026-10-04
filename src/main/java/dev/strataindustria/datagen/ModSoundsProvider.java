@@ -138,6 +138,13 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:entity.sheep.shear", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.6f)));
         add(ModSounds.SAW_MILL_BLADE_BREAK, definition().subtitle(subtitle("saw_mill.blade_break"))
                 .with(sound("minecraft:entity.item.break", SoundDefinition.SoundType.EVENT)));
+        add(ModSounds.CORE_SAMPLER_DRILL, definition().subtitle(subtitle("core_sampler.drill"))
+                .with(sound("minecraft:block.stone.hit", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.7f))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
+        add(ModSounds.CORE_SAMPLER_DONE, definition().subtitle(subtitle("core_sampler.done"))
+                .with(sound("minecraft:block.note_block.bell", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
+        add(ModSounds.CORE_SAMPLE_OPEN, definition().subtitle(subtitle("core_sample.open"))
+                .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(0.8f)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

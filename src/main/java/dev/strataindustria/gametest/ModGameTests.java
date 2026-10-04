@@ -106,6 +106,7 @@ public final class ModGameTests {
         TESTS.put("crucible_casting", ModGameTests::crucibleCasting);
         TESTS.put("anvil_smithing", ModGameTests::anvilSmithing);
         TESTS.put("kinetic_network", ModGameTests::kineticNetwork);
+        TESTS.put("core_sample", ModGameTests::coreSample);
     }
 
     private ModGameTests() {}
@@ -526,6 +527,37 @@ public final class ModGameTests {
         KineticNetworks.rebuildNow(level, millPos);
         helper.assertValueEqual(mill.kinetic().status(), KineticState.Status.OVERSTRESSED, "network with a bellows added");
         helper.assertValueEqual(Math.round(mill.kinetic().rpm()), 0, "an overstressed network stands still");
+        helper.succeed();
+    }
+
+    // Core sampler (tier 3 spec 8.5): the core reads the rock under the sampler and the ore in it.
+
+    private static void coreSample(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos samplerPos = helper.absolutePos(new BlockPos(4, 3, 4));
+        Block shale = ModBlocks.RAW_ROCK.get(dev.strataindustria.geology.Rock.SHALE).get();
+        dev.strataindustria.block.OreBlock hematite = (dev.strataindustria.block.OreBlock) ModBlocks.ORES
+                .get(dev.strataindustria.geology.Rock.SHALE).get(OreMineral.HEMATITE).get();
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                level.setBlock(samplerPos.offset(dx, -1, dz), shale.defaultBlockState(), Block.UPDATE_ALL);
+                level.setBlock(samplerPos.offset(dx, -2, dz), shale.defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }
+        level.setBlock(samplerPos.offset(0, -2, 0), hematite.withGrade(OreGrade.RICH), Block.UPDATE_ALL);
+        level.setBlock(samplerPos.offset(1, -2, 0), hematite.withGrade(OreGrade.NORMAL), Block.UPDATE_ALL);
+        level.setBlock(samplerPos, ModBlocks.CORE_SAMPLER.get().defaultBlockState(), Block.UPDATE_ALL);
+
+        dev.strataindustria.prospecting.CoreSample sample = dev.strataindustria.prospecting.CoreSample.take(level, samplerPos);
+        helper.assertValueEqual(sample.top(), samplerPos.getY() - 1, "core top");
+        helper.assertValueEqual(sample.rows().getFirst().name(), shale.getDescriptionId(), "first row");
+        helper.assertValueEqual(sample.rows().get(1).name(), shale.getDescriptionId(), "an ore row is named after its host rock");
+        var find = sample.finds().stream().filter(f -> f.deposit().equals(OreMineral.HEMATITE.id())).findFirst();
+        helper.assertTrue(find.isPresent(), "hematite should be found, got " + sample.finds());
+        helper.assertValueEqual(find.get().top(), samplerPos.getY() - 2, "hematite depth");
+        helper.assertValueEqual(find.get().count(), 2, "hematite blocks");
+        helper.assertValueEqual(find.get().grade(), OreGrade.RICH.ordinal(), "best grade");
+        helper.assertValueEqual(sample.mainDeposits().getFirst(), OreMineral.HEMATITE.id(), "main deposit");
         helper.succeed();
     }
 }

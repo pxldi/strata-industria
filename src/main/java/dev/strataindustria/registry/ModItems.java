@@ -104,6 +104,10 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(ModBlocks.BELLOWS);
     public static final DeferredItem<BlockItem> SAW_MILL = ITEMS.registerSimpleBlockItem(ModBlocks.SAW_MILL);
     public static final DeferredItem<BlockItem> TRIP_HAMMER = ITEMS.registerSimpleBlockItem(ModBlocks.TRIP_HAMMER);
+    public static final DeferredItem<BlockItem> CORE_SAMPLER = ITEMS.registerSimpleBlockItem(ModBlocks.CORE_SAMPLER);
+    /** Tier 3 spec 8.5: a drilled core; use it to read the ground below the sampler. */
+    public static final DeferredItem<dev.strataindustria.prospecting.CoreSampleItem> CORE_SAMPLE = ITEMS.registerItem("core_sample",
+            dev.strataindustria.prospecting.CoreSampleItem::new, p -> p.stacksTo(1));
     /** Tier 3 spec 12.4: from the saw mill; tannin later in tier 3, and a weak fuel meanwhile. */
     public static final DeferredItem<Item> BARK = ITEMS.registerSimpleItem("bark");
     // Quern (spec 10.1).

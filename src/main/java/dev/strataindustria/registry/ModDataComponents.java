@@ -69,5 +69,11 @@ public final class ModDataComponents {
                     .persistent(SmithingPattern.CODEC)
                     .networkSynchronized(SmithingPattern.STREAM_CODEC));
 
+    /** Tier 3 spec 8.5: the column a core sampler drilled. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.strataindustria.prospecting.CoreSample>> CORE_SAMPLE =
+            COMPONENTS.registerComponentType("core_sample", b -> b
+                    .persistent(dev.strataindustria.prospecting.CoreSample.CODEC)
+                    .networkSynchronized(dev.strataindustria.prospecting.CoreSample.STREAM_CODEC));
+
     private ModDataComponents() {}
 }
