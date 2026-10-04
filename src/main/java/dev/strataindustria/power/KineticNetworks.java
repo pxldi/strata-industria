@@ -175,5 +175,6 @@ public final class KineticNetworks {
             dev.strataindustria.journal.Observations.overstress(level, start);
         }
         if (running && !wasRunning && overspeed.size() < members.size()) Journal.awardNear(level, start, Journal.ROTATION);
+        dev.strataindustria.listening.KineticVoices.update(level, members, running, load, capacity);
     }
 }

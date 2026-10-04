@@ -11,6 +11,7 @@ import dev.strataindustria.registry.Tier4BlockEntities;
 import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Menus;
+import dev.strataindustria.listening.ListeningSounds;
 import dev.strataindustria.registry.Tier4Sounds;
 import java.util.Locale;
 import net.minecraft.core.BlockPos;
@@ -58,6 +59,8 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Heat
     /** Ticks without heat after which the water is cold again. */
     public static final int COLD_AFTER = 1200;
     public static final float LOW_WATER = 0.25f, DRY = 0.10f;
+    /** Share of the steam buffer above which the boiler hisses harder as it nears its safety valve. */
+    static final float HISS_FILL = 0.8f;
     /** Integrity lost when water hits a dry-fired boiler. */
     public static final float BURST_DAMAGE = 20.0f;
     public static final float PLATE_REPAIR = 10.0f;
@@ -397,6 +400,10 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Heat
 
         if (status == Status.HEATING && age % 60 == 0) play(level, pos, Tier4Sounds.BOILER_HEAT.get(), SoundSource.BLOCKS, 0.6f);
         if (made > 0 && age % 50 == 0) play(level, pos, Tier4Sounds.BOILER_RUN.get(), SoundSource.BLOCKS, 0.7f);
+        float fill = (float) steam / steamCapacity();
+        if (!venting && fill >= HISS_FILL && age % 40 == 0) {
+            play(level, pos, ListeningSounds.BOILER_HISS.get(), SoundSource.BLOCKS, 0.4f + (fill - HISS_FILL) * 3.0f);
+        }
         if (status == Status.LOW_WATER && age % 100 == 0) play(level, pos, Tier4Sounds.BOILER_LOW_WATER.get(), SoundSource.PLAYERS, 0.6f);
 
         afterTick(level, pos);

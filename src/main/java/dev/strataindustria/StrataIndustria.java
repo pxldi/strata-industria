@@ -47,6 +47,7 @@ public final class StrataIndustria {
         Tier4BlockEntities.init();
         Tier4Menus.init();
         Tier4Sounds.init();
+        dev.strataindustria.listening.ListeningBlocks.init();
         Tier4Recipes.init();
         dev.strataindustria.registry.Tier4DataComponents.init();
         dev.strataindustria.registry.Tier5Blocks.init();

@@ -731,6 +731,10 @@ final class ModModelProvider extends ModelProvider {
         }
         itemModels.itemModelOutput.accept(Tier4Items.MECHANICAL_PUMP.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/mechanical_pump")));
         itemModels.itemModelOutput.accept(Tier4Items.STEAM_ENGINE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/steam_engine_item")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/steam_whistle"))));
+        itemModels.itemModelOutput.accept(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/steam_whistle")));
         processing(blockModels, itemModels);
         blastFurnace(blockModels, itemModels);
     }
