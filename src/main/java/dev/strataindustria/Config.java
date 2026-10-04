@@ -99,9 +99,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue REPLACE_COPPER_GEAR = BUILDER
             .comment("Replace the recipes of vanilla copper tools and armour.")
             .define("replaceCopperGear", true);
-    public static final ModConfigSpec.BooleanValue LEAVES_DROP_STICKS = BUILDER
-            .comment("Leaves broken by hand drop a stick 20% of the time.")
-            .define("leavesDropSticks", true);
+    public static final ModConfigSpec.BooleanValue BRANCH_SNAPPING = BUILDER
+            .comment("Use leaves with an empty hand to snap a branch off for sticks and bark.")
+            .define("branchSnapping", true);
     public static final ModConfigSpec.BooleanValue GRAVEL_FLINT_CHANCE = BUILDER
             .comment("Raise the flint chance of gravel to 15%.")
             .define("gravelFlintChance", true);

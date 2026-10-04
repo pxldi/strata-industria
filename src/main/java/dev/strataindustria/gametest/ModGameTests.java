@@ -148,6 +148,7 @@ public final class ModGameTests {
         PreviewExport.register(TESTS);
         CollectibleGameTests.register(TESTS);
         SharedBlockGameTests.register(TESTS);
+        BranchGameTests.register(TESTS);
     }
 
     private ModGameTests() {}

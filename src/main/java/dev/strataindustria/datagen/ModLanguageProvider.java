@@ -189,6 +189,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "crucible.pour", "Molten metal pours");
         add(subtitles + "mold.knock", "Cast knocked out");
         add(subtitles + "mold.break", "Mold cracks");
+        add(subtitles + "branch.shake", "Branch creaks");
+        add(subtitles + "branch.snap", "Branch snaps");
+        add(subtitles + "branch.bare", "Dry leaves rustle");
+        add("message." + StrataIndustria.MOD_ID + ".branch.bare", "This branch is bare. Try another.");
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
@@ -252,7 +256,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "removeCampfire", "Remove campfire recipe");
         add(config + "gateFurnace", "Gate the furnace");
         add(config + "replaceCopperGear", "Replace copper gear recipes");
-        add(config + "leavesDropSticks", "Leaves drop sticks");
+        add(config + "branchSnapping", "Snap branches off trees");
         add(config + "gravelFlintChance", "More flint from gravel");
         add(config + "kiln", "Pit Kiln");
         add(config + "burnTicks", "Burn time (ticks)");
@@ -1075,7 +1079,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(machine + "no_blade", "Needs a saw blade");
         addBlock(ModBlocks.SAW_MILL, "Saw Mill");
         addBlock(ModBlocks.TRIP_HAMMER, "Trip Hammer");
-        addItem(ModItems.BARK, "Bark");
+        addItem(ModItems.BARK, "Bark Strip");
         add("container." + id + ".saw_mill", "Saw Mill");
         add("container." + id + ".trip_hammer", "Trip Hammer");
         add("container." + id + ".core_sampler", "Core Sampler");
