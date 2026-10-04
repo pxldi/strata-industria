@@ -101,6 +101,14 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .pushReaction(PushReaction.IMMOVEABLE));
+    /** Wrought iron anvil (tier 3 spec 9.1): tier 4, the tier 3 exit item. */
+    public static final DeferredBlock<AnvilBlock> WROUGHT_IRON_ANVIL = BLOCKS.registerBlock("wrought_iron_anvil", p -> new AnvilBlock(4, false, p),
+            p -> p.mapColor(MapColor.METAL)
+                    .strength(5.0f, 1200.0f)
+                    .sound(SoundType.ANVIL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.IMMOVEABLE));
 
     /** Logs stacked for a charcoal pit (spec 4.4). */
     public static final DeferredBlock<LogPileBlock> LOG_PILE = BLOCKS.registerBlock("log_pile", LogPileBlock::new,

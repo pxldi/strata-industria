@@ -129,6 +129,10 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(refine, "t3/iron_pickaxe", Items.IRON_PICKAXE, has(Items.IRON_PICKAXE));
         goal(refine, "t3/bucket", Items.BUCKET, has(Items.BUCKET));
         goal(fireBrick, "t3/furnace", Items.FURNACE, has(Items.FURNACE));
+        AdvancementHolder weld = goal(refine, "t3/weld", ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), has(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()));
+        goal(weld, "t3/pattern", ModItems.SMITHING_PATTERN.get(), JournalTrigger.TriggerInstance.of(Journal.PATTERN_RECORDED));
+        goal(weld, "t3/iron_anvil", ModItems.WROUGHT_IRON_ANVIL.get(), AdvancementType.GOAL,
+                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.WROUGHT_IRON_ANVIL.get()));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

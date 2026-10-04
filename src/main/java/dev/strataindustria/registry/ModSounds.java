@@ -76,6 +76,10 @@ public final class ModSounds {
     /** A hammer on wrought iron: heavier and lower than bronze. */
     public static final DeferredHolder<SoundEvent, SoundEvent> WROUGHT_IRON_HIT = register("wrought_iron.hit");
 
+    /** Tier 3 spec 9.4: a weld takes, or the button is pressed when it cannot. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD = register("anvil.weld");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD_FAIL = register("anvil.weld_fail");
+
     /** Pages of the field journal turning. */
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");
 
