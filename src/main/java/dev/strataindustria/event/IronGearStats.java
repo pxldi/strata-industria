@@ -30,10 +30,12 @@ public final class IronGearStats {
 
     private IronGearStats() {}
 
+    private static void probe(String s) {}
+
     @SubscribeEvent
     static void modify(ModifyDefaultComponentsEvent event) {
         if (!Config.IRON_STAT_OVERRIDE.getAsBoolean()) return;
-        event.modify(Items.IRON_PICKAXE, (Object) null);
+        event.modify(Items.IRON_PICKAXE, IronGearStats::probe);
         float attackBonus = ModToolMaterials.WROUGHT_IRON.attackDamageBonus() - VANILLA_ATTACK;
         for (Item item : TOOLS) {
             Tool tool = item.components().get(DataComponents.TOOL);
