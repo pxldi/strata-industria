@@ -347,6 +347,16 @@ final class ModLanguageProvider extends LanguageProvider {
         add(kilnStatus + "output_full", "Output full");
         add(kilnStatus + "needs_heat", "Needs heat");
         add(kilnStatus + "firing", "Firing (%s%%)");
+        addBlock(Tier4Blocks.ROASTER, "Roaster");
+        add("container." + id + ".roaster", "Roaster");
+        String roaster = id + ".roaster.";
+        add(roaster + "status.empty", "Load sulfide ore to roast");
+        add(roaster + "status.no_recipe", "That does not roast");
+        add(roaster + "status.output_full", "Output full");
+        add(roaster + "status.needs_heat", "Needs heat");
+        add(roaster + "status.roasting", "Roasting");
+        add(roaster + "status.venting", "Venting sulfur dioxide");
+        add(roaster + "tank", "Sulfur Dioxide %s / %s mB");
         add("fluid_type." + id + ".steam", "Steam");
         add("container." + id + ".firebox", "Firebox");
         add("container." + id + ".bronze_boiler", "Bronze Boiler");
@@ -362,6 +372,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(heatLine + "hot_blast", "Hot blast");
         add(heatLine + "preheat", "Preheat");
         add(heatLine + "kiln", "Heat");
+        add(heatLine + "roaster", "Heat");
         add(heatLine + "none", "%s: no heat");
         add(heatLine + "cold", "%s: %3$s of %2$s °C");
         add(heatLine + "limited", "%s: pipes cap %s °C");

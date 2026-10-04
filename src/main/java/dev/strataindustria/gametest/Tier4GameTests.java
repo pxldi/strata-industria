@@ -79,6 +79,7 @@ final class Tier4GameTests {
         tests.put("tier4_hot_blast", Tier4GameTests::hotBlast);
         tests.put("tier4_converter_preheat", Tier4GameTests::converterPreheat);
         tests.put("tier4_kiln", Tier4GameTests::kiln);
+        tests.put("tier4_roaster", Tier4GameTests::roaster);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -890,6 +891,57 @@ final class Tier4GameTests {
         steam(level, hotPos, hot, boilerPos, boiler, 1);
         helper.assertValueEqual(Math.round(boiler.heatTemperature()), 980, "1000 °C less 4 insulated pipes at 5 °C");
         helper.succeed();
+    }
+
+    // Spec 8.5 and 5.3: a roaster on a coke firebox roasts each slot's stack at half the forge's time and
+    // keeps the gas; a slot whose calcine would not fit waits, and gas past the 4000 mB tank is vented.
+    private static void roaster(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(2, 1, 2)), roasterPos = fireboxPos.above();
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(roasterPos, Tier4Blocks.ROASTER.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        var roaster = (dev.strataindustria.roasting.RoasterBlockEntity) level.getBlockEntity(roasterPos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 4));
+        firebox.preheat(1600.0f);
+        Item crushed = ModItems.crushedOre(OreMineral.SPHALERITE, OreGrade.NORMAL), calcine = Tier4Items.zincCalcine(OreGrade.NORMAL);
+        helper.assertTrue(roaster.canPlaceItem(0, new ItemStack(crushed)), "the roaster takes crushed sphalerite");
+        helper.assertTrue(!roaster.canPlaceItem(0, new ItemStack(Items.COBBLESTONE)), "the roaster takes only what roasts");
+        roaster.setItem(0, new ItemStack(crushed, 4));
+        roaster.setItem(1, new ItemStack(ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get(), 2));
+        int out = dev.strataindustria.roasting.RoasterBlockEntity.INPUTS;
+
+        roast(level, fireboxPos, firebox, roasterPos, roaster, 1);
+        helper.assertValueEqual(roaster.status(), dev.strataindustria.roasting.RoasterBlockEntity.Status.NEEDS_HEAT, "status before the heat arrives");
+        roast(level, fireboxPos, firebox, roasterPos, roaster, 100);
+        helper.assertValueEqual(roaster.status(), dev.strataindustria.roasting.RoasterBlockEntity.Status.ROASTING, "status while roasting");
+        helper.assertValueEqual(firebox.taken(), dev.strataindustria.roasting.RoasterBlockEntity.HEAT, "HU/t the roaster draws");
+        helper.assertTrue(roaster.getItem(out + 1).is(Tier4Items.SMALL_ZINC_CALCINE.get()) && roaster.getItem(out + 1).getCount() == 2,
+                "small sphalerite roasts in 100 ticks");
+        helper.assertTrue(roaster.getItem(out).isEmpty(), "crushed sphalerite is not done at 100 ticks");
+        helper.assertValueEqual(roaster.gas(), 30, "15 mB of gas from each small piece");
+        roast(level, fireboxPos, firebox, roasterPos, roaster, 100);
+        helper.assertTrue(roaster.getItem(out).is(calcine) && roaster.getItem(out).getCount() == 4, "4 calcine in 200 ticks");
+        helper.assertValueEqual(roaster.gas(), 230, "50 mB more from each crushed piece");
+
+        // 64 more would not fit with the 4 calcine already out, so that slot waits; two full stacks overflow the tank.
+        roaster.setItem(0, new ItemStack(crushed, 64));
+        roaster.setItem(2, new ItemStack(crushed, 64));
+        roaster.setItem(3, new ItemStack(crushed, 64));
+        roast(level, fireboxPos, firebox, roasterPos, roaster, 200);
+        helper.assertTrue(roaster.getItem(out + 2).getCount() == 64 && roaster.getItem(out + 3).getCount() == 64, "two stacks roasted");
+        helper.assertValueEqual(roaster.getItem(0).getCount(), 64, "a slot with no room for its calcine waits");
+        helper.assertValueEqual(roaster.gas(), dev.strataindustria.roasting.RoasterBlockEntity.CAPACITY, "the tank is full");
+        helper.assertValueEqual(roaster.status(), dev.strataindustria.roasting.RoasterBlockEntity.Status.VENTING, "the rest is vented");
+        helper.succeed();
+    }
+
+    private static void roast(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos roasterPos,
+            dev.strataindustria.roasting.RoasterBlockEntity roaster, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            dev.strataindustria.roasting.RoasterBlockEntity.serverTick(level, roasterPos, level.getBlockState(roasterPos), roaster);
+        }
     }
 
     private static void fire(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos kilnPos,

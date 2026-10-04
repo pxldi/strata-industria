@@ -7472,6 +7472,237 @@ public final class TextureGen {
         }
     }
 
+    // ---------------------------------------------------------------- tier 4: roaster
+
+    static final class Ro {
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+        static int cu(int s) { return COPPER.get(s); }
+        static final int CAVITY = 0x16110f, DEEP = 0x0e0c0c;
+        static final int[] FUME = {0xe8e2a6, 0xcfc67e, 0xa89f5c};
+
+        static int hash(int x, int y) { return Math.floorMod(x * 73 + y * 151 + x * y * 17 + 11, 97); }
+
+        /** Copper hood plates: lit top edge, seams, rivets, lip shadow on the face below. */
+        static void hood(BufferedImage im, int rows) {
+            for (int y = 0; y < rows; y++)
+                for (int x = 0; x < 16; x++) {
+                    int s = y == 0 ? 5 : y == 1 ? 4 : y >= rows - 2 ? 2 : 3;
+                    if (y == rows - 2) s = 2;
+                    if (y == rows - 1) s = 1;
+                    if ((x == 5 || x == 10) && y > 0 && y < rows - 2) s = 2;
+                    if ((x == 6 || x == 11) && y > 0 && y < rows - 2) s = 4;
+                    if (x == 0 && y < rows - 1) s = Math.min(5, s + 1);
+                    if (x == 15 && y < rows - 1) s = Math.max(2, s - 1);
+                    px(im, x, y, cu(s));
+                }
+            for (int x : new int[] {2, 8, 13}) { px(im, x, 2, cu(5)); px(im, x + 1, 3, cu(1)); }
+            px(im, 3, 1, COPPER.spec());
+        }
+
+        /** Ore bed height per column x=3..12. */
+        static final int[] HEIGHT = {2, 3, 3, 4, 4, 4, 3, 3, 3, 2};
+
+        static int oreStep(int x, int y, int top) {
+            int h = hash(x, y);
+            int s = h % 5 == 0 ? 3 : h % 3 == 0 ? 2 : 1;
+            if (y == top && x < 8) s = Math.min(4, s + 1);
+            if (y == top && x >= 8) s = Math.max(1, s);
+            return s;
+        }
+
+        static BufferedImage front(int frame) {
+            boolean active = frame >= 0;
+            BufferedImage im = fireBricks();
+            hood(im, 8);
+            // Hearth opening: x3..12, y8..13, brick surround with a dark rim.
+            for (int y = 8; y <= 14; y++)
+                for (int x = 2; x <= 13; x++) {
+                    boolean open = x >= 3 && x <= 12 && y <= 13;
+                    if (open) continue;
+                    int s = (x == 2 || y == 14) ? (y == 14 ? 4 : 1) : (x == 13 ? 3 : 1);
+                    if (y == 14 && x == 2) s = 1;
+                    if (x == 13 && y == 14) s = 2;
+                    px(im, x, y, fb(s));
+                }
+            for (int x = 3; x <= 12; x++) px(im, x, 14, fb(x < 8 ? 5 : 4));
+            for (int y = 8; y <= 13; y++)
+                for (int x = 3; x <= 12; x++) {
+                    int top = 14 - HEIGHT[x - 3];
+                    int c;
+                    if (y < top) c = y == 8 ? DEEP : CAVITY;
+                    else c = mix(CHARCOAL.get(oreStep(x, y, top)), CASSITERITE.get(oreStep(x, y, top) + 1), 0.5);
+                    px(im, x, y, c);
+                }
+            if (!active) return im;
+            // Glowing parts of the bed: surface and crevices, flickering by frame.
+            for (int x = 3; x <= 12; x++)
+                for (int y = 14 - HEIGHT[x - 3]; y <= 13; y++) {
+                    int h = hash(x, y);
+                    if (h % 5 >= 3 && y != 14 - HEIGHT[x - 3]) continue;
+                    double g = 0.30 + 0.62 * (((h + frame) % 4) / 3.0);
+                    if (y == 13) g *= 0.8;
+                    px(im, x, y, Hp.band(g));
+                }
+            // Warm bleed on the surround and the cavity ceiling.
+            for (int x = 3; x <= 12; x++) {
+                Hp.glow(im, x, 14, 0.5, 0.45);
+            }
+            for (int y = 9; y <= 13; y++) { Hp.glow(im, 2, y, 0.45, 0.4); Hp.glow(im, 13, y, 0.45, 0.4); }
+            // Fume wisps rising through the cavity.
+            int[][] wisps = {{5, 0}, {8, 2}, {10, 1}};
+            for (int[] w : wisps) {
+                int top = 14 - HEIGHT[w[0] - 3];
+                for (int k = 0; k < 2; k++) {
+                    int y = top - 1 - Math.floorMod(frame + w[1] + k * 2, 4) % 3 + 0;
+                    y = Math.max(8, Math.min(top - 1, y));
+                    int xx = w[0] + ((frame + w[1] + k) % 2);
+                    int top2 = 14 - HEIGHT[Math.min(12, Math.max(3, xx)) - 3];
+                    if (y >= 8 && y < top2) px(im, xx, y, FUME[k == 0 ? 0 : 1 + (frame + w[1]) % 2]);
+                }
+            }
+            return im;
+        }
+
+        static BufferedImage side() {
+            BufferedImage im = fireBricks();
+            for (int x = 0; x < 16; x++) {
+                px(im, x, 0, cu(5));
+                px(im, x, 1, cu(4));
+                px(im, x, 2, cu(3));
+                px(im, x, 3, cu(2));
+                px(im, x, 4, fb(1));
+                if (x == 0) { px(im, x, 1, cu(5)); px(im, x, 2, cu(4)); }
+                if (x == 15) { px(im, x, 0, cu(4)); px(im, x, 1, cu(3)); px(im, x, 2, cu(2)); }
+            }
+            for (int x : new int[] {3, 11}) { px(im, x, 1, COPPER.spec()); px(im, x + 1, 2, cu(1)); }
+            for (int x = 5; x <= 9; x++) px(im, x, 3, cu(1));
+            return im;
+        }
+
+        static BufferedImage back() {
+            BufferedImage im = fireBricks();
+            double c = 7.5;
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    double dx = x - c, dy = y - c, d = Math.hypot(dx, dy);
+                    if (d > 6.0 && d <= 7.1 && dx + dy > 1) px(im, x, y, fb(1)); // cast shadow
+                    if (d > 6.0) continue;
+                    boolean lit = dx + dy < -1.5;
+                    int s;
+                    if (d <= 2.2) { px(im, x, y, dx + dy < -1 ? DEEP : 0x1b1615); continue; }
+                    else if (d <= 3.6) s = lit ? 5 : dx + dy > 2 ? 2 : 3; // pipe collar
+                    else s = lit ? 4 : dx + dy > 2.5 ? 2 : 3; // flange face
+                    if (d > 5.3) s = lit ? 5 : dx + dy > 2.5 ? 1 : 2; // flange rim
+                    if (Math.abs(d - 3.65) < 0.5) s = 1; // collar seam
+                    px(im, x, y, cu(s));
+                }
+            // Eight bolts on the flange.
+            int[][] bolts = {{7, 2}, {8, 2}, {7, 13}, {8, 13}, {2, 7}, {2, 8}, {13, 7}, {13, 8}};
+            int[][] diag = {{3, 3}, {12, 3}, {3, 12}, {12, 12}};
+            for (int[] b : diag) { px(im, b[0], b[1], cu(5)); px(im, b[0] + 1, b[1] + 1, cu(1)); }
+            px(im, 7, 2, cu(5)); px(im, 8, 13, cu(1)); px(im, 2, 8, cu(5)); px(im, 13, 7, cu(1));
+            px(im, 8, 2, cu(1)); px(im, 7, 13, cu(5)); px(im, 2, 7, cu(1)); px(im, 13, 8, cu(5));
+            px(im, 3, 3, COPPER.spec());
+            return im;
+        }
+
+        static BufferedImage top() {
+            BufferedImage im = img();
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int s = 3;
+                    if (y == 0 || x == 0) s = 5;
+                    else if (y == 15 || x == 15) s = 1;
+                    else if (y == 1 || x == 1) s = 4;
+                    else if (y == 14 || x == 14) s = 2;
+                    else if (x == 5 || x == 10) s = (x == 5) ? 2 : 2;
+                    else if (x == 6 || x == 11) s = 4;
+                    px(im, x, y, cu(s));
+                }
+            for (int[] r : new int[][] {{2, 2}, {13, 2}, {2, 13}, {13, 13}}) {
+                px(im, r[0], r[1], cu(5)); px(im, r[0] + 1, r[1] + 1, cu(1));
+            }
+            px(im, 2, 2, COPPER.spec());
+            // Flue: 6x6 collar with a 4x4 dark opening.
+            for (int y = 5; y <= 10; y++)
+                for (int x = 5; x <= 10; x++) {
+                    boolean in = x >= 6 && x <= 9 && y >= 6 && y <= 9;
+                    if (in) { px(im, x, y, (x == 6 || y == 6) ? DEEP : 0x1b1615); continue; }
+                    int s = (y == 5 || x == 5) ? 5 : (y == 10 || x == 10) ? 2 : 4;
+                    if (x == 10 && y == 10) s = 1;
+                    px(im, x, y, cu(s));
+                }
+            px(im, 7, 7, 0x000000 | CAVITY);
+            return im;
+        }
+
+        static void arrowShape(BufferedImage im, int ox, int oy, java.util.function.IntBinaryOperator colour) {
+            String[] a = {"..####..", "..####..", "..####..", "..####..", "########", ".######.", "..####..", "...##..."};
+            for (int y = 0; y < 8; y++)
+                for (int x = 0; x < 8; x++)
+                    if (a[y].charAt(x) == '#') im.setRGB(ox + x, oy + y, 0xff000000 | colour.applyAsInt(x, y));
+        }
+
+        static BufferedImage gui() {
+            BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            panel(im, 176, 182);
+            for (int i = 0; i < 4; i++) {
+                int x = 35 + 18 * i;
+                slot(im, x, 17);
+                slot(im, x, 46);
+                arrowShape(im, x + 4, 36, (px, py) -> SLOT_FILL);
+            }
+            // Filled arrow sprite.
+            arrowShape(im, 176, 0, (px, py) -> {
+                int c = mix(HEAT_BAND[3], HEAT_BAND[4], py / 7.0);
+                if (px >= 5 && py < 4) c = mix(c, HEAT_BAND[2], 0.35);
+                if (py == 7) c = HEAT_BAND[4];
+                return c;
+            });
+            // Gas gauge: recessed well, 16x46 dark inner.
+            well(im, 139, 16, 18, 48, 0x2b2b2b);
+            fill(im, 140, 17, 16, 46, 0x2b2b2b);
+            for (int t = 0; t < 4; t++) {
+                int y = 17 + 9 + t * 9;
+                int len = t == 1 ? 5 : 3;
+                fill(im, 156 - len, y, len, 1, SLOT_FILL);
+            }
+            // Filled gas sprite: sulfur yellow gradient, lighter top, a soft light edge on the left.
+            for (int y = 0; y < 46; y++)
+                for (int x = 0; x < 16; x++) {
+                    double t = y / 45.0;
+                    int c = mix(0xeee89c, 0xb8ae48, t);
+                    if (x == 0) c = mix(c, 0xfff8c8, 0.4);
+                    if (x == 15) c = mix(c, 0x80781e, 0.3);
+                    if (y == 0) c = 0xfff4b8;
+                    if (((x * 5 + y * 3) % 11) == 0 && x > 1 && x < 14) c = mix(c, 0xfff8c8, 0.35);
+                    im.setRGB(184 + x, y, 0xff000000 | c);
+                }
+            for (int t = 0; t < 4; t++) {
+                int y = 9 + t * 9, len = t == 1 ? 5 : 3;
+                for (int i = 0; i < len; i++) im.setRGB(184 + 15 - i, y, 0xff000000 | 0x8a8030);
+            }
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 100 + row * 18);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 158);
+            return im;
+        }
+
+        static void roaster() throws IOException {
+            save("block/roaster_front", front(-1));
+            BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+            for (int f = 0; f < 4; f++) {
+                BufferedImage fr = front(f);
+                for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) strip.setRGB(x, f * 16 + y, fr.getRGB(x, y));
+            }
+            saveAnimated("block/roaster_front_active", strip, 3);
+            save("block/roaster_side", side());
+            save("block/roaster_back", back());
+            save("block/roaster_top", top());
+            saveRaw("gui/roaster", gui());
+        }
+    }
+
     static void converter() throws IOException {
         save("block/converter_controller_front", Cv.front(-1));
         saveAnimated("block/converter_controller_front_blowing", Cv.blowing(), 2);
@@ -7494,6 +7725,7 @@ public final class TextureGen {
         converter();
         heatPipes();
         Kn.kiln();
+        Ro.roaster();
     }
 
     static void steam() throws IOException {

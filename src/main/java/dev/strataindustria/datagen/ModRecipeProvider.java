@@ -504,6 +504,14 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('F', ModItems.FIRE_BRICKS.get())
                 .unlockedBy("has_firebox", has(Tier4Items.FIREBOX.get()))
                 .save(output, key("kiln"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.ROASTER.get())
+                .pattern("BPB")
+                .pattern("B B")
+                .pattern("BPB")
+                .define('B', fireBrick)
+                .define('P', ModItems.PLATES.get(Metal.COPPER).get())
+                .unlockedBy("has_firebox", has(Tier4Items.FIREBOX.get()))
+                .save(output, key("roaster"));
         shaped(RecipeCategory.REDSTONE, Tier4Items.BRONZE_FLUID_PIPE.get(), 4)
                 .pattern("PSP")
                 .define('P', ModTags.Items.ANY_BRONZE_PLATES)
