@@ -17,14 +17,27 @@
       "rolls": 1
     },
     {
-      "condition": {
-        "type": "minecraft:random_chance",
-        "chance": 0.7
-      },
       "entries": [
         {
           "type": "minecraft:item",
           "name": "strataindustria:charcoal_burners_pottery_sherd"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 8,
+              "min": 4
+            }
+          },
+          "name": "minecraft:flint"
         }
       ],
       "rolls": 1
