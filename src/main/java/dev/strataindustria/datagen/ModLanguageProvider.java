@@ -588,6 +588,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "charter.deed", "Deed written");
         addItem(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_LEDGER, "Builder's Ledger");
         addBlock(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD, "Fume Hood");
+        add("item." + StrataIndustria.MOD_ID + ".fume_hood.hint", "Set it directly above a crucible. Arsenic fumes rise while the pot is poured.");
+        add("item." + StrataIndustria.MOD_ID + ".bell.hint", "Hangs from the underside of a block. Right-click to ring.");
         addBlock(dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET, "Specimen Cabinet");
         String cab = StrataIndustria.MOD_ID + ".cabinet.";
         add(cab + "have", "%s is already in the cabinet");
