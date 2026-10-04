@@ -129,7 +129,9 @@ public class SawMillBlockEntity extends BaseContainerBlockEntity implements Kine
         if (rpm < MIN_SPEED) return Status.TOO_SLOW;
         SawingRecipe recipe = holder.get().value();
         ItemStack result = recipe.assemble(new SingleRecipeInput(input));
-        ItemStack extra = recipe.extraResult();
+        // Bark only comes off a log that still has it (spec 8.2): stripping already gave it.
+        ItemStack extra = input.is(net.neoforged.neoforge.common.Tags.Items.STRIPPED_LOGS)
+                || input.is(net.neoforged.neoforge.common.Tags.Items.STRIPPED_WOODS) ? ItemStack.EMPTY : recipe.extraResult();
         if (!fits(items.get(OUTPUT), result) || !fits(items.get(EXTRA), extra)) return Status.OUTPUT_FULL;
         ticks = recipe.ticks();
         progress += rpm / 16.0f;

@@ -1,11 +1,11 @@
 {
   "placement": {
     "type": "minecraft:concentric_rings",
-    "count": 3,
+    "count": 6,
     "distance": 4,
     "preferred_biomes": "#strataindustria:has_structure/prospector_camp",
     "salt": 0,
-    "spread": 3
+    "spread": 6
   },
   "structures": [
     {

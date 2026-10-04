@@ -113,13 +113,14 @@ final class StructureData {
                 new RandomSpreadStructurePlacement(net.minecraft.core.Vec3i.ZERO, AbstractSpreadingStructurePlacement.FrequencyReductionMethod.DEFAULT,
                         1.0f, s[2], villages, s[0], s[1], RandomSpreadType.LINEAR))));
 
-        // Near-origin guarantee (structures spec 3.3): one ring of three tries around the world origin.
+        // Near-origin guarantee (structures spec 3.3): one ring of tries around the world origin. A try fails
+        // when its site is unsuitable and nothing retries it, so six tries make a near miss on every one unlikely.
         context.register(set("prospector_camp_near_origin"), new StructureSet(
                 structures.getOrThrow(CampStructure.Layout.PROSPECTOR_CAMP.key()),
-                new ConcentricRingsStructurePlacement(4, 3, 3, biomes.getOrThrow(biomes(CampStructure.Layout.PROSPECTOR_CAMP)))));
+                new ConcentricRingsStructurePlacement(4, 6, 6, biomes.getOrThrow(biomes(CampStructure.Layout.PROSPECTOR_CAMP)))));
         context.register(set("mining_camp_near_origin"), new StructureSet(
                 structures.getOrThrow(CampStructure.Layout.MINING_CAMP.key()),
-                new ConcentricRingsStructurePlacement(10, 3, 3, biomes.getOrThrow(biomes(CampStructure.Layout.MINING_CAMP)))));
+                new ConcentricRingsStructurePlacement(10, 6, 6, biomes.getOrThrow(biomes(CampStructure.Layout.MINING_CAMP)))));
     }
 
     private static ResourceKey<StructureSet> set(String id) {

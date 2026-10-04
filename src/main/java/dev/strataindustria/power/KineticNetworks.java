@@ -130,27 +130,28 @@ public final class KineticNetworks {
             }
         }
         if (turningSources < 2) limiter = null;
+        // Wooden parts cannot take more than 64 RPM (spec 7.1): the part of the network turning faster than
+        // that stops, and the rest keeps running. Fastest a wooden part may turn: config
+        // kinetics.woodenSpeedLimit; iron axles raise it in tier 4.
+        Set<BlockPos> overspeed = new HashSet<>();
+        if (turningSources > 0) {
+            for (var entry : members.entrySet()) {
+                if (base * ratios.get(entry.getKey()) > dev.strataindustria.Config.KINETIC_WOODEN_SPEED_LIMIT.getAsInt() + 0.01f) {
+                    overspeed.add(entry.getKey());
+                }
+            }
+        }
         int load = 0;
         if (turningSources > 0) {
             for (var entry : members.entrySet()) {
-                if (entry.getValue() instanceof KineticConsumer consumer) {
+                if (entry.getValue() instanceof KineticConsumer consumer && !overspeed.contains(entry.getKey())) {
                     load += Math.round(consumer.impact() * base * ratios.get(entry.getKey()));
                 }
             }
         }
 
-        // Wooden parts cannot take more than 64 RPM (spec 7.1).
-        boolean overspeed = false;
-        if (turningSources > 0) {
-            for (var entry : members.entrySet()) {
-                // Fastest a wooden part may turn (spec 7.1, config kinetics.woodenSpeedLimit); iron axles raise it in tier 4.
-                if (base * ratios.get(entry.getKey()) > dev.strataindustria.Config.KINETIC_WOODEN_SPEED_LIMIT.getAsInt() + 0.01f) overspeed = true;
-            }
-        }
-
         KineticState.Status status;
         if (tooLarge) status = KineticState.Status.TOO_LARGE;
-        else if (overspeed) status = KineticState.Status.OVERSPEED;
         else if (incomplete) status = KineticState.Status.INCOMPLETE;
         else if (turningSources == 0) status = KineticState.Status.IDLE;
         else if (load > capacity) status = KineticState.Status.OVERSTRESSED;
@@ -162,8 +163,9 @@ public final class KineticNetworks {
             KineticState state = entry.getValue().kinetic();
             wasRunning |= state.status() == KineticState.Status.RUNNING;
             wasOverstressed |= state.status() == KineticState.Status.OVERSTRESSED;
-            float rpm = running ? base * ratios.get(entry.getKey()) : 0.0f;
-            if (state.set(rpm, status, load, capacity, limiter) && entry.getValue() instanceof BlockEntity be) {
+            boolean over = running && overspeed.contains(entry.getKey());
+            float rpm = running && !over ? base * ratios.get(entry.getKey()) : 0.0f;
+            if (state.set(rpm, over ? KineticState.Status.OVERSPEED : status, load, capacity, limiter) && entry.getValue() instanceof BlockEntity be) {
                 be.setChanged();
                 level.sendBlockUpdated(be.getBlockPos(), be.getBlockState(), be.getBlockState(), Block.UPDATE_CLIENTS);
             }
@@ -171,6 +173,6 @@ public final class KineticNetworks {
         if (status == KineticState.Status.OVERSTRESSED && !wasOverstressed) {
             level.playSound(null, start, ModSounds.KINETIC_OVERSTRESS.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         }
-        if (running && !wasRunning) Journal.awardNear(level, start, Journal.ROTATION);
+        if (running && !wasRunning && overspeed.size() < members.size()) Journal.awardNear(level, start, Journal.ROTATION);
     }
 }
