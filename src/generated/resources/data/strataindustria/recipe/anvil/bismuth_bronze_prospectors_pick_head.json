@@ -1,0 +1,22 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 90,
+  "ingredient": "strataindustria:bismuth_bronze_ingot",
+  "result": {
+    "id": "strataindustria:bismuth_bronze_prospectors_pick_head"
+  },
+  "rules": [
+    {
+      "hit": "punch",
+      "where": "last"
+    },
+    {
+      "hit": "draw",
+      "where": "not_last"
+    },
+    {
+      "hit": "hit",
+      "where": "not_last"
+    }
+  ]
+}

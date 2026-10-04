@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": "#strataindustria:ingots/any_bronze",
+    "P": "#strataindustria:plates/any_bronze"
+  },
+  "pattern": [
+    "PPP",
+    " I ",
+    "III"
+  ],
+  "result": {
+    "id": "strataindustria:bronze_anvil"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "strataindustria:block/template_stone_anvil",
+  "textures": {
+    "side": "strataindustria:block/gabbro",
+    "top": "strataindustria:block/gabbro_anvil_top"
+  }
+}

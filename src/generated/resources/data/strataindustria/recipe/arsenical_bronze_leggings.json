@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "strataindustria:fibre_cloth",
+    "P": "strataindustria:arsenical_bronze_plate"
+  },
+  "pattern": [
+    "PCP",
+    "P P"
+  ],
+  "result": {
+    "id": "strataindustria:arsenical_bronze_leggings"
+  }
+}

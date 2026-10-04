@@ -1,0 +1,44 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "strataindustria:block/quern_base"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/quern_runner"
+      },
+      "when": {
+        "turn": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/quern_runner",
+        "y": 90
+      },
+      "when": {
+        "turn": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/quern_runner",
+        "y": 180
+      },
+      "when": {
+        "turn": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/quern_runner",
+        "y": 270
+      },
+      "when": {
+        "turn": "3"
+      }
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "strataindustria:anvil",
+  "ingredient": "minecraft:copper_ingot",
+  "result": {
+    "id": "strataindustria:copper_axe_head"
+  },
+  "rules": [
+    {
+      "hit": "punch",
+      "where": "last"
+    },
+    {
+      "hit": "hit",
+      "where": "second_last"
+    },
+    {
+      "hit": "upset",
+      "where": "third_last"
+    }
+  ]
+}

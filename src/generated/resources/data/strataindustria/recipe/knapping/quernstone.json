@@ -1,0 +1,16 @@
+{
+  "type": "strataindustria:knapping",
+  "consume": 4,
+  "ingredient": "#strataindustria:loose_rocks",
+  "mirror": false,
+  "pattern": [
+    ".###.",
+    "#####",
+    "##.##",
+    "#####",
+    ".###."
+  ],
+  "result": {
+    "id": "strataindustria:quernstone"
+  }
+}

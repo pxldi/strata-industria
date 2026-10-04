@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "strataindustria:malachite",
+  "result": {
+    "id": "strataindustria:crushed_malachite"
+  }
+}
