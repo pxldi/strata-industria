@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "strataindustria:fire_brick",
+    "F": "strataindustria:copper_fluid_pipe",
+    "P": "strataindustria:copper_plate",
+    "T": "strataindustria:fluid_tank"
+  },
+  "pattern": [
+    "PFP",
+    "PTP",
+    "BBB"
+  ],
+  "result": {
+    "id": "strataindustria:oil_still"
+  }
+}

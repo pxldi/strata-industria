@@ -8,6 +8,39 @@
         "max_temperature": 1350,
         "hu_per_tick": 30
       }
+    },
+    "strataindustria:diesel": {
+      "joules_per_mb": 32,
+      "bucket": "strataindustria:diesel_bucket",
+      "burn": {
+        "hu_per_mb": 64,
+        "max_temperature": 1600,
+        "hu_per_tick": 60
+      }
+    },
+    "strataindustria:refinery_gas": {
+      "joules_per_mb": 12,
+      "burn": {
+        "hu_per_mb": 24,
+        "max_temperature": 1700,
+        "hu_per_tick": 60
+      }
+    },
+    "strataindustria:heavy_oil": {
+      "bucket": "strataindustria:heavy_oil_bucket",
+      "burn": {
+        "hu_per_mb": 24,
+        "max_temperature": 1500,
+        "hu_per_tick": 40
+      }
+    },
+    "strataindustria:crude_oil": {
+      "bucket": "strataindustria:crude_oil_bucket",
+      "burn": {
+        "hu_per_mb": 8,
+        "max_temperature": 1100,
+        "hu_per_tick": 20
+      }
     }
   }
 }

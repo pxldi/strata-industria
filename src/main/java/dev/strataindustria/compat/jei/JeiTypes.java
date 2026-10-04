@@ -10,6 +10,7 @@ import dev.strataindustria.processing.ElectrolysisRecipe;
 import dev.strataindustria.processing.ExtrudingRecipe;
 import dev.strataindustria.processing.MachiningRecipe;
 import dev.strataindustria.processing.MixingRecipe;
+import dev.strataindustria.processing.OilStillRecipe;
 import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.roasting.RoastingRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
@@ -37,6 +38,8 @@ public final class JeiTypes {
     public static final IRecipeHolderType<ElectrolysisRecipe> ELECTROLYSIS = IRecipeHolderType.create(StrataIndustria.id("electrolysis"));
     public static final IRecipeHolderType<AssemblingRecipe> ASSEMBLING = IRecipeHolderType.create(StrataIndustria.id("assembling"));
     public static final IRecipeHolderType<ExtrudingRecipe> EXTRUDING = IRecipeHolderType.create(StrataIndustria.id("extruding"));
+
+    public static final IRecipeHolderType<OilStillRecipe> OIL_STILL = IRecipeHolderType.create(StrataIndustria.id("oil_still"));
 
     public static final IRecipeType<Processes.Firing> PIT_KILN = IRecipeType.create(StrataIndustria.id("pit_kiln"), Processes.Firing.class);
     public static final IRecipeType<Processes.CharcoalPit> CHARCOAL_PIT = IRecipeType.create(StrataIndustria.id("charcoal_pit"), Processes.CharcoalPit.class);

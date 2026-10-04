@@ -69,6 +69,7 @@ final class ModModelProvider extends ModelProvider {
     @Override
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         Tier5Models.register(blockModels, itemModels);
+        Tier6Models.register(blockModels, itemModels);
         GridData.models(blockModels, itemModels);
         FootData.models(blockModels, itemModels);
         RailData.models(blockModels, itemModels);
