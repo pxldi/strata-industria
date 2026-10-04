@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:barrel",
+  "count": 4,
+  "fluid": {
+    "amount": 1000,
+    "fluid": "minecraft:water"
+  },
+  "fluid_result": {
+    "amount": 1000,
+    "fluid": "strataindustria:tannin"
+  },
+  "ingredient": "strataindustria:bark",
+  "ticks": 2400
+}

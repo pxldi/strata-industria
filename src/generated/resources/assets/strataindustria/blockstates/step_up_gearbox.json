@@ -1,0 +1,27 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "strataindustria:block/step_up_gearbox",
+      "x": 90
+    },
+    "facing=east": {
+      "model": "strataindustria:block/step_up_gearbox",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/step_up_gearbox"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/step_up_gearbox",
+      "y": 180
+    },
+    "facing=up": {
+      "model": "strataindustria:block/step_up_gearbox",
+      "x": 270
+    },
+    "facing=west": {
+      "model": "strataindustria:block/step_up_gearbox",
+      "y": 270
+    }
+  }
+}

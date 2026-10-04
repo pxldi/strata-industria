@@ -31,6 +31,8 @@ import org.jspecify.annotations.Nullable;
 @EventBusSubscriber(modid = StrataIndustria.MOD_ID)
 public final class KineticNetworks {
     private static final Map<ResourceKey<Level>, Set<BlockPos>> DIRTY = new HashMap<>();
+    /** Fastest a wooden part may turn (spec 7.1); iron axles raise it in tier 4. */
+    public static final float WOODEN_SPEED_LIMIT = 64.0f;
 
     private KineticNetworks() {}
 
@@ -91,6 +93,22 @@ public final class KineticNetworks {
                 ratios.put(next, ratio * throughRatio(block, pos, side, ratios, members));
                 queue.add(next);
             }
+            // Belts join blocks that do not touch; both ends must name each other.
+            for (BlockPos next : block.links()) {
+                if (members.containsKey(next)) continue;
+                if (!level.isLoaded(next)) {
+                    incomplete = true;
+                    continue;
+                }
+                if (!(level.getBlockEntity(next) instanceof Kinetic neighbour) || !neighbour.links().contains(pos)) continue;
+                if (members.size() >= max) {
+                    tooLarge = true;
+                    continue;
+                }
+                members.put(next, neighbour);
+                ratios.put(next, ratio);
+                queue.add(next);
+            }
         }
         done.addAll(members.keySet());
 
@@ -120,8 +138,17 @@ public final class KineticNetworks {
             }
         }
 
+        // Wooden parts cannot take more than 64 RPM (spec 7.1).
+        boolean overspeed = false;
+        if (turningSources > 0) {
+            for (var entry : members.entrySet()) {
+                if (base * ratios.get(entry.getKey()) > WOODEN_SPEED_LIMIT + 0.01f) overspeed = true;
+            }
+        }
+
         KineticState.Status status;
         if (tooLarge) status = KineticState.Status.TOO_LARGE;
+        else if (overspeed) status = KineticState.Status.OVERSPEED;
         else if (incomplete) status = KineticState.Status.INCOMPLETE;
         else if (turningSources == 0) status = KineticState.Status.IDLE;
         else if (load > capacity) status = KineticState.Status.OVERSTRESSED;
@@ -148,8 +175,8 @@ public final class KineticNetworks {
     /** The ratio between {@code pos} and its neighbour on {@code side}, through the block at {@code pos}. */
     private static float throughRatio(Kinetic block, BlockPos pos, Direction side, Map<BlockPos, Float> ratios,
             Map<BlockPos, Kinetic> members) {
-        // Rotation enters a block from the neighbour it was reached through. For the start block,
-        // or a block reached from several sides, the first side found decides; plain blocks are 1:1 anyway.
+        // Rotation enters a block from the neighbour it was reached through. For a block reached from
+        // several sides the first side found decides; the start block measures from itself.
         for (Direction from : Direction.values()) {
             if (from == side || !block.connects(from)) continue;
             BlockPos prev = pos.relative(from);
@@ -157,6 +184,6 @@ public final class KineticNetworks {
                 return block.ratio(from, side);
             }
         }
-        return 1.0f;
+        return block.ratio(null, side);
     }
 }

@@ -68,5 +68,11 @@ public final class ModRecipes {
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<dev.strataindustria.washing.WashingRecipe>> WASHING_SERIALIZER =
             SERIALIZERS.register("washing", () -> dev.strataindustria.washing.WashingRecipe.SERIALIZER);
 
+    /** Soaking in a barrel (tier 3 spec 12.1). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<dev.strataindustria.tanning.BarrelRecipe>> BARREL =
+            TYPES.register("barrel", () -> RecipeType.simple(StrataIndustria.id("barrel")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<dev.strataindustria.tanning.BarrelRecipe>> BARREL_SERIALIZER =
+            SERIALIZERS.register("barrel", () -> dev.strataindustria.tanning.BarrelRecipe.SERIALIZER);
+
     private ModRecipes() {}
 }

@@ -1,0 +1,81 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "strataindustria:block/windmill_sail",
+    "sail": "strataindustria:block/windmill_sail"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        7
+      ],
+      "to": [
+        16,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#sail",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#sail",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#sail",
+          "uv": [
+            0,
+            7,
+            16,
+            9
+          ],
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#sail",
+          "uv": [
+            0,
+            7,
+            16,
+            9
+          ],
+          "cullface": "down"
+        },
+        "east": {
+          "texture": "#sail",
+          "uv": [
+            15,
+            0,
+            16,
+            16
+          ],
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#sail",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ],
+          "cullface": "west"
+        }
+      }
+    }
+  ]
+}
