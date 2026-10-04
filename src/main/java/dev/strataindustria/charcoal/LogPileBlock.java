@@ -1,6 +1,5 @@
 package dev.strataindustria.charcoal;
 
-import dev.strataindustria.fire.FirestarterItem;
 import dev.strataindustria.fire.Ignitable;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModBlocks;
@@ -58,7 +57,6 @@ public class LogPileBlock extends BaseEntityBlock implements Ignitable {
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
             InteractionHand hand, BlockHitResult hit) {
         if (state.getValue(LIT)) return InteractionResult.PASS;
-        if (stack.getItem() instanceof FirestarterItem) return InteractionResult.PASS;
         if (stack.is(Items.TORCH) || stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE)) {
             if (!level.isClientSide() && ignite(level, pos, state)) {
                 if (stack.is(Items.FLINT_AND_STEEL)) stack.hurtAndBreak(1, player, hand);

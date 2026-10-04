@@ -64,10 +64,15 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 
-        // Fire: wood friction for the drill, then vanilla fire samples.
-        SoundDefinition drill = definition().subtitle(subtitle("firestarter.drill"));
-        for (int i = 1; i <= 4; i++) drill.with(sound("minecraft:step/wood" + i).pitch(1.6f).volume(0.5f));
-        add(ModSounds.FIRESTARTER_DRILL, drill);
+        // Fire: flint on rock is a sharp stone click over a bright chime (the code raises the pitch with each
+        // strike), the catch a soft rush of air over the first crackle.
+        SoundDefinition strike = definition().subtitle(subtitle("flint.strike"));
+        for (int i = 1; i <= 4; i++) strike.with(sound("minecraft:step/stone" + i).pitch(1.7f).volume(0.7f));
+        strike.with(sound("minecraft:block.amethyst_block.hit", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.45f));
+        add(ModSounds.FLINT_STRIKE, strike);
+        add(ModSounds.FLINT_CATCH, definition().subtitle(subtitle("flint.catch"))
+                .with(sound("minecraft:fire/ignite").pitch(0.8f))
+                .with(sound("minecraft:fire/fire").pitch(1.3f).volume(0.7f)));
         add(ModSounds.FIRE_PIT_IGNITE, definition().subtitle(subtitle("fire_pit.ignite"))
                 .with(sound("minecraft:fire/ignite").pitch(0.9f))
                 .with(sound("minecraft:fire/fire").pitch(1.2f).volume(0.6f)));
@@ -651,6 +656,26 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.water.ambient", event).pitch(1.2f).volume(0.7f))
                 .with(sound("minecraft:item.bucket.fill", event).pitch(1.4f).volume(0.35f))
                 .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.6f).volume(0.2f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_CHUFF, definition().subtitle(subtitle("locomotive.chuff"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.9f).volume(0.55f))
+                .with(sound("minecraft:block.piston.contract", event).pitch(1.9f).volume(0.35f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(1.7f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_WHISTLE, definition().subtitle(subtitle("locomotive.whistle"))
+                .with(sound("minecraft:block.note_block.flute", event).pitch(1.25f).volume(1.0f))
+                .with(sound("minecraft:block.note_block.didgeridoo", event).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.5f).volume(0.4f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_BRAKE, definition().subtitle(subtitle("locomotive.brake"))
+                .with(sound("minecraft:block.grindstone.use", event).pitch(1.7f).volume(0.5f))
+                .with(sound("minecraft:item.axe.scrape", event).pitch(1.3f).volume(0.45f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.8f).volume(0.35f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.WATER_POUR, definition().subtitle(subtitle("water_tower.pour"))
+                .with(sound("minecraft:block.water.ambient", event).pitch(1.0f).volume(0.8f))
+                .with(sound("minecraft:item.bucket.empty", event).pitch(1.3f).volume(0.35f))
+                .with(sound("minecraft:block.pointed_dripstone.drip_water", event).pitch(1.2f).volume(0.5f)));
+        SoundDefinition coal = definition().subtitle(subtitle("coal_stage.load"));
+        for (int i = 1; i <= 3; i++) coal.with(sound("minecraft:dig/gravel" + i).pitch(1.1f).volume(0.7f));
+        coal.with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.8f).volume(0.15f));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.COAL_LOAD, coal);
         add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
                 .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
                 .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))

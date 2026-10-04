@@ -274,11 +274,6 @@ final class ModRecipeProvider extends RecipeProvider {
 
     // Spec 3.5.
     private void fire() {
-        shapeless(RecipeCategory.TOOLS, ModItems.FIRESTARTER.get())
-                .requires(Items.STICK, 2)
-                .requires(ModItems.TWINE.get())
-                .unlockedBy("has_twine", has(ModItems.TWINE.get()))
-                .save(output, key("firestarter"));
         shapeless(RecipeCategory.DECORATIONS, ModItems.FIRE_PIT.get())
                 .requires(Items.STICK, 4)
                 .requires(ModItems.STRAW.get())
@@ -388,14 +383,6 @@ final class ModRecipeProvider extends RecipeProvider {
                 anvil(m + "_gear", ingot, 1, ModItems.GEARS.get(metal).get(), 4);
             }
         }
-        shaped(RecipeCategory.DECORATIONS, ModItems.BRONZE_ANVIL.get())
-                .pattern("PPP")
-                .pattern(" I ")
-                .pattern("III")
-                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
-                .define('I', ModTags.Items.ANY_BRONZE_INGOTS)
-                .unlockedBy("has_bronze_plate", has(ModTags.Items.ANY_BRONZE_PLATES))
-                .save(output, key("bronze_anvil"));
         shapeless(RecipeCategory.TOOLS, ModItems.TONGS.get())
                 .requires(ModItems.TONGS_JAW.get())
                 .requires(Items.STICK, 2)
@@ -463,19 +450,11 @@ final class ModRecipeProvider extends RecipeProvider {
         }
         roast("small_zinc_calcine", ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get(), Tier4Items.SMALL_ZINC_CALCINE.get(), 200, 15);
 
-        // Spec 14.1 and 14.4: welded steel, and the steel anvil built from it.
+        // Spec 14.1: welded steel.
         Item steel = ModItems.ingot(Metal.STEEL);
         Item steelDouble = ModItems.STEEL_DOUBLE_INGOT.get();
         output.accept(key("welding/steel_double_ingot"), new WeldingRecipe(Ingredient.of(steel), Ingredient.of(steel),
                 new ItemStackTemplate(steelDouble)), null);
-        shaped(RecipeCategory.DECORATIONS, Tier4Items.STEEL_ANVIL.get())
-                .pattern("DDD")
-                .pattern(" I ")
-                .pattern("III")
-                .define('D', steelDouble)
-                .define('I', steel)
-                .unlockedBy("has_steel_double_ingot", has(steelDouble))
-                .save(output, key("steel_anvil"));
 
         // Spec 11.7: iron transmission for speeds past the wooden 64 RPM.
         Item ironRod = ModItems.WROUGHT_IRON_ROD.get(), ironAxle = Tier4Items.IRON_AXLE.get(), brassGear = ModItems.GEARS.get(Metal.BRASS).get();
@@ -756,7 +735,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
                 .unlockedBy("has_bronze_boiler", has(Tier4Items.BRONZE_BOILER.get()))
                 .save(output, key("steam_engine"));
-        // Spec 10.5: the steam hammer, around a wrought iron anvil.
+        // Spec 10.5: the steam hammer, around an iron anvil.
         shaped(RecipeCategory.REDSTONE, Tier4Items.STEAM_HAMMER.get())
                 .pattern("PVP")
                 .pattern(" R ")
@@ -765,7 +744,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('V', Tier4Items.VALVE.get())
                 .define('R', ModItems.RODS.get(Metal.STEEL).get())
                 .define('I', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
-                .define('A', ModItems.WROUGHT_IRON_ANVIL.get())
+                .define('A', ModItems.IRON_ANVIL.get())
                 .unlockedBy("has_steam_engine", has(Tier4Items.STEAM_ENGINE.get()))
                 .save(output, key("steam_hammer"));
         // Spec 11.2: the crusher, and what it does better than a quern.
@@ -902,21 +881,21 @@ final class ModRecipeProvider extends RecipeProvider {
         // Spec 9.3: hammering the slag out of a bloom. Partial blooms give nuggets instead (AnvilRecipe#assemble).
         anvil("bloom_refining", ModItems.RAW_BLOOM.get(), 1, Items.IRON_INGOT, 6);
 
-        // Spec 9.4: flux from the quern, welding, and the wrought iron anvil.
+        // Spec 9.4: flux from the quern, welding, and the iron anvil.
         grind("flux_from_sand", Ingredient.of(Items.SAND), ModItems.FLUX.get(), 2);
         grind("flux_from_limestone", Ingredient.of(ModItems.ROCK_SHARD.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
         grind("flux_from_marble", Ingredient.of(ModItems.ROCK_SHARD.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
         output.accept(key("welding/wrought_iron_double_ingot"), new WeldingRecipe(Ingredient.of(Items.IRON_INGOT),
                 Ingredient.of(Items.IRON_INGOT), new ItemStackTemplate(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get())), null);
-        Item doubleIngot = ModItems.WROUGHT_IRON_DOUBLE_INGOT.get();
-        shaped(RecipeCategory.DECORATIONS, ModItems.WROUGHT_IRON_ANVIL.get())
-                .pattern("DDD")
+        // Two anvils: the iron anvil is built straight from ingots, so it needs no welding to get started. It
+        // is the anvil that works wrought iron and steel.
+        shaped(RecipeCategory.DECORATIONS, ModItems.IRON_ANVIL.get())
+                .pattern("III")
                 .pattern(" I ")
                 .pattern("III")
-                .define('D', doubleIngot)
                 .define('I', Items.IRON_INGOT)
-                .unlockedBy("has_double_ingot", has(doubleIngot))
-                .save(output, key("wrought_iron_anvil"));
+                .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
+                .save(output, key("iron_anvil"));
 
         kinetics();
 

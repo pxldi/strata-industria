@@ -49,16 +49,15 @@ public class MetalArmourRecipe extends ShapedRecipe {
     @Override
     public ItemStack assemble(CraftingInput input) {
         ItemStack piece = super.assemble(input);
-        int material = 0, craft = 0, plates = 0;
+        int craft = 0, plates = 0;
         for (ItemStack stack : input.items()) {
             Quality quality = stack.get(ModDataComponents.QUALITY.get());
             if (quality == null) continue;
-            material += quality.material();
             craft += quality.craft();
             plates++;
         }
         if (plates == 0) return piece;
-        Quality quality = new Quality(Math.round(material / (float) plates), Math.round(craft / (float) plates));
+        Quality quality = new Quality(Math.round(craft / (float) plates));
         piece.set(ModDataComponents.QUALITY.get(), quality);
         if (piece.isDamageableItem()) {
             piece.set(DataComponents.MAX_DAMAGE, Math.max(1, Math.round(piece.getMaxDamage() * quality.durabilityMultiplier())));

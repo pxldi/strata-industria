@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,pouring=false": {
+      "model": "strataindustria:block/water_tower_spout",
+      "y": 90
+    },
+    "facing=east,pouring=true": {
+      "model": "strataindustria:block/water_tower_spout_out",
+      "y": 90
+    },
+    "facing=north,pouring=false": {
+      "model": "strataindustria:block/water_tower_spout"
+    },
+    "facing=north,pouring=true": {
+      "model": "strataindustria:block/water_tower_spout_out"
+    },
+    "facing=south,pouring=false": {
+      "model": "strataindustria:block/water_tower_spout",
+      "y": 180
+    },
+    "facing=south,pouring=true": {
+      "model": "strataindustria:block/water_tower_spout_out",
+      "y": 180
+    },
+    "facing=west,pouring=false": {
+      "model": "strataindustria:block/water_tower_spout",
+      "y": 270
+    },
+    "facing=west,pouring=true": {
+      "model": "strataindustria:block/water_tower_spout_out",
+      "y": 270
+    }
+  }
+}

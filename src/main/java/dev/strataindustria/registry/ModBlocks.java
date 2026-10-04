@@ -104,22 +104,20 @@ public final class ModBlocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.POPPED));
 
-    /** Bronze anvil (spec 9.1): tier 3, the tier 2 exit item. */
-    public static final DeferredBlock<AnvilBlock> BRONZE_ANVIL = BLOCKS.registerBlock("bronze_anvil", p -> new AnvilBlock(3, false, p),
-            p -> p.mapColor(MapColor.COLOR_ORANGE)
-                    .strength(5.0f, 1200.0f)
-                    .sound(SoundType.ANVIL)
-                    .requiresCorrectToolForDrops()
-                    .noOcclusion()
-                    .pushReaction(PushReaction.IMMOVEABLE));
-    /** Wrought iron anvil (tier 3 spec 9.1): tier 4, the tier 3 exit item. */
-    public static final DeferredBlock<AnvilBlock> WROUGHT_IRON_ANVIL = BLOCKS.registerBlock("wrought_iron_anvil", p -> new AnvilBlock(4, false, p),
+    /** The iron anvil: works wrought iron and steel (anvil tier 4). Stone anvils work copper and bronze (tier 2). */
+    public static final DeferredBlock<AnvilBlock> IRON_ANVIL = BLOCKS.registerBlock("iron_anvil", p -> new AnvilBlock(4, false, p),
             p -> p.mapColor(MapColor.METAL)
                     .strength(5.0f, 1200.0f)
                     .sound(SoundType.ANVIL)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .pushReaction(PushReaction.IMMOVEABLE));
+    static {
+        // The bronze and steel anvils are gone (two anvils: stone and iron); old ones in a world turn into iron anvils.
+        for (String old : new String[] {"bronze_anvil", "wrought_iron_anvil", "steel_anvil"}) {
+            BLOCKS.addAlias(StrataIndustria.id(old), StrataIndustria.id("iron_anvil"));
+        }
+    }
 
     /** Logs stacked for a charcoal pit (spec 4.4). */
     public static final DeferredBlock<LogPileBlock> LOG_PILE = BLOCKS.registerBlock("log_pile", LogPileBlock::new,

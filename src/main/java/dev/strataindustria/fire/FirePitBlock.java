@@ -38,7 +38,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * The first fire (tier 0-2 spec 3.5): a ring of stones around a bed of sticks. Placed unlit; lit with
- * a firestarter, a torch or flint and steel once it has fuel. A lit pit turns a stick into a torch.
+ * flint struck on a rock, a torch or flint and steel once it has fuel. A lit pit turns a stick into a torch.
  */
 public class FirePitBlock extends BaseEntityBlock implements Ignitable {
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
@@ -94,8 +94,6 @@ public class FirePitBlock extends BaseEntityBlock implements Ignitable {
             }
             return InteractionResult.SUCCESS;
         }
-        // The firestarter lights the pit through its own held use instead of opening the menu.
-        if (!lit && stack.getItem() instanceof FirestarterItem) return InteractionResult.PASS;
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 

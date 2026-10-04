@@ -71,10 +71,10 @@ public enum Alloy {
         for (Alloy alloy : values()) {
             if (alloy.result != metal || alloy.itemShare <= 0) continue;
             int added = Math.round(units * alloy.itemShare);
-            if (added <= 0) return Melt.of(alloy.base, units, 0);
-            return new Melt(Map.of(alloy.base, units - added, alloy.added, added), 0);
+            if (added <= 0) return Melt.of(alloy.base, units);
+            return new Melt(Map.of(alloy.base, units - added, alloy.added, added));
         }
-        return Melt.of(metal, units, 0);
+        return Melt.of(metal, units);
     }
 
     boolean matches(Melt melt) {

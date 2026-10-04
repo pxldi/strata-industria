@@ -60,9 +60,19 @@ public final class TramwayRoutes {
                 } else {
                     List<BlockPos> route = trace.route();
                     route.add(stop.immutable());
-                    RouteIndex.Proof proof = index.prove(level, from.id(), to.id(), LinkKind.TRAMWAY, route);
-                    if (proof.refusal() != null) tell(level, stop, proof.refusal());
-                    else if (proof.link() != null) index.traffic(level, proof.link().id());
+                    // A locomotive proves a railway; the T4 area needs the whole route in steel track (outposts spec 7.1).
+                    LinkKind kind = !(lead instanceof SteamLocomotiveEntity) ? LinkKind.TRAMWAY
+                            : RailGrade.steelRoute(level, route) ? LinkKind.RAILWAY : LinkKind.RAILWAY_MIXED;
+                    RouteIndex.Proof proof = index.prove(level, from.id(), to.id(), kind, route);
+                    if (proof.refusal() != null) {
+                        tell(level, stop, proof.refusal());
+                    } else if (proof.link() != null) {
+                        index.traffic(level, proof.link().id());
+                        if (kind == LinkKind.RAILWAY) {
+                            Journal.awardOwners(level, from, Journal.OUTPOST_GROWN);
+                            Journal.awardOwners(level, to, Journal.OUTPOST_GROWN);
+                        }
+                    }
                 }
             }
         }

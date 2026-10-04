@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "X": "strataindustria:treated_planks",
+    "c": "strataindustria:chute"
+  },
+  "pattern": [
+    "X X",
+    "XcX",
+    "XXX"
+  ],
+  "result": {
+    "id": "strataindustria:coal_stage"
+  }
+}

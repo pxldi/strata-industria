@@ -115,7 +115,7 @@ public final class StrataJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addCraftingStation(JeiTypes.PIT_KILN, ModItems.STRAW.get(), dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get(), Tier4Items.KILN.get());
-        registration.addCraftingStation(JeiTypes.CHARCOAL_PIT, ModItems.FIRESTARTER.get());
+        registration.addCraftingStation(JeiTypes.CHARCOAL_PIT, net.minecraft.world.item.Items.FLINT);
         registration.addCraftingStation(JeiTypes.QUERN, ModItems.QUERN.get(), ModItems.MILLSTONE.get());
         registration.addCraftingStation(JeiTypes.ALLOYING, ModItems.CRUCIBLE.get(), Tier4Items.REFRACTORY_CRUCIBLE.get(), Tier4Items.SMELTER.get(), ModItems.FORGE.get());
         registration.addCraftingStation(JeiTypes.CASTING, ModItems.CRUCIBLE.get(), Tier4Items.REFRACTORY_CRUCIBLE.get(), Tier4Items.SMELTER.get());

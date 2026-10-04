@@ -9,30 +9,26 @@ import java.util.Map;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-/**
- * Metal by units, with the unit-weighted material quality carried along (spec 6.4). Used for a
- * crucible's contents, a filled mold and a slag ingot's composition.
- */
-public record Melt(Map<Metal, Integer> units, int qualityUnits) {
-    public static final Melt EMPTY = new Melt(Map.of(), 0);
+/** Metal by units. Used for a crucible's contents, a filled mold and a slag ingot's composition. */
+public record Melt(Map<Metal, Integer> units) {
+    public static final Melt EMPTY = new Melt(Map.of());
 
+    /** Old saves carry a {@code quality_units} field from the ore-grade quality; it is ignored. */
     public static final Codec<Melt> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Codec.unboundedMap(Metal.CODEC, Codec.INT).fieldOf("units").forGetter(Melt::units),
-            Codec.INT.optionalFieldOf("quality_units", 0).forGetter(Melt::qualityUnits)
+            Codec.unboundedMap(Metal.CODEC, Codec.INT).fieldOf("units").forGetter(Melt::units)
     ).apply(i, Melt::new));
 
     public static final StreamCodec<ByteBuf, Melt> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.<ByteBuf, Metal, Integer, Map<Metal, Integer>>map(i -> new EnumMap<>(Metal.class), Metal.STREAM_CODEC,
                     ByteBufCodecs.VAR_INT), Melt::units,
-            ByteBufCodecs.INT, Melt::qualityUnits,
             Melt::new);
 
     public Melt {
         units = Map.copyOf(units);
     }
 
-    public static Melt of(Metal metal, int units, int quality) {
-        return new Melt(Map.of(metal, units), units * quality);
+    public static Melt of(Metal metal, int units) {
+        return new Melt(Map.of(metal, units));
     }
 
     public int total() {
@@ -51,16 +47,11 @@ public record Melt(Map<Metal, Integer> units, int qualityUnits) {
         return total == 0 ? 0 : units.getOrDefault(metal, 0) / (float) total;
     }
 
-    public int quality() {
-        int total = total();
-        return total == 0 ? 0 : Math.round(qualityUnits / (float) total);
-    }
-
     public Melt plus(Melt other) {
         Map<Metal, Integer> sum = new EnumMap<>(Metal.class);
         sum.putAll(units);
         other.units.forEach((metal, u) -> sum.merge(metal, u, Integer::sum));
-        return new Melt(sum, qualityUnits + other.qualityUnits);
+        return new Melt(sum);
     }
 
     /**
@@ -89,7 +80,7 @@ public record Melt(Map<Metal, Integer> units, int qualityUnits) {
             int rest = u - take.get(metal);
             if (rest > 0) left.put(metal, rest);
         });
-        return new Melt(left, Math.round(qualityUnits * (float) (total - amount) / total));
+        return new Melt(left);
     }
 
     /** The same mix at a share of its units: slag gives back 90% when remelted. */
@@ -105,7 +96,7 @@ public record Melt(Map<Metal, Integer> units, int qualityUnits) {
             units.entrySet().stream().max(Map.Entry.comparingByValue())
                     .ifPresent(largest -> out.merge(largest.getKey(), shortfall, Integer::sum));
         }
-        return new Melt(out, Math.round(qualityUnits * factor));
+        return new Melt(out);
     }
 
     /** Where everything in the mix is liquid: the highest melting point among its metals. */
