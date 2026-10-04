@@ -1,0 +1,394 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller"
+      },
+      "when": {
+        "facing": "north",
+        "venting": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_venting"
+      },
+      "when": {
+        "facing": "north",
+        "venting": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_green"
+      },
+      "when": {
+        "facing": "north",
+        "light": "green"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_amber"
+      },
+      "when": {
+        "facing": "north",
+        "light": "amber"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_red"
+      },
+      "when": {
+        "facing": "north",
+        "light": "red"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_1"
+      },
+      "when": {
+        "facing": "north",
+        "glass": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_2"
+      },
+      "when": {
+        "facing": "north",
+        "glass": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_3"
+      },
+      "when": {
+        "facing": "north",
+        "glass": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_4"
+      },
+      "when": {
+        "facing": "north",
+        "glass": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_5"
+      },
+      "when": {
+        "facing": "north",
+        "glass": "5"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "venting": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_venting",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "venting": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_green",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "light": "green"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_amber",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "light": "amber"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_red",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "light": "red"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_1",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "glass": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_2",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "glass": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_3",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "glass": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_4",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "glass": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_5",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "glass": "5"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "venting": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_venting",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "venting": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_green",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "light": "green"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_amber",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "light": "amber"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_red",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "light": "red"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_1",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "glass": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_2",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "glass": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_3",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "glass": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_4",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "glass": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_5",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "glass": "5"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "venting": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_venting",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "venting": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_green",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "light": "green"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_amber",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "light": "amber"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_lamp_red",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "light": "red"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_1",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "glass": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_2",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "glass": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_3",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "glass": "3"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_4",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "glass": "4"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/boiler_controller_glass_5",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "glass": "5"
+      }
+    }
+  ]
+}

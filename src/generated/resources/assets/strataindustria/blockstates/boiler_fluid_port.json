@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "mode=steam": {
+      "model": "strataindustria:block/boiler_fluid_port_steam"
+    },
+    "mode=water": {
+      "model": "strataindustria:block/boiler_fluid_port_water"
+    }
+  }
+}
