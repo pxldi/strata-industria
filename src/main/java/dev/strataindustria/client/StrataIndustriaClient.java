@@ -33,6 +33,7 @@ import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyE
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -45,6 +46,8 @@ public final class StrataIndustriaClient {
         modBus.addListener(StrataIndustriaClient::registerRenderers);
         modBus.addListener(StrataIndustriaClient::registerTints);
         modBus.addListener(StrataIndustriaClient::registerItemProperties);
+        modBus.addListener(SurveyClient::registerTints);
+        NeoForge.EVENT_BUS.addListener(SurveyClient::onTooltip);
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {

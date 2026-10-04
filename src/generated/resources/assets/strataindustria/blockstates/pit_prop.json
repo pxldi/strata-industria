@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "strataindustria:block/pit_prop",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "strataindustria:block/pit_prop"
+    },
+    "axis=z": {
+      "model": "strataindustria:block/pit_prop",
+      "x": 90
+    }
+  }
+}

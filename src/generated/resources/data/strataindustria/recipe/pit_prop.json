@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "L": "#c:stripped_logs"
+  },
+  "pattern": [
+    "L",
+    "L",
+    "L"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:pit_prop"
+  }
+}

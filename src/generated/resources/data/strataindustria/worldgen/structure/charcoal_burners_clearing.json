@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:camp",
+  "biomes": "#strataindustria:has_structure/charcoal_burners_clearing",
+  "layout": "charcoal_burners_clearing",
+  "spawn_overrides": {},
+  "step": "top_layer_modification"
+}
