@@ -8,6 +8,11 @@ import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.survey.Surveyor;
 import java.util.ArrayList;
 import java.util.List;
+import dev.strataindustria.registry.ModItems;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -111,10 +116,16 @@ public class AditPiece extends StructurePiece {
                 "adit/mining");
     }
 
+    /** The older, collapsed adit's tunnel, for tests: {@link #straight} with the miner's end and old weathering. */
+    public static AditPiece ruined(BlockPos portal, Direction heading, int length) {
+        AditPiece p = straight(portal, heading, length);
+        return new AditPiece(p.steps, p.mineral, p.wood, p.surfaceY, p.seed, false, p.ladderSide, "adit/collapsed");
+    }
+
     private static BoundingBox box(int[] steps) {
         BoundingBox box = null;
         for (int i = 0; i < steps.length; i += STRIDE) {
-            BoundingBox cell = new BoundingBox(steps[i] - 2, steps[i + 1], steps[i + 2] - 2, steps[i] + 2, steps[i + 1] + 4, steps[i + 2] + 2);
+            BoundingBox cell = new BoundingBox(steps[i] - 3, steps[i + 1], steps[i + 2] - 3, steps[i] + 3, steps[i + 1] + 4, steps[i + 2] + 3);
             box = box == null ? cell : box.encapsulate(cell);
         }
         return box == null ? new BoundingBox(0, 0, 0, 0, 0, 0) : box;
@@ -224,6 +235,7 @@ public class AditPiece extends StructurePiece {
                 continue;
             }
             carve(level, chunkBB, x, y, z, side);
+            if (ruin()) weather(level, chunkBB, x, y, z, side, i, geology);
             if ((flags & PROPS) != 0 && i < lastHorizontal - 1 && !Weathering.chance(new BlockPos(x, y, z), seed, 0.06)) {
                 props(level, chunkBB, x, y, z, side);
             }
@@ -235,6 +247,91 @@ public class AditPiece extends StructurePiece {
         if (last >= 0 && last != lastHorizontal) {
             Direction h = Direction.from3DDataValue(steps[last * STRIDE + 3]);
             face(level, random, chunkBB, steps[last * STRIDE], steps[last * STRIDE + 1], steps[last * STRIDE + 2], h.getClockWise(), geology);
+        }
+    }
+
+    /** The older adit of structures v2 6.4: cracked walls, rubble, roots, and the miner's end. */
+    private boolean ruin() {
+        return "adit/collapsed".equals(digPlan);
+    }
+
+    /** Old rock and old damp: cracked wall blocks, rubble on the floor, roots through the first stretch of roof, webs. */
+    private void weather(WorldGenLevel level, BoundingBox chunkBB, int x, int y, int z, Direction side, int index, GeologyContext geology) {
+        Rock rock = geology == null ? Rock.GRANITE : geology.sampler().rockAt(x, y + 2, z, surfaceY);
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int o = -2; o <= 2; o += 4) {
+            for (int dy = 1; dy <= 3; dy++) {
+                pos.set(x + side.getStepX() * o, y + dy, z + side.getStepZ() * o);
+                if (Terrain.isGround(level.getBlockState(pos)) && Weathering.chance(pos, seed, 0.22)) {
+                    set(level, chunkBB, pos, SharedBlocks.CRACKED.get(rock).get().defaultBlockState());
+                }
+            }
+        }
+        int o = (int) (Weathering.hash(new BlockPos(x, y, z), seed) % 3) - 1;
+        pos.set(x + side.getStepX() * o, y + 1, z + side.getStepZ() * o);
+        if (level.getBlockState(pos).isAir() && Terrain.isGround(level.getBlockState(pos.below())) && Weathering.chance(pos, seed, 0.4)) {
+            set(level, chunkBB, pos, SharedBlocks.RUBBLE.get(rock).get().defaultBlockState());
+        }
+        if (index < 8) {
+            pos.set(x + side.getStepX() * -o, y + 3, z + side.getStepZ() * -o);
+            if (level.getBlockState(pos).isAir() && Terrain.isGround(level.getBlockState(pos.above())) && Weathering.chance(pos, seed, 0.35)) {
+                set(level, chunkBB, pos, Blocks.HANGING_ROOTS.defaultBlockState());
+            }
+        }
+        pos.set(x + side.getStepX() * -o, y + 3, z + side.getStepZ() * -o);
+        if (level.getBlockState(pos).isAir() && Terrain.isGround(level.getBlockState(pos.above())) && Weathering.chance(pos, seed, 0.06)) {
+            set(level, chunkBB, pos, Blocks.COBWEB.defaultBlockState());
+        }
+    }
+
+    /**
+     * The miner's end: a slumped stand in a leather cap and tunic, his pack crate with the burnt-out lamp on
+     * it, a bone half buried in rubble, a pick hung in the wall, and a cache behind two cracked blocks.
+     */
+    private void minersEnd(WorldGenLevel level, RandomSource random, BoundingBox chunkBB, int x, int y, int z, Direction h, Rock rock) {
+        Direction side = h.getClockWise();
+        BlockPos base = new BlockPos(x, y, z);
+        BlockPos crate = base.relative(side).above();
+        BlockPos stand = base.relative(side.getOpposite()).above();
+        BlockState air = Blocks.CAVE_AIR.defaultBlockState();
+        for (BlockPos p : new BlockPos[] {crate, stand, crate.above(), base.above()}) {
+            if (chunkBB.isInside(p) && !isFluid(level, p)) set(level, chunkBB, p, air);
+        }
+        if (chunkBB.isInside(crate)) {
+            set(level, chunkBB, crate, SharedBlocks.CRATE.get().defaultBlockState());
+            RandomizableContainer.setBlockEntityLootTable(level, random, crate, CampLoot.barrel("adit/cache", mineral));
+            set(level, chunkBB, crate.above(), SharedBlocks.MINERS_LAMP.get().defaultBlockState()
+                    .setValue(MinersLampBlock.MODE, MinersLampBlock.Mode.OFF));
+        }
+        BlockPos rubble = base.above();
+        if (chunkBB.isInside(rubble)) set(level, chunkBB, rubble, SharedBlocks.RUBBLE.get(rock).get().defaultBlockState());
+        BlockPos bone = base.relative(h.getOpposite()).relative(side.getOpposite()).above();
+        if (chunkBB.isInside(bone) && Terrain.isGround(level.getBlockState(bone.below()))) {
+            set(level, chunkBB, bone, Blocks.BONE_BLOCK.defaultBlockState());
+        }
+        if (chunkBB.isInside(stand)) {
+            ArmorStand dummy = new ArmorStand(level.getLevel(), stand.getX() + 0.5, stand.getY(), stand.getZ() + 0.5);
+            {
+                dummy.setYRot(h.toYRot());
+                dummy.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.LEATHER_HELMET));
+                dummy.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
+                level.addFreshEntity(dummy);
+            }
+        }
+        BlockPos rack = base.relative(h).above(2);
+        if (chunkBB.isInside(rack) && Terrain.isGround(level.getBlockState(rack))) {
+            set(level, chunkBB, rack, SharedBlocks.TOOL_RACK.get().defaultBlockState().setValue(ToolRackBlock.FACING, h.getOpposite()));
+            ToolRackBlockEntity.stock(level.getLevel(), rack, List.of(new ItemStack(ModItems.STONE_PICKAXE.get())));
+        }
+        // The cache: two cracked blocks stacked in the side wall, a crate behind them.
+        Direction wall = side.getOpposite();
+        BlockPos lower = base.relative(wall, 2).above(), upper = lower.above(), cache = lower.relative(wall);
+        if (chunkBB.isInside(lower) && chunkBB.isInside(upper) && chunkBB.isInside(cache) && Terrain.isGround(level.getBlockState(cache))) {
+            BlockState cracked = SharedBlocks.CRACKED.get(rock).get().defaultBlockState();
+            set(level, chunkBB, lower, cracked);
+            set(level, chunkBB, upper, cracked);
+            set(level, chunkBB, cache, SharedBlocks.CRATE.get().defaultBlockState());
+            RandomizableContainer.setBlockEntityLootTable(level, random, cache, CampLoot.key(CampLoot.ADIT_HIDDEN, mineral));
         }
     }
 
@@ -306,6 +403,11 @@ public class AditPiece extends StructurePiece {
     private void face(WorldGenLevel level, RandomSource random, BoundingBox chunkBB, int x, int y, int z, Direction side,
             GeologyContext geology) {
         Rock rock = geology == null ? Rock.GRANITE : geology.sampler().rockAt(x, y, z, surfaceY);
+        if (ruin()) {
+            Direction heading = side.getCounterClockWise();
+            minersEnd(level, random, chunkBB, x, y, z, heading, rock);
+            return;
+        }
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int o = -1; o <= 1; o += 2) {
             pos.set(x + side.getStepX() * o, y + 1, z + side.getStepZ() * o);

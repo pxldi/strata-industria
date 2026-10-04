@@ -40,6 +40,7 @@ final class StructureGameTests {
         tests.put("structure_plans_in_forest", StructureGameTests::plansInForest);
         tests.put("structure_sluice_in_forest", StructureGameTests::sluiceInForest);
         tests.put("structure_adit_in_forest", StructureGameTests::aditInForest);
+        tests.put("structure_adit_miners_end", StructureGameTests::aditMinersEnd);
         tests.put("structure_bunkhouse_cache", StructureGameTests::bunkhouseCache);
     }
 
@@ -116,6 +117,34 @@ final class StructureGameTests {
         build(level, AditPiece.straight(portal, Direction.SOUTH, 12), area);
         audit(level, area, "adit", problems);
         helper.assertTrue(problems.isEmpty(), "unclean generation: " + problems.stream().limit(6).toList());
+        helper.succeed();
+    }
+
+    /** The old adit ends in the miner's chamber: pack crate, burnt-out lamp, stand, bone, rack, and a cache behind cracked blocks. */
+    private static void aditMinersEnd(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        BlockPos portal = new BlockPos(origin.getX() + 4 * PAD, groundY, origin.getZ() + 4 * PAD);
+        BoundingBox area = new BoundingBox(portal.getX() - PAD, groundY - 12, portal.getZ() - PAD, portal.getX() + PAD, groundY + 40,
+                portal.getZ() + PAD + 14);
+        forest(level, area, groundY, portal.getX() - 3, portal.getZ() - 3, 6, 16);
+        build(level, AditPiece.ruined(portal, Direction.SOUTH, 14), area);
+        int crates = 0, racks = 0, bones = 0, cracked = 0, lamps = 0;
+        for (BlockPos pos : BlockPos.betweenClosed(area.minX(), area.minY(), area.minZ(), area.maxX(), area.maxY(), area.maxZ())) {
+            BlockState state = level.getBlockState(pos);
+            if (state.is(dev.strataindustria.structure.SharedBlocks.CRATE.get())) crates++;
+            else if (state.is(dev.strataindustria.structure.SharedBlocks.TOOL_RACK.get())) racks++;
+            else if (state.is(Blocks.BONE_BLOCK)) bones++;
+            else if (state.is(dev.strataindustria.structure.SharedBlocks.MINERS_LAMP.get())) lamps++;
+            else if (dev.strataindustria.structure.SharedBlocks.CRACKED.values().stream().anyMatch(b -> state.is(b.get()))) cracked++;
+        }
+        helper.assertTrue(crates == 2, "expected pack and cache crates, found " + crates);
+        helper.assertTrue(racks == 1 && bones == 1 && lamps == 1, "miner's end incomplete: " + racks + "/" + bones + "/" + lamps);
+        helper.assertTrue(cracked >= 2, "no cracked walls");
+        helper.assertTrue(!level.getEntitiesOfClass(net.minecraft.world.entity.decoration.ArmorStand.class,
+                new net.minecraft.world.phys.AABB(area.minX(), area.minY(), area.minZ(), area.maxX(), area.maxY(), area.maxZ())).isEmpty(),
+                "no armor stand");
         helper.succeed();
     }
 
