@@ -1191,6 +1191,12 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('A', Tier4Items.IRON_AXLE.get())
                 .unlockedBy("has_iron_axle", has(Tier4Items.IRON_AXLE.get()))
                 .save(output, key("blower"));
+        // Spec 10.5: the blowing engine.
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.BLOWING_ENGINE.get())
+                .requires(Tier4Items.STEAM_ENGINE.get())
+                .requires(Tier4Items.BLOWER.get())
+                .unlockedBy("has_blower", has(Tier4Items.BLOWER.get()))
+                .save(output, key("blowing_engine"));
         shaped(RecipeCategory.DECORATIONS, Tier4Items.CONVERTER_CONTROLLER.get())
                 .pattern("PGP")
                 .pattern("PCP")

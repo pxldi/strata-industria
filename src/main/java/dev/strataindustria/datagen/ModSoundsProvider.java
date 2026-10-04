@@ -300,6 +300,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.FLUID_TANK_FILL, definition().subtitle(subtitle("fluid_tank.fill"))
                 .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.8f))
                 .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
+        add(Tier4Sounds.BLOWING_ENGINE_STROKE, definition().subtitle(subtitle("blowing_engine.stroke"))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.6f))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.55f))
+                .with(sound("minecraft:entity.breeze.wind_burst", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.25f)));
         // Spec 21.7: a hiss, then the heavy ringing blow.
         add(Tier4Sounds.STEAM_HAMMER_STRIKE, definition().subtitle(subtitle("steam_hammer.strike"))
                 .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.6f))

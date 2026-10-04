@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:steam_engine",
+    "strataindustria:blower"
+  ],
+  "result": {
+    "id": "strataindustria:blowing_engine"
+  }
+}

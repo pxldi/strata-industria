@@ -389,6 +389,29 @@
     ],
     "subtitle": "subtitles.strataindustria.blower.run"
   },
+  "blowing_engine.stroke": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 0.5,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "entity.breeze.wind_burst",
+        "pitch": 0.6,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.blowing_engine.stroke"
+  },
   "boiler.crack": {
     "sounds": [
       {

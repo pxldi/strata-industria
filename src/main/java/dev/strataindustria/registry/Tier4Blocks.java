@@ -177,6 +177,12 @@ public final class Tier4Blocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .sound(HEAVY_METAL));
+    // Spec 10.5: a steam engine on a blowing cylinder, worth two blowers.
+    public static final DeferredBlock<dev.strataindustria.ironworks.BlowingEngineBlock> BLOWING_ENGINE = ModBlocks.BLOCKS.registerBlock(
+            "blowing_engine", dev.strataindustria.ironworks.BlowingEngineBlock::new, p -> p.mapColor(MapColor.METAL)
+                    .strength(4.0f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(HEAVY_METAL));
 
     // Spec 8.2 and 8.4: heat pipes, which glow while they carry heat, and the inlet that takes it into a multiblock.
     public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> COPPER_HEAT_PIPE = ModBlocks.BLOCKS.registerBlock("copper_heat_pipe",

@@ -83,6 +83,7 @@ final class Tier4GameTests {
         tests.put("tier4_smelter", Tier4GameTests::smelter);
         tests.put("tier4_steam_hammer", Tier4GameTests::steamHammer);
         tests.put("tier4_fluid_tank", Tier4GameTests::fluidTank);
+        tests.put("tier4_blowing_engine", Tier4GameTests::blowingEngine);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -973,6 +974,37 @@ final class Tier4GameTests {
         helper.assertTrue(smelter.melt().isEmpty(), "the pot is empty");
         helper.assertTrue(smelter.getItem(out).getCount() == 2, "the castings stack though they came out at different heats");
         helper.succeed();
+    }
+
+    // Blowing engine (spec 10.5 and 11.6): no air without steam; at 2 bar it blows two blowers' worth
+    // out of its front only, at 1.5 bar one, and it stops once the steam is gone.
+
+    private static void blowingEngine(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, Tier4Blocks.BLOWING_ENGINE.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlowingEngineBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        var engine = (dev.strataindustria.ironworks.BlowingEngineBlockEntity) level.getBlockEntity(pos);
+        blowTick(level, pos, engine, 0, 0, 3);
+        helper.assertValueEqual(engine.airOut(Direction.NORTH), 0, "air without steam");
+        helper.assertValueEqual(engine.fill(Direction.NORTH, Tier4Fluids.STEAM.get(), 40, 2.0f, true), 0, "steam only goes in at the back");
+        blowTick(level, pos, engine, 15, 2.0f, 10);
+        helper.assertValueEqual(engine.airOut(Direction.NORTH), 2, "air out of the front at 2 bar");
+        helper.assertValueEqual(engine.airOut(Direction.EAST), 0, "no air out of the side");
+        blowTick(level, pos, engine, 8, 1.5f, 10);
+        helper.assertValueEqual(engine.airOut(Direction.NORTH), 1, "air at 1.5 bar");
+        blowTick(level, pos, engine, 0, 0, 20);
+        helper.assertValueEqual(engine.airOut(Direction.NORTH), 0, "air once the steam stops");
+        helper.succeed();
+    }
+
+    /** Ticks with {@code steam} mB pushed into the back of a north-facing engine each tick at {@code pressure}. */
+    private static void blowTick(ServerLevel level, BlockPos pos, dev.strataindustria.ironworks.BlowingEngineBlockEntity engine, int steam,
+            float pressure, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            if (steam > 0) engine.fill(Direction.SOUTH, Tier4Fluids.STEAM.get(), steam, pressure, false);
+            dev.strataindustria.ironworks.BlowingEngineBlockEntity.serverTick(level, pos, level.getBlockState(pos), engine);
+        }
     }
 
     // Fluid tank and valve (spec 9.3): two stacked tanks hold one fluid, filling from the bottom. Through an
