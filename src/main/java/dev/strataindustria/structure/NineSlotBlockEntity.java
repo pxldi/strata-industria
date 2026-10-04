@@ -30,7 +30,7 @@ import net.minecraft.sounds.SoundSource;
 public abstract class NineSlotBlockEntity extends RandomizableContainerBlockEntity {
     public static final int SLOTS = 9;
 
-    private NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.withSize(rows() * 9, ItemStack.EMPTY);
     private final ContainerOpenersCounter openers = new ContainerOpenersCounter() {
         @Override
         protected void onOpen(Level level, BlockPos pos, BlockState state) {
@@ -55,6 +55,11 @@ public abstract class NineSlotBlockEntity extends RandomizableContainerBlockEnti
         super(type, pos, state);
     }
 
+    /** Rows of nine slots: one for the crate and the cart, three for the builder's crate. */
+    protected int rows() {
+        return 1;
+    }
+
     protected abstract Component name();
 
     protected abstract SoundEvent openSound();
@@ -76,13 +81,13 @@ public abstract class NineSlotBlockEntity extends RandomizableContainerBlockEnti
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
+        items = NonNullList.withSize(rows() * 9, ItemStack.EMPTY);
         if (!tryLoadLootTable(input)) ContainerHelper.loadAllItems(input, items);
     }
 
     @Override
     public int getContainerSize() {
-        return SLOTS;
+        return rows() * 9;
     }
 
     @Override
@@ -102,7 +107,7 @@ public abstract class NineSlotBlockEntity extends RandomizableContainerBlockEnti
 
     @Override
     protected AbstractContainerMenu createMenu(int containerId, Inventory inventory) {
-        return new ChestMenu(MenuType.GENERIC_9x1, containerId, inventory, (Container) this, 1);
+        return new ChestMenu(rows() == 3 ? MenuType.GENERIC_9x3 : MenuType.GENERIC_9x1, containerId, inventory, (Container) this, rows());
     }
 
     @Override
