@@ -93,7 +93,6 @@ public class TreeTapBlockEntity extends BlockEntity implements FluidPort {
     /** Remembers when the tap went in, which decides who draws when a tree has too many taps. */
     public void placed(Level level) {
         placedAt = level.getGameTime();
-        age = 0;
         setChanged();
     }
 
@@ -140,7 +139,10 @@ public class TreeTapBlockEntity extends BlockEntity implements FluidPort {
                         && level.getBlockEntity(at) instanceof TreeTapBlockEntity tap) taps.add(tap);
             }
         }
-        taps.sort(Comparator.<TreeTapBlockEntity>comparingLong(t -> t.placedAt).thenComparingLong(t -> t.worldPosition.asLong()));
+        // A tap that has not ticked yet was placed just now.
+        long now = level.getGameTime();
+        taps.sort(Comparator.<TreeTapBlockEntity>comparingLong(t -> t.placedAt < 0 ? now : t.placedAt)
+                .thenComparingLong(t -> t.worldPosition.asLong()));
         return taps.indexOf(this);
     }
 
