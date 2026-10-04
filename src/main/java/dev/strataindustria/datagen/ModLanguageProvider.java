@@ -784,6 +784,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.blast_furnace.hint", "Build a five-high refractory furnace, blow air into its tuyere and charge it with iron ore, coke and flux. Tap the pig iron.");
         add(journal + "t4.converter", "Bessemer Steel");
         add(journal + "t4.converter.hint", "Blow air through pig iron in a converter, with a coke to preheat it. Watch the flame: when it drops, the steel is done.");
+        add(journal + "t4.automated_chain", "Automate a Chain");
+        add(journal + "t4.automated_chain.hint", "Let a machine finish 64 items in a row with everything arriving and leaving by belt, chute, inserter or hopper, and nobody opening it.");
         add(journal + "t4.steel_anvil", "Steel Anvil");
         add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }

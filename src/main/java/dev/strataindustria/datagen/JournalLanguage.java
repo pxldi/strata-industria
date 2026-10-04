@@ -187,6 +187,8 @@ final class JournalLanguage {
                 "Air roaring into the tuyere, and pig iron running out of the tap hole.");
         lead.add("t4/converter", "Pig iron is brittle from all its carbon. Could I blow the carbon out of it?",
                 "Air through molten pig iron, a roaring flame, and when it died down: steel by the ton.");
+        lead.add("t4/automated_chain", "I spend my days carrying ore from one machine to the next. Could the machines pass it along themselves?",
+                "Belts, chutes and inserters, and a crusher that ran through a whole load with nobody there to feed it.");
     }
 
     private static void observations(BiConsumer<String, String> lang, String observe) {

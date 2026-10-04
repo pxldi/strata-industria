@@ -94,6 +94,7 @@ final class Tier4GameTests {
         tests.put("tier4_conveyor_slopes", Tier4GameTests::conveyorSlopes);
         tests.put("tier4_conveyor_queue", Tier4GameTests::conveyorQueue);
         tests.put("tier4_belt_diverter", Tier4GameTests::beltDiverter);
+        tests.put("tier4_automated_chain", Tier4GameTests::automatedChain);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -1612,6 +1613,29 @@ final class Tier4GameTests {
     }
 
     /** A steam engine at {@code pos} with its shaft toward {@code facing}, given 2.5 bar steam once so it runs at 32 RPM. */
+    // Spec 13.6: a machine counts the items it finishes while nobody opens it; the 64th ends the run's goal and
+    // a player opening the machine starts the count over.
+    private static void automatedChain(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos crusherPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        level.setBlock(crusherPos, Tier4Blocks.CRUSHER.get().defaultBlockState().setValue(ProcessingBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        CrusherBlockEntity crusher = (CrusherBlockEntity) level.getBlockEntity(crusherPos);
+        drive(level, crusherPos.west(), Direction.EAST, crusherPos);
+        ItemStack rock = new ItemStack(ModItems.COBBLED_ROCK.get(dev.strataindustria.geology.Rock.GRANITE).get());
+        for (int slot = 0; slot < 3; slot++) crusher.setItem(slot, rock.copyWithCount(10));
+        crush(level, crusherPos, crusher, 400);
+        helper.assertValueEqual(crusher.chainCount(), 30, "thirty items done unattended");
+
+        var player = helper.makeMockServerPlayerInLevel();
+        player.openMenu(crusher);
+        helper.assertValueEqual(crusher.chainCount(), 0, "opening the machine starts the count over");
+
+        for (int slot = 0; slot < 3; slot++) crusher.setItem(slot, rock.copyWithCount(22));
+        crush(level, crusherPos, crusher, 880);
+        helper.assertTrue(crusher.chainCount() >= 64, "an unattended run of 64 reaches the goal count, got " + crusher.chainCount());
+        helper.succeed();
+    }
+
     private static void drive(ServerLevel level, BlockPos pos, Direction facing, BlockPos machine) {
         level.setBlock(pos, Tier4Blocks.STEAM_ENGINE.get().defaultBlockState().setValue(SteamEngineBlock.FACING, facing), Block.UPDATE_ALL);
         SteamEngineBlockEntity engine = (SteamEngineBlockEntity) level.getBlockEntity(pos);

@@ -1,5 +1,6 @@
 package dev.strataindustria.processing;
 
+import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.KineticConsumer;
@@ -57,6 +58,7 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
     private final float[] progress;
     private Status status = Status.EMPTY;
     private int finished;
+    private int chain;
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -183,6 +185,13 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
         finished++;
         String goal = journalGoal();
         if (goal != null) Journal.awardNear(level, pos, goal);
+        // Spec 13.6: only an unattended run counts; opening the machine starts the count over.
+        if (++chain >= Config.AUTOMATION_CHAIN_OPERATIONS.getAsInt()) Journal.awardNear(level, pos, Journal.AUTOMATED_CHAIN);
+    }
+
+    /** Finished items in a row since a player last opened this machine (spec 13.6). */
+    public int chainCount() {
+        return chain;
     }
 
     /** Items this machine has finished since it was placed. */
@@ -304,6 +313,7 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
 
     @Override
     protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
+        chain = 0;
         return new ProcessingMenu(layout, id, inventory, worldPosition, this, data);
     }
 
@@ -314,6 +324,7 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
         ContainerHelper.loadAllItems(in, items);
         for (int i = 0; i < progress.length; i++) progress[i] = in.getFloatOr("progress" + i, 0.0f);
         finished = in.getIntOr("finished", 0);
+        chain = in.getIntOr("chain", 0);
         kinetic.load(in);
     }
 
@@ -323,6 +334,7 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
         ContainerHelper.saveAllItems(out, items);
         for (int i = 0; i < progress.length; i++) out.putFloat("progress" + i, progress[i]);
         out.putInt("finished", finished);
+        out.putInt("chain", chain);
         kinetic.save(out);
     }
 

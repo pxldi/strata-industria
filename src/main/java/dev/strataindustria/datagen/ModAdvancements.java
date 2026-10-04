@@ -200,6 +200,9 @@ final class ModAdvancements extends AdvancementSubProvider {
         // Spec 15, goal 67: a converter finishes a blow.
         goal(blastFurnace, "t4/converter", Tier4Items.CONVERTER_CONTROLLER.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.CONVERTER));
+        // Spec 15, goal 74 and spec 13.6: a machine finishes a long run fed and emptied by automation. Closes tier 4.
+        goal(engine, "t4/automated_chain", Tier4Items.INSERTER.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.AUTOMATED_CHAIN));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */
