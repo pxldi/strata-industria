@@ -633,6 +633,8 @@
   "journal.strataindustria.place.mining_camp": "Mining camp",
   "journal.strataindustria.place.mining_camp.hint": "Miners followed this vein into the hill, propping the tunnel as they went. They stopped at the poor ore on the vein's edge; the rich ore at the heart of a vein is still down there. Their notes mention ore their picks could not cut.",
   "journal.strataindustria.place.noted": "Field journal: %s",
+  "journal.strataindustria.place.placer_workings": "Placer workings",
+  "journal.strataindustria.place.placer_workings.hint": "Panners washed river gravel here and left a heap they never finished. Heavy grains settle when gravel is swirled in water; the light stuff washes away. Look for glints in river gravel.",
   "journal.strataindustria.place.prospector_camp": "Abandoned prospector's camp",
   "journal.strataindustria.place.prospector_camp.hint": "A prospector laid three stones on a log: the rock at the surface, the rock below it, and the hard rock at the bottom. Every region stacks its own three rocks, and every rock keeps its own ores. The pebbles of ore on the ground here sit above a vein.",
   "journal.strataindustria.place.ruined_bloomery": "Ruined bloomery",
