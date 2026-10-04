@@ -63,6 +63,10 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> FIREBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.FIREBOX);
     public static final DeferredItem<BlockItem> BRONZE_BOILER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BRONZE_BOILER);
     public static final DeferredItem<BlockItem> CRACKED_BRONZE_BOILER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CRACKED_BRONZE_BOILER);
+    public static final DeferredItem<BlockItem> STEEL_BOILER_SHELL = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_BOILER_SHELL);
+    public static final DeferredItem<BlockItem> BOILER_FLUID_PORT = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BOILER_FLUID_PORT);
+    public static final DeferredItem<BlockItem> BOILER_CONTROLLER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BOILER_CONTROLLER);
+    public static final DeferredItem<BlockItem> CRACKED_BOILER_CONTROLLER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CRACKED_BOILER_CONTROLLER);
     public static final DeferredItem<BlockItem> COPPER_FLUID_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.COPPER_FLUID_PIPE);
     public static final DeferredItem<BlockItem> BRONZE_FLUID_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BRONZE_FLUID_PIPE);
     public static final DeferredItem<BlockItem> STEEL_FLUID_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_FLUID_PIPE);

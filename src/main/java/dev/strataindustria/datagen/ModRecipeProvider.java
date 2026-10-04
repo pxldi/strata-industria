@@ -562,6 +562,33 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('G', Tier4Items.PRESSURE_GAUGE.get())
                 .unlockedBy("has_pressure_gauge", has(Tier4Items.PRESSURE_GAUGE.get()))
                 .save(output, key("bronze_boiler"));
+        // Spec 10.3: the steel boiler.
+        Item boilerSteel = ModItems.PLATES.get(Metal.STEEL).get();
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.STEEL_BOILER_SHELL.get())
+                .pattern("SW")
+                .pattern("WS")
+                .define('S', boilerSteel)
+                .define('W', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .unlockedBy("has_steel_plate", has(boilerSteel))
+                .save(output, key("steel_boiler_shell"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.BOILER_CONTROLLER.get())
+                .pattern("PGP")
+                .pattern("PVP")
+                .pattern("PPP")
+                .define('P', boilerSteel)
+                .define('G', Tier4Items.PRESSURE_GAUGE.get())
+                .define('V', Tier4Items.VALVE.get())
+                .unlockedBy("has_steel_boiler_shell", has(Tier4Items.STEEL_BOILER_SHELL.get()))
+                .save(output, key("boiler_controller"));
+        shapeless(RecipeCategory.DECORATIONS, Tier4Items.BOILER_FLUID_PORT.get())
+                .requires(Tier4Items.STEEL_BOILER_SHELL.get())
+                .requires(Tier4Items.BRONZE_FLUID_PIPE.get())
+                .unlockedBy("has_steel_boiler_shell", has(Tier4Items.STEEL_BOILER_SHELL.get()))
+                .save(output, key("boiler_fluid_port"));
+        shapeless(RecipeCategory.MISC, boilerSteel, 4)
+                .requires(Tier4Items.CRACKED_BOILER_CONTROLLER.get())
+                .unlockedBy("has_cracked_boiler_controller", has(Tier4Items.CRACKED_BOILER_CONTROLLER.get()))
+                .save(output, key("steel_plate_from_cracked_boiler_controller"));
         shaped(RecipeCategory.REDSTONE, Tier4Items.MECHANICAL_PUMP.get())
                 .pattern("PGP")
                 .pattern(" A ")

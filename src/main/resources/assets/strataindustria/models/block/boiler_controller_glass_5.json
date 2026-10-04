@@ -1,0 +1,15 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/boiler_sight_glass_water",
+    "water": "strataindustria:block/boiler_sight_glass_water"
+  },
+  "elements": [
+    {
+      "from": [2, 3, -0.01],
+      "to": [4, 13, 0],
+      "faces": {
+        "north": {"uv": [12, 3, 14, 13], "texture": "#water"}
+      }
+    }
+  ]
+}

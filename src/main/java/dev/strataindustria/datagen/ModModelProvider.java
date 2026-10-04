@@ -559,6 +559,8 @@ final class ModModelProvider extends ModelProvider {
             itemModels.itemModelOutput.accept(boiler.get().asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
         }
 
+        steelBoiler(blockModels, itemModels);
+
         for (var pipe : java.util.List.of(Tier4Blocks.COPPER_FLUID_PIPE, Tier4Blocks.BRONZE_FLUID_PIPE, Tier4Blocks.STEEL_FLUID_PIPE)) {
             String name = pipe.getId().getPath();
             MultiPartGenerator parts = MultiPartGenerator.multiPart(pipe.get())
@@ -921,5 +923,67 @@ final class ModModelProvider extends ModelProvider {
 
     private static void flatItem(ItemModelGenerators itemModels, Item item) {
         itemModels.generateFlatItem(item, ModelTemplates.FLAT_ITEM);
+    }
+
+    /** A model turned to face a horizontal direction, from facing north. */
+    private static MultiVariant turned(MultiVariant model, net.minecraft.core.Direction facing) {
+        return switch (facing) {
+            case EAST -> model.with(BlockModelGenerators.Y_ROT_90);
+            case SOUTH -> model.with(BlockModelGenerators.Y_ROT_180);
+            case WEST -> model.with(BlockModelGenerators.Y_ROT_270);
+            default -> model;
+        };
+    }
+
+    /** Spec 10.3: the steel boiler's shell, its two-mode fluid port and the controller with its light and sight glass. */
+    private static void steelBoiler(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        blockModels.createTrivialCube(Tier4Blocks.STEEL_BOILER_SHELL.get());
+
+        Block port = Tier4Blocks.BOILER_FLUID_PORT.get();
+        var water = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ALL.createWithSuffix(port, "_water",
+                TextureMapping.singleSlot(TextureSlot.ALL, blockTexture("boiler_fluid_port_water")), blockModels.modelOutput));
+        var steam = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ALL.createWithSuffix(port, "_steam",
+                TextureMapping.singleSlot(TextureSlot.ALL, blockTexture("boiler_fluid_port_steam")), blockModels.modelOutput));
+        PropertyDispatch.C1<MultiVariant, dev.strataindustria.steam.BoilerFluidPortBlock.Mode> portState =
+                PropertyDispatch.initial(dev.strataindustria.steam.BoilerFluidPortBlock.MODE);
+        portState.select(dev.strataindustria.steam.BoilerFluidPortBlock.Mode.WATER, water);
+        portState.select(dev.strataindustria.steam.BoilerFluidPortBlock.Mode.STEAM, steam);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(port).with(portState));
+        itemModels.itemModelOutput.accept(Tier4Items.BOILER_FLUID_PORT.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/boiler_fluid_port_water")));
+
+        Block controller = Tier4Blocks.BOILER_CONTROLLER.get();
+        TextureMapping faces = new TextureMapping().put(TextureSlot.FRONT, blockTexture("boiler_controller_front"))
+                .put(TextureSlot.SIDE, blockTexture("steel_boiler_shell")).put(TextureSlot.TOP, blockTexture("boiler_controller_top"));
+        var still = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(controller, faces, blockModels.modelOutput));
+        var venting = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(controller, "_venting",
+                faces.copyAndUpdate(TextureSlot.FRONT, blockTexture("boiler_controller_front_venting")), blockModels.modelOutput));
+        MultiPartGenerator parts = MultiPartGenerator.multiPart(controller);
+        for (var side : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+            for (boolean vent : new boolean[] {false, true}) {
+                parts.with(BlockModelGenerators.condition().term(dev.strataindustria.steam.BoilerBlock.FACING, side)
+                        .term(dev.strataindustria.steam.SteelBoilerControllerBlock.VENTING, vent), turned(vent ? venting : still, side));
+            }
+            for (var light : dev.strataindustria.steam.SteelBoilerControllerBlock.Light.values()) {
+                if (light == dev.strataindustria.steam.SteelBoilerControllerBlock.Light.OFF) continue;
+                parts.with(BlockModelGenerators.condition().term(dev.strataindustria.steam.BoilerBlock.FACING, side)
+                                .term(dev.strataindustria.steam.SteelBoilerControllerBlock.LIGHT, light),
+                        turned(BlockModelGenerators.plainVariant(StrataIndustria.id("block/boiler_controller_lamp_" + light.getSerializedName())), side));
+            }
+            for (int level = 1; level <= 5; level++) {
+                parts.with(BlockModelGenerators.condition().term(dev.strataindustria.steam.BoilerBlock.FACING, side)
+                                .term(dev.strataindustria.steam.SteelBoilerControllerBlock.GLASS, level),
+                        turned(BlockModelGenerators.plainVariant(StrataIndustria.id("block/boiler_controller_glass_" + level)), side));
+            }
+        }
+        blockModels.blockStateOutput.accept(parts);
+        itemModels.itemModelOutput.accept(Tier4Items.BOILER_CONTROLLER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/boiler_controller")));
+
+        Block cracked = Tier4Blocks.CRACKED_BOILER_CONTROLLER.get();
+        var broken = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(cracked,
+                faces.copyAndUpdate(TextureSlot.FRONT, blockTexture("cracked_boiler_controller_front")), blockModels.modelOutput));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> crackedState = PropertyDispatch.initial(dev.strataindustria.steam.BoilerBlock.FACING);
+        for (var side : net.minecraft.core.Direction.Plane.HORIZONTAL) crackedState.select(side, turned(broken, side));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(cracked).with(crackedState));
+        itemModels.itemModelOutput.accept(Tier4Items.CRACKED_BOILER_CONTROLLER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/cracked_boiler_controller")));
     }
 }

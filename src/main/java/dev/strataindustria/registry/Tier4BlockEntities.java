@@ -80,6 +80,13 @@ public final class Tier4BlockEntities {
             ModBlockEntities.BLOCK_ENTITIES.register("blowing_engine", () -> new BlockEntityType<>(dev.strataindustria.ironworks.BlowingEngineBlockEntity::new,
                     Tier4Blocks.BLOWING_ENGINE.get()));
     // Spec 8.4: the heat inlet's link to its multiblock.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.steam.SteelBoilerControllerBlockEntity>> BOILER_CONTROLLER =
+            ModBlockEntities.BLOCK_ENTITIES.register("boiler_controller", () -> new BlockEntityType<>(dev.strataindustria.steam.SteelBoilerControllerBlockEntity::new,
+                    Tier4Blocks.BOILER_CONTROLLER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.steam.BoilerPartBlockEntity>> BOILER_PART =
+            ModBlockEntities.BLOCK_ENTITIES.register("boiler_part", () -> new BlockEntityType<>(dev.strataindustria.steam.BoilerPartBlockEntity::new,
+                    Tier4Blocks.STEEL_BOILER_SHELL.get(), Tier4Blocks.BOILER_FLUID_PORT.get()));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.heat.HeatInletBlockEntity>> HEAT_INLET =
             ModBlockEntities.BLOCK_ENTITIES.register("heat_inlet", () -> new BlockEntityType<>(dev.strataindustria.heat.HeatInletBlockEntity::new,
                     Tier4Blocks.HEAT_INLET.get()));
