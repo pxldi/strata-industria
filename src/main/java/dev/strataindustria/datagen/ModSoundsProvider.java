@@ -33,6 +33,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         marks();
         ledger();
         foot();
+        rail();
         transport();
         bronze();
         // A dull chip off a rock.
@@ -551,6 +552,28 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(dev.strataindustria.transport.foot.FootRegistry.HANDCART_SHAFTS, definition().subtitle(subtitle("handcart.shafts"))
                 .with(sound("minecraft:block.wood.place", event).pitch(0.8f).volume(0.8f))
                 .with(sound("minecraft:block.chain.hit", event).pitch(1.2f).volume(0.25f)));
+    }
+
+    /** The wooden tramway, from vanilla wood, chain, gravel and barrel samples. */
+    private void rail() {
+        var event = SoundDefinition.SoundType.EVENT;
+        SoundDefinition roll = definition().subtitle(subtitle("tub.roll_wood"));
+        for (int i = 1; i <= 4; i++) roll.with(sound("minecraft:step/wood" + i).pitch(0.6f).volume(0.6f));
+        for (int i = 1; i <= 4; i++) roll.with(sound("minecraft:step/gravel" + i).pitch(0.7f).volume(0.35f));
+        add(dev.strataindustria.transport.rail.RailRegistry.TUB_ROLL, roll);
+        add(dev.strataindustria.transport.rail.RailRegistry.TUB_COUPLE, definition().subtitle(subtitle("tub.couple"))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.0f).volume(0.8f))
+                .with(sound("minecraft:block.wood.hit", event).pitch(0.7f).volume(0.5f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.TUB_THUD, definition().subtitle(subtitle("tub.thud"))
+                .with(sound("minecraft:block.wood.hit", event).pitch(0.55f).volume(1.0f))
+                .with(sound("minecraft:block.wooden_trapdoor.close", event).pitch(0.6f).volume(0.6f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.TUB_STOP_BRAKE, definition().subtitle(subtitle("tub_stop.brake"))
+                .with(sound("minecraft:block.barrel.close", event).pitch(0.8f).volume(0.7f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.9f).volume(0.4f)));
+        SoundDefinition dump = definition().subtitle(subtitle("tipple.dump"));
+        for (int i = 1; i <= 4; i++) dump.with(sound("minecraft:dig/gravel" + i).pitch(0.8f).volume(0.9f));
+        for (int i = 1; i <= 4; i++) dump.with(sound("minecraft:dig/stone" + i).pitch(0.9f).volume(0.5f));
+        add(dev.strataindustria.transport.rail.RailRegistry.TIPPLE_DUMP, dump);
     }
 
     /** Pattern casting, from vanilla wood and sand samples. */
