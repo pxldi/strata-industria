@@ -2590,6 +2590,51 @@
     ],
     "subtitle": "subtitles.strataindustria.knapping.rock"
   },
+  "ledger.entry": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "ui.cartography_table.take_result",
+        "pitch": 1.4,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ledger.entry"
+  },
+  "ledger.short": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.put",
+        "pitch": 0.8,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ledger.short"
+  },
+  "ledger.stamp": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "block.copper.hit",
+        "pitch": 1.3,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.ledger.stamp"
+  },
   "mark.cut": {
     "sounds": [
       {

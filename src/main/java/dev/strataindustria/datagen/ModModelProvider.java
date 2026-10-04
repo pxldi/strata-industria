@@ -226,6 +226,7 @@ final class ModModelProvider extends ModelProvider {
         flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get());
         flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.SAND_FLASK.get());
         itemModels.generateFlatItem(dev.strataindustria.mark.MarkRegistry.MAKER_PUNCH.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+        flatItem(itemModels, dev.strataindustria.ledger.LedgerRegistry.BUILDERS_LEDGER.get());
         for (var pattern : dev.strataindustria.registry.PatternRegistry.PATTERNS.values()) flatItem(itemModels, pattern.get());
         for (var mold : dev.strataindustria.registry.PatternRegistry.SAND_MOLDS.values()) castMold(itemModels, mold.get());
     }
@@ -745,6 +746,10 @@ final class ModModelProvider extends ModelProvider {
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/steam_whistle"))));
         itemModels.itemModelOutput.accept(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get(),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/steam_whistle")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/builders_crate"))));
+        itemModels.itemModelOutput.accept(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/builders_crate")));
         processing(blockModels, itemModels);
         blastFurnace(blockModels, itemModels);
     }

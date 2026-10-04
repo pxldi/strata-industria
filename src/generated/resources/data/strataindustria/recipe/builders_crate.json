@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": "strataindustria:bronze_ingot",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "PPP",
+    "PIP",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:builders_crate"
+  }
+}

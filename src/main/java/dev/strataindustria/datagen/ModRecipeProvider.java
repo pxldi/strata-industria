@@ -706,6 +706,20 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('S', Items.STICK)
                 .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
                 .save(output, key("maker_punch"));
+        shapeless(RecipeCategory.TOOLS, dev.strataindustria.ledger.LedgerRegistry.BUILDERS_LEDGER.get())
+                .requires(Items.BOOK)
+                .requires(ModItems.ingot(Metal.BRONZE))
+                .requires(ModItems.TWINE.get())
+                .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
+                .save(output, key("builders_ledger"));
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE_ITEM.get())
+                .pattern("PPP")
+                .pattern("PIP")
+                .pattern("PPP")
+                .define('P', net.minecraft.tags.ItemTags.PLANKS)
+                .define('I', ModItems.ingot(Metal.BRONZE))
+                .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
+                .save(output, key("builders_crate"));
         shaped(RecipeCategory.REDSTONE, dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get())
                 .pattern(" R ")
                 .pattern("PRP")
