@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": "strataindustria:fibre_cloth"
+  },
+  "pattern": [
+    "CC",
+    "CC"
+  ],
+  "result": {
+    "id": "strataindustria:fibre_canvas"
+  }
+}

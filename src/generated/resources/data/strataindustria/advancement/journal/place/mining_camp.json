@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/root",
+  "criteria": {
+    "visited": {
+      "conditions": {
+        "event": "place/mining_camp"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.place.mining_camp.hint"
+    },
+    "hidden": true,
+    "icon": {
+      "id": "strataindustria:pit_prop"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.place.mining_camp"
+    }
+  },
+  "requirements": [
+    [
+      "visited"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

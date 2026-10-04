@@ -1,0 +1,16 @@
+{
+  "placement": {
+    "type": "minecraft:concentric_rings",
+    "count": 3,
+    "distance": 10,
+    "preferred_biomes": "#strataindustria:has_structure/mining_camp",
+    "salt": 0,
+    "spread": 3
+  },
+  "structures": [
+    {
+      "structure": "strataindustria:mining_camp",
+      "weight": 1
+    }
+  ]
+}

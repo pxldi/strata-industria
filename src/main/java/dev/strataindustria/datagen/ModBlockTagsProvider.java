@@ -1,5 +1,6 @@
 package dev.strataindustria.datagen;
 
+import dev.strataindustria.structure.StructureContent;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -137,5 +138,6 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         for (var anvil : ModBlocks.STONE_ANVILS.values()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(anvil.getKey());
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.PIT_KILN.getKey()).add(ModBlocks.CHARCOAL_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(StructureContent.PIT_PROP.getKey());
     }
 }
