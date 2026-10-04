@@ -86,6 +86,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add("container." + StrataIndustria.MOD_ID + ".small_vessel", "Small Vessel");
         add("container." + StrataIndustria.MOD_ID + ".large_vessel", "Large Vessel");
         addBlock(ModBlocks.PIT_KILN, "Pit Kiln");
+        addBlock(ModBlocks.LOG_PILE, "Log Pile");
+        addBlock(ModBlocks.CHARCOAL_PILE, "Charcoal Pile");
+        addItem(ModItems.ASH, "Ash");
         String kiln = StrataIndustria.MOD_ID + ".pit_kiln.";
         add(kiln + "burning", "The kiln is already burning");
         add(kiln + "needs_straw", "The kiln needs 8 straw on top first");
@@ -155,5 +158,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "gravelFlintChance", "More flint from gravel");
         add(config + "kiln", "Pit Kiln");
         add(config + "burnTicks", "Burn time (ticks)");
+        add(config + "charcoal", "Charcoal Pit");
+        add(config + "perLog", "Charcoal per log");
     }
 }

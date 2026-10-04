@@ -3,6 +3,7 @@ package dev.strataindustria.registry;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.LargeVesselBlockEntity;
 import dev.strataindustria.ceramics.PitKilnBlockEntity;
+import dev.strataindustria.charcoal.LogPileBlockEntity;
 import dev.strataindustria.fire.FirePitBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -21,6 +22,9 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LargeVesselBlockEntity>> LARGE_VESSEL =
             BLOCK_ENTITIES.register("large_vessel", () -> new BlockEntityType<>(LargeVesselBlockEntity::new, ModBlocks.LARGE_VESSEL.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LogPileBlockEntity>> LOG_PILE =
+            BLOCK_ENTITIES.register("log_pile", () -> new BlockEntityType<>(LogPileBlockEntity::new, ModBlocks.LOG_PILE.get()));
 
     private ModBlockEntities() {}
 }
