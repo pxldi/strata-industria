@@ -125,6 +125,12 @@ public final class MetalContent {
         return (calcine.units().getOrDefault(Metal.ZINC, 0) + 9) / 10;
     }
 
+    /** Every item with a fixed metal content that holds some of {@code metal}, for recipe viewers. */
+    public static java.util.List<Item> itemsHolding(Metal metal) {
+        return fixed().entrySet().stream().filter(e -> e.getValue().units().getOrDefault(metal, 0) > 0)
+                .map(Map.Entry::getKey).toList();
+    }
+
     public static boolean hasMetal(ItemStack stack) {
         return of(stack).isPresent();
     }
