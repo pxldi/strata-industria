@@ -64,6 +64,7 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> BRONZE_BOILER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BRONZE_BOILER);
     public static final DeferredItem<BlockItem> CRACKED_BRONZE_BOILER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CRACKED_BRONZE_BOILER);
     public static final DeferredItem<BlockItem> CHUTE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CHUTE);
+    public static final DeferredItem<BlockItem> INSERTER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.INSERTER);
     public static final DeferredItem<dev.strataindustria.automation.FilterItem> FILTER = ModItems.ITEMS.registerItem("filter",
             dev.strataindustria.automation.FilterItem::new, p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> STEEL_BOILER_SHELL = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_BOILER_SHELL);

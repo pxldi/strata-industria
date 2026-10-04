@@ -796,6 +796,20 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.CHUTE.get(),
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/chute"))));
         itemModels.itemModelOutput.accept(Tier4Items.CHUTE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/chute")));
+        // Spec 13.4: the inserter's base is hand-built, with a paper tag when a filter is fitted; the arm is drawn by its renderer.
+        MultiPartGenerator inserter = MultiPartGenerator.multiPart(Tier4Blocks.INSERTER.get())
+                .with(BlockModelGenerators.plainVariant(StrataIndustria.id("block/inserter")));
+        var tag = BlockModelGenerators.plainVariant(StrataIndustria.id("block/inserter_tag"));
+        inserter.with(BlockModelGenerators.condition().term(dev.strataindustria.automation.InserterBlock.FILTERED, true)
+                .term(dev.strataindustria.automation.InserterBlock.FACING, net.minecraft.core.Direction.NORTH), tag);
+        inserter.with(BlockModelGenerators.condition().term(dev.strataindustria.automation.InserterBlock.FILTERED, true)
+                .term(dev.strataindustria.automation.InserterBlock.FACING, net.minecraft.core.Direction.EAST), tag.with(BlockModelGenerators.Y_ROT_90));
+        inserter.with(BlockModelGenerators.condition().term(dev.strataindustria.automation.InserterBlock.FILTERED, true)
+                .term(dev.strataindustria.automation.InserterBlock.FACING, net.minecraft.core.Direction.SOUTH), tag.with(BlockModelGenerators.Y_ROT_180));
+        inserter.with(BlockModelGenerators.condition().term(dev.strataindustria.automation.InserterBlock.FILTERED, true)
+                .term(dev.strataindustria.automation.InserterBlock.FACING, net.minecraft.core.Direction.WEST), tag.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(inserter);
+        itemModels.itemModelOutput.accept(Tier4Items.INSERTER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/inserter_item")));
         flatItem(itemModels, Tier4Items.FILTER.get());
         flatItem(itemModels, Tier4Items.SLAG_WOOL.get());
     }

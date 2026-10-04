@@ -195,6 +195,23 @@
     ],
     "subtitle": "subtitles.strataindustria.block.electric_furnace.run"
   },
+  "block.inserter.swing": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.dispenser.dispense",
+        "pitch": 1.4,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.5,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.inserter.swing"
+  },
   "block.macerator.grind": {
     "sounds": [
       {

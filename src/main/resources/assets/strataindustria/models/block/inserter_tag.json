@@ -1,0 +1,68 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "strataindustria:block/inserter_tag",
+    "tag": "strataindustria:block/inserter_tag"
+  },
+  "elements": [
+    {
+      "from": [
+        5,
+        4,
+        1.5
+      ],
+      "to": [
+        11,
+        4.4,
+        4.5
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            4,
+            3,
+            12,
+            12
+          ],
+          "texture": "#tag"
+        },
+        "north": {
+          "uv": [
+            4,
+            3,
+            12,
+            4
+          ],
+          "texture": "#tag"
+        },
+        "south": {
+          "uv": [
+            4,
+            3,
+            12,
+            4
+          ],
+          "texture": "#tag"
+        },
+        "east": {
+          "uv": [
+            4,
+            3,
+            5,
+            4
+          ],
+          "texture": "#tag"
+        },
+        "west": {
+          "uv": [
+            4,
+            3,
+            5,
+            4
+          ],
+          "texture": "#tag"
+        }
+      }
+    }
+  ]
+}

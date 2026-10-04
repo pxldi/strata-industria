@@ -87,6 +87,8 @@ final class Tier4GameTests {
         tests.put("tier4_steel_boiler", Tier4GameTests::steelBoiler);
         tests.put("tier4_chute", Tier4GameTests::chute);
         tests.put("tier4_filter", Tier4GameTests::filter);
+        tests.put("tier4_inserter", Tier4GameTests::inserter);
+        tests.put("tier4_inserter_filter", Tier4GameTests::inserterFilter);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -1126,6 +1128,91 @@ final class Tier4GameTests {
         stack.set(dev.strataindustria.registry.Tier4DataComponents.FILTER_CONTENTS.get(), filter);
         helper.assertValueEqual(dev.strataindustria.automation.FilterContents.of(stack), filter, "the filter item keeps its contents");
         helper.succeed();
+    }
+
+    // Inserter (spec 13.4): driven at 32 RPM it moves one item every 20 ticks from the chest behind into the
+    // crusher in front, taking only what the crusher accepts, and a redstone signal pauses it.
+    private static void inserter(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(3, 1, 3));
+        BlockPos inserterPos = base.above(), sourcePos = inserterPos.west(), targetPos = inserterPos.east();
+        level.setBlock(base, Tier4Blocks.IRON_GEARBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(inserterPos, Tier4Blocks.INSERTER.get().defaultBlockState()
+                .setValue(dev.strataindustria.automation.InserterBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(sourcePos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(targetPos, Tier4Blocks.CRUSHER.get().defaultBlockState().setValue(ProcessingBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        drive(level, base.west(), Direction.EAST, inserterPos);
+        var inserter = (dev.strataindustria.automation.InserterBlockEntity) level.getBlockEntity(inserterPos);
+        var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(sourcePos);
+        var crusher = (CrusherBlockEntity) level.getBlockEntity(targetPos);
+        helper.assertTrue(inserter.kinetic().rpm() >= 32, "the inserter turns at the engine's speed");
+        chest.setItem(0, new ItemStack(Items.STICK, 4));
+        chest.setItem(1, new ItemStack(ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL), 3));
+
+        inserterTicks(level, inserterPos, 30);
+        helper.assertValueEqual(count(crusher, ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL)), 1, "one piece in the crusher after a swing");
+        helper.assertValueEqual(chest.getItem(0).getCount(), 4, "the sticks stay behind: the crusher takes none");
+        inserterTicks(level, inserterPos, 80);
+        helper.assertValueEqual(count(crusher, ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL)), 3, "all three pieces arrive");
+        helper.assertTrue(chest.getItem(1).isEmpty(), "the chest gave up its ore");
+        helper.assertTrue(inserter.held().isEmpty(), "nothing is left in the claw");
+
+        // With a signal on a neighbour, the arm holds still.
+        chest.setItem(1, new ItemStack(ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL), 1));
+        crusher.setItem(0, ItemStack.EMPTY);
+        crusher.setItem(1, ItemStack.EMPTY);
+        crusher.setItem(2, ItemStack.EMPTY);
+        level.setBlock(inserterPos.north(), Blocks.REDSTONE_BLOCK.defaultBlockState(), Block.UPDATE_ALL);
+        inserterTicks(level, inserterPos, 60);
+        helper.assertValueEqual(chest.getItem(1).getCount(), 1, "a redstone signal pauses the inserter");
+        level.setBlock(inserterPos.north(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        inserterTicks(level, inserterPos, 40);
+        helper.assertTrue(chest.getItem(1).isEmpty(), "and it carries on once the signal drops");
+        helper.succeed();
+    }
+
+    // The filter fitted to an inserter (spec 13.4 and 13.5) keeps coal out of the chest it fills, and goes
+    // back to the player's hands. With nothing in front, an inserter drops the item on the ground.
+    private static void inserterFilter(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(3, 1, 3));
+        BlockPos inserterPos = base.above(), sourcePos = inserterPos.west(), targetPos = inserterPos.east();
+        level.setBlock(base, Tier4Blocks.IRON_GEARBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(inserterPos, Tier4Blocks.INSERTER.get().defaultBlockState()
+                .setValue(dev.strataindustria.automation.InserterBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(sourcePos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(targetPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        drive(level, base.west(), Direction.EAST, inserterPos);
+        var inserter = (dev.strataindustria.automation.InserterBlockEntity) level.getBlockEntity(inserterPos);
+        var source = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(sourcePos);
+        var target = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(targetPos);
+        source.setItem(0, new ItemStack(Items.COAL, 2));
+        source.setItem(1, new ItemStack(Items.IRON_NUGGET, 2));
+
+        var stack = new ItemStack(Tier4Items.FILTER.get());
+        stack.set(dev.strataindustria.registry.Tier4DataComponents.FILTER_CONTENTS.get(),
+                dev.strataindustria.automation.FilterContents.EMPTY.withEntry(0, Items.IRON_NUGGET));
+        inserter.setFilter(stack);
+        helper.assertTrue(level.getBlockState(inserterPos).getValue(dev.strataindustria.automation.InserterBlock.FILTERED), "a paper tag shows the filter");
+        inserterTicks(level, inserterPos, 100);
+        helper.assertTrue(target.getItem(0).is(Items.IRON_NUGGET) && target.getItem(0).getCount() == 2, "both nuggets crossed");
+        helper.assertValueEqual(source.getItem(0).getCount(), 2, "the coal stayed");
+
+        helper.assertTrue(inserter.setFilter(ItemStack.EMPTY) == stack, "the filter comes back out");
+        helper.assertTrue(!level.getBlockState(inserterPos).getValue(dev.strataindustria.automation.InserterBlock.FILTERED), "and the tag goes");
+        level.setBlock(targetPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        inserterTicks(level, inserterPos, 30);
+        helper.assertTrue(!level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(targetPos).inflate(1.0),
+                e -> e.getItem().is(Items.COAL)).isEmpty(), "with nothing in front the coal drops on the ground");
+        helper.succeed();
+    }
+
+    private static void inserterTicks(ServerLevel level, BlockPos pos, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            dev.strataindustria.automation.InserterBlockEntity.serverTick(level, pos, level.getBlockState(pos),
+                    (dev.strataindustria.automation.InserterBlockEntity) level.getBlockEntity(pos));
+            level.getGameTime();
+        }
     }
 
     // Blowing engine (spec 10.5 and 11.6): no air without steam; at 2 bar it blows two blowers' worth

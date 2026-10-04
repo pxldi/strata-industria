@@ -120,6 +120,9 @@ public final class StrataIndustriaClient {
         // Tier 4 spec 21.4: the steam hammer's ram drops with each blow.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.STEAM_HAMMER.get(),
                 dev.strataindustria.client.render.SteamHammerRenderer::new);
+        // Tier 4 spec 13.4: the inserter's arm swings between its source and target.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.INSERTER.get(),
+                dev.strataindustria.client.render.InserterRenderer::new);
         // Tier 4 spec 13.3: what a chute holds lies in its tube.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.CHUTE.get(),
                 dev.strataindustria.client.render.ChuteRenderer::new);

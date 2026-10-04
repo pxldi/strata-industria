@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron_axle": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:iron_axle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:inserter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_iron_axle"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:inserter"
+    ]
+  }
+}

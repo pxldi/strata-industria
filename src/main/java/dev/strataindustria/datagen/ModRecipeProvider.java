@@ -571,6 +571,17 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('P', chuteIron)
                 .unlockedBy("has_wrought_iron_plate", has(chuteIron))
                 .save(output, key("chute"));
+        // Spec 13.4: the inserter.
+        shaped(RecipeCategory.REDSTONE, Tier4Items.INSERTER.get())
+                .pattern(" R ")
+                .pattern(" G ")
+                .pattern("PAP")
+                .define('R', Tier4Items.TREATED_STICK.get())
+                .define('G', ModItems.GEARS.get(Metal.BRASS).get())
+                .define('P', chuteIron)
+                .define('A', Tier4Items.IRON_AXLE.get())
+                .unlockedBy("has_iron_axle", has(Tier4Items.IRON_AXLE.get()))
+                .save(output, key("inserter"));
         shapeless(RecipeCategory.REDSTONE, Tier4Items.FILTER.get())
                 .requires(Items.PAPER)
                 .requires(ModItems.PLATES.get(Metal.BRASS).get())

@@ -1,0 +1,48 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "strataindustria:block/inserter"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/inserter_tag"
+      },
+      "when": {
+        "facing": "north",
+        "filtered": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/inserter_tag",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "filtered": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/inserter_tag",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "filtered": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/inserter_tag",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "filtered": "true"
+      }
+    }
+  ]
+}
