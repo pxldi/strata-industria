@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:core_sample"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.core_sample"
     }

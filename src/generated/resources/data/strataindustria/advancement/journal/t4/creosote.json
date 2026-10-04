@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:treated_planks"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.creosote"
     }

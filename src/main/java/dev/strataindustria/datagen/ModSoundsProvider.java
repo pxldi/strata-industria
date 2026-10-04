@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.journal.JournalContent;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.registry.Tier5Sounds;
@@ -97,6 +98,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition pages = definition().subtitle(subtitle("journal.open"));
         for (int i = 1; i <= 3; i++) pages.with(sound("minecraft:item/book/open_flip" + i).volume(0.8f));
         add(ModSounds.JOURNAL_OPEN, pages);
+        journal();
 
         // Tier 3 bloomery (spec 20.6): a whoosh of catching charcoal, a low draught roar, ore on coals, and
         // a metallic crunch as a bloom comes out.
@@ -333,6 +335,29 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.bubble_column.bubble_pop", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
                 .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f))
                 .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.3f)));
+    }
+
+    /** The leads notebook: a pencil on paper, pages, and a tack into cork, all short and quiet. */
+    private void journal() {
+        add(JournalContent.WRITE, brush("journal.write", 1.5f, 0.4f));
+        add(JournalContent.CROSS_OFF, brush("journal.cross_off", 1.7f, 0.5f));
+        add(JournalContent.STUDY, brush("journal.study", 1.05f, 0.45f));
+        SoundDefinition remember = definition().subtitle(subtitle("journal.remember"));
+        for (int i = 1; i <= 3; i++) remember.with(sound("minecraft:item/book/open_flip" + i).pitch(0.75f).volume(0.8f));
+        add(JournalContent.REMEMBER, remember);
+        SoundDefinition page = definition().subtitle(subtitle("journal.page"));
+        for (int i = 1; i <= 3; i++) page.with(sound("minecraft:item/book/open_flip" + i).pitch(1.05f).volume(0.7f));
+        add(JournalContent.PAGE, page);
+        SoundDefinition pin = definition().subtitle(subtitle("journal.pin"));
+        for (int i = 1; i <= 4; i++) pin.with(sound("minecraft:dig/wood" + i).pitch(1.9f).volume(0.35f));
+        add(JournalContent.PIN, pin);
+    }
+
+    /** A brush on paper reads as a pencil when pitched up. */
+    private static SoundDefinition brush(String subtitle, float pitch, float volume) {
+        SoundDefinition definition = definition().subtitle(subtitle(subtitle));
+        for (int i = 1; i <= 4; i++) definition.with(sound("minecraft:item/brush/brushing_generic" + i).pitch(pitch).volume(volume));
+        return definition;
     }
 
     private static String subtitle(String name) {

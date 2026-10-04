@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:blast_furnace_controller"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.blast_furnace"
     }

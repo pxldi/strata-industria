@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:wrought_iron_double_ingot"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.weld"
     }

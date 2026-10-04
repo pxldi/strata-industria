@@ -35,6 +35,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(ModCreativeTabs.MAIN_TAB_TITLE, "Strata Industria");
         StructureData.lang(this::add);
         Tier5Language.add(this::add);
+        JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
         recipeViewer();
 
@@ -557,9 +558,8 @@ final class ModLanguageProvider extends LanguageProvider {
     /** Spec 11: the field journal's goals and hints. */
     private void journal() {
         String journal = "journal." + StrataIndustria.MOD_ID + ".";
-        add(journal + "next", "Field journal, next: %s");
         add(journal + "root", "Field Journal");
-        add(journal + "root.hint", "From the first loose rock to a bronze anvil. Use the journal to open this page.");
+        add(journal + "root.hint", "Every goal of the field journal at a glance. Switch this tab on in the config to open it from the journal.");
         add(journal + "t0.loose_rock", "A Rock to Start With");
         add(journal + "t0.loose_rock.hint", "Pick up a loose rock lying on the ground.");
         add(journal + "t0.knap", "First Edge");
@@ -612,7 +612,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.prospectors_pick.hint", "Strike rock with a prospector's pick to learn what ore lies nearby.");
         add(journal + "t2.bronze_anvil", "Bronze Anvil");
         add(journal + "t2.bronze_anvil.hint", "Build a bronze anvil, the last tool of the bronze age.");
-        add(journal + "t3.fire_clay", "Tier 3: Iron");
+        add(journal + "t3.fire_clay", "Fire Clay");
         add(journal + "t3.fire_clay.hint", "Bronze cannot melt iron. You will need a bloomery, and it is built of fire bricks. "
                 + "Dig fire clay from the pale beds near the surface in shale and slate.");
         add(journal + "t3.fire_brick", "Fire Brick");

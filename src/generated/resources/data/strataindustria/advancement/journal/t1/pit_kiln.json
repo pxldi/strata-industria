@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:small_vessel"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t1.pit_kiln"
     }

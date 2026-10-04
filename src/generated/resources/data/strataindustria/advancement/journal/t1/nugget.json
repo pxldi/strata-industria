@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:small_native_copper"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t1.nugget"
     }

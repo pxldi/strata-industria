@@ -20,6 +20,7 @@
     "icon": {
       "id": "minecraft:crafting_table"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t0.crafting_table"
     }

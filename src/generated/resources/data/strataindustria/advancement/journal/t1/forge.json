@@ -19,6 +19,7 @@
     "icon": {
       "id": "strataindustria:forge"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t1.forge"
     }

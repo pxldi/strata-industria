@@ -23,6 +23,7 @@
     "icon": {
       "id": "minecraft:clay_ball"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t0.clay"
     }

@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:bronze_boiler"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.boiler"
     }

@@ -30,6 +30,7 @@
     "icon": {
       "id": "strataindustria:cassiterite"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t2.alloy_metal"
     }

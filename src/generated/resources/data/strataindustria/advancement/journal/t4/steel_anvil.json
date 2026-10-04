@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:steel_anvil"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.steel_anvil"
     }

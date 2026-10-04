@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:stone_axe"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t0.stone_axe"
     }

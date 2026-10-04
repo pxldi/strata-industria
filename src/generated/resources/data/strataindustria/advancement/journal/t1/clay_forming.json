@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:unfired_small_vessel"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t1.clay_forming"
     }

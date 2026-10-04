@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:saw_mill"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.saw_mill"
     }
