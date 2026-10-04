@@ -10,12 +10,12 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.item.GroundCoverItem;
+import dev.strataindustria.item.ProspectorsPickItem;
+import dev.strataindustria.journal.FieldJournalItem;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.CastMoldItem;
-import dev.strataindustria.metal.ModToolMaterials;
 import dev.strataindustria.metal.ModArmorMaterials;
-import dev.strataindustria.item.ProspectorsPickItem;
-import net.minecraft.world.item.equipment.ArmorType;
+import dev.strataindustria.metal.ModToolMaterials;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -24,6 +24,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -34,6 +35,9 @@ public final class ModItems {
     public static final DeferredItem<Item> STRAW = ITEMS.registerSimpleItem("straw", p -> p);
     public static final DeferredItem<Item> TWINE = ITEMS.registerSimpleItem("twine", p -> p);
     public static final DeferredItem<Item> FIBRE_CLOTH = ITEMS.registerSimpleItem("fibre_cloth", p -> p);
+    /** Spec 3.6: opens the journal tab of the advancements screen. */
+    public static final DeferredItem<FieldJournalItem> FIELD_JOURNAL = ITEMS.registerItem("field_journal", FieldJournalItem::new,
+            p -> p.stacksTo(1));
 
     // Knapped heads (tier 0-2 spec 3.2). Each carries knapped_from.
     public static final DeferredItem<Item> STONE_AXE_HEAD = ITEMS.registerSimpleItem("stone_axe_head", p -> p.stacksTo(16));

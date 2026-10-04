@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t0/twine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "fire_pit_lit"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t0.fire.hint"
+    },
+    "icon": {
+      "id": "strataindustria:fire_pit"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t0.fire"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

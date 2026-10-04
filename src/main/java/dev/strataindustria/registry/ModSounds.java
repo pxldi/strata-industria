@@ -63,6 +63,9 @@ public final class ModSounds {
     /** A stick held in the flames catches as a torch. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_TORCH = register("fire_pit.torch");
 
+    /** Pages of the field journal turning. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

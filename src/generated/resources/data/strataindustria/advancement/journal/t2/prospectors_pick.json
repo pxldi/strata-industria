@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t2/bronze",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "prospect"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.prospectors_pick.hint"
+    },
+    "icon": {
+      "id": "strataindustria:bronze_prospectors_pick"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.prospectors_pick"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

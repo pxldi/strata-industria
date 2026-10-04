@@ -1,0 +1,27 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "strataindustria:block/granite",
+    "description": {
+      "translate": "journal.strataindustria.root.hint"
+    },
+    "icon": {
+      "id": "strataindustria:field_journal"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.root"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

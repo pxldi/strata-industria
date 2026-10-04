@@ -3,6 +3,7 @@ package dev.strataindustria.item;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.block.OreBlock;
 import dev.strataindustria.geology.OreMineral;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModSounds;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -12,15 +13,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Prospector's pick (spec 10.2): tap a block to sound out the ore in the 25 x 25 x 25 cube around it.
@@ -46,6 +48,7 @@ public class ProspectorsPickItem extends Item {
         ItemStack stack = context.getItemInHand();
         stack.hurtAndBreak(1, player, context.getHand());
         player.getCooldowns().addCooldown(stack, COOLDOWN);
+        if (player instanceof ServerPlayer serverPlayer) Journal.award(serverPlayer, Journal.PROSPECT);
         return InteractionResult.SUCCESS;
     }
 

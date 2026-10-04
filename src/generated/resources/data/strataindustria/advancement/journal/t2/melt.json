@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t1/crucible",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "crucible_molten"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.melt.hint"
+    },
+    "icon": {
+      "id": "strataindustria:ingot_mold"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.melt"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

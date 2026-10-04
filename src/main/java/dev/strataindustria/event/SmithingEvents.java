@@ -2,6 +2,7 @@ package dev.strataindustria.event;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.geology.Rock;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.ModTags;
@@ -11,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -49,5 +51,6 @@ public final class SmithingEvents {
         server.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5,
                 16, 0.3, 0.05, 0.3, 0.1);
         held.hurtAndBreak(1, player, event.getHand());
+        if (player instanceof ServerPlayer serverPlayer) Journal.award(serverPlayer, Journal.STONE_ANVIL);
     }
 }

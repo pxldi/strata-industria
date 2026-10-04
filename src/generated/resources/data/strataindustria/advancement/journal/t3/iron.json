@@ -1,0 +1,27 @@
+{
+  "parent": "strataindustria:journal/t2/bronze_anvil",
+  "criteria": {
+    "done": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.iron.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "minecraft:raw_iron"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.iron"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
