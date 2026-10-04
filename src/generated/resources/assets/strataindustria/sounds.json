@@ -2230,6 +2230,29 @@
     ],
     "subtitle": "subtitles.strataindustria.firestarter.drill"
   },
+  "flat_wagon.load": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 1.3,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.wood.place",
+        "pitch": 0.7,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.1,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.flat_wagon.load"
+  },
   "fluid_pipe.refuse": {
     "sounds": [
       {
@@ -3490,6 +3513,35 @@
     ],
     "subtitle": "subtitles.strataindustria.quern.load"
   },
+  "rail.clatter_steel": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.5,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 1.7,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.step",
+        "pitch": 1.6,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.metal.step",
+        "pitch": 1.3,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.rail.clatter_steel"
+  },
   "raw_bloom.hit": {
     "sounds": [
       {
@@ -3790,6 +3842,28 @@
     ],
     "subtitle": "subtitles.strataindustria.steam_whistle.blow"
   },
+  "steel_buffer.clang": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.1,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.iron_door.close",
+        "pitch": 0.7,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.chain.break",
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steel_buffer.clang"
+  },
   "stethoscope.silent": {
     "sounds": [
       {
@@ -4076,6 +4150,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.valve.open"
+  },
+  "wagon_port.flow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.fill",
+        "pitch": 1.4,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.6,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.wagon_port.flow"
   },
   "washer.wash": {
     "sounds": [

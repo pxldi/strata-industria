@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "strataindustria:steel_rod",
+    "X": "strataindustria:treated_planks"
+  },
+  "pattern": [
+    "D D",
+    "DXD",
+    "D D"
+  ],
+  "result": {
+    "count": 16,
+    "id": "strataindustria:steel_track"
+  }
+}

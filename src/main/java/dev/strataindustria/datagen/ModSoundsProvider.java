@@ -35,6 +35,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         ledger();
         foot();
         rail();
+        railway();
         transport();
         bronze();
         // A dull chip off a rock.
@@ -603,6 +604,28 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.wooden_door.open", event).pitch(0.5f).volume(0.45f))
                 .with(sound("minecraft:block.chain.hit", event).pitch(0.7f).volume(0.4f))
                 .with(sound("minecraft:block.wood.step", event).pitch(0.6f).volume(0.5f)));
+    }
+
+    /** The steel track and wagons, from vanilla iron, chain, anvil and water samples. */
+    private void railway() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.transport.rail.RailwayRegistry.CLATTER_STEEL, definition().subtitle(subtitle("rail.clatter_steel"))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.5f).volume(0.55f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.7f).volume(0.35f))
+                .with(sound("minecraft:block.anvil.step", event).pitch(1.6f).volume(0.4f))
+                .with(sound("minecraft:block.metal.step", event).pitch(1.3f).volume(0.6f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.BUFFER_CLANG, definition().subtitle(subtitle("steel_buffer.clang"))
+                .with(sound("minecraft:block.anvil.land", event).pitch(1.1f).volume(0.55f))
+                .with(sound("minecraft:block.iron_door.close", event).pitch(0.7f).volume(0.7f))
+                .with(sound("minecraft:block.chain.break", event).pitch(1.0f).volume(0.4f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.PORT_FLOW, definition().subtitle(subtitle("wagon_port.flow"))
+                .with(sound("minecraft:block.water.ambient", event).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:item.bucket.fill", event).pitch(1.4f).volume(0.35f))
+                .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.6f).volume(0.2f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
+                .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
+                .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.1f).volume(0.5f)));
     }
 
     /** Pattern casting, from vanilla wood and sand samples. */

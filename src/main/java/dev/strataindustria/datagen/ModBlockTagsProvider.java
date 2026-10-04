@@ -221,6 +221,14 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             tag(dev.strataindustria.transport.rail.RailRegistry.TRACK).add(rail.getKey());
             tag(BlockTags.MINEABLE_WITH_AXE).add(rail.getKey());
         }
+        // Tier 4: steel track and the wagon fluid port.
+        for (var rail : java.util.List.of(dev.strataindustria.transport.rail.RailwayRegistry.STEEL_TRACK, dev.strataindustria.transport.rail.RailwayRegistry.STATION_TRACK,
+                dev.strataindustria.transport.rail.RailwayRegistry.STEEL_BUFFER)) {
+            tag(BlockTags.RAILS).add(rail.getKey());
+            tag(dev.strataindustria.transport.rail.RailRegistry.TRACK).add(rail.getKey());
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(rail.getKey());
+        }
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.rail.RailwayRegistry.WAGON_FLUID_PORT.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.getKey())
                 .add(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());

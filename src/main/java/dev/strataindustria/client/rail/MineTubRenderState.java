@@ -6,4 +6,6 @@ import net.minecraft.client.renderer.entity.state.MinecartRenderState;
 public class MineTubRenderState extends MinecartRenderState {
     public float tip;
     public boolean coupled;
+    /** A tank wagon's fluid level, 0 to 16. */
+    public int gauge;
 }

@@ -144,6 +144,10 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 dev.strataindustria.transport.rail.RailRegistry.TIPPLE_RAIL, dev.strataindustria.transport.rail.RailRegistry.RAIL_BUFFER)) {
             dropSelf(rail.get());
         }
+        for (var rail : java.util.List.of(dev.strataindustria.transport.rail.RailwayRegistry.STEEL_TRACK, dev.strataindustria.transport.rail.RailwayRegistry.STATION_TRACK,
+                dev.strataindustria.transport.rail.RailwayRegistry.STEEL_BUFFER, dev.strataindustria.transport.rail.RailwayRegistry.WAGON_FLUID_PORT)) {
+            dropSelf(rail.get());
+        }
         dropSelf(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.get());
         dropSelf(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.get());
         dropSelf(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.get());

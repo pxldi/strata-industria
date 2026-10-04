@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "strataindustria:steel_rod",
+    "X": "strataindustria:treated_planks"
+  },
+  "pattern": [
+    "XXX",
+    " D "
+  ],
+  "result": {
+    "id": "strataindustria:flat_wagon"
+  }
+}
