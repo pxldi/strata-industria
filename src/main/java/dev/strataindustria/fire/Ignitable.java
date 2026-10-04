@@ -3,6 +3,7 @@ package dev.strataindustria.fire;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 /**
  * A block that a firestarter, torch or flint and steel can light: the fire pit now, later the pit
@@ -14,6 +15,16 @@ public interface Ignitable {
 
     /** Lights the block. Returns whether it caught. Only called on the server. */
     boolean ignite(Level level, BlockPos pos, BlockState state);
+
+    /**
+     * {@link #canIgnite} on the server. The client never sees the fuel inside a fire pit or forge, so there
+     * it only asks whether the block is unlit and leaves the real check to the server.
+     */
+    static boolean mayIgnite(Level level, BlockPos pos, BlockState state) {
+        if (!(state.getBlock() instanceof Ignitable target)) return false;
+        if (!level.isClientSide()) return target.canIgnite(level, pos, state);
+        return !state.hasProperty(BlockStateProperties.LIT) || !state.getValue(BlockStateProperties.LIT);
+    }
 
     /** True when rain falls on the block, which keeps it from catching. */
     static boolean rainedOn(Level level, BlockPos pos) {
