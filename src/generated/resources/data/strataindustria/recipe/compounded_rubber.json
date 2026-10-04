@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:raw_rubber",
+    "strataindustria:raw_rubber",
+    "strataindustria:raw_rubber",
+    "strataindustria:raw_rubber",
+    "strataindustria:sulfur_dust"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:compounded_rubber"
+  }
+}

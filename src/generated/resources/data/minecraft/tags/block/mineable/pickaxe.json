@@ -1,5 +1,8 @@
 {
   "values": [
+    "strataindustria:kinetic_dynamo",
+    "strataindustria:battery_box",
+    "strataindustria:lv_machine_hull",
     "#strataindustria:rocks",
     "strataindustria:cobbled_limestone",
     "strataindustria:limestone_native_copper_ore",

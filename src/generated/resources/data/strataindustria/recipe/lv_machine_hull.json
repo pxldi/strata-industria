@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "I": "strataindustria:wrought_iron_plate",
+    "L": "strataindustria:lv_cable",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "PIP",
+    "L L",
+    "PIP"
+  ],
+  "result": {
+    "id": "strataindustria:lv_machine_hull"
+  }
+}

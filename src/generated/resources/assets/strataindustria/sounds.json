@@ -65,6 +65,23 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.weld_fail"
   },
+  "battery_box.charge": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 2.0,
+        "volume": 0.15
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.9,
+        "volume": 0.12
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.battery_box.charge"
+  },
   "bellows.pump": {
     "sounds": [
       {
@@ -615,6 +632,46 @@
     ],
     "subtitle": "subtitles.strataindustria.crusher.crush"
   },
+  "electric.overvoltage": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.lightning_bolt.impact",
+        "pitch": 2.0,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "entity.lightning_bolt.impact",
+        "pitch": 1.8,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.electric.overvoltage"
+  },
+  "electric.spark": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.redstone_torch.burnout",
+        "pitch": 1.6,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.redstone_torch.burnout",
+        "pitch": 1.8,
+        "volume": 0.25
+      },
+      {
+        "type": "event",
+        "name": "block.redstone_torch.burnout",
+        "pitch": 1.45,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.electric.spark"
+  },
   "fire_pit.extinguish": {
     "sounds": [
       "random/fizz"
@@ -855,6 +912,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.kinetic.overstress"
+  },
+  "kinetic_dynamo.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.5,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.4,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.6,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.kinetic_dynamo.run"
   },
   "knapping.finish": {
     "sounds": [

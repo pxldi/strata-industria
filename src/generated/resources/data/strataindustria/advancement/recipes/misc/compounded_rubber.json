@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_rubber": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:raw_rubber"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:compounded_rubber"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_rubber"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:compounded_rubber"
+    ]
+  }
+}

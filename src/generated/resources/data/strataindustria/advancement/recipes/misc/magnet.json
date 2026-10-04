@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_rich_magnetite": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:rich_magnetite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:magnet"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_rich_magnetite"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:magnet"
+    ]
+  }
+}

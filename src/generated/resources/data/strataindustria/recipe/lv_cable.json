@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "R": "strataindustria:rubber",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    " R ",
+    "WWW",
+    " R "
+  ],
+  "result": {
+    "count": 3,
+    "id": "strataindustria:lv_cable"
+  }
+}
