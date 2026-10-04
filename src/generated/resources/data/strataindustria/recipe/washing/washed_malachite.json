@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:washing",
+  "chances": [
+    {
+      "chance": 0.15,
+      "item": {
+        "id": "minecraft:green_dye"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:crushed_malachite",
+  "result": {
+    "id": "strataindustria:washed_malachite"
+  }
+}

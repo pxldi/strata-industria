@@ -1,0 +1,27 @@
+{
+  "type": "strataindustria:washing",
+  "chances": [
+    {
+      "chance": 0.25,
+      "item": {
+        "id": "strataindustria:small_native_gold"
+      }
+    },
+    {
+      "chance": 0.25,
+      "item": {
+        "id": "strataindustria:small_magnetite"
+      }
+    },
+    {
+      "chance": 0.05,
+      "item": {
+        "id": "strataindustria:small_cassiterite"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:placer_sand",
+  "result": {
+    "id": "minecraft:sand"
+  }
+}
