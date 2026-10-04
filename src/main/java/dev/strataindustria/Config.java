@@ -256,6 +256,22 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- steam
+    static {
+        BUILDER.comment("Boilers and steam engines.").push("steam");
+    }
+
+    public static final ModConfigSpec.BooleanValue STEAM_BOILER_EXPLOSIONS = BUILDER
+            .comment("Whether a boiler that cracks from dry firing also explodes.")
+            .define("boilerExplosions", false);
+    public static final ModConfigSpec.DoubleValue STEAM_DRY_FIRING_DAMAGE = BUILDER
+            .comment("Integrity, in percent, a dry-fired boiler loses each second.")
+            .defineInRange("dryFiringDamagePerSecond", 1.0, 0.0, 100.0);
+
+    static {
+        BUILDER.pop();
+    }
+
     // ---------------------------------------------------------------- journal
     static {
         BUILDER.comment("The field journal.").push("journal");

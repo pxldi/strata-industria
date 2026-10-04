@@ -65,6 +65,8 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.SLUICE.get(), dev.strataindustria.client.screen.SluiceScreen::new);
         event.register(ModMenus.SOAKING_BARREL.get(), dev.strataindustria.client.screen.SoakingBarrelScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.COKE_OVEN.get(), dev.strataindustria.client.screen.CokeOvenScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.FIREBOX.get(), dev.strataindustria.client.screen.FireboxScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.BRONZE_BOILER.get(), dev.strataindustria.client.screen.BoilerScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

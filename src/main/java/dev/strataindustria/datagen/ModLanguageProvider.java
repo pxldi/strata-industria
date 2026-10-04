@@ -239,6 +239,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "bloomery", "Bloomery");
         add(config + "runTicks", "Bloomery run time");
         add(config + "journal", "Field Journal");
+        add(config + "steam", "Steam");
         add(config + "giveOnJoin", "Give a journal on first join");
     }
 
@@ -319,6 +320,57 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.IRON_GEARBOX, "Iron Gearbox");
         addBlock(Tier4Blocks.IRON_STEP_UP_GEARBOX, "Iron Step-up Gearbox");
         add(id + ".ore.sulfide", "Sulfide ore: roast it in a forge before melting");
+
+        // Spec 8.1, 9 and 10: the firebox, pipes, the gauge and the bronze boiler.
+        addBlock(Tier4Blocks.FIREBOX, "Firebox");
+        addBlock(Tier4Blocks.BRONZE_BOILER, "Bronze Boiler");
+        addBlock(Tier4Blocks.CRACKED_BRONZE_BOILER, "Cracked Bronze Boiler");
+        addBlock(Tier4Blocks.COPPER_FLUID_PIPE, "Copper Fluid Pipe");
+        addBlock(Tier4Blocks.BRONZE_FLUID_PIPE, "Bronze Fluid Pipe");
+        addBlock(Tier4Blocks.STEEL_FLUID_PIPE, "Steel Fluid Pipe");
+        addBlock(Tier4Blocks.PRESSURE_GAUGE, "Pressure Gauge");
+        add("fluid_type." + id + ".steam", "Steam");
+        add("container." + id + ".firebox", "Firebox");
+        add("container." + id + ".bronze_boiler", "Bronze Boiler");
+        String firebox = id + ".firebox.";
+        add(firebox + "status.empty", "Add fuel");
+        add(firebox + "status.idle", "Burning, %s HU/t wasted");
+        add(firebox + "status.heating", "Heating: %s / %s HU/t");
+        add(firebox + "status.cooling", "Out of fuel, cooling");
+        add(firebox + "temperature", "%s °C");
+        String boiler = id + ".boiler.";
+        add(boiler + "status.no_heat", "No heat");
+        add(boiler + "status.too_cool", "Fire too cool: %2$s °C");
+        add(boiler + "status.no_water", "No water");
+        add(boiler + "status.heating", "Heating water (%s%%)");
+        add(boiler + "status.running", "Making steam");
+        add(boiler + "status.venting", "Venting: no demand");
+        add(boiler + "status.pipe_too_hot", "Pipe too weak");
+        add(boiler + "status.low_water", "Low water");
+        add(boiler + "status.dry_firing", "Dry firing! %s%%");
+        add(boiler + "pressure", "%s bar");
+        add(boiler + "heat", "%s HU/t");
+        add(boiler + "fire", "%s °C");
+        add(boiler + "water", "Water %s / %s mB");
+        add(boiler + "steam", "Steam %s / %s mB");
+        add(boiler + "integrity", "Integrity %s%%");
+        String gauge = id + ".pressure_gauge.";
+        add(gauge + "empty", "Nothing flowing");
+        add(gauge + "pressure", "Steam at %s bar");
+        add(gauge + "flow", "%s flowing, %s mB/t");
+        add(subtitles + "firebox.light", "Firebox catches");
+        add(subtitles + "firebox.burn", "Firebox roars");
+        add(subtitles + "fluid_pipe.refuse", "Pipe clanks");
+        add(subtitles + "boiler.heat", "Boiler creaks");
+        add(subtitles + "boiler.run", "Boiler rumbles");
+        add(subtitles + "boiler.vent", "Safety valve whistles");
+        add(subtitles + "boiler.low_water", "Boiler warns of low water");
+        add(subtitles + "boiler.dry_fire", "Boiler groans");
+        add(subtitles + "boiler.steam_burst", "Steam bursts");
+        add(subtitles + "boiler.crack", "Boiler cracks");
+        add(subtitles + "boiler.repair", "Boiler patched");
+        add(config + "boilerExplosions", "Cracking boilers explode");
+        add(config + "dryFiringDamagePerSecond", "Dry firing damage per second (%)");
     }
 
     private void ironAge() {
@@ -502,6 +554,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.brass.hint", "Melt calcine with copper and a little carbon dust. Two parts copper to one of zinc.");
         add(journal + "t4.solder", "Solder");
         add(journal + "t4.solder.hint", "Galena melts like tin ore. Alloy its lead with tin.");
+        add(journal + "t4.pipe", "Pipework");
+        add(journal + "t4.pipe.hint", "Join copper plates with solder into pipe. Copper carries a bronze boiler's steam.");
+        add(journal + "t4.boiler", "Raising Steam");
+        add(journal + "t4.boiler.hint", "Set a bronze boiler on a burning firebox, fill it with water and wait for the needle to rise.");
         add(journal + "t4.steel_anvil", "Steel Anvil");
         add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }

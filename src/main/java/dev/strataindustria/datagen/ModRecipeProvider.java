@@ -444,6 +444,56 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_iron_gearbox", has(Tier4Items.IRON_GEARBOX.get()))
                 .save(output, key("iron_step_up_gearbox"));
 
+        // Spec 8.1, 9.2, 9.3 and 10.2: steam. Solder joins copper and bronze pipe; steel pipe is welded.
+        Item fireBrick = ModItems.FIRE_BRICK.get(), solder = ModItems.ingot(Metal.SOLDER);
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.FIREBOX.get())
+                .pattern("BBB")
+                .pattern("B B")
+                .pattern("BPB")
+                .define('B', fireBrick)
+                .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .unlockedBy("has_fire_brick", has(fireBrick))
+                .save(output, key("firebox"));
+        Item copperPlate = ModItems.PLATES.get(Metal.COPPER).get();
+        shaped(RecipeCategory.REDSTONE, Tier4Items.COPPER_FLUID_PIPE.get(), 4)
+                .pattern("PSP")
+                .define('P', copperPlate)
+                .define('S', solder)
+                .unlockedBy("has_solder_ingot", has(solder))
+                .save(output, key("copper_fluid_pipe"));
+        shaped(RecipeCategory.REDSTONE, Tier4Items.BRONZE_FLUID_PIPE.get(), 4)
+                .pattern("PSP")
+                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
+                .define('S', solder)
+                .unlockedBy("has_solder_ingot", has(solder))
+                .save(output, key("bronze_fluid_pipe"));
+        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get();
+        shaped(RecipeCategory.REDSTONE, Tier4Items.STEEL_FLUID_PIPE.get(), 4)
+                .pattern("PPP")
+                .define('P', steelPlate)
+                .unlockedBy("has_steel_plate", has(steelPlate))
+                .save(output, key("steel_fluid_pipe"));
+        Item brassPlate = ModItems.PLATES.get(Metal.BRASS).get();
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.PRESSURE_GAUGE.get())
+                .requires(brassPlate, 2)
+                .requires(Items.GLASS)
+                .requires(ModItems.RODS.get(Metal.BRASS).get())
+                .unlockedBy("has_brass_plate", has(brassPlate))
+                .save(output, key("pressure_gauge"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.BRONZE_BOILER.get())
+                .pattern("PPP")
+                .pattern("PGP")
+                .pattern("PPP")
+                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
+                .define('G', Tier4Items.PRESSURE_GAUGE.get())
+                .unlockedBy("has_pressure_gauge", has(Tier4Items.PRESSURE_GAUGE.get()))
+                .save(output, key("bronze_boiler"));
+        // Spec 10.4: a cracked boiler is good for four of its plates.
+        shapeless(RecipeCategory.MISC, ModItems.PLATES.get(Metal.BRONZE).get(), 4)
+                .requires(Tier4Items.CRACKED_BRONZE_BOILER.get())
+                .unlockedBy("has_cracked_bronze_boiler", has(Tier4Items.CRACKED_BRONZE_BOILER.get()))
+                .save(output, key("bronze_plate_from_cracked_boiler"));
+
         Item coke = Tier4Items.COKE.get();
         shaped(RecipeCategory.MISC, Tier4Items.COKE_BLOCK.get())
                 .pattern("CCC")

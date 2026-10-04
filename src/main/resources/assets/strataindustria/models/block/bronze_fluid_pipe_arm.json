@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/fluid_pipe_arm",
+  "textures": {
+    "pipe": "strataindustria:block/bronze_fluid_pipe"
+  }
+}

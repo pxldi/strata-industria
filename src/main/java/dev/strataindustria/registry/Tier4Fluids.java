@@ -28,6 +28,21 @@ public final class Tier4Fluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_SULFUR_DIOXIDE = ModFluids.FLUIDS.register("flowing_sulfur_dioxide",
             () -> new BaseFlowingFluid.Flowing(Tier4Fluids.sulfurDioxideProperties()));
 
+    /**
+     * Spec 9.1: steam, 100 °C plus 15 per bar. It lives in boilers, pipes and engines and has no bucket
+     * and no world block.
+     */
+    public static final DeferredHolder<FluidType, FluidType> STEAM_TYPE = ModFluids.TYPES.register("steam",
+            () -> new FluidType(FluidType.Properties.create().density(-1000).viscosity(200).temperature(373)));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> STEAM = ModFluids.FLUIDS.register("steam",
+            () -> new BaseFlowingFluid.Source(Tier4Fluids.steamProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_STEAM = ModFluids.FLUIDS.register("flowing_steam",
+            () -> new BaseFlowingFluid.Flowing(Tier4Fluids.steamProperties()));
+
+    private static BaseFlowingFluid.Properties steamProperties() {
+        return new BaseFlowingFluid.Properties(STEAM_TYPE, STEAM, FLOWING_STEAM);
+    }
+
     private static BaseFlowingFluid.Properties sulfurDioxideProperties() {
         return new BaseFlowingFluid.Properties(SULFUR_DIOXIDE_TYPE, SULFUR_DIOXIDE, FLOWING_SULFUR_DIOXIDE);
     }

@@ -2,8 +2,13 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.ceramics.RefractoryCrucibleBlock;
 import dev.strataindustria.coking.CokeOvenBlock;
+import dev.strataindustria.fluid.FluidPipeBlock;
+import dev.strataindustria.fluid.PressureGaugeBlock;
 import dev.strataindustria.power.IronTransmission;
 import dev.strataindustria.smithing.AnvilBlock;
+import dev.strataindustria.steam.BoilerBlock;
+import dev.strataindustria.steam.CrackedBoilerBlock;
+import dev.strataindustria.steam.FireboxBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -68,6 +73,56 @@ public final class Tier4Blocks {
             IronTransmission.Gearbox::new, Tier4Blocks::iron);
     public static final DeferredBlock<IronTransmission.StepUpGearbox> IRON_STEP_UP_GEARBOX = ModBlocks.BLOCKS.registerBlock("iron_step_up_gearbox",
             IronTransmission.StepUpGearbox::new, Tier4Blocks::iron);
+
+    // Spec 21.7: fire brick for the firebox; a heavy, deep metal for boilers; copper for copper and bronze
+    // pipes; brass fittings ring higher.
+    private static final SoundType FIRE_BRICK_SOUND = new SoundType(1.0f, 1.1f, SoundType.DEEPSLATE_BRICKS.getBreakSound(),
+            SoundType.DEEPSLATE_BRICKS.getStepSound(), SoundType.DEEPSLATE_BRICKS.getPlaceSound(),
+            SoundType.DEEPSLATE_BRICKS.getHitSound(), SoundType.DEEPSLATE_BRICKS.getFallSound());
+    public static final SoundType HEAVY_METAL = new SoundType(1.0f, 0.9f, SoundType.NETHERITE_BLOCK.getBreakSound(),
+            SoundType.NETHERITE_BLOCK.getStepSound(), SoundType.NETHERITE_BLOCK.getPlaceSound(),
+            SoundType.NETHERITE_BLOCK.getHitSound(), SoundType.NETHERITE_BLOCK.getFallSound());
+    private static final SoundType BRASS_SOUND = new SoundType(1.0f, 1.2f, SoundType.COPPER.getBreakSound(),
+            SoundType.COPPER.getStepSound(), SoundType.COPPER.getPlaceSound(),
+            SoundType.COPPER.getHitSound(), SoundType.COPPER.getFallSound());
+
+    // Spec 8.1 and 10.2: the firebox and the bronze boiler that sits on it.
+    public static final DeferredBlock<FireboxBlock> FIREBOX = ModBlocks.BLOCKS.registerBlock("firebox", FireboxBlock::new,
+            p -> p.mapColor(MapColor.SAND)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .strength(2.5f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(FIRE_BRICK_SOUND)
+                    .lightLevel(state -> state.getValue(FireboxBlock.LIT) ? 13 : 0));
+    public static final DeferredBlock<BoilerBlock> BRONZE_BOILER = ModBlocks.BLOCKS.registerBlock("bronze_boiler", BoilerBlock::new,
+            Tier4Blocks::boiler);
+    public static final DeferredBlock<CrackedBoilerBlock> CRACKED_BRONZE_BOILER = ModBlocks.BLOCKS.registerBlock("cracked_bronze_boiler",
+            CrackedBoilerBlock::new, Tier4Blocks::boiler);
+
+    // Spec 9.2 and 9.3: fluid pipes, rated by the hottest fluid and the flow they take, and the gauge.
+    public static final DeferredBlock<FluidPipeBlock> COPPER_FLUID_PIPE = ModBlocks.BLOCKS.registerBlock("copper_fluid_pipe",
+            p -> new FluidPipeBlock(160, 100, p), p -> pipe(p, MapColor.COLOR_ORANGE, SoundType.COPPER));
+    public static final DeferredBlock<FluidPipeBlock> BRONZE_FLUID_PIPE = ModBlocks.BLOCKS.registerBlock("bronze_fluid_pipe",
+            p -> new FluidPipeBlock(220, 200, p), p -> pipe(p, MapColor.COLOR_BROWN, SoundType.COPPER));
+    public static final DeferredBlock<FluidPipeBlock> STEEL_FLUID_PIPE = ModBlocks.BLOCKS.registerBlock("steel_fluid_pipe",
+            p -> new FluidPipeBlock(400, 400, p), p -> pipe(p, MapColor.METAL, HEAVY_METAL));
+    public static final DeferredBlock<PressureGaugeBlock> PRESSURE_GAUGE = ModBlocks.BLOCKS.registerBlock("pressure_gauge",
+            p -> new PressureGaugeBlock(220, 200, p), p -> pipe(p, MapColor.GOLD, BRASS_SOUND));
+
+    private static Block.Properties boiler(Block.Properties p) {
+        return p.mapColor(MapColor.COLOR_BROWN)
+                .strength(4.0f, 8.0f)
+                .requiresCorrectToolForDrops()
+                .sound(HEAVY_METAL);
+    }
+
+    private static Block.Properties pipe(Block.Properties p, MapColor colour, SoundType sound) {
+        return p.mapColor(colour)
+                .strength(2.0f, 6.0f)
+                .requiresCorrectToolForDrops()
+                .noOcclusion()
+                .sound(sound);
+    }
 
     /** Wrought iron machine parts: mined with a pickaxe, they ring like iron. */
     private static Block.Properties iron(Block.Properties p) {

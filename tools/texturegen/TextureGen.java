@@ -5531,6 +5531,407 @@ public final class TextureGen {
         return im;
     }
 
+    // Tier 4 spec 21.2 and 21.5: steam. The firebox is fire brick with a cast iron grate; the boiler is
+    // riveted bronze plate; pipes and the gauge are drawn into the parts of one sheet their models use.
+
+    /** Firebox side: fire brick held by a riveted wrought iron band along the top and bottom. */
+    static BufferedImage fireboxSide() {
+        BufferedImage im = fireBricks();
+        for (int x = 0; x < 16; x++) {
+            px(im, x, 0, WROUGHT_IRON.get(x % 5 == 0 ? 5 : 4));
+            px(im, x, 1, WROUGHT_IRON.get(2));
+            px(im, x, 14, WROUGHT_IRON.get(x % 7 == 3 ? 4 : 3));
+            px(im, x, 15, WROUGHT_IRON.get(1));
+        }
+        for (int x : new int[] {2, 13}) {
+            px(im, x, 0, WROUGHT_IRON.spec());
+            px(im, x, 14, WROUGHT_IRON.get(5));
+        }
+        return im;
+    }
+
+    /** Firebox top: a cast iron hot plate in a fire brick rim, where the boiler sits. */
+    static BufferedImage fireboxTop() {
+        BufferedImage im = fireBricks();
+        double[][] n = fractal(8411);
+        for (int y = 2; y <= 13; y++)
+            for (int x = 2; x <= 13; x++) {
+                int step = 3;
+                if (x == 2 || y == 2) step = 4;
+                else if (x == 13 || y == 13) step = 2;
+                else if (n[y][x] < 0.3) step = 2;
+                else if (n[y][x] > 0.7) step = 4;
+                px(im, x, y, PIG_IRON.get(step));
+            }
+        // A cross of casting ribs, and the four corner bolts.
+        for (int i = 4; i <= 11; i++) {
+            px(im, i, 7, PIG_IRON.get(4));
+            px(im, i, 8, PIG_IRON.get(1));
+            px(im, 7, i, PIG_IRON.get(4));
+            px(im, 8, i, PIG_IRON.get(1));
+        }
+        for (int[] b : new int[][] {{3, 3}, {11, 3}, {3, 11}, {11, 11}}) rivet(im, b[0], b[1]);
+        return im;
+    }
+
+    /**
+     * Firebox front: fire brick round a cast iron grate door with an ash slot under it. Frames 0-3 are the
+     * lit animation; {@code hot} pushes the coals to yellow and white (coke with a blower), -1 is cold.
+     */
+    static BufferedImage fireboxFront(int frame, boolean hot) {
+        BufferedImage im = fireBricks();
+        int[] bright = {0, 1, 2, 1};
+        Random r = new Random(8500 + frame * 7 + (hot ? 100 : 0));
+        int base = hot ? 3 : 1, cap = hot ? 5 : 3;
+        // Coals behind the bars, brightest low down where the bed is.
+        for (int y = 3; y <= 11; y++)
+            for (int x = 3; x <= 12; x++) {
+                int c;
+                if (frame < 0) c = r.nextInt(4) == 0 ? CHARCOAL.get(2) : CHARCOAL.get(1);
+                else {
+                    int i = base + bright[frame] / 2 + (y >= 8 ? 1 : 0) - (y <= 4 ? 1 : 0) + (r.nextInt(3) == 0 ? 1 : 0) - (r.nextInt(4) == 0 ? 1 : 0);
+                    c = HEAT_BAND[Math.max(0, Math.min(cap, i))];
+                }
+                px(im, x, y, c);
+            }
+        // Frame: lit top and left, shadowed bottom and right.
+        for (int x = 2; x <= 13; x++) {
+            px(im, x, 2, PIG_IRON.get(x == 2 ? 5 : 4));
+            px(im, x, 12, PIG_IRON.get(2));
+        }
+        for (int y = 3; y <= 11; y++) {
+            px(im, 2, y, PIG_IRON.get(4));
+            px(im, 13, y, PIG_IRON.get(2));
+        }
+        // Vertical bars with a cross bar, each lit along its top.
+        for (int x = 4; x <= 12; x += 2)
+            for (int y = 3; y <= 11; y++) px(im, x, y, PIG_IRON.get(y == 3 ? 4 : 3));
+        for (int x = 3; x <= 12; x++) {
+            px(im, x, 7, PIG_IRON.get(x % 2 == 0 ? 4 : 3));
+        }
+        // Hinges on the left, latch on the right.
+        px(im, 1, 4, WROUGHT_IRON.get(4));
+        px(im, 1, 10, WROUGHT_IRON.get(4));
+        px(im, 13, 6, WROUGHT_IRON.get(5));
+        px(im, 13, 7, WROUGHT_IRON.get(4));
+        px(im, 14, 7, WROUGHT_IRON.get(3));
+        px(im, 13, 8, WROUGHT_IRON.get(2));
+        // Ash slot: dark, with a faint glow when lit.
+        for (int x = 4; x <= 11; x++) {
+            px(im, x, 13, PIG_IRON.get(4));
+            int glow = frame < 0 ? CHARCOAL.get(1) : HEAT_BAND[(x + frame) % 3 == 0 ? Math.min(cap, base) : 0];
+            px(im, x, 14, glow);
+        }
+        px(im, 3, 13, PIG_IRON.get(4));
+        px(im, 3, 14, PIG_IRON.get(2));
+        px(im, 12, 13, PIG_IRON.get(3));
+        px(im, 12, 14, PIG_IRON.get(2));
+        return im;
+    }
+
+    static BufferedImage fireboxFrontLit(boolean hot) {
+        BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(fireboxFront(f, hot), 0, f * 16, null);
+        return strip;
+    }
+
+    /**
+     * Riveted bronze plate in two horizontal courses (style guide 7): each course lapped over the one below
+     * with a dark seam and a row of rivets, the vertical seams staggered.
+     */
+    static BufferedImage bronzePlates(long seed) {
+        BufferedImage im = img();
+        double[][] n = fractal(seed);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int row = y % 8;
+                int step = row == 0 ? 4 : row == 7 ? 2 : 3;
+                if (n[y][x] > 0.68 && step == 3) step = 4;
+                if (n[y][x] < 0.3 && step == 3) step = 2;
+                px(im, x, y, BRONZE.get(step));
+            }
+        for (int course = 0; course < 2; course++) {
+            int y0 = course * 8;
+            int seam = course == 0 ? 0 : 8;
+            for (int y = y0; y < y0 + 8; y++) {
+                pxWrap(im, seam - 1, y, BRONZE.get(1));
+                pxWrap(im, seam, y, BRONZE.get(4));
+            }
+            for (int x = 0; x < 16; x++) pxWrap(im, x, y0 + 7, BRONZE.get(1));
+            for (int x = (course == 0 ? 2 : 6); x < 16 + (course == 0 ? 2 : 6); x += 4) {
+                pxWrap(im, x, y0 + 1, BRONZE.spec());
+                pxWrap(im, x + 1, y0 + 2, BRONZE.get(1));
+                pxWrap(im, x, y0 + 2, BRONZE.get(2));
+            }
+        }
+        return im;
+    }
+
+    /** Boiler top: plates round the riveted steam outlet flange. */
+    static BufferedImage boilerTop() {
+        BufferedImage im = bronzePlates(8611);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                if (d <= 5.2 && d > 3.6) px(im, x, y, BRONZE.get(x + y < 15 ? 5 : 3));
+                else if (d <= 3.6 && d > 2.2) px(im, x, y, BRASS.get(x + y < 15 ? 4 : 2));
+                else if (d <= 2.2) px(im, x, y, BRONZE.get(1));
+                if (d > 5.2 && d <= 5.9) px(im, x, y, BRONZE.get(1));
+            }
+        for (int[] p : new int[][] {{7, 3}, {12, 7}, {8, 12}, {3, 8}}) {
+            px(im, p[0], p[1], BRONZE.spec());
+            px(im, p[0] + 1, p[1] + 1, BRONZE.get(2));
+        }
+        px(im, 6, 6, 0x0e0c0c);
+        return im;
+    }
+
+    /** Boiler front: plates with the brass-rimmed gauge high up and a water sight glass beside it. */
+    static BufferedImage boilerFront() {
+        BufferedImage im = bronzePlates(8612);
+        for (int y = 1; y <= 8; y++)
+            for (int x = 2; x <= 9; x++) {
+                double d = Math.hypot(x - 5.5, y - 4.5);
+                if (d > 4.0) continue;
+                int c;
+                if (d > 3.0) c = BRASS.get(x + y < 10 ? 5 : 2);
+                else c = PAPER.get(5);
+                px(im, x, y, c);
+            }
+        // Arcs: green, amber, red round the top of the face.
+        int[][] arc = {{3, 5, 0x4c9a3a}, {3, 4, 0x4c9a3a}, {4, 3, 0x4c9a3a}, {5, 2, 0xd8a030}, {6, 2, 0xd8a030}, {7, 3, 0xc8342a}, {7, 4, 0xc8342a}};
+        for (int[] a : arc) px(im, a[0], a[1], a[2]);
+        px(im, 5, 5, 0x2a2626);
+        px(im, 5, 4, 0x2a2626);
+        px(im, 6, 3, 0xb02a1e);
+        px(im, 4, 6, BRASS.get(1));
+        // Sight glass: a brass-framed tube, water to half way.
+        for (int y = 2; y <= 13; y++) {
+            px(im, 12, y, BRASS.get(y == 2 || y == 13 ? 5 : 4));
+            px(im, 14, y, BRASS.get(y == 2 || y == 13 ? 3 : 2));
+            px(im, 13, y, y == 2 || y == 13 ? BRASS.get(4) : y >= 8 ? (y == 8 ? 0x7aa4f0 : 0x3f76e4) : 0x9aa4a8);
+        }
+        px(im, 13, 4, 0xe8eef0);
+        return im;
+    }
+
+    /** The cracked boiler: a dark split across the plates, stained pale where steam escaped, a bent rivet line. */
+    static BufferedImage crackedBoiler(BufferedImage im, long seed) {
+        BufferedImage out = img();
+        out.getGraphics().drawImage(im, 0, 0, null);
+        Random r = new Random(seed);
+        int y = 3 + r.nextInt(3);
+        for (int x = 1; x < 15; x++) {
+            if (r.nextInt(3) == 0) y += r.nextBoolean() ? 1 : -1;
+            y = Math.max(2, Math.min(13, y));
+            px(out, x, y, 0x120c08);
+            px(out, x, y + 1, BRONZE.get(1));
+            // Steam stains above the split.
+            if (r.nextInt(2) == 0) {
+                int s = rgb(out, x, y - 1);
+                px(out, x, y - 1, blend(s, 0xd8d4c8, 0.45));
+                if (r.nextInt(2) == 0) px(out, x, y - 2, blend(rgb(out, x, y - 2), 0xd8d4c8, 0.25));
+            }
+        }
+        // Scorch toward the bottom edge.
+        for (int x = 0; x < 16; x++)
+            for (int yy = 13; yy < 16; yy++)
+                if (r.nextInt(3) == 0) px(out, x, yy, scale(rgb(out, x, yy), 0.7));
+        return out;
+    }
+
+    static int blend(int a, int b, double t) {
+        int r = (int) (((a >> 16) & 255) * (1 - t) + ((b >> 16) & 255) * t);
+        int g = (int) (((a >> 8) & 255) * (1 - t) + ((b >> 8) & 255) * t);
+        int bl = (int) ((a & 255) * (1 - t) + (b & 255) * t);
+        return (r << 16) | (g << 8) | bl;
+    }
+
+    /**
+     * One pipe sheet: the tube's side at (0,0) 5x5, run lengthwise; the joint face at (5,5) 6x6, solder
+     * bands for copper and bronze or a bolted flange for steel; the open end at (0,11) 5x5. The rest is
+     * plain tube, for break particles.
+     */
+    static BufferedImage pipeSheet(Ramp metal, boolean flanged, long seed) {
+        BufferedImage im = img();
+        double[][] n = fractal(seed);
+        int[] across = {4, 5, 4, 3, 2};
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = across[y % 5];
+                if (n[y][x] < 0.28 && step > 2) step--;
+                px(im, x, y, metal.get(step));
+            }
+        px(im, 2, 1, metal.spec());
+        // Joint face.
+        for (int y = 5; y <= 10; y++)
+            for (int x = 5; x <= 10; x++) {
+                boolean edge = x == 5 || y == 5 || x == 10 || y == 10;
+                int step = edge ? (x == 5 || y == 5 ? 4 : 2) : 3;
+                if (!edge && (x + y) % 5 == 0) step = 4;
+                px(im, x, y, metal.get(step));
+            }
+        if (flanged) {
+            for (int[] b : new int[][] {{6, 6}, {9, 6}, {6, 9}, {9, 9}}) px(im, b[0], b[1], metal.spec());
+            for (int[] b : new int[][] {{7, 7}, {8, 8}}) px(im, b[0], b[1], metal.get(2));
+        } else {
+            for (int i = 6; i <= 9; i++) {
+                px(im, i, 6, SOLDER.get(i == 6 ? 5 : 4));
+                px(im, 6, i, SOLDER.get(4));
+                px(im, i, 9, SOLDER.get(2));
+                px(im, 9, i, SOLDER.get(3));
+            }
+        }
+        // Open end: a lit rim round a dark bore.
+        for (int y = 11; y <= 15; y++)
+            for (int x = 0; x <= 4; x++) {
+                boolean rim = x == 0 || x == 4 || y == 11 || y == 15;
+                int c = rim ? metal.get(x == 0 || y == 11 ? 5 : 3) : (x == 2 && y == 13 ? 0x0e0c0c : metal.get(1));
+                px(im, x, y, c);
+            }
+        // A band of the joint metal near the end of the tube side, so arms read as soldered on.
+        if (!flanged) for (int y = 0; y < 5; y++) px(im, 4, y, SOLDER.get(across[y] - 1 < 1 ? 1 : across[y] - 1));
+        else for (int y = 0; y < 5; y++) px(im, 4, y, metal.get(Math.min(5, across[y] + 1)));
+        return im;
+    }
+
+    /** Gauge housing: turned brass, its cap a dome with a centre screw. */
+    static BufferedImage gaugeHousing() {
+        BufferedImage im = img();
+        double[][] n = fractal(8701);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                int step = d < 1.6 ? 5 : d < 3.2 ? 4 : 3;
+                if (x == 4 || y == 4) step = 4;
+                if (x == 11 || y == 11) step = 2;
+                if (n[y][x] < 0.25 && step == 3) step = 2;
+                px(im, x, y, BRASS.get(step));
+            }
+        px(im, 7, 7, BRASS.spec());
+        px(im, 8, 8, BRASS.get(2));
+        return im;
+    }
+
+    /**
+     * Gauge dial in the centre 8x8: brass bezel, cream face with green, amber and red arcs, and the needle
+     * at {@code reading} of 4 (0 on the left, 4 on the right).
+     */
+    static BufferedImage gaugeDial(int reading) {
+        BufferedImage im = gaugeHousing();
+        // Bezel.
+        for (int y = 4; y <= 11; y++)
+            for (int x = 4; x <= 11; x++) {
+                boolean edge = x == 4 || y == 4 || x == 11 || y == 11;
+                if (edge) px(im, x, y, BRASS.get(x == 4 || y == 4 ? 5 : 2));
+                else px(im, x, y, PAPER.get(5));
+            }
+        for (int[] c : new int[][] {{4, 4}, {11, 4}, {4, 11}, {11, 11}}) px(im, c[0], c[1], BRASS.get(3));
+        double hx = 7.5, hy = 9.0;
+        for (int y = 5; y <= 10; y++)
+            for (int x = 5; x <= 10; x++) {
+                double dx = x + 0.5 - hx, dy = hy - (y + 0.5);
+                double d = Math.hypot(dx, dy);
+                if (dy < 0 || d < 2.3 || d > 3.6) continue;
+                double share = 1.0 - Math.atan2(dy, dx) / Math.PI;
+                px(im, x, y, share < 0.6 ? 0x4c9a3a : share < 0.85 ? 0xd8a030 : 0xc8342a);
+            }
+        double angle = Math.PI * (1.0 - reading / 4.0);
+        for (double t = 0.6; t <= 2.6; t += 0.5) {
+            int x = (int) Math.floor(hx + Math.cos(angle) * t), y = (int) Math.floor(hy - Math.sin(angle) * t);
+            px(im, x, y, t > 2.0 ? 0xb02a1e : 0x2a2626);
+        }
+        px(im, 7, 9, 0x3a3230);
+        px(im, 5, 5, 0xffffff);
+        return im;
+    }
+
+    /** Firebox screen (spec 21.5): fuel slots under the flame, status line on top, gauge on the right. */
+    static BufferedImage fireboxGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        for (int i = 0; i < 4; i++) slot(im, 35 + i * 18, 53);
+        for (int y = 0; y < 14; y++)
+            for (int x = 0; x < 14; x++)
+                if (FLAME_SILHOUETTE[y].charAt(x) == '#') {
+                    im.setRGB(63 + x, 35 + y, 0xff000000 | SLOT_FILL);
+                    int band = y < 4 ? 4 : y < 8 ? 3 : y < 11 ? 2 : 1;
+                    im.setRGB(192 + x, y, 0xff000000 | HEAT_BAND[band]);
+                }
+        // Gauge: 0 to 1750 degrees over 58 px, a notch every 250, as on the forge.
+        well(im, 150, 16, 12, 60, 0x2a2a2a);
+        for (int t = 250; t < 1750; t += 250) {
+            int y = 17 + 58 - Math.round(t / 1750f * 58);
+            fill(im, 147, y, 3, 1, t % 500 == 0 ? GUI_SHADOW : SLOT_FILL);
+        }
+        inventory(im);
+        return im;
+    }
+
+    /**
+     * Bronze boiler screen (spec 21.5): water and steam tanks, the pressure dial (0 to 4 bar, green to 60%,
+     * amber to 85%, then red), the integrity bar. Fill strips: water at u 176, steam at u 192.
+     */
+    static BufferedImage boilerGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        for (int x : new int[] {7, 29}) {
+            well(im, x, 16, 18, 54, 0x2a2a2a);
+            for (int i = 1; i <= 3; i++) fill(im, x + 1, 16 + 1 + 52 - i * 13, 3, 1, 0x4a4a4a);
+        }
+        // Dial: brass bezel, cream face, arcs, a tick per bar.
+        int cx = 88, cy = 44;
+        for (int y = cy - 26; y <= cy + 2; y++)
+            for (int x = cx - 26; x <= cx + 26; x++) {
+                double dx = x + 0.5 - (cx + 0.5), dy = (cy + 0.5) - (y + 0.5);
+                double d = Math.hypot(dx, dy);
+                if (dy < -2.5 || d > 25.5) continue;
+                int c;
+                if (d > 23.5) c = BRASS.get(dx < 0 && dy > 8 ? 5 : dy > 8 ? 4 : 2);
+                else if (d > 22.5) c = BRASS.get(1);
+                else c = PAPER.get(5);
+                if (d <= 22.5 && d > 19.5 && dy >= 0) {
+                    double share = 1.0 - Math.atan2(dy, dx) / Math.PI;
+                    c = share < 0.6 ? 0x4c9a3a : share < 0.85 ? 0xd8a030 : 0xc8342a;
+                }
+                im.setRGB(x, y, 0xff000000 | c);
+            }
+        for (int bar = 0; bar <= 4; bar++) {
+            double a = Math.PI * (1.0 - bar / 4.0);
+            for (double t = 16.5; t <= 19.0; t += 0.5)
+                im.setRGB(cx + (int) Math.round(Math.cos(a) * t), cy - (int) Math.round(Math.sin(a) * t), 0xff3a3230);
+        }
+        // Integrity bar.
+        well(im, 119, 18, 50, 6, 0x2a2a2a);
+        inventory(im);
+        int[] water = {0x2c5cb8, 0x3466cc, 0x3f76e4, 0x5a8aec, 0x7aa4f0};
+        int[] steam = {0xb8bcc0, 0xcdd0d2, 0xdfe1e2, 0xeceeef, 0xffffff};
+        fillStrip(im, 176, water, 0xff);
+        fillStrip(im, 192, steam, 0xd0);
+        return im;
+    }
+
+    static void steam() throws IOException {
+        save("block/firebox_side", fireboxSide());
+        save("block/firebox_top", fireboxTop());
+        save("block/firebox_front", fireboxFront(-1, false));
+        saveAnimated("block/firebox_front_lit", fireboxFrontLit(false), 2);
+        saveAnimated("block/firebox_front_lit_hot", fireboxFrontLit(true), 2);
+        save("block/bronze_boiler_side", bronzePlates(8610));
+        save("block/bronze_boiler_top", boilerTop());
+        save("block/bronze_boiler_front", boilerFront());
+        save("block/cracked_bronze_boiler_side", crackedBoiler(bronzePlates(8610), 8620));
+        save("block/cracked_bronze_boiler_top", crackedBoiler(boilerTop(), 8621));
+        save("block/cracked_bronze_boiler_front", crackedBoiler(boilerFront(), 8622));
+        save("block/copper_fluid_pipe", pipeSheet(COPPER, false, 8630));
+        save("block/bronze_fluid_pipe", pipeSheet(BRONZE, false, 8631));
+        save("block/steel_fluid_pipe", pipeSheet(STEEL, true, 8632));
+        save("block/pressure_gauge", gaugeHousing());
+        for (int r = 0; r <= 4; r++) save("block/pressure_gauge_dial_" + r, gaugeDial(r));
+        saveRaw("gui/firebox", fireboxGui());
+        saveRaw("gui/bronze_boiler", boilerGui());
+    }
+
     static void tier4() throws IOException {
         // Spec 11.7: iron transmission.
         save("block/iron_axle", ironAxleSide());
@@ -5644,6 +6045,7 @@ public final class TextureGen {
         save("item/unfired_gear_mold", mold(CLAY, GEAR_CAVITY));
         save("item/gear_mold", mold(CERAMIC, GEAR_CAVITY));
         save("item/gear_mold_filled", filledMold(CERAMIC, GEAR_CAVITY));
+        steam();
     }
 
     static void save(String path, BufferedImage im) throws IOException {
