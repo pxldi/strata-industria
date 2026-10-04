@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "strataindustria:block/fibre_canvas",
+    "side": "strataindustria:block/fibre_canvas",
+    "top": "strataindustria:block/fibre_canvas"
+  }
+}

@@ -510,6 +510,7 @@ final class StructureData {
         protected void generate() {
             dropSelf(StructureContent.FIBRE_CANVAS.get());
             dropSelf(StructureContent.FIBRE_CANVAS_CARPET.get());
+            dropSelf(StructureContent.FIBRE_CANVAS_STAIRS.get());
             dropSelf(StructureContent.PIT_PROP.get());
             dropSelf(StructureContent.SPECIMEN_SHELF.get());
             // A cracked brick mostly crumbles to nothing; sometimes a piece is worth grinding into grog.
@@ -567,7 +568,10 @@ final class StructureData {
     // ---------------------------------------------------------------- assets
 
     static void models(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        blockModels.createFullAndCarpetBlocks(StructureContent.FIBRE_CANVAS.get(), StructureContent.FIBRE_CANVAS_CARPET.get());
+        net.minecraft.data.BlockFamily canvasFamily = new net.minecraft.data.BlockFamily.Builder(StructureContent.FIBRE_CANVAS.get())
+                .stairs(StructureContent.FIBRE_CANVAS_STAIRS.get()).getFamily();
+        blockModels.family(StructureContent.FIBRE_CANVAS.get()).generateFor(canvasFamily)
+                .carpet(StructureContent.FIBRE_CANVAS_CARPET.get());
 
         // A round post along its axis; the model is hand-built in resources.
         var prop = StrataIndustria.id("block/pit_prop");
@@ -669,6 +673,7 @@ final class StructureData {
         SharedBlockData.lang(add);
         add.accept("block." + id + ".fibre_canvas", "Fibre Canvas");
         add.accept("block." + id + ".fibre_canvas_carpet", "Fibre Canvas Carpet");
+        add.accept("block." + id + ".fibre_canvas_stairs", "Fibre Canvas Stairs");
         add.accept("block." + id + ".pit_prop", "Pit Prop");
         add.accept("block." + id + ".cracked_fire_bricks", "Cracked Fire Bricks");
         add.accept("block." + id + ".slag_heap", "Slag Heap");

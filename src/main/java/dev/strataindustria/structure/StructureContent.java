@@ -62,6 +62,12 @@ public final class StructureContent {
                     .strength(0.8f)
                     .sound(SoundType.WOOL)
                     .ignitedByLava());
+    public static final DeferredBlock<net.minecraft.world.level.block.StairBlock> FIBRE_CANVAS_STAIRS = BLOCKS.registerBlock(
+            "fibre_canvas_stairs", p -> new net.minecraft.world.level.block.StairBlock(FIBRE_CANVAS.get().defaultBlockState(), p),
+            p -> p.mapColor(MapColor.SAND)
+                    .strength(0.8f)
+                    .sound(SoundType.WOOL)
+                    .ignitedByLava());
     public static final DeferredBlock<CanvasBlock.Carpet> FIBRE_CANVAS_CARPET = BLOCKS.registerBlock("fibre_canvas_carpet",
             CanvasBlock.Carpet::new,
             p -> p.mapColor(MapColor.SAND)
@@ -94,6 +100,7 @@ public final class StructureContent {
                     .pushReaction(PushReaction.POPPED));
 
     public static final DeferredItem<BlockItem> FIBRE_CANVAS_ITEM = ITEMS.registerSimpleBlockItem(FIBRE_CANVAS);
+    public static final DeferredItem<BlockItem> FIBRE_CANVAS_STAIRS_ITEM = ITEMS.registerSimpleBlockItem(FIBRE_CANVAS_STAIRS);
     public static final DeferredItem<BlockItem> FIBRE_CANVAS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(FIBRE_CANVAS_CARPET);
     public static final DeferredItem<BlockItem> PIT_PROP_ITEM = ITEMS.registerSimpleBlockItem(PIT_PROP);
     public static final DeferredItem<BlockItem> CRACKED_FIRE_BRICKS_ITEM = ITEMS.registerSimpleBlockItem(CRACKED_FIRE_BRICKS);
