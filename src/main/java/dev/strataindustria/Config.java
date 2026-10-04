@@ -75,9 +75,6 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue REMOVE_BLAST_FURNACE = BUILDER
             .comment("Remove the vanilla blast furnace recipe.")
             .define("removeBlastFurnace", true);
-    public static final ModConfigSpec.BooleanValue IRON_STAT_OVERRIDE = BUILDER
-            .comment("Vanilla iron tools and armour get the wrought iron stats (520 durability, tougher armour). Needs a restart.")
-            .define("ironStatOverride", true);
     public static final ModConfigSpec.BooleanValue STRIPPING_DROPS_BARK = BUILDER
             .comment("Stripping a log with an axe drops a piece of bark.")
             .define("strippingDropsBark", true);

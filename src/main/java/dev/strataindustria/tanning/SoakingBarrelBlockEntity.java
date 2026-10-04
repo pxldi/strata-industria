@@ -153,10 +153,10 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
             barrel.status = Status.OPEN;
             int rain = dev.strataindustria.Config.BARREL_RAIN_FILL.getAsInt();
             if (rain > 0 && server.isRainingAt(pos.above()) && barrel.amount < CAPACITY && barrel.addWater(0, true)) {
-                int before = barrel.amount;
+                int was = barrel.amount;
                 barrel.fluid = Fluids.WATER;
                 barrel.amount = Math.min(CAPACITY, barrel.amount + rain);
-                if (barrel.amount / 50 != before / 50) barrel.sync();
+                if (barrel.amount / 50 != was / 50) barrel.sync();
                 if (server.getRandom().nextInt(400) == 0) {
                     server.playSound(null, pos, ModSounds.SOAKING_BARREL_FILL.get(), SoundSource.BLOCKS, 0.25f, 1.2f);
                 }

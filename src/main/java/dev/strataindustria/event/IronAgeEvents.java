@@ -39,8 +39,9 @@ public final class IronAgeEvents {
     /** Spec 2: stripping a log with an axe peels off one piece of bark, for tannin. */
     @SubscribeEvent
     static void barkFromStripping(net.neoforged.neoforge.event.level.BlockEvent.BlockToolModificationEvent event) {
-        if (event.isSimulated() || event.getItemAbility() != net.neoforged.neoforge.common.ItemAbilities.AXE_STRIP) return;
-        if (!Config.STRIPPING_DROPS_BARK.getAsBoolean() || event.getFinalState() == null) return;
+        // Only an axe strips logs, so a log that changes under a tool is being stripped.
+        if (event.isSimulated()) return;
+        if (!Config.STRIPPING_DROPS_BARK.getAsBoolean() || event.getFinalState() == null || event.getFinalState() == event.getState()) return;
         if (!event.getState().is(net.minecraft.tags.BlockTags.LOGS)) return;
         if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level)) return;
         var context = event.getContext();
