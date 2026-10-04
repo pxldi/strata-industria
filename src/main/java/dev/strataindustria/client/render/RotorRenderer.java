@@ -5,7 +5,9 @@ import com.mojang.math.Axis;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.power.Kinetic;
 import dev.strataindustria.power.Kinetics;
+import com.google.common.base.Suppliers;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -33,7 +35,7 @@ import org.jspecify.annotations.Nullable;
  */
 public class RotorRenderer<T extends BlockEntity & Kinetic> implements BlockEntityRenderer<T, RotorRenderer.State> {
     private final ItemModelResolver itemModelResolver;
-    private final ItemStack rotor;
+    private final Supplier<ItemStack> rotor;
     private final Function<BlockState, @Nullable Direction> up;
     private final int reach;
 
@@ -44,8 +46,7 @@ public class RotorRenderer<T extends BlockEntity & Kinetic> implements BlockEnti
      */
     public RotorRenderer(BlockEntityRendererProvider.Context context, String model, Function<BlockState, @Nullable Direction> up, int reach) {
         this.itemModelResolver = context.itemModelResolver();
-        this.rotor = new ItemStack(Items.STICK);
-        this.rotor.set(DataComponents.ITEM_MODEL, StrataIndustria.id("rotor/" + model));
+        this.rotor = rotorStack(model);
         this.up = up;
         this.reach = reach;
     }
@@ -63,7 +64,7 @@ public class RotorRenderer<T extends BlockEntity & Kinetic> implements BlockEnti
         state.up = up.apply(block.getBlockState());
         state.item.clear();
         if (state.up == null) return;
-        itemModelResolver.updateForTopItem(state.item, rotor, ItemDisplayContext.NONE, block.getLevel(), null, 0);
+        itemModelResolver.updateForTopItem(state.item, rotor.get(), ItemDisplayContext.NONE, block.getLevel(), null, 0);
     }
 
     @Override
@@ -89,11 +90,16 @@ public class RotorRenderer<T extends BlockEntity & Kinetic> implements BlockEnti
         }
     }
 
-    /** A stick that draws as the named rotor model. */
-    public static ItemStack rotorStack(String model) {
-        ItemStack stack = new ItemStack(Items.STICK);
-        stack.set(DataComponents.ITEM_MODEL, StrataIndustria.id("rotor/" + model));
-        return stack;
+    /**
+     * A stick that draws as the named rotor model, built on first use. Renderers are constructed during
+     * the first resource load, before item components are bound, so the stack must not exist yet then.
+     */
+    public static Supplier<ItemStack> rotorStack(String model) {
+        return Suppliers.memoize(() -> {
+            ItemStack stack = new ItemStack(Items.STICK);
+            stack.set(DataComponents.ITEM_MODEL, StrataIndustria.id("rotor/" + model));
+            return stack;
+        });
     }
 
     @Override

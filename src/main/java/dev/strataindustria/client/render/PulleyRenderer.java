@@ -5,6 +5,7 @@ import com.mojang.math.Axis;
 import dev.strataindustria.power.Kinetics;
 import dev.strataindustria.power.PulleyBlock;
 import dev.strataindustria.power.PulleyBlockEntity;
+import java.util.function.Supplier;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -35,8 +36,8 @@ public class PulleyRenderer implements BlockEntityRenderer<PulleyBlockEntity, Pu
     private static final float BELT_RADIUS = 6.5f / 16.0f;
 
     private final ItemModelResolver itemModelResolver;
-    private final ItemStack wheel = RotorRenderer.rotorStack("pulley");
-    private final ItemStack belt = RotorRenderer.rotorStack("belt");
+    private final Supplier<ItemStack> wheel = RotorRenderer.rotorStack("pulley");
+    private final Supplier<ItemStack> belt = RotorRenderer.rotorStack("belt");
 
     public PulleyRenderer(BlockEntityRendererProvider.Context context) {
         this.itemModelResolver = context.itemModelResolver();
@@ -57,9 +58,9 @@ public class PulleyRenderer implements BlockEntityRenderer<PulleyBlockEntity, Pu
         BlockPos link = pulley.link();
         BlockPos pos = pulley.getBlockPos();
         state.belt = link != null && pos.asLong() < link.asLong() ? link.subtract(pos) : null;
-        itemModelResolver.updateForTopItem(state.wheel, wheel, ItemDisplayContext.NONE, pulley.getLevel(), null, 0);
+        itemModelResolver.updateForTopItem(state.wheel, wheel.get(), ItemDisplayContext.NONE, pulley.getLevel(), null, 0);
         state.beltItem.clear();
-        if (state.belt != null) itemModelResolver.updateForTopItem(state.beltItem, belt, ItemDisplayContext.NONE, pulley.getLevel(), null, 0);
+        if (state.belt != null) itemModelResolver.updateForTopItem(state.beltItem, belt.get(), ItemDisplayContext.NONE, pulley.getLevel(), null, 0);
     }
 
     @Override
