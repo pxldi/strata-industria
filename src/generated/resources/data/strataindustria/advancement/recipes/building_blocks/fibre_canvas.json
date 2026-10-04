@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fibre_cloth": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:fibre_cloth"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:fibre_canvas"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fibre_cloth"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:fibre_canvas"
+    ]
+  }
+}

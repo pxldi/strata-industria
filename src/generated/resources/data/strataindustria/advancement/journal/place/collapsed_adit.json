@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/root",
+  "criteria": {
+    "visited": {
+      "conditions": {
+        "event": "place/collapsed_adit"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.place.collapsed_adit.hint"
+    },
+    "hidden": true,
+    "icon": {
+      "id": "minecraft:gravel"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.place.collapsed_adit"
+    }
+  },
+  "requirements": [
+    [
+      "visited"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
