@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:archaeology",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:flint",
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:flint",
+          "weight": 30
+        },
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:stick",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "name": "strataindustria:prospector_pottery_sherd",
+          "weight": 4
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:archaeology/prospector_camp/lazurite"
+}

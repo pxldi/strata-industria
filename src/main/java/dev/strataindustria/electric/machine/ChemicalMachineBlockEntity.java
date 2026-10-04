@@ -83,6 +83,8 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
     private int finished;
     private ElectricMachineBlockEntity.Status status = ElectricMachineBlockEntity.Status.EMPTY;
     private Fluid fullFluid = Fluids.EMPTY;
+    /** Per face: 0 = auto, 1 to 3 = only that product leaves here, fluidOutputs + 1 = nothing leaves (spec 11.2). */
+    private final int[] faceMode = new int[6];
     /** The recipe running now, so progress restarts when the inputs change to another one. */
     private @Nullable Object running;
 
@@ -432,6 +434,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
         for (int tank = layout.fluidInputs(); tank < layout.tanks(); tank++) {
             for (Direction face : Direction.values()) {
                 if (amount[tank] <= 0) break;
+                if (!faceTakes(face, tank - layout.fluidInputs())) continue;
                 FluidPipes.Network network = FluidPipes.find(level, worldPosition, face);
                 if (network.isEmpty()) continue;
                 int moved = FluidPipes.push(level, network, fluid[tank], Math.min(amount[tank], PUSH_AMOUNT), 20, 0).moved();
@@ -444,6 +447,26 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
                 setChanged();
             }
         }
+    }
+
+    /** Whether product {@code product} (0 based) may leave through {@code face}. */
+    public boolean faceTakes(Direction face, int product) {
+        int mode = faceMode[face.get3DDataValue()];
+        return mode == 0 || mode == product + 1;
+    }
+
+    /** The wrench setting of a face: 0 auto, 1 to fluidOutputs a product, fluidOutputs + 1 none. */
+    public int faceMode(Direction face) {
+        return faceMode[face.get3DDataValue()];
+    }
+
+    /** Steps a face to its next setting (auto, product 1, 2, 3, none) and returns it. */
+    public int cycleFace(Direction face) {
+        int i = face.get3DDataValue();
+        faceMode[i] = (faceMode[i] + 1) % (layout.fluidOutputs() + 2);
+        setChanged();
+        if (level != null) level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+        return faceMode[i];
     }
 
     public Fluid fluid(int tank) {
@@ -605,6 +628,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
         progress = in.getFloatOr("progress", 0.0f);
         autoEject = in.getBooleanOr("auto_eject", false);
         finished = in.getIntOr("finished", 0);
+        for (int i = 0; i < 6; i++) faceMode[i] = in.getIntOr("face" + i, 0);
         for (int i = 0; i < layout.tanks(); i++) {
             amount[i] = in.getIntOr("tank" + i, 0);
             fluid[i] = in.read("fluid" + i, BuiltInRegistries.FLUID.byNameCodec()).orElse(Fluids.EMPTY);
@@ -620,6 +644,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
         out.putFloat("progress", progress);
         out.putBoolean("auto_eject", autoEject);
         out.putInt("finished", finished);
+        for (int i = 0; i < 6; i++) if (faceMode[i] != 0) out.putInt("face" + i, faceMode[i]);
         for (int i = 0; i < layout.tanks(); i++) {
             out.putInt("tank" + i, amount[i]);
             if (amount[i] > 0) out.store("fluid" + i, BuiltInRegistries.FLUID.byNameCodec(), fluid[i]);

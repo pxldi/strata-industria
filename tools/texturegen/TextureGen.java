@@ -5031,6 +5031,21 @@ public final class TextureGen {
     static final Ramp GALENA = ramp(0xd0d6e0, 0x1e2028, 0x343844, 0x525866, 0x767d8c, 0x9ea6b4);
     static final Ramp SULFUR = ramp(0, 0x3c3820, 0x5c5630, 0x827a40, 0xa69c54, 0xc6bc72);
 
+    // Tier 5 ores (tier 5 spec 18): cinnabar is a cool vermilion, lazurite a deep ultramarine with pale flecks.
+    static final Ramp ORE_CINNABAR = ramp(0xf0b8a8, 0x3c1214, 0x6a1c1e, 0x9c2a24, 0xc83c2e, 0xe8644a);
+    static final Ramp ORE_LAZURITE = ramp(0xd8e0f4, 0x141c4a, 0x1f2f78, 0x2e46a4, 0x4468cc, 0x7a98e6);
+    static final List<Mineral> T5_MINERALS = List.of(
+            new Mineral("cinnabar", ORE_CINNABAR, true),
+            new Mineral("lazurite", ORE_LAZURITE, false));
+
+    /** Ore overlays and small ore pebbles for cinnabar and lazurite. */
+    static void tier5Ores() throws IOException {
+        for (Mineral m : T5_MINERALS) {
+            for (String grade : List.of("poor", "normal", "rich")) save("block/ore/" + m.name() + "_" + grade, oreOverlay(m, grade));
+            save("block/small_" + m.name(), pebbles(m));
+        }
+    }
+
     static final List<Mineral> T4_MINERALS = List.of(
             new Mineral("sphalerite", ORE_SPHALERITE, false),
             new Mineral("galena", ORE_GALENA, true),
@@ -8341,6 +8356,7 @@ public final class TextureGen {
         washing();
         windAndTanning();
         tier4();
+        tier5Ores();
 
         // Glow layers for hot metal: written last, from the finished item textures.
         glowLayers();

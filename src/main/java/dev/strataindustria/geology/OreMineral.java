@@ -22,7 +22,10 @@ public enum OreMineral implements StringRepresentable {
     SPHALERITE(Map.of(Metal.ZINC, 1.0f), new int[] {20, 35, 50}, 3, true),
     GALENA(Map.of(Metal.LEAD, 1.0f), new int[] {20, 35, 50}, 3, true),
     BITUMINOUS_COAL(Map.of(), new int[] {0, 0, 0}, 3, true),
-    SULFUR(Map.of(), new int[] {0, 0, 0}, 3, true);
+    SULFUR(Map.of(), new int[] {0, 0, 0}, 3, true),
+    // Tier 5 spec 18: volcanic cinnabar gives redstone, contact-metamorphic lazurite gives lapis. Steel tools.
+    CINNABAR(Map.of(), new int[] {0, 0, 0}, 4, true),
+    LAZURITE(Map.of(), new int[] {0, 0, 0}, 4, true);
 
     /** Raw (uncrushed) ore melts at this share of the crushed value. */
     public static final float RAW_MELT_EFFICIENCY = 0.8f;
@@ -33,7 +36,7 @@ public enum OreMineral implements StringRepresentable {
 
     private final Map<Metal, Float> composition;
     private final int[] crushedUnits;
-    /** 0 = stone tools, 1 = copper, 2 = bronze, 3 = wrought iron. */
+    /** 0 = stone tools, 1 = copper, 2 = bronze, 3 = wrought iron, 4 = steel. */
     private final int toolTier;
     private final boolean inRock;
 
@@ -73,9 +76,14 @@ public enum OreMineral implements StringRepresentable {
         return toolTier >= 3;
     }
 
+    /** Needs a steel tool (tier 5 spec 18). */
+    public boolean needsSteelTool() {
+        return toolTier >= 4;
+    }
+
     /**
      * Metal ores break into graded ore pieces that crush, wash and melt. Bituminous coal and native
-     * sulfur drop a plain item instead (tier 4 spec 4.4).
+     * sulfur, cinnabar and lazurite drop a plain item instead (tier 4 spec 4.4, tier 5 spec 18).
      */
     public boolean hasPieces() {
         return !composition.isEmpty();

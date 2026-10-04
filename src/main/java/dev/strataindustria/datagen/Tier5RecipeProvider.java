@@ -55,6 +55,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         overheadLines();
         heatAndMotion();
         logistics();
+        macerating();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -252,6 +253,16 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .define('M', Tier5Items.ELECTRIC_MOTOR.get())
                 .unlockedBy("has_lv_machine_hull", has(hull))
                 .save(output, key(name));
+    }
+
+    // Spec 10.3: only the macerator's fine wheels free the redstone or lapis from a silk-touched ore block.
+    private void macerating() {
+        for (var entry : java.util.Map.of(OreMineral.CINNABAR, Items.REDSTONE, OreMineral.LAZURITE, Items.LAPIS_LAZULI).entrySet()) {
+            var ores = new java.util.ArrayList<Item>();
+            for (var rock : dev.strataindustria.geology.Rock.values()) ores.add(ModItems.ORE_BLOCKS.get(rock).get(entry.getKey()).get());
+            output.accept(key("crushing/" + entry.getKey().id() + "_ore"), new dev.strataindustria.processing.CrushingRecipe(
+                    Ingredient.of(ores.toArray(new Item[0])), new ItemStackTemplate(entry.getValue(), 8), List.of(), Optional.of(ElectricTier.LV)), null);
+        }
     }
 
     private void machining(String machine, String mode, Item input, Item result, int count) {

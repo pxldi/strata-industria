@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_cinnabar"
+      },
+      {
+        "model": "strataindustria:block/small_cinnabar",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_cinnabar",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_cinnabar",
+        "y": 270
+      }
+    ]
+  }
+}

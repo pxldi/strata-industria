@@ -2,6 +2,7 @@ package dev.strataindustria.electric;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.electric.machine.ChemicalMachineBlock;
+import dev.strataindustria.electric.machine.ChemicalMachineBlockEntity;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.logistics.ItemPipeBlock;
 import dev.strataindustria.power.ElectricNetworks;
@@ -43,11 +44,39 @@ public class WrenchItem extends Item {
             return InteractionResult.SUCCESS;
         }
         if (state.getBlock() instanceof ItemPipeBlock pipe) return pipe.wrench(level, pos, state, player, hit);
+        if (state.getBlock() instanceof ChemicalMachineBlock<?> && level.getBlockEntity(pos) instanceof ChemicalMachineBlockEntity machine
+                && machine.layout().fluidOutputs() > 1) {
+            // Spec 11.2: on a machine with several products, the front panel turns it and every other face is a port to set.
+            if (hit.getDirection() != state.getValue(ElectricMachineBlock.FACING)) return setPort(level, pos, player, machine, hit.getDirection());
+            return turnClockwise(level, pos, state);
+        }
         if (state.getBlock() instanceof ElectricMachineBlock<?> || state.getBlock() instanceof GeneratorBlock<?>
                 || state.getBlock() instanceof ChemicalMachineBlock<?> || state.getBlock() instanceof BatteryBoxBlock) {
             return turn(level, pos, state, hit);
         }
         return InteractionResult.PASS;
+    }
+
+    /** Cycles the output setting of one face: auto, product 1, 2, 3, none. */
+    private static InteractionResult setPort(Level level, BlockPos pos, Player player, ChemicalMachineBlockEntity machine, Direction face) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        int mode = machine.cycleFace(face);
+        level.playSound(null, pos, Tier5Sounds.WRENCH_TURN.get(), SoundSource.BLOCKS, 0.8f, 1.2f);
+        Component what = mode == 0 ? Component.translatable(StrataIndustria.MOD_ID + ".port.auto")
+                : mode > machine.layout().fluidOutputs() ? Component.translatable(StrataIndustria.MOD_ID + ".port.none")
+                : Component.translatable(StrataIndustria.MOD_ID + ".port.product", mode);
+        String name = face.getName();
+        player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".port.face", Character.toUpperCase(name.charAt(0)) + name.substring(1), what));
+        return InteractionResult.SUCCESS;
+    }
+
+    private static InteractionResult turnClockwise(Level level, BlockPos pos, BlockState state) {
+        if (!level.isClientSide()) {
+            level.setBlock(pos, state.setValue(ElectricMachineBlock.FACING, state.getValue(ElectricMachineBlock.FACING).getClockWise()), Block.UPDATE_ALL);
+            ElectricNetworks.markDirty(level, pos);
+            level.playSound(null, pos, Tier5Sounds.WRENCH_TURN.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
+        }
+        return InteractionResult.SUCCESS;
     }
 
     /** Faces the machine the way the clicked side points; the top and bottom turn it a quarter instead. */

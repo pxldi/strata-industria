@@ -1,0 +1,18 @@
+{
+  "type": "strataindustria:crushing",
+  "ingredient": [
+    "strataindustria:limestone_lazurite_ore",
+    "strataindustria:shale_lazurite_ore",
+    "strataindustria:slate_lazurite_ore",
+    "strataindustria:marble_lazurite_ore",
+    "strataindustria:granite_lazurite_ore",
+    "strataindustria:gabbro_lazurite_ore",
+    "strataindustria:basalt_lazurite_ore",
+    "strataindustria:rhyolite_lazurite_ore"
+  ],
+  "min_tier": "lv",
+  "result": {
+    "count": 8,
+    "id": "minecraft:lapis_lazuli"
+  }
+}

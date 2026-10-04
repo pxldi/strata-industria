@@ -176,7 +176,18 @@ final class ModBlockLoot extends BlockLootSubProvider {
     }
 
     private static net.minecraft.world.level.ItemLike plainDrop(OreMineral mineral) {
-        return mineral == OreMineral.BITUMINOUS_COAL ? Items.COAL : dev.strataindustria.registry.Tier4Items.SULFUR.get();
+        return switch (mineral) {
+            case BITUMINOUS_COAL -> Items.COAL;
+            case CINNABAR -> Items.REDSTONE;
+            case LAZURITE -> Items.LAPIS_LAZULI;
+            default -> dev.strataindustria.registry.Tier4Items.SULFUR.get();
+        };
+    }
+
+    /** Items per ore block by grade: coal and sulfur 1, 2, 3; cinnabar and lazurite 2, 4, 6 (tier 5 spec 18). */
+    private static int plainCount(OreMineral mineral, OreGrade grade) {
+        int base = grade.ordinal() + 1;
+        return mineral == OreMineral.CINNABAR || mineral == OreMineral.LAZURITE ? base * 2 : base;
     }
 
     /**
@@ -193,7 +204,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
                                 StatePropertiesPredicate.Builder.properties().hasProperty(OreGrade.PROPERTY, grade)))
                         .add(LootItem.lootTableItem(block).when(hasSilkTouch())
                                 .otherwise(applyExplosionDecay(block, LootItem.lootTableItem(plainDrop(mineral))
-                                        .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(grade.ordinal() + 1)))
+                                        .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(plainCount(mineral, grade))))
                                         .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1))))));
             }
             add(block, table);
