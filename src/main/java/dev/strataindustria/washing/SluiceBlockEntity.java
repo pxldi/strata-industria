@@ -141,7 +141,8 @@ public class SluiceBlockEntity extends BaseContainerBlockEntity implements World
             deliver(level, input.split(input.getCount()));
             return Status.NO_RECIPE;
         }
-        total = recipe.get().value().ticks();
+        // Recipes are written for the default 60 ticks; config sluice.ticksPerItem scales them.
+        total = Math.max(1, recipe.get().value().ticks() * dev.strataindustria.Config.SLUICE_TICKS_PER_ITEM.getAsInt() / WashingRecipe.DEFAULT_TICKS);
         progress++;
         if (level.getGameTime() % 30 == 0) {
             level.playSound(null, worldPosition, ModSounds.SLUICE_WASH.get(), SoundSource.BLOCKS, 0.5f, 0.9f + level.getRandom().nextFloat() * 0.2f);
