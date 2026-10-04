@@ -121,6 +121,12 @@ public final class Tier4Blocks {
                     .strength(1.5f, 3.0f)
                     .noOcclusion()
                     .sound(SoundType.WOOD));
+    // Spec 13.2: the belt diverter.
+    public static final DeferredBlock<dev.strataindustria.automation.BeltDiverterBlock> BELT_DIVERTER = ModBlocks.BLOCKS.registerBlock("belt_diverter",
+            dev.strataindustria.automation.BeltDiverterBlock::new, p -> p.mapColor(MapColor.WOOD)
+                    .strength(1.5f, 3.0f)
+                    .noOcclusion()
+                    .sound(SoundType.WOOD));
     // Spec 10.3: the steel boiler multiblock.
     public static final DeferredBlock<dev.strataindustria.steam.SteelBoilerShellBlock> STEEL_BOILER_SHELL = ModBlocks.BLOCKS.registerBlock(
             "steel_boiler_shell", dev.strataindustria.steam.SteelBoilerShellBlock::new, Tier4Blocks::steelBoiler);

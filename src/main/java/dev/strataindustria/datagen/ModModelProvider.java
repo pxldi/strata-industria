@@ -822,6 +822,23 @@ final class ModModelProvider extends ModelProvider {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.CONVEYOR_BELT.get()).with(beltState));
         itemModels.itemModelOutput.accept(Tier4Items.CONVEYOR_BELT.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/conveyor_item")));
+        // Spec 13.2: the diverter is a flat belt frame with its push-side rail lowered; the paddle and the leather are drawn by the belt renderer.
+        MultiPartGenerator diverter = MultiPartGenerator.multiPart(Tier4Blocks.BELT_DIVERTER.get());
+        for (boolean left : new boolean[] {false, true}) {
+            for (boolean tagged : new boolean[] {false, true}) {
+                var model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/belt_diverter_" + (left ? "left" : "right") + (tagged ? "_tagged" : "")));
+                var turns = new MultiVariant[] {model, model.with(BlockModelGenerators.Y_ROT_90), model.with(BlockModelGenerators.Y_ROT_180), model.with(BlockModelGenerators.Y_ROT_270)};
+                var facings = new net.minecraft.core.Direction[] {net.minecraft.core.Direction.NORTH, net.minecraft.core.Direction.EAST,
+                        net.minecraft.core.Direction.SOUTH, net.minecraft.core.Direction.WEST};
+                for (int i = 0; i < 4; i++) {
+                    diverter.with(BlockModelGenerators.condition().term(dev.strataindustria.automation.ConveyorBlock.FACING, facings[i])
+                            .term(dev.strataindustria.automation.BeltDiverterBlock.LEFT, left)
+                            .term(dev.strataindustria.automation.BeltDiverterBlock.FILTERED, tagged), turns[i]);
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(diverter);
+        itemModels.itemModelOutput.accept(Tier4Items.BELT_DIVERTER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/belt_diverter_item")));
         flatItem(itemModels, Tier4Items.FILTER.get());
         flatItem(itemModels, Tier4Items.SLAG_WOOL.get());
     }

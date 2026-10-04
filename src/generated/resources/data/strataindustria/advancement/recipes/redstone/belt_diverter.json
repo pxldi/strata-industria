@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_conveyor_belt": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:conveyor_belt"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:belt_diverter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_conveyor_belt"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:belt_diverter"
+    ]
+  }
+}

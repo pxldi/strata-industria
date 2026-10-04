@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
@@ -47,7 +48,12 @@ public class ConveyorBlockEntity extends KineticBlockEntity implements KineticCo
     private boolean dirty;
 
     public ConveyorBlockEntity(BlockPos pos, BlockState state) {
-        super(Tier4BlockEntities.CONVEYOR_BELT.get(), pos, state);
+        this(Tier4BlockEntities.CONVEYOR_BELT.get(), pos, state);
+    }
+
+    /** For belt variants such as the diverter, which keep the belt's cargo and drive. */
+    protected ConveyorBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     @Override
@@ -209,7 +215,7 @@ public class ConveyorBlockEntity extends KineticBlockEntity implements KineticCo
     }
 
     /** Hands {@code stack} to what the belt faces; false if it cannot go yet. */
-    private boolean deliver(ServerLevel level, BlockPos pos, BlockState state, ItemStack stack) {
+    protected boolean deliver(ServerLevel level, BlockPos pos, BlockState state, ItemStack stack) {
         Direction facing = state.getValue(ConveyorBlock.FACING);
         BlockPos nextBelt = ConveyorBlock.next(level, pos, state);
         if (nextBelt != null) {
@@ -259,7 +265,7 @@ public class ConveyorBlockEntity extends KineticBlockEntity implements KineticCo
         entity.setDeltaMovement(motion.x + facing.getStepX() * push, motion.y, motion.z + facing.getStepZ() * push);
     }
 
-    private void changed() {
+    protected void changed() {
         dirty = true;
         setChanged();
     }

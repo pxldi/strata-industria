@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Writes the conveyor belt's models (tier 4 spec 13.1 and 21): the frame for each slope, the four render-only
-top frames per slope the renderer swaps between, and the item model. Facing north; the blockstate turns them.
+top frames per slope the renderer swaps between, and the item model. Also the belt diverter's (spec 13.2): a
+flat frame with its push-side rail lowered to a brass lip, with and without the filter tag, and the two
+render-only paddles. Facing north; the blockstate turns them.
 Run from the repository root: python3 tools/gen_belt_models.py
 """
 import json
@@ -114,3 +116,66 @@ with open(os.path.join(ASSETS, "models/block/inserter_item.json")) as f:
     item["display"] = json.load(f)["display"]
 write("models/block/conveyor_item.json", item)
 print("belt models written")
+
+
+# ---- Belt diverter (spec 13.2). Facing north; "right" pushes east, "left" west. The push-side rail is
+# lowered to a brass lip with two posts so items can leave, and the paddle (a render-only rotor model)
+# hinges on the opposite rail at z = 2.5 and sweeps across.
+DIV = {"particle": NS + "belt_diverter_side", "lip": NS + "belt_diverter_side", "tag": NS + "inserter_tag"}
+
+
+def diverter_elements(push):
+    open_x0 = 14 if push == "right" else 0
+    keep = []
+    for el in frame_elements(None):
+        f, t = el["from"], el["to"]
+        is_rail = t[1] == 5 and t[0] - f[0] == 2 and f[0] == open_x0
+        if not is_rail:
+            keep.append(el)
+    outer = "east" if push == "right" else "west"
+    inner = "west" if push == "right" else "east"
+    lip_faces = {
+        outer: face("lip", [0, 1, 16, 4]),
+        inner: face("lip", [0, 1, 16, 4]),
+        "up": face("lip", [0, 0, 2, 16]),
+        "north": face("lip", [0, 1, 2, 4]),
+        "south": face("lip", [0, 1, 2, 4]),
+    }
+    keep.append(box([open_x0, 0, 0], [open_x0 + 2, 3.5, 16], lip_faces))
+    for z0 in (0, 14):
+        post = {d: face("lip", [0, 0, 2, 5]) for d in ("north", "south", "east", "west")}
+        post["up"] = face("lip", [0, 0, 2, 2])
+        keep.append(box([open_x0, 3.5, z0], [open_x0 + 2, 5, z0 + 2], post))
+    return keep
+
+
+def tag_element(push):
+    x0 = 0.3 if push == "right" else 13.7
+    faces = {"up": face("tag", [4, 3, 12, 12]), "north": face("tag", [4, 3, 12, 4]), "south": face("tag", [4, 3, 12, 4]),
+             "east": face("tag", [4, 3, 5, 4]), "west": face("tag", [4, 3, 5, 4])}
+    return box([x0, 5, 10], [x0 + 2, 5.4, 14], faces)
+
+
+def paddle_element(push):
+    cx = 2.5 if push == "right" else 13.5
+    faces = {"up": face("paddle", [0, 0, 1.5, 11]), "down": face("paddle", [0, 0, 1.5, 11]),
+             "east": face("paddle", [0, 0, 11, 1.5]), "west": face("paddle", [0, 0, 11, 1.5]),
+             "north": face("paddle", [0, 0, 1.5, 1.5]), "south": face("paddle", [0, 0, 1.5, 1.5])}
+    return box([cx - 0.75, 5.1, 2.5], [cx + 0.75, 6.6, 13.5], faces)
+
+
+for push in ("right", "left"):
+    for tagged in (False, True):
+        els = diverter_elements(push) + ([tag_element(push)] if tagged else [])
+        # The paddle model is the same shape on the other rail; the renderer turns it, so it is not part of the block model.
+        write("models/block/belt_diverter_%s%s.json" % (push, "_tagged" if tagged else ""),
+              {"textures": dict(textures(0), **DIV), "elements": els})
+    write("models/block/rotor/belt_diverter_paddle_%s.json" % push,
+          {"textures": {"particle": NS + "belt_diverter_paddle", "paddle": NS + "belt_diverter_paddle"}, "elements": [paddle_element(push)]})
+    write("items/rotor/belt_diverter_paddle_%s.json" % push,
+          {"model": {"type": "minecraft:model", "model": "strataindustria:block/rotor/belt_diverter_paddle_%s" % push}})
+
+div_item = {"parent": "minecraft:block/block", "textures": dict(textures(0), **DIV, paddle=NS + "belt_diverter_paddle"),
+            "elements": diverter_elements("right") + top_elements(None, 0) + [paddle_element("right")], "display": item["display"]}
+write("models/block/belt_diverter_item.json", div_item)
+print("diverter models written")

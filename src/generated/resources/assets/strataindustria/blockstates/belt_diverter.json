@@ -1,0 +1,176 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right"
+      },
+      "when": {
+        "facing": "north",
+        "filtered": "false",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "filtered": "false",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "filtered": "false",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "filtered": "false",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right_tagged"
+      },
+      "when": {
+        "facing": "north",
+        "filtered": "true",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right_tagged",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "filtered": "true",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right_tagged",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "filtered": "true",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_right_tagged",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "filtered": "true",
+        "left": "false"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left"
+      },
+      "when": {
+        "facing": "north",
+        "filtered": "false",
+        "left": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "filtered": "false",
+        "left": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "filtered": "false",
+        "left": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "filtered": "false",
+        "left": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left_tagged"
+      },
+      "when": {
+        "facing": "north",
+        "filtered": "true",
+        "left": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left_tagged",
+        "y": 90
+      },
+      "when": {
+        "facing": "east",
+        "filtered": "true",
+        "left": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left_tagged",
+        "y": 180
+      },
+      "when": {
+        "facing": "south",
+        "filtered": "true",
+        "left": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/belt_diverter_left_tagged",
+        "y": 270
+      },
+      "when": {
+        "facing": "west",
+        "filtered": "true",
+        "left": "true"
+      }
+    }
+  ]
+}

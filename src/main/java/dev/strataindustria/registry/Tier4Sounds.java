@@ -92,6 +92,8 @@ public final class Tier4Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> INSERTER_SWING = register("block.inserter.swing");
     /** The soft rolling rumble of a loaded belt. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CONVEYOR_RUN = register("block.conveyor.run");
+    /** The diverter's paddle flicks an item off the belt. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BELT_DIVERTER_PUSH = register("block.belt_diverter.push");
     /** An item drops out of a chute's end. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CHUTE_DROP = register("chute.drop");
     /** An entry is set in a filter. */

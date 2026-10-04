@@ -66,6 +66,7 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> CHUTE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CHUTE);
     public static final DeferredItem<BlockItem> INSERTER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.INSERTER);
     public static final DeferredItem<BlockItem> CONVEYOR_BELT = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CONVEYOR_BELT);
+    public static final DeferredItem<BlockItem> BELT_DIVERTER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BELT_DIVERTER);
     public static final DeferredItem<dev.strataindustria.automation.FilterItem> FILTER = ModItems.ITEMS.registerItem("filter",
             dev.strataindustria.automation.FilterItem::new, p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> STEEL_BOILER_SHELL = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_BOILER_SHELL);
