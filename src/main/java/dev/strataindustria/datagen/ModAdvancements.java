@@ -89,7 +89,7 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder copperPick = goal(copperIngot, "t2/copper_pickaxe", Items.COPPER_PICKAXE, has(Items.COPPER_PICKAXE));
         List<ItemLike> alloyOres = new ArrayList<>();
         List<ItemLike> crushed = new ArrayList<>();
-        for (OreMineral mineral : OreMineral.values()) {
+        for (OreMineral mineral : OreMineral.withPieces()) {
             for (OreGrade grade : OreGrade.values()) {
                 if (mineral == OreMineral.CASSITERITE || mineral == OreMineral.BISMUTHINITE || mineral == OreMineral.TENNANTITE) {
                     alloyOres.add(ModItems.orePiece(mineral, grade));

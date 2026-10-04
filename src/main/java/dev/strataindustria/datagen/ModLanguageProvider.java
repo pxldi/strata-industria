@@ -176,14 +176,16 @@ final class ModLanguageProvider extends LanguageProvider {
         for (OreMineral mineral : OreMineral.values()) {
             String name = title(mineral.id());
             addBlock(ModBlocks.SMALL_ORES.get(mineral), "Small " + name);
+            if (!mineral.hasPieces()) continue;
             for (OreGrade grade : OreGrade.values()) {
                 String graded = grade == OreGrade.NORMAL ? name : title(grade.getSerializedName()) + " " + name;
                 addItem(ModItems.ORE_PIECES.get(mineral).get(grade), graded);
                 addItem(ModItems.CRUSHED_ORES.get(mineral).get(grade), "Crushed " + graded);
-                addItem(ModItems.WASHED_ORES.get(mineral).get(grade), "Washed " + graded);
+                if (mineral.washable()) addItem(ModItems.WASHED_ORES.get(mineral).get(grade), "Washed " + graded);
             }
         }
         ironAge();
+        tier4();
         addBlock(ModBlocks.LOOSE_STICK, "Loose Stick");
         addBlock(ModBlocks.LOOSE_FLINT, "Loose Flint");
 
@@ -238,6 +240,14 @@ final class ModLanguageProvider extends LanguageProvider {
     }
 
     /** Tier 3 spec 3 and 4: fire clay, the new deposits, and the wrought iron name for vanilla iron. */
+    // Tier 4 spec 4.6: materials.
+    private void tier4() {
+        addItem(ModItems.STEEL_DOUBLE_INGOT, "Steel Double Ingot");
+        addItem(dev.strataindustria.registry.Tier4Items.SULFUR, "Sulfur");
+        addItem(dev.strataindustria.registry.Tier4Items.SULFUR_DUST, "Sulfur Dust");
+        addItem(dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST, "Charcoal Dust");
+    }
+
     private void ironAge() {
         String id = StrataIndustria.MOD_ID;
         addItem(ModItems.FIRE_CLAY_BALL, "Fire Clay Ball");
@@ -586,8 +596,10 @@ final class ModLanguageProvider extends LanguageProvider {
                 addItem(ModItems.INGOTS.get(metal), name + " Ingot");
                 if (metal.hasNugget()) addItem(ModItems.NUGGETS.get(metal), name + " Nugget");
             }
+            if (metal.hasPlate()) addItem(ModItems.PLATES.get(metal), name + " Plate");
+            if (ModItems.RODS.containsKey(metal)) addItem(ModItems.RODS.get(metal), name + " Rod");
+            if (ModItems.GEARS.containsKey(metal)) addItem(ModItems.GEARS.get(metal), name + " Gear");
             if (!metal.isToolMetal()) continue;
-            addItem(ModItems.PLATES.get(metal), name + " Plate");
             if (!metal.isVanilla()) {
                 for (var piece : ModItems.ARMOUR.get(metal).entrySet()) {
                     add(piece.getValue().get(), name + " " + title(piece.getKey().getName()));

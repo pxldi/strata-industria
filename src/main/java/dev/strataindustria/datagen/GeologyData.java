@@ -89,6 +89,14 @@ final class GeologyData {
                 -64, 100, 20);
         vein(ctx, "native_gold", VeinType.ClusterShape.of(3, 5, 3, 4, 0.20f),
                 List.of(m(OreMineral.NATIVE_GOLD, 100)), List.of(GRANITE, RHYOLITE), List.of(GRANITE), -64, 60, 8);
+
+        // Tier 4 (worldgen spec 5.8): zinc and lead, sulfur and coal.
+        vein(ctx, "sphalerite_galena", VeinType.ClusterShape.of(8, 12, 4, 6, 0.28f),
+                List.of(m(OreMineral.SPHALERITE, 60), m(OreMineral.GALENA, 40)), List.of(LIMESTONE, MARBLE), List.of(LIMESTONE), -32, 120, 25);
+        vein(ctx, "native_sulfur", VeinType.ClusterShape.of(4, 7, 3, 4, 0.35f),
+                List.of(m(OreMineral.SULFUR, 100)), List.of(BASALT), List.of(BASALT), 20, 160, 15);
+        vein(ctx, "bituminous_coal", VeinType.ClusterShape.layer(16, 24, 2, 4, 0.70f),
+                List.of(m(OreMineral.BITUMINOUS_COAL, 100)), List.of(SHALE, SLATE, LIMESTONE), List.of(SHALE), -32, 80, 25);
         sediment(ctx, "lignite", VeinType.ClusterShape.layer(14, 24, 2, 3, 0.60f), ModBlocks.LIGNITE_SEAM.get().defaultBlockState(),
                 List.of(SHALE, LIMESTONE, SLATE), List.of(SHALE), 20, 140, 25);
         sediment(ctx, "fire_clay", VeinType.ClusterShape.layer(10, 16, 2, 4, 0.80f), ModBlocks.FIRE_CLAY.get().defaultBlockState(),

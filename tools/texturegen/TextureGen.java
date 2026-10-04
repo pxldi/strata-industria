@@ -2104,7 +2104,7 @@ public final class TextureGen {
 
     /** Metal items that go in the forge: ingots, nuggets, plates, cast heads and blades, the tongs jaw. */
     static final java.util.regex.Pattern HEATABLE =
-            java.util.regex.Pattern.compile("(?!stone_|unfired_).*(_ingot|_nugget|(?<!chest)_plate|_head|_blade|_rod)|tongs_jaw|raw_bloom");
+            java.util.regex.Pattern.compile("(?!stone_|unfired_|wooden_).*(_ingot|_nugget|(?<!chest)_plate|_head|_blade|_rod|_gear)|tongs_jaw|raw_bloom");
 
     /**
      * A pale copy of each heatable item: its shading kept as light greys so the heat tint reads as glowing
@@ -4895,6 +4895,180 @@ public final class TextureGen {
 
     // ---------------------------------------------------------------- output
 
+    // ---------------------------------------------------------------- tier 4: steel and steam (spec 21)
+
+    // Metal ramps (tier 4 spec 21.1).
+    static final Ramp STEEL = ramp(0xdfe4ea, 0x22262e, 0x3a404a, 0x5c636e, 0x848b96, 0xadb4be);
+    static final Ramp PIG_IRON = ramp(0xa8a098, 0x1c1a1a, 0x2e2a28, 0x45403c, 0x5e5852, 0x7a736a);
+    static final Ramp BRASS = ramp(0xf8ecb8, 0x4a3814, 0x7a5e1e, 0xa8862e, 0xd0ae48, 0xecd27a);
+    static final Ramp ZINC = ramp(0xe4ecee, 0x2e3238, 0x4a5058, 0x6e767e, 0x97a0a6, 0xbfc7cb);
+    static final Ramp LEAD = ramp(0xa8b0be, 0x1e2028, 0x2e3240, 0x444a5c, 0x5e6678, 0x7c8494);
+    static final Ramp SOLDER = ramp(0xe2e6e2, 0x34383a, 0x50565a, 0x737a7c, 0x9aa09e, 0xbec4c0);
+    // Ore ramps (worldgen spec 14.1): sulfur stays a muted green-yellow, well off the heat band.
+    static final Ramp BITUMINOUS_COAL = ramp(0, 0x121318, 0x1e2027, 0x2c2e37, 0x3e414c, 0x565a66);
+    static final Ramp SPHALERITE = ramp(0, 0x1c1210, 0x2e1c14, 0x4a2e1a, 0x6e4622, 0x946632);
+    static final Ramp GALENA = ramp(0xd0d6e0, 0x1e2028, 0x343844, 0x525866, 0x767d8c, 0x9ea6b4);
+    static final Ramp SULFUR = ramp(0, 0x3c3820, 0x5c5630, 0x827a40, 0xa69c54, 0xc6bc72);
+
+    static final List<Mineral> T4_MINERALS = List.of(
+            new Mineral("sphalerite", SPHALERITE, false),
+            new Mineral("galena", GALENA, true),
+            new Mineral("bituminous_coal", BITUMINOUS_COAL, false),
+            new Mineral("sulfur", SULFUR, false));
+
+    /** Sphalerite, "black jack": blocky dark grains with a resinous amber core. */
+    static final String[][] SPHALERITE_GRAINS = {
+            {"24", "12"},
+            {"221", "254", "121"},
+            {".221", "2254", "2441", "1211"},
+    };
+    /** Galena: crisp cubes, lit top-left faces, shadowed bottom-right. */
+    static final String[][] GALENA_CUBES = {
+            {"s4", "41"},
+            {"554", "531", "411"},
+            {"5554", "5331", "5331", "4111"},
+    };
+    /** Bituminous coal: thin horizontal seams, a lit top edge and one glassy glint each. */
+    static final String[][] COAL_STREAKS = {
+            {"54", "11"},
+            {"4544", "1121"},
+            {"445444", "111211"},
+    };
+    /** Native sulfur: crusty, rounded-angular crystal clusters, a little larger than other grains. */
+    static final String[][] SULFUR_CRUSTS = {
+            {"45", "32"},
+            {".54.", "4543", "3322"},
+            {".545.", "45543", "34433", ".222."},
+    };
+
+    /** A soft conical heap of powder (coke, charcoal, slag and sulfur dust). */
+    static final String[] DUST_HEAP = {
+            "....45.....",
+            "...4544....",
+            "..444443...",
+            ".44443332..",
+            "4444333322.",
+            "43333322221",
+            ".222221111.",
+    };
+    /** A muted yellow crystal lump: angular faces, lit top-left. */
+    static final String[] SULFUR_LUMP = {
+            ".....5......",
+            "....454..5..",
+            "...44543454.",
+            "..4445434433",
+            ".44443343342",
+            "444433333322",
+            "433333322221",
+            ".3322222211.",
+            "..1111111...",
+    };
+
+    /** An eight-tooth gear with a bored centre, lit from the top-left, one specular pixel on the upper-left teeth. */
+    static BufferedImage gear(Ramp a) {
+        BufferedImage im = img();
+        double cx = 7.5, cy = 7.5;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x - cx, dy = y - cy, r = Math.sqrt(dx * dx + dy * dy);
+                double ang = Math.atan2(dy, dx);
+                // Teeth: eight lobes reaching from the rim (r 4.6) out to r 6.4.
+                double tooth = Math.cos(ang * 8);
+                boolean body = r <= 4.7 || (r <= 6.5 && tooth > 0.35);
+                if (!body || r < 1.6) continue;
+                double light = -(dx + dy) / Math.max(r, 0.01);
+                int step = light > 0.45 ? 4 : light < -0.45 ? 2 : 3;
+                if (r < 2.6) step = light > 0 ? 2 : 4; // the bore's inner wall is lit from the other side
+                if (r > 5.3 && light > 0.6) step = 5;
+                px(im, x, y, a.get(step));
+            }
+        if (a.spec() != 0) px(im, 4, 3, a.spec());
+        return outline(im);
+    }
+
+    /** The shared ingot with a rough, sand-cast top: some lit pixels sink a step. */
+    static String[] sandCast(String[] rows) {
+        Random r = new Random(4040);
+        String[] out = new String[rows.length];
+        for (int y = 0; y < rows.length; y++) {
+            char[] row = rows[y].toCharArray();
+            for (int x = 0; x < row.length; x++)
+                if ((row[x] == '4' || row[x] == '5' || row[x] == 's') && r.nextInt(3) == 0) row[x] = '3';
+            out[y] = new String(row);
+        }
+        return out;
+    }
+
+    static void tier4() throws IOException {
+        // Ores (worldgen spec 14.2 and 14.3).
+        for (String grade : List.of("poor", "normal", "rich")) {
+            save("block/ore/sphalerite_" + grade, pieceOverlay(T4_MINERALS.get(0), grade, SPHALERITE_GRAINS, 4));
+            save("block/ore/galena_" + grade, pieceOverlay(T4_MINERALS.get(1), grade, GALENA_CUBES, 5));
+            save("block/ore/bituminous_coal_" + grade, pieceOverlay(T4_MINERALS.get(2), grade, COAL_STREAKS, 5));
+            save("block/ore/sulfur_" + grade, pieceOverlay(T4_MINERALS.get(3), grade, SULFUR_CRUSTS, 5));
+        }
+        for (Mineral m : T4_MINERALS) save("block/small_" + m.name(), pebbles(m));
+        String[] washedPoor = washedPile(CRUSHED_SMALL), washedNormal = washedPile(CRUSHED_NORMAL), washedRich = washedPile(CRUSHED_RICH);
+        for (Mineral m : T4_MINERALS.subList(0, 2)) {
+            String n = m.name();
+            save("item/poor_" + n, map(m.ramp(), ORE_SMALL));
+            save("item/" + n, map(m.ramp(), ORE_NORMAL));
+            save("item/rich_" + n, map(m.ramp(), ORE_RICH));
+            save("item/crushed_poor_" + n, map(m.ramp(), CRUSHED_SMALL));
+            save("item/crushed_" + n, map(m.ramp(), CRUSHED_NORMAL));
+            save("item/crushed_rich_" + n, map(m.ramp(), CRUSHED_RICH));
+            save("item/small_" + n, map(m.ramp(), NUGGET));
+        }
+        // Sphalerite is never washed (spec 11.3).
+        save("item/washed_poor_galena", washedItem(GALENA, washedPoor, 6, 2));
+        save("item/washed_galena", washedItem(GALENA, washedNormal, 7, 3));
+        save("item/washed_rich_galena", washedItem(GALENA, washedRich, 6, 3));
+
+        // Metals (spec 4.1 and 21.4).
+        save("item/pig_iron_ingot", map(PIG_IRON, sandCast(INGOT)));
+        for (var e : List.of(java.util.Map.entry("steel", STEEL), java.util.Map.entry("zinc", ZINC), java.util.Map.entry("lead", LEAD),
+                java.util.Map.entry("brass", BRASS))) {
+            save("item/" + e.getKey() + "_ingot", map(e.getValue(), INGOT));
+            save("item/" + e.getKey() + "_nugget", map(e.getValue(), NUGGET));
+        }
+        save("item/solder_ingot", map(SOLDER, INGOT));
+        for (var e : List.of(java.util.Map.entry("steel", STEEL), java.util.Map.entry("brass", BRASS))) {
+            save("item/" + e.getKey() + "_plate", map(e.getValue(), PLATE));
+            save("item/" + e.getKey() + "_rod", map(e.getValue(), ROD));
+            save("item/" + e.getKey() + "_gear", gear(e.getValue()));
+        }
+        for (Metal metal : METALS)
+            if (metal.name().contains("bronze")) save("item/" + metal.name() + "_gear", gear(metal.ramp()));
+        save("item/steel_double_ingot", map(STEEL, DOUBLE_INGOT));
+
+        // Steel tools: smithed heads, smooth handles with a brass ferrule (SG 5, tier 4+).
+        java.util.Map<String, String[]> heads = new java.util.LinkedHashMap<>();
+        heads.put("pickaxe_head", PICKAXE_HEAD);
+        heads.put("axe_head", AXE_HEAD);
+        heads.put("shovel_head", SHOVEL_HEAD);
+        heads.put("hoe_head", HOE_HEAD);
+        heads.put("knife_blade", KNIFE_BLADE);
+        heads.put("hammer_head", HAMMER_HEAD);
+        heads.put("saw_blade", SAW_BLADE);
+        heads.put("sword_blade", SWORD_BLADE);
+        for (var head : heads.entrySet()) save("item/steel_" + head.getKey(), map(STEEL, head.getValue()));
+        for (String kind : List.of("pickaxe", "axe", "shovel", "hoe", "knife", "hammer", "saw", "sword"))
+            save("item/steel_" + kind, tool(STEEL, WOOD, BRASS, kind));
+
+        // Steel armour: plates laced onto leather (spec 14.3).
+        saveRaw("entity/equipment/humanoid/steel", armourLayer(STEEL));
+        saveRaw("entity/equipment/humanoid_leggings/steel", leggingsLayer(STEEL));
+        save("item/steel_helmet", map(STEEL, LEATHER, HELMET_ITEM));
+        save("item/steel_chestplate", map(STEEL, LEATHER, CHESTPLATE_ITEM));
+        save("item/steel_leggings", map(STEEL, LEATHER, LEGGINGS_ITEM));
+        save("item/steel_boots", map(STEEL, LEATHER, BOOTS_ITEM));
+
+        // Materials (spec 4.6).
+        save("item/sulfur", map(SULFUR, SULFUR_LUMP));
+        save("item/sulfur_dust", map(SULFUR, DUST_HEAP));
+        save("item/charcoal_dust", map(CHARCOAL, DUST_HEAP));
+    }
+
     static void save(String path, BufferedImage im) throws IOException {
         PREVIEW.put(path, im);
         if (HAND_MADE.contains(path) && Files.exists(OUT.resolve(path + ".png"))) return;
@@ -5077,6 +5251,7 @@ public final class TextureGen {
         machines();
         washing();
         windAndTanning();
+        tier4();
 
         // Glow layers for hot metal: written last, from the finished item textures.
         glowLayers();

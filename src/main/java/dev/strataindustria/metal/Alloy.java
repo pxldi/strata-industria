@@ -11,15 +11,27 @@ import java.util.Optional;
 public enum Alloy {
     BRONZE(Metal.BRONZE, Metal.COPPER, 0.88f, 0.92f, Metal.TIN, 0.08f, 0.12f),
     ARSENICAL_BRONZE(Metal.ARSENICAL_BRONZE, Metal.COPPER, 0.88f, 0.94f, Metal.ARSENIC, 0.06f, 0.12f),
-    BISMUTH_BRONZE(Metal.BISMUTH_BRONZE, Metal.COPPER, 0.85f, 0.90f, Metal.BISMUTH, 0.10f, 0.15f);
+    BISMUTH_BRONZE(Metal.BISMUTH_BRONZE, Metal.COPPER, 0.85f, 0.90f, Metal.BISMUTH, 0.10f, 0.15f),
+    // Tier 4 spec 5: iron and carbon. Iron items carry their carbon only as a trace when remelted.
+    WROUGHT_IRON(Metal.WROUGHT_IRON, Metal.WROUGHT_IRON, 0.995f, 1.0f, Metal.CARBON, 0.0f, 0.005f, 0f),
+    STEEL(Metal.STEEL, Metal.WROUGHT_IRON, 0.98f, 0.995f, Metal.CARBON, 0.005f, 0.02f, 0.01f),
+    PIG_IRON(Metal.PIG_IRON, Metal.WROUGHT_IRON, 0.94f, 0.97f, Metal.CARBON, 0.03f, 0.06f, 0.04f),
+    BRASS(Metal.BRASS, Metal.COPPER, 0.60f, 0.70f, Metal.ZINC, 0.30f, 0.40f),
+    SOLDER(Metal.SOLDER, Metal.TIN, 0.50f, 0.70f, Metal.LEAD, 0.30f, 0.50f);
 
     private final Metal result;
     private final Metal base;
     private final float baseMin, baseMax;
     private final Metal added;
     private final float addedMin, addedMax;
+    private final float itemShare;
 
     Alloy(Metal result, Metal base, float baseMin, float baseMax, Metal added, float addedMin, float addedMax) {
+        this(result, base, baseMin, baseMax, added, addedMin, addedMax, (addedMin + addedMax) / 2);
+    }
+
+    Alloy(Metal result, Metal base, float baseMin, float baseMax, Metal added, float addedMin, float addedMax, float itemShare) {
+        this.itemShare = itemShare;
         this.result = result;
         this.base = base;
         this.baseMin = baseMin;
@@ -51,8 +63,9 @@ public enum Alloy {
      */
     public static Melt parts(Metal metal, int units) {
         for (Alloy alloy : values()) {
-            if (alloy.result != metal) continue;
-            int added = Math.round(units * (alloy.addedMin + alloy.addedMax) / 2);
+            if (alloy.result != metal || alloy.itemShare <= 0) continue;
+            int added = Math.round(units * alloy.itemShare);
+            if (added <= 0) return Melt.of(alloy.base, units, 0);
             return new Melt(Map.of(alloy.base, units - added, alloy.added, added), 0);
         }
         return Melt.of(metal, units, 0);
@@ -72,7 +85,7 @@ public enum Alloy {
         if (units.size() == 1) {
             Metal only = units.keySet().iterator().next();
             // Arsenic never exists on its own outside a melt (spec 6.1).
-            return only == Metal.ARSENIC ? Optional.empty() : Optional.of(only);
+            return only.dissolvedOnly() ? Optional.empty() : Optional.of(only);
         }
         for (Alloy alloy : values()) if (alloy.matches(melt)) return Optional.of(alloy.result);
         return Optional.empty();
