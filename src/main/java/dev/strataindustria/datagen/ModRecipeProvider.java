@@ -562,6 +562,21 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('G', Tier4Items.PRESSURE_GAUGE.get())
                 .unlockedBy("has_pressure_gauge", has(Tier4Items.PRESSURE_GAUGE.get()))
                 .save(output, key("bronze_boiler"));
+        // Spec 13.3 and 13.5: the chute and the filter.
+        Item chuteIron = ModItems.PLATES.get(Metal.WROUGHT_IRON).get();
+        shaped(RecipeCategory.REDSTONE, Tier4Items.CHUTE.get(), 2)
+                .pattern("P P")
+                .pattern("P P")
+                .pattern(" P ")
+                .define('P', chuteIron)
+                .unlockedBy("has_wrought_iron_plate", has(chuteIron))
+                .save(output, key("chute"));
+        shapeless(RecipeCategory.REDSTONE, Tier4Items.FILTER.get())
+                .requires(Items.PAPER)
+                .requires(ModItems.PLATES.get(Metal.BRASS).get())
+                .requires(ModItems.TWINE.get())
+                .unlockedBy("has_brass_plate", has(ModItems.PLATES.get(Metal.BRASS).get()))
+                .save(output, key("filter"));
         // Spec 10.3: the steel boiler.
         Item boilerSteel = ModItems.PLATES.get(Metal.STEEL).get();
         shaped(RecipeCategory.DECORATIONS, Tier4Items.STEEL_BOILER_SHELL.get())

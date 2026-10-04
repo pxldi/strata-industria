@@ -85,6 +85,8 @@ final class Tier4GameTests {
         tests.put("tier4_fluid_tank", Tier4GameTests::fluidTank);
         tests.put("tier4_blowing_engine", Tier4GameTests::blowingEngine);
         tests.put("tier4_steel_boiler", Tier4GameTests::steelBoiler);
+        tests.put("tier4_chute", Tier4GameTests::chute);
+        tests.put("tier4_filter", Tier4GameTests::filter);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -1054,6 +1056,76 @@ final class Tier4GameTests {
             }
             BoilerBlockEntity.serverTick(level, controllerPos, level.getBlockState(controllerPos), boiler);
         }
+    }
+
+    // Chute (spec 13.3): two chutes over a chest pass items down one every 4 ticks, never let a hopper
+    // pull from them, and drop items out of the bottom when nothing is below.
+    private static void chute(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos chestPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        BlockPos lowerPos = chestPos.above(), upperPos = chestPos.above(2);
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(lowerPos, Tier4Blocks.CHUTE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(upperPos, Tier4Blocks.CHUTE.get().defaultBlockState(), Block.UPDATE_ALL);
+        var upper = (dev.strataindustria.automation.ChuteBlockEntity) level.getBlockEntity(upperPos);
+        var lower = (dev.strataindustria.automation.ChuteBlockEntity) level.getBlockEntity(lowerPos);
+        var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(chestPos);
+        helper.assertTrue(!upper.canTakeItemThroughFace(0, new ItemStack(Items.COAL), Direction.DOWN), "a chute gives nothing to what pulls on it");
+        upper.insert(new ItemStack(Items.COAL, 3));
+        helper.assertValueEqual(upper.held().getCount(), 3, "coal dropped in the top chute");
+        chuteTicks(level, java.util.List.of(upperPos, lowerPos), 4);
+        helper.assertValueEqual(upper.held().getCount(), 2, "one item falls on after 4 ticks");
+        chuteTicks(level, java.util.List.of(upperPos, lowerPos), 40);
+        int inChest = 0;
+        for (int i = 0; i < chest.getContainerSize(); i++) if (chest.getItem(i).is(Items.COAL)) inChest += chest.getItem(i).getCount();
+        helper.assertValueEqual(inChest, 3, "coal in the chest under the chutes");
+        helper.assertTrue(upper.isEmpty() && lower.isEmpty(), "both chutes empty");
+
+        // With the chest gone, items fall out of the bottom.
+        level.setBlock(chestPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        lower.insert(new ItemStack(Items.IRON_NUGGET, 1));
+        chuteTicks(level, java.util.List.of(lowerPos), 8);
+        helper.assertTrue(lower.isEmpty(), "the item left the open bottom");
+        helper.assertTrue(!level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(chestPos).inflate(1.0),
+                e -> e.getItem().is(Items.IRON_NUGGET)).isEmpty(), "the nugget lies under the chute");
+        helper.succeed();
+    }
+
+    private static void chuteTicks(ServerLevel level, java.util.List<BlockPos> chutes, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            for (BlockPos pos : chutes) {
+                dev.strataindustria.automation.ChuteBlockEntity.serverTick(level, pos, level.getBlockState(pos),
+                        (dev.strataindustria.automation.ChuteBlockEntity) level.getBlockEntity(pos));
+            }
+        }
+    }
+
+    // Filter (spec 13.5): an item entry, the grade toggle, a tag entry and the blacklist.
+    private static void filter(GameTestHelper helper) {
+        var normal = new ItemStack(ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL));
+        var rich = new ItemStack(ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.RICH));
+        var filter = dev.strataindustria.automation.FilterContents.EMPTY;
+        helper.assertTrue(!filter.test(normal), "an empty whitelist lets nothing through");
+        filter = filter.withEntry(0, normal.getItem());
+        helper.assertTrue(filter.test(normal), "the item itself gets through");
+        helper.assertTrue(!filter.test(rich), "another grade does not, by default");
+        filter = filter.toggleGrade();
+        helper.assertTrue(filter.test(rich), "with any grade, the rich piece gets through");
+        helper.assertTrue(!filter.test(new ItemStack(Items.COAL)), "coal does not");
+
+        filter = filter.withEntry(1, Items.OAK_LOG);
+        for (int i = 0; i < 20 && !filter.tag(1).equals("minecraft:logs"); i++) filter = filter.cycleTag(1);
+        helper.assertValueEqual(filter.tag(1), "minecraft:logs", "cycling reaches the logs tag");
+        helper.assertTrue(filter.test(new ItemStack(Items.BIRCH_LOG)), "a birch log is in the logs tag");
+
+        filter = filter.toggleWhitelist();
+        helper.assertTrue(!filter.test(new ItemStack(Items.BIRCH_LOG)), "a blacklist holds the log back");
+        helper.assertTrue(filter.test(new ItemStack(Items.COAL)), "and lets coal through");
+
+        var stack = new ItemStack(Tier4Items.FILTER.get());
+        stack.set(dev.strataindustria.registry.Tier4DataComponents.FILTER_CONTENTS.get(), filter);
+        helper.assertValueEqual(dev.strataindustria.automation.FilterContents.of(stack), filter, "the filter item keeps its contents");
+        helper.succeed();
     }
 
     // Blowing engine (spec 10.5 and 11.6): no air without steam; at 2 bar it blows two blowers' worth

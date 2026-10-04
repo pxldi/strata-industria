@@ -88,6 +88,10 @@ public final class Tier4Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> CONVERTER_BLOW = register("converter.blow");
     /** The flame drops and the blow is done. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CONVERTER_DONE = register("converter.done");
+    /** An item drops out of a chute's end. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CHUTE_DROP = register("chute.drop");
+    /** An entry is set in a filter. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FILTER_CONFIGURE = register("filter.configure");
     /** A multiblock is complete: a heavy clunk and a short chime. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MULTIBLOCK_FORM = register("multiblock.form");
 

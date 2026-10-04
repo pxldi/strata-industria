@@ -72,6 +72,7 @@ public final class StrataIndustriaClient {
         event.register(dev.strataindustria.registry.Tier4Menus.STEAM_HAMMER.get(), dev.strataindustria.client.screen.SteamHammerScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.BRONZE_BOILER.get(), dev.strataindustria.client.screen.BoilerScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.BOILER_CONTROLLER.get(), dev.strataindustria.client.screen.BoilerScreen::new);
+        event.register(dev.strataindustria.registry.Tier4Menus.FILTER.get(), dev.strataindustria.client.screen.FilterScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.CRUSHER.get(), dev.strataindustria.client.screen.ProcessingScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.WASHER.get(), dev.strataindustria.client.screen.ProcessingScreen::new);
         event.register(dev.strataindustria.registry.Tier4Menus.BLAST_FURNACE.get(), dev.strataindustria.client.screen.BlastFurnaceScreen::new);
@@ -117,6 +118,9 @@ public final class StrataIndustriaClient {
         // Tier 4 spec 21.4: the steam hammer's ram drops with each blow.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.STEAM_HAMMER.get(),
                 dev.strataindustria.client.render.SteamHammerRenderer::new);
+        // Tier 4 spec 13.3: what a chute holds lies in its tube.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.CHUTE.get(),
+                dev.strataindustria.client.render.ChuteRenderer::new);
     }
 
     private static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {
