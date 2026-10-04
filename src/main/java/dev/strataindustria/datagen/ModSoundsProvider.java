@@ -30,6 +30,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         listening();
         marks();
         ledger();
+        transport();
         bronze();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
@@ -478,6 +479,21 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(dev.strataindustria.mark.MarkRegistry.MARK_CUT, definition().subtitle(subtitle("mark.cut"))
                 .with(sound("minecraft:block.copper.hit", event).pitch(1.7f).volume(0.5f))
                 .with(sound("minecraft:block.chain.hit", event).pitch(1.8f).volume(0.35f)));
+    }
+
+    /** Outposts and transport (outposts spec 14), from vanilla wood, paper and metal samples. */
+    private void transport() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.registry.TransportSounds.CHARTER_PLACE, definition().subtitle(subtitle("charter.place"))
+                .with(sound("minecraft:block.wood.place", event).pitch(0.8f).volume(1.0f))
+                .with(sound("minecraft:block.wood.hit", event).pitch(0.7f).volume(0.8f))
+                .with(sound("minecraft:item.book.page_turn", event).pitch(1.2f).volume(0.5f)));
+        add(dev.strataindustria.registry.TransportSounds.CHARTER_LINE_CUT, definition().subtitle(subtitle("charter.line_cut"))
+                .with(sound("minecraft:block.chain.break", event).pitch(0.6f).volume(0.45f))
+                .with(sound("minecraft:entity.leash_knot.break", event).pitch(0.7f).volume(0.5f)));
+        add(dev.strataindustria.registry.TransportSounds.CHARTER_DEED, definition().subtitle(subtitle("charter.deed"))
+                .with(sound("minecraft:item.book.page_turn", event).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:ui.cartography_table.take_result", event).pitch(1.5f).volume(0.3f)));
     }
 
     /** Bronze age touches (uniqueness 4.2, 4.3), from vanilla fire and fizz samples. */

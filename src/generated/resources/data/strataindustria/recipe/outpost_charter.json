@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "minecraft:paper",
+    "S": "minecraft:stick",
+    "W": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    " A ",
+    " W ",
+    " S "
+  ],
+  "result": {
+    "id": "strataindustria:outpost_charter"
+  }
+}

@@ -138,6 +138,8 @@ final class JournalLanguage {
                 "The bellows breathe in time with the shaft, and the coals roar white.");
         lead.add("t3/saw_mill", "Splitting planks by hand is slow and wasteful. Could a turning blade do better?",
                 "The saw mill rips a log into planks in moments, with the bark left over.");
+        lead.add("t3/charter", "The tin is a long walk off. Could I keep a mine going out there?",
+                "Charter set at the tin workings. The line runs; the place keeps working while I'm home.");
         lead.add("t3/weld", "One ingot is too small for the bigger tools. Could two be joined while hot?",
                 "Hammered together white hot, two ingots became one. The seam does not show.");
         lead.add("t3/pattern", "I smith the same pieces again and again. Could the anvil remember my hits?",

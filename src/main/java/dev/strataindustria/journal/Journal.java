@@ -76,6 +76,8 @@ public final class Journal {
     public static final String STORAGE = "storage";
     public static final String ORE_SCAN = "ore_scan";
     public static final String ELECTRIC_CHAIN = "electric_chain";
+    // Outposts and transport (outposts spec 11)
+    public static final String CHARTER_LINKED = "charter_linked";
 
     /** Blocks of overhead span a consumer must be served across for the power line goal. */
     public static final int POWER_LINE_SPAN = 64;
@@ -106,6 +108,13 @@ public final class Journal {
         if (!(level instanceof ServerLevel server)) return;
         for (ServerPlayer player : server.getEntitiesOfClass(ServerPlayer.class, new AABB(pos).inflate(NEARBY))) {
             award(player, event);
+        }
+    }
+
+    /** For goals of a charter: every online owner of it, and the players on the owner's team. */
+    public static void awardOwners(ServerLevel level, dev.strataindustria.transport.outpost.Charter charter, String event) {
+        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+            if (dev.strataindustria.transport.outpost.OutpostPlan.isOwner(level, player, charter)) award(player, event);
         }
     }
 

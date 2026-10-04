@@ -772,6 +772,15 @@ final class ModModelProvider extends ModelProvider {
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/builders_crate"))));
         itemModels.itemModelOutput.accept(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE_ITEM.get(),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/builders_crate")));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> charterFacing = PropertyDispatch.initial(HorizontalDirectionalBlock.FACING);
+        var charter = BlockModelGenerators.plainVariant(StrataIndustria.id("block/outpost_charter"));
+        charterFacing.select(net.minecraft.core.Direction.NORTH, charter);
+        charterFacing.select(net.minecraft.core.Direction.EAST, charter.with(BlockModelGenerators.Y_ROT_90));
+        charterFacing.select(net.minecraft.core.Direction.SOUTH, charter.with(BlockModelGenerators.Y_ROT_180));
+        charterFacing.select(net.minecraft.core.Direction.WEST, charter.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.get()).with(charterFacing));
+        itemModels.itemModelOutput.accept(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/outpost_charter")));
         processing(blockModels, itemModels);
         blastFurnace(blockModels, itemModels);
     }

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:outpost_charter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wrought_iron_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:wrought_iron_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wrought_iron_plate"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:outpost_charter"
+    ]
+  }
+}
