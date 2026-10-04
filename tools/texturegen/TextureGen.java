@@ -4525,8 +4525,10 @@ public final class TextureGen {
                 double dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
                 if (d > 5.6 || d < 1.4) continue;
                 double turn = (Math.atan2(dy, dx) / (2 * Math.PI) + 1) % 1.0;
-                double f = ((d - 1.4 + turn * 1.9) / 1.9) % 1.0;  // position across the current turn of the spiral
-                int step = f < 0.22 ? 1 : f < 0.45 ? 4 : f < 0.8 ? 3 : 2;
+                // Three wraps of strap, each a 1 px gap then 1 px of strap face; the outer wrap ends in the tail.
+                double f = ((d - 1.4 + turn * 0.6) / 2.0) % 1.0;
+                int step = f < 0.42 ? 1 : f < 0.7 ? 4 : 3;
+                if (step == 3 && dx + dy < -1) step = 4;
                 if (step == 4 && dx + dy > 2) step = 3;             // the lower right of the coil turns away from the light
                 if (step == 3 && dx + dy < -4) step = 4;
                 px(im, x, y, LEATHER.get(step));
@@ -4550,7 +4552,7 @@ public final class TextureGen {
 
     // Tanning (spec 12.1).
 
-    /** One outstretched hide (four legs, neck and tail), its lower-right corner folded back over along x + y = 21. */
+    /** One outstretched hide (four legs, neck and tail), its lower-right corner folded back over along x + y = 19. */
     static final String[] HIDE_SHAPE = {
             "................",
             "..##........##..",
@@ -4575,14 +4577,14 @@ public final class TextureGen {
         int[][] m = new int[16][16];
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++)
-                if (HIDE_SHAPE[y].charAt(x) == '#' && x + y <= 21) m[y][x] = 1;
+                if (HIDE_SHAPE[y].charAt(x) == '#' && x + y <= 19) m[y][x] = 1;
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++)
-                if (HIDE_SHAPE[y].charAt(x) == '#' && x + y > 21) {
-                    int fx = 21 - y, fy = 21 - x; // mirror across the fold line
+                if (HIDE_SHAPE[y].charAt(x) == '#' && x + y > 19) {
+                    int fx = 19 - y, fy = 19 - x; // mirror across the fold line
                     if (fx >= 0 && fy >= 0 && fx < 16 && fy < 16) m[fy][fx] = 2;
                 }
-        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) if (m[y][x] != 0 && (x + y == 21 || x + y == 20)) m[y][x] = 3;
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) if (m[y][x] != 0 && x + y == 19) m[y][x] = 3;
         return m;
     }
 
@@ -4616,7 +4618,7 @@ public final class TextureGen {
                     px(im, x, y, flesh.get(stage == 2 ? step : Math.min(5, step + 1)));
                 } else {
                     // The crease: a lit roll on the fold, shadow on the flap side of it.
-                    px(im, x, y, outer.get(x + y == 20 ? 5 : 2));
+                    px(im, x, y, outer.get(5));
                 }
             }
         // The flap's free edge casts a shadow on the hide beside it.

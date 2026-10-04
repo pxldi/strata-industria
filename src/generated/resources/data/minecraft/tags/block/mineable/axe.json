@@ -9,6 +9,11 @@
     "strataindustria:trip_hammer",
     "strataindustria:core_sampler",
     "strataindustria:sluice",
+    "strataindustria:step_up_gearbox",
+    "strataindustria:pulley",
+    "strataindustria:windmill_bearing",
+    "strataindustria:windmill_sail",
+    "strataindustria:soaking_barrel",
     "strataindustria:fire_pit",
     "strataindustria:log_pile"
   ]

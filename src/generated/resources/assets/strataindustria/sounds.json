@@ -75,6 +75,15 @@
     ],
     "subtitle": "subtitles.strataindustria.bellows.pump"
   },
+  "belt.attach": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.leash_knot.place"
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.belt.attach"
+  },
   "bloomery.charge": {
     "sounds": [
       {
@@ -400,6 +409,16 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.heat.sear"
+  },
+  "hide.scrape": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.sheep.shear",
+        "pitch": 1.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.hide.scrape"
   },
   "journal.open": {
     "sounds": [
@@ -795,6 +814,47 @@
     ],
     "subtitle": "subtitles.strataindustria.sluice.wash"
   },
+  "soaking_barrel.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_inside",
+        "pitch": 0.8,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.soaking_barrel.done"
+  },
+  "soaking_barrel.fill": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.empty",
+        "pitch": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.soaking_barrel.fill"
+  },
+  "soaking_barrel.open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.barrel.open",
+        "pitch": 0.85
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.soaking_barrel.open"
+  },
+  "soaking_barrel.seal": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.barrel.close",
+        "pitch": 0.85
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.soaking_barrel.seal"
+  },
   "washing_pan.find": {
     "sounds": [
       {
@@ -832,6 +892,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.water_wheel.turn"
+  },
+  "windmill.turn": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.step",
+        "pitch": 0.5,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.wool.step",
+        "pitch": 0.6,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.windmill.turn"
   },
   "wrought_iron.hit": {
     "sounds": [
