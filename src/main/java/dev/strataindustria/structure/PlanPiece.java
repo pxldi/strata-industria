@@ -364,6 +364,8 @@ public class PlanPiece extends StructurePiece {
                     var empty = net.minecraft.network.chat.CommonComponents.EMPTY;
                     var lines = List.of(empty, net.minecraft.network.chat.Component.literal("Here lies"),
                             net.minecraft.network.chat.Component.literal("the smith."), empty);
+                    // Worldgen block entities have no level yet, and the sign's update call needs one.
+                    sign.setLevel(level.getLevel());
                     sign.setText(new net.minecraft.world.level.block.entity.SignText(lines, lines, net.minecraft.world.item.DyeColor.BLACK, false),
                             net.minecraft.world.level.block.entity.SignTextSlot.FRONT);
                 }
