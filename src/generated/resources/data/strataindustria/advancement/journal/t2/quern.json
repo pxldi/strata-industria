@@ -32,7 +32,13 @@
               "strataindustria:crushed_rich_magnetite",
               "strataindustria:crushed_poor_native_gold",
               "strataindustria:crushed_native_gold",
-              "strataindustria:crushed_rich_native_gold"
+              "strataindustria:crushed_rich_native_gold",
+              "strataindustria:crushed_poor_sphalerite",
+              "strataindustria:crushed_sphalerite",
+              "strataindustria:crushed_rich_sphalerite",
+              "strataindustria:crushed_poor_galena",
+              "strataindustria:crushed_galena",
+              "strataindustria:crushed_rich_galena"
             ]
           }
         ]

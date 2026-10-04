@@ -49,11 +49,12 @@ final class ModItemTagsProvider extends ItemTagsProvider {
                 ores.add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
                 if (mineral.isIron()) tag(Tags.Items.ORES_IRON).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
                 if (mineral == OreMineral.NATIVE_GOLD) tag(Tags.Items.ORES_GOLD).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
+                if (mineral == OreMineral.BITUMINOUS_COAL) tag(Tags.Items.ORES_COAL).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
             }
         }
 
         var smallOres = tag(ModTags.Items.SMALL_ORES);
-        for (OreMineral mineral : OreMineral.values()) {
+        for (OreMineral mineral : OreMineral.withPieces()) {
             smallOres.add(ModItems.SMALL_ORES.get(mineral).getKey());
             var mineralTag = tag(ModTags.Items.ores(mineral.id()));
             for (OreGrade grade : OreGrade.values()) {

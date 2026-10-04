@@ -11,7 +11,9 @@
               "strataindustria:arsenical_bronze_plate",
               "strataindustria:bismuth_bronze_plate",
               "strataindustria:wrought_iron_plate",
-              "strataindustria:gold_plate"
+              "strataindustria:gold_plate",
+              "strataindustria:steel_plate",
+              "strataindustria:brass_plate"
             ]
           }
         ]

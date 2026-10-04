@@ -1,0 +1,22 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 95,
+  "ingredient": "strataindustria:steel_ingot",
+  "result": {
+    "id": "strataindustria:steel_knife_blade"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "draw",
+      "where": "second_last"
+    },
+    {
+      "hit": "draw",
+      "where": "third_last"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/steel_hammer_head",
+    "layer1": "strataindustria:item/glow/steel_hammer_head"
+  }
+}

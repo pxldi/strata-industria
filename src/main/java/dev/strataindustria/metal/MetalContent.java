@@ -35,14 +35,16 @@ public final class MetalContent {
     private static Map<Item, Melt> fixed() {
         if (fixed == null) {
             Map<Item, Melt> map = new IdentityHashMap<>();
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.withPieces()) {
+                // Tier 4 spec 4.4: a sulfide never melts as ore; it is roasted to calcine first.
+                if (mineral.isSulfide()) continue;
                 map.put(ModItems.SMALL_ORES.get(mineral).get(), ore(mineral, OreMineral.SMALL_ORE_UNITS, OreGrade.NORMAL));
                 for (OreGrade grade : OreGrade.values()) {
                     int crushed = mineral.crushedUnits(grade);
                     map.put(ModItems.orePiece(mineral, grade), ore(mineral, crushed * OreMineral.RAW_MELT_EFFICIENCY, grade));
                     map.put(ModItems.crushedOre(mineral, grade), ore(mineral, crushed, grade));
                     // Tier 3 spec 11.2: washing is worth a tenth more.
-                    map.put(ModItems.washedOre(mineral, grade), ore(mineral, (float) Math.floor(crushed * OreMineral.WASHED_BONUS), grade));
+                    if (mineral.washable()) map.put(ModItems.washedOre(mineral, grade), ore(mineral, (float) Math.floor(crushed * OreMineral.WASHED_BONUS), grade));
                 }
             }
             for (Metal metal : Metal.values()) {
@@ -50,6 +52,8 @@ public final class MetalContent {
                 if (ModItems.INGOTS.containsKey(metal)) map.put(ModItems.ingot(metal), Alloy.parts(metal, INGOT_UNITS));
                 if (ModItems.NUGGETS.containsKey(metal)) map.put(ModItems.NUGGETS.get(metal).get(), Alloy.parts(metal, NUGGET_UNITS));
                 if (ModItems.PLATES.containsKey(metal)) map.put(ModItems.PLATES.get(metal).get(), Alloy.parts(metal, INGOT_UNITS));
+                if (ModItems.RODS.containsKey(metal)) map.put(ModItems.RODS.get(metal).get(), Alloy.parts(metal, ROD_UNITS));
+                if (ModItems.GEARS.containsKey(metal)) map.put(ModItems.GEARS.get(metal).get(), Alloy.parts(metal, INGOT_UNITS));
                 if (ModItems.HEADS.containsKey(metal)) {
                     for (MoldType type : metal.toolTypes()) map.put(ModItems.head(metal, type), Alloy.parts(metal, type.units()));
                 }
@@ -58,6 +62,7 @@ public final class MetalContent {
             // Tier 3 spec 4.1: rods are half an ingot, a double ingot two.
             map.put(ModItems.WROUGHT_IRON_ROD.get(), Melt.of(Metal.WROUGHT_IRON, ROD_UNITS, 0));
             map.put(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), Melt.of(Metal.WROUGHT_IRON, 2 * INGOT_UNITS, 0));
+            map.put(ModItems.STEEL_DOUBLE_INGOT.get(), Alloy.parts(Metal.STEEL, 2 * INGOT_UNITS));
             // Tier 3 spec 5.4: bloomery slag still holds some iron.
             map.put(ModItems.BLOOMERY_SLAG.get(), Melt.of(Metal.WROUGHT_IRON, BLOOMERY_SLAG_UNITS, 0));
             // Spec 4.2: vanilla raw ores from loot count as raw normal ore.

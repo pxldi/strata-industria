@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:quern",
+  "ingredient": "strataindustria:rich_galena",
+  "result": {
+    "id": "strataindustria:crushed_rich_galena"
+  }
+}

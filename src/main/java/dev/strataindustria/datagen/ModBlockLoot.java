@@ -63,7 +63,9 @@ final class ModBlockLoot extends BlockLootSubProvider {
         }
 
         for (OreMineral mineral : OreMineral.values()) {
-            dropSelf(ModBlocks.SMALL_ORES.get(mineral).get());
+            // Tier 4 spec 4.4: coal and sulfur indicators drop one of their item.
+            if (mineral.hasPieces()) dropSelf(ModBlocks.SMALL_ORES.get(mineral).get());
+            else dropOther(ModBlocks.SMALL_ORES.get(mineral).get(), plainDrop(mineral));
         }
         dropOther(ModBlocks.LOOSE_STICK.get(), Items.STICK);
         dropOther(ModBlocks.LOOSE_FLINT.get(), Items.FLINT);
@@ -142,9 +144,30 @@ final class ModBlockLoot extends BlockLootSubProvider {
         add(block, table);
     }
 
-    /** One pool per grade: the ore piece of that grade, with fortune adding up to one extra. */
+    private static net.minecraft.world.level.ItemLike plainDrop(OreMineral mineral) {
+        return mineral == OreMineral.BITUMINOUS_COAL ? Items.COAL : dev.strataindustria.registry.Tier4Items.SULFUR.get();
+    }
+
+    /**
+     * One pool per grade: the ore piece of that grade, with fortune adding up to one extra. Coal and
+     * sulfur drop 1, 2 or 3 of their item by grade instead (tier 4 spec 4.4); silk touch keeps those blocks.
+     */
     private void oreDrops(Block block, OreMineral mineral, Holder<Enchantment> fortune) {
         LootTable.Builder table = LootTable.lootTable();
+        if (!mineral.hasPieces()) {
+            for (OreGrade grade : OreGrade.values()) {
+                table.withPool(LootPool.lootPool()
+                        .setRolls(ContextIntProviders.exactly(1))
+                        .when(MatchBlock.blockMatches(blocks, block,
+                                StatePropertiesPredicate.Builder.properties().hasProperty(OreGrade.PROPERTY, grade)))
+                        .add(LootItem.lootTableItem(block).when(hasSilkTouch())
+                                .otherwise(applyExplosionDecay(block, LootItem.lootTableItem(plainDrop(mineral))
+                                        .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(grade.ordinal() + 1)))
+                                        .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1))))));
+            }
+            add(block, table);
+            return;
+        }
         for (OreGrade grade : OreGrade.values()) {
             table.withPool(LootPool.lootPool()
                     .setRolls(ContextIntProviders.exactly(1))
