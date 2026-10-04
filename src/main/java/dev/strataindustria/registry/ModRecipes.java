@@ -2,6 +2,7 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.crafting.KnappedToolRecipe;
+import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
 import dev.strataindustria.knapping.KnappingRecipe;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +26,9 @@ public final class ModRecipes {
     /** Shapeless tool assembly that carries the head's knapped_from over and scales durability. */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<KnappedToolRecipe>> KNAPPED_TOOL =
             SERIALIZERS.register("knapped_tool", () -> KnappedToolRecipe.SERIALIZER);
+    /** Shapeless metal tool assembly that carries the head's quality over and scales durability. */
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MetalToolRecipe>> METAL_TOOL =
+            SERIALIZERS.register("metal_tool", () -> MetalToolRecipe.SERIALIZER);
 
     private ModRecipes() {}
 }

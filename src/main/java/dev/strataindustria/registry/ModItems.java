@@ -10,10 +10,16 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.item.GroundCoverItem;
+import dev.strataindustria.material.Metal;
+import dev.strataindustria.metal.CastMoldItem;
+import dev.strataindustria.metal.ModToolMaterials;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Supplier;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ToolMaterial;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -68,12 +74,20 @@ public final class ModItems {
     public static final DeferredItem<LargeVesselItem> LARGE_VESSEL = ITEMS.registerItem("large_vessel",
             p -> new LargeVesselItem(ModBlocks.LARGE_VESSEL.get(), p), p -> p.stacksTo(1).useBlockDescriptionPrefix());
     public static final DeferredItem<BlockItem> CRUCIBLE = ITEMS.registerSimpleBlockItem(ModBlocks.CRUCIBLE, p -> p.stacksTo(1));
-    public static final DeferredItem<Item> INGOT_MOLD = ITEMS.registerSimpleItem("ingot_mold", p -> p.stacksTo(16));
+    public static final DeferredItem<CastMoldItem> INGOT_MOLD = ITEMS.registerItem("ingot_mold", p -> new CastMoldItem(null, p),
+            p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> FORGE = ITEMS.registerSimpleBlockItem(ModBlocks.FORGE);
     // Charcoal (spec 4.4).
     public static final DeferredItem<AshItem> ASH = ITEMS.registerItem("ash", AshItem::new);
+    // Metals (spec 6 to 8). Copper's ingot, nugget, armour and five of its tools are vanilla items.
+    public static final Map<Metal, Supplier<Item>> INGOTS = new EnumMap<>(Metal.class);
+    public static final Map<Metal, Supplier<Item>> NUGGETS = new EnumMap<>(Metal.class);
+    public static final Map<Metal, DeferredItem<Item>> PLATES = new EnumMap<>(Metal.class);
+    /** Cast heads and blades, by metal and the mold that casts them. */
+    public static final Map<Metal, Map<MoldType, DeferredItem<Item>>> HEADS = new EnumMap<>(Metal.class);
+    public static final Map<Metal, Map<MoldType, Supplier<Item>>> TOOLS = new EnumMap<>(Metal.class);
     public static final Map<MoldType, DeferredItem<Item>> UNFIRED_MOLDS = new EnumMap<>(MoldType.class);
-    public static final Map<MoldType, DeferredItem<Item>> MOLDS = new EnumMap<>(MoldType.class);
+    public static final Map<MoldType, DeferredItem<CastMoldItem>> MOLDS = new EnumMap<>(MoldType.class);
 
     public static final Map<Rock, DeferredItem<BlockItem>> RAW_ROCK = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredItem<BlockItem>> COBBLED_ROCK = new EnumMap<>(Rock.class);
@@ -85,9 +99,31 @@ public final class ModItems {
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> CRUSHED_ORES = new EnumMap<>(OreMineral.class);
 
     static {
+        for (Metal metal : Metal.values()) {
+            if (!metal.hasIngot()) continue;
+            if (metal.isVanilla()) {
+                INGOTS.put(metal, () -> Items.COPPER_INGOT);
+                NUGGETS.put(metal, () -> Items.COPPER_NUGGET);
+            } else {
+                INGOTS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_ingot"));
+                if (metal.hasNugget()) NUGGETS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_nugget"));
+            }
+            if (!metal.isToolMetal()) continue;
+            PLATES.put(metal, ITEMS.registerSimpleItem(metal.id() + "_plate"));
+            Map<MoldType, DeferredItem<Item>> heads = new EnumMap<>(MoldType.class);
+            Map<MoldType, Supplier<Item>> tools = new EnumMap<>(MoldType.class);
+            for (MoldType type : MoldType.values()) {
+                heads.put(type, ITEMS.registerSimpleItem(metal.id() + "_" + type.id(), p -> p.stacksTo(16)));
+                Item vanilla = metal.isVanilla() ? vanillaCopperTool(type) : null;
+                if (vanilla != null) tools.put(type, () -> vanilla);
+                else tools.put(type, ITEMS.registerSimpleItem(metal.id() + "_" + type.tool(), p -> metalTool(p, metal, type)));
+            }
+            HEADS.put(metal, heads);
+            TOOLS.put(metal, tools);
+        }
         for (MoldType type : MoldType.values()) {
             UNFIRED_MOLDS.put(type, ITEMS.registerSimpleItem("unfired_" + type.id() + "_mold", p -> p.stacksTo(16)));
-            MOLDS.put(type, ITEMS.registerSimpleItem(type.id() + "_mold", p -> p.stacksTo(16)));
+            MOLDS.put(type, ITEMS.registerItem(type.id() + "_mold", p -> new CastMoldItem(type, p), p -> p.stacksTo(16)));
         }
         for (Rock rock : Rock.values()) {
             RAW_ROCK.put(rock, ITEMS.registerSimpleBlockItem(ModBlocks.RAW_ROCK.get(rock)));
@@ -112,6 +148,44 @@ public final class ModItems {
             ORE_PIECES.put(mineral, pieces);
             CRUSHED_ORES.put(mineral, crushed);
         }
+    }
+
+    private static Item vanillaCopperTool(MoldType type) {
+        return switch (type) {
+            case PICKAXE_HEAD -> Items.COPPER_PICKAXE;
+            case AXE_HEAD -> Items.COPPER_AXE;
+            case SHOVEL_HEAD -> Items.COPPER_SHOVEL;
+            case HOE_HEAD -> Items.COPPER_HOE;
+            case SWORD_BLADE -> Items.COPPER_SWORD;
+            default -> null;
+        };
+    }
+
+    /** Spec 8.3: attack damage and speed per tool, on top of the material's bonus. */
+    private static Item.Properties metalTool(Item.Properties p, Metal metal, MoldType type) {
+        ToolMaterial material = ModToolMaterials.of(metal);
+        return switch (type) {
+            case PICKAXE_HEAD -> p.pickaxe(material, 1.0f, -2.8f);
+            case AXE_HEAD -> p.axe(material, 6.0f, -3.1f);
+            case SHOVEL_HEAD -> p.shovel(material, 1.5f, -3.0f);
+            case HOE_HEAD -> p.hoe(material, 0.0f, -2.0f);
+            case KNIFE_BLADE -> p.tool(material, ModTags.Blocks.MINEABLE_WITH_KNIFE, 1.5f, -2.0f, 0.0f);
+            case HAMMER_HEAD -> p.tool(material, ModTags.Blocks.MINEABLE_WITH_HAMMER, 3.0f, -3.2f, 0.0f);
+            case SAW_BLADE -> p.tool(material, BlockTags.MINEABLE_WITH_AXE, 1.0f, -2.8f, 0.0f);
+            case SWORD_BLADE -> p.sword(material, 3.0f, -2.4f);
+        };
+    }
+
+    public static Item ingot(Metal metal) {
+        return INGOTS.get(metal).get();
+    }
+
+    public static Item head(Metal metal, MoldType type) {
+        return HEADS.get(metal).get(type).get();
+    }
+
+    public static Item tool(Metal metal, MoldType type) {
+        return TOOLS.get(metal).get(type).get();
     }
 
     /** Knapped stone: stone mining tier, 80 base durability, repaired with loose rocks. */

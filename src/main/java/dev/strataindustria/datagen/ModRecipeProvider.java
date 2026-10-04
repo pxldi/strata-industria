@@ -4,11 +4,13 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.crafting.ConfigCondition;
 import dev.strataindustria.crafting.KnappedToolRecipe;
+import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
+import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import java.util.List;
@@ -62,6 +64,7 @@ final class ModRecipeProvider extends RecipeProvider {
         stoneTools();
         fire();
         planks();
+        metals();
         vanillaOverrides();
     }
 
@@ -170,7 +173,7 @@ final class ModRecipeProvider extends RecipeProvider {
         save(key(name(tool)), recipe, RecipeCategory.TOOLS, "has_" + name(head), has(head));
     }
 
-    // Spec 2: log + axe gives 2 planks, the axe takes 1 damage. The saw recipe arrives with metal saws.
+    // Spec 2: log + axe gives 2 planks, log + saw gives 4; the tool takes 1 damage.
     private void planks() {
         logToPlanks(ItemTags.OAK_LOGS, Items.OAK_PLANKS);
         logToPlanks(ItemTags.SPRUCE_LOGS, Items.SPRUCE_PLANKS);
@@ -187,13 +190,48 @@ final class ModRecipeProvider extends RecipeProvider {
     }
 
     private void logToPlanks(TagKey<Item> logs, Item planks) {
-        Ingredient axe = tag(ModTags.Items.AXES);
+        logToPlanks(logs, planks, ModTags.Items.AXES, 2, "_with_axe");
+        logToPlanks(logs, planks, ModTags.Items.SAWS, 4, "_with_saw");
+    }
+
+    private void logToPlanks(TagKey<Item> logs, Item planks, TagKey<Item> tools, int count, String suffix) {
+        Ingredient tool = tag(tools);
         var recipe = new ToolShapelessRecipe(new Recipe.CommonInfo(true),
                 new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.BUILDING, "planks"),
-                new ItemStackTemplate(planks, 2),
-                List.of(tag(logs), axe),
-                axe);
-        save(key(name(planks) + "_with_axe"), recipe, RecipeCategory.BUILDING_BLOCKS, "has_logs", has(logs));
+                new ItemStackTemplate(planks, count),
+                List.of(tag(logs), tool),
+                tool);
+        save(key(name(planks) + suffix), recipe, RecipeCategory.BUILDING_BLOCKS, "has_logs", has(logs));
+    }
+
+    // Spec 6.1 and 8.1: nuggets, and metal tools from a cast head and a stick.
+    private void metals() {
+        for (Metal metal : Metal.values()) {
+            if (!metal.hasIngot()) continue;
+            Item ingot = ModItems.ingot(metal);
+            if (!metal.isVanilla() && metal.hasNugget()) {
+                Item nugget = ModItems.NUGGETS.get(metal).get();
+                // Nine to the ingot, as with vanilla nuggets; a 3x3 grid has no room for ten.
+                shapeless(RecipeCategory.MISC, nugget, 9)
+                        .requires(ingot)
+                        .unlockedBy("has_ingot", has(ingot))
+                        .save(output, key(name(nugget) + "_from_ingot"));
+                shapeless(RecipeCategory.MISC, ingot)
+                        .requires(nugget, 9)
+                        .unlockedBy("has_nugget", has(nugget))
+                        .save(output, key(name(ingot) + "_from_nuggets"));
+            }
+            if (!metal.isToolMetal()) continue;
+            for (MoldType type : MoldType.values()) {
+                Item head = ModItems.head(metal, type);
+                Item tool = ModItems.tool(metal, type);
+                var recipe = new MetalToolRecipe(new Recipe.CommonInfo(true),
+                        new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.EQUIPMENT, ""),
+                        new ItemStackTemplate(tool),
+                        List.of(Ingredient.of(head), Ingredient.of(Items.STICK)));
+                save(key(name(tool)), recipe, RecipeCategory.TOOLS, "has_" + name(head), has(head));
+            }
+        }
     }
 
     private void save(ResourceKey<Recipe<?>> key, Recipe<?> recipe, RecipeCategory category, String criterion, Criterion<?> trigger) {
@@ -213,6 +251,12 @@ final class ModRecipeProvider extends RecipeProvider {
         RecipeOutput stoneTools = whenOff("vanilla.removeStoneTools");
         vanillaToolSet(stoneTools, ItemTags.STONE_TOOL_MATERIALS, "has_cobblestone",
                 Items.STONE_PICKAXE, Items.STONE_AXE, Items.STONE_SHOVEL, Items.STONE_HOE, Items.STONE_SWORD, Items.STONE_SPEAR);
+
+        // Copper tools come from cast heads; the copper spear has no mold and keeps its recipe.
+        // Armour is handled with the plates.
+        RecipeOutput copperTools = whenOff("vanilla.replaceCopperGear");
+        vanillaToolSet(copperTools, ItemTags.COPPER_TOOL_MATERIALS, "has_copper_ingot",
+                Items.COPPER_PICKAXE, Items.COPPER_AXE, Items.COPPER_SHOVEL, Items.COPPER_HOE, Items.COPPER_SWORD, null);
 
         RecipeOutput planks = whenOff("vanilla.planksNeedTools");
         vanillaPlanks(planks, ItemTags.OAK_LOGS, Items.OAK_PLANKS);
@@ -270,6 +314,7 @@ final class ModRecipeProvider extends RecipeProvider {
         shaped(RecipeCategory.COMBAT, sword).define('#', Items.STICK).define('X', material)
                 .pattern("X").pattern("X").pattern("#")
                 .unlockedBy(criterion, has).save(out, vanillaKey(sword));
+        if (spear == null) return;
         shaped(RecipeCategory.COMBAT, spear).define('#', Items.STICK).define('X', material)
                 .pattern("  X").pattern(" # ").pattern("#  ")
                 .unlockedBy(criterion, has).save(out, vanillaKey(spear));

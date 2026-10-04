@@ -7,6 +7,7 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.RockCategory;
 import dev.strataindustria.heat.HeatBand;
+import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModCreativeTabs;
 import dev.strataindustria.registry.ModItems;
@@ -91,6 +92,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.ASH, "Ash");
         addBlock(ModBlocks.FORGE, "Forge");
         add("container." + StrataIndustria.MOD_ID + ".forge", "Forge");
+        metals();
         String kiln = StrataIndustria.MOD_ID + ".pit_kiln.";
         add(kiln + "burning", "The kiln is already burning");
         add(kiln + "needs_straw", "The kiln needs 8 straw on top first");
@@ -107,6 +109,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "pit_kiln.fired", "Kiln burns out");
         add(subtitles + "heat.quench", "Hot metal hisses");
         add(subtitles + "forge.ignite", "Forge catches");
+        add(subtitles + "crucible.melt", "Metal melts");
+        add(subtitles + "crucible.pour", "Molten metal pours");
+        add(subtitles + "mold.knock", "Cast knocked out");
+        add(subtitles + "mold.break", "Mold cracks");
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
@@ -164,5 +170,59 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "burnTicks", "Burn time (ticks)");
         add(config + "charcoal", "Charcoal Pit");
         add(config + "perLog", "Charcoal per log");
+        add(config + "crucible", "Crucible");
+        add(config + "capacity", "Capacity (units)");
+        add(config + "casting", "Casting");
+        add(config + "ingotMoldBreak", "Ingot mold break chance");
+        add(config + "toolMoldBreak", "Tool mold break chance");
+    }
+
+    /** Spec 6 to 8: metal names, the crucible screen, molds, cast parts and tools. */
+    private void metals() {
+        String id = StrataIndustria.MOD_ID;
+        for (Metal metal : Metal.values()) {
+            String name = metal == Metal.SLAG_METAL ? "Slag" : title(metal.id());
+            add(id + ".metal." + metal.id(), name);
+            if (metal.isVanilla() || !metal.hasIngot()) {
+                // Copper's ingot and nugget are the vanilla items.
+            } else {
+                addItem(ModItems.INGOTS.get(metal), name + " Ingot");
+                if (metal.hasNugget()) addItem(ModItems.NUGGETS.get(metal), name + " Nugget");
+            }
+            if (!metal.isToolMetal()) continue;
+            addItem(ModItems.PLATES.get(metal), name + " Plate");
+            for (MoldType type : MoldType.values()) {
+                addItem(ModItems.HEADS.get(metal).get(type), name + " " + title(type.id()));
+                var tool = ModItems.TOOLS.get(metal).get(type);
+                if (tool instanceof net.neoforged.neoforge.registries.DeferredItem<?> item) {
+                    add(item.get(), name + " " + title(type.tool()));
+                }
+            }
+        }
+        add("container." + id + ".crucible", "Crucible");
+        String status = id + ".crucible.status.";
+        add(status + "cold", "Cold");
+        add(status + "heating", "Heating up");
+        add(status + "melting", "Melting... %s%%");
+        add(status + "molten", "%s, molten");
+        add(status + "molten_unknown", "Molten, but no known alloy");
+        add(status + "solid", "Solid, needs more heat");
+        add(status + "no_forge", "Needs a lit forge below");
+        add(id + ".crucible.pour", "Pour");
+        // The alloy name (%1$s) is left out to fit the line; the status line names it once it forms.
+        add(id + ".crucible.hint", "Needs %2$s-%3$s%% %4$s, has %5$s%%");
+        String problem = id + ".crucible.problem.";
+        add(problem + "no_mold", "Put an empty mold in the mold slot");
+        add(problem + "pouring", "Already pouring");
+        add(problem + "not_molten", "The metal is not molten");
+        add(problem + "not_enough", "Not enough metal to fill that mold");
+        add(problem + "no_alloy", "That mix will not make a usable metal");
+        add(id + ".mold.contents", "Holds %s (%s units)");
+        add(id + ".mold.still_molten", "The metal is still molten. Let it cool first");
+        add(id + ".mold.broke", "The mold cracked apart");
+        add(id + ".metal.slag_note", "Remelts to most of the metal that went in");
+        for (String grade : new String[] {"crude", "rough", "standard", "fine", "masterwork"}) {
+            add(id + ".quality." + grade, title(grade) + " quality");
+        }
     }
 }
