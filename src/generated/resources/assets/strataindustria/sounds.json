@@ -178,6 +178,91 @@
     ],
     "subtitle": "subtitles.strataindustria.block.crude_oil.bubble"
   },
+  "block.electric_furnace.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.furnace.fire_crackle",
+        "pitch": 1.2,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.furnace.fire_crackle",
+        "pitch": 1.1,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.electric_furnace.run"
+  },
+  "block.macerator.grind": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.9,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.82,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.98,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.macerator.grind"
+  },
+  "block.machine.low_power": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bit",
+        "pitch": 0.8,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.machine.low_power"
+  },
+  "block.machine.power_off": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 1.2,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.deactivate",
+        "pitch": 1.8,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.machine.power_off"
+  },
+  "block.machine.power_on": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 1.4,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.activate",
+        "pitch": 1.8,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.machine.power_on"
+  },
   "block.pit_prop.creak": {
     "sounds": [
       {

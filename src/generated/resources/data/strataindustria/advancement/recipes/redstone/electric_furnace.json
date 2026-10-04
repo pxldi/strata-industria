@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_lv_machine_hull": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:lv_machine_hull"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:electric_furnace"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_lv_machine_hull"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:electric_furnace"
+    ]
+  }
+}
