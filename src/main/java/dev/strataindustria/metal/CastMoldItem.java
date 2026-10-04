@@ -31,6 +31,7 @@ public class CastMoldItem extends Item {
     private final @Nullable MoldType type;
     private final boolean gear;
     private final boolean refractory;
+    private final boolean sand;
 
     public CastMoldItem(@Nullable MoldType type, Properties properties) {
         this(type, false, false, properties);
@@ -38,7 +39,13 @@ public class CastMoldItem extends Item {
 
     /** A gear mold casts {@code <metal>_gear}; a refractory mold takes any metal, iron and steel included. */
     public CastMoldItem(@Nullable MoldType type, boolean gear, boolean refractory, Properties properties) {
+        this(type, gear, refractory, false, properties);
+    }
+
+    /** A sand mold is pressed from a pattern, takes any metal and cracks apart after one casting. */
+    public CastMoldItem(@Nullable MoldType type, boolean gear, boolean refractory, boolean sand, Properties properties) {
         super(properties);
+        this.sand = sand;
         this.type = type;
         this.gear = gear;
         this.refractory = refractory;
@@ -117,6 +124,7 @@ public class CastMoldItem extends Item {
     /** Whether the mold cracks as the casting is knocked out of it. */
     public static boolean breaks(ItemStack mold, RandomSource random) {
         CastMoldItem item = (CastMoldItem) mold.getItem();
+        if (item.sand) return true;
         double breakChance = item.refractory ? Config.REFRACTORY_MOLD_BREAK.getAsDouble()
                 : item.type == null && !item.gear ? Config.INGOT_MOLD_BREAK.getAsDouble() : Config.TOOL_MOLD_BREAK.getAsDouble();
         return random.nextDouble() < breakChance;

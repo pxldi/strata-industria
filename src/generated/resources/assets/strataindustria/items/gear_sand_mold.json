@@ -1,0 +1,15 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "component": "strataindustria:cast_contents",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/gear_sand_mold"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/gear_sand_mold_filled"
+    },
+    "property": "minecraft:has_component"
+  }
+}

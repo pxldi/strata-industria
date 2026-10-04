@@ -138,6 +138,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "anvil.quick", "Hammer rings steadily");
         add(subtitles + "brick_kiln.work", "Brick kiln burns");
         add(subtitles + "brick_kiln.done", "Brick kiln fired");
+        add(subtitles + "pattern.carve", "Wood carved");
+        add(subtitles + "pattern.finish", "Pattern finished");
+        add(subtitles + "pattern.press", "Pattern pressed into sand");
         add(subtitles + "casting_table.set", "Mold set down");
         add(subtitles + "casting_table.knock", "Castings knocked out");
         add(subtitles + "anvil.dress", "Stone dressed");
@@ -745,6 +748,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.weld.hint", "Heat two iron ingots, add flux, and weld them into a double ingot on the anvil.");
         add(journal + "t2.brick_kiln", "Brick Kiln");
         add(journal + "t2.brick_kiln.hint", "Build a brick kiln out of bricks, set it on a lit forge, and fire clay pieces in it.");
+        add(journal + "t2.pattern_casting", "Pattern Casting");
+        add(journal + "t2.pattern_casting.hint", "Cut a plank blank from planks and carve it on the grid into a pattern. Press the pattern into a sand flask (right-click with a flask in your pack) to get a sand mold. A sand mold takes any metal, once.");
         add(journal + "t2.casting_table", "Casting Table");
         add(journal + "t2.casting_table.hint", "Lay fired molds on a casting table beside a crucible and pour. One pour fills every empty mold. Click the table to knock the castings out.");
         add(journal + "t2.quick_smith", "Quick Smith");
@@ -1034,6 +1039,15 @@ final class ModLanguageProvider extends LanguageProvider {
         add(problem + "no_alloy", "That mix will not make a usable metal");
         add(id + ".mold.contents", "Holds %s (%s units)");
         add(id + ".mold.still_molten", "The metal is still molten. Let it cool first");
+        addItem(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK, "Pattern Blank");
+        addItem(dev.strataindustria.registry.PatternRegistry.SAND_FLASK, "Sand Flask");
+        for (String shape : dev.strataindustria.registry.PatternRegistry.SHAPES) {
+            String name = title(shape);
+            addItem(dev.strataindustria.registry.PatternRegistry.PATTERNS.get(shape), name + " Pattern");
+            addItem(dev.strataindustria.registry.PatternRegistry.SAND_MOLDS.get(shape), name + " Sand Mold");
+        }
+        add("container." + id + ".carving", "Carving");
+        add(id + ".pattern.need_flask", "You need a sand flask");
         addBlock(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN, "Brick Kiln");
         addBlock(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE, "Casting Table");
         add("container." + id + ".brick_kiln", "Brick Kiln");

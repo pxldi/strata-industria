@@ -87,6 +87,7 @@ final class ModRecipeProvider extends RecipeProvider {
 
         knapping();
         clayForming();
+        patterns();
         forge();
         prologueMachines();
         fibre();
@@ -133,6 +134,39 @@ final class ModRecipeProvider extends RecipeProvider {
         form(mold(MoldType.HAMMER_HEAD), 1, ".....", ".....", "##.##", "#####", "#####");
         form(mold(MoldType.SAW_BLADE), 1, "#####", "#####", ".....", ".....", "#####");
         form(mold(MoldType.SWORD_BLADE), 1, "###..", "##..#", "#..##", "..###", ".####");
+    }
+
+    // Pattern casting: a plank blank is carved on the clay grid, a flask is a plank frame round damp sand.
+    private void patterns() {
+        shapeless(RecipeCategory.MISC, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get(), 2)
+                .requires(ItemTags.PLANKS)
+                .unlockedBy("has_crucible", has(ModItems.CRUCIBLE.get()))
+                .save(output, key("pattern_blank"));
+        shaped(RecipeCategory.MISC, dev.strataindustria.registry.PatternRegistry.SAND_FLASK.get(), 2)
+                .pattern("P P")
+                .pattern("PSP")
+                .define('P', ItemTags.PLANKS)
+                .define('S', Items.SAND)
+                .unlockedBy("has_crucible", has(ModItems.CRUCIBLE.get()))
+                .save(output, key("sand_flask"));
+        carve("ingot", ".....", "#####", "#...#", "#####", ".....");
+        carve("gear", "#.#.#", ".....", "#...#", ".....", "#.#.#");
+        carve(MoldType.PICKAXE_HEAD.id(), "#...#", ".###.", "#####", "#####", "#####");
+        carve(MoldType.AXE_HEAD.id(), "#.###", "....#", ".....", "....#", "#.###");
+        carve(MoldType.SHOVEL_HEAD.id(), "#...#", "#...#", "#...#", "#...#", "##.##");
+        carve(MoldType.HOE_HEAD.id(), ".....", "..###", "#####", "#####", "#####");
+        carve(MoldType.KNIFE_BLADE.id(), ".####", "..###", "#..##", "##..#", "###..");
+        carve(MoldType.HAMMER_HEAD.id(), ".....", ".....", "##.##", "#####", "#####");
+        carve(MoldType.SAW_BLADE.id(), "#####", "#####", ".....", ".....", "#####");
+        carve(MoldType.SWORD_BLADE.id(), "###..", "##..#", "#..##", "..###", ".####");
+    }
+
+    private void carve(String shape, String... rows) {
+        int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
+        Item result = dev.strataindustria.registry.PatternRegistry.PATTERNS.get(shape).get();
+        output.accept(key("carving/" + shape + "_pattern"), new KnappingRecipe(
+                Ingredient.of(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get()), 1, pattern, true,
+                new ItemStackTemplate(result)), null);
     }
 
     // Spec 4.5: seven bricks around a charcoal hearth.

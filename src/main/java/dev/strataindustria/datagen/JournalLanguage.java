@@ -81,6 +81,8 @@ final class JournalLanguage {
                 "The ore slumped and ran. I watched a pool of molten metal shine back at me.");
         lead.add("t2/brick_kiln", "A pit kiln takes a night and a pile of logs for a few pots. Is there a quicker way?",
                 "A small brick oven that stands on the forge. A load of pots is done in half a minute.");
+        lead.add("t2/pattern_casting", "Every mold I make by hand is a day of clay. Can I carve the shape once and use it again?",
+                "A plank carved to the shape, pressed into damp sand. The sand mold takes one pour and goes, the plank stays.");
         lead.add("t2/casting_table", "I pour one mold at a time and stand and wait. Can I do several at once?",
                 "Four molds on a stone table, and one pour fills the lot.");
         lead.add("t2/copper_ingot", "The melt is ready. What do I do with it before it sets?",
