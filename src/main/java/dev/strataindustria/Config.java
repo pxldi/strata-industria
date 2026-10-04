@@ -114,7 +114,7 @@ public final class Config {
 
     public static final ModConfigSpec.IntValue KILN_BURN_TICKS = BUILDER
             .comment("Ticks a lit pit kiln burns before its pieces are fired.")
-            .defineInRange("burnTicks", 6000, 20, 72000);
+            .defineInRange("burnTicks", 2400, 20, 72000);
 
     static {
         BUILDER.pop();
@@ -126,8 +126,8 @@ public final class Config {
     }
 
     public static final ModConfigSpec.BooleanValue HEAT_BURN_PLAYER = BUILDER
-            .comment("Holding an item at 480 °C or hotter without tongs in the off hand burns the player.")
-            .define("burnPlayer", true);
+            .comment("Off by default. When on, holding an item at 480 °C or hotter without tongs in the off hand burns the player.")
+            .define("burnPlayer", false);
 
     public static final ModConfigSpec.IntValue HEAT_MAX_PIPE_LENGTH = BUILDER
             .comment("How many heat pipe blocks heat crosses at most on its way from a firebox to a consumer.")
@@ -171,14 +171,14 @@ public final class Config {
     }
 
     public static final ModConfigSpec.DoubleValue INGOT_MOLD_BREAK = BUILDER
-            .comment("Chance an ingot mold breaks when the ingot is taken out.")
-            .defineInRange("ingotMoldBreak", 0.05, 0.0, 1.0);
+            .comment("Chance an ingot mold breaks (0 = fired molds last) when the ingot is taken out.")
+            .defineInRange("ingotMoldBreak", 0.0, 0.0, 1.0);
     public static final ModConfigSpec.DoubleValue TOOL_MOLD_BREAK = BUILDER
             .comment("Chance a tool mold breaks when the cast part is taken out.")
-            .defineInRange("toolMoldBreak", 0.10, 0.0, 1.0);
+            .defineInRange("toolMoldBreak", 0.0, 0.0, 1.0);
     public static final ModConfigSpec.DoubleValue REFRACTORY_MOLD_BREAK = BUILDER
             .comment("Chance a refractory mold breaks when the casting is taken out.")
-            .defineInRange("refractoryMoldBreak", 0.03, 0.0, 1.0);
+            .defineInRange("refractoryMoldBreak", 0.0, 0.0, 1.0);
 
     static {
         BUILDER.pop();
@@ -207,7 +207,7 @@ public final class Config {
 
     public static final ModConfigSpec.IntValue BLOOMERY_BURN_TICKS = BUILDER
             .comment("Ticks a bloomery run takes at 1200 °C or hotter, before bellows shorten it.")
-            .defineInRange("runTicks", 12000, 200, 240000);
+            .defineInRange("runTicks", 4800, 200, 240000);
     public static final ModConfigSpec.IntValue BLOOMERY_MIN_TEMPERATURE = BUILDER
             .comment("Lowest temperature, in °C, at which a bloomery makes a bloom.")
             .defineInRange("minTemperature", 1200, 800, 1600);

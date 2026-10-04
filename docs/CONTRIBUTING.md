@@ -68,7 +68,7 @@ src/generated/resources/ generated assets and data (do not edit by hand)
 
 ### Heat
 
-- Items at or above 480 °C burn the holder unless tongs are in the off hand; at or above 580 °C
+- Items at or above 480 °C burn the holder unless tongs are in the off hand (config `heat.burnPlayer`, off by default); at or above 580 °C
   they glow. To make a new item heatable, use `ModModelProvider.heatable` in datagen and add the
   item to the `HEATABLE` pattern in `TextureGen` so its glow layer is generated.
 

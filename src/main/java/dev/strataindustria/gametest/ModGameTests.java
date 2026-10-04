@@ -29,6 +29,7 @@ import dev.strataindustria.power.KineticNetworks;
 import dev.strataindustria.power.KineticState;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Alloy;
+import dev.strataindustria.Config;
 import dev.strataindustria.metal.CastMoldItem;
 import dev.strataindustria.metal.CrucibleBlockEntity;
 import dev.strataindustria.metal.Melt;
@@ -104,6 +105,7 @@ public final class ModGameTests {
         TESTS.put("smithing_solvable", ModGameTests::smithingSolvable);
         TESTS.put("item_heat", ModGameTests::itemHeat);
         TESTS.put("pit_kiln", ModGameTests::pitKiln);
+        TESTS.put("easy_defaults", ModGameTests::easyDefaults);
         TESTS.put("charcoal_pit", ModGameTests::charcoalPit);
         TESTS.put("charcoal_pit_exposed", ModGameTests::charcoalPitExposed);
         TESTS.put("crucible_casting", ModGameTests::crucibleCasting);
@@ -379,7 +381,7 @@ public final class ModGameTests {
         helper.assertTrue(kilnBlock.ignite(level, pos, state), "the kiln should catch");
 
         PitKilnBlockEntity kiln = (PitKilnBlockEntity) level.getBlockEntity(pos);
-        for (int tick = 0; tick < 6000 && level.getBlockState(pos).getValue(PitKilnBlock.LIT); tick++) {
+        for (int tick = 0; tick < 3000 && level.getBlockState(pos).getValue(PitKilnBlock.LIT); tick++) {
             PitKilnBlockEntity.serverTick(level, pos, level.getBlockState(pos), kiln);
         }
         BlockState done = level.getBlockState(pos);
@@ -394,6 +396,18 @@ public final class ModGameTests {
                 .setValue(PitKilnBlock.STRAW, PitKilnBlock.MAX_LAYERS).setValue(PitKilnBlock.LOGS, PitKilnBlock.MAX_LAYERS);
         level.setBlock(open, exposed, Block.UPDATE_ALL);
         helper.assertTrue(!kilnBlock.canIgnite(level, open, exposed), "a kiln without walls should not light");
+        helper.succeed();
+    }
+
+    // Prologue defaults: hot items do not burn, fired molds last, the kiln fires in about two minutes.
+
+    private static void easyDefaults(GameTestHelper helper) {
+        helper.assertTrue(!Config.HEAT_BURN_PLAYER.getAsBoolean(), "hot items should not burn by default");
+        ItemStack mold = new ItemStack(ModItems.INGOT_MOLD.get());
+        for (int i = 0; i < 200; i++) {
+            helper.assertTrue(!CastMoldItem.breaks(mold, helper.getLevel().getRandom()), "a fired mold should not break");
+        }
+        helper.assertTrue(Config.KILN_BURN_TICKS.getAsInt() <= 3000, "the pit kiln should be short");
         helper.succeed();
     }
 
