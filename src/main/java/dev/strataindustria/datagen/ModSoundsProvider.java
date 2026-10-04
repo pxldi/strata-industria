@@ -84,6 +84,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 4; i++) dress.with(sound("minecraft:dig/stone" + i).pitch(0.7f));
         add(ModSounds.ANVIL_DRESS, dress);
         add(ModSounds.PROSPECT, stone("prospect", 1.9f, 0.6f));
+        // The journal: pages flipping open.
+        SoundDefinition pages = definition().subtitle(subtitle("journal.open"));
+        for (int i = 1; i <= 3; i++) pages.with(sound("minecraft:item/book/open_flip" + i).volume(0.8f));
+        add(ModSounds.JOURNAL_OPEN, pages);
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

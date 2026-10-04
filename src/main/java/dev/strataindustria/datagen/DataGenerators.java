@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.advancements.AdvancementProvider;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -45,6 +46,7 @@ public final class DataGenerators {
         event.createProvider(ModItemTagsProvider::new);
         event.createReloadableRegistryObjects(
                 new RegistrySetBuilder()
+                        .add(Registries.ADVANCEMENT, new AdvancementProvider(List.of(ModAdvancements::new)))
                         .add(RecipeProvider.asBootstrap(ModRecipeProvider::new))
                         .add(Registries.LOOT_TABLE, new LootTableProvider(
                                 Set.of(),

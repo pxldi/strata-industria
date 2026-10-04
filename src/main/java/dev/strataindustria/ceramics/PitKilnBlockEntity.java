@@ -2,6 +2,7 @@ package dev.strataindustria.ceramics;
 
 import dev.strataindustria.Config;
 import dev.strataindustria.fire.Ignitable;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.ModTags;
@@ -15,8 +16,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.Containers;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -134,6 +135,7 @@ public class PitKilnBlockEntity extends BlockEntity {
         level.setBlock(pos, state.setValue(PitKilnBlock.STRAW, 0).setValue(PitKilnBlock.LOGS, 0).setValue(PitKilnBlock.LIT, false),
                 Block.UPDATE_ALL);
         level.playSound(null, pos, ModSounds.KILN_FIRED.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+        Journal.awardNear(level, pos, Journal.PIT_KILN_FIRED);
         if (level instanceof ServerLevel serverLevel) {
             serverLevel.sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX() + 0.5, pos.getY() + 0.6, pos.getZ() + 0.5,
                     12, 0.3, 0.2, 0.3, 0.02);

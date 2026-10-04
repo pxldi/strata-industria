@@ -1,11 +1,13 @@
 package dev.strataindustria.knapping;
 
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModMenus;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.registry.ModSounds;
 import java.util.Optional;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
@@ -129,6 +131,7 @@ public class KnappingMenu extends AbstractContainerMenu {
             if (extra > 0) taker.getItemInHand(hand).shrink(extra);
         }
         finished.set(1);
+        if (taker instanceof ServerPlayer player) Journal.award(player, Knapping.isClay(material) ? Journal.CLAY_FORMING : Journal.KNAP);
         taker.level().playSound(null, taker.getX(), taker.getY(), taker.getZ(), Knapping.finishSound(material),
                 SoundSource.PLAYERS, 0.8f, 1.0f);
         broadcastChanges();

@@ -66,6 +66,7 @@ public final class TextureGen {
     static final Ramp CHARCOAL = ramp(0, 0x141416, 0x232327, 0x34343a, 0x4a4a52, 0x626270);
     static final Ramp ASH = ramp(0, 0x4a4846, 0x64615e, 0x807c78, 0x9c9894, 0xb8b4ae);
     static final Ramp LEATHER = ramp(0, 0x3a2216, 0x553322, 0x744834, 0x92614a, 0xb07e62);
+    static final Ramp PAPER = ramp(0, 0x6e6250, 0x948670, 0xb8aa8e, 0xd6caae, 0xece2c8);
 
     record Rock(String name, Ramp ramp, String category) {}
 
@@ -758,6 +759,39 @@ public final class TextureGen {
             "..222...........",
             "................",
     };
+
+    /** A small book: woven straw covers, a twine-stitched spine and a twine tie, page edges at the side. */
+    static final String[] FIELD_JOURNAL = {
+            "................",
+            "..2355555554....",
+            "..2353443344r...",
+            "..2354433443s...",
+            "..dc54334433r...",
+            "..2353344334s...",
+            "..2353443344r...",
+            "..dcccccccccd...",
+            "..23443344cdec..",
+            "..2343344334sb..",
+            "..dc33443344r...",
+            "..2324422442s...",
+            "..2344224422r...",
+            "..dc22222222q...",
+            "....qrrrrrrrq...",
+            "................",
+    };
+
+    /** Like {@link #art}, but digits draw from the first ramp, a-e from the second and p-t from the third. */
+    static BufferedImage art(String[] rows, Ramp digits, Ramp letters, Ramp paper) {
+        BufferedImage im = img();
+        for (int y = 0; y < rows.length; y++)
+            for (int x = 0; x < rows[y].length(); x++) {
+                char ch = rows[y].charAt(x);
+                if (ch >= '1' && ch <= '5') px(im, x, y, digits.get(ch - '0'));
+                else if (ch >= 'a' && ch <= 'e') px(im, x, y, letters.get(ch - 'a' + 1));
+                else if (ch >= 'p' && ch <= 't') px(im, x, y, paper.get(ch - 'p' + 1));
+            }
+        return outline(im);
+    }
 
     /** Full 16x16 art without centring, then outlined. */
     static BufferedImage art(Ramp a, String[] rows) {
@@ -2022,6 +2056,7 @@ public final class TextureGen {
         // Stone age (tier 0-2 spec 3).
         save("item/straw", art(STRAW, STRAW_SHEAF));
         save("item/twine", art(FIBRE, TWINE_HANK));
+        save("item/field_journal", art(FIELD_JOURNAL, STRAW, FIBRE, PAPER));
         save("item/fibre_cloth", fibreCloth());
         save("item/stone_axe_head", map(FLINT, KNAPPED_AXE_HEAD));
         save("item/stone_knife_blade", map(FLINT, KNAPPED_KNIFE_BLADE));
