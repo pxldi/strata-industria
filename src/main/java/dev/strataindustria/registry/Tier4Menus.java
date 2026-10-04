@@ -25,6 +25,9 @@ public final class Tier4Menus {
             ModMenus.MENUS.register("washer", () -> IMenuTypeExtension.create((id, inventory, buf) ->
                     new dev.strataindustria.processing.ProcessingMenu(dev.strataindustria.processing.MachineLayout.WASHER, id, inventory, buf)));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.ironworks.BlastFurnaceMenu>> BLAST_FURNACE =
+            ModMenus.MENUS.register("blast_furnace", () -> IMenuTypeExtension.create(dev.strataindustria.ironworks.BlastFurnaceMenu::new));
+
     public static void init() {}
 
     private Tier4Menus() {}

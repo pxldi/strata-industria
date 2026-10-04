@@ -73,6 +73,18 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> WASHER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.WASHER);
     public static final DeferredItem<BlockItem> IRON_STEP_UP_GEARBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_STEP_UP_GEARBOX);
 
+    // Spec 12.1 and 11.6: the blast furnace, the blower, and the slag the furnace leaves.
+    public static final DeferredItem<BlockItem> REFRACTORY_CASING = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.REFRACTORY_CASING);
+    public static final DeferredItem<BlockItem> BLAST_FURNACE_CONTROLLER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BLAST_FURNACE_CONTROLLER);
+    public static final DeferredItem<BlockItem> TUYERE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.TUYERE);
+    public static final DeferredItem<BlockItem> CHARGING_HATCH = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CHARGING_HATCH);
+    public static final DeferredItem<BlockItem> TAP_HATCH = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.TAP_HATCH);
+    public static final DeferredItem<BlockItem> BLOWER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BLOWER);
+    public static final DeferredItem<Item> SLAG = ModItems.ITEMS.registerSimpleItem("slag");
+    /** Spec 4.6: ground slag, a fertiliser worth two bone meal. */
+    public static final DeferredItem<dev.strataindustria.ironworks.SlagDustItem> SLAG_DUST = ModItems.ITEMS.registerItem("slag_dust",
+            dev.strataindustria.ironworks.SlagDustItem::new);
+
     // Spec 4.4 and 5.3: roasted sphalerite, by grade, and the small piece from a surface indicator.
     public static final Map<OreGrade, DeferredItem<Item>> ZINC_CALCINES = new EnumMap<>(OreGrade.class);
     public static final DeferredItem<Item> SMALL_ZINC_CALCINE = ModItems.ITEMS.registerSimpleItem("small_zinc_calcine");

@@ -80,6 +80,8 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(ItemTags.WOODEN_STAIRS).add(Tier4Items.TREATED_STAIRS.getKey());
         tag(ItemTags.WOODEN_FENCES).add(Tier4Items.TREATED_FENCE.getKey());
         tag(Tags.Items.STORAGE_BLOCKS).add(Tier4Items.COKE_BLOCK.getKey());
+        // Tier 4 spec 12.1: blast furnace flux; bloomery slag still carries its limestone.
+        tag(dev.strataindustria.registry.ModTags.Items.FLUX).add(ModItems.FLUX.getKey()).add(ModItems.BLOOMERY_SLAG.getKey());
 
         tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.LOOSE_ROCKS).add(key(Items.FLINT));
         tag(Tags.Items.STRINGS).add(ModItems.TWINE.getKey());
