@@ -53,6 +53,11 @@ src/generated/resources/ generated assets and data (do not edit by hand)
   (`java tools/texturegen/TextureGen.java` from the repo root). Output is deterministic and
   written into `src/main/resources/assets/strataindustria/textures`; a preview sheet goes to
   `build/texturegen/preview.png`. Files in `HAND_MADE` are never overwritten.
+- Art style v2 (vanilla-native, `art/STYLE_GUIDE.md`): rocks, cobble and ore overlays already use it. The
+  helpers live in `TextureGen.V2` (grain field, share quantise, stamped ore clusters, hard item outline,
+  v2 ramps); the `*_V2` and `ORE_*` ramps are the v2 ones, the older ramps are reworked chunk by chunk.
+  Check a new texture with `python3 art/tools/check_textures.py <rock|ore|item|machine|bricks> file.png`
+  (composite ore overlays on their host rock first).
 - Structure blocks have their own generator, `tools/texturegen/StructureTextures.java`.
 - Tier 5 (electric) textures come from `tools/texturegen/ElectricTextures.java`, which reuses
   `TextureGen`'s helpers; its javadoc has the run command. It also adds the latex strip to
