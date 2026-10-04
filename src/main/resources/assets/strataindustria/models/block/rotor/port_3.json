@@ -1,0 +1,15 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/overlay/port_out_3",
+    "port": "strataindustria:block/overlay/port_out_3"
+  },
+  "elements": [
+    {
+      "from": [0, 16, 0],
+      "to": [16, 16.1, 16],
+      "faces": {
+        "up": {"texture": "#port", "uv": [0, 0, 16, 16]}
+      }
+    }
+  ]
+}

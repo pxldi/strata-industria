@@ -69,6 +69,8 @@ final class ModItemTagsProvider extends ItemTagsProvider {
                 if (mineral.isIron()) tag(Tags.Items.ORES_IRON).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
                 if (mineral == OreMineral.NATIVE_GOLD) tag(Tags.Items.ORES_GOLD).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
                 if (mineral == OreMineral.BITUMINOUS_COAL) tag(Tags.Items.ORES_COAL).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
+                if (mineral == OreMineral.CINNABAR) tag(Tags.Items.ORES_REDSTONE).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
+                if (mineral == OreMineral.LAZURITE) tag(Tags.Items.ORES_LAPIS).add(ModItems.ORE_BLOCKS.get(rock).get(mineral).getKey());
             }
         }
 

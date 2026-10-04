@@ -2930,6 +2930,37 @@ public final class ElectricTextures {
         System.out.println("wrote " + OUTS.size() + " textures");
     }
 
+    // ---------------------------------------------------------------- output ports (spec 11.2, 23.2)
+
+    /** A small ring plate for an electrolyser face: one colour per product, a dark cross for a closed face. */
+    static void ports() throws IOException {
+        int[] colours = {0x8fd0e8, 0xe0a838, 0x7ac048};
+        for (int n = 1; n <= 3; n++) save("block/overlay/port_out_" + n, port(colours[n - 1], false));
+        save("block/overlay/port_out_none", port(0x6a707a, true));
+    }
+
+    private static BufferedImage port(int colour, boolean closed) {
+        BufferedImage im = TextureGen.img();
+        int dark = 0x1c1e24, mid = 0x2e3138;
+        for (int y = 4; y <= 11; y++)
+            for (int x = 4; x <= 11; x++) {
+                boolean corner = (x == 4 || x == 11) && (y == 4 || y == 11);
+                if (corner) continue;
+                boolean edge = x == 4 || x == 11 || y == 4 || y == 11;
+                boolean ring = x == 5 || x == 10 || y == 5 || y == 10;
+                TextureGen.px(im, x, y, edge ? dark : ring ? colour : mid);
+            }
+        if (closed) {
+            for (int i = 6; i <= 9; i++) {
+                TextureGen.px(im, i, i, colour);
+                TextureGen.px(im, i, 15 - i, colour);
+            }
+        } else {
+            fill(im, 7, 7, 8, 8, dark);
+        }
+        return im;
+    }
+
     // ---------------------------------------------------------------- hand tools (spec 13)
 
     static final TextureGen.Ramp SCREEN = TextureGen.ramp(0xcff5c0, 0x0e2a14, 0x1e4a26, 0x2e7a36, 0x4fae4a, 0x8ad66a);

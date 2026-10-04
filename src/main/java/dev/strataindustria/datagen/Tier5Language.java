@@ -37,6 +37,10 @@ final class Tier5Language {
         lang.accept(item + "wrench", "Wrench");
         lang.accept(item + "ore_scanner", "Ore Scanner");
         lang.accept(id + ".machine.downgraded", "Back to %s");
+        lang.accept(id + ".port.face", "%s face: %s");
+        lang.accept(id + ".port.auto", "any product");
+        lang.accept(id + ".port.none", "closed");
+        lang.accept(id + ".port.product", "product %s only");
         lang.accept(id + ".ore_scanner.charge", "Charge: %s / %s J");
         lang.accept(id + ".ore_scanner.charged", "Scanner charge %s / %s J");
         lang.accept(id + ".ore_scanner.full", "Scanner is full");

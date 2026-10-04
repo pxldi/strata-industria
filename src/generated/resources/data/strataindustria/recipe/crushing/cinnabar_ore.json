@@ -1,0 +1,18 @@
+{
+  "type": "strataindustria:crushing",
+  "ingredient": [
+    "strataindustria:limestone_cinnabar_ore",
+    "strataindustria:shale_cinnabar_ore",
+    "strataindustria:slate_cinnabar_ore",
+    "strataindustria:marble_cinnabar_ore",
+    "strataindustria:granite_cinnabar_ore",
+    "strataindustria:gabbro_cinnabar_ore",
+    "strataindustria:basalt_cinnabar_ore",
+    "strataindustria:rhyolite_cinnabar_ore"
+  ],
+  "min_tier": "lv",
+  "result": {
+    "count": 8,
+    "id": "minecraft:redstone"
+  }
+}

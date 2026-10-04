@@ -9,10 +9,14 @@
   "minerals": [
     {
       "mineral": "strataindustria:magnetite",
-      "weight": 90
+      "weight": 80
     },
     {
       "mineral": "strataindustria:native_copper",
+      "weight": 10
+    },
+    {
+      "mineral": "strataindustria:cinnabar",
       "weight": 10
     }
   ],

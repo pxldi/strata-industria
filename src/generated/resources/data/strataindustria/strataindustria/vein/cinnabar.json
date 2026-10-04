@@ -1,0 +1,30 @@
+{
+  "hosts": [
+    "strataindustria:basalt",
+    "strataindustria:shale"
+  ],
+  "max_y": 80,
+  "min_y": -48,
+  "minerals": [
+    {
+      "mineral": "strataindustria:cinnabar",
+      "weight": 100
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:basalt"
+  ],
+  "shape": {
+    "type": "strataindustria:cluster",
+    "density": 0.28,
+    "radius_horizontal": {
+      "max": 12,
+      "min": 8
+    },
+    "radius_vertical": {
+      "max": 6,
+      "min": 4
+    }
+  },
+  "weight": 20
+}

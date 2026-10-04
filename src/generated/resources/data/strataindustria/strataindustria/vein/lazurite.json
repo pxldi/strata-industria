@@ -1,0 +1,29 @@
+{
+  "hosts": [
+    "strataindustria:marble"
+  ],
+  "max_y": 100,
+  "min_y": -32,
+  "minerals": [
+    {
+      "mineral": "strataindustria:lazurite",
+      "weight": 100
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:marble"
+  ],
+  "shape": {
+    "type": "strataindustria:cluster",
+    "density": 0.3,
+    "radius_horizontal": {
+      "max": 7,
+      "min": 4
+    },
+    "radius_vertical": {
+      "max": 4,
+      "min": 3
+    }
+  },
+  "weight": 8
+}

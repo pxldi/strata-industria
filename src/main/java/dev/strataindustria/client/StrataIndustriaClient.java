@@ -135,6 +135,9 @@ public final class StrataIndustriaClient {
         // Tier 4 spec 21.4: the blower's fan turns behind its grille.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.BLOWER.get(), context -> new RotorRenderer<>(context,
                 "blower_fan", state -> state.getValue(dev.strataindustria.ironworks.BlowerBlock.FACING), 0));
+        // Tier 5 spec 11.2: wrench-set output ports on the electrolyser.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.ELECTROLYSER.get(),
+                dev.strataindustria.client.render.PortRenderer::new);
         // Tier 4 spec 21.4: the fluid level behind a tank's glass.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.FLUID_TANK.get(),
                 dev.strataindustria.client.render.FluidTankRenderer::new);

@@ -34,7 +34,7 @@ public class MaceratorBlockEntity extends ElectricMachineBlockEntity {
 
     @Override
     protected Optional<Operation> operation(ServerLevel level, ItemStack input) {
-        var crushing = CrushingRecipe.recipeFor(level, input);
+        var crushing = CrushingRecipe.recipeFor(level, input, tier());
         if (crushing.isPresent()) return Optional.of(new Operation(maceration(crushing.get().value()), BASE_TICKS));
         return QuernBlockEntity.recipeFor(level, input)
                 .map(quern -> new Operation(new Processing(List.of(quern.value().assemble(new SingleRecipeInput(input))), List.of()), BASE_TICKS));

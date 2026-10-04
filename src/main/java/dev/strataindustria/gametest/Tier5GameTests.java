@@ -115,6 +115,9 @@ final class Tier5GameTests {
         tests.put("tier5_extruder", Tier5GameTests::extruder);
         tests.put("tier5_mv_upgrade", Tier5GameTests::mvUpgrade);
         tests.put("tier5_wrench", Tier5GameTests::wrench);
+        tests.put("tier5_redstone_ores", Tier5GameTests::redstoneOres);
+        tests.put("tier5_mixer_barrel", Tier5GameTests::mixerBarrel);
+        tests.put("tier5_electrolyser_ports", Tier5GameTests::electrolyserPorts);
         tests.put("tier5_ore_scanner", Tier5GameTests::oreScanner);
         tests.put("tier5_transformer", Tier5GameTests::transformer);
         tests.put("tier5_energy_adapter", Tier5GameTests::energyAdapter);
@@ -614,6 +617,71 @@ final class Tier5GameTests {
         BlockPos stone = pos.south(4);
         level.setBlock(stone, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
         helper.assertTrue(WrenchItem.apply(level, stone, player, up) == net.minecraft.world.InteractionResult.PASS, "stone is none of its business");
+        helper.succeed();
+    }
+
+    // Spec 18 and 10.3: cinnabar and lazurite exist in every rock and need a steel tool; only the macerator frees
+    // 8 redstone or lapis from a silk-touched block, the crusher has no recipe for it.
+    private static void redstoneOres(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        for (var rock : dev.strataindustria.geology.Rock.values()) {
+            for (var entry : java.util.Map.of(dev.strataindustria.geology.OreMineral.CINNABAR, Items.REDSTONE,
+                    dev.strataindustria.geology.OreMineral.LAZURITE, Items.LAPIS_LAZULI).entrySet()) {
+                Block ore = ModBlocks.ORES.get(rock).get(entry.getKey()).get();
+                helper.assertTrue(ore.defaultBlockState().is(dev.strataindustria.registry.ModTags.Blocks.NEEDS_STEEL_TOOL), rock.id() + " " + entry.getKey().id() + " needs steel");
+                ItemStack stack = new ItemStack(ore);
+                helper.assertTrue(CrushingRecipe.recipeFor(level, stack).isEmpty(), "the crusher cannot grind " + entry.getKey().id());
+                var recipe = CrushingRecipe.recipeFor(level, stack, ElectricTier.LV);
+                helper.assertTrue(recipe.isPresent(), "the macerator grinds " + rock.id() + " " + entry.getKey().id());
+                helper.assertTrue(recipe.get().value().result().create().is(entry.getValue()) && recipe.get().value().result().count() == 8, "8 of the item");
+            }
+        }
+        helper.assertTrue(ModBlocks.SMALL_ORES.get(dev.strataindustria.geology.OreMineral.CINNABAR).get().defaultBlockState().is(dev.strataindustria.registry.ModTags.Blocks.SMALL_ORES),
+                "the cinnabar indicator is a small ore");
+        helper.succeed();
+    }
+
+    // Spec 11.1: the mixer runs a barrel recipe at one tenth of its ticks: 1000 mB latex makes 4 raw rubber in 120.
+    private static void mixerBarrel(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(pos, Tier5Blocks.MIXER.get().defaultBlockState(), Block.UPDATE_ALL);
+        MixerBlockEntity mixer = (MixerBlockEntity) level.getBlockEntity(pos);
+        mixer.setTank(0, Tier5Fluids.LATEX.get(), 1000);
+        helper.assertTrue(mixer.fill(Direction.UP, Tier5Fluids.LATEX.get(), 1, 0, true) == 1, "latex is a fluid the mixer takes");
+        int out = mixer.layout().itemInputs();
+        helper.assertValueEqual(chemicalTicks(level, pos, mixer, () -> mixer.getItem(out).is(Tier5Items.RAW_RUBBER.get())), 120, "a tenth of the barrel's 1200 ticks");
+        helper.assertValueEqual(mixer.getItem(out).getCount(), 4, "four raw rubber");
+        helper.assertValueEqual(mixer.amount(0), 0, "the latex is used up");
+        helper.succeed();
+    }
+
+    // Spec 11.2: a wrench on an electrolyser face steps auto, product 1, 2, 3, none; the front turns the machine; a product
+    // leaves only through the faces that take it.
+    private static void electrolyserPorts(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        player.setShiftKeyDown(false);
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(pos, Tier5Blocks.ELECTROLYSER.get().defaultBlockState().setValue(ElectricMachineBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        ElectrolyserBlockEntity cell = (ElectrolyserBlockEntity) level.getBlockEntity(pos);
+        var east = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.EAST, pos, false);
+        for (int expected : new int[] {1, 2, 3, 4, 0}) {
+            helper.assertTrue(WrenchItem.apply(level, pos, player, east) == net.minecraft.world.InteractionResult.SUCCESS, "the wrench handles the port");
+            helper.assertValueEqual(cell.faceMode(Direction.EAST), expected, "east face setting");
+        }
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.FACING), Direction.NORTH, "a side click does not turn it");
+        helper.assertTrue(cell.faceTakes(Direction.EAST, 0) && cell.faceTakes(Direction.EAST, 2), "auto takes any product");
+        WrenchItem.apply(level, pos, player, east);
+        helper.assertTrue(cell.faceTakes(Direction.EAST, 0) && !cell.faceTakes(Direction.EAST, 1), "product 1 only");
+        WrenchItem.apply(level, pos, player, east);
+        WrenchItem.apply(level, pos, player, east);
+        WrenchItem.apply(level, pos, player, east);
+        helper.assertTrue(!cell.faceTakes(Direction.EAST, 0) && !cell.faceTakes(Direction.EAST, 2), "none takes nothing");
+        var front = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.NORTH, pos, false);
+        WrenchItem.apply(level, pos, player, front);
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.FACING), Direction.EAST, "the front turns it a quarter");
         helper.succeed();
     }
 

@@ -85,7 +85,7 @@ final class GeologyData {
         vein(ctx, "hematite", VeinType.ClusterShape.layer(12, 20, 3, 5, 0.35f),
                 List.of(m(OreMineral.HEMATITE, 100)), List.of(SHALE, SLATE), List.of(SHALE), -32, 120, 30);
         vein(ctx, "magnetite", VeinType.ClusterShape.of(6, 10, 4, 6, 0.30f),
-                List.of(m(OreMineral.MAGNETITE, 90), m(OreMineral.NATIVE_COPPER, 10)), List.of(GABBRO, BASALT, MARBLE), List.of(GABBRO),
+                List.of(m(OreMineral.MAGNETITE, 80), m(OreMineral.NATIVE_COPPER, 10), m(OreMineral.CINNABAR, 10)), List.of(GABBRO, BASALT, MARBLE), List.of(GABBRO),
                 -64, 100, 20);
         vein(ctx, "native_gold", VeinType.ClusterShape.of(3, 5, 3, 4, 0.20f),
                 List.of(m(OreMineral.NATIVE_GOLD, 100)), List.of(GRANITE, RHYOLITE), List.of(GRANITE), -64, 60, 8);
@@ -97,6 +97,11 @@ final class GeologyData {
                 List.of(m(OreMineral.SULFUR, 100)), List.of(BASALT), List.of(BASALT), 20, 160, 15);
         vein(ctx, "bituminous_coal", VeinType.ClusterShape.layer(16, 24, 2, 4, 0.70f),
                 List.of(m(OreMineral.BITUMINOUS_COAL, 100)), List.of(SHALE, SLATE, LIMESTONE), List.of(SHALE), -32, 80, 25);
+        // Tier 5 (tier 5 spec 18): cinnabar in volcanic basalt and shale basins, lazurite at marble contacts.
+        vein(ctx, "cinnabar", VeinType.ClusterShape.of(8, 12, 4, 6, 0.28f),
+                List.of(m(OreMineral.CINNABAR, 100)), List.of(BASALT, SHALE), List.of(BASALT), -48, 80, 20);
+        vein(ctx, "lazurite", VeinType.ClusterShape.of(4, 7, 3, 4, 0.30f),
+                List.of(m(OreMineral.LAZURITE, 100)), List.of(MARBLE), List.of(MARBLE), -32, 100, 8);
         sediment(ctx, "lignite", VeinType.ClusterShape.layer(14, 24, 2, 3, 0.60f), ModBlocks.LIGNITE_SEAM.get().defaultBlockState(),
                 List.of(SHALE, LIMESTONE, SLATE), List.of(SHALE), 20, 140, 25);
         sediment(ctx, "fire_clay", VeinType.ClusterShape.layer(10, 16, 2, 4, 0.80f), ModBlocks.FIRE_CLAY.get().defaultBlockState(),
