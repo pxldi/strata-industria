@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "strataindustria:block/log_pile_top",
+    "side": "strataindustria:block/log_pile_side"
+  }
+}
