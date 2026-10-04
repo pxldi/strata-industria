@@ -87,7 +87,7 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
     /** The charge in the order it went in, so the last stack can come back out. */
     private NonNullList<ItemStack> charge = NonNullList.withSize(CHARGE_SLOTS, ItemStack.EMPTY);
     private float temperature = Heat.AMBIENT;
-    /** Share of the burn done, 0 to 1. */
+    /** Share of the burn done, 0 to 1. It survives the fire going out, so a relit run resumes (spec 5.3). */
     private float progress;
     /** Set when a lit run settled below 1200 °C, until the next lighting. */
     private boolean tooCool;
@@ -173,15 +173,23 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
             if (player != null) player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".bloomery.full"));
             return -1;
         }
+        // Top up the last stack, then start new ones, never past the item's own stack size.
         int last = lastFilled();
+        int left = amount;
         if (last >= 0 && ItemStack.isSameItemSameComponents(charge.get(last), stack)) {
-            charge.get(last).grow(amount);
-        } else if (last + 1 < charge.size()) {
-            charge.set(last + 1, stack.copyWithCount(amount));
-        } else {
-            return -1;
+            int add = Math.min(left, charge.get(last).getMaxStackSize() - charge.get(last).getCount());
+            charge.get(last).grow(Math.max(0, add));
+            left -= Math.max(0, add);
         }
+        for (int slot = last + 1; left > 0 && slot < charge.size(); slot++) {
+            int add = Math.min(left, stack.getMaxStackSize());
+            charge.set(slot, stack.copyWithCount(add));
+            left -= add;
+        }
+        amount -= left;
+        if (amount <= 0) return -1;
         tooCool = false;
+        progress = 0;
         setChanged();
         if (level != null) {
             level.playSound(null, worldPosition, ModSounds.BLOOMERY_CHARGE.get(), SoundSource.BLOCKS, 0.8f,
@@ -202,6 +210,7 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
         if (last < 0) return ItemStack.EMPTY;
         ItemStack out = charge.get(last);
         charge.set(last, ItemStack.EMPTY);
+        progress = 0;
         setChanged();
         return out;
     }
@@ -259,7 +268,6 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     void onLit() {
-        progress = 0;
         tooCool = false;
         setChanged();
     }

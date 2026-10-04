@@ -279,7 +279,8 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     private void recordPattern(ServerLevel server, RecipeHolder<AnvilRecipe> recipe, SmithingProgress progress, int target, int craft,
             ItemStack out) {
         ItemStack pattern = items.get(PATTERN);
-        if (!isBlankPattern(pattern) || progress.history().isEmpty()) return;
+        // A run longer than the remembered history cannot be replayed, so it leaves the pattern blank.
+        if (!isBlankPattern(pattern) || progress.history().isEmpty() || progress.history().size() != progress.hits()) return;
         pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new SmithingPattern(recipe.id(),
                 net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(out.getItem()), target, progress.history(), craft));
         server.playSound(null, worldPosition, SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS, 0.8f, 1.1f);
