@@ -154,7 +154,12 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder coal = goal(ironAnvil, "t4/coal", Items.COAL, has(Items.COAL));
         AdvancementHolder cokeOven = goal(coal, "t4/coke_oven", Tier4Items.COKE_OVEN_DOOR.get(),
                 JournalTrigger.TriggerInstance.of(Journal.COKE_OVEN_BUILT));
-        goal(cokeOven, "t4/coke", Tier4Items.COKE.get(), has(Tier4Items.COKE.get()));
+        AdvancementHolder coke = goal(cokeOven, "t4/coke", Tier4Items.COKE.get(), has(Tier4Items.COKE.get()));
+        AdvancementHolder refractory = goal(coke, "t4/refractory_crucible", Tier4Items.REFRACTORY_CRUCIBLE.get(),
+                has(Tier4Items.REFRACTORY_CRUCIBLE.get()));
+        AdvancementHolder moltenIron = goal(refractory, "t4/molten_iron", Items.IRON_INGOT,
+                JournalTrigger.TriggerInstance.of(Journal.MOLTEN_IRON));
+        goal(moltenIron, "t4/steel", ModItems.ingot(Metal.STEEL), AdvancementType.GOAL, has(ModItems.ingot(Metal.STEEL)));
         goal(cokeOven, "t4/creosote", Tier4Items.TREATED_PLANKS.get(), has(Tier4Items.TREATED_PLANKS.get()));
         List<ItemLike> sphalerite = new ArrayList<>();
         sphalerite.add(ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get());

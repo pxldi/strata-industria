@@ -63,22 +63,32 @@ public record Melt(Map<Metal, Integer> units, int qualityUnits) {
         return new Melt(sum, qualityUnits + other.qualityUnits);
     }
 
-    /** Takes {@code amount} units out evenly across the metals. */
+    /**
+     * Takes {@code amount} units out evenly across the metals. Leftover units from rounding go to the
+     * metals with the largest fractions, so a 1% share of carbon still leaves with a 100-unit pour.
+     */
     public Melt minus(int amount) {
         int total = total();
         if (amount >= total) return EMPTY;
-        Map<Metal, Integer> left = new EnumMap<>(Metal.class);
-        int removed = 0;
-        Metal largest = null;
+        Map<Metal, Integer> take = new EnumMap<>(Metal.class);
+        Map<Metal, Double> fraction = new EnumMap<>(Metal.class);
+        int taken = 0;
         for (var e : units.entrySet()) {
-            int take = (int) Math.floor(e.getValue() * (double) amount / total);
-            left.put(e.getKey(), e.getValue() - take);
-            removed += take;
-            if (largest == null || e.getValue() > units.get(largest)) largest = e.getKey();
+            double exact = e.getValue() * (double) amount / total;
+            int floor = (int) Math.floor(exact);
+            take.put(e.getKey(), floor);
+            fraction.put(e.getKey(), exact - floor);
+            taken += floor;
         }
-        // Rounding leftovers come out of the largest share.
-        if (largest != null) left.merge(largest, -(amount - removed), Integer::sum);
-        left.values().removeIf(u -> u <= 0);
+        int spare = amount - taken;
+        var order = new java.util.ArrayList<>(units.keySet());
+        order.sort((a, b) -> Double.compare(fraction.get(b), fraction.get(a)));
+        for (int i = 0; i < spare && i < order.size(); i++) take.merge(order.get(i), 1, Integer::sum);
+        Map<Metal, Integer> left = new EnumMap<>(Metal.class);
+        units.forEach((metal, u) -> {
+            int rest = u - take.get(metal);
+            if (rest > 0) left.put(metal, rest);
+        });
         return new Melt(left, Math.round(qualityUnits * (float) (total - amount) / total));
     }
 

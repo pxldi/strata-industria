@@ -91,15 +91,22 @@ public enum Alloy {
         return Optional.empty();
     }
 
-    /** The alloy this mix is nearest to, for the hint line: the one whose alloying metal is present. */
+    /**
+     * The alloy this mix is nearest to, for the hint line: of the alloys whose metals are both present,
+     * the one whose range for the alloying metal is closest. Pig iron is left out: it comes from the
+     * blast furnace, and iron with too much carbon is aiming for steel.
+     */
     public static Optional<Alloy> closest(Melt melt) {
         Alloy best = null;
-        float bestShare = 0;
+        float bestDistance = Float.MAX_VALUE;
         for (Alloy alloy : values()) {
+            if (alloy.result == Metal.PIG_IRON || alloy.result == alloy.base) continue;
             float share = melt.share(alloy.added);
-            if (melt.share(alloy.base) > 0 && share > bestShare) {
+            if (melt.share(alloy.base) <= 0 || share <= 0) continue;
+            float distance = share < alloy.addedMin ? alloy.addedMin - share : share > alloy.addedMax ? share - alloy.addedMax : 0;
+            if (distance < bestDistance) {
                 best = alloy;
-                bestShare = share;
+                bestDistance = distance;
             }
         }
         return Optional.ofNullable(best);

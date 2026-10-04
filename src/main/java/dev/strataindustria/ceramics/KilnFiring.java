@@ -23,6 +23,11 @@ public final class KilnFiring {
             map.put(ModItems.UNFIRED_BRICK.get(), Items.BRICK);
             map.put(ModItems.UNFIRED_FIRE_BRICK.get(), ModItems.FIRE_BRICK.get());
             map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_COKE_OVEN_BRICK.get(), dev.strataindustria.registry.Tier4Items.COKE_OVEN_BRICK.get());
+            // Tier 4 spec 6.1: refractory ceramics and the gear molds.
+            map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE.get(), dev.strataindustria.registry.Tier4Items.REFRACTORY_CRUCIBLE.get());
+            map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.get(), dev.strataindustria.registry.Tier4Items.REFRACTORY_INGOT_MOLD.get());
+            map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.get(), dev.strataindustria.registry.Tier4Items.REFRACTORY_GEAR_MOLD.get());
+            map.put(dev.strataindustria.registry.Tier4Items.UNFIRED_GEAR_MOLD.get(), dev.strataindustria.registry.Tier4Items.GEAR_MOLD.get());
             for (MoldType type : MoldType.values()) {
                 map.put(ModItems.UNFIRED_MOLDS.get(type).get(), ModItems.MOLDS.get(type).get());
             }

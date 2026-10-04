@@ -119,7 +119,11 @@ final class ModBlockLoot extends BlockLootSubProvider {
 
     /** The crucible keeps its pieces, its melt and its heat when picked up, like a shulker box. */
     private void crucible() {
-        Block block = ModBlocks.CRUCIBLE.get();
+        crucible(ModBlocks.CRUCIBLE.get());
+        crucible(Tier4Blocks.REFRACTORY_CRUCIBLE.get());
+    }
+
+    private void crucible(Block block) {
         add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
                 .setRolls(ContextIntProviders.exactly(1))
                 .add(LootItem.lootTableItem(block)

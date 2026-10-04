@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t4/refractory_crucible",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "molten_iron"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.molten_iron.hint"
+    },
+    "icon": {
+      "id": "minecraft:iron_ingot"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.molten_iron"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

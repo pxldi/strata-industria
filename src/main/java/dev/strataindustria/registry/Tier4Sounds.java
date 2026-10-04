@@ -12,6 +12,8 @@ public final class Tier4Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> COKE_OVEN_DONE = register("coke_oven.done");
     /** Thick oil glugging into a bucket. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CREOSOTE_FILL = register("creosote.fill");
+    /** Spare carbon flares off a melt with no iron to hold it. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CARBON_BURN = register("crucible.carbon_burn");
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));

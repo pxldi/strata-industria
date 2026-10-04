@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t4/coke",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:refractory_crucible"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.refractory_crucible.hint"
+    },
+    "icon": {
+      "id": "strataindustria:refractory_crucible"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.refractory_crucible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

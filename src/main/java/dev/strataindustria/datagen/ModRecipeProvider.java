@@ -148,6 +148,12 @@ final class ModRecipeProvider extends RecipeProvider {
         output.accept(key("clay_forming/" + name(result)), recipe, null);
     }
 
+    private void formFireClay(Item result, String... rows) {
+        int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
+        output.accept(key("clay_forming/" + name(result)), new KnappingRecipe(Ingredient.of(ModItems.FIRE_CLAY_BALL.get()),
+                Knapping.CLAY_OPENING_COST, pattern, true, new ItemStackTemplate(result)), null);
+    }
+
     private void knap(Item result, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
         var recipe = new KnappingRecipe(tag(ModTags.Items.KNAPPABLE), 1, pattern, true, new ItemStackTemplate(result));
@@ -384,6 +390,12 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('I', ironPlate)
                 .unlockedBy("has_coke_oven_brick", has(ovenBrick))
                 .save(output, key("coke_oven_door"));
+
+        // Spec 6.1: refractory pieces formed in fire clay, and a gear mold in plain clay.
+        formFireClay(Tier4Items.UNFIRED_REFRACTORY_CRUCIBLE.get(), "##.##", "#...#", "#...#", "#...#", "#####");
+        formFireClay(Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.get(), ".....", "#####", "#...#", "#####", ".....");
+        formFireClay(Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.get(), "#.#.#", ".....", "#...#", ".....", "#.#.#");
+        form(Tier4Items.UNFIRED_GEAR_MOLD.get(), 1, "#.#.#", ".....", "#...#", ".....", "#.#.#");
 
         Item coke = Tier4Items.COKE.get();
         shaped(RecipeCategory.MISC, Tier4Items.COKE_BLOCK.get())
