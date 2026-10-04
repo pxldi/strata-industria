@@ -108,6 +108,8 @@ public final class ModGameTests {
         TESTS.put("kinetic_network", ModGameTests::kineticNetwork);
         TESTS.put("core_sample", ModGameTests::coreSample);
         TESTS.put("sluice_washing", ModGameTests::sluiceWashing);
+        TESTS.put("step_up_gearbox", ModGameTests::stepUpGearbox);
+        TESTS.put("soaking_barrel", ModGameTests::soakingBarrel);
     }
 
     private ModGameTests() {}
@@ -585,6 +587,54 @@ public final class ModGameTests {
         }
         helper.assertValueEqual(washed, 2, "washed hematite in the chest");
         helper.assertTrue(sluice.getItem(0).isEmpty(), "the buffer should be empty");
+        helper.succeed();
+    }
+
+    // Step-up gearbox (tier 3 spec 7.3): a crank at 16 RPM drives the millstone behind the gearbox at 32.
+
+    private static void stepUpGearbox(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos crankPos = helper.absolutePos(new BlockPos(4, 1, 2));
+        BlockPos gearboxPos = crankPos.south();
+        BlockPos millPos = gearboxPos.south();
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.SOUTH),
+                Block.UPDATE_ALL);
+        level.setBlock(gearboxPos, ModBlocks.STEP_UP_GEARBOX.get().defaultBlockState()
+                .setValue(dev.strataindustria.power.StepUpGearboxBlock.FACING, Direction.SOUTH), Block.UPDATE_ALL);
+        level.setBlock(millPos, ModBlocks.MILLSTONE.get().defaultBlockState(), Block.UPDATE_ALL);
+        MillstoneBlockEntity mill = (MillstoneBlockEntity) level.getBlockEntity(millPos);
+        HandCrankBlockEntity crank = (HandCrankBlockEntity) level.getBlockEntity(crankPos);
+        crank.crank(new FakePlayer(level, new GameProfile(UUID.randomUUID(), "miller")));
+        KineticNetworks.rebuildNow(level, millPos);
+        helper.assertValueEqual(Math.round(mill.kinetic().rpm()), 32, "millstone RPM behind a step-up gearbox");
+        helper.succeed();
+    }
+
+    // Soaking barrel (tier 3 spec 12.1): water and ash make lye, and lye limes raw hides.
+
+    private static void soakingBarrel(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        var sealed = dev.strataindustria.tanning.SoakingBarrelBlock.SEALED;
+        level.setBlock(pos, ModBlocks.SOAKING_BARREL.get().defaultBlockState(), Block.UPDATE_ALL);
+        var barrel = (dev.strataindustria.tanning.SoakingBarrelBlockEntity) level.getBlockEntity(pos);
+        helper.assertTrue(barrel.addWater(1000, false), "a bucket of water fits");
+        barrel.setItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT, new ItemStack(ModItems.ASH.get(), 2));
+        level.setBlock(pos, level.getBlockState(pos).setValue(sealed, true), Block.UPDATE_ALL);
+        for (int tick = 0; tick < 600; tick++) {
+            dev.strataindustria.tanning.SoakingBarrelBlockEntity.serverTick(level, pos, level.getBlockState(pos), barrel);
+        }
+        helper.assertTrue(barrel.fluid().isSame(dev.strataindustria.registry.ModFluids.LYE.get()), "water and ash should make lye");
+        helper.assertValueEqual(barrel.amount(), 1000, "lye in the tank");
+        helper.assertTrue(barrel.getItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT).isEmpty(), "the ash is used up");
+
+        barrel.setItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT, new ItemStack(ModItems.RAW_HIDE.get(), 4));
+        for (int tick = 0; tick < 4000; tick++) {
+            dev.strataindustria.tanning.SoakingBarrelBlockEntity.serverTick(level, pos, level.getBlockState(pos), barrel);
+        }
+        ItemStack out = barrel.getItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.OUTPUT);
+        helper.assertTrue(out.is(ModItems.LIMED_HIDE.get()) && out.getCount() == 4, "four limed hides, got " + out);
+        helper.assertValueEqual(barrel.amount(), 0, "the lye is used up");
         helper.succeed();
     }
 }
