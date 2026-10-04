@@ -85,6 +85,10 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_IGNITE = register("fire_pit.ignite");
     /** The fire pit goes out: a fizz in the rain, a soft fade when the embers cool. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_EXTINGUISH = register("fire_pit.extinguish");
+    /** Fuel goes on the fire and the flames flare up; the code raises the pitch with the size of the fire. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_FEED = register("fire_pit.feed");
+    /** Food on the hearth stones is done and hops off. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_READY = register("fire_pit.ready");
     /** A stick held in the flames catches as a torch. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_TORCH = register("fire_pit.torch");
 

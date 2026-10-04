@@ -21,7 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Draws the clay standing on the fire pit hearth. While the pit is hot enough a piece lights up from
+ * Draws the clay and food lying on the fire pit hearth stones. While the pit is hot enough a piece lights up from
  * within, and the longer it has been in the heat the harder it glows; a fired piece goes back to the
  * ordinary light of the day.
  */
@@ -49,7 +49,7 @@ public class FirePitRenderer implements BlockEntityRenderer<FirePitBlockEntity, 
             state.glow[i] = 0;
             if (stack.isEmpty()) continue;
             itemModelResolver.updateForTopItem(state.items[i], stack, ItemDisplayContext.FIXED, pit.getLevel(), null, state.seed + i);
-            if (lit && pit.isFiring(i)) {
+            if (lit && pit.isClay(i) && pit.isFiring(i)) {
                 // Starts at a warm half light and climbs to full bright as the piece nears done.
                 float flicker = 0.04f * (float) Math.sin((pit.getLevel().getGameTime() + partialTick) * 0.35 + i * 1.7);
                 state.glow[i] = Math.min(1, 0.5f + 0.5f * pit.firingProgress(i) + flicker);
@@ -62,7 +62,7 @@ public class FirePitRenderer implements BlockEntityRenderer<FirePitBlockEntity, 
         for (int i = 0; i < FirePitBlockEntity.HEARTH_SPOTS; i++) {
             if (state.items[i].isEmpty()) continue;
             pose.pushPose();
-            pose.translate(FirePitBlockEntity.HEARTH_X[i], 0.07, FirePitBlockEntity.HEARTH_Z[i]);
+            pose.translate(FirePitBlockEntity.HEARTH_X[i], FirePitBlockEntity.HEARTH_Y + 0.02, FirePitBlockEntity.HEARTH_Z[i]);
             pose.rotateDegrees(Axis.YP, Math.floorMod(state.seed * 31 + i * 53, 90) - 45);
             pose.rotateDegrees(Axis.XP, 90);
             pose.scale(0.42f, 0.42f, 0.42f);

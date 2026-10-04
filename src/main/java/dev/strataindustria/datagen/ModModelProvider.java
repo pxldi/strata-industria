@@ -116,13 +116,15 @@ final class ModModelProvider extends ModelProvider {
             itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(item));
         }
 
-        // Fire pit: hand-built models in resources (stone ring, sticks, campfire flames when lit).
-        var firePit = StrataIndustria.id("block/fire_pit");
-        PropertyDispatch.C1<MultiVariant, Boolean> firePitLit = PropertyDispatch.initial(FirePitBlock.LIT);
-        firePitLit.select(false, BlockModelGenerators.plainVariant(firePit));
-        firePitLit.select(true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fire_pit_lit")));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.FIRE_PIT.get()).with(firePitLit));
-        itemModels.itemModelOutput.accept(ModItems.FIRE_PIT.get(), ItemModelUtils.plainModel(firePit));
+        // Fire pit: hand-built models in resources, one per size of fire (0 to 3), cold and lit: stone ring,
+        // flat hearth stones, a stack of wood that grows and campfire flames that grow with it.
+        PropertyDispatch.C2<MultiVariant, Boolean, Integer> firePitStates = PropertyDispatch.initial(FirePitBlock.LIT, FirePitBlock.FUEL);
+        for (int size = 0; size <= 3; size++) {
+            firePitStates.select(false, size, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fire_pit_cold_" + size)));
+            firePitStates.select(true, size, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fire_pit_lit_" + size)));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.FIRE_PIT.get()).with(firePitStates));
+        itemModels.itemModelOutput.accept(ModItems.FIRE_PIT.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/fire_pit_cold_1")));
 
         StructureData.models(blockModels, itemModels);
         clay(blockModels, itemModels);

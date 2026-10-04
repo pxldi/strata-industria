@@ -1,0 +1,479 @@
+{
+  "parent": "block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "strataindustria:block/fire_pit_wood",
+    "stones": "strataindustria:block/fire_pit_stones",
+    "hearth": "strataindustria:block/fire_pit_stones",
+    "wood": "strataindustria:block/fire_pit_wood",
+    "bed": "strataindustria:block/fire_pit_ash"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        0,
+        4
+      ],
+      "to": [
+        12,
+        0.5,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#bed"
+        },
+        "south": {
+          "texture": "#bed"
+        },
+        "east": {
+          "texture": "#bed"
+        },
+        "west": {
+          "texture": "#bed"
+        },
+        "up": {
+          "texture": "#bed"
+        },
+        "down": {
+          "texture": "#bed",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        6
+      ],
+      "to": [
+        4,
+        2.5,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#stones"
+        },
+        "south": {
+          "texture": "#stones"
+        },
+        "east": {
+          "texture": "#stones"
+        },
+        "west": {
+          "texture": "#stones"
+        },
+        "up": {
+          "texture": "#stones"
+        },
+        "down": {
+          "texture": "#stones",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        0,
+        6
+      ],
+      "to": [
+        15,
+        2,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#stones"
+        },
+        "south": {
+          "texture": "#stones"
+        },
+        "east": {
+          "texture": "#stones"
+        },
+        "west": {
+          "texture": "#stones"
+        },
+        "up": {
+          "texture": "#stones"
+        },
+        "down": {
+          "texture": "#stones",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        0,
+        1
+      ],
+      "to": [
+        10,
+        2,
+        4
+      ],
+      "faces": {
+        "north": {
+          "texture": "#stones"
+        },
+        "south": {
+          "texture": "#stones"
+        },
+        "east": {
+          "texture": "#stones"
+        },
+        "west": {
+          "texture": "#stones"
+        },
+        "up": {
+          "texture": "#stones"
+        },
+        "down": {
+          "texture": "#stones",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        0,
+        12
+      ],
+      "to": [
+        10,
+        2.5,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#stones"
+        },
+        "south": {
+          "texture": "#stones"
+        },
+        "east": {
+          "texture": "#stones"
+        },
+        "west": {
+          "texture": "#stones"
+        },
+        "up": {
+          "texture": "#stones"
+        },
+        "down": {
+          "texture": "#stones",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        1.2,
+        0,
+        1.2
+      ],
+      "to": [
+        5.2,
+        1.5,
+        5.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hearth"
+        },
+        "south": {
+          "texture": "#hearth"
+        },
+        "east": {
+          "texture": "#hearth"
+        },
+        "west": {
+          "texture": "#hearth"
+        },
+        "up": {
+          "texture": "#hearth"
+        },
+        "down": {
+          "texture": "#hearth",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        10.8,
+        0,
+        1.2
+      ],
+      "to": [
+        14.8,
+        1.5,
+        5.2
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hearth"
+        },
+        "south": {
+          "texture": "#hearth"
+        },
+        "east": {
+          "texture": "#hearth"
+        },
+        "west": {
+          "texture": "#hearth"
+        },
+        "up": {
+          "texture": "#hearth"
+        },
+        "down": {
+          "texture": "#hearth",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        1.2,
+        0,
+        10.8
+      ],
+      "to": [
+        5.2,
+        1.5,
+        14.8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hearth"
+        },
+        "south": {
+          "texture": "#hearth"
+        },
+        "east": {
+          "texture": "#hearth"
+        },
+        "west": {
+          "texture": "#hearth"
+        },
+        "up": {
+          "texture": "#hearth"
+        },
+        "down": {
+          "texture": "#hearth",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        10.8,
+        0,
+        10.8
+      ],
+      "to": [
+        14.8,
+        1.5,
+        14.8
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hearth"
+        },
+        "south": {
+          "texture": "#hearth"
+        },
+        "east": {
+          "texture": "#hearth"
+        },
+        "west": {
+          "texture": "#hearth"
+        },
+        "up": {
+          "texture": "#hearth"
+        },
+        "down": {
+          "texture": "#hearth",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        3.5,
+        0.5,
+        7
+      ],
+      "to": [
+        12.5,
+        2,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        7.5,
+        2,
+        3.5
+      ],
+      "to": [
+        9,
+        3.5,
+        12.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        0.5,
+        9.5
+      ],
+      "to": [
+        11,
+        2,
+        11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood",
+          "cullface": "down"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          1,
+          8
+        ]
+      }
+    },
+    {
+      "from": [
+        5,
+        0.5,
+        5
+      ],
+      "to": [
+        11,
+        1.5,
+        6.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood",
+          "cullface": "down"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          1,
+          8
+        ]
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    }
+  }
+}

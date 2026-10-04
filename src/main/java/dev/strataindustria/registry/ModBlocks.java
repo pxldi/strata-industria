@@ -57,13 +57,13 @@ public final class ModBlocks {
     public static final DeferredBlock<GroundCoverBlock> LOOSE_FLINT = BLOCKS.registerBlock("loose_flint",
             p -> new GroundCoverBlock(Block.box(4, 0, 4, 12, 1, 12), p), ModBlocks::groundCover);
 
-    /** Tier 0 fire (spec 3.5). Light 15 while lit. */
+    /** Tier 0 fire (spec 3.5, redesign R6). Light follows the size of the flames. */
     public static final DeferredBlock<FirePitBlock> FIRE_PIT = BLOCKS.registerBlock("fire_pit", FirePitBlock::new,
             p -> p.mapColor(MapColor.PODZOL)
                     .strength(0.5f)
                     .sound(SoundType.WOOD)
                     .noOcclusion()
-                    .lightLevel(state -> state.getValue(FirePitBlock.LIT) ? 15 : 0)
+                    .lightLevel(FirePitBlock::lightFor)
                     .pushReaction(PushReaction.POPPED));
 
     public static final DeferredBlock<CrucibleBlock> CRUCIBLE = BLOCKS.registerBlock("crucible", CrucibleBlock::new,

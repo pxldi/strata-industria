@@ -2,7 +2,6 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.bloomery.BloomeryMenu;
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.fire.FirePitMenu;
 import dev.strataindustria.forge.ForgeMenu;
 import dev.strataindustria.metal.CrucibleMenu;
 import dev.strataindustria.machine.MillstoneMenu;
@@ -16,9 +15,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class ModMenus {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(Registries.MENU, StrataIndustria.MOD_ID);
-
-    public static final DeferredHolder<MenuType<?>, MenuType<FirePitMenu>> FIRE_PIT =
-            MENUS.register("fire_pit", () -> IMenuTypeExtension.create((id, inventory, buf) -> new FirePitMenu(id, inventory)));
 
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeMenu>> FORGE =
             MENUS.register("forge", () -> IMenuTypeExtension.create((id, inventory, buf) -> new ForgeMenu(id, inventory)));

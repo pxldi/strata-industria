@@ -4,8 +4,10 @@
   "textures": {
     "particle": "strataindustria:block/fire_pit_wood",
     "stones": "strataindustria:block/fire_pit_stones",
+    "hearth": "strataindustria:block/fire_pit_stones",
     "wood": "strataindustria:block/fire_pit_wood",
-    "bed": "strataindustria:block/fire_pit_ash"
+    "bed": "strataindustria:block/fire_pit_embers",
+    "fire": "minecraft:block/campfire_fire"
   },
   "elements": [
     {
@@ -20,13 +22,6 @@
         12
       ],
       "faces": {
-        "up": {
-          "texture": "#bed"
-        },
-        "down": {
-          "texture": "#bed",
-          "cullface": "down"
-        },
         "north": {
           "texture": "#bed"
         },
@@ -38,6 +33,13 @@
         },
         "west": {
           "texture": "#bed"
+        },
+        "up": {
+          "texture": "#bed"
+        },
+        "down": {
+          "texture": "#bed",
+          "cullface": "down"
         }
       }
     },
@@ -175,132 +177,132 @@
     },
     {
       "from": [
-        2.5,
+        1.2,
         0,
-        2.5
+        1.2
       ],
       "to": [
-        5.5,
-        2,
-        5.5
+        5.2,
+        1.5,
+        5.2
       ],
       "faces": {
         "north": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "south": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "east": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "west": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "up": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "down": {
-          "texture": "#stones",
+          "texture": "#hearth",
           "cullface": "down"
         }
       }
     },
     {
       "from": [
-        10.5,
+        10.8,
         0,
-        2.5
+        1.2
       ],
       "to": [
-        13.5,
-        2.5,
-        5.5
+        14.8,
+        1.5,
+        5.2
       ],
       "faces": {
         "north": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "south": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "east": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "west": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "up": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "down": {
-          "texture": "#stones",
+          "texture": "#hearth",
           "cullface": "down"
         }
       }
     },
     {
       "from": [
-        2.5,
+        1.2,
         0,
-        10.5
+        10.8
       ],
       "to": [
-        5.5,
-        2.5,
-        13.5
+        5.2,
+        1.5,
+        14.8
       ],
       "faces": {
         "north": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "south": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "east": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "west": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "up": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "down": {
-          "texture": "#stones",
+          "texture": "#hearth",
           "cullface": "down"
         }
       }
     },
     {
       "from": [
-        10.5,
+        10.8,
         0,
-        10.5
+        10.8
       ],
       "to": [
-        13.5,
-        2,
-        13.5
+        14.8,
+        1.5,
+        14.8
       ],
       "faces": {
         "north": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "south": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "east": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "west": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "up": {
-          "texture": "#stones"
+          "texture": "#hearth"
         },
         "down": {
-          "texture": "#stones",
+          "texture": "#hearth",
           "cullface": "down"
         }
       }
@@ -411,6 +413,134 @@
           1,
           8
         ]
+      }
+    },
+    {
+      "from": [
+        5,
+        0.5,
+        5
+      ],
+      "to": [
+        11,
+        1.5,
+        6.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#wood"
+        },
+        "south": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood",
+          "cullface": "down"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          1,
+          8
+        ]
+      }
+    },
+    {
+      "from": [
+        3.5,
+        0.5,
+        8
+      ],
+      "to": [
+        12.5,
+        9.0,
+        8
+      ],
+      "shade": false,
+      "light_emission": 15,
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            3.5,
+            7.5,
+            12.5,
+            16
+          ],
+          "texture": "#fire"
+        },
+        "south": {
+          "uv": [
+            3.5,
+            7.5,
+            12.5,
+            16
+          ],
+          "texture": "#fire"
+        }
+      }
+    },
+    {
+      "from": [
+        3.5,
+        0.5,
+        8
+      ],
+      "to": [
+        12.5,
+        9.0,
+        8
+      ],
+      "shade": false,
+      "light_emission": 15,
+      "rotation": {
+        "angle": -45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            3.5,
+            7.5,
+            12.5,
+            16
+          ],
+          "texture": "#fire"
+        },
+        "south": {
+          "uv": [
+            3.5,
+            7.5,
+            12.5,
+            16
+          ],
+          "texture": "#fire"
+        }
       }
     }
   ],

@@ -76,7 +76,6 @@ final class ModLanguageProvider extends LanguageProvider {
             add(knapped + "category." + category.getSerializedName(), category.getSerializedName().replace('_', ' '));
         }
         addBlock(ModBlocks.FIRE_PIT, "Fire Pit");
-        add("container." + StrataIndustria.MOD_ID + ".fire_pit", "Fire Pit");
         for (HeatBand band : HeatBand.values()) {
             String name = band.word();
             add(StrataIndustria.MOD_ID + ".heat." + (band == HeatBand.NONE ? "cold" : band.id()), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
@@ -192,7 +191,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "fire_pit.ignite", "Fire catches");
         add(subtitles + "fire_pit.extinguish", "Fire goes out");
         add(subtitles + "fire_pit.torch", "Torch lit");
-        add(subtitles + "fire_pit.set", "Clay set by the fire");
+        add(subtitles + "fire_pit.feed", "Fire flares");
+        add(subtitles + "fire_pit.ready", "Food is done");
+        add(subtitles + "fire_pit.set", "Piece set by the fire");
         add(subtitles + "fire_pit.ring", "Pottery rings");
 
         for (Rock rock : Rock.values()) {
@@ -784,13 +785,13 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.twine", "Twisted Fibre");
         add(journal + "t0.twine.hint", "Cut grass with a knapped knife blade for plant fibre, then twist two fibres into twine.");
         add(journal + "t0.fire", "Firelight");
-        add(journal + "t0.fire.hint", "Build a fire pit from sticks and straw, put fuel in, and strike flint on a rock over it.");
+        add(journal + "t0.fire.hint", "Set down a fire pit, lay sticks or straw on it and strike flint on a rock over it.");
         add(journal + "t0.clay", "Riverbank Clay");
         add(journal + "t0.clay.hint", "Gather five clay balls. Look along riverbanks and in swamps.");
         add(journal + "t1.clay_forming", "Shaped by Hand");
         add(journal + "t1.clay_forming.hint", "Hold five clay balls and use them. Sneak and use picks what to form; strike a few times and it is done.");
         add(journal + "t1.fired_pottery", "Fired Pottery");
-        add(journal + "t1.fired_pottery.hint", "Set an unfired piece on the stones beside a lit fire pit. Charcoal or logs burn hot enough. Wait until it rings.");
+        add(journal + "t1.fired_pottery.hint", "Set an unfired piece on a flat stone of a lit fire pit and keep it fed. Charcoal or logs burn hot enough. Wait until it rings.");
         add(journal + "t1.charcoal", "Charcoal Burner");
         add(journal + "t1.charcoal.hint", "Sneak and place logs into a pile, light it, cover every face with soil or stone, then dig out the charcoal.");
         add(journal + "t1.forge", "The Forge");

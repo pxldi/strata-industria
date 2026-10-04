@@ -40,7 +40,7 @@ final class FlintStrikeGameTests {
         helper.setBlock(PIT, ModBlocks.FIRE_PIT.get().defaultBlockState());
         if (fuel) {
             helper.getBlockEntity(PIT, dev.strataindustria.fire.FirePitBlockEntity.class)
-                    .setItem(dev.strataindustria.fire.FirePitBlockEntity.FUEL_SLOT, new ItemStack(Items.STICK, 4));
+                    .feed(dev.strataindustria.fire.FirePitFuel.STICK);
         }
     }
 

@@ -15,7 +15,6 @@ import dev.strataindustria.power.WaterWheelBlock;
 import net.minecraft.core.Direction;
 import dev.strataindustria.client.screen.BloomeryScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
-import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModMenus;
@@ -45,7 +44,6 @@ public final class StrataIndustriaClient {
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(dev.strataindustria.mark.MarkRegistry.MENU.get(), dev.strataindustria.client.screen.MarkScreen::new);
-        event.register(ModMenus.FIRE_PIT.get(), FirePitScreen::new);
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
         event.register(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_MENU.get(), dev.strataindustria.client.screen.BrickKilnScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);

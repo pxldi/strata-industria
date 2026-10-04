@@ -70,6 +70,16 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:fire/fire").pitch(1.2f).volume(0.6f)));
         add(ModSounds.FIRE_PIT_EXTINGUISH, definition().subtitle(subtitle("fire_pit.extinguish"))
                 .with(sound("minecraft:random/fizz")));
+        // Fuel on the fire: a log laid on the coals, then the flames rush up. Food done: a spit and a bright pop.
+        SoundDefinition feed = definition().subtitle(subtitle("fire_pit.feed"));
+        for (int i = 1; i <= 4; i++) feed.with(sound("minecraft:dig/wood" + i).pitch(0.7f).volume(0.6f));
+        feed.with(sound("minecraft:fire/ignite").pitch(1.5f).volume(0.55f));
+        feed.with(sound("minecraft:fire/fire").pitch(1.1f).volume(0.9f));
+        add(ModSounds.FIRE_PIT_FEED, feed);
+        add(ModSounds.FIRE_PIT_READY, definition().subtitle(subtitle("fire_pit.ready"))
+                .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.5f))
+                .with(sound("minecraft:fire/fire").pitch(1.8f).volume(0.7f))
+                .with(sound("minecraft:liquid/lavapop").pitch(1.3f).volume(0.6f)));
         add(ModSounds.POTTERY_SET, definition().subtitle(subtitle("fire_pit.set"))
                 .with(sound("minecraft:block.decorated_pot.place", SoundDefinition.SoundType.EVENT).pitch(1.1f))
                 .with(sound("minecraft:block.gravel.place", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f)));

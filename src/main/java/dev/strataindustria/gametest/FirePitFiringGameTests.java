@@ -2,6 +2,7 @@ package dev.strataindustria.gametest;
 
 import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.fire.FirePitBlockEntity;
+import dev.strataindustria.fire.FirePitFuel;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
 import java.util.Map;
@@ -27,7 +28,10 @@ final class FirePitFiringGameTests {
     private static FirePitBlockEntity lit(GameTestHelper helper, Item fuel) {
         helper.setBlock(PIT, ModBlocks.FIRE_PIT.get().defaultBlockState());
         FirePitBlockEntity pit = helper.getBlockEntity(PIT, FirePitBlockEntity.class);
-        pit.setItem(FirePitBlockEntity.FUEL_SLOT, new ItemStack(fuel, 64));
+        FirePitFuel burning = FirePitFuel.of(new ItemStack(fuel)).orElseThrow();
+        while (pit.feed(burning)) {
+            // lay on as much as the fire holds
+        }
         BlockPos abs = helper.absolutePos(PIT);
         helper.assertTrue(((FirePitBlock) helper.getBlockState(PIT).getBlock()).ignite(helper.getLevel(), abs, helper.getBlockState(PIT)), "the pit lights");
         return pit;

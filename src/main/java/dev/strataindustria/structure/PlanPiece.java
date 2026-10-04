@@ -1,7 +1,9 @@
 package dev.strataindustria.structure;
 
 import dev.strataindustria.charcoal.LogPileBlockEntity;
+import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.fire.FirePitBlockEntity;
+import dev.strataindustria.fire.FirePitFuel;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.StrataSampler;
@@ -405,12 +407,20 @@ public class PlanPiece extends StructurePiece {
             }
             case 'f' -> {
                 if (level.getBlockEntity(pos) instanceof FirePitBlockEntity pit) {
-                    Supplier<ItemStack> fuel = switch (planId) {
-                        case "charcoal_burners_clearing" -> () -> new ItemStack(Items.STICK, 2);
-                        case "mining_camp/yard" -> () -> new ItemStack(wood.logItem(), 2);
-                        default -> () -> ItemStack.EMPTY;
-                    };
-                    pit.setItem(FirePitBlockEntity.FUEL_SLOT, fuel.get());
+                    // Fuel laid on the bed: a camp that has just been left still has wood on it.
+                    switch (planId) {
+                        case "charcoal_burners_clearing" -> {
+                            pit.feed(FirePitFuel.STICK);
+                            pit.feed(FirePitFuel.STICK);
+                        }
+                        case "mining_camp/yard" -> {
+                            pit.feed(FirePitFuel.LOG);
+                            pit.feed(FirePitFuel.LOG);
+                        }
+                        default -> {
+                        }
+                    }
+                    level.setBlock(pos, level.getBlockState(pos).setValue(FirePitBlock.FUEL, pit.size()), 2);
                 }
             }
             default -> {
