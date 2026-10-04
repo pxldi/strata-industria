@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "G": "strataindustria:brass_gear",
+    "P": "#strataindustria:plates/any_bronze",
+    "R": "strataindustria:bronze_fluid_pipe"
+  },
+  "pattern": [
+    "PGP",
+    " A ",
+    "PRP"
+  ],
+  "result": {
+    "id": "strataindustria:mechanical_pump"
+  }
+}

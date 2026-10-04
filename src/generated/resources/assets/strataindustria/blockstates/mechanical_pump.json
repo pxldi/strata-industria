@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/mechanical_pump",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/mechanical_pump"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/mechanical_pump",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/mechanical_pump",
+      "y": 270
+    }
+  }
+}
