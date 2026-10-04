@@ -6,6 +6,7 @@ import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModSounds;
 import java.util.List;
+import net.minecraft.util.Prediction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -123,7 +124,7 @@ public class WashingPanItem extends Item {
         ItemStack load = contents.stack();
         List<ItemStack> out = WashingRecipe.recipeFor(level, load).map(r -> r.value().roll(level.getRandom())).orElse(List.of(load));
         for (ItemStack result : out) {
-            if (!player.getInventory().add(result)) player.drop(result, false);
+            player.getInventory().placeItemBackInInventory(result, Prediction.SERVER_ONLY);
         }
         if (out.size() > 1) {
             level.playSound(null, user.getX(), user.getY(), user.getZ(), ModSounds.WASHING_PAN_FIND.get(), SoundSource.PLAYERS, 0.5f, 1.5f);
