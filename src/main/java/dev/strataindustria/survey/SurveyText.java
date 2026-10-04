@@ -63,6 +63,7 @@ public final class SurveyText {
     /** "Needs a copper pick" for ores that stone will not cut; null when a stone pick does. */
     public static Component toolHint(String mineral) {
         OreMineral m = Surveyor.mineral(mineral);
+        if (m != null && m.needsBronzeTool()) return Component.translatable(PREFIX + "tool.bronze");
         if (m != null && m.needsCopperTool()) return Component.translatable(PREFIX + "tool.copper");
         return null;
     }

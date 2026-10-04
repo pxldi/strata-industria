@@ -2,6 +2,7 @@ package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.registry.ModSounds;
+import dev.strataindustria.structure.StructureContent;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.SoundDefinition;
 import net.neoforged.neoforge.common.data.SoundDefinitionsProvider;
@@ -93,6 +94,21 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.JOURNAL_OPEN, pages);
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
+
+        // Structures: an old mine timber groaning, stiff paper, and a pencil note in the journal.
+        SoundDefinition creak = definition().subtitle(subtitle("pit_prop.creak"));
+        for (int i = 1; i <= 4; i++) creak.with(sound("minecraft:block/scaffold/place" + i).pitch(0.55f).volume(0.6f));
+        creak.with(sound("minecraft:random/door_open").pitch(0.5f).volume(0.35f));
+        add(StructureContent.PIT_PROP_CREAK, creak);
+        SoundDefinition unfold = definition().subtitle(subtitle("survey_notes.open"));
+        for (int i = 1; i <= 3; i++) unfold.with(sound("minecraft:item/book/open_flip" + i).pitch(1.25f).volume(0.7f));
+        add(StructureContent.SURVEY_NOTES_OPEN, unfold);
+        add(StructureContent.SURVEY_NOTES_FOUND, definition().subtitle(subtitle("survey_notes.found"))
+                .with(sound("minecraft:block/note_block/chime").pitch(0.8f).volume(0.35f))
+                .with(sound("minecraft:item/book/page_turn1").pitch(1.1f).volume(0.6f)));
+        SoundDefinition place = definition().subtitle(subtitle("journal.place"));
+        for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/page_turn" + i).pitch(0.9f).volume(0.7f));
+        add(StructureContent.JOURNAL_PLACE, place);
     }
 
     private static String subtitle(String name) {

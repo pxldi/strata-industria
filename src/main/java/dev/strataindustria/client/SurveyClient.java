@@ -73,6 +73,10 @@ public final class SurveyClient {
             case "tennantite" -> 0x5C6672;
             case "cassiterite" -> 0x6E5444;
             case "bismuthinite" -> 0x7A8292;
+            case "hematite" -> 0x8E4A34;
+            case "magnetite" -> 0x4A4E58;
+            case "limonite" -> 0xA6762C;
+            case "native_gold" -> 0xC08A26;
             default -> 0x6E625A;
         };
     }

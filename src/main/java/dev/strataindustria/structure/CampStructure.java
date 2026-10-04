@@ -3,6 +3,7 @@ package dev.strataindustria.structure;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.geology.GeologyContext;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.VeinCells;
@@ -17,6 +18,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -40,6 +43,14 @@ public class CampStructure extends Structure {
         CHARCOAL_BURNERS_CLEARING, PROSPECTOR_CAMP, MINING_CAMP, COLLAPSED_ADIT;
 
         public static final Codec<Layout> CODEC = StringRepresentable.fromEnum(Layout::values);
+
+        public String id() {
+            return getSerializedName();
+        }
+
+        public ResourceKey<Structure> key() {
+            return ResourceKey.create(Registries.STRUCTURE, StrataIndustria.id(id()));
+        }
 
         @Override
         public String getSerializedName() {
@@ -101,7 +112,8 @@ public class CampStructure extends Structure {
         int cx = site.context.chunkPos().getMiddleBlockX(), cz = site.context.chunkPos().getMiddleBlockZ();
         GeologyContext geology = StructureGeology.of(site.context);
         if (geology == null) return Optional.empty();
-        VeinCells.Vein vein = anchor(geology, cx, cz, 48, 32, type -> true);
+        // Only veins of the stone and copper tiers: the camp's pebbles are its loot (structures spec 4.1, L6).
+        VeinCells.Vein vein = anchor(geology, cx, cz, 48, 32, type -> !mainMineral(type, null).needsBronzeTool());
         if (vein == null) return Optional.empty();
         RandomSource random = site.context.random();
 
@@ -370,12 +382,16 @@ public class CampStructure extends Structure {
 
     /** The vein's most common mineral, among {@code allowed} when given. */
     private static OreMineral mainMineral(VeinCells.Vein vein, List<OreMineral> allowed) {
+        return mainMineral(vein.type(), allowed);
+    }
+
+    private static OreMineral mainMineral(VeinType type, List<OreMineral> allowed) {
         VeinType.MineralWeight best = null;
-        for (VeinType.MineralWeight m : vein.type().minerals()) {
+        for (VeinType.MineralWeight m : type.minerals()) {
             if (allowed != null && !allowed.contains(m.mineral())) continue;
             if (best == null || m.weight() > best.weight()) best = m;
         }
-        return best == null ? vein.type().minerals().getFirst().mineral() : best.mineral();
+        return best == null ? type.minerals().getFirst().mineral() : best.mineral();
     }
 
     /** Unit vector from the vein's centre toward a point, random if the point is right above it. */

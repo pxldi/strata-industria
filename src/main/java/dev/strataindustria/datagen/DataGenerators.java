@@ -35,7 +35,9 @@ public final class DataGenerators {
                         .add(Registries.FEATURE, GeologyData::features)
                         .add(Registries.PLACED_FEATURE, GeologyData::placedFeatures)
                         .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GeologyData::biomeModifiers)
-                        .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap),
+                        .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap)
+                        .add(Registries.STRUCTURE, StructureData::structures)
+                        .add(Registries.STRUCTURE_SET, StructureData::structureSets),
                 Set.of(StrataIndustria.MOD_ID));
 
         // Assets
@@ -46,15 +48,20 @@ public final class DataGenerators {
         // Data
         event.createProvider(ModBlockTagsProvider::new);
         event.createProvider(ModItemTagsProvider::new);
+        event.createProvider(StructureData.BiomeTagProvider::new);
         event.createReloadableRegistryObjects(
                 new RegistrySetBuilder()
-                        .add(Registries.ADVANCEMENT, new AdvancementProvider(List.of(ModAdvancements::new)))
+                        .add(Registries.ADVANCEMENT, new AdvancementProvider(List.of(ModAdvancements::new, StructureData.Places::new)))
                         .add(RecipeProvider.asBootstrap(ModRecipeProvider::new))
                         .add(Registries.LOOT_TABLE, new LootTableProvider(
                                 Set.of(),
                                 List.of(new LootTableProvider.SubProviderEntry(
                                         ModBlockLoot::new,
-                                        LootContextParamSets.BLOCK)))),
+                                        LootContextParamSets.BLOCK),
+                                        new LootTableProvider.SubProviderEntry(StructureData.BlockLoot::new, LootContextParamSets.BLOCK),
+                                        new LootTableProvider.SubProviderEntry(StructureData.ChestLoot::new, LootContextParamSets.CHEST),
+                                        new LootTableProvider.SubProviderEntry(StructureData.ArchaeologyLoot::new,
+                                                LootContextParamSets.ARCHAEOLOGY)))),
                 // "minecraft" for the conditional overrides of vanilla recipes (spec section 2).
                 Set.of(StrataIndustria.MOD_ID, "minecraft"));
     }

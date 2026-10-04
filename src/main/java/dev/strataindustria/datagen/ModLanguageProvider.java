@@ -31,6 +31,7 @@ final class ModLanguageProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         add(ModCreativeTabs.MAIN_TAB_TITLE, "Strata Industria");
+        StructureData.lang(this::add);
 
         addItem(ModItems.PLANT_FIBRE, "Plant Fibre");
         addItem(ModItems.STRAW, "Straw");

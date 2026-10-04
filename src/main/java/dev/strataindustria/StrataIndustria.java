@@ -35,6 +35,7 @@ public final class StrataIndustria {
         ModMenus.MENUS.register(modEventBus);
         ModRecipes.TYPES.register(modEventBus);
         ModRecipes.SERIALIZERS.register(modEventBus);
+        dev.strataindustria.structure.StructureContent.register(modEventBus);
         ModConditions.CONDITIONS.register(modEventBus);
         Journal.TRIGGERS.register(modEventBus);
 
