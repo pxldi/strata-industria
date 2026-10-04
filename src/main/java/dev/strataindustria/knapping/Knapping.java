@@ -62,7 +62,7 @@ public final class Knapping {
         return stack.is(ModItems.FIRE_CLAY_BALL.get());
     }
 
-    /** Anything shaped by striking: loose rocks, flint, clay or a pattern blank. */
+    /** Anything shaped by striking: rock shards, flint, clay or a pattern blank. */
     public static boolean isKnappable(ItemStack stack) {
         return isFlint(stack) || isClay(stack) || isWood(stack) || rockOf(stack).isPresent();
     }

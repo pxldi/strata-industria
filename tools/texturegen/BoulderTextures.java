@@ -28,7 +28,7 @@ public final class BoulderTextures {
             ".21111111...",
     };
 
-    static final int CRACK_DARK = 0x14161a;
+    static final int CRACK_DARK = 0x1a1c22;
     static final int CRACK_EDGE = 0x2a2c32;
 
     /** Pixel paths of the cracks, read as (x, y) pairs from the top of the face down. */
@@ -57,11 +57,11 @@ public final class BoulderTextures {
     static BufferedImage crackTwo() {
         BufferedImage im = TextureGen.img();
         trace(im, MAIN, false);
-        for (int i = 0; i < MAIN.length; i += 2) TextureGen.px(im, MAIN[i][0] + 1, MAIN[i][1], CRACK_DARK);
+        for (int i = 4; i < 10; i += 2) TextureGen.px(im, MAIN[i][0] + 1, MAIN[i][1], CRACK_DARK);
         trace(im, SPUR, false);
         trace(im, LEFT, false);
         trace(im, FORK, false);
-        trace(im, HAIR, true);
+        trace(im, HAIR, false);
         return im;
     }
 

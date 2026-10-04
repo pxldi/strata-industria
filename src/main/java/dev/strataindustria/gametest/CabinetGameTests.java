@@ -37,9 +37,9 @@ final class CabinetGameTests {
         tests.put("cabinet_shelves_and_pick", CabinetGameTests::shelvesAndPick);
     }
 
-    // Loose rocks, cut specimens and raw ore pieces count; nothing else does.
+    // Rock shards, cut specimens and raw ore pieces count; nothing else does.
     private static void specimens(GameTestHelper helper) {
-        helper.assertValueEqual(Specimens.idOf(new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get())), "rock:basalt", "a loose rock");
+        helper.assertValueEqual(Specimens.idOf(new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get())), "rock:basalt", "a rock shard");
         helper.assertValueEqual(Specimens.idOf(MineralSpecimenItem.of(OreMineral.CASSITERITE)), "mineral:cassiterite", "a cut specimen");
         helper.assertValueEqual(Specimens.idOf(new ItemStack(ModItems.ORE_PIECES.get(OreMineral.CASSITERITE).get(OreGrade.POOR).get())),
                 "mineral:cassiterite", "a raw ore piece");

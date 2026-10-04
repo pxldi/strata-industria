@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
  * <ul>
  *   <li><b>Lamps in order</b> ({@code ordered}): the steps are positions of {@code miners_lamp}s. Lighting
  *       them in the listed order opens the crate; lighting one out of turn snuffs them all again.</li>
- *   <li><b>Blocks in place</b>: each step names a block that has to stand at a position (loose rocks on a
+ *   <li><b>Blocks in place</b>: each step names a block that has to stand at a position (rock samples on a
  *       table, bricks set back into a stump). It opens when every step holds, checked whenever a block is
  *       placed nearby.</li>
  * </ul>

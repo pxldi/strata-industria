@@ -20,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -40,6 +41,7 @@ final class BoulderGameTests {
         tests.put("boulder_hand", BoulderGameTests::hand);
         tests.put("boulder_cobble", BoulderGameTests::cobble);
         tests.put("boulder_loot", BoulderGameTests::loot);
+        tests.put("boulder_worldgen", BoulderGameTests::worldgen);
     }
 
     private static FakePlayer player(GameTestHelper helper) {
@@ -157,5 +159,47 @@ final class BoulderGameTests {
             helper.assertValueEqual(count(helper, ModItems.COBBLED_ROCK.get(Rock.GRANITE).get()), 1, "raw granite gives cobbled granite");
             helper.succeed();
         });
+    }
+
+    // The surface pass puts boulders on bare ground, none loose rocks, sticks or flint; limestone ones carry nodules.
+    private static void worldgen(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        int cx0 = (origin.getX() + 300) >> 4, cz0 = (origin.getZ() + 300) >> 4;
+        int size = 6;
+        for (int cx = cx0; cx < cx0 + size; cx++) {
+            for (int cz = cz0; cz < cz0 + size; cz++) level.getChunk(cx, cz);
+        }
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        for (int x = cx0 * 16; x < (cx0 + size) * 16; x++) {
+            for (int z = cz0 * 16; z < (cz0 + size) * 16; z++) {
+                for (int y = groundY - 2; y <= groundY + 6; y++) {
+                    level.setBlock(pos.set(x, y, z), y > groundY ? Blocks.AIR.defaultBlockState()
+                            : y == groundY ? Blocks.GRASS_BLOCK.defaultBlockState() : Blocks.DIRT.defaultBlockState(), Block.UPDATE_CLIENTS);
+                }
+            }
+        }
+        for (int cx = cx0; cx < cx0 + size; cx++) {
+            for (int cz = cz0; cz < cz0 + size; cz++) {
+                dev.strataindustria.geology.worldgen.GroundCoverFeature.INSTANCE.place(level, level.getChunkSource().getGenerator(),
+                        net.minecraft.util.RandomSource.create(cx * 31L + cz), new BlockPos(cx * 16, groundY, cz * 16));
+            }
+        }
+        int boulders = 0, flinty = 0;
+        for (int x = cx0 * 16; x < (cx0 + size) * 16; x++) {
+            for (int z = cz0 * 16; z < (cz0 + size) * 16; z++) {
+                BlockState state = level.getBlockState(pos.set(x, groundY + 1, z));
+                if (!state.is(dev.strataindustria.registry.ModTags.Blocks.BOULDERS)) continue;
+                boulders++;
+                if (state.getValue(BoulderBlock.FLINTY)) {
+                    flinty++;
+                    helper.assertTrue(state.is(ModBlocks.BOULDER.get(Rock.LIMESTONE).get()), "only limestone shows flint");
+                }
+                helper.assertValueEqual(state.getValue(BoulderBlock.CRACKS), 0, "no cracks yet");
+            }
+        }
+        helper.assertTrue(boulders >= 6, "boulders are placed, found " + boulders + " in " + size * size + " chunks");
+        helper.succeed();
     }
 }

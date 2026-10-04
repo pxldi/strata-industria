@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
 /**
- * What the specimen cabinet (uniqueness 9.5) takes and how its shelves complete. A specimen is a loose rock or a
+ * What the specimen cabinet (uniqueness 9.5) takes and how its shelves complete. A specimen is a rock shard or a
  * mineral, as a cut specimen or a raw ore piece. Each rock category is a shelf of its own and all the minerals
  * together are one more. A specimen is named {@code rock:basalt} or {@code mineral:cassiterite}.
  */

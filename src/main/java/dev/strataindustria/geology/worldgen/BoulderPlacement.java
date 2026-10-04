@@ -35,12 +35,12 @@ final class BoulderPlacement {
             int x = minX + 1 + random.nextInt(14), z = minZ + 1 + random.nextInt(14);
             int surface = level.getHeight(Heightmap.Types.OCEAN_FLOOR, x, z);
             Rock rock = ctx.sampler().column(x, z, surface).province().top();
-            // One big rock, then up to three smaller ones close by.
+            // One big rock, then up to three smaller ones within two blocks.
             int main = random.nextInt(5) == 0 ? 3 : random.nextInt(2) == 0 ? 2 : 1;
             put(level, random, rock, x, z, main);
-            int others = random.nextInt(4);
+            int others = 1 + random.nextInt(3);
             for (int k = 0; k < others; k++) {
-                int ox = x + random.nextInt(7) - 3, oz = z + random.nextInt(7) - 3;
+                int ox = x + random.nextInt(5) - 2, oz = z + random.nextInt(5) - 2;
                 if (ox < minX || ox > minX + 15 || oz < minZ || oz > minZ + 15 || (ox == x && oz == z)) continue;
                 put(level, random, rock, ox, oz, Math.max(1, Math.min(2, main - random.nextInt(2))));
             }
