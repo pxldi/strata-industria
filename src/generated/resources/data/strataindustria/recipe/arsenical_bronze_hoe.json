@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:arsenical_bronze_hoe_head",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "strataindustria:arsenical_bronze_hoe"
+  }
+}

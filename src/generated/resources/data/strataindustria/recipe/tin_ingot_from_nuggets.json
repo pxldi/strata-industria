@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget",
+    "strataindustria:tin_nugget"
+  ],
+  "result": {
+    "id": "strataindustria:tin_ingot"
+  }
+}

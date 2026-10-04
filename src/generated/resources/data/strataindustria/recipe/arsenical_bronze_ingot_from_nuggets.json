@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget",
+    "strataindustria:arsenical_bronze_nugget"
+  ],
+  "result": {
+    "id": "strataindustria:arsenical_bronze_ingot"
+  }
+}

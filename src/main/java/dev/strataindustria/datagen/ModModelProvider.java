@@ -10,6 +10,8 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.material.Metal;
 import java.util.Optional;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -110,6 +112,7 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.FORGE.get()).with(forgeState));
         itemModels.itemModelOutput.accept(ModItems.FORGE.get(), ItemModelUtils.plainModel(forge));
 
+        metals(itemModels);
         flatItem(itemModels, ModItems.PLANT_FIBRE.get());
         flatItem(itemModels, ModItems.STRAW.get());
         flatItem(itemModels, ModItems.TWINE.get());
@@ -151,13 +154,42 @@ final class ModModelProvider extends ModelProvider {
         }
 
         for (var item : java.util.List.of(ModItems.UNFIRED_SMALL_VESSEL, ModItems.UNFIRED_LARGE_VESSEL, ModItems.UNFIRED_CRUCIBLE,
-                ModItems.UNFIRED_INGOT_MOLD, ModItems.UNFIRED_BRICK, ModItems.INGOT_MOLD)) {
+                ModItems.UNFIRED_INGOT_MOLD, ModItems.UNFIRED_BRICK)) {
             flatItem(itemModels, item.get());
         }
         flatItem(itemModels, ModItems.SMALL_VESSEL.get());
         for (MoldType type : MoldType.values()) {
             flatItem(itemModels, ModItems.UNFIRED_MOLDS.get(type).get());
-            flatItem(itemModels, ModItems.MOLDS.get(type).get());
+            castMold(itemModels, ModItems.MOLDS.get(type).get());
+        }
+        castMold(itemModels, ModItems.INGOT_MOLD.get());
+    }
+
+    /** A fired mold shows the cast metal in its cavity once it has been poured. */
+    private static void castMold(ItemModelGenerators itemModels, Item mold) {
+        var empty = itemModels.createFlatItemModel(mold, ModelTemplates.FLAT_ITEM);
+        var filled = itemModels.createFlatItemModel(mold, "_filled", ModelTemplates.FLAT_ITEM);
+        itemModels.itemModelOutput.accept(mold, ItemModelUtils.conditional(
+                ItemModelUtils.hasComponent(ModDataComponents.CAST_CONTENTS.get()),
+                ItemModelUtils.plainModel(filled), ItemModelUtils.plainModel(empty)));
+    }
+
+    // Spec 6 to 8: ingots, nuggets, plates and heads are flat; tools are held like vanilla tools.
+    private static void metals(ItemModelGenerators itemModels) {
+        for (Metal metal : Metal.values()) {
+            if (!metal.hasIngot() || metal.isVanilla() && !metal.isToolMetal()) continue;
+            if (!metal.isVanilla()) {
+                flatItem(itemModels, ModItems.ingot(metal));
+                if (metal.hasNugget()) flatItem(itemModels, ModItems.NUGGETS.get(metal).get());
+            }
+            if (!metal.isToolMetal()) continue;
+            flatItem(itemModels, ModItems.PLATES.get(metal).get());
+            for (MoldType type : MoldType.values()) {
+                flatItem(itemModels, ModItems.head(metal, type));
+                if (ModItems.TOOLS.get(metal).get(type) instanceof net.neoforged.neoforge.registries.DeferredItem<?> tool) {
+                    itemModels.generateFlatItem(tool.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
+                }
+            }
         }
     }
 

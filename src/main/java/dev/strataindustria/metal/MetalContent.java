@@ -1,0 +1,83 @@
+package dev.strataindustria.metal;
+
+import dev.strataindustria.ceramics.MoldType;
+import dev.strataindustria.geology.OreGrade;
+import dev.strataindustria.geology.OreMineral;
+import dev.strataindustria.material.Metal;
+import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.registry.ModItems;
+import java.util.EnumMap;
+import java.util.IdentityHashMap;
+import java.util.Map;
+import java.util.Optional;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+
+/**
+ * What an item gives when melted (spec 6.2, 7.1): ore pieces at 80% of their crushed value, crushed
+ * ore in full, surface nuggets at 10 units, ingots 100, nuggets 10, plates and heads 100 (sword
+ * blades 200), and slag metal 90% of what went into it.
+ */
+public final class MetalContent {
+    public static final int INGOT_UNITS = 100;
+    public static final int NUGGET_UNITS = 10;
+    public static final float SLAG_RETURN = 0.9f;
+
+    private static Map<Item, Melt> fixed;
+
+    private MetalContent() {}
+
+    private static Map<Item, Melt> fixed() {
+        if (fixed == null) {
+            Map<Item, Melt> map = new IdentityHashMap<>();
+            for (OreMineral mineral : OreMineral.values()) {
+                map.put(ModItems.SMALL_ORES.get(mineral).get(), ore(mineral, OreMineral.SMALL_ORE_UNITS, OreGrade.NORMAL));
+                for (OreGrade grade : OreGrade.values()) {
+                    int crushed = mineral.crushedUnits(grade);
+                    map.put(ModItems.orePiece(mineral, grade), ore(mineral, crushed * OreMineral.RAW_MELT_EFFICIENCY, grade));
+                    map.put(ModItems.crushedOre(mineral, grade), ore(mineral, crushed, grade));
+                }
+            }
+            for (Metal metal : Metal.values()) {
+                if (metal == Metal.SLAG_METAL) continue;
+                if (ModItems.INGOTS.containsKey(metal)) map.put(ModItems.ingot(metal), Alloy.parts(metal, INGOT_UNITS));
+                if (ModItems.NUGGETS.containsKey(metal)) map.put(ModItems.NUGGETS.get(metal).get(), Alloy.parts(metal, NUGGET_UNITS));
+                if (ModItems.PLATES.containsKey(metal)) map.put(ModItems.PLATES.get(metal).get(), Alloy.parts(metal, INGOT_UNITS));
+                if (ModItems.HEADS.containsKey(metal)) {
+                    for (MoldType type : MoldType.values()) map.put(ModItems.head(metal, type), Alloy.parts(metal, type.units()));
+                }
+            }
+            fixed = map;
+        }
+        return fixed;
+    }
+
+    /** Each metal of the ore gets its share of the units, rounded down per metal. */
+    private static Melt ore(OreMineral mineral, float units, OreGrade grade) {
+        Map<Metal, Integer> out = new EnumMap<>(Metal.class);
+        int total = 0;
+        for (var e : mineral.composition().entrySet()) {
+            int u = (int) Math.floor(units * e.getValue());
+            if (u > 0) out.put(e.getKey(), u);
+            total += u;
+        }
+        return new Melt(out, total * grade.quality());
+    }
+
+    /** The metal in one of this item, if any. */
+    public static Optional<Melt> of(ItemStack stack) {
+        if (stack.isEmpty()) return Optional.empty();
+        Melt slag = stack.get(ModDataComponents.SLAG.get());
+        if (slag != null) return Optional.of(slag.scaled(SLAG_RETURN));
+        Melt melt = fixed().get(stack.getItem());
+        if (melt == null) return Optional.empty();
+        // Cast and smithed items keep only their material part when remelted (spec 6.4).
+        Quality quality = stack.get(ModDataComponents.QUALITY.get());
+        if (quality != null) melt = new Melt(melt.units(), melt.total() * quality.material());
+        return Optional.of(melt);
+    }
+
+    public static boolean hasMetal(ItemStack stack) {
+        return of(stack).isPresent();
+    }
+}

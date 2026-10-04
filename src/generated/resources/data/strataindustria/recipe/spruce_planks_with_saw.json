@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:tool_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "#minecraft:spruce_logs",
+    "#strataindustria:tools/saws"
+  ],
+  "result": {
+    "count": 4,
+    "id": "minecraft:spruce_planks"
+  },
+  "tool": "#strataindustria:tools/saws"
+}

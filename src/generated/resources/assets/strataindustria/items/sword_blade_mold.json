@@ -1,6 +1,15 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "strataindustria:item/sword_blade_mold"
+    "type": "minecraft:condition",
+    "component": "strataindustria:cast_contents",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/sword_blade_mold"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/sword_blade_mold_filled"
+    },
+    "property": "minecraft:has_component"
   }
 }

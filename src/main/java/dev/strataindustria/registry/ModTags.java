@@ -52,9 +52,20 @@ public final class ModTags {
         public static final TagKey<Item> KNIVES = tag("tools/knives");
         public static final TagKey<Item> HAMMERS = tag("tools/hammers");
         public static final TagKey<Item> SAWS = tag("tools/saws");
+        public static final TagKey<Item> ANY_BRONZE_INGOTS = tag("ingots/any_bronze");
+        public static final TagKey<Item> ANY_BRONZE_PLATES = tag("plates/any_bronze");
 
         public static TagKey<Item> rocks(RockCategory category) {
             return tag("rocks/" + category.getSerializedName());
+        }
+
+        /** {@code c:ingots/<metal>}, also each tool metal's repair material. */
+        public static TagKey<Item> ingots(dev.strataindustria.material.Metal metal) {
+            return TagKey.create(Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath("c", "ingots/" + metal.id()));
+        }
+
+        public static TagKey<Item> nuggets(dev.strataindustria.material.Metal metal) {
+            return TagKey.create(Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath("c", "nuggets/" + metal.id()));
         }
 
         /** Every ore piece and crushed piece of one mineral, all grades. */

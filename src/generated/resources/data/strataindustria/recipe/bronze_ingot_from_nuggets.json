@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget",
+    "strataindustria:bronze_nugget"
+  ],
+  "result": {
+    "id": "strataindustria:bronze_ingot"
+  }
+}

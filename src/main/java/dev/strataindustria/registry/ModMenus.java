@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.SmallVesselMenu;
 import dev.strataindustria.fire.FirePitMenu;
 import dev.strataindustria.forge.ForgeMenu;
+import dev.strataindustria.metal.CrucibleMenu;
 import dev.strataindustria.knapping.KnappingMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
@@ -25,6 +26,9 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<ForgeMenu>> FORGE =
             MENUS.register("forge", () -> IMenuTypeExtension.create((id, inventory, buf) -> new ForgeMenu(id, inventory)));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<CrucibleMenu>> CRUCIBLE =
+            MENUS.register("crucible", () -> IMenuTypeExtension.create((id, inventory, buf) -> new CrucibleMenu(id, inventory)));
 
     private ModMenus() {}
 }

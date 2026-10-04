@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:bronze_shovel_head",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "strataindustria:bronze_shovel"
+  }
+}

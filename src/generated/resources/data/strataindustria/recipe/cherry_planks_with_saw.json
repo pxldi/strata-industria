@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:tool_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "#minecraft:cherry_logs",
+    "#strataindustria:tools/saws"
+  ],
+  "result": {
+    "count": 4,
+    "id": "minecraft:cherry_planks"
+  },
+  "tool": "#strataindustria:tools/saws"
+}

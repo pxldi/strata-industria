@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:bronze_saw_blade",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "strataindustria:bronze_saw"
+  }
+}

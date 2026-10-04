@@ -109,6 +109,31 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- crucible and casting
+    static {
+        BUILDER.comment("Crucible melting and casting.").push("crucible");
+    }
+
+    public static final ModConfigSpec.IntValue CRUCIBLE_CAPACITY = BUILDER
+            .comment("Metal units a crucible holds (100 units is one ingot).")
+            .defineInRange("capacity", 400, 100, 4000);
+
+    static {
+        BUILDER.pop();
+        BUILDER.push("casting");
+    }
+
+    public static final ModConfigSpec.DoubleValue INGOT_MOLD_BREAK = BUILDER
+            .comment("Chance an ingot mold breaks when the ingot is taken out.")
+            .defineInRange("ingotMoldBreak", 0.05, 0.0, 1.0);
+    public static final ModConfigSpec.DoubleValue TOOL_MOLD_BREAK = BUILDER
+            .comment("Chance a tool mold breaks when the cast part is taken out.")
+            .defineInRange("toolMoldBreak", 0.10, 0.0, 1.0);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

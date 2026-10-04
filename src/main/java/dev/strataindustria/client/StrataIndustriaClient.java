@@ -3,6 +3,7 @@ package dev.strataindustria.client;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.client.hud.FirestarterHud;
 import dev.strataindustria.client.render.PitKilnRenderer;
+import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
 import dev.strataindustria.client.screen.KnappingScreen;
@@ -34,6 +35,7 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.FIRE_PIT.get(), FirePitScreen::new);
         event.register(ModMenus.SMALL_VESSEL.get(), SmallVesselScreen::new);
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
+        event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
