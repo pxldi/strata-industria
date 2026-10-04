@@ -727,6 +727,26 @@
     ],
     "subtitle": "subtitles.strataindustria.raw_bloom.hit"
   },
+  "saw_mill.blade_break": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.item.break"
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.saw_mill.blade_break"
+  },
+  "saw_mill.saw": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.sheep.shear",
+        "pitch": 0.6,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.saw_mill.saw"
+  },
   "water_wheel.turn": {
     "sounds": [
       {
