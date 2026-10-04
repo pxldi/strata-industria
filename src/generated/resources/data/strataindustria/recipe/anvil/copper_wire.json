@@ -8,7 +8,7 @@
   },
   "rules": [
     {
-      "hit": "draw",
+      "hit": "hit",
       "where": "last"
     },
     {
