@@ -4495,8 +4495,6 @@ public final class TextureGen {
                     double d = Math.hypot(x - cx - s[0], y - cy - s[0]);
                     if (d <= rad) px(im, x, y, WROUGHT_IRON.get(s[1] == 1 ? 1 : (x + y > cx + cy + 2 * s[0] + 3 ? 2 : s[1] + 1)));
                 }
-        // The belt riding in the groove, coming off toward the bottom-right.
-        for (int i = 0; i < 4; i++) { px(im, 11 + i, 12 + (i + 1) / 2 - 1, LEATHER.get(3)); px(im, 11 + i, 13 + (i + 1) / 2 - 1, LEATHER.get(2)); }
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 double d = Math.hypot(x - cx, y - cy);
@@ -4614,13 +4612,17 @@ public final class TextureGen {
                     // Flesh side: paler and smoother than the outside, darker toward the free edge.
                     step = darkEdge ? 3 : 4;
                     if (stage == 2 && !darkEdge && (x + y) % 5 == 0) step = 5;
-                    Ramp flesh = stage == 0 ? SCRAPED : stage == 1 ? LIMED : SCRAPED;
-                    px(im, x, y, flesh.get(stage == 1 ? Math.min(5, step + 1) : step));
+                    Ramp flesh = stage == 1 ? LIMED : SCRAPED;
+                    px(im, x, y, flesh.get(stage == 2 ? step : Math.min(5, step + 1)));
                 } else {
                     // The crease: a lit roll on the fold, shadow on the flap side of it.
                     px(im, x, y, outer.get(x + y == 20 ? 5 : 2));
                 }
             }
+        // The flap's free edge casts a shadow on the hide beside it.
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++)
+                if (m[y][x] == 1 && ((y > 0 && m[y - 1][x] == 2) || (x > 0 && m[y][x - 1] == 2))) px(im, x, y, outer.get(1));
         if (stage == 0) {
             // Hair: short dark strokes lying toward the lower right, a few light ones, and tufts on the outline.
             for (int i = 0; i < 26; i++) {
@@ -4784,6 +4786,22 @@ public final class TextureGen {
         return im;
     }
 
+    /** The outline of a '#' shape (every '#' with a 4-neighbour outside it), for ghost icons. */
+    static String[] edgeRows(String[] rows) {
+        String[] out = new String[rows.length];
+        for (int y = 0; y < rows.length; y++) {
+            StringBuilder sb = new StringBuilder();
+            for (int x = 0; x < rows[y].length(); x++) {
+                boolean in = rows[y].charAt(x) == '#';
+                boolean edge = in && (y == 0 || x == 0 || y == rows.length - 1 || x == rows[y].length() - 1
+                        || rows[y - 1].charAt(x) != '#' || rows[y + 1].charAt(x) != '#' || rows[y].charAt(x - 1) != '#' || rows[y].charAt(x + 1) != '#');
+                sb.append(edge ? '#' : '.');
+            }
+            out[y] = sb.toString();
+        }
+        return out;
+    }
+
     /** The soaking barrel's progress arrow, 24x17: a 5 px shaft and a head tapering to a point at the right. */
     static boolean barrelArrow(int i, int j) {
         int d = Math.abs(j - 8);
@@ -4823,7 +4841,7 @@ public final class TextureGen {
         }
         slot(im, 44, 27);
         slot(im, 116, 27);
-        ghost(im, 44, 27, HIDE_SHAPE);
+        ghost(im, 44, 27, edgeRows(HIDE_SHAPE));
         for (int j = 0; j < 17; j++)
             for (int i = 0; i < 24; i++)
                 if (barrelArrow(i, j)) {
