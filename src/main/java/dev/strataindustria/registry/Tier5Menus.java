@@ -10,6 +10,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 public final class Tier5Menus {
     public static final DeferredHolder<MenuType<?>, MenuType<ElectricMachineMenu>> ELECTRIC_FURNACE = machine(ElectricMachineLayout.ELECTRIC_FURNACE);
     public static final DeferredHolder<MenuType<?>, MenuType<ElectricMachineMenu>> MACERATOR = machine(ElectricMachineLayout.MACERATOR);
+    public static final DeferredHolder<MenuType<?>, MenuType<ElectricMachineMenu>> WIREMILL = machine(ElectricMachineLayout.WIREMILL);
+    public static final DeferredHolder<MenuType<?>, MenuType<ElectricMachineMenu>> BENDER = machine(ElectricMachineLayout.BENDER);
+    public static final DeferredHolder<MenuType<?>, MenuType<ElectricMachineMenu>> LATHE = machine(ElectricMachineLayout.LATHE);
 
     private static DeferredHolder<MenuType<?>, MenuType<ElectricMachineMenu>> machine(ElectricMachineLayout layout) {
         return ModMenus.MENUS.register(layout.id(), () -> IMenuTypeExtension.create((id, inventory, buf) ->

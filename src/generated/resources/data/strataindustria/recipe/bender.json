@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "H": "strataindustria:lv_machine_hull",
+    "M": "strataindustria:electric_motor",
+    "X": "strataindustria:steel_rod"
+  },
+  "pattern": [
+    " X ",
+    "CHM",
+    " X "
+  ],
+  "result": {
+    "id": "strataindustria:bender"
+  }
+}

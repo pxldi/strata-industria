@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "minecraft:gold_ingot",
+  "machine": "bender",
+  "result": {
+    "id": "strataindustria:gold_plate"
+  }
+}

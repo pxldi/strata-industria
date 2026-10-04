@@ -15,6 +15,8 @@ import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlockEntity;
 import dev.strataindustria.electric.machine.ElectricMachineLayout;
+import dev.strataindustria.electric.machine.LatheBlockEntity;
+import dev.strataindustria.electric.machine.LatheBlock;
 import dev.strataindustria.electric.machine.MaceratorBlockEntity;
 import dev.strataindustria.power.StatusLight;
 import dev.strataindustria.processing.CrushingRecipe;
@@ -85,6 +87,7 @@ final class Tier5GameTests {
         tests.put("tier5_electric_furnace", Tier5GameTests::electricFurnace);
         tests.put("tier5_steam_turbine", Tier5GameTests::steamTurbine);
         tests.put("tier5_combustion_generator", Tier5GameTests::combustionGenerator);
+        tests.put("tier5_shaping_machines", Tier5GameTests::shapingMachines);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -473,6 +476,67 @@ final class Tier5GameTests {
             furnace.setBuffer(furnace.bufferCapacity());
             ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), furnace);
             if (furnace.getItem(ElectricMachineLayout.ELECTRIC_FURNACE.outputSlot(0, 0)).is(result)) return tick;
+        }
+        return -1;
+    }
+
+    // Spec 10.4 to 10.6: the wiremill draws a copper rod into two wires, the bender rolls an ingot into a plate and a
+    // double ingot into two, the lathe makes two rods or one gear by mode; each takes 100 ticks and the machine's
+    // draw per tick, and refuses what its recipes do not take.
+    private static void shapingMachines(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(1, 1, 1));
+        Item copperWire = Tier5Items.COPPER_WIRE.get();
+
+        BlockPos wiremillPos = base;
+        level.setBlock(wiremillPos, Tier5Blocks.WIREMILL.get().defaultBlockState(), Block.UPDATE_ALL);
+        ElectricMachineBlockEntity wiremill = (ElectricMachineBlockEntity) level.getBlockEntity(wiremillPos);
+        helper.assertTrue(!wiremill.canPlaceItem(0, new ItemStack(Items.COPPER_INGOT)), "the wiremill refuses an ingot");
+        wiremill.setItem(0, new ItemStack(Tier5Items.COPPER_ROD.get()));
+        helper.assertValueEqual(shapingTicks(level, wiremillPos, wiremill, ElectricMachineLayout.WIREMILL, copperWire), 100, "copper rod to wire");
+        helper.assertValueEqual(wiremill.getItem(ElectricMachineLayout.WIREMILL.outputSlot(0, 0)).getCount(), 2, "two wires from a rod");
+
+        BlockPos benderPos = base.south(2);
+        level.setBlock(benderPos, Tier5Blocks.BENDER.get().defaultBlockState(), Block.UPDATE_ALL);
+        ElectricMachineBlockEntity bender = (ElectricMachineBlockEntity) level.getBlockEntity(benderPos);
+        Item steelPlate = ModItems.PLATES.get(Metal.STEEL).get();
+        bender.setItem(0, new ItemStack(ModItems.ingot(Metal.STEEL)));
+        helper.assertValueEqual(shapingTicks(level, benderPos, bender, ElectricMachineLayout.BENDER, steelPlate), 100, "steel ingot to plate");
+        helper.assertValueEqual(bender.getItem(ElectricMachineLayout.BENDER.outputSlot(0, 0)).getCount(), 1, "one plate from an ingot");
+        bender.clearContent();
+        bender.setItem(0, new ItemStack(ModItems.STEEL_DOUBLE_INGOT.get()));
+        shapingTicks(level, benderPos, bender, ElectricMachineLayout.BENDER, steelPlate);
+        helper.assertValueEqual(bender.getItem(ElectricMachineLayout.BENDER.outputSlot(0, 0)).getCount(), 2, "two plates from a double ingot");
+
+        BlockPos lathePos = base.south(4);
+        level.setBlock(lathePos, Tier5Blocks.LATHE.get().defaultBlockState(), Block.UPDATE_ALL);
+        LatheBlockEntity lathe = (LatheBlockEntity) level.getBlockEntity(lathePos);
+        Item steelRod = ModItems.RODS.get(Metal.STEEL).get(), steelGear = ModItems.GEARS.get(Metal.STEEL).get();
+        lathe.setItem(0, new ItemStack(ModItems.ingot(Metal.STEEL)));
+        helper.assertValueEqual(shapingTicks(level, lathePos, lathe, ElectricMachineLayout.LATHE, steelRod), 100, "steel ingot to rods");
+        helper.assertValueEqual(lathe.getItem(ElectricMachineLayout.LATHE.outputSlot(0, 0)).getCount(), 2, "two rods from an ingot");
+        lathe.clearContent();
+        lathe.toggleMode();
+        helper.assertTrue(level.getBlockState(lathePos).getValue(LatheBlock.GEAR), "the mode button switches to gears");
+        helper.assertTrue(!lathe.canPlaceItem(0, new ItemStack(Items.COPPER_INGOT)), "copper has no gear");
+        lathe.setItem(0, new ItemStack(ModItems.ingot(Metal.STEEL)));
+        helper.assertValueEqual(shapingTicks(level, lathePos, lathe, ElectricMachineLayout.LATHE, steelGear), 100, "steel ingot to a gear");
+        helper.assertValueEqual(lathe.getItem(ElectricMachineLayout.LATHE.outputSlot(0, 0)).getCount(), 1, "one gear from an ingot");
+
+        // Energy per item: 100 ticks at the machine's draw.
+        for (var entry : java.util.List.of(java.util.Map.entry(wiremill, 800.0), java.util.Map.entry(bender, 1600.0), java.util.Map.entry(lathe, 1600.0))) {
+            double joules = entry.getKey().stats().draw().get(ElectricTier.LV) * 100;
+            helper.assertTrue(Math.abs(joules - entry.getValue()) < 1e-6, "energy per item " + joules);
+        }
+        helper.succeed();
+    }
+
+    /** Ticks {@code machine} takes to put {@code result} in its output on a full buffer; -1 if it never does. */
+    private static int shapingTicks(ServerLevel level, BlockPos pos, ElectricMachineBlockEntity machine, ElectricMachineLayout layout, Item result) {
+        for (int tick = 1; tick <= 1000; tick++) {
+            machine.setBuffer(machine.bufferCapacity());
+            ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+            if (machine.getItem(layout.outputSlot(0, 0)).is(result)) return tick;
         }
         return -1;
     }

@@ -6,6 +6,7 @@ import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.GeneratorBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
+import dev.strataindustria.electric.machine.LatheBlock;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.power.StatusLight;
 import dev.strataindustria.registry.Tier5Blocks;
@@ -46,6 +47,9 @@ final class Tier5Models {
         batteryBox(blockModels, itemModels);
         machine(blockModels, itemModels, Tier5Blocks.ELECTRIC_FURNACE.get(), "electric_furnace");
         machine(blockModels, itemModels, Tier5Blocks.MACERATOR.get(), "macerator");
+        machine(blockModels, itemModels, Tier5Blocks.WIREMILL.get(), "wiremill");
+        machine(blockModels, itemModels, Tier5Blocks.BENDER.get(), "bender");
+        lathe(blockModels, itemModels);
         generator(blockModels, itemModels, Tier5Blocks.STEAM_TURBINE.get(), "steam_turbine", false);
         generator(blockModels, itemModels, Tier5Blocks.COMBUSTION_GENERATOR.get(), "combustion_generator", true);
 
@@ -161,6 +165,38 @@ final class Tier5Models {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
         plainItem(itemModels, block.asItem(), StrataIndustria.id("block/" + name + "_lv_off"));
+    }
+
+    // Spec 23.2: like machine(), with the rod or gear icon of the mode on the front.
+    private static void lathe(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Block block = Tier5Blocks.LATHE.get();
+        PropertyDispatch.C5<MultiVariant, Direction, ElectricTier, StatusLight, Boolean, Boolean> dispatch = PropertyDispatch.initial(
+                ElectricMachineBlock.FACING, ElectricMachineBlock.TIER, ElectricMachineBlock.STATUS, ElectricMachineBlock.ACTIVE, LatheBlock.GEAR);
+        for (ElectricTier tier : ElectricTier.values()) {
+            String t = tier.getSerializedName();
+            for (boolean gear : new boolean[] {false, true}) {
+                for (boolean active : new boolean[] {false, true}) {
+                    for (StatusLight light : StatusLight.values()) {
+                        TextureMapping faces = new TextureMapping()
+                                .put(TextureSlot.FRONT, texture("lathe_front_" + t + (gear ? "_gear" : "") + (active ? "_active" : "")))
+                                .put(TextureSlot.SIDE, texture("casing/" + t + "_side")).put(TextureSlot.TOP, texture("casing/" + t + "_top"))
+                                .put(TextureSlot.BOTTOM, texture("casing/" + t + "_bottom"));
+                        Identifier model = StrataIndustria.id("block/lathe_" + t + (gear ? "_gear" : "") + (active ? "_active" : "") + "_"
+                                + light.getSerializedName());
+                        Identifier id = light == StatusLight.OFF
+                                ? ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(model, faces, blockModels.modelOutput)
+                                : MACHINE.create(model, faces.put(STATUS, texture("overlay/status_" + light.getSerializedName())), blockModels.modelOutput);
+                        MultiVariant variant = BlockModelGenerators.plainVariant(id);
+                        dispatch.select(Direction.NORTH, tier, light, active, gear, variant);
+                        dispatch.select(Direction.EAST, tier, light, active, gear, variant.with(BlockModelGenerators.Y_ROT_90));
+                        dispatch.select(Direction.SOUTH, tier, light, active, gear, variant.with(BlockModelGenerators.Y_ROT_180));
+                        dispatch.select(Direction.WEST, tier, light, active, gear, variant.with(BlockModelGenerators.Y_ROT_270));
+                    }
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+        plainItem(itemModels, block.asItem(), StrataIndustria.id("block/lathe_lv_off"));
     }
 
     private static final TextureSlot BACK = TextureSlot.create("back");

@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "minecraft:iron_ingot",
+  "machine": "bender",
+  "result": {
+    "id": "strataindustria:wrought_iron_plate"
+  }
+}

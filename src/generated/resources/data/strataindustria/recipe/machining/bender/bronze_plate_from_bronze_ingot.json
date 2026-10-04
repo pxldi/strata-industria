@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "strataindustria:bronze_ingot",
+  "machine": "bender",
+  "result": {
+    "id": "strataindustria:bronze_plate"
+  }
+}

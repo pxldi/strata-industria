@@ -1,0 +1,9 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "strataindustria:brass_ingot",
+  "machine": "lathe",
+  "mode": "gear",
+  "result": {
+    "id": "strataindustria:brass_gear"
+  }
+}

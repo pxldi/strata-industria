@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "strataindustria:steel_ingot",
+  "machine": "bender",
+  "result": {
+    "id": "strataindustria:steel_plate"
+  }
+}

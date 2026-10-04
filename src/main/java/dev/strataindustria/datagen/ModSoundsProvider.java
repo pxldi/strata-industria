@@ -443,6 +443,18 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.5f))
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.82f).volume(0.45f))
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.98f).volume(0.45f)));
+        add(Tier5Sounds.WIREMILL_DRAW, definition().subtitle(subtitle("block.wiremill.draw"))
+                .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.5f))
+                .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(1.55f).volume(0.45f))
+                .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.45f)));
+        add(Tier5Sounds.BENDER_PRESS, definition().subtitle(subtitle("block.bender.press"))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.25f))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.22f))
+                .with(sound("minecraft:block.chain.place", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.4f)));
+        add(Tier5Sounds.LATHE_CUT, definition().subtitle(subtitle("block.lathe.cut"))
+                .with(sound("minecraft:item.axe.strip", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.45f))
+                .with(sound("minecraft:item.axe.strip", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.4f))
+                .with(sound("minecraft:item.axe.strip", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.4f)));
         add(Tier5Sounds.STEAM_TURBINE_RUN, definition().subtitle(subtitle("block.steam_turbine.run"))
                 .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.5f))
                 .with(sound("minecraft:entity.minecart.riding", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f))

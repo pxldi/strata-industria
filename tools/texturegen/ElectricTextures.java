@@ -988,6 +988,163 @@ public final class ElectricTextures {
         return strip;
     }
 
+    // ---- wiremill, bender, lathe
+
+    static void pxs(BufferedImage im, int x, int y, int col) { TextureGen.px(im, x, y, col); }
+
+    /** Engraved dark glyph with a lit shadow below-right; rows of '#'. */
+    static void engrave(BufferedImage im, boolean mv, int x0, int y0, String[] rows) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        for (int j = 0; j < rows.length; j++)
+            for (int i = 0; i < rows[j].length(); i++)
+                if (rows[j].charAt(i) == '#') pxs(im, x0 + i + 1, y0 + j + 1, c(r, base + 2));
+        for (int j = 0; j < rows.length; j++)
+            for (int i = 0; i < rows[j].length(); i++)
+                if (rows[j].charAt(i) == '#') pxs(im, x0 + i, y0 + j, c(STEEL, 1));
+    }
+
+    /** Beveled steel block: lit top-left, shaded bottom-right. */
+    static void block(BufferedImage im, int x0, int y0, int x1, int y1, int body) {
+        fill(im, x0, y0, x1, y1, c(STEEL, body));
+        for (int x = x0; x <= x1; x++) { pxs(im, x, y0, c(STEEL, body + 2)); pxs(im, x, y1, c(STEEL, body - 1)); }
+        for (int y = y0; y <= y1; y++) { pxs(im, x0, y, c(STEEL, body + 2)); pxs(im, x1, y, c(STEEL, body - 1)); }
+        pxs(im, x1, y0, c(STEEL, body)); pxs(im, x0, y1, c(STEEL, body));
+    }
+
+    static BufferedImage wiremillFront(boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 731 : 730);
+        // copper tag with a rivet at each end
+        fill(im, 3, 2, 8, 3, c(COPPER, 3));
+        for (int x = 3; x <= 8; x++) { pxs(im, x, 2, c(COPPER, 4)); pxs(im, x, 3, c(COPPER, 2)); }
+        pxs(im, 3, 2, c(COPPER, 5));
+        lip(im, mv);
+        fill(im, 2, 6, 13, 11, c(STEEL, 1));
+        // draw plate on the right with a small round die
+        block(im, 9, 6, 13, 11, 3);
+        for (int x = 11; x <= 12; x++) pxs(im, x, 7, c(STEEL, 4));
+        pxs(im, 11, 8, c(STEEL, 1)); pxs(im, 12, 8, c(STEEL, 1));
+        pxs(im, 11, 9, c(STEEL, 1)); pxs(im, 12, 9, c(STEEL, 1));
+        pxs(im, 10, 8, c(STEEL, 2)); pxs(im, 10, 9, c(STEEL, 2));
+        pxs(im, 11, 10, c(STEEL, 4)); pxs(im, 12, 10, c(STEEL, 4)); pxs(im, 13, 9, c(STEEL, 4));
+        // spool: steel rim, copper windings in rotating sectors, steel hub
+        double ph = active ? frame * Math.PI / 6 : 0;
+        for (int y = 6; y <= 11; y++)
+            for (int x = 2; x <= 8; x++) {
+                double ox = x + 0.5 - 5.5, oy = y + 0.5 - 8.5, d = Math.sqrt(ox * ox + oy * oy);
+                if (d > 3.05) continue;
+                boolean lit = ox + oy < 0;
+                int col;
+                if (d > 2.5) col = c(STEEL, lit ? 5 : 2);
+                else if (d > 1.15) {
+                    int sec = Math.floorMod((int) Math.floor((Math.atan2(oy, ox) + ph) / (Math.PI / 3)), 2);
+                    col = c(COPPER, sec == 0 ? (lit ? 5 : 4) : (lit ? 3 : 2));
+                } else col = c(STEEL, ox < 0 && oy < 0 ? 5 : (ox > 0 && oy > 0 ? 2 : 3));
+                pxs(im, x, y, col);
+            }
+        // wire from the spool through the die and out to the right edge
+        pxs(im, 8, 8, c(COPPER, 4));
+        pxs(im, 9, 8, c(COPPER, 4));
+        pxs(im, 10, 8, c(COPPER, 3));
+        pxs(im, 11, 8, c(COPPER, 4));
+        pxs(im, 12, 8, c(COPPER, 4));
+        pxs(im, 13, 8, c(COPPER, 3));
+        pxs(im, 9, 9, c(COPPER, 2));
+        if (active) {
+            int[] hx = {8, 10, 12, 13};
+            pxs(im, hx[frame], 8, c(COPPER, 5));
+            pxs(im, 13 - (hx[frame] - 8) * 0 - (frame == 3 ? 5 : 0), 8, c(COPPER, 5));
+        }
+        lampOff(im, mv);
+        return im;
+    }
+
+    /** One bender roller: lit/shaded rim, flat face, dark axle and two rotating marks (bright, dark). */
+    static void roller(BufferedImage im, double cx, double cy, double rad, double ph, int topClip) {
+        for (int y = topClip; y < 12; y++)
+            for (int x = 2; x <= 13; x++) {
+                double ox = x + 0.5 - cx, oy = y + 0.5 - cy, d = Math.sqrt(ox * ox + oy * oy);
+                if (d > rad) continue;
+                boolean lit = ox + oy < 0;
+                int col = d > rad - 0.9 ? c(STEEL, lit ? 5 : 2) : c(STEEL, lit ? 4 : 3);
+                pxs(im, x, y, col);
+            }
+        pxs(im, (int) Math.floor(cx), (int) Math.floor(cy), c(STEEL, 1));
+        double mr = rad - 1.5;
+        pxs(im, (int) Math.floor(cx + mr * Math.cos(ph)), (int) Math.floor(cy + mr * Math.sin(ph)), c(STEEL, 5));
+        pxs(im, (int) Math.floor(cx - mr * Math.cos(ph)), (int) Math.floor(cy - mr * Math.sin(ph)), c(STEEL, 1));
+    }
+
+    static BufferedImage benderFront(boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 741 : 740);
+        // tall recess 1..14, 1..12 (the lamp socket is redrawn on top): dark top-left, lit bottom-right bevel
+        fill(im, 2, 2, 13, 11, c(STEEL, 1));
+        for (int x = 1; x <= 14; x++) { pxs(im, x, 1, c(r, base - 1)); pxs(im, x, 12, c(r, base + 2)); }
+        for (int y = 1; y <= 12; y++) { pxs(im, 1, y, c(r, base - 1)); pxs(im, 14, y, c(r, base + 2)); }
+        pxs(im, 14, 1, c(r, base)); pxs(im, 1, 12, c(r, base));
+        double ph = active ? frame * Math.PI / 4 : 0.6;
+        roller(im, 4.5, 10.2, 2.6, -ph, 2);
+        roller(im, 11.5, 10.2, 2.6, -ph + 1.0, 2);
+        // plate edge through the nip; bright dashes slide when active
+        for (int x = 2; x <= 13; x++) {
+            boolean bright = active ? ((x + frame) % 4) < 2 : (x % 4) < 2;
+            pxs(im, x, 7, c(ALUMINIUM, bright ? 5 : 4));
+            pxs(im, x, 8, c(ALUMINIUM, 2));
+        }
+        roller(im, 8.0, 4.8, 2.6, ph, 2);
+        lampOff(im, mv);
+        return im;
+    }
+
+    static final String[] ROD_ICON = {"...#", "..#.", ".#..", "#..."};
+    static final String[] GEAR_ICON = {"#.#.#", ".###.", "##.##", ".###.", "#.#.#"};
+
+    /** Lathe: chuck left, tool post and cutter right, spinning rod or gear blank between. */
+    static BufferedImage latheFront(boolean mv, int frame, boolean active, boolean gear) {
+        BufferedImage im = frontBase(mv, mv ? 751 : 750);
+        if (gear) engrave(im, mv, 6, 0 + 1, new String[]{"#.#.#", ".###.", "##.##", ".###."});
+        else engrave(im, mv, 6, 1, ROD_ICON);
+        lip(im, mv);
+        fill(im, 2, 6, 13, 11, c(STEEL, 1));
+        // bed rail along the bottom
+        for (int x = 2; x <= 13; x++) pxs(im, x, 11, c(STEEL, 2));
+        // chuck with jaws
+        block(im, 2, 6, 4, 10, 4);
+        for (int y : new int[]{7, 9}) for (int x = 2; x <= 4; x++) pxs(im, x, y, c(STEEL, 2));
+        // tool post right with cutter tip pointing at the work
+        block(im, 11, 6, 13, 9, 3);
+        pxs(im, 12, 7, c(STEEL, 1));
+        pxs(im, 10, 7, c(STEEL, 5));
+        pxs(im, 11, 8, c(STEEL, 5));
+        pxs(im, 10, 8, c(STEEL, 4));
+        // workpiece, banded lighter and darker in alternating columns when spinning
+        int ph = active ? frame : 0;
+        if (!gear) {
+            // thin round rod on rows 8..9 between chuck and cutter
+            for (int x = 5; x <= 10; x++) {
+                boolean band = active && ((x + ph) % 4 < 2);
+                pxs(im, x, 8, c(STEEL, band ? 4 : 5));
+                pxs(im, x, 9, c(STEEL, band ? 2 : 3));
+            }
+        } else {
+            // gear blank: short drum rows 7..10 with a toothed rim top and bottom
+            for (int x = 5; x <= 9; x++) {
+                boolean tooth = ((x + ph) % 2) == 0;
+                boolean band = active && ((x + ph) % 4 < 2);
+                pxs(im, x, 7, tooth ? c(STEEL, 4) : c(STEEL, 1));
+                pxs(im, x, 8, c(STEEL, band ? 4 : 5));
+                pxs(im, x, 9, c(STEEL, band ? 3 : 4));
+                pxs(im, x, 10, tooth ? c(STEEL, 2) : c(STEEL, 1));
+            }
+        }
+        lampOff(im, mv);
+        return im;
+    }
+
     // ---- GUI
 
     static void lane(BufferedImage im, int y, int outputs) {
@@ -1052,6 +1209,28 @@ public final class ElectricTextures {
         return im;
     }
 
+    /** Lathe mode button: same bevelled face as the eject button, rod or gear glyph in SLOT_DARK. */
+    static BufferedImage latheButton(boolean gear) {
+        BufferedImage im = new BufferedImage(14, 14, BufferedImage.TYPE_INT_ARGB);
+        fill(im, 0, 0, 13, 13, TextureGen.GUI_FACE);
+        for (int i = 0; i < 14; i++) {
+            TextureGen.px(im, i, 0, TextureGen.GUI_LIGHT);
+            TextureGen.px(im, 0, i, TextureGen.GUI_LIGHT);
+            TextureGen.px(im, i, 13, TextureGen.GUI_SHADOW);
+            TextureGen.px(im, 13, i, TextureGen.GUI_SHADOW);
+        }
+        TextureGen.px(im, 13, 0, TextureGen.GUI_FACE);
+        TextureGen.px(im, 0, 13, TextureGen.GUI_FACE);
+        String[] g = gear
+                ? new String[]{"..#....#..", ".##.##.##.", "..######..", "###....###", "###....###", "..######..", ".##.##.##.", "..#....#.."}
+                : new String[]{"........##", ".......###", "......###.", ".....###..", "....###...", "...###....", "..###.....", ".###......", "###......."};
+        int x0 = (14 - g[0].length()) / 2, y0 = (14 - g.length) / 2;
+        for (int j = 0; j < g.length; j++)
+            for (int i = 0; i < g[j].length(); i++)
+                if (g[j].charAt(i) == '#') TextureGen.px(im, x0 + i, y0 + j, TextureGen.SLOT_DARK);
+        return im;
+    }
+
     static BufferedImage ejectHighlight() {
         BufferedImage im = new BufferedImage(14, 14, BufferedImage.TYPE_INT_ARGB);
         for (int i = 0; i < 14; i++) {
@@ -1104,6 +1283,18 @@ public final class ElectricTextures {
             save("block/macerator_front_" + t, maceratorFront(mv, 0, false));
             TextureGen.saveAnimated("block/macerator_front_" + t + "_active", maceratorStrip(mv), 2);
             TextureGen.saveRaw("gui/sprites/container/electric_machine/tier_" + t, tierBadge(mv));
+            save("block/wiremill_front_" + t, wiremillFront(mv, 0, false));
+            TextureGen.saveAnimated("block/wiremill_front_" + t + "_active", strip(f -> wiremillFront(mv, f, true)), 2);
+            save("block/bender_front_" + t, benderFront(mv, 0, false));
+            TextureGen.saveAnimated("block/bender_front_" + t + "_active", strip(f -> benderFront(mv, f, true)), 2);
+            save("block/lathe_front_" + t, latheFront(mv, 0, false, false));
+            TextureGen.saveAnimated("block/lathe_front_" + t + "_active", strip(f -> latheFront(mv, f, true, false)), 2);
+            save("block/lathe_front_" + t + "_gear", latheFront(mv, 0, false, true));
+            TextureGen.saveAnimated("block/lathe_front_" + t + "_gear_active", strip(f -> latheFront(mv, f, true, true)), 2);
+            OUTS.put("preview/wiremill_" + t, wiremillFront(mv, 1, true));
+            OUTS.put("preview/bender_" + t, benderFront(mv, 1, true));
+            OUTS.put("preview/lathe_" + t, latheFront(mv, 1, true, false));
+            OUTS.put("preview/lathe_gear_" + t, latheFront(mv, 1, true, true));
         }
         save("block/overlay/status_run", lampOverlay(RUN));
         save("block/overlay/status_wait", lampOverlay(WAIT));
@@ -1114,6 +1305,10 @@ public final class ElectricTextures {
         TextureGen.saveRaw("gui/electric_furnace_mv", machineGui(two, 1));
         TextureGen.saveRaw("gui/macerator", machineGui(one, 3));
         TextureGen.saveRaw("gui/macerator_mv", machineGui(two, 3));
+        for (String n : new String[]{"wiremill", "bender", "lathe"}) {
+            TextureGen.saveRaw("gui/" + n, machineGui(one, 1));
+            TextureGen.saveRaw("gui/" + n + "_mv", machineGui(two, 1));
+        }
 
         String sp = "gui/sprites/container/electric_machine/";
         TextureGen.saveRaw(sp + "power_bar_run", powerBar(RUN));
@@ -1122,6 +1317,8 @@ public final class ElectricTextures {
         TextureGen.saveRaw(sp + "eject_off", ejectButton(false));
         TextureGen.saveRaw(sp + "eject_on", ejectButton(true));
         TextureGen.saveRaw(sp + "eject_highlighted", ejectHighlight());
+        TextureGen.saveRaw(sp + "lathe_rod", latheButton(false));
+        TextureGen.saveRaw(sp + "lathe_gear", latheButton(true));
     }
 
     // ---------------------------------------------------------------- generators (steam turbine, combustion generator)

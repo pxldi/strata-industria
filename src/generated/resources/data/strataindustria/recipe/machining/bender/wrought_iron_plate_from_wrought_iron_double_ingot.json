@@ -1,0 +1,9 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "strataindustria:wrought_iron_double_ingot",
+  "machine": "bender",
+  "result": {
+    "count": 2,
+    "id": "strataindustria:wrought_iron_plate"
+  }
+}

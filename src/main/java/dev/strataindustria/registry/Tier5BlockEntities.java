@@ -6,7 +6,10 @@ import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
 import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
+import dev.strataindustria.electric.machine.BenderBlockEntity;
+import dev.strataindustria.electric.machine.LatheBlockEntity;
 import dev.strataindustria.electric.machine.MaceratorBlockEntity;
+import dev.strataindustria.electric.machine.WiremillBlockEntity;
 import dev.strataindustria.rubber.TreeTapBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -34,6 +37,12 @@ public final class Tier5BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MaceratorBlockEntity>> MACERATOR =
             ModBlockEntities.BLOCK_ENTITIES.register("macerator", () -> new BlockEntityType<>(MaceratorBlockEntity::new,
                     Tier5Blocks.MACERATOR.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WiremillBlockEntity>> WIREMILL =
+            ModBlockEntities.BLOCK_ENTITIES.register("wiremill", () -> new BlockEntityType<>(WiremillBlockEntity::new, Tier5Blocks.WIREMILL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BenderBlockEntity>> BENDER =
+            ModBlockEntities.BLOCK_ENTITIES.register("bender", () -> new BlockEntityType<>(BenderBlockEntity::new, Tier5Blocks.BENDER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatheBlockEntity>> LATHE =
+            ModBlockEntities.BLOCK_ENTITIES.register("lathe", () -> new BlockEntityType<>(LatheBlockEntity::new, Tier5Blocks.LATHE.get()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamTurbineBlockEntity>> STEAM_TURBINE =
             ModBlockEntities.BLOCK_ENTITIES.register("steam_turbine", () -> new BlockEntityType<>(SteamTurbineBlockEntity::new,

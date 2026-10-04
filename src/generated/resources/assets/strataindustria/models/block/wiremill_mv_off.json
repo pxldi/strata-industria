@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "strataindustria:block/casing/mv_bottom",
+    "front": "strataindustria:block/wiremill_front_mv",
+    "side": "strataindustria:block/casing/mv_side",
+    "top": "strataindustria:block/casing/mv_top"
+  }
+}

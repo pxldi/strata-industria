@@ -111,6 +111,7 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
                 case ElectricMachineLayout.POWER -> Math.round(power * 100);
                 case ElectricMachineLayout.BUFFER -> (int) Math.round(buffer / bufferCapacity() * 100);
                 case ElectricMachineLayout.EJECT -> autoEject ? 1 : 0;
+                case ElectricMachineLayout.MODE -> modeIndex();
                 default -> 0;
             };
         }
@@ -137,6 +138,14 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
 
     /** Played every 40 ticks while the machine runs. */
     protected abstract SoundEvent workSound();
+
+    /** The mode button's current setting, 0 or 1; machines without one ignore it. */
+    protected int modeIndex() {
+        return 0;
+    }
+
+    /** Menu button 1: switches a machine with modes to its next mode. */
+    public void toggleMode() {}
 
     /** Called once for each finished item, after its outputs are in. */
     protected void finished(ServerLevel level, Operation operation) {}

@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:machining",
+  "ingredient": "minecraft:copper_ingot",
+  "machine": "bender",
+  "result": {
+    "id": "strataindustria:copper_plate"
+  }
+}
