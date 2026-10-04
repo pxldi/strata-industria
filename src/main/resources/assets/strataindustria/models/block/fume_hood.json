@@ -1,0 +1,105 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "#hood",
+    "hood": "strataindustria:block/fume_hood"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        3,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hood"
+        },
+        "south": {
+          "texture": "#hood"
+        },
+        "east": {
+          "texture": "#hood"
+        },
+        "west": {
+          "texture": "#hood"
+        },
+        "up": {
+          "texture": "#hood"
+        },
+        "down": {
+          "texture": "#hood"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        3,
+        3
+      ],
+      "to": [
+        13,
+        8,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hood"
+        },
+        "south": {
+          "texture": "#hood"
+        },
+        "east": {
+          "texture": "#hood"
+        },
+        "west": {
+          "texture": "#hood"
+        },
+        "up": {
+          "texture": "#hood"
+        },
+        "down": {
+          "texture": "#hood"
+        }
+      }
+    },
+    {
+      "from": [
+        6,
+        8,
+        6
+      ],
+      "to": [
+        10,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "texture": "#hood"
+        },
+        "south": {
+          "texture": "#hood"
+        },
+        "east": {
+          "texture": "#hood"
+        },
+        "west": {
+          "texture": "#hood"
+        },
+        "up": {
+          "texture": "#hood"
+        },
+        "down": {
+          "texture": "#hood"
+        }
+      }
+    }
+  ]
+}

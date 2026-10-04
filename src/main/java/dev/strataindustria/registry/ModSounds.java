@@ -15,6 +15,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FLINT = register("knapping.flint");
     /** The finished head comes free of the stone. */
     /** A known pattern cut again in one go: a rush of flakes. */
+    /** Crumbly stone breaking away beside the cell struck. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_CRUMBLE = register("knapping.crumble");
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_REPEAT = register("knapping.repeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FINISH = register("knapping.finish");
 
