@@ -2551,7 +2551,7 @@ public final class TextureGen {
             save("item/crushed_" + n, map(m.ramp(), CRUSHED_NORMAL));
             save("item/crushed_rich_" + n, map(m.ramp(), CRUSHED_RICH));
             save("item/small_" + n, map(m.ramp(), NUGGET));
-            save("block/small_" + n, pebbles(m));
+            if (keepsPile(n)) save("block/small_" + n, pebbles(m));
         }
 
         // Materials (spec 20.4).
@@ -4729,7 +4729,7 @@ public final class TextureGen {
     static void tier5Ores() throws IOException {
         for (Mineral m : T5_MINERALS) {
             for (String grade : List.of("poor", "normal", "rich")) save("block/ore/" + m.name() + "_" + grade, oreOverlay(m, grade));
-            save("block/small_" + m.name(), pebbles(m));
+            if (keepsPile(m.name())) save("block/small_" + m.name(), pebbles(m));
         }
     }
 
@@ -7699,7 +7699,7 @@ public final class TextureGen {
             save("block/ore/bituminous_coal_" + grade, oreOverlay(T4_MINERALS.get(2), grade));
             save("block/ore/sulfur_" + grade, oreOverlay(T4_MINERALS.get(3), grade));
         }
-        for (Mineral m : T4_MINERALS) save("block/small_" + m.name(), pebbles(m));
+        for (Mineral m : T4_MINERALS) if (keepsPile(m.name())) save("block/small_" + m.name(), pebbles(m));
         String[] washedPoor = washedPile(CRUSHED_SMALL), washedNormal = washedPile(CRUSHED_NORMAL), washedRich = washedPile(CRUSHED_RICH);
         for (Mineral m : T4_MINERALS.subList(0, 2)) {
             String n = m.name();
@@ -7793,6 +7793,11 @@ public final class TextureGen {
         steam();
     }
 
+    /** Only the plain-item minerals still lie about as small piles; metal ore signs are stains (redesign R7). */
+    static boolean keepsPile(String mineral) {
+        return mineral.equals("bituminous_coal") || mineral.equals("cinnabar") || mineral.equals("lazurite");
+    }
+
     static void save(String path, BufferedImage im) throws IOException {
         PREVIEW.put(path, im);
         if (HAND_MADE.contains(path) && Files.exists(OUT.resolve(path + ".png"))) return;
@@ -7845,7 +7850,7 @@ public final class TextureGen {
             save("item/crushed_" + n, map(m.ramp(), CRUSHED_NORMAL));
             save("item/crushed_rich_" + n, map(m.ramp(), CRUSHED_RICH));
             save("item/small_" + n, map(m.ramp(), NUGGET));
-            save("block/small_" + n, pebbles(m));
+            if (keepsPile(n)) save("block/small_" + n, pebbles(m));
         }
         save("item/flint_shard", map(V2.FLINT_V2, FLINT_SHARD));
 

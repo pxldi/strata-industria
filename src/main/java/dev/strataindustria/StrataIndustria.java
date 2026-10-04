@@ -50,6 +50,7 @@ public final class StrataIndustria {
         dev.strataindustria.listening.ListeningBlocks.init();
         dev.strataindustria.grid.GridBlocks.init();
         dev.strataindustria.flora.FloraBlocks.init();
+        dev.strataindustria.signs.SignBlocks.init();
         Tier4Recipes.init();
         dev.strataindustria.registry.Tier4DataComponents.init();
         dev.strataindustria.registry.Tier5Blocks.init();

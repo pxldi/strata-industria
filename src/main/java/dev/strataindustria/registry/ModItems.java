@@ -7,7 +7,6 @@ import dev.strataindustria.charcoal.AshItem;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
-import dev.strataindustria.item.GroundCoverItem;
 import dev.strataindustria.item.RockShardItem;
 import dev.strataindustria.item.ProspectorsPickItem;
 import dev.strataindustria.journal.FieldJournalItem;
@@ -145,6 +144,7 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> BOG_IRON = ITEMS.registerSimpleBlockItem(ModBlocks.BOG_IRON);
     public static final DeferredItem<BlockItem> PLACER_GRAVEL = ITEMS.registerSimpleBlockItem(ModBlocks.PLACER_GRAVEL);
     public static final DeferredItem<BlockItem> PLACER_SAND = ITEMS.registerSimpleBlockItem(ModBlocks.PLACER_SAND);
+    public static final DeferredItem<BlockItem> BLACK_SAND = ITEMS.registerSimpleBlockItem(ModBlocks.BLACK_SAND);
     // Wrought iron forms beyond the vanilla ingot and nugget (spec 4.1).
     public static final DeferredItem<Item> WROUGHT_IRON_ROD = ITEMS.registerSimpleItem("wrought_iron_rod");
     public static final DeferredItem<Item> WROUGHT_IRON_DOUBLE_INGOT = ITEMS.registerSimpleItem("wrought_iron_double_ingot", p -> p.stacksTo(16));
@@ -174,7 +174,7 @@ public final class ModItems {
     /** The rock shard: what a boulder splits into, shaped by hand into tool heads. */
     public static final Map<Rock, DeferredItem<RockShardItem>> ROCK_SHARD = new EnumMap<>(Rock.class);
     public static final Map<Rock, Map<OreMineral, DeferredItem<BlockItem>>> ORE_BLOCKS = new EnumMap<>(Rock.class);
-    public static final Map<OreMineral, DeferredItem<GroundCoverItem>> SMALL_ORES = new EnumMap<>(OreMineral.class);
+    public static final Map<OreMineral, DeferredItem<Item>> SMALL_ORES = new EnumMap<>(OreMineral.class);
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> ORE_PIECES = new EnumMap<>(OreMineral.class);
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> CRUSHED_ORES = new EnumMap<>(OreMineral.class);
     /** Tier 3 spec 11.2: crushed ore washed clean, worth a tenth more. */
@@ -245,8 +245,7 @@ public final class ModItems {
         }
         // Coal and sulfur indicators drop their item, so only metal ores have a small ore item (tier 4 spec 4.4).
         for (OreMineral mineral : OreMineral.withPieces()) {
-            SMALL_ORES.put(mineral, ITEMS.registerItem("small_" + mineral.id(),
-                    p -> new GroundCoverItem(ModBlocks.SMALL_ORES.get(mineral).get(), p), p -> p.useBlockDescriptionPrefix()));
+            SMALL_ORES.put(mineral, ITEMS.registerSimpleItem("small_" + mineral.id()));
             Map<OreGrade, DeferredItem<Item>> pieces = new EnumMap<>(OreGrade.class);
             Map<OreGrade, DeferredItem<Item>> crushed = new EnumMap<>(OreGrade.class);
             for (OreGrade grade : OreGrade.values()) {

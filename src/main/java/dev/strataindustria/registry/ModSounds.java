@@ -25,6 +25,9 @@ public final class ModSounds {
     /** Shards bouncing away over the ground. */
     public static final DeferredHolder<SoundEvent, SoundEvent> BOULDER_SHARDS = register("boulder.shards");
 
+    /** Rubbing a stain on the ground with a bare hand; the code raises the pitch with each rub. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> STAIN_RUB = register("stain.rub");
+
     /** A clean note over each flint blow; the same note rings again when the rhythm is in the groove. */
     public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_CHIME = register("shaping.chime");
     /** A blow on the rebound: heavier, and it counts twice. */

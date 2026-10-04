@@ -64,6 +64,11 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition shards = definition().subtitle(subtitle("boulder.shards"));
         for (int i = 1; i <= 4; i++) shards.with(sound("minecraft:dig/gravel" + i).pitch(1.5f).volume(0.7f));
         add(ModSounds.BOULDER_SHARDS, shards);
+        // Rubbing a stain: dry grit under a fingertip.
+        SoundDefinition rub = definition().subtitle(subtitle("stain.rub"));
+        for (int i = 1; i <= 4; i++) rub.with(sound("minecraft:dig/sand" + i).pitch(1.3f).volume(0.6f));
+        rub.with(sound("minecraft:item.brush.brushing.gravel.complete", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.4f));
+        add(ModSounds.STAIN_RUB, rub);
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 

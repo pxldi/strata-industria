@@ -48,11 +48,14 @@ public final class Study {
         SUBJECTS.put("t0/log", state -> state.is(BlockTags.LOGS));
         SUBJECTS.put("t0/stone_axe", state -> state.is(BlockTags.LOGS));
         SUBJECTS.put("t0/clay", state -> state.is(Blocks.CLAY));
-        SUBJECTS.put("t1/nugget", state -> state.is(ModTags.Blocks.SMALL_ORES));
-        SUBJECTS.put("t2/alloy_metal", ore(OreMineral.CASSITERITE, OreMineral.BISMUTHINITE, OreMineral.TENNANTITE));
+        SUBJECTS.put("t1/nugget", state -> state.getBlock() instanceof dev.strataindustria.signs.StainBlock stain && stain.stain() == dev.strataindustria.signs.Stain.MALACHITE_BLOOM
+                || state.getBlock() instanceof dev.strataindustria.block.BoulderBlock && state.getValue(dev.strataindustria.block.BoulderBlock.COAT) == dev.strataindustria.block.BoulderBlock.Coat.BLOOM);
+        SUBJECTS.put("t2/alloy_metal", ore(OreMineral.CASSITERITE, OreMineral.BISMUTHINITE, OreMineral.TENNANTITE).or(state -> state.is(ModBlocks.BLACK_SAND.get())));
         SUBJECTS.put("t2/stone_anvil", state -> RockLookup.rawRock(state) != null);
         SUBJECTS.put("t3/fire_clay", state -> state.is(ModBlocks.FIRE_CLAY.get()));
-        SUBJECTS.put("t3/iron_ore", state -> state.getBlock() instanceof OreBlock ore && ore.mineral().isIron());
+        SUBJECTS.put("t3/iron_ore", state -> state.getBlock() instanceof OreBlock ore && ore.mineral().isIron()
+                || state.getBlock() instanceof dev.strataindustria.signs.StainBlock stain && stain.stain() == dev.strataindustria.signs.Stain.GOSSAN
+                || state.getBlock() instanceof dev.strataindustria.block.BoulderBlock && state.getValue(dev.strataindustria.block.BoulderBlock.COAT) == dev.strataindustria.block.BoulderBlock.Coat.GOSSAN);
         SUBJECTS.put("t3/bellows", state -> state.getBlock() == ModBlocks.BLOOMERY.get());
         SUBJECTS.put("t4/coal", ore(OreMineral.BITUMINOUS_COAL));
         SUBJECTS.put("t4/sphalerite", ore(OreMineral.SPHALERITE));
@@ -84,6 +87,8 @@ public final class Study {
         if (state.getBlock() instanceof OreBlock ore) {
             key = KEY + "ore";
             args.add(toolKey(ore.mineral(), state));
+        } else if (state.getBlock() instanceof dev.strataindustria.block.BoulderBlock && state.getValue(dev.strataindustria.block.BoulderBlock.COAT) != dev.strataindustria.block.BoulderBlock.Coat.NONE) {
+            key = KEY + "coated." + state.getValue(dev.strataindustria.block.BoulderBlock.COAT).getSerializedName();
         } else if (rock != null) {
             key = KEY + "rock";
             args.add(KEY + "category." + rock.category().getSerializedName());
@@ -93,6 +98,10 @@ public final class Study {
             } else {
                 args.add(String.join(Journal.ARG_LIST, minerals));
             }
+        } else if (state.getBlock() instanceof dev.strataindustria.signs.StainBlock stain) {
+            key = KEY + "stain." + stain.stain().id();
+        } else if (state.is(ModBlocks.BLACK_SAND.get())) {
+            key = KEY + "black_sand";
         } else if (state.getBlock() instanceof dev.strataindustria.flora.IndicatorPlantBlock plant) {
             key = KEY + "plant." + plant.plant().id();
         } else if (be instanceof BloomeryBlockEntity bloomery) {

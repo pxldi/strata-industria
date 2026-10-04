@@ -1,0 +1,191 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "#rock",
+    "coat": "strataindustria:block/boulder_gossan",
+    "crack": "strataindustria:block/boulder_crack_1"
+  },
+  "elements": [
+    {
+      "from": [3.0, 0, 3.0],
+      "to": [13.0, 3.0, 12.0],
+      "faces": {
+        "up": {
+          "uv": [3, 3, 13, 12],
+          "texture": "#rock"
+        },
+        "north": {
+          "uv": [3, 13, 13, 16],
+          "texture": "#rock"
+        },
+        "south": {
+          "uv": [3, 13, 13, 16],
+          "texture": "#rock"
+        },
+        "west": {
+          "uv": [3, 13, 12, 16],
+          "texture": "#rock"
+        },
+        "east": {
+          "uv": [3, 13, 12, 16],
+          "texture": "#rock"
+        },
+        "down": {
+          "uv": [3, 3, 13, 12],
+          "texture": "#rock",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [4.0, 3.0, 4.0],
+      "to": [11.0, 5.0, 10.0],
+      "faces": {
+        "up": {
+          "uv": [4, 4, 11, 10],
+          "texture": "#rock"
+        },
+        "north": {
+          "uv": [4, 11, 11, 13],
+          "texture": "#rock"
+        },
+        "south": {
+          "uv": [4, 11, 11, 13],
+          "texture": "#rock"
+        },
+        "west": {
+          "uv": [4, 11, 10, 13],
+          "texture": "#rock"
+        },
+        "east": {
+          "uv": [4, 11, 10, 13],
+          "texture": "#rock"
+        },
+        "down": {
+          "uv": [4, 4, 11, 10],
+          "texture": "#rock",
+          "cullface": "down"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [8, 0, 8]
+      }
+    },
+    {
+      "from": [2.97, 0, 2.97],
+      "to": [13.03, 3.03, 12.03],
+      "faces": {
+        "up": {
+          "uv": [3, 3, 13, 12],
+          "texture": "#coat"
+        },
+        "north": {
+          "uv": [3, 13, 13, 16],
+          "texture": "#coat"
+        },
+        "south": {
+          "uv": [3, 13, 13, 16],
+          "texture": "#coat"
+        },
+        "west": {
+          "uv": [3, 13, 12, 16],
+          "texture": "#coat"
+        },
+        "east": {
+          "uv": [3, 13, 12, 16],
+          "texture": "#coat"
+        }
+      }
+    },
+    {
+      "from": [3.97, 2.97, 3.97],
+      "to": [11.03, 5.03, 10.03],
+      "faces": {
+        "up": {
+          "uv": [4, 4, 11, 10],
+          "texture": "#coat"
+        },
+        "north": {
+          "uv": [4, 11, 11, 13],
+          "texture": "#coat"
+        },
+        "south": {
+          "uv": [4, 11, 11, 13],
+          "texture": "#coat"
+        },
+        "west": {
+          "uv": [4, 11, 10, 13],
+          "texture": "#coat"
+        },
+        "east": {
+          "uv": [4, 11, 10, 13],
+          "texture": "#coat"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [8, 0, 8]
+      }
+    },
+    {
+      "from": [2.96, 0, 2.96],
+      "to": [13.04, 3.04, 12.04],
+      "faces": {
+        "up": {
+          "uv": [3, 3, 13, 12],
+          "texture": "#crack"
+        },
+        "north": {
+          "uv": [3, 13, 13, 16],
+          "texture": "#crack"
+        },
+        "south": {
+          "uv": [3, 13, 13, 16],
+          "texture": "#crack"
+        },
+        "west": {
+          "uv": [3, 13, 12, 16],
+          "texture": "#crack"
+        },
+        "east": {
+          "uv": [3, 13, 12, 16],
+          "texture": "#crack"
+        }
+      }
+    },
+    {
+      "from": [3.96, 2.96, 3.96],
+      "to": [11.04, 5.04, 10.04],
+      "faces": {
+        "up": {
+          "uv": [4, 4, 11, 10],
+          "texture": "#crack"
+        },
+        "north": {
+          "uv": [4, 11, 11, 13],
+          "texture": "#crack"
+        },
+        "south": {
+          "uv": [4, 11, 11, 13],
+          "texture": "#crack"
+        },
+        "west": {
+          "uv": [4, 11, 10, 13],
+          "texture": "#crack"
+        },
+        "east": {
+          "uv": [4, 11, 10, 13],
+          "texture": "#crack"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [8, 0, 8]
+      }
+    }
+  ]
+}

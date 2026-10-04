@@ -1,0 +1,72 @@
+{
+  "variants": {
+    "variant=0": [
+      {
+        "model": "strataindustria:block/malachite_bloom_0"
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_0",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_0",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_0",
+        "y": 270
+      }
+    ],
+    "variant=1": [
+      {
+        "model": "strataindustria:block/malachite_bloom_1"
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_1",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_1",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_1",
+        "y": 270
+      }
+    ],
+    "variant=2": [
+      {
+        "model": "strataindustria:block/malachite_bloom_2"
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_2",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_2",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_2",
+        "y": 270
+      }
+    ],
+    "variant=3": [
+      {
+        "model": "strataindustria:block/malachite_bloom_3"
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_3",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_3",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/malachite_bloom_3",
+        "y": 270
+      }
+    ]
+  }
+}

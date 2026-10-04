@@ -58,13 +58,20 @@ def element(frm, to, turn, tex, grow=0.0, down=True):
     return e
 
 
-def model(size, cracks, flinty):
+COATS = {1: "gossan", 2: "bloom"}
+
+
+def model(size, cracks, flinty, coat):
     elements = [element(f, t, turn, "#rock") for f, t, turn in BODIES[size]]
     if flinty:
         elements += [element(f, t, turn, "#nodules", 0.02, False) for f, t, turn in BODIES[size]]
+    if coat:
+        elements += [element(f, t, turn, "#coat", 0.03, False) for f, t, turn in BODIES[size]]
     if cracks:
         elements += [element(f, t, turn, "#crack", 0.04, False) for f, t, turn in BODIES[size]]
     textures = {"particle": "#rock", "nodules": "strataindustria:block/boulder_nodules"}
+    if coat:
+        textures["coat"] = "strataindustria:block/boulder_" + COATS[coat]
     if cracks:
         textures["crack"] = "strataindustria:block/boulder_crack_%d" % cracks
     if not flinty:
@@ -76,8 +83,9 @@ os.makedirs(OUT, exist_ok=True)
 for size in BODIES:
     for cracks in range(0, 3):
         for flinty in (0, 1):
-            name = "template_boulder_%d_%d_%d.json" % (size, cracks, flinty)
-            with open(os.path.join(OUT, name), "w") as f:
-                text = json.dumps(model(size, cracks, flinty), indent=2)
-                f.write(re.sub(r"\[\s+([-\d., \s]+?)\s+\]", lambda m: "[" + " ".join(m.group(1).split()) + "]", text) + "\n")
-print("wrote", len(BODIES) * 3 * 2, "boulder models")
+            for coat in (0, 1, 2):
+                name = "template_boulder_%d_%d_%d_%d.json" % (size, cracks, flinty, coat)
+                with open(os.path.join(OUT, name), "w") as f:
+                    text = json.dumps(model(size, cracks, flinty, coat), indent=2)
+                    f.write(re.sub(r"\[\s+([-\d., \s]+?)\s+\]", lambda m: "[" + " ".join(m.group(1).split()) + "]", text) + "\n")
+print("wrote", len(BODIES) * 3 * 2 * 3, "boulder models")

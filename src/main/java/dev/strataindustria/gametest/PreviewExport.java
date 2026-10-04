@@ -80,6 +80,43 @@ final class PreviewExport {
                 }
                 write(level, Path.of(dir, "boulders.json"), "boulders", new BoundingBox(bx - 2, groundY - 2, bz - 2, bx + 20, groundY + 5, bz + 8));
             }
+            if (only == null || "ore_signs".matches(only)) {
+                // Rust, green and yellow stains, stained boulders in three sizes, and a bank of sand with black sand in it.
+                int sx = origin.getX() + 100, sz = origin.getZ() + 60;
+                BoundingBox area = new BoundingBox(sx - 4, groundY - 6, sz - 4, sx + 30, groundY + 8, sz + 22);
+                ground(level, area, groundY, false);
+                dev.strataindustria.signs.Stain[] stains = dev.strataindustria.signs.Stain.values();
+                java.util.Random random = new java.util.Random(5);
+                for (int row = 0; row < stains.length; row++) {
+                    var block = dev.strataindustria.signs.SignBlocks.STAINS.get(stains[row]).get();
+                    for (int dx = 0; dx < 7; dx++) {
+                        for (int dz = 0; dz < 5; dz++) {
+                            double edge = Math.hypot(dx - 3, dz - 2) / 4.0;
+                            if (random.nextDouble() > 0.95 - 0.7 * edge) continue;
+                            level.setBlock(new BlockPos(sx + dx, groundY + 1, sz + row * 7 + dz), block.with(random.nextInt(4)), Block.UPDATE_CLIENTS);
+                        }
+                    }
+                }
+                dev.strataindustria.block.BoulderBlock.Coat[] coats = {dev.strataindustria.block.BoulderBlock.Coat.GOSSAN, dev.strataindustria.block.BoulderBlock.Coat.BLOOM};
+                for (int row = 0; row < coats.length; row++) {
+                    for (int size = 1; size <= 3; size++) {
+                        for (int cracks = 0; cracks <= 1; cracks++) {
+                            BlockPos at = new BlockPos(sx + 9 + ((size - 1) * 2 + cracks) * 2, groundY + 1, sz + row * 3);
+                            level.setBlock(at, dev.strataindustria.registry.ModBlocks.BOULDER.get(row == 0 ? dev.strataindustria.geology.Rock.GRANITE : dev.strataindustria.geology.Rock.LIMESTONE).get()
+                                    .with(size, false, Direction.NORTH, coats[row]).setValue(dev.strataindustria.block.BoulderBlock.CRACKS, cracks), Block.UPDATE_CLIENTS);
+                        }
+                    }
+                }
+                for (int dx = 0; dx < 10; dx++) {
+                    for (int dz = 0; dz < 6; dz++) {
+                        boolean black = (dx + dz * 2) % 5 < 3;
+                        level.setBlock(new BlockPos(sx + 9 + dx, groundY, sz + 10 + dz), Blocks.SAND.defaultBlockState(), Block.UPDATE_CLIENTS);
+                        level.setBlock(new BlockPos(sx + 9 + dx, groundY, sz + 10 + dz), black ? dev.strataindustria.registry.ModBlocks.BLACK_SAND.get().defaultBlockState()
+                                : Blocks.SAND.defaultBlockState(), Block.UPDATE_CLIENTS);
+                    }
+                }
+                write(level, Path.of(dir, "ore_signs.json"), "ore_signs", new BoundingBox(sx - 2, groundY - 2, sz - 2, sx + 22, groundY + 5, sz + 20));
+            }
             if (only == null || "collapsed_adit".matches(only)) {
                 BlockPos portal = new BlockPos(origin.getX() + 40, groundY, origin.getZ() + 40);
                 BoundingBox area = new BoundingBox(portal.getX() - 14, groundY - 8, portal.getZ() - 6, portal.getX() + 14, groundY + 24, portal.getZ() + 26);

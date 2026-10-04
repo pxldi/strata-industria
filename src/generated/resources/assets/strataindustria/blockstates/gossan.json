@@ -1,0 +1,72 @@
+{
+  "variants": {
+    "variant=0": [
+      {
+        "model": "strataindustria:block/gossan_0"
+      },
+      {
+        "model": "strataindustria:block/gossan_0",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/gossan_0",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/gossan_0",
+        "y": 270
+      }
+    ],
+    "variant=1": [
+      {
+        "model": "strataindustria:block/gossan_1"
+      },
+      {
+        "model": "strataindustria:block/gossan_1",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/gossan_1",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/gossan_1",
+        "y": 270
+      }
+    ],
+    "variant=2": [
+      {
+        "model": "strataindustria:block/gossan_2"
+      },
+      {
+        "model": "strataindustria:block/gossan_2",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/gossan_2",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/gossan_2",
+        "y": 270
+      }
+    ],
+    "variant=3": [
+      {
+        "model": "strataindustria:block/gossan_3"
+      },
+      {
+        "model": "strataindustria:block/gossan_3",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/gossan_3",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/gossan_3",
+        "y": 270
+      }
+    ]
+  }
+}

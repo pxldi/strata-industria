@@ -102,16 +102,18 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         }
 
         var smallOres = tag(ModTags.Blocks.SMALL_ORES);
-        for (OreMineral mineral : OreMineral.values()) {
-            smallOres.add(ModBlocks.SMALL_ORES.get(mineral).getKey());
-        }
+        ModBlocks.SMALL_ORES.values().forEach(pile -> smallOres.add(pile.getKey()));
 
         // Tier 3 spec 3, 4.2 and 4.3: fire clay, fire bricks, bog iron, lignite and river placers.
         ores.add(ModBlocks.BOG_IRON.getKey());
         tag(Tags.Blocks.ORES_IRON).add(ModBlocks.BOG_IRON.getKey());
         tag(ModTags.Blocks.NEEDS_BRONZE_TOOL).add(ModBlocks.BOG_IRON.getKey());
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.BOG_IRON.getKey()).add(ModBlocks.BAUXITE_BED.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
-                .add(ModBlocks.PLACER_GRAVEL.getKey()).add(ModBlocks.PLACER_SAND.getKey());
+                .add(ModBlocks.PLACER_GRAVEL.getKey()).add(ModBlocks.PLACER_SAND.getKey()).add(ModBlocks.BLACK_SAND.getKey());
+        for (var stain : dev.strataindustria.signs.SignBlocks.STAINS.values()) {
+            tag(BlockTags.SWORD_INSTANTLY_MINES).add(stain.getKey());
+            tag(BlockTags.REPLACEABLE_BY_TREES).add(stain.getKey());
+        }
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_BRICKS.getKey())
                 .add(ModBlocks.BLOOMERY.getKey())
                 .add(ModBlocks.FIRE_BRICK_SLAB.getKey()).add(ModBlocks.FIRE_BRICK_STAIRS.getKey()).add(ModBlocks.FIRE_BRICK_WALL.getKey());

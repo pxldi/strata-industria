@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.signs.SignBlocks;
+import dev.strataindustria.signs.Stain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.BlockTags;
@@ -76,7 +78,7 @@ public record BogIronFeature() implements Feature {
                 int px = Math.clamp(x - radius + random.nextInt(2 * radius + 1), minX, minX + 15);
                 int pz = Math.clamp(z - radius + random.nextInt(2 * radius + 1), minZ, minZ + 15);
                 GroundCoverFeature.placeOnSurface(level, px, pz,
-                        ModBlocks.SMALL_ORES.get(OreMineral.LIMONITE).get().defaultBlockState());
+                        SignBlocks.STAINS.get(Stain.GOSSAN).get().with(random.nextInt(4)));
             }
         }
         return placed;

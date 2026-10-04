@@ -1,18 +1,6 @@
 {
   "values": [
-    "strataindustria:small_native_copper",
-    "strataindustria:small_malachite",
-    "strataindustria:small_tennantite",
-    "strataindustria:small_cassiterite",
-    "strataindustria:small_bismuthinite",
-    "strataindustria:small_limonite",
-    "strataindustria:small_hematite",
-    "strataindustria:small_magnetite",
-    "strataindustria:small_native_gold",
-    "strataindustria:small_sphalerite",
-    "strataindustria:small_galena",
     "strataindustria:small_bituminous_coal",
-    "strataindustria:small_sulfur",
     "strataindustria:small_cinnabar",
     "strataindustria:small_lazurite"
   ]

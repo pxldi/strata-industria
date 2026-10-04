@@ -4278,6 +4278,37 @@
     ],
     "subtitle": "subtitles.strataindustria.soaking_barrel.seal"
   },
+  "stain.rub": {
+    "sounds": [
+      {
+        "name": "dig/sand1",
+        "pitch": 1.3,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/sand2",
+        "pitch": 1.3,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/sand3",
+        "pitch": 1.3,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/sand4",
+        "pitch": 1.3,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "item.brush.brushing.gravel.complete",
+        "pitch": 1.4,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.stain.rub"
+  },
   "steam_engine.chuff": {
     "sounds": [
       {

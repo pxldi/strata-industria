@@ -63,11 +63,11 @@ final class ModBlockLoot extends BlockLootSubProvider {
             }
         }
 
-        for (OreMineral mineral : OreMineral.values()) {
-            // Tier 4 spec 4.4: coal and sulfur indicators drop one of their item.
-            if (mineral.hasPieces()) dropSelf(ModBlocks.SMALL_ORES.get(mineral).get());
-            else dropOther(ModBlocks.SMALL_ORES.get(mineral).get(), plainDrop(mineral));
-        }
+        // Tier 4 spec 4.4: coal, cinnabar and lazurite piles drop one of their item.
+        ModBlocks.SMALL_ORES.forEach((mineral, pile) -> dropOther(pile.get(), plainDrop(mineral)));
+        dropSelf(ModBlocks.BLACK_SAND.get());
+        // Stains are only a colour on the ground: they drop nothing.
+        dev.strataindustria.signs.SignBlocks.STAINS.values().forEach(stain -> add(stain.get(), noDrop()));
         dev.strataindustria.flora.FloraBlocks.PLANTS.values().forEach(plant -> dropSelf(plant.get()));
         dropSelf(ModBlocks.FIRE_PIT.get());
         crucible();
@@ -202,6 +202,17 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 .when(MatchBlock.blockMatches(blocks, block,
                         StatePropertiesPredicate.Builder.properties().hasProperty(BoulderBlock.FLINTY, true)))
                 .add(LootItem.lootTableItem(Items.FLINT)));
+        // The ore inside a stained boulder comes out too.
+        table.withPool(LootPool.lootPool()
+                .setRolls(ContextIntProviders.exactly(1))
+                .when(MatchBlock.blockMatches(blocks, block,
+                        StatePropertiesPredicate.Builder.properties().hasProperty(BoulderBlock.COAT, BoulderBlock.Coat.GOSSAN)))
+                .add(LootItem.lootTableItem(ModItems.SMALL_ORES.get(OreMineral.LIMONITE).get())));
+        table.withPool(LootPool.lootPool()
+                .setRolls(ContextIntProviders.exactly(1))
+                .when(MatchBlock.blockMatches(blocks, block,
+                        StatePropertiesPredicate.Builder.properties().hasProperty(BoulderBlock.COAT, BoulderBlock.Coat.BLOOM)))
+                .add(LootItem.lootTableItem(ModItems.SMALL_ORES.get(OreMineral.MALACHITE).get())));
         add(block, table);
     }
 

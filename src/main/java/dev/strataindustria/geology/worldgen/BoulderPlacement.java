@@ -48,9 +48,14 @@ final class BoulderPlacement {
     }
 
     private static void put(WorldGenLevel level, RandomSource random, Rock rock, int x, int z, int size) {
+        put(level, random, rock, x, z, size, BoulderBlock.Coat.NONE);
+    }
+
+    /** One boulder, with the rust or green coat of the ore below it if it has one (redesign R7). */
+    static void put(WorldGenLevel level, RandomSource random, Rock rock, int x, int z, int size, BoulderBlock.Coat coat) {
         boolean flinty = rock == Rock.LIMESTONE && random.nextFloat() < LIMESTONE_FLINT_CHANCE;
         Direction facing = Direction.Plane.HORIZONTAL.getRandomDirection(random);
         BoulderBlock block = ModBlocks.BOULDER.get(rock).get();
-        GroundCoverFeature.placeOnSurface(level, x, z, block.with(size, flinty, facing));
+        GroundCoverFeature.placeOnSurface(level, x, z, block.with(size, flinty, facing, coat));
     }
 }

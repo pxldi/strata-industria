@@ -20,7 +20,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
  */
 public final class IndicatorPlants {
     /** Veins whose top lies deeper below the surface than this have no plants over them. */
-    static final int DEPTH = 40;
+    static final int DEPTH = 48;
     /** Locoweed colonies sit on a grid of this many blocks; most cells have none. */
     public static final int COLONY_CELL = 96;
     private static final double COLONY_CHANCE = 0.12;
@@ -46,7 +46,7 @@ public final class IndicatorPlants {
             if (vein.y() + vein.verticalReach() < vein.surfaceY() - DEPTH) continue;
             int reach = vein.radiusH() + 5;
             if (!vein.intersects(minX - 5, minZ - 5, minX + 20, minZ + 20)) continue;
-            int count = (int) Math.round(Math.clamp(vein.estimatedOreBlocks() / 25.0, 6, 22) * density);
+            int count = (int) Math.round(Math.clamp(vein.estimatedOreBlocks() / 18.0, 10, 30) * density);
             for (int k = 0; k < count; k++) {
                 long h = Noise.hash(vein.seed(), 700 + k);
                 int dx = (int) ((Noise.unit(Noise.hash(h, 1)) * 2 - 1) * reach);

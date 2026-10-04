@@ -179,6 +179,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "boulder.crack", "Boulder cracks");
         add(subtitles + "boulder.split", "Boulder splits");
         add(subtitles + "boulder.shards", "Shards clatter");
+        add(subtitles + "stain.rub", "Grit rubbed");
         add(subtitles + "branch.shake", "Branch creaks");
         add(subtitles + "branch.snap", "Branch snaps");
         add(subtitles + "branch.bare", "Dry leaves rustle");
@@ -213,8 +214,9 @@ final class ModLanguageProvider extends LanguageProvider {
         }
         for (OreMineral mineral : OreMineral.values()) {
             String name = title(mineral.id());
-            addBlock(ModBlocks.SMALL_ORES.get(mineral), "Small " + name);
+            if (ModBlocks.SMALL_ORES.containsKey(mineral)) addBlock(ModBlocks.SMALL_ORES.get(mineral), "Small " + name);
             if (!mineral.hasPieces()) continue;
+            addItem(ModItems.SMALL_ORES.get(mineral), "Small " + name);
             for (OreGrade grade : OreGrade.values()) {
                 String graded = grade == OreGrade.NORMAL ? name : title(grade.getSerializedName()) + " " + name;
                 addItem(ModItems.ORE_PIECES.get(mineral).get(grade), graded);
@@ -731,6 +733,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.BOG_IRON, "Bog Iron");
         addBlock(ModBlocks.PLACER_GRAVEL, "Placer Gravel");
         addBlock(ModBlocks.PLACER_SAND, "Placer Sand");
+        addBlock(ModBlocks.BLACK_SAND, "Black Sand");
+        addBlock(dev.strataindustria.signs.SignBlocks.STAINS.get(dev.strataindustria.signs.Stain.GOSSAN), "Gossan");
+        addBlock(dev.strataindustria.signs.SignBlocks.STAINS.get(dev.strataindustria.signs.Stain.MALACHITE_BLOOM), "Malachite Bloom");
+        addBlock(dev.strataindustria.signs.SignBlocks.STAINS.get(dev.strataindustria.signs.Stain.SULFUR_CRUST), "Sulfur Crust");
         addItem(ModItems.WROUGHT_IRON_ROD, "Wrought Iron Rod");
         addItem(ModItems.WROUGHT_IRON_DOUBLE_INGOT, "Wrought Iron Double Ingot");
         // Spec 2: the vanilla iron ingot and nugget are wrought iron.

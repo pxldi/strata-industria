@@ -1200,6 +1200,11 @@ final class ModRecipeProvider extends RecipeProvider {
                 new ItemStackTemplate(Items.SAND), List.of(new WashingRecipe.Chance(new ItemStackTemplate(gold), 0.25f),
                 new WashingRecipe.Chance(new ItemStackTemplate(magnetite), 0.25f), new WashingRecipe.Chance(new ItemStackTemplate(cassiterite), 0.05f)),
                 WashingRecipe.DEFAULT_TICKS), null);
+        // Redesign R7: black sand under a tin vein is mostly cassiterite and magnetite, the best tin there is by hand.
+        output.accept(key("washing/black_sand"), new WashingRecipe(Ingredient.of(ModItems.BLACK_SAND.get()),
+                new ItemStackTemplate(Items.SAND), List.of(new WashingRecipe.Chance(new ItemStackTemplate(cassiterite), 0.55f),
+                new WashingRecipe.Chance(new ItemStackTemplate(magnetite), 0.25f)),
+                WashingRecipe.DEFAULT_TICKS), null);
     }
 
     /** Tier 3 spec 12.1: the soaking barrel, tannin from bark and the one soak that turns a raw hide into leather. */

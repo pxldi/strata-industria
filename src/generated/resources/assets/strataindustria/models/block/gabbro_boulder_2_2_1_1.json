@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_boulder_2_2_1_1",
+  "textures": {
+    "rock": "strataindustria:block/gabbro"
+  }
+}

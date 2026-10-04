@@ -76,6 +76,38 @@
         }
       ],
       "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:basalt_boulder",
+        "state": {
+          "coat": "gossan"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "strataindustria:small_limonite"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:basalt_boulder",
+        "state": {
+          "coat": "bloom"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "strataindustria:small_malachite"
+        }
+      ],
+      "rolls": 1
     }
   ],
   "random_sequence": "strataindustria:blocks/basalt_boulder"

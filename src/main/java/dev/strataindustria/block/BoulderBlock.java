@@ -4,6 +4,7 @@ import dev.strataindustria.geology.Rock;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import dev.strataindustria.knapping.Boulders;
+import dev.strataindustria.signs.Stain;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -45,6 +46,31 @@ public class BoulderBlock extends Block {
     /** Flint nodules in the rock. */
     public static final BooleanProperty FLINTY = BooleanProperty.create("flinty");
     public static final EnumProperty<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
+    /** Rust streaks or green bloom over iron or copper below (redesign R7); a stained boulder splits into ore chunks. */
+    public static final EnumProperty<Coat> COAT = EnumProperty.create("coat", Coat.class);
+
+    /** What stains a boulder. */
+    public enum Coat implements net.minecraft.util.StringRepresentable {
+        NONE, GOSSAN, BLOOM;
+
+        /** The ground stain of the same colour, or null for a clean boulder. */
+        public Stain stain() {
+            return switch (this) {
+                case NONE -> null;
+                case GOSSAN -> Stain.GOSSAN;
+                case BLOOM -> Stain.MALACHITE_BLOOM;
+            };
+        }
+
+        public static Coat of(Stain stain) {
+            return stain == Stain.GOSSAN ? GOSSAN : stain == Stain.MALACHITE_BLOOM ? BLOOM : NONE;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name().toLowerCase(java.util.Locale.ROOT);
+        }
+    }
 
     private static final VoxelShape[] SHAPES = {Block.box(3, 0, 3, 13, 5, 13), Block.box(1, 0, 1, 15, 9, 15), Block.box(0, 0, 0, 16, 13, 16)};
 
@@ -53,7 +79,8 @@ public class BoulderBlock extends Block {
     public BoulderBlock(Rock rock, Properties properties) {
         super(properties);
         this.rock = rock;
-        registerDefaultState(stateDefinition.any().setValue(SIZE, 2).setValue(CRACKS, 0).setValue(FLINTY, false).setValue(FACING, Direction.NORTH));
+        registerDefaultState(stateDefinition.any().setValue(SIZE, 2).setValue(CRACKS, 0).setValue(FLINTY, false).setValue(FACING, Direction.NORTH)
+                .setValue(COAT, Coat.NONE));
     }
 
     public Rock rock() {
@@ -65,9 +92,14 @@ public class BoulderBlock extends Block {
         return defaultBlockState().setValue(SIZE, size).setValue(FLINTY, flinty).setValue(FACING, facing);
     }
 
+    /** A boulder stained over an ore vein. */
+    public BlockState with(int size, boolean flinty, Direction facing, Coat coat) {
+        return with(size, flinty, facing).setValue(COAT, coat);
+    }
+
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(SIZE, CRACKS, FLINTY, FACING);
+        builder.add(SIZE, CRACKS, FLINTY, FACING, COAT);
     }
 
     @Override

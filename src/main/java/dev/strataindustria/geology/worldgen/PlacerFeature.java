@@ -66,7 +66,7 @@ public record PlacerFeature() implements Feature {
     }
 
     /** Under water, or at the water's edge. */
-    private static boolean wet(WorldGenLevel level, BlockPos pos) {
+    static boolean wet(WorldGenLevel level, BlockPos pos) {
         if (level.getFluidState(pos.above()).is(FluidTags.WATER)) return true;
         for (Direction side : Direction.Plane.HORIZONTAL) {
             if (level.getFluidState(pos.relative(side).above()).is(FluidTags.WATER)) return true;

@@ -88,11 +88,15 @@ final class ModModelProvider extends ModelProvider {
             }
         }
 
+        stains(blockModels);
+        blockModels.createTrivialCube(ModBlocks.BLACK_SAND.get());
         for (OreMineral mineral : OreMineral.values()) {
-            Block small = ModBlocks.SMALL_ORES.get(mineral).get();
-            var model = SMALL_ORE_TEMPLATE.create(small, TextureMapping.singleSlot(ORE, blockTexture("small_" + mineral.id())), blockModels.modelOutput);
-            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(small,
-                    BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(model))));
+            if (ModBlocks.SMALL_ORES.containsKey(mineral)) {
+                Block small = ModBlocks.SMALL_ORES.get(mineral).get();
+                var model = SMALL_ORE_TEMPLATE.create(small, TextureMapping.singleSlot(ORE, blockTexture("small_" + mineral.id())), blockModels.modelOutput);
+                blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(small,
+                        BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(model))));
+            }
             if (!mineral.hasPieces()) continue;
             flatItem(itemModels, ModItems.SMALL_ORES.get(mineral).get());
             for (OreGrade grade : OreGrade.values()) {
@@ -431,25 +435,41 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
     }
 
-    /** A boulder: one model per size, crack stage and nodules, each turned four ways. */
+    /** A boulder: one model per size, crack stage, nodules and stain, each turned four ways. */
     private static void boulder(BlockModelGenerators blockModels, Rock rock) {
         Block block = ModBlocks.BOULDER.get(rock).get();
-        PropertyDispatch.C4<MultiVariant, Integer, Integer, Boolean, net.minecraft.core.Direction> dispatch = PropertyDispatch.initial(
-                BoulderBlock.SIZE, BoulderBlock.CRACKS, BoulderBlock.FLINTY, BoulderBlock.FACING);
+        PropertyDispatch.C5<MultiVariant, Integer, Integer, Boolean, net.minecraft.core.Direction, BoulderBlock.Coat> dispatch = PropertyDispatch.initial(
+                BoulderBlock.SIZE, BoulderBlock.CRACKS, BoulderBlock.FLINTY, BoulderBlock.FACING, BoulderBlock.COAT);
         TextureMapping textures = TextureMapping.singleSlot(ROCK, blockTexture(rock.id()));
         for (int size = 1; size <= 3; size++) {
             for (int cracks = 0; cracks <= Boulders.MAX_CRACKS; cracks++) {
                 for (boolean flinty : new boolean[] {false, true}) {
-                    String suffix = "_" + size + "_" + cracks + "_" + (flinty ? 1 : 0);
-                    MultiVariant model = BlockModelGenerators.plainVariant(
-                            template("template_boulder" + suffix, ROCK).createWithSuffix(block, suffix, textures, blockModels.modelOutput));
-                    for (net.minecraft.core.Direction facing : net.minecraft.core.Direction.Plane.HORIZONTAL) {
-                        dispatch.select(size, cracks, flinty, facing, turned(model, facing));
+                    for (BoulderBlock.Coat coat : BoulderBlock.Coat.values()) {
+                        String suffix = "_" + size + "_" + cracks + "_" + (flinty ? 1 : 0) + "_" + coat.ordinal();
+                        MultiVariant model = BlockModelGenerators.plainVariant(
+                                template("template_boulder" + suffix, ROCK).createWithSuffix(block, suffix, textures, blockModels.modelOutput));
+                        for (net.minecraft.core.Direction facing : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+                            dispatch.select(size, cracks, flinty, facing, coat, turned(model, facing));
+                        }
                     }
                 }
             }
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+    }
+
+    /** A ground stain: a flat sheet just over the ground, four drawings each turned four ways. */
+    private static void stains(BlockModelGenerators blockModels) {
+        for (var entry : dev.strataindustria.signs.SignBlocks.STAINS.entrySet()) {
+            Block block = entry.getValue().get();
+            PropertyDispatch.C1<MultiVariant, Integer> dispatch = PropertyDispatch.initial(dev.strataindustria.signs.StainBlock.VARIANT);
+            for (int variant = 0; variant < 4; variant++) {
+                TextureMapping textures = TextureMapping.singleSlot(TextureSlot.TEXTURE, blockTexture(entry.getKey().id() + "_" + variant));
+                var model = template("template_stain", TextureSlot.TEXTURE).createWithSuffix(block, "_" + variant, textures, blockModels.modelOutput);
+                dispatch.select(variant, BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(model)));
+            }
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+        }
     }
 
     // Tier 4 spec 4.6 and 21.4: materials.

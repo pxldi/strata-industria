@@ -261,7 +261,10 @@ public class PlanPiece extends StructurePiece {
             case 'k' -> wood.fence();
             case 's' -> wood.slab().setValue(SlabBlock.TYPE, SlabType.TOP);
             case 'H' -> Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
-            case 'n' -> ModBlocks.SMALL_ORES.get(mineral).get().defaultBlockState();
+            case 'n' -> {
+                dev.strataindustria.signs.Stain stain = dev.strataindustria.signs.Stain.forMineral(mineral);
+                yield stain == null ? Blocks.AIR.defaultBlockState() : dev.strataindustria.signs.SignBlocks.STAINS.get(stain).get().with(mineral.ordinal());
+            }
             case 'p' -> wood.planks();
             case 'v' -> wood.stairs().setValue(StairBlock.FACING, Direction.SOUTH);
             case '^' -> wood.stairs().setValue(StairBlock.FACING, Direction.NORTH);

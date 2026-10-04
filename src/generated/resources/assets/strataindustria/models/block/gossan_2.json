@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_stain",
+  "textures": {
+    "texture": "strataindustria:block/gossan_2"
+  }
+}

@@ -72,8 +72,8 @@ final class JournalLanguage {
                 "Smothered under earth, the wood charred black and light. It burns hot and clean.");
         lead.add("t1/forge", "Charcoal on an open fire throws its heat away. I need something to hold it in.",
                 "A stone hearth with walls around the coals. It glows hotter than anything I have built.");
-        lead.add("t1/nugget", "Some of the pebbles here are strangely coloured. What are they?",
-                "Ore, washed up from a vein below. Somewhere under my feet there is more.");
+        lead.add("t1/nugget", "Some of the rock out here is streaked green. What is it?",
+                "Ore, broken out of a stained boulder. Somewhere under my feet there is more.");
         lead.add("t1/crucible", "If I could melt this ore, what would I pour it into?",
                 "A crucible to melt in and a mold to pour into, both fired hard.");
         // Tier 2: copper and bronze
@@ -284,6 +284,13 @@ final class JournalLanguage {
         lang.accept(observe + "plant.pink_thrift", "Pink pompoms on a mat of grass, in soil too thin for most things.");
         lang.accept(observe + "plant.locoweed", "Violet flower spikes on bare granite. Nothing else grows close to them. "
                 + "I don't know what they are telling me.");
+        lang.accept(observe + "sign.gossan", "Rust-coloured crust on the ground, and it comes off orange on my fingers. "
+                + "Iron weathers like this. It is not deep.");
+        lang.accept(observe + "sign.malachite_bloom", "Green streaks on the rock and in the dirt. Copper goes green when "
+                + "it weathers. There is copper close by.");
+        lang.accept(observe + "sign.sulfur_crust", "A yellow crust on the ground, and a sharp smell. Sulfur.");
+        lang.accept(observe + "sign.black_sand", "Black sand in the stream bed, heavy for its size. Tin washes down the "
+                + "water like this.");
         lang.accept(observe + "link.copper_flower", "Copper again, and the same little blue flower over it. "
                 + "I think they go together.");
         lang.accept(observe + "link.horsetail", "Gold in the gravel, and horsetail on the bank above it.");
@@ -304,6 +311,12 @@ final class JournalLanguage {
         lang.accept(study + "lead", "I looked the %s over closely. It has something to do with a question I have been asking.");
         lang.accept(study + "plain", "I looked the %s over closely. Nothing I did not already know.");
         lang.accept(study + "nothing_new", "Nothing new about the %s");
+        lang.accept(study + "stain.gossan", "%s. Iron weathers out of the ground like this.");
+        lang.accept(study + "stain.malachite_bloom", "%s. Green is copper.");
+        lang.accept(study + "stain.sulfur_crust", "%s. Smells of struck flint. A sulfur deposit is near the surface.");
+        lang.accept(study + "black_sand", "%s. Heavy grains. Pan it in water and see what stays in the bowl.");
+        lang.accept(study + "coated.gossan", "Rust streaks on the %s. Something heavy is inside. Hit it.");
+        lang.accept(study + "coated.bloom", "Green streaks on the %s. There is ore in it. Hit it.");
         lang.accept(study + "plant.copper_flower", "%s. It grows in patches, and only on some hills. Worth looking under.");
         lang.accept(study + "plant.horsetail", "%s. Likes wet gravel. It takes up more from the ground than most plants.");
         lang.accept(study + "plant.stunted_birch", "%s. Something in the ground is poisoning it.");

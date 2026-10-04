@@ -204,6 +204,11 @@ public final class ModBlocks {
             p -> new ColoredFallingBlock(new ColorRGBA(0xFFDBD3A0), p),
             p -> p.mapColor(MapColor.SAND).instrument(NoteBlockInstrument.SNARE).strength(0.5f).sound(SoundType.SAND));
 
+    /** Heavy dark sand in stream beds below tin veins (redesign R7); panned for tin. */
+    public static final DeferredBlock<ColoredFallingBlock> BLACK_SAND = BLOCKS.registerBlock("black_sand",
+            p -> new ColoredFallingBlock(new ColorRGBA(0xFF2C2C34), p),
+            p -> p.mapColor(MapColor.COLOR_BLACK).instrument(NoteBlockInstrument.SNARE).strength(0.5f).sound(SoundType.SAND));
+
     static {
         for (Rock rock : Rock.values()) {
             RAW_ROCK.put(rock, BLOCKS.registerSimpleBlock(rock.id(), p -> p
@@ -250,6 +255,11 @@ public final class ModBlocks {
             ORES.put(rock, ores);
         }
         for (OreMineral mineral : OreMineral.values()) {
+            // Metal ore piles and sulfur are signs now: stains, coated boulders and black sand (redesign R7).
+            if (!hasGroundPile(mineral)) {
+                BLOCKS.addAlias(StrataIndustria.id("small_" + mineral.id()), Identifier.withDefaultNamespace("air"));
+                continue;
+            }
             SMALL_ORES.put(mineral, BLOCKS.registerBlock("small_" + mineral.id(),
                     p -> new GroundCoverBlock(Block.box(3, 0, 3, 13, 3, 13), p),
                     p -> groundCover(p).sound(SoundType.GRAVEL)));
@@ -266,6 +276,11 @@ public final class ModBlocks {
                 .strength(2.5f, 8.0f)
                 .requiresCorrectToolForDrops()
                 .sound(FIRE_BRICK_SOUND);
+    }
+
+    /** Only the minerals that give a plain item, bar sulfur, still lie about as small piles. */
+    public static boolean hasGroundPile(OreMineral mineral) {
+        return !mineral.hasPieces() && mineral != OreMineral.SULFUR;
     }
 
     private static Block.Properties groundCover(Block.Properties p) {

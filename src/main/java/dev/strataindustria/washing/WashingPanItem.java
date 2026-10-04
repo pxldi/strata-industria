@@ -50,7 +50,7 @@ public class WashingPanItem extends Item {
         Level level = context.getLevel();
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
-        if (!state.is(ModBlocks.PLACER_GRAVEL.get()) && !state.is(ModBlocks.PLACER_SAND.get())) return InteractionResult.PASS;
+        if (!state.is(ModBlocks.PLACER_GRAVEL.get()) && !state.is(ModBlocks.PLACER_SAND.get()) && !state.is(ModBlocks.BLACK_SAND.get())) return InteractionResult.PASS;
         if (!level.isClientSide()) {
             level.removeBlock(pos, false);
             pan.set(ModDataComponents.PAN_CONTENTS.get(), new PanContents(state.getBlock().asItem()));

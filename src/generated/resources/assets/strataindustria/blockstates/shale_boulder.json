@@ -1,273 +1,813 @@
 {
   "variants": {
-    "cracks=0,facing=east,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_0",
+    "coat=bloom,cracks=0,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_2",
       "y": 90
     },
-    "cracks=0,facing=east,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_0",
+    "coat=bloom,cracks=0,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_2",
       "y": 90
     },
-    "cracks=0,facing=east,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_0",
+    "coat=bloom,cracks=0,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_2",
       "y": 90
     },
-    "cracks=0,facing=east,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_1",
+    "coat=bloom,cracks=0,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_2",
       "y": 90
     },
-    "cracks=0,facing=east,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_1",
+    "coat=bloom,cracks=0,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_2",
       "y": 90
     },
-    "cracks=0,facing=east,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_1",
+    "coat=bloom,cracks=0,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_2",
       "y": 90
     },
-    "cracks=0,facing=north,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_0"
+    "coat=bloom,cracks=0,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_2"
     },
-    "cracks=0,facing=north,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_0"
+    "coat=bloom,cracks=0,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_2"
     },
-    "cracks=0,facing=north,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_0"
+    "coat=bloom,cracks=0,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_2"
     },
-    "cracks=0,facing=north,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_1"
+    "coat=bloom,cracks=0,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_2"
     },
-    "cracks=0,facing=north,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_1"
+    "coat=bloom,cracks=0,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_2"
     },
-    "cracks=0,facing=north,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_1"
+    "coat=bloom,cracks=0,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_2"
     },
-    "cracks=0,facing=south,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_0",
+    "coat=bloom,cracks=0,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_2",
       "y": 180
     },
-    "cracks=0,facing=south,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_0",
+    "coat=bloom,cracks=0,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_2",
       "y": 180
     },
-    "cracks=0,facing=south,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_0",
+    "coat=bloom,cracks=0,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_2",
       "y": 180
     },
-    "cracks=0,facing=south,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_1",
+    "coat=bloom,cracks=0,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_2",
       "y": 180
     },
-    "cracks=0,facing=south,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_1",
+    "coat=bloom,cracks=0,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_2",
       "y": 180
     },
-    "cracks=0,facing=south,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_1",
+    "coat=bloom,cracks=0,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_2",
       "y": 180
     },
-    "cracks=0,facing=west,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_0",
+    "coat=bloom,cracks=0,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_2",
       "y": 270
     },
-    "cracks=0,facing=west,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_0",
+    "coat=bloom,cracks=0,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_2",
       "y": 270
     },
-    "cracks=0,facing=west,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_0",
+    "coat=bloom,cracks=0,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_2",
       "y": 270
     },
-    "cracks=0,facing=west,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_0_1",
+    "coat=bloom,cracks=0,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_2",
       "y": 270
     },
-    "cracks=0,facing=west,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_0_1",
+    "coat=bloom,cracks=0,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_2",
       "y": 270
     },
-    "cracks=0,facing=west,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_0_1",
+    "coat=bloom,cracks=0,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_2",
       "y": 270
     },
-    "cracks=1,facing=east,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_0",
+    "coat=bloom,cracks=1,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_2",
       "y": 90
     },
-    "cracks=1,facing=east,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_0",
+    "coat=bloom,cracks=1,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_2",
       "y": 90
     },
-    "cracks=1,facing=east,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_0",
+    "coat=bloom,cracks=1,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_2",
       "y": 90
     },
-    "cracks=1,facing=east,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_1",
+    "coat=bloom,cracks=1,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_2",
       "y": 90
     },
-    "cracks=1,facing=east,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_1",
+    "coat=bloom,cracks=1,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_2",
       "y": 90
     },
-    "cracks=1,facing=east,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_1",
+    "coat=bloom,cracks=1,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_2",
       "y": 90
     },
-    "cracks=1,facing=north,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_0"
+    "coat=bloom,cracks=1,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_2"
     },
-    "cracks=1,facing=north,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_0"
+    "coat=bloom,cracks=1,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_2"
     },
-    "cracks=1,facing=north,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_0"
+    "coat=bloom,cracks=1,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_2"
     },
-    "cracks=1,facing=north,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_1"
+    "coat=bloom,cracks=1,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_2"
     },
-    "cracks=1,facing=north,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_1"
+    "coat=bloom,cracks=1,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_2"
     },
-    "cracks=1,facing=north,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_1"
+    "coat=bloom,cracks=1,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_2"
     },
-    "cracks=1,facing=south,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_0",
+    "coat=bloom,cracks=1,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_2",
       "y": 180
     },
-    "cracks=1,facing=south,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_0",
+    "coat=bloom,cracks=1,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_2",
       "y": 180
     },
-    "cracks=1,facing=south,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_0",
+    "coat=bloom,cracks=1,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_2",
       "y": 180
     },
-    "cracks=1,facing=south,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_1",
+    "coat=bloom,cracks=1,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_2",
       "y": 180
     },
-    "cracks=1,facing=south,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_1",
+    "coat=bloom,cracks=1,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_2",
       "y": 180
     },
-    "cracks=1,facing=south,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_1",
+    "coat=bloom,cracks=1,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_2",
       "y": 180
     },
-    "cracks=1,facing=west,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_0",
+    "coat=bloom,cracks=1,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_2",
       "y": 270
     },
-    "cracks=1,facing=west,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_0",
+    "coat=bloom,cracks=1,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_2",
       "y": 270
     },
-    "cracks=1,facing=west,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_0",
+    "coat=bloom,cracks=1,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_2",
       "y": 270
     },
-    "cracks=1,facing=west,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_1_1",
+    "coat=bloom,cracks=1,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_2",
       "y": 270
     },
-    "cracks=1,facing=west,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_1_1",
+    "coat=bloom,cracks=1,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_2",
       "y": 270
     },
-    "cracks=1,facing=west,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_1_1",
+    "coat=bloom,cracks=1,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_2",
       "y": 270
     },
-    "cracks=2,facing=east,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_0",
+    "coat=bloom,cracks=2,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_2",
       "y": 90
     },
-    "cracks=2,facing=east,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_0",
+    "coat=bloom,cracks=2,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_2",
       "y": 90
     },
-    "cracks=2,facing=east,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_0",
+    "coat=bloom,cracks=2,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_2",
       "y": 90
     },
-    "cracks=2,facing=east,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_1",
+    "coat=bloom,cracks=2,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_2",
       "y": 90
     },
-    "cracks=2,facing=east,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_1",
+    "coat=bloom,cracks=2,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_2",
       "y": 90
     },
-    "cracks=2,facing=east,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_1",
+    "coat=bloom,cracks=2,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_2",
       "y": 90
     },
-    "cracks=2,facing=north,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_0"
+    "coat=bloom,cracks=2,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_2"
     },
-    "cracks=2,facing=north,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_0"
+    "coat=bloom,cracks=2,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_2"
     },
-    "cracks=2,facing=north,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_0"
+    "coat=bloom,cracks=2,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_2"
     },
-    "cracks=2,facing=north,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_1"
+    "coat=bloom,cracks=2,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_2"
     },
-    "cracks=2,facing=north,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_1"
+    "coat=bloom,cracks=2,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_2"
     },
-    "cracks=2,facing=north,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_1"
+    "coat=bloom,cracks=2,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_2"
     },
-    "cracks=2,facing=south,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_0",
+    "coat=bloom,cracks=2,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_2",
       "y": 180
     },
-    "cracks=2,facing=south,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_0",
+    "coat=bloom,cracks=2,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_2",
       "y": 180
     },
-    "cracks=2,facing=south,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_0",
+    "coat=bloom,cracks=2,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_2",
       "y": 180
     },
-    "cracks=2,facing=south,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_1",
+    "coat=bloom,cracks=2,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_2",
       "y": 180
     },
-    "cracks=2,facing=south,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_1",
+    "coat=bloom,cracks=2,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_2",
       "y": 180
     },
-    "cracks=2,facing=south,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_1",
+    "coat=bloom,cracks=2,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_2",
       "y": 180
     },
-    "cracks=2,facing=west,flinty=false,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_0",
+    "coat=bloom,cracks=2,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_2",
       "y": 270
     },
-    "cracks=2,facing=west,flinty=false,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_0",
+    "coat=bloom,cracks=2,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_2",
       "y": 270
     },
-    "cracks=2,facing=west,flinty=false,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_0",
+    "coat=bloom,cracks=2,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_2",
       "y": 270
     },
-    "cracks=2,facing=west,flinty=true,size=1": {
-      "model": "strataindustria:block/shale_boulder_1_2_1",
+    "coat=bloom,cracks=2,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_2",
       "y": 270
     },
-    "cracks=2,facing=west,flinty=true,size=2": {
-      "model": "strataindustria:block/shale_boulder_2_2_1",
+    "coat=bloom,cracks=2,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_2",
       "y": 270
     },
-    "cracks=2,facing=west,flinty=true,size=3": {
-      "model": "strataindustria:block/shale_boulder_3_2_1",
+    "coat=bloom,cracks=2,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_2",
+      "y": 270
+    },
+    "coat=gossan,cracks=0,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=0,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=0,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=0,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=0,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=0,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=0,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_1"
+    },
+    "coat=gossan,cracks=0,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_1"
+    },
+    "coat=gossan,cracks=0,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_1"
+    },
+    "coat=gossan,cracks=0,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_1"
+    },
+    "coat=gossan,cracks=0,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_1"
+    },
+    "coat=gossan,cracks=0,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_1"
+    },
+    "coat=gossan,cracks=0,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=0,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=0,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=0,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=0,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=0,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=0,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=0,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=0,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=0,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=0,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=0,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=1,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=1,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=1,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=1,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=1,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=1,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=1,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_1"
+    },
+    "coat=gossan,cracks=1,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_1"
+    },
+    "coat=gossan,cracks=1,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_1"
+    },
+    "coat=gossan,cracks=1,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_1"
+    },
+    "coat=gossan,cracks=1,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_1"
+    },
+    "coat=gossan,cracks=1,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_1"
+    },
+    "coat=gossan,cracks=1,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=1,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=1,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=1,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=1,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=1,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=1,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=1,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=1,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=1,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=1,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=1,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=2,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=2,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=2,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=2,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=2,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=2,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_1",
+      "y": 90
+    },
+    "coat=gossan,cracks=2,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_1"
+    },
+    "coat=gossan,cracks=2,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_1"
+    },
+    "coat=gossan,cracks=2,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_1"
+    },
+    "coat=gossan,cracks=2,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_1"
+    },
+    "coat=gossan,cracks=2,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_1"
+    },
+    "coat=gossan,cracks=2,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_1"
+    },
+    "coat=gossan,cracks=2,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=2,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=2,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=2,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=2,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=2,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_1",
+      "y": 180
+    },
+    "coat=gossan,cracks=2,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=2,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=2,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=2,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=2,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_1",
+      "y": 270
+    },
+    "coat=gossan,cracks=2,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_1",
+      "y": 270
+    },
+    "coat=none,cracks=0,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=0,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=0,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=0,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=0,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=0,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=0,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_0"
+    },
+    "coat=none,cracks=0,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_0"
+    },
+    "coat=none,cracks=0,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_0"
+    },
+    "coat=none,cracks=0,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_0"
+    },
+    "coat=none,cracks=0,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_0"
+    },
+    "coat=none,cracks=0,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_0"
+    },
+    "coat=none,cracks=0,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=0,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=0,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=0,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=0,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=0,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=0,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=0,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=0,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=0,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_0_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=0,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_0_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=0,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_0_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=1,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=1,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=1,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=1,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=1,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=1,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=1,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_0"
+    },
+    "coat=none,cracks=1,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_0"
+    },
+    "coat=none,cracks=1,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_0"
+    },
+    "coat=none,cracks=1,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_0"
+    },
+    "coat=none,cracks=1,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_0"
+    },
+    "coat=none,cracks=1,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_0"
+    },
+    "coat=none,cracks=1,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=1,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=1,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=1,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=1,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=1,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=1,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=1,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=1,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=1,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_1_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=1,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_1_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=1,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_1_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=2,facing=east,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=2,facing=east,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=2,facing=east,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_0",
+      "y": 90
+    },
+    "coat=none,cracks=2,facing=east,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=2,facing=east,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=2,facing=east,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_0",
+      "y": 90
+    },
+    "coat=none,cracks=2,facing=north,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_0"
+    },
+    "coat=none,cracks=2,facing=north,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_0"
+    },
+    "coat=none,cracks=2,facing=north,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_0"
+    },
+    "coat=none,cracks=2,facing=north,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_0"
+    },
+    "coat=none,cracks=2,facing=north,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_0"
+    },
+    "coat=none,cracks=2,facing=north,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_0"
+    },
+    "coat=none,cracks=2,facing=south,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=2,facing=south,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=2,facing=south,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_0",
+      "y": 180
+    },
+    "coat=none,cracks=2,facing=south,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=2,facing=south,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=2,facing=south,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_0",
+      "y": 180
+    },
+    "coat=none,cracks=2,facing=west,flinty=false,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=2,facing=west,flinty=false,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=2,facing=west,flinty=false,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_0_0",
+      "y": 270
+    },
+    "coat=none,cracks=2,facing=west,flinty=true,size=1": {
+      "model": "strataindustria:block/shale_boulder_1_2_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=2,facing=west,flinty=true,size=2": {
+      "model": "strataindustria:block/shale_boulder_2_2_1_0",
+      "y": 270
+    },
+    "coat=none,cracks=2,facing=west,flinty=true,size=3": {
+      "model": "strataindustria:block/shale_boulder_3_2_1_0",
       "y": 270
     }
   }

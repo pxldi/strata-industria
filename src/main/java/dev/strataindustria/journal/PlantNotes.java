@@ -38,6 +38,7 @@ public final class PlantNotes {
         BlockPos at = player.blockPosition();
         for (BlockPos pos : BlockPos.betweenClosed(at.offset(-REACH, -1, -REACH), at.offset(REACH, 2, REACH))) {
             BlockState block = player.level().getBlockState(pos);
+            SignNotes.noticed(player, block);
             if (block.getBlock() instanceof IndicatorPlantBlock plant && !state.seen(seenId(plant.plant()))) {
                 seen(player, plant.plant());
             }

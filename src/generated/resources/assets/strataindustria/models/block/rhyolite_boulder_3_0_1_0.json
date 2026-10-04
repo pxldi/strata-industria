@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_boulder_3_0_1_0",
+  "textures": {
+    "rock": "strataindustria:block/rhyolite"
+  }
+}

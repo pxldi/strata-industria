@@ -20,7 +20,8 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 
 /**
- * Surface pass: ore indicators above shallow veins (worldgen spec 6.1) and boulders of the local top rock
+ * Surface pass: ore indicators above shallow veins (worldgen spec 6.1), the colours iron, copper, sulfur and tin
+ * leave on the ground ({@link SignPlacement}, redesign R7) and boulders of the local top rock
  * (redesign R1, {@link BoulderPlacement}). Only writes inside the current chunk.
  */
 public record GroundCoverFeature() implements Feature {
@@ -39,10 +40,12 @@ public record GroundCoverFeature() implements Feature {
         int minX = (origin.getX() >> 4) << 4, minZ = (origin.getZ() >> 4) << 4;
         placeIndicators(level, ctx, minX, minZ);
         dev.strataindustria.flora.IndicatorPlants.generate(level, ctx, minX, minZ);
+        SignPlacement.place(level, ctx, random, minX, minZ);
         BoulderPlacement.place(level, ctx, random, minX, minZ);
         return true;
     }
 
+    /** Small piles of the plain-item minerals (coal, cinnabar, lazurite) over shallow veins. */
     private static void placeIndicators(WorldGenLevel level, GeologyContext ctx, int minX, int minZ) {
         int depth = Config.INDICATOR_DEPTH.get();
         double density = Config.INDICATOR_DENSITY.get();
@@ -58,6 +61,7 @@ public record GroundCoverFeature() implements Feature {
                 int z = vein.z() - reach + (int) (Noise.unit(Noise.hash(h, 2)) * (2 * reach + 1));
                 if (x < minX || x > minX + 15 || z < minZ || z > minZ + 15) continue;
                 OreMineral mineral = vein.type().pickMineral(Noise.unit(Noise.hash(h, 3)));
+                if (!ModBlocks.SMALL_ORES.containsKey(mineral)) continue;
                 placeOnSurface(level, x, z, ModBlocks.SMALL_ORES.get(mineral).get().defaultBlockState());
             }
         }

@@ -94,7 +94,7 @@ Exit condition: having a campfire, stone tools and a stash of clay.
 - **Firing**: stand unfired pottery on the hearth beside a hot fire pit (up to four pieces). It glows and rings when done.
 - **Charcoal pit**: stack logs, cover with dirt, light. Yields charcoal by volume. First "multiblock" in spirit, no GUI.
 - **Forge (basic)**: a small charcoal-fired hearth that heats items to working temperature. Introduces the temperature system and the temperature colour on item tooltips.
-- **Prospecting I**: by hand, look at boulders and ore nuggets ("surface indicators") that hint at veins below.
+- **Prospecting I**: by hand, read the ground: rust stains over iron, green streaks over copper, yellow crust over sulfur, black sand in stream beds near tin, stained boulders that split into ore chunks, and indicator plants.
 
 Exit condition: fired crucible, ingot molds, a forge, and found surface copper.
 
@@ -186,7 +186,7 @@ One or two flagship megaprojects that act as a "you finished it" moment, for exa
 - **Rock strata**: replace vanilla stone in the overworld with rock types grouped into categories (sedimentary, metamorphic, igneous intrusive, igneous extrusive). Layers vary by region. Built with data-driven world-gen (density functions, noise settings and placed features via datapack JSON produced by datagen).
 - **Ore veins**: large, sparse veins instead of evenly scattered ores. Each vein type lists the host rocks it can appear in, the depth range, and the ore minerals with weights. Vanilla ores are disabled in the overworld.
 - **Ore grades**: poor, normal, rich. Rich ore is in vein cores.
-- **Surface indicators**: loose ore nuggets above veins.
+- **Surface indicators**: coloured stains and coated boulders above veins, black sand in streams, indicator plants (redesign R7).
 - **Deep layers**: below a certain depth, ore is more concentrated but needs better tools and lighting.
 - **Nether and End**: get their own ore tables later (tier 5+ materials) so these dimensions remain worth visiting.
 - **Compatibility switch**: a config option to keep vanilla world-gen for players who want the tech chain only.

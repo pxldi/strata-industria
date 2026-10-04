@@ -3,6 +3,7 @@ package dev.strataindustria.knapping;
 import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.block.BoulderBlock;
+import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -74,6 +76,7 @@ public final class Boulders {
         int cracks = state.getValue(BoulderBlock.CRACKS);
         int size = state.getValue(BoulderBlock.SIZE);
         boolean flinty = state.getValue(BoulderBlock.FLINTY);
+        BoulderBlock.Coat coat = state.getValue(BoulderBlock.COAT);
         float voice = rock.grain().strikePitch();
         float vary = 0.97f + random.nextFloat() * 0.06f;
         Item shard = block.shard();
@@ -91,6 +94,9 @@ public final class Boulders {
             if (flinty || rock.grain() == Grain.CLEAN) {
                 level.sendParticles(ParticleTypes.ELECTRIC_SPARK, at.x, at.y, at.z, 2 + cracks * 2, 0.12, 0.08, 0.12, 0.2);
             }
+            if (coat != BoulderBlock.Coat.NONE) {
+                level.sendParticles(new DustParticleOptions(coat.stain().color(), 1.0f), at.x, at.y, at.z, 6 + 3 * cracks, 0.2, 0.1, 0.2, 0.03);
+            }
             hint(player, now);
             return;
         }
@@ -99,6 +105,7 @@ public final class Boulders {
         boolean last = size == 1;
         int shards = last ? BURST_MIN + random.nextInt(BURST_MAX - BURST_MIN + 1) : SPLIT_MIN + random.nextInt(2);
         int flint = !flinty ? 0 : last ? 1 + random.nextInt(2) : random.nextInt(2);
+        int chunks = coat == BoulderBlock.Coat.NONE ? 0 : last ? 1 + random.nextInt(2) : random.nextInt(2);
         Vec3 top = Vec3.atCenterOf(pos).add(0.0, 0.1 + 0.15 * size, 0.0);
         if (last) level.removeBlock(pos, false);
         else level.setBlock(pos, state.setValue(BoulderBlock.SIZE, size - 1).setValue(BoulderBlock.CRACKS, 0), Block.UPDATE_ALL);
@@ -112,9 +119,24 @@ public final class Boulders {
         if (flinty || rock.grain() == Grain.CLEAN) {
             level.sendParticles(ParticleTypes.ELECTRIC_SPARK, top.x, top.y, top.z, 10, 0.25, 0.1, 0.25, 0.25);
         }
+        if (coat != BoulderBlock.Coat.NONE) {
+            level.sendParticles(new DustParticleOptions(coat.stain().color(), 1.4f), top.x, top.y, top.z, 20, 0.3, 0.15, 0.3, 0.05);
+        }
         hop(level, top, new ItemStack(shard), shards);
+        if (chunks > 0) {
+            level.playSound(null, at.x, at.y, at.z, ModSounds.SHAPING_CHIME.get(), SoundSource.BLOCKS, 0.5f, pitch(Smithing.notePitch(0, 1, true, true) * 1.2f));
+            hop(level, top, new ItemStack(chunk(coat, random)), chunks);
+        }
         if (flint > 0) hop(level, top, new ItemStack(Items.FLINT), flint);
         if (!(player instanceof FakePlayer) && Config.SMITHING_SCREEN_NUDGE.get()) StrikeNudge.send(player, last ? 1.0f : 0.7f);
+    }
+
+    /** The ore chunk inside a stained boulder: rust over iron, green over copper. */
+    public static Item chunk(BoulderBlock.Coat coat, RandomSource random) {
+        OreMineral mineral = coat == BoulderBlock.Coat.GOSSAN
+                ? (random.nextInt(3) == 0 ? OreMineral.HEMATITE : OreMineral.LIMONITE)
+                : (random.nextBoolean() ? OreMineral.MALACHITE : OreMineral.NATIVE_COPPER);
+        return ModItems.SMALL_ORES.get(mineral).get();
     }
 
     /** Throws {@code count} of {@code stack} out of the break, one entity each, so they hop apart across the ground. */
