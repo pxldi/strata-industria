@@ -16,7 +16,13 @@ public enum OreMineral implements StringRepresentable {
     LIMONITE(Map.of(Metal.WROUGHT_IRON, 1.0f), new int[] {15, 25, 35}, 2, false),
     HEMATITE(Map.of(Metal.WROUGHT_IRON, 1.0f), new int[] {20, 35, 50}, 2, true),
     MAGNETITE(Map.of(Metal.WROUGHT_IRON, 1.0f), new int[] {25, 40, 55}, 2, true),
-    NATIVE_GOLD(Map.of(Metal.GOLD, 1.0f), new int[] {20, 35, 50}, 2, true);
+    NATIVE_GOLD(Map.of(Metal.GOLD, 1.0f), new int[] {20, 35, 50}, 2, true),
+    // Tier 4 spec 4.4: zinc and lead, then two deposits that drop an item instead of ore pieces.
+    /** A sulfide: never melts as ore, it is roasted to zinc calcine first. */
+    SPHALERITE(Map.of(Metal.ZINC, 1.0f), new int[] {20, 35, 50}, 3, true),
+    GALENA(Map.of(Metal.LEAD, 1.0f), new int[] {20, 35, 50}, 3, true),
+    BITUMINOUS_COAL(Map.of(), new int[] {0, 0, 0}, 3, true),
+    SULFUR(Map.of(), new int[] {0, 0, 0}, 3, true);
 
     /** Raw (uncrushed) ore melts at this share of the crushed value. */
     public static final float RAW_MELT_EFFICIENCY = 0.8f;
@@ -27,7 +33,7 @@ public enum OreMineral implements StringRepresentable {
 
     private final Map<Metal, Float> composition;
     private final int[] crushedUnits;
-    /** 0 = stone tools, 1 = copper, 2 = bronze. */
+    /** 0 = stone tools, 1 = copper, 2 = bronze, 3 = wrought iron. */
     private final int toolTier;
     private final boolean inRock;
 
@@ -60,6 +66,39 @@ public enum OreMineral implements StringRepresentable {
     /** Needs a bronze tool or better. */
     public boolean needsBronzeTool() {
         return toolTier >= 2;
+    }
+
+    /** Needs a wrought iron tool or better (tier 4 spec 4.7). */
+    public boolean needsWroughtIronTool() {
+        return toolTier >= 3;
+    }
+
+    /**
+     * Metal ores break into graded ore pieces that crush, wash and melt. Bituminous coal and native
+     * sulfur drop a plain item instead (tier 4 spec 4.4).
+     */
+    public boolean hasPieces() {
+        return !composition.isEmpty();
+    }
+
+    /** Minerals with ore pieces. */
+    public static java.util.List<OreMineral> withPieces() {
+        return java.util.Arrays.stream(values()).filter(OreMineral::hasPieces).toList();
+    }
+
+    /** Whether crushed pieces can be washed; sphalerite is refused (tier 4 spec 11.3). */
+    public boolean washable() {
+        return hasPieces() && this != SPHALERITE;
+    }
+
+    /** Minerals with washed forms. */
+    public static java.util.List<OreMineral> washableValues() {
+        return java.util.Arrays.stream(values()).filter(OreMineral::washable).toList();
+    }
+
+    /** A sulfide ore that has to be roasted before it melts (tier 4 spec 5.3). */
+    public boolean isSulfide() {
+        return this == SPHALERITE;
     }
 
     /** Whether the mineral has an ore block in every rock; limonite only forms in soil. */

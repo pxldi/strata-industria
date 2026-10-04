@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_steel_hammer_head": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:steel_hammer_head"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:steel_hammer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_steel_hammer_head"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:steel_hammer"
+    ]
+  }
+}

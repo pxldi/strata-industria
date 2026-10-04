@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_sulfur"
+      },
+      {
+        "model": "strataindustria:block/small_sulfur",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_sulfur",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_sulfur",
+        "y": 270
+      }
+    ]
+  }
+}

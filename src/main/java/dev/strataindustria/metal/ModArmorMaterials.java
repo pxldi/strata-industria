@@ -19,7 +19,21 @@ public final class ModArmorMaterials {
     public static final ArmorMaterial ARSENICAL_BRONZE = bronze(Metal.ARSENICAL_BRONZE, 14, 9, 0.0f);
     public static final ArmorMaterial BISMUTH_BRONZE = bronze(Metal.BISMUTH_BRONZE, 13, 18, 0.0f);
 
+    /** Tier 4 spec 14.3: 3 / 7 / 6 / 3, toughness 1.5. */
+    public static final ArmorMaterial STEEL = steel();
+
     private ModArmorMaterials() {}
+
+    private static ArmorMaterial steel() {
+        Map<ArmorType, Integer> defense = new EnumMap<>(ArmorType.class);
+        defense.put(ArmorType.HELMET, 3);
+        defense.put(ArmorType.CHESTPLATE, 7);
+        defense.put(ArmorType.LEGGINGS, 6);
+        defense.put(ArmorType.BOOTS, 3);
+        defense.put(ArmorType.BODY, 7);
+        return new ArmorMaterial(28, defense, 10, SoundEvents.ARMOR_EQUIP_IRON, 1.5f, 0.0f,
+                ModTags.Items.ingots(Metal.STEEL), asset(Metal.STEEL));
+    }
 
     public static ResourceKey<EquipmentAsset> asset(Metal metal) {
         return ResourceKey.create(EquipmentAssets.ROOT_ID, StrataIndustria.id(metal.id()));
@@ -44,6 +58,7 @@ public final class ModArmorMaterials {
             case BISMUTH_BRONZE -> BISMUTH_BRONZE;
             case WROUGHT_IRON -> ArmorMaterials.IRON;
             case GOLD -> ArmorMaterials.GOLD;
+            case STEEL -> STEEL;
             default -> throw new IllegalArgumentException(metal + " makes no armour");
         };
     }

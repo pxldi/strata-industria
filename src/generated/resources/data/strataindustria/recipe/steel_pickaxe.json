@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:steel_pickaxe_head",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "strataindustria:steel_pickaxe"
+  }
+}

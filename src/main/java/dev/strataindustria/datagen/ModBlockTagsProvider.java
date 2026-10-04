@@ -61,10 +61,12 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 var ore = ModBlocks.ORES.get(rock).get(mineral).getKey();
                 ores.add(ore);
                 pickaxe.add(ore);
-                if (mineral.needsBronzeTool()) tag(ModTags.Blocks.NEEDS_BRONZE_TOOL).add(ore);
+                if (mineral.needsWroughtIronTool()) tag(ModTags.Blocks.NEEDS_WROUGHT_IRON_TOOL).add(ore);
+                else if (mineral.needsBronzeTool()) tag(ModTags.Blocks.NEEDS_BRONZE_TOOL).add(ore);
                 else if (mineral.needsCopperTool()) needsCopper.add(ore);
                 if (mineral.isIron()) tag(Tags.Blocks.ORES_IRON).add(ore);
                 if (mineral == OreMineral.NATIVE_GOLD) tag(Tags.Blocks.ORES_GOLD).add(ore);
+                if (mineral == OreMineral.BITUMINOUS_COAL) tag(Tags.Blocks.ORES_COAL).add(ore);
             }
         }
 
@@ -99,8 +101,9 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.BOG_IRON.getKey());
 
         // Mining tiers: stone < copper < bronze < wrought iron < steel. Vanilla diamond and above still apply.
-        tag(ModTags.Blocks.NEEDS_WROUGHT_IRON_TOOL);
         tag(ModTags.Blocks.NEEDS_STEEL_TOOL);
+        // Tier 4 spec 4.7: steel mines what a vanilla diamond pickaxe mines.
+        tag(ModTags.Blocks.INCORRECT_FOR_STEEL_TOOL).addTag(BlockTags.INCORRECT_FOR_DIAMOND_TOOL);
         tag(ModTags.Blocks.INCORRECT_FOR_WROUGHT_IRON_TOOL)
                 .addTag(ModTags.Blocks.NEEDS_STEEL_TOOL)
                 .addTag(BlockTags.NEEDS_DIAMOND_TOOL);

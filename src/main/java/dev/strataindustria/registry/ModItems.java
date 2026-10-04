@@ -154,10 +154,15 @@ public final class ModItems {
     // Wrought iron forms beyond the vanilla ingot and nugget (spec 4.1).
     public static final DeferredItem<Item> WROUGHT_IRON_ROD = ITEMS.registerSimpleItem("wrought_iron_rod");
     public static final DeferredItem<Item> WROUGHT_IRON_DOUBLE_INGOT = ITEMS.registerSimpleItem("wrought_iron_double_ingot", p -> p.stacksTo(16));
+    /** Tier 4 spec 14.1: welded from two steel ingots; the steel sword blade and the steel anvil. */
+    public static final DeferredItem<Item> STEEL_DOUBLE_INGOT = ITEMS.registerSimpleItem("steel_double_ingot", p -> p.stacksTo(16));
     // Metals (spec 6 to 8). Copper's ingot, nugget, armour and five of its tools are vanilla items.
     public static final Map<Metal, Supplier<Item>> INGOTS = new EnumMap<>(Metal.class);
     public static final Map<Metal, Supplier<Item>> NUGGETS = new EnumMap<>(Metal.class);
     public static final Map<Metal, DeferredItem<Item>> PLATES = new EnumMap<>(Metal.class);
+    /** Tier 4 spec 4.1: rods (half an ingot) and gears (one ingot) of steel and brass; gears of the bronzes too. */
+    public static final Map<Metal, DeferredItem<Item>> RODS = new EnumMap<>(Metal.class);
+    public static final Map<Metal, DeferredItem<Item>> GEARS = new EnumMap<>(Metal.class);
     /** Cast heads and blades, by metal and the mold that casts them. */
     public static final Map<Metal, Map<MoldType, DeferredItem<Item>>> HEADS = new EnumMap<>(Metal.class);
     public static final Map<Metal, Map<MoldType, Supplier<Item>>> TOOLS = new EnumMap<>(Metal.class);
@@ -192,8 +197,10 @@ public final class ModItems {
                 INGOTS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_ingot"));
                 if (metal.hasNugget()) NUGGETS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_nugget"));
             }
+            if (metal.hasPlate()) PLATES.put(metal, ITEMS.registerSimpleItem(metal.id() + "_plate"));
+            if (metal.hasRod()) RODS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_rod"));
+            if (metal.hasGear()) GEARS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_gear"));
             if (!metal.isToolMetal()) continue;
-            PLATES.put(metal, ITEMS.registerSimpleItem(metal.id() + "_plate"));
             Map<MoldType, DeferredItem<Item>> heads = new EnumMap<>(MoldType.class);
             Map<MoldType, Supplier<Item>> tools = new EnumMap<>(MoldType.class);
             for (MoldType type : metal.toolTypes()) {
@@ -242,7 +249,8 @@ public final class ModItems {
             }
             ORE_BLOCKS.put(rock, ores);
         }
-        for (OreMineral mineral : OreMineral.values()) {
+        // Coal and sulfur indicators drop their item, so only metal ores have a small ore item (tier 4 spec 4.4).
+        for (OreMineral mineral : OreMineral.withPieces()) {
             SMALL_ORES.put(mineral, ITEMS.registerItem("small_" + mineral.id(),
                     p -> new GroundCoverItem(ModBlocks.SMALL_ORES.get(mineral).get(), p), p -> p.useBlockDescriptionPrefix()));
             Map<OreGrade, DeferredItem<Item>> pieces = new EnumMap<>(OreGrade.class);
@@ -251,11 +259,13 @@ public final class ModItems {
                 pieces.put(grade, ITEMS.registerSimpleItem(grade.prefix() + mineral.id()));
                 crushed.put(grade, ITEMS.registerSimpleItem("crushed_" + grade.prefix() + mineral.id()));
             }
-            Map<OreGrade, DeferredItem<Item>> washed = new EnumMap<>(OreGrade.class);
-            for (OreGrade grade : OreGrade.values()) {
-                washed.put(grade, ITEMS.registerSimpleItem("washed_" + grade.prefix() + mineral.id()));
+            if (mineral.washable()) {
+                Map<OreGrade, DeferredItem<Item>> washed = new EnumMap<>(OreGrade.class);
+                for (OreGrade grade : OreGrade.values()) {
+                    washed.put(grade, ITEMS.registerSimpleItem("washed_" + grade.prefix() + mineral.id()));
+                }
+                WASHED_ORES.put(mineral, washed);
             }
-            WASHED_ORES.put(mineral, washed);
             ORE_PIECES.put(mineral, pieces);
             CRUSHED_ORES.put(mineral, crushed);
         }

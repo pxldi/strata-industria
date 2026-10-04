@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_sphalerite"
+      },
+      {
+        "model": "strataindustria:block/small_sphalerite",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_sphalerite",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_sphalerite",
+        "y": 270
+      }
+    ]
+  }
+}

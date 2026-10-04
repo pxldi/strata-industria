@@ -1,0 +1,31 @@
+{
+  "hosts": [
+    "strataindustria:shale",
+    "strataindustria:slate",
+    "strataindustria:limestone"
+  ],
+  "max_y": 80,
+  "min_y": -32,
+  "minerals": [
+    {
+      "mineral": "strataindustria:bituminous_coal",
+      "weight": 100
+    }
+  ],
+  "preferred_hosts": [
+    "strataindustria:shale"
+  ],
+  "shape": {
+    "type": "strataindustria:layer",
+    "density": 0.7,
+    "radius_horizontal": {
+      "max": 24,
+      "min": 16
+    },
+    "radius_vertical": {
+      "max": 2,
+      "min": 1
+    }
+  },
+  "weight": 25
+}

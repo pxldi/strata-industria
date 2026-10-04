@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:washing",
+  "ingredient": "strataindustria:crushed_rich_galena",
+  "result": {
+    "id": "strataindustria:washed_rich_galena"
+  }
+}

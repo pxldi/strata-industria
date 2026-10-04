@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "strataindustria:steel"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "strataindustria:steel"
+      }
+    ]
+  }
+}

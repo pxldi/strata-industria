@@ -5,6 +5,12 @@
     "#c:ingots/bronze",
     "#c:ingots/arsenical_bronze",
     "#c:ingots/bismuth_bronze",
-    "#c:ingots/slag_metal"
+    "#c:ingots/slag_metal",
+    "#c:ingots/pig_iron",
+    "#c:ingots/steel",
+    "#c:ingots/zinc",
+    "#c:ingots/lead",
+    "#c:ingots/brass",
+    "#c:ingots/solder"
   ]
 }
