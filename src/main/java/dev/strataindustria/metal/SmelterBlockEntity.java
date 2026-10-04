@@ -60,14 +60,13 @@ public class SmelterBlockEntity extends CrucibleBlockEntity implements WorldlyCo
         @Override
         public int get(int index) {
             if (index < DATA_AUTO) return SmelterBlockEntity.super.data().get(index);
-            return switch (index) {
-                case DATA_AUTO -> autoPour ? 1 : 0;
-                case DATA_HEAT -> intake.heat();
-                case DATA_HEAT_TEMPERATURE -> Math.round(intake.temperature());
-                case DATA_LIMIT -> intake.limit();
-                case DATA_COOLING -> coolingTemperature();
-                default -> 0;
-            };
+            // The crucible's indexes depend on how many metals there are, so these are not constants to switch on.
+            if (index == DATA_AUTO) return autoPour ? 1 : 0;
+            if (index == DATA_HEAT) return intake.heat();
+            if (index == DATA_HEAT_TEMPERATURE) return Math.round(intake.temperature());
+            if (index == DATA_LIMIT) return intake.limit();
+            if (index == DATA_COOLING) return coolingTemperature();
+            return 0;
         }
 
         @Override

@@ -7703,6 +7703,187 @@ public final class TextureGen {
         }
     }
 
+    static final class Sm {
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+        static int st(int s) { return STEEL.get(s); }
+        static int rf(int s) { return REFRACTORY.get(s); }
+        static final int CAVITY = 0x16110f, DEEP = 0x0e0c0c;
+        static int hash(int x, int y) { return Math.floorMod(x * 73 + y * 151 + x * y * 17 + 11, 97); }
+
+        /** Steel band across rows 2..4: lit top edge, shaded lower edge, rivets, seam shadow below. */
+        static void band(BufferedImage im) {
+            for (int x = 0; x < 16; x++) {
+                px(im, x, 2, st(x == 15 ? 4 : 5));
+                px(im, x, 3, st(x == 15 ? 2 : 4));
+                px(im, x, 4, st(x == 15 ? 1 : 2));
+                if (x == 0) { px(im, x, 3, st(5)); px(im, x, 4, st(3)); }
+                px(im, x, 5, fb(1));
+            }
+            px(im, 3, 3, STEEL.spec()); px(im, 4, 4, st(1));
+            px(im, 11, 3, st(5)); px(im, 12, 4, st(1));
+        }
+
+        static BufferedImage side() {
+            BufferedImage im = fireBricks();
+            band(im);
+            return im;
+        }
+
+        static BufferedImage front(int frame) {
+            boolean active = frame >= 0;
+            BufferedImage im = fireBricks();
+            band(im);
+            // Spout housing: steel block x5..10, y6..9 with a dark mouth, lit top-left.
+            for (int y = 6; y <= 10; y++)
+                for (int x = 5; x <= 10; x++) {
+                    int s = y == 6 ? 5 : y == 10 ? 1 : 3;
+                    if (x == 5) s = Math.min(5, s + 1);
+                    if (x == 10) s = Math.max(1, s - 1);
+                    if (y == 10 && x == 5) s = 2;
+                    px(im, x, y, st(s));
+                }
+            // Mouth, 2 wide, running down the lip.
+            for (int y = 8; y <= 10; y++) { px(im, 7, y, DEEP); px(im, 8, y, DEEP); }
+            px(im, 6, 8, st(1)); px(im, 9, 8, st(2));
+            // Shadow cast under the spout.
+            px(im, 6, 11, fb(1)); px(im, 7, 11, fb(2)); px(im, 8, 11, fb(2)); px(im, 9, 11, fb(1)); px(im, 10, 11, fb(1));
+            // Catch trough below.
+            for (int x = 4; x <= 11; x++) { px(im, x, 14, x == 4 ? st(4) : x == 11 ? st(1) : st(2)); px(im, x, 13, x < 8 ? st(5) : st(4)); }
+            px(im, 4, 13, st(5)); px(im, 11, 13, st(2));
+            for (int x = 5; x <= 10; x++) px(im, x, 15, fb(1));
+            // Status light: small lens on the band's right end.
+            px(im, 13, 3, 0x2a3a30);
+            if (active) {
+                px(im, 13, 3, 0x4ac060);
+                px(im, 12, 3, mix(st(4), 0x4ac060, 0.45)); px(im, 14, 3, mix(st(4), 0x4ac060, 0.3));
+                px(im, 13, 2, mix(st(5), 0x4ac060, 0.5));
+                // Glowing mouth and a thin trickle with a drip running down.
+                px(im, 7, 8, Hp.band(0.8)); px(im, 8, 8, Hp.band(0.95));
+                px(im, 7, 9, Hp.band(0.85)); px(im, 8, 9, Hp.band(1.0));
+                px(im, 7, 10, Hp.band(0.9)); px(im, 8, 10, Hp.band(0.75));
+                px(im, 6, 9, mix(st(3), Hp.band(0.5), 0.5)); px(im, 9, 9, mix(st(2), Hp.band(0.5), 0.5));
+                px(im, 8, 11, Hp.band(0.9));
+                px(im, 8, 12, Hp.band(0.8));
+                int dy = 12 + frame % 4;
+                // Stream into the trough, a drip falling with the frame.
+                px(im, 8, 13, Hp.band(1.0));
+                if (frame % 2 == 0) px(im, 7, 11, Hp.band(0.55));
+                int y1 = 11 + (frame % 4);
+                px(im, 7, y1, Hp.band(1.0));
+                if (y1 + 1 <= 12) px(im, 7, y1 + 1, Hp.band(0.6));
+                // Metal pooled in the trough.
+                for (int x = 5; x <= 10; x++) px(im, x, 13, Hp.band(x == 8 ? 1.0 : 0.55 + 0.3 * (((x + frame) % 3) / 2.0)));
+                // Warm bleed on the steel round the mouth and the bricks under the trough.
+                for (int x = 5; x <= 10; x++) { Hp.glow(im, x, 10, 0.5, 0.45); Hp.glow(im, x, 14, 0.4, 0.35); }
+                Hp.glow(im, 5, 8, 0.4, 0.4); Hp.glow(im, 10, 8, 0.4, 0.4);
+            }
+            return im;
+        }
+
+        /** Rim from above: fire brick, steel collar, refractory pot rim, 6x6 opening. */
+        static BufferedImage top(int frame) {
+            boolean active = frame >= 0;
+            BufferedImage im = fireBricks();
+            for (int y = 1; y <= 14; y++)
+                for (int x = 1; x <= 14; x++) {
+                    boolean corner = (x == 1 || x == 14) && (y == 1 || y == 14);
+                    if (corner) continue;
+                    boolean outer = x == 1 || x == 14 || y == 1 || y == 14;
+                    int s = 3;
+                    if (outer) s = (x == 14 || y == 14) ? 1 : 3;
+                    else if (y == 2 || x == 2) s = 5;
+                    else if (y == 13 || x == 13) s = 2;
+                    else if (y == 3 || x == 3) s = 4;
+                    px(im, x, y, st(s));
+                }
+            // Collar rivets.
+            for (int[] r : new int[][] {{3, 3}, {12, 3}, {3, 12}, {12, 12}}) { px(im, r[0], r[1], st(5)); px(im, r[0] + 1, r[1] + 1, st(1)); }
+            px(im, 3, 3, STEEL.spec());
+            // Pot rim: refractory ring x4..11.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    boolean corner = (x == 4 || x == 11) && (y == 4 || y == 11);
+                    if (corner) { px(im, x, y, st(2)); continue; }
+                    int s = (y == 4 || x == 4) ? 5 : (y == 11 || x == 11) ? 2 : 4;
+                    px(im, x, y, rf(s));
+                }
+            // Opening x5..10, y5..10 with the corners cut.
+            for (int y = 5; y <= 10; y++)
+                for (int x = 5; x <= 10; x++) {
+                    boolean corner = (x == 5 || x == 10) && (y == 5 || y == 10);
+                    if (corner) { px(im, x, y, rf(2)); continue; }
+                    int c;
+                    if (!active) c = (x == 5 || y == 5) ? DEEP : (x == 10 || y == 10) ? 0x1f1a17 : CAVITY;
+                    else {
+                        double g = 0.62 + 0.38 * (((hash(x, y) + frame * 3) % 8) / 7.0);
+                        // slow drifting swirl: lighter band sweeping diagonally
+                        double sweep = Math.sin((x + y) * 0.9 - frame * 0.785) * 0.5 + 0.5;
+                        g = Math.min(1.0, 0.55 + 0.25 * sweep + 0.2 * g);
+                        c = Hp.band(g);
+                        if (hash(x + 5, y) % 9 == 0 && (x + frame) % 4 != 0) c = HEAT_BAND[2];
+                        if (x == 5 || y == 5) c = mix(c, HEAT_BAND[2], 0.5);
+                        if (hash(x, y + frame) % 17 == 0) c = HEAT_BAND[5];
+                    }
+                    px(im, x, y, c);
+                }
+            if (active) {
+                for (int i = 4; i <= 11; i++) { Hp.glow(im, i, 4, 0.5, 0.3); Hp.glow(im, 4, i, 0.5, 0.3); Hp.glow(im, i, 11, 0.5, 0.35); Hp.glow(im, 11, i, 0.5, 0.35); }
+            }
+            return im;
+        }
+
+        static BufferedImage strip(java.util.function.IntFunction<BufferedImage> f) {
+            BufferedImage s = new BufferedImage(16, 128, BufferedImage.TYPE_INT_ARGB);
+            for (int fr = 0; fr < 8; fr++) {
+                BufferedImage a = f.apply(fr);
+                for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) s.setRGB(x, fr * 16 + y, a.getRGB(x, y));
+            }
+            return s;
+        }
+
+        static void rightArrow(BufferedImage im, int ox, int oy, java.util.function.IntBinaryOperator colour) {
+            String[] a = {".......#....", ".......##...", "##########..", "############", "############", "##########..", ".......##...", ".......#...."};
+            for (int y = 0; y < 8; y++)
+                for (int x = 0; x < 12; x++)
+                    if (a[y].charAt(x) == '#') im.setRGB(ox + x, oy + y, 0xff000000 | colour.applyAsInt(x, y));
+        }
+
+        static BufferedImage gui() {
+            BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            panel(im, 176, 240);
+            for (int i = 0; i < 9; i++) slot(im, 8 + (i % 3) * 18, 18 + (i / 3) * 18);
+            well(im, 65, 17, 10, 54, 0x2a2a2a);
+            for (int u = 1; u < 4; u++) fill(im, 75, 17 + 1 + Math.round(52 - u * 13f), 2, 1, SLOT_FILL);
+            well(im, 159, 17, 10, 54, 0x2a2a2a);
+            for (int t = 250; t < 1750; t += 250) {
+                int y = 18 + 52 - Math.round(t / 1750f * 52);
+                fill(im, 156, y, 3, 1, t % 500 == 0 ? GUI_SHADOW : SLOT_FILL);
+            }
+            slot(im, 8, 78); slot(im, 26, 78); slot(im, 62, 78); slot(im, 98, 78);
+            rightArrow(im, 45, 82, (px, py) -> SLOT_FILL);
+            rightArrow(im, 81, 82, (px, py) -> SLOT_FILL);
+            rightArrow(im, 176, 0, (px, py) -> {
+                int c = mix(HEAT_BAND[3], HEAT_BAND[4], py / 7.0);
+                if (px < 7 && py < 3) c = mix(c, HEAT_BAND[2], 0.35);
+                if (px == 11 || py == 7) c = HEAT_BAND[4];
+                return c;
+            });
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 158 + row * 18);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 216);
+            return im;
+        }
+
+        static void smelter() throws IOException {
+            save("block/smelter_front", front(-1));
+            saveAnimated("block/smelter_front_active", strip(Sm::front), 3);
+            save("block/smelter_side", side());
+            save("block/smelter_top", top(-1));
+            saveAnimated("block/smelter_top_active", strip(Sm::top), 3);
+            saveRaw("gui/smelter", gui());
+        }
+    }
+
     static void converter() throws IOException {
         save("block/converter_controller_front", Cv.front(-1));
         saveAnimated("block/converter_controller_front_blowing", Cv.blowing(), 2);
@@ -7726,6 +7907,7 @@ public final class TextureGen {
         heatPipes();
         Kn.kiln();
         Ro.roaster();
+        Sm.smelter();
     }
 
     static void steam() throws IOException {
