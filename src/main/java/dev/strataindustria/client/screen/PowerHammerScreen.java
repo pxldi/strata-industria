@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import com.mojang.blaze3d.platform.InputConstants;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.electric.PowerHammerBlockEntity;
@@ -98,14 +99,14 @@ public class PowerHammerScreen extends AbstractContainerScreen<PowerHammerMenu> 
         PowerHammerBlockEntity.Status status = menu.status();
         Component line = switch (status) {
             case WORKING -> Component.translatable(status.key(), menu.hitsDone(), menu.hitsTotal());
-            case HEATING -> Component.translatable(status.key(), menu.pieceTemperature(), menu.needed());
+            case HEATING -> Component.translatable(status.key(), HeatWords.of(menu.pieceTemperature()), HeatWords.of(menu.needed()));
             case LOW_POWER -> Component.translatable(status.key(), menu.powerPercent());
             default -> Component.translatable(status.key());
         };
         int colour = status.light() == StatusLight.ERROR ? HeatLine.SHORT : status.light() == StatusLight.WAIT ? 0xFF7A4A20 : HeatLine.FINE;
         g.text(font, line, 8, STATUS_Y, colour, false);
         if (menu.pieceTemperature() > 0 || menu.needed() > 0) {
-            g.text(font, Component.translatable(KEY + "temperature", menu.pieceTemperature(), menu.needed()), 8, STATUS_Y + 10,
+            g.text(font, Component.translatable(KEY + "temperature", HeatWords.of(menu.pieceTemperature()), HeatWords.of(menu.needed())), 8, STATUS_Y + 10,
                     menu.pieceTemperature() >= menu.needed() ? HeatLine.FINE : HeatLine.SHORT, false);
         }
     }

@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.steam.SteamHammerBlockEntity;
 import dev.strataindustria.steam.SteamHammerMenu;
@@ -62,7 +63,7 @@ public class SteamHammerScreen extends AbstractContainerScreen<SteamHammerMenu> 
         SteamHammerBlockEntity.Status status = menu.status();
         Component line = switch (status) {
             case WORKING -> Component.translatable(status.key(), menu.hitsDone(), menu.hitsTotal());
-            case HEATING -> Component.translatable(status.key(), menu.pieceTemperature(), menu.working());
+            case HEATING -> Component.translatable(status.key(), HeatWords.of(menu.pieceTemperature()), HeatWords.of(menu.working()));
             default -> Component.translatable(status.key());
         };
         g.text(font, line, 8, STATUS_Y, status.fine() ? HeatLine.FINE : HeatLine.SHORT, false);

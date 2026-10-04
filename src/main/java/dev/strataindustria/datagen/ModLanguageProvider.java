@@ -77,9 +77,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.FIRE_PIT, "Fire Pit");
         add("container." + StrataIndustria.MOD_ID + ".fire_pit", "Fire Pit");
         for (HeatBand band : HeatBand.values()) {
-            if (band == HeatBand.NONE) continue;
-            String name = band.id().replace('_', ' ');
-            add(StrataIndustria.MOD_ID + ".heat." + band.id(), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
+            String name = band.word();
+            add(StrataIndustria.MOD_ID + ".heat." + (band == HeatBand.NONE ? "cold" : band.id()), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
         }
         add(StrataIndustria.MOD_ID + ".flint_strike.need_rock", "Hold a rock in your other hand to strike the flint on");
         add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s for this shape");
@@ -338,7 +337,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(Tier4Items.GEAR_MOLD, "Gear Mold");
         add("container." + id + ".refractory_crucible", "Refractory Crucible");
         String status = id + ".crucible.status.";
-        add(status + "at_limit", "Crucible at its limit (%s °C)");
+        add(status + "at_limit", "Crucible at its limit (%s)");
         add(status + "carbon_waiting", "Carbon needs molten iron or calcine");
         add(status + "calcine_short", "Calcine needs more carbon");
         add(status + "carbon_burned", "Excess carbon burned off");
@@ -428,7 +427,7 @@ final class ModLanguageProvider extends LanguageProvider {
         String smelter = id + ".smelter.";
         add(smelter + "auto_on", "Auto-pour: On");
         add(smelter + "auto_off", "Auto-pour: Off");
-        add(smelter + "cooling", "%s °C");
+        add(smelter + "cooling", "%s");
         add(smelter + "slot.mold", "Mold being filled");
         add(smelter + "slot.stock", "Spare empty molds (up to 16)");
         add(smelter + "slot.cooling", "Filled mold cooling");
@@ -443,8 +442,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(firebox + "status.idle", "Burning, %s HU/t wasted");
         add(firebox + "status.heating", "Heating: %s / %s HU/t");
         add(firebox + "status.cooling", "Out of fuel, cooling");
-        add(firebox + "temperature", "%s °C");
-        add(firebox + "blower", "Blower: +%s °C, 1.5× heat");
+        add(firebox + "temperature", "%s");
+        add(firebox + "blower", "Blower: hotter, 1.5× heat");
         // Spec 8.3: the line a multiblock shows about the heat coming in through its inlets.
         String heatLine = id + ".heat_line.";
         add(heatLine + "hot_blast", "Hot blast");
@@ -454,15 +453,15 @@ final class ModLanguageProvider extends LanguageProvider {
         add(heatLine + "smelter", "Heat");
         add(heatLine + "steam_hammer", "Heat");
         add(heatLine + "none", "%s: no heat");
-        add(heatLine + "cold", "%s: %3$s of %2$s °C");
-        add(heatLine + "limited", "%s: pipes cap %s °C");
-        add(heatLine + "fine", "%s: %s °C, %s HU/t");
-        add(heatLine + "limited_by", "Limited by %s (%s °C)");
-        add(heatLine + "needs", "Needs %s °C");
+        add(heatLine + "cold", "%s: %3$s, needs %2$s");
+        add(heatLine + "limited", "%s: pipes cap it at %s");
+        add(heatLine + "fine", "%s: %s, %s HU/t");
+        add(heatLine + "limited_by", "Limited by %s (%s)");
+        add(heatLine + "needs", "Needs %s");
         add(heatLine + "pipes", "the pipes");
         String boiler = id + ".boiler.";
         add(boiler + "status.no_heat", "No heat");
-        add(boiler + "status.too_cool", "Fire too cool: %2$s °C");
+        add(boiler + "status.too_cool", "Fire too cool: %2$s, needs %1$s");
         add(boiler + "status.no_water", "No water");
         add(boiler + "status.heating", "Heating water (%s%%)");
         add(boiler + "status.running", "Making steam");
@@ -472,7 +471,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(boiler + "status.dry_firing", "Dry firing! %s%%");
         add(boiler + "pressure", "%s bar");
         add(boiler + "heat", "%s HU/t");
-        add(boiler + "fire", "%s °C");
+        add(boiler + "fire", "%s");
         add(boiler + "water", "Water %s / %s mB");
         add(boiler + "steam", "Steam %s / %s mB");
         add(boiler + "integrity", "Integrity %s%%");
@@ -523,7 +522,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(steamHammer + "status.output_full", "Output full");
         add(steamHammer + "status.no_steam", "Needs steam at 1 bar or more");
         add(steamHammer + "status.too_cold", "Workpiece too cold");
-        add(steamHammer + "status.heating", "Heating the piece: %s of %s °C");
+        add(steamHammer + "status.heating", "Heating the piece: %s, needs %s");
         add(steamHammer + "status.working", "Working (%s / %s hits)");
         add(steamHammer + "steam.none", "Steam: none");
         add(steamHammer + "steam.slow", "Steam: %s bar, half speed");
@@ -757,8 +756,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(bloomery + "status.empty", "Empty");
         add(bloomery + "status.charged", "Charged, ready to light");
         add(bloomery + "status.needs_charcoal", "Needs %s more charcoal");
-        add(bloomery + "status.heating", "Heating (%s °C)");
-        add(bloomery + "status.too_cool", "Too cool: needs 1200 °C");
+        add(bloomery + "status.heating", "Heating (%s)");
+        add(bloomery + "status.too_cool", "Too cool: needs yellow heat");
         add(bloomery + "status.burning", "Burning (%s%%)");
         add(bloomery + "status.ready", "Bloom ready: use a pickaxe");
         add(bloomery + "problem.brick", "Needs fire bricks");
@@ -766,7 +765,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(bloomery + "at", "at %s, %s, %s");
         add(bloomery + "hint", "Bricks around and under the chamber.");
         add(bloomery + "charge", "Ore %s/%s, charcoal %s/%s");
-        add(bloomery + "draught", "Flue %s, bellows %s: %s °C");
+        add(bloomery + "draught", "Flue %s, bellows %s: %s");
         add(bloomery + "yield", "Yield %s%%, %s blooms");
         add(bloomery + "no_yield", "Too cool for a bloom");
         add(bloomery + "not_iron", "Only iron-bearing items go in a bloomery");
@@ -912,7 +911,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.boiler", "Raising Steam");
         add(journal + "t4.boiler.hint", "Set a bronze boiler on a burning firebox, fill it with water and wait for the needle to rise.");
         add(journal + "t4.heat_network", "Heat on the Move");
-        add(journal + "t4.heat_network.hint", "Lay four or more heat pipes from a burning firebox to a boiler or a heat inlet. Copper pipe holds the heat down to 1000 °C.");
+        add(journal + "t4.heat_network.hint", "Lay four or more heat pipes from a burning firebox to a boiler or a heat inlet. Copper pipe only carries a cherry-red heat.");
         add(journal + "t4.steam_engine", "Steam Power");
         add(journal + "t4.steam_hammer", "Hammer with Steam");
         add(journal + "t4.steam_hammer.hint", "Pick a shape on a steam hammer, give it steam at the back and heat from below, and let it smith steel.");
@@ -928,7 +927,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t5.latex", "Tap a Rubber Tree");
         add(journal + "t5.latex.hint", "Jungle trees bleed latex. Plant one at home if the jungle is far; dandelions will do in a pinch.");
         add(journal + "t5.rubber", "Vulcanise Rubber");
-        add(journal + "t5.rubber.hint", "Set latex in a sealed barrel, then roast the raw rubber at 140 °C.");
+        add(journal + "t5.rubber.hint", "Set latex in a sealed barrel, then roast the raw rubber at a low heat.");
         add(journal + "t5.cinnabar", "Mine Cinnabar");
         add(journal + "t5.cinnabar.hint", "Cinnabar is red as rust and hides in basalt and shale. Only steel will cut it.");
         add(journal + "t5.red_alloy", "Red Alloy");
