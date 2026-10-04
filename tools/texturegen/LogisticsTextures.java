@@ -20,6 +20,7 @@ public final class LogisticsTextures {
     static void glass(BufferedImage im, int x, int y, int alpha, int rgb) { im.setRGB(x, y, (alpha << 24) | rgb); }
 
     public static void main(String[] args) throws IOException {
+        TextureGen.itemsV2 = true;
         pipe();
         extractor();
         controller();
