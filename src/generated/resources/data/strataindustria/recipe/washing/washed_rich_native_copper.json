@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:washing",
+  "chances": [
+    {
+      "chance": 0.08,
+      "item": {
+        "id": "strataindustria:small_native_gold"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:crushed_rich_native_copper",
+  "result": {
+    "id": "strataindustria:washed_rich_native_copper"
+  }
+}

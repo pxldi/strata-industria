@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:washing",
+  "chances": [
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:small_native_gold"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:crushed_bismuthinite",
+  "result": {
+    "id": "strataindustria:washed_bismuthinite"
+  }
+}

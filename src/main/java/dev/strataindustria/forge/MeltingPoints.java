@@ -28,6 +28,7 @@ public final class MeltingPoints {
                 for (OreGrade grade : OreGrade.values()) {
                     map.put(ModItems.orePiece(mineral, grade), lowest);
                     map.put(ModItems.crushedOre(mineral, grade), lowest);
+                    map.put(ModItems.washedOre(mineral, grade), lowest);
                 }
             }
             points = map;

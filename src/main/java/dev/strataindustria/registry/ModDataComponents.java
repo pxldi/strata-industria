@@ -75,5 +75,11 @@ public final class ModDataComponents {
                     .persistent(dev.strataindustria.prospecting.CoreSample.CODEC)
                     .networkSynchronized(dev.strataindustria.prospecting.CoreSample.STREAM_CODEC));
 
+    /** Tier 3 spec 11.1: what a loaded washing pan holds. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.strataindustria.washing.PanContents>> PAN_CONTENTS =
+            COMPONENTS.registerComponentType("pan_contents", b -> b
+                    .persistent(dev.strataindustria.washing.PanContents.CODEC)
+                    .networkSynchronized(dev.strataindustria.washing.PanContents.STREAM_CODEC));
+
     private ModDataComponents() {}
 }

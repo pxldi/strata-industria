@@ -177,6 +177,8 @@ public final class ModBlocks {
             p -> kineticWood(p).noOcclusion());
     public static final DeferredBlock<dev.strataindustria.machine.CoreSamplerBlock> CORE_SAMPLER = BLOCKS.registerBlock("core_sampler",
             dev.strataindustria.machine.CoreSamplerBlock::new, p -> kineticWood(p).strength(2.5f, 4.0f).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.washing.SluiceBlock> SLUICE = BLOCKS.registerBlock("sluice",
+            dev.strataindustria.washing.SluiceBlock::new, p -> kineticWood(p).noOcclusion());
     public static final DeferredBlock<TripHammerBlock> TRIP_HAMMER = BLOCKS.registerBlock("trip_hammer", TripHammerBlock::new,
             p -> kineticWood(p).strength(3.0f, 4.0f).noOcclusion());
 

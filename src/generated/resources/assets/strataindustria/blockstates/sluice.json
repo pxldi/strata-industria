@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,wet=false": {
+      "model": "strataindustria:block/sluice",
+      "y": 90
+    },
+    "facing=east,wet=true": {
+      "model": "strataindustria:block/sluice_wet",
+      "y": 90
+    },
+    "facing=north,wet=false": {
+      "model": "strataindustria:block/sluice"
+    },
+    "facing=north,wet=true": {
+      "model": "strataindustria:block/sluice_wet"
+    },
+    "facing=south,wet=false": {
+      "model": "strataindustria:block/sluice",
+      "y": 180
+    },
+    "facing=south,wet=true": {
+      "model": "strataindustria:block/sluice_wet",
+      "y": 180
+    },
+    "facing=west,wet=false": {
+      "model": "strataindustria:block/sluice",
+      "y": 270
+    },
+    "facing=west,wet=true": {
+      "model": "strataindustria:block/sluice_wet",
+      "y": 270
+    }
+  }
+}
