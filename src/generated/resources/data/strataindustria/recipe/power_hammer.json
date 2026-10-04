@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:steam_hammer",
+    "strataindustria:lv_machine_hull",
+    "strataindustria:electric_motor",
+    "strataindustria:basic_circuit"
+  ],
+  "result": {
+    "id": "strataindustria:power_hammer"
+  }
+}

@@ -21,10 +21,10 @@ public class AnvilMenu extends AbstractContainerMenu {
     public static final int INPUT_X = 8, INPUT_Y = 27, OUTPUT_X = 152, OUTPUT_Y = 27;
     public static final int PLANS_X = 30, PLANS_Y = 18, PLANS_PER_ROW = 6;
     /** The weld row (tier 3 spec 9.4 and 9.5): second piece, flux, the Weld button, and the pattern slot. */
-    public static final int WELD_Y = 130, SECOND_X = 8, FLUX_X = 26, WELD_BUTTON_X = 46, PATTERN_X = 152;
+    public static final int WELD_Y = 130, SECOND_X = 8, FLUX_X = 26, WELD_BUTTON_X = 46, PATTERN_X = 152, QUICK_BUTTON_X = 72;
     public static final int INVENTORY_Y = 173;
     /** Button ids: 0 to 7 are the hits, {@code PLAN_BUTTON + i} picks plan i, {@code WELD_BUTTON} welds. */
-    public static final int PLAN_BUTTON = 100, WELD_BUTTON = 200;
+    public static final int PLAN_BUTTON = 100, WELD_BUTTON = 200, QUICK_BUTTON = 201;
     private static final int PLAN_SLOT_START = AnvilBlockEntity.SLOTS;
     private static final int INVENTORY_START = PLAN_SLOT_START + AnvilBlockEntity.MAX_PLANS;
 
@@ -96,6 +96,10 @@ public class AnvilMenu extends AbstractContainerMenu {
             anvil.weld(server);
             return true;
         }
+        if (id == QUICK_BUTTON) {
+            anvil.quick(server);
+            return true;
+        }
         if (id >= PLAN_BUTTON) {
             anvil.choose(id - PLAN_BUTTON);
             return true;
@@ -146,6 +150,11 @@ public class AnvilMenu extends AbstractContainerMenu {
     public AnvilBlockEntity.WeldStatus weldStatus() {
         AnvilBlockEntity.WeldStatus[] values = AnvilBlockEntity.WeldStatus.values();
         return values[Math.floorMod(data.get(AnvilBlockEntity.DATA_WELD), values.length)];
+    }
+
+    /** Whether the player has smithed the chosen plan by hand before, so the Quick button works. */
+    public boolean quickKnown() {
+        return data.get(AnvilBlockEntity.DATA_QUICK) != 0;
     }
 
     public int weldingTemperature() {

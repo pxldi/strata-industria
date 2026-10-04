@@ -72,6 +72,30 @@ final class Tier5Language {
         lang.accept(block + "bender", "Bender");
         lang.accept(block + "lathe", "Lathe");
         lang.accept(block + "mixer", "Mixer");
+        lang.accept(block + "power_hammer", "Power Hammer");
+        lang.accept(block + "extruder", "Extruder");
+        lang.accept("container." + id + ".power_hammer", "Power Hammer");
+        String hammer = id + ".power_hammer.";
+        lang.accept(hammer + "status.no_pattern", "Needs a recorded pattern");
+        lang.accept(hammer + "status.outdated_pattern", "Outdated pattern: record it again");
+        lang.accept(hammer + "status.waiting", "Waiting for a workpiece");
+        lang.accept(hammer + "status.wrong_piece", "This does not fit the pattern or weld");
+        lang.accept(hammer + "status.output_full", "Output full");
+        lang.accept(hammer + "status.no_flux", "Needs flux to weld");
+        lang.accept(hammer + "status.no_power", "No power");
+        lang.accept(hammer + "status.low_power", "Low power: waiting (%s%%)");
+        lang.accept(hammer + "status.heating", "Heating (%s °C / %s °C)");
+        lang.accept(hammer + "status.working", "Working (%s / %s hits)");
+        lang.accept(hammer + "status.welding", "Welding");
+        lang.accept(hammer + "status.overvoltage", "Overvoltage");
+        lang.accept(hammer + "status.too_far", "Too far from a source");
+        lang.accept(hammer + "temperature", "Piece: %s of %s °C");
+        lang.accept(hammer + "slot.pattern", "Recorded smithing pattern");
+        lang.accept(hammer + "slot.flux", "Flux, for welding");
+        lang.accept(hammer + "slot.input", "Workpieces, cold or hot");
+        lang.accept(hammer + "slot.second", "Second piece, to weld");
+        lang.accept(hammer + "slot.piece", "On the anvil");
+        lang.accept(hammer + "slot.result", "Finished pieces");
         lang.accept(block + "assembler", "Assembler");
         lang.accept(block + "transformer", "Transformer");
         lang.accept(block + "energy_adapter", "Energy Adapter");
@@ -123,6 +147,9 @@ final class Tier5Language {
         lang.accept(machine + "eject_on", "Auto-eject on: outputs go into the block behind");
         lang.accept(machine + "eject_off", "Auto-eject off");
         lang.accept(machine + "mode_rod", "Mode: rods (one ingot makes two)");
+        lang.accept(machine + "mode_cable_lv", "Mode: LV cable (2 wire and 1 rubber make 3)");
+        lang.accept(machine + "mode_cable_mv", "Mode: MV cable (2 wire and 2 rubber make 3)");
+        lang.accept(machine + "mode_pipe", "Mode: fluid pipe (1 plate makes 4)");
         lang.accept(machine + "mode_gear", "Mode: gears (one ingot makes one)");
 
         // Spec 6.5: diagnostics and status lines.
@@ -176,6 +203,9 @@ final class Tier5Language {
         lang.accept(subtitles + "block.lathe.cut", "Lathe cuts");
         lang.accept(subtitles + "block.mixer.stir", "Mixer sloshes");
         lang.accept(subtitles + "block.assembler.work", "Assembler whirs");
+        lang.accept(subtitles + "block.extruder.press", "Extruder presses");
+        lang.accept(subtitles + "block.power_hammer.strike", "Power hammer strikes");
+        lang.accept(subtitles + "block.power_hammer.induction", "Induction coil whines");
         lang.accept(subtitles + "block.electrolyser.bubble", "Electrolyser bubbles");
         lang.accept(subtitles + "block.steam_turbine.run", "Steam turbine whines");
         lang.accept(subtitles + "block.steam_turbine.spin_down", "Steam turbine spins down");

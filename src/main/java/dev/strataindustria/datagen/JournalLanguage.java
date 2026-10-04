@@ -93,6 +93,8 @@ final class JournalLanguage {
                 "A block of hard rock dressed flat on top. It will take a beating.");
         lead.add("t2/smith", "Can I beat hot metal into a shape a mold cannot give?",
                 "Heat, strike, heat again. The ingot spread into a thin, even plate.");
+        lead.add("t2/quick_smith", "I know this work now. Do I have to count every blow again?",
+                "A known piece goes quicker. Not my best work, but good enough.");
         lead.add("t2/bronze_tools", "Bronze holds an edge. Every tool I own could be better for it.",
                 "Pick, axe, shovel, knife, hammer, saw and sword, all in bronze. A proper kit.");
         lead.add("t2/bronze_armour", "Bronze plate would turn a blow that would cut through leather.",

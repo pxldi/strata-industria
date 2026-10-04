@@ -40,6 +40,26 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.hit"
   },
+  "anvil.quick": {
+    "sounds": [
+      {
+        "name": "random/anvil_use",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "name": "random/anvil_use",
+        "pitch": 1.7,
+        "volume": 0.6
+      },
+      {
+        "name": "random/anvil_use",
+        "pitch": 1.4,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.quick"
+  },
   "anvil.weld": {
     "sounds": [
       {
@@ -389,6 +409,29 @@
     ],
     "subtitle": "subtitles.strataindustria.block.electrolyser.bubble"
   },
+  "block.extruder.press": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.piston.extend",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.piston.extend",
+        "pitch": 0.55,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.slime_block.step",
+        "pitch": 0.6,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.extruder.press"
+  },
   "block.inserter.swing": {
     "sounds": [
       {
@@ -635,6 +678,46 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.pole_insulator.disconnect"
+  },
+  "block.power_hammer.induction": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.9,
+        "volume": 0.2
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.7,
+        "volume": 0.18
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.power_hammer.induction"
+  },
+  "block.power_hammer.strike": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.2,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.3,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 1.8,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.power_hammer.strike"
   },
   "block.slag_heap.break": {
     "sounds": [

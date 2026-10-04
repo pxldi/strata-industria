@@ -164,6 +164,36 @@
         "mv": 2
       },
       "buffer_ticks": 20
+    },
+    "strataindustria:power_hammer": {
+      "draw": {
+        "lv": 16,
+        "mv": 64
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 1
+      },
+      "buffer_ticks": 20
+    },
+    "strataindustria:extruder": {
+      "draw": {
+        "lv": 64,
+        "mv": 64
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 1.0
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 1
+      },
+      "buffer_ticks": 20
     }
   }
 }

@@ -130,7 +130,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     }
 
     @Override
-    protected int tier() {
+    protected int anvilTier() {
         return TIER;
     }
 

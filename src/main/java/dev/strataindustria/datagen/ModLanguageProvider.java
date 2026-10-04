@@ -135,6 +135,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "raw_bloom.hit", "Bloom thuds");
         add(subtitles + "wrought_iron.hit", "Iron rings");
         add(subtitles + "anvil.done", "Piece finished");
+        add(subtitles + "anvil.quick", "Hammer rings steadily");
         add(subtitles + "anvil.dress", "Stone dressed");
         add(subtitles + "anvil.weld", "Metal welds");
         add(subtitles + "hand_crank.turn", "Crank creaks");
@@ -738,6 +739,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.trip_hammer.hint", "Give a trip hammer a recorded pattern and a forge beside its anvil, and let it smith.");
         add(journal + "t3.weld", "Forge Weld");
         add(journal + "t3.weld.hint", "Heat two iron ingots, add flux, and weld them into a double ingot on the anvil.");
+        add(journal + "t2.quick_smith", "Quick Smith");
+        add(journal + "t2.quick_smith.hint", "Smith a piece by hand once. After that the Quick button on the anvil makes it for you at normal quality.");
         add(journal + "t3.pattern", "Smithing Pattern");
         add(journal + "t3.pattern.hint", "Put a blank pattern in the anvil while you smith, and it records every hit.");
         add(journal + "t3.hide", "Raw Hide");
@@ -953,6 +956,9 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");
         addItem(ModItems.FLUX, "Flux");
         addItem(ModItems.SMITHING_PATTERN, "Smithing Pattern");
+        add(id + ".anvil.quick", "Quick smith");
+        add(id + ".anvil.quick.tip", "Quick smith: finish this plan at normal quality. Costs the hammer wear and heat of the shortest run.");
+        add(id + ".anvil.quick.unknown", "Smith this plan by hand once first");
         add(id + ".anvil.weld", "Weld");
         add(id + ".anvil.pattern", "Pattern");
         String weld = id + ".anvil.weld.";
