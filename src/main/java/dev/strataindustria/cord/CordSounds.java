@@ -16,6 +16,9 @@ public final class CordSounds {
     /** The cloth comes off the stone flat and pops free. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CLOTH = register("cord.cloth");
 
+    /** The head is seated and the cord wound round it and knotted: the last blow of a stone tool. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BIND = register("cord.bind");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

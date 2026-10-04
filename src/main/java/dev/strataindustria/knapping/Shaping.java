@@ -2,7 +2,9 @@ package dev.strataindustria.knapping;
 
 import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.cord.CordSounds;
 import dev.strataindustria.journal.Journal;
+import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.smithing.Smithing;
@@ -139,7 +141,8 @@ public final class Shaping {
     /** "Stone axe head · 4 blows". */
     public static Component shapeLine(RecipeHolder<KnappingRecipe> shape, ItemStack held) {
         KnappingRecipe recipe = shape.value();
-        return Component.translatable(StrataIndustria.MOD_ID + ".shaping.shape", recipe.result().create().getHoverName(), recipe.blows(), cost(recipe, held), held.getHoverName());
+        String key = StrataIndustria.MOD_ID + (recipe.bound() ? ".shaping.shape_bound" : ".shaping.shape");
+        return Component.translatable(key, recipe.result().create().getHoverName(), recipe.blows(), cost(recipe, held), held.getHoverName());
     }
 
     /**
@@ -170,6 +173,10 @@ public final class Shaping {
             player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".knapping.need_more", cost, held.getHoverName()));
             return;
         }
+        if (recipe.bound() && !Knapping.hasBinding(player)) {
+            player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".shaping.need_binding", recipe.result().create().getHoverName()));
+            return;
+        }
         if (!state.hinted && state.blows == 0) {
             state.hinted = true;
             player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".shaping.hint"));
@@ -187,11 +194,12 @@ public final class Shaping {
         state.glintPending = !done;
 
         ItemStack result = recipe.assemble(new SingleRecipeInput(held.copyWithCount(1)));
-        feedback(level, player, held, state, before, total, trueBlow, done);
+        feedback(level, player, held, state, before, total, trueBlow, done, recipe.bound());
         if (done) ShapingView.clear(level, state);
         else ShapingView.show(level, state, held, result, state.blows, total, 1.0f, now);
         if (done) {
             if (!player.hasInfiniteMaterials()) held.shrink(cost);
+            if (recipe.bound()) Knapping.spendBinding(player);
             pop(level, state.spot, result);
             if (!kind.equals(Knapping.KIND_WOOD)) Journal.award(player, Knapping.isClayKind(kind) ? Journal.CLAY_FORMING : Journal.KNAP);
             state.reset();
@@ -209,7 +217,7 @@ public final class Shaping {
     }
 
     private static void feedback(ServerLevel level, ServerPlayer player, ItemStack held, HandShaping state, int before, int total,
-                                 boolean trueBlow, boolean done) {
+                                 boolean trueBlow, boolean done, boolean bound) {
         Vec3 at = state.spot;
         var random = player.getRandom();
         float vary = 0.97f + random.nextFloat() * 0.06f;
@@ -233,6 +241,12 @@ public final class Shaping {
             level.playSound(null, at.x, at.y, at.z, Knapping.finishSound(held), SoundSource.PLAYERS, 0.9f, 1.0f);
             level.sendParticles(ParticleTypes.POOF, at.x, at.y + 0.1, at.z, 4, 0.1, 0.05, 0.1, 0.01);
             level.sendParticles(ParticleTypes.WAX_ON, at.x, at.y + 0.2, at.z, 8, 0.2, 0.15, 0.2, 0.0);
+            if (bound) {
+                // The head is seated, wrapped and knotted: loose cord ends spring free over a glint.
+                level.playSound(null, at.x, at.y, at.z, CordSounds.BIND.get(), SoundSource.PLAYERS, 1.0f, 0.95f + random.nextFloat() * 0.1f);
+                level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, ModItems.CORD.get()), at.x, at.y + 0.2, at.z, 10, 0.12, 0.1, 0.12, 0.08);
+                level.sendParticles(ParticleTypes.CRIT, at.x, at.y + 0.25, at.z, 8, 0.15, 0.1, 0.15, 0.25);
+            }
         }
         if (!(player instanceof FakePlayer) && Config.SMITHING_SCREEN_NUDGE.get() && (trueBlow || done)) {
             StrikeNudge.send(player, done ? 1.0f : 0.6f);

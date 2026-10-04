@@ -2,7 +2,6 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.machine.SawingRecipe;
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.crafting.KnappedToolRecipe;
 import dev.strataindustria.crafting.MetalArmourRecipe;
 import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
@@ -28,9 +27,6 @@ public final class ModRecipes {
     /** Shapeless crafting that damages a tool ingredient instead of using it up (planks). */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<ToolShapelessRecipe>> TOOL_SHAPELESS =
             SERIALIZERS.register("tool_shapeless", () -> ToolShapelessRecipe.SERIALIZER);
-    /** Shapeless tool assembly that carries the head's knapped_from over and scales durability. */
-    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<KnappedToolRecipe>> KNAPPED_TOOL =
-            SERIALIZERS.register("knapped_tool", () -> KnappedToolRecipe.SERIALIZER);
     /** Shapeless metal tool assembly that carries the head's quality over and scales durability. */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MetalToolRecipe>> METAL_TOOL =
             SERIALIZERS.register("metal_tool", () -> MetalToolRecipe.SERIALIZER);

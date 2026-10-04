@@ -93,7 +93,7 @@ public final class StoneAgeEvents {
 
     /** A knife cuts grass cleanly, and so does a bare knapped knife blade. */
     static boolean cuts(ItemStack tool) {
-        return tool.is(ModTags.Items.KNIVES) || tool.is(ModItems.STONE_KNIFE_BLADE.get());
+        return tool.is(ModTags.Items.KNIVES);
     }
 
     private static void drop(BlockDropsEvent event, ItemStack stack) {

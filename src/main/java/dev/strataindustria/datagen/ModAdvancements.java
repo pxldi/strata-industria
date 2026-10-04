@@ -68,7 +68,7 @@ final class ModAdvancements extends AdvancementSubProvider {
         // Tier 0: stone
         AdvancementHolder boulder = goal(root, "t0/boulder", ModItems.ROCK_SHARD.values().iterator().next().get(),
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.ROCK_SHARDS)));
-        AdvancementHolder knap = goal(boulder, "t0/knap", ModItems.STONE_AXE_HEAD.get(), JournalTrigger.TriggerInstance.of(Journal.KNAP));
+        AdvancementHolder knap = goal(boulder, "t0/knap", ModItems.STONE_AXE.get(), JournalTrigger.TriggerInstance.of(Journal.KNAP));
         AdvancementHolder stoneAxe = goal(knap, "t0/stone_axe", ModItems.STONE_AXE.get(), has(ModItems.STONE_AXE.get()));
         AdvancementHolder log = goal(stoneAxe, "t0/log", Items.OAK_LOG,
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ItemTags.LOGS)));

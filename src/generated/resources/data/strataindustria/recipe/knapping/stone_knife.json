@@ -1,15 +1,16 @@
 {
   "type": "strataindustria:knapping",
   "blows": 4,
+  "bound": true,
   "ingredient": "#strataindustria:knappable",
   "pattern": [
-    "..#..",
-    ".###.",
-    ".###.",
-    "..#..",
-    "..#.."
+    "#....",
+    "##...",
+    ".##..",
+    "..##.",
+    "...##"
   ],
   "result": {
-    "id": "strataindustria:stone_spear_head"
+    "id": "strataindustria:stone_knife"
   }
 }

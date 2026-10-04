@@ -45,10 +45,11 @@ final class BronzeGameTests {
         helper.assertValueEqual(Rock.RHYOLITE.grain(), Grain.CLEAN, "rhyolite grain");
         helper.assertTrue(Grain.CRUMBLY.chipFactor() > Grain.COARSE.chipFactor(), "crumbly stone should shed more chips");
         helper.assertTrue(Grain.CLEAN.strikePitch() > Grain.COARSE.strikePitch(), "clean stone should ring higher than coarse stone");
-        helper.assertTrue(KnappedFrom.of(Rock.RHYOLITE).durabilityMultiplier() > Rock.RHYOLITE.category().durabilityMultiplier(),
-                "clean-grained stone should hold a better edge than its category alone");
-        helper.assertValueEqual(KnappedFrom.of(Rock.BASALT).durabilityMultiplier(), Rock.BASALT.category().durabilityMultiplier(),
-                "coarse stone gets no bonus");
+        helper.assertTrue(KnappedFrom.of(Rock.RHYOLITE).durabilityMultiplier() > KnappedFrom.of(Rock.BASALT).durabilityMultiplier(),
+                "clean-grained stone should hold a better edge than basalt");
+        helper.assertTrue(KnappedFrom.of(Rock.GABBRO).durabilityMultiplier() > KnappedFrom.of(Rock.LIMESTONE).durabilityMultiplier(),
+                "dense igneous rock outlasts limestone");
+        helper.assertTrue(KnappedFrom.of(Rock.SHALE).durabilityMultiplier() < 1.0f, "shale wears out first");
         helper.succeed();
     }
 

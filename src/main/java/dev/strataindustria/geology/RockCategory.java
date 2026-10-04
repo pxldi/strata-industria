@@ -2,23 +2,17 @@ package dev.strataindustria.geology;
 
 import net.minecraft.util.StringRepresentable;
 
-/** The four rock categories. Knapped tools take their durability multiplier from these. */
+/** The four rock categories (shelves, tags, oil basins). Tool durability is per rock, see {@link Rock#toolDurability()}. */
 public enum RockCategory implements StringRepresentable {
-    IGNEOUS_EXTRUSIVE("igneous_extrusive", 1.2f),
-    IGNEOUS_INTRUSIVE("igneous_intrusive", 1.0f),
-    METAMORPHIC("metamorphic", 1.0f),
-    SEDIMENTARY("sedimentary", 0.8f);
+    IGNEOUS_EXTRUSIVE("igneous_extrusive"),
+    IGNEOUS_INTRUSIVE("igneous_intrusive"),
+    METAMORPHIC("metamorphic"),
+    SEDIMENTARY("sedimentary");
 
     private final String name;
-    private final float durabilityMultiplier;
 
-    RockCategory(String name, float durabilityMultiplier) {
+    RockCategory(String name) {
         this.name = name;
-        this.durabilityMultiplier = durabilityMultiplier;
-    }
-
-    public float durabilityMultiplier() {
-        return durabilityMultiplier;
     }
 
     public boolean isIgneous() {
