@@ -10,6 +10,7 @@ import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
+import dev.strataindustria.machine.BellowsBlock;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.registry.ModBlocks;
@@ -122,6 +123,7 @@ final class ModModelProvider extends ModelProvider {
 
         metals(itemModels);
         ironAge(blockModels, itemModels);
+        kinetics(blockModels, itemModels);
 
         // Spec 9.1: stone anvils are the raw rock with a dressed face; the bronze anvil turns like a vanilla anvil.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
@@ -297,6 +299,41 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(pattern, ItemModelUtils.conditional(
                 ItemModelUtils.hasComponent(ModDataComponents.SMITHING_PATTERN.get()),
                 ItemModelUtils.plainModel(recorded), ItemModelUtils.plainModel(blank)));
+    }
+
+    /**
+     * Tier 3 spec 7 and 8. Turning parts are drawn by the rotor renderer, so the axle, crank and wheel
+     * blocks carry particle-only models; the hand-written models live in the main resources.
+     */
+    private static void kinetics(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        for (var block : java.util.List.of(ModBlocks.WOODEN_AXLE, ModBlocks.WOODEN_GEARBOX, ModBlocks.HAND_CRANK, ModBlocks.WATER_WHEEL,
+                ModBlocks.MILLSTONE)) {
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block.get(),
+                    BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + block.getId().getPath()))));
+        }
+        itemModels.itemModelOutput.accept(ModItems.WOODEN_AXLE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/rotor/wooden_axle")));
+        itemModels.itemModelOutput.accept(ModItems.WOODEN_GEARBOX.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/wooden_gearbox")));
+        itemModels.itemModelOutput.accept(ModItems.MILLSTONE.get(), ItemModelUtils.composite(
+                ItemModelUtils.plainModel(StrataIndustria.id("block/millstone")),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/rotor/millstone_runner"))));
+        flatItem(itemModels, ModItems.HAND_CRANK.get());
+        flatItem(itemModels, ModItems.WATER_WHEEL.get());
+        flatItem(itemModels, ModItems.WOODEN_GEAR.get());
+
+        // The bellows model faces north and squashes while it blows.
+        var open = BlockModelGenerators.plainVariant(StrataIndustria.id("block/bellows"));
+        var squeezed = BlockModelGenerators.plainVariant(StrataIndustria.id("block/bellows_compressed"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> bellows =
+                PropertyDispatch.initial(BellowsBlock.FACING, BellowsBlock.COMPRESSED);
+        for (boolean compressed : new boolean[] {false, true}) {
+            var base = compressed ? squeezed : open;
+            bellows.select(net.minecraft.core.Direction.NORTH, compressed, base);
+            bellows.select(net.minecraft.core.Direction.EAST, compressed, base.with(BlockModelGenerators.Y_ROT_90));
+            bellows.select(net.minecraft.core.Direction.SOUTH, compressed, base.with(BlockModelGenerators.Y_ROT_180));
+            bellows.select(net.minecraft.core.Direction.WEST, compressed, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.BELLOWS.get()).with(bellows));
+        itemModels.itemModelOutput.accept(ModItems.BELLOWS.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bellows")));
     }
 
     /** Metal anvils turn like a vanilla anvil; the model JSON is hand-written on the vanilla anvil template. */

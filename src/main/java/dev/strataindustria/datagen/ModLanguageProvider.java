@@ -130,6 +130,11 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "anvil.done", "Piece finished");
         add(subtitles + "anvil.dress", "Stone dressed");
         add(subtitles + "anvil.weld", "Metal welds");
+        add(subtitles + "hand_crank.turn", "Crank creaks");
+        add(subtitles + "water_wheel.turn", "Water wheel splashes");
+        add(subtitles + "kinetic.overstress", "Machinery groans to a halt");
+        add(subtitles + "millstone.grind", "Millstone grinds");
+        add(subtitles + "bellows.pump", "Bellows wheeze");
         add(subtitles + "anvil.weld_fail", "Weld refused");
         add(subtitles + "quern.load", "Quern loaded");
         add(subtitles + "quern.done", "Quern spills ground");
@@ -350,6 +355,14 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.bucket.hint", "Wrought iron is finally enough for a bucket.");
         add(journal + "t3.furnace", "Furnace");
         add(journal + "t3.furnace.hint", "Eight fire bricks make a furnace.");
+        add(journal + "t3.rotation", "Turning");
+        add(journal + "t3.rotation.hint", "Put a hand crank on the end of a wooden axle and hold right-click on it.");
+        add(journal + "t3.water_power", "Water Power");
+        add(journal + "t3.water_power.hint", "Set a water wheel on an axle where flowing water pushes one side of it.");
+        add(journal + "t3.millstone", "Millstone");
+        add(journal + "t3.millstone.hint", "Drive a millstone from an axle and let it grind for you.");
+        add(journal + "t3.bellows", "Bellows");
+        add(journal + "t3.bellows.hint", "Turn a bellows with a shaft and point its nozzle into a forge or a bloomery wall.");
         add(journal + "t3.weld", "Forge Weld");
         add(journal + "t3.weld.hint", "Heat two iron ingots, add flux, and weld them into a double ingot on the anvil.");
         add(journal + "t3.pattern", "Smithing Pattern");
@@ -395,6 +408,32 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".anvil.where.third_last", "third last");
         add(id + ".anvil.where.not_last", "not last");
         add(id + ".anvil.where.any", "any of the last three");
+
+        // Spec 7 and 8: mechanical power and machines.
+        addBlock(ModBlocks.WOODEN_AXLE, "Wooden Axle");
+        addBlock(ModBlocks.WOODEN_GEARBOX, "Wooden Gearbox");
+        addBlock(ModBlocks.HAND_CRANK, "Hand Crank");
+        addBlock(ModBlocks.WATER_WHEEL, "Water Wheel");
+        addBlock(ModBlocks.MILLSTONE, "Millstone");
+        addBlock(ModBlocks.BELLOWS, "Bellows");
+        addItem(ModItems.WOODEN_GEAR, "Wooden Gear");
+        add("container." + id + ".millstone", "Millstone");
+        String kinetic = id + ".kinetic.";
+        add(kinetic + "running", "%s RPM, %s / %s SU");
+        add(kinetic + "idle", "Not turning");
+        add(kinetic + "overstressed", "Overstressed (%s / %s SU)");
+        add(kinetic + "incomplete", "Network incomplete");
+        add(kinetic + "too_large", "Network too large");
+        add(kinetic + "limited_by", "speed limited by the source at %s %s %s");
+        add(id + ".water_wheel.no_flow", "No water flow");
+        add(id + ".water_wheel.blocked", "Blocked");
+        String machine = id + ".machine.";
+        add(machine + "empty", "Waiting for input");
+        add(machine + "working", "Working");
+        add(machine + "not_turning", "Needs a turning shaft");
+        add(machine + "too_slow", "Too slow: needs %s RPM");
+        add(machine + "no_recipe", "Cannot grind that");
+        add(machine + "output_full", "Output full");
 
         // Spec 9.4 and 9.5: welding, flux and patterns.
         addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");

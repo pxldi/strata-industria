@@ -194,6 +194,19 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- kinetics
+    static {
+        BUILDER.comment("Mechanical power.").push("kinetics");
+    }
+
+    public static final ModConfigSpec.IntValue KINETIC_MAX_NETWORK = BUILDER
+            .comment("Most kinetic blocks one network may have; a larger network stops.")
+            .defineInRange("maxNetworkSize", 512, 16, 4096);
+
+    static {
+        BUILDER.pop();
+    }
+
     // ---------------------------------------------------------------- journal
     static {
         BUILDER.comment("The field journal.").push("journal");

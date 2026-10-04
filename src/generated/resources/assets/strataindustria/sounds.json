@@ -65,6 +65,16 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.weld_fail"
   },
+  "bellows.pump": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.horse.breathe",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bellows.pump"
+  },
   "bloomery.charge": {
     "sounds": [
       {
@@ -312,6 +322,17 @@
     ],
     "subtitle": "subtitles.strataindustria.forge.ignite"
   },
+  "hand_crank.turn": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_door.open",
+        "pitch": 1.4,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.hand_crank.turn"
+  },
   "heat.quench": {
     "sounds": [
       {
@@ -358,6 +379,16 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.journal.open"
+  },
+  "kinetic.overstress": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.break",
+        "pitch": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.kinetic.overstress"
   },
   "knapping.finish": {
     "sounds": [
@@ -429,6 +460,17 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.knapping.rock"
+  },
+  "millstone.grind": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.millstone.grind"
   },
   "mold.break": {
     "sounds": [
@@ -684,6 +726,16 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.raw_bloom.hit"
+  },
+  "water_wheel.turn": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.boat.paddle_water",
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.water_wheel.turn"
   },
   "wrought_iron.hit": {
     "sounds": [

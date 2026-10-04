@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "L": "minecraft:leather",
+    "P": "#minecraft:planks",
+    "R": "strataindustria:wrought_iron_rod"
+  },
+  "pattern": [
+    "PPP",
+    "LLL",
+    "PRP"
+  ],
+  "result": {
+    "id": "strataindustria:bellows"
+  }
+}
