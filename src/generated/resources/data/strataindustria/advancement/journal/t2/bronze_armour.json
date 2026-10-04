@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t2/smith",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "bronze_armour"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.bronze_armour.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:bronze_chestplate"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.bronze_armour"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

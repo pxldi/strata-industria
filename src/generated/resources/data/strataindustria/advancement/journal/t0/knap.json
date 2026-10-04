@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t0/loose_rock",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "knap"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t0.knap.hint"
+    },
+    "icon": {
+      "id": "strataindustria:stone_axe_head"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t0.knap"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "strataindustria:journal/t2/stone_anvil",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "strataindustria:copper_plate",
+              "strataindustria:bronze_plate",
+              "strataindustria:arsenical_bronze_plate",
+              "strataindustria:bismuth_bronze_plate"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.smith.hint"
+    },
+    "icon": {
+      "id": "strataindustria:bronze_plate"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.smith"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

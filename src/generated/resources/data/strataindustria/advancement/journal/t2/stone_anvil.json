@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t2/bronze",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "stone_anvil"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.stone_anvil.hint"
+    },
+    "icon": {
+      "id": "strataindustria:stone_hammer"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.stone_anvil"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

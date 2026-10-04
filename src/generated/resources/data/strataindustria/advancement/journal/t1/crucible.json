@@ -1,0 +1,36 @@
+{
+  "parent": "strataindustria:journal/t1/pit_kiln",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:crucible"
+          },
+          {
+            "items": "strataindustria:ingot_mold"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t1.crucible.hint"
+    },
+    "icon": {
+      "id": "strataindustria:crucible"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t1.crucible"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

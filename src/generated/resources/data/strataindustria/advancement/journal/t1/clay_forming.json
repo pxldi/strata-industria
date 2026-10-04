@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t0/clay",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "clay_forming"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t1.clay_forming.hint"
+    },
+    "icon": {
+      "id": "strataindustria:unfired_small_vessel"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t1.clay_forming"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

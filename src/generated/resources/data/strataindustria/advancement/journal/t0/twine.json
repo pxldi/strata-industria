@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t0/knap",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:twine"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t0.twine.hint"
+    },
+    "icon": {
+      "id": "strataindustria:twine"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t0.twine"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "strataindustria:journal/t1/charcoal",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "strataindustria:forge"
+        }
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t1.forge.hint"
+    },
+    "icon": {
+      "id": "strataindustria:forge"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t1.forge"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

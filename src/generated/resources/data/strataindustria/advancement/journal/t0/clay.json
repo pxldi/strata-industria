@@ -1,0 +1,36 @@
+{
+  "parent": "strataindustria:journal/t0/fire",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "count": {
+              "min": 5
+            },
+            "items": "minecraft:clay_ball"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t0.clay.hint"
+    },
+    "icon": {
+      "id": "minecraft:clay_ball"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t0.clay"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

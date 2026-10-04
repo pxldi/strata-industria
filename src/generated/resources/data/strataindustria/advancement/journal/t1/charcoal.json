@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t0/fire",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:charcoal"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t1.charcoal.hint"
+    },
+    "icon": {
+      "id": "minecraft:charcoal"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t1.charcoal"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
