@@ -32,9 +32,12 @@ public class SoakingBarrelScreen extends AbstractContainerScreen<SoakingBarrelMe
         int amount = menu.amount();
         if (fluid != SoakingBarrelBlockEntity.TankFluid.NONE && amount > 0) {
             int h = Math.max(1, Math.round(TANK_H * Math.min(1.0f, amount / (float) SoakingBarrelBlockEntity.CAPACITY)));
-            int u = FLUID_U + (fluid.ordinal() - 1) * TANK_W;
+            // Five strips fit along the top of the sheet; later fluids continue on a second row.
+            int strip = fluid.ordinal() - 1;
+            int u = FLUID_U + (strip % 5) * TANK_W;
+            int v = FLUID_V + (strip / 5) * 76;
             g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos + TANK_X, topPos + TANK_Y + TANK_H - h,
-                    u, FLUID_V + TANK_H - h, TANK_W, h, 256, 256);
+                    u, v + TANK_H - h, TANK_W, h, 256, 256);
         }
         if (menu.status() == SoakingBarrelBlockEntity.Status.WORKING) {
             int w = Math.round(ARROW_W * menu.progress());

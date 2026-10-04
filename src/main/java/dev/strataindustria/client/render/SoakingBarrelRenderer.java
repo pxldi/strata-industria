@@ -38,6 +38,7 @@ public class SoakingBarrelRenderer implements BlockEntityRenderer<SoakingBarrelB
         surfaces.put(SoakingBarrelBlockEntity.TankFluid.TANNIN, RotorRenderer.rotorStack("barrel_tannin"));
         surfaces.put(SoakingBarrelBlockEntity.TankFluid.OTHER, RotorRenderer.rotorStack("barrel_water"));
         surfaces.put(SoakingBarrelBlockEntity.TankFluid.LATEX, RotorRenderer.rotorStack("barrel_latex"));
+        surfaces.put(SoakingBarrelBlockEntity.TankFluid.CREOSOTE, RotorRenderer.rotorStack("barrel_creosote"));
     }
 
     @Override

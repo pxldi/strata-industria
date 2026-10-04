@@ -21,6 +21,12 @@ public final class Tier5DataComponents {
                     .persistent(StringRepresentable.fromEnum(ElectricTier::values))
                     .networkSynchronized(ByteBufCodecs.idMapper(i -> ElectricTier.values()[i], ElectricTier::ordinal)));
 
+    /** Spec 16.3: the first insulator clicked with an ACSR conductor, waiting for the second. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.core.BlockPos>> SPAN_LINK =
+            ModDataComponents.COMPONENTS.registerComponentType("span_link", b -> b
+                    .persistent(net.minecraft.core.BlockPos.CODEC)
+                    .networkSynchronized(net.minecraft.core.BlockPos.STREAM_CODEC));
+
     public static void init() {}
 
     private Tier5DataComponents() {}

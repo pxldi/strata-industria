@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:sawing",
+  "ingredient": "strataindustria:treated_log",
+  "result": {
+    "count": 3,
+    "id": "strataindustria:utility_pole"
+  }
+}

@@ -15,6 +15,7 @@ import dev.strataindustria.registry.Tier5Blocks;
 import dev.strataindustria.registry.Tier5DataComponents;
 import dev.strataindustria.rubber.TreeTapBlock;
 import dev.strataindustria.registry.Tier5Items;
+import dev.strataindustria.electric.PoleInsulatorBlock;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.MultiVariant;
@@ -42,10 +43,12 @@ final class Tier5Models {
                 Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER, Tier5Items.LATEX_BUCKET, Tier5Items.TREE_TAP,
                 Tier5Items.RED_ALLOY_ROD, Tier5Items.RED_ALLOY_WIRE, Tier5Items.DRAW_PLATE, Tier5Items.CIRCUIT_BOARD, Tier5Items.BASIC_CIRCUIT,
                 Tier5Items.ELECTRIC_MOTOR, Tier5Items.ALUMINIUM_WIRE, Tier5Items.STEEL_WIRE, Tier5Items.SULFURIC_ACID_BUCKET, Tier5Items.ALUM,
-                Tier5Items.ALUMINA, Tier5Items.LEAD_ACID_CELL, Tier5Items.MV_UPGRADE_KIT)) {
+                Tier5Items.ALUMINA, Tier5Items.LEAD_ACID_CELL, Tier5Items.MV_UPGRADE_KIT, Tier5Items.UNFIRED_INSULATOR, Tier5Items.CERAMIC_INSULATOR,
+                Tier5Items.ACSR_CONDUCTOR)) {
             itemModels.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
         }
         treeTap(blockModels);
+        overheadLines(blockModels, itemModels);
         cables(blockModels, itemModels);
         dynamo(blockModels, itemModels);
         batteryBox(blockModels, itemModels);
@@ -81,6 +84,31 @@ final class Tier5Models {
             dispatch.select(Direction.WEST, fill, model.with(BlockModelGenerators.Y_ROT_270));
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.TREE_TAP.get()).with(dispatch));
+    }
+
+    // Spec 5.4 and 8.3: the treated log is a pillar; the pole and the insulator are hand-built models (the insulator points up).
+    private static void overheadLines(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Block log = Tier5Blocks.TREATED_LOG.get();
+        Identifier logModel = ModelTemplates.CUBE_COLUMN.create(log, TextureMapping.column(texture("treated_log_side"), texture("treated_log_top")),
+                blockModels.modelOutput);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(log, BlockModelGenerators.plainVariant(logModel))
+                .with(BlockModelGenerators.createRotatedPillar()));
+        plainItem(itemModels, log.asItem(), logModel);
+
+        Identifier pole = StrataIndustria.id("block/utility_pole");
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.UTILITY_POLE.get(), BlockModelGenerators.plainVariant(pole)));
+        plainItem(itemModels, Tier5Items.UTILITY_POLE.get(), pole);
+
+        MultiVariant up = BlockModelGenerators.plainVariant(StrataIndustria.id("block/pole_insulator"));
+        PropertyDispatch.C1<MultiVariant, Direction> dispatch = PropertyDispatch.initial(PoleInsulatorBlock.FACING);
+        dispatch.select(Direction.UP, up);
+        dispatch.select(Direction.DOWN, up.with(BlockModelGenerators.X_ROT_180));
+        dispatch.select(Direction.NORTH, up.with(BlockModelGenerators.X_ROT_90));
+        dispatch.select(Direction.SOUTH, up.with(BlockModelGenerators.X_ROT_270));
+        dispatch.select(Direction.EAST, up.with(BlockModelGenerators.X_ROT_90).with(BlockModelGenerators.Y_ROT_90));
+        dispatch.select(Direction.WEST, up.with(BlockModelGenerators.X_ROT_90).with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.POLE_INSULATOR.get()).with(dispatch));
+        plainItem(itemModels, Tier5Items.POLE_INSULATOR.get(), StrataIndustria.id("block/pole_insulator"));
     }
 
     // Spec 8.1: hand-built core and arm models (core, arm pointing north) joined on each connected face.

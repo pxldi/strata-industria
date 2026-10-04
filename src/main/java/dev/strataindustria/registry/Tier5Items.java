@@ -47,6 +47,14 @@ public final class Tier5Items {
     /** Spec 11.4: clay and acid make alum, roasting alum makes alumina, and electrolysis turns alumina into aluminium. */
     public static final DeferredItem<Item> ALUM = ModItems.ITEMS.registerSimpleItem("alum");
     public static final DeferredItem<Item> ALUMINA = ModItems.ITEMS.registerSimpleItem("alumina");
+    /** Spec 5.4, 8.3 and 8.4: treated wood, poles, insulators and the conductor that spans between them. */
+    public static final DeferredItem<BlockItem> TREATED_LOG = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.TREATED_LOG);
+    public static final DeferredItem<BlockItem> UTILITY_POLE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.UTILITY_POLE);
+    public static final DeferredItem<BlockItem> POLE_INSULATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.POLE_INSULATOR);
+    public static final DeferredItem<Item> UNFIRED_INSULATOR = ModItems.ITEMS.registerSimpleItem("unfired_insulator");
+    public static final DeferredItem<Item> CERAMIC_INSULATOR = ModItems.ITEMS.registerSimpleItem("ceramic_insulator");
+    public static final DeferredItem<dev.strataindustria.electric.AcsrConductorItem> ACSR_CONDUCTOR = ModItems.ITEMS.registerItem("acsr_conductor",
+            dev.strataindustria.electric.AcsrConductorItem::new, p -> p);
     public static final DeferredItem<BlockItem> TREE_TAP = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.TREE_TAP);
 
     public static final DeferredItem<BlockItem> LV_CABLE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_CABLE);

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "strataindustria:block/treated_log",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "strataindustria:block/treated_log"
+    },
+    "axis=z": {
+      "model": "strataindustria:block/treated_log",
+      "x": 90
+    }
+  }
+}

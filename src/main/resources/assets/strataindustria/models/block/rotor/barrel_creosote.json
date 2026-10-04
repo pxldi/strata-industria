@@ -1,0 +1,40 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/fluid/creosote_still",
+    "fluid": "strataindustria:block/fluid/creosote_still"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        8,
+        2
+      ],
+      "to": [
+        14,
+        8,
+        14
+      ],
+      "faces": {
+        "up": {
+          "texture": "#fluid",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#fluid",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        }
+      }
+    }
+  ]
+}

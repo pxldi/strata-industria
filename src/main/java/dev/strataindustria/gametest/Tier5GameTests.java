@@ -2,6 +2,7 @@ package dev.strataindustria.gametest;
 
 import com.mojang.authlib.GameProfile;
 import dev.strataindustria.electric.BatteryBoxBlock;
+import dev.strataindustria.electric.OverheadLine;
 import dev.strataindustria.electric.BatteryBoxBlockEntity;
 import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
 import dev.strataindustria.electric.GeneratorBlock;
@@ -102,6 +103,7 @@ final class Tier5GameTests {
         tests.put("tier5_mv_upgrade", Tier5GameTests::mvUpgrade);
         tests.put("tier5_transformer", Tier5GameTests::transformer);
         tests.put("tier5_energy_adapter", Tier5GameTests::energyAdapter);
+        tests.put("tier5_overhead_line", Tier5GameTests::overheadLine);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -671,6 +673,52 @@ final class Tier5GameTests {
         helper.assertTrue(lvBox.stored() < 50_000, "and the LV box paid for it");
 
         level.getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
+    // Spec 8.3, 8.4 and 24: two poles with insulators and a span between them join two MV machines; the span loses
+    // 0.01% per block, carries 1024 J/t, is refused through a solid block, and breaking an insulator drops
+    // ceil(length / 4) conductors and frees the other end.
+    private static void overheadLine(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos a = helper.absolutePos(new BlockPos(1, 3, 1)), b = helper.absolutePos(new BlockPos(7, 3, 7));
+        for (BlockPos top : List.of(a, b)) {
+            level.setBlock(top.below(2), Tier5Blocks.UTILITY_POLE.get().defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(top.below(), Tier5Blocks.UTILITY_POLE.get().defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(top, Tier5Blocks.POLE_INSULATOR.get().defaultBlockState(), Block.UPDATE_ALL);
+        }
+        helper.assertTrue(level.getBlockState(a).is(Tier5Blocks.POLE_INSULATOR.get()), "an insulator stays on top of a pole");
+        BlockPos boxPos = a.below(2).east(), machinePos = b.below(2).west();
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState().setValue(BatteryBoxBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
+        level.setBlock(machinePos, Tier5Blocks.MACERATOR.get().defaultBlockState(), Block.UPDATE_ALL);
+        ((BatteryBoxBlockEntity) level.getBlockEntity(boxPos)).setStored(50_000);
+
+        ElectricNetwork apart = ElectricNetworks.rebuildNow(level, machinePos);
+        helper.assertTrue(!apart.members().contains(boxPos), "no span yet, so the two poles are separate networks");
+
+        BlockPos middle = new BlockPos((a.getX() + b.getX()) / 2, a.getY(), (a.getZ() + b.getZ()) / 2);
+        level.setBlock(middle, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        helper.assertValueEqual(OverheadLine.problem(level, a, b), "blocked", "a solid block between the insulators refuses the span");
+        level.setBlock(middle, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        helper.assertTrue(OverheadLine.problem(level, a, b) == null, "a clear line is accepted");
+        helper.assertValueEqual(OverheadLine.conductorsFor(a, b), 3, "a span of 8.5 blocks costs 3 conductors");
+        helper.assertValueEqual(OverheadLine.conductorsFor(a, a.east(24)), 6, "24 blocks cost 6 conductors");
+        helper.assertValueEqual(OverheadLine.conductorsFor(a, a.east(25)), 7, "25 blocks cost 7 conductors");
+        helper.assertTrue(Math.abs(ElectricNetwork.spanLoss(a, a.east(96)) - 0.0096) < 1e-9, "96 blocks of span lose 0.96%");
+
+        OverheadLine.connect(level, a, b);
+        helper.assertValueEqual(OverheadLine.problem(level, a, b), "already", "a second span between the same insulators is refused");
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, machinePos);
+        helper.assertTrue(network.members().contains(boxPos) && network.members().contains(machinePos), "the span joins both machines");
+        helper.assertTrue(network.capacity() == 1024, "poles and spans carry 1024 J/t, got " + network.capacity());
+        double expected = ElectricNetwork.spanLoss(a, b);
+        helper.assertTrue(Math.abs(network.loss(machinePos) - expected) < 1e-9, "the path loses only the span's " + expected + ", got " + network.loss(machinePos));
+
+        level.destroyBlock(a, true);
+        long dropped = level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(a).inflate(2)).stream()
+                .filter(e -> e.getItem().is(Tier5Items.ACSR_CONDUCTOR.get())).mapToInt(e -> e.getItem().getCount()).sum();
+        helper.assertValueEqual(dropped, 3L, "breaking an insulator drops the conductors");
+        helper.assertTrue(((dev.strataindustria.electric.PoleInsulatorBlockEntity) level.getBlockEntity(b)).spans().isEmpty(), "the other end is freed");
         helper.succeed();
     }
 

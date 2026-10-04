@@ -51,6 +51,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         chemistry();
         storage();
         assembling();
+        overheadLines();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -418,6 +419,28 @@ final class Tier5RecipeProvider extends RecipeProvider {
         assemble("lv_cable", 100, Tier5Items.LV_CABLE.get(), 6, null, wire, 6, Tier5Items.RUBBER.get(), 3);
         assemble("mv_upgrade_kit", 200, Tier5Items.MV_UPGRADE_KIT.get(), 1, null, ModItems.PLATES.get(Metal.ALUMINIUM).get(), 2,
                 Tier5Items.BASIC_CIRCUIT.get(), 2, Tier5Items.MV_CABLE.get(), 1, Tier5Items.ELECTRIC_MOTOR.get(), 1);
+    }
+
+    // Spec 5.4, 8.3 and 8.4: treated logs, poles, hand-made insulators and the span conductor.
+    private void overheadLines() {
+        output.accept(key("barrel/treated_log"), new BarrelRecipe(Optional.of(tag(net.minecraft.tags.ItemTags.LOGS)), 1,
+                Optional.of(new FluidAmount(Tier4Fluids.CREOSOTE.get(), 250)), Optional.of(new ItemStackTemplate(Tier5Items.TREATED_LOG.get())),
+                Optional.empty(), 1200), null);
+        Ingredient saw = tag(dev.strataindustria.registry.ModTags.Items.SAWS);
+        output.accept(key("utility_pole"), new dev.strataindustria.crafting.ToolShapelessRecipe(new Recipe.CommonInfo(true),
+                new net.minecraft.world.item.crafting.CraftingRecipe.CraftingBookInfo(net.minecraft.world.item.crafting.CraftingBookCategory.BUILDING, "poles"),
+                new ItemStackTemplate(Tier5Items.UTILITY_POLE.get(), 2), List.of(Ingredient.of(Tier5Items.TREATED_LOG.get()), saw), saw), null);
+        output.accept(key("sawing/utility_pole"), new dev.strataindustria.machine.SawingRecipe(Ingredient.of(Tier5Items.TREATED_LOG.get()),
+                new ItemStackTemplate(Tier5Items.UTILITY_POLE.get(), 3), Optional.empty(), dev.strataindustria.machine.SawingRecipe.DEFAULT_TICKS), null);
+        shapeless(RecipeCategory.REDSTONE, Tier5Items.POLE_INSULATOR.get())
+                .requires(Tier5Items.CERAMIC_INSULATOR.get())
+                .requires(ModItems.RODS.get(Metal.STEEL).get())
+                .unlockedBy("has_ceramic_insulator", has(Tier5Items.CERAMIC_INSULATOR.get()))
+                .save(output, key("pole_insulator"));
+        int pattern = dev.strataindustria.knapping.GridPattern.parse(List.of(".###.", "..#..", ".###.", "..#..", ".###.")).getOrThrow();
+        output.accept(key("clay_forming/unfired_insulator"), new dev.strataindustria.knapping.KnappingRecipe(Ingredient.of(Items.CLAY_BALL),
+                dev.strataindustria.knapping.Knapping.CLAY_OPENING_COST, pattern, true, new ItemStackTemplate(Tier5Items.UNFIRED_INSULATOR.get(), 2)), null);
+        assemble("acsr_conductor", 200, Tier5Items.ACSR_CONDUCTOR.get(), 4, null, Tier5Items.ALUMINIUM_WIRE.get(), 6, Tier5Items.STEEL_WIRE.get(), 1);
     }
 
     /** An assembler recipe: {@code inputs} alternate item and count. */

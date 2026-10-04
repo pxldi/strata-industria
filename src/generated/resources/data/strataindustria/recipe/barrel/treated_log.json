@@ -1,0 +1,12 @@
+{
+  "type": "strataindustria:barrel",
+  "fluid": {
+    "amount": 250,
+    "fluid": "strataindustria:creosote"
+  },
+  "ingredient": "#minecraft:logs",
+  "result": {
+    "id": "strataindustria:treated_log"
+  },
+  "ticks": 1200
+}

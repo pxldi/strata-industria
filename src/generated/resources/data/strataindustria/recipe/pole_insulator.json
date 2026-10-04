@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:ceramic_insulator",
+    "strataindustria:steel_rod"
+  ],
+  "result": {
+    "id": "strataindustria:pole_insulator"
+  }
+}

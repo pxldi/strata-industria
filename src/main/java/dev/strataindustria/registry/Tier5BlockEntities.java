@@ -25,6 +25,13 @@ public final class Tier5BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CableBlockEntity>> CABLE =
             ModBlockEntities.BLOCK_ENTITIES.register("cable", () -> new BlockEntityType<>(CableBlockEntity::new,
                     Tier5Blocks.LV_CABLE.get(), Tier5Blocks.MV_CABLE.get()));
+    /** Spec 16.1: poles only carry the network; insulators hold the span list. */
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.electric.UtilityPoleBlockEntity>> UTILITY_POLE =
+            ModBlockEntities.BLOCK_ENTITIES.register("utility_pole", () -> new BlockEntityType<>(dev.strataindustria.electric.UtilityPoleBlockEntity::new,
+                    Tier5Blocks.UTILITY_POLE.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.electric.PoleInsulatorBlockEntity>> POLE_INSULATOR =
+            ModBlockEntities.BLOCK_ENTITIES.register("pole_insulator", () -> new BlockEntityType<>(dev.strataindustria.electric.PoleInsulatorBlockEntity::new,
+                    Tier5Blocks.POLE_INSULATOR.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticDynamoBlockEntity>> KINETIC_DYNAMO =
             ModBlockEntities.BLOCK_ENTITIES.register("kinetic_dynamo", () -> new BlockEntityType<>(KineticDynamoBlockEntity::new,
                     Tier5Blocks.KINETIC_DYNAMO.get()));

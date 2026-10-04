@@ -106,6 +106,9 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(ModBlockEntities.WINDMILL_BEARING.get(), dev.strataindustria.client.render.WindmillRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SOAKING_BARREL.get(), dev.strataindustria.client.render.SoakingBarrelRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.PULLEY.get(), dev.strataindustria.client.render.PulleyRenderer::new);
+        // Tier 5 spec 8.4: overhead spans sag between pole insulators.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.POLE_INSULATOR.get(),
+                dev.strataindustria.client.render.PoleInsulatorRenderer::new);
         // Tier 5 spec 7.1: the dynamo's armature turns with its shaft, seen through the front window.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.KINETIC_DYNAMO.get(), context -> new RotorRenderer<>(context,
                 "kinetic_dynamo_armature", state -> state.getValue(dev.strataindustria.electric.KineticDynamoBlock.FACING), 0));

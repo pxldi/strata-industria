@@ -61,6 +61,11 @@ public final class Tier5Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ASSEMBLER_WORK = register("block.assembler.work");
     public static final DeferredHolder<SoundEvent, SoundEvent> ELECTROLYSER_BUBBLE = register("block.electrolyser.bubble");
 
+    /** Spec 23.6: a wire twang and a clamp click when a span is strung. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> POLE_INSULATOR_CONNECT = register("block.pole_insulator.connect");
+    /** A slack wire flopping down when a span is cut. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> POLE_INSULATOR_DISCONNECT = register("block.pole_insulator.disconnect");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }
