@@ -98,6 +98,7 @@ public final class ModSounds {
 
     /** Tier 3 spec 9.4: a weld takes, or the button is pressed when it cannot. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD = register("anvil.weld");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_STAMP = register("anvil.stamp");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD_FAIL = register("anvil.weld_fail");
 
     /** Tier 3 spec 20.6: mechanical power and machines. */

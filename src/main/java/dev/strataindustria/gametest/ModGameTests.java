@@ -110,6 +110,9 @@ public final class ModGameTests {
         TESTS.put("anvil_cycle_shape", ModGameTests::anvilCycleShape);
         TESTS.put("anvil_place_and_take", ModGameTests::anvilPlaceAndTake);
         TESTS.put("anvil_weld", ModGameTests::anvilWeld);
+        TESTS.put("anvil_weld_cold", ModGameTests::anvilWeldCold);
+        TESTS.put("anvil_bloom_weld", ModGameTests::anvilBloomWeld);
+        TESTS.put("anvil_bloom_refine", ModGameTests::anvilBloomRefine);
         TESTS.put("anvil_quench", ModGameTests::anvilQuench);
         TESTS.put("kinetic_network", ModGameTests::kineticNetwork);
         TESTS.put("core_sample", ModGameTests::coreSample);
@@ -606,6 +609,64 @@ public final class ModGameTests {
         helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()),
                 "a double ingot, got " + anvil.getItem(AnvilBlockEntity.OUTPUT));
         helper.assertTrue(anvil.input().isEmpty() && anvil.getItem(AnvilBlockEntity.SECOND).isEmpty(), "both ingots are used up");
+        helper.succeed();
+    }
+
+    // Ingots that have gone dull will not weld: the anvil thuds and says so.
+
+    private static void anvilWeldCold(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = smithWithHammer(level);
+        anvil.setItem(AnvilBlockEntity.INPUT, hotIngot(level, Items.IRON_INGOT, 200.0f));
+        anvil.setItem(AnvilBlockEntity.SECOND, hotIngot(level, Items.IRON_INGOT, 200.0f));
+        helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.TOO_COLD, "cold ingots do not weld");
+        for (int i = 0; i < 6; i++) strike(anvil, smith, 100 + i * STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "nothing welds cold");
+        helper.assertTrue(!anvil.input().isEmpty() && !anvil.getItem(AnvilBlockEntity.SECOND).isEmpty(), "both ingots are still there");
+        helper.succeed();
+    }
+
+    // Two part-blooms strike into one bloom holding both their iron.
+
+    private static void anvilBloomWeld(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = smithWithHammer(level);
+        for (int slot = 1; slot <= 2; slot++) {
+            ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1300.0f);
+            bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, 40, 0));
+            smith.getInventory().setItem(slot, bloom);
+            helper.assertTrue(anvil.place(smith, bloom), "bloom " + slot + " goes on the anvil");
+        }
+        helper.assertTrue(!anvil.getItem(AnvilBlockEntity.SECOND).isEmpty(), "the second bloom is the partner");
+        for (int i = 0; i < 12 && anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(); i++) strike(anvil, smith, 100 + i * STEP);
+        ItemStack out = anvil.getItem(AnvilBlockEntity.OUTPUT);
+        helper.assertTrue(out.is(ModItems.RAW_BLOOM.get()), "one bloom, got " + out);
+        Melt contents = out.get(ModDataComponents.BLOOM_CONTENTS.get());
+        helper.assertTrue(contents != null && contents.total() == 80, "the iron of both, got " + contents);
+        helper.succeed();
+    }
+
+    // A full bloom hammered by hand squeezes out an iron ingot, and the player is told the bloom is refined.
+
+    private static void anvilBloomRefine(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = smithWithHammer(level);
+        ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1200.0f);
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, dev.strataindustria.bloomery.BloomeryBlockEntity.BLOOM_UNITS, 0));
+        anvil.setItem(AnvilBlockEntity.INPUT, bloom);
+        helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.READY, "a hot bloom is ready to work");
+        for (int i = 0; i < 12 && anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(); i++) strike(anvil, smith, 100 + i * STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(Items.IRON_INGOT), "an iron ingot, got " + anvil.getItem(AnvilBlockEntity.OUTPUT));
+        helper.assertTrue(anvil.input().isEmpty(), "the bloom is used up");
         helper.succeed();
     }
 
