@@ -6,7 +6,8 @@ A single, cohesive technology mod for Minecraft that takes you from knapping fli
 to running a fully automated industrial base, where every tier changes how you play. Inspired by
 GregTech New Horizons, TerraFirmaGreg and Vintage Story.
 
-See [docs/design.md](docs/design.md) for the full progression design.
+See [docs/design.md](docs/design.md) for the full progression design and
+[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for code layout and conventions.
 
 ## Status
 
@@ -37,7 +38,9 @@ support (IntelliJ IDEA recommended).
 ```
 
 Generated resources are committed. After changing anything under `datagen/`, run
-`./gradlew runData` and commit `src/generated`. CI fails if they are out of date.
+`./gradlew runData` and commit `src/generated`. On pull requests from this repository, CI
+regenerates them and commits the result to the branch if they are out of date (pull before your
+next push); on `main` and on forks it fails instead.
 
 ### Project layout
 
