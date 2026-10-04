@@ -1,0 +1,21 @@
+{
+  "type": "strataindustria:crushing",
+  "chances": [
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:crushed_rich_bismuthinite"
+      }
+    },
+    {
+      "chance": 0.2,
+      "item": {
+        "id": "strataindustria:small_galena"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:rich_bismuthinite",
+  "result": {
+    "id": "strataindustria:crushed_rich_bismuthinite"
+  }
+}

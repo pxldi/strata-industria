@@ -1,0 +1,21 @@
+{
+  "type": "strataindustria:crushing",
+  "chances": [
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:crushed_hematite"
+      }
+    },
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:small_magnetite"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:hematite",
+  "result": {
+    "id": "strataindustria:crushed_hematite"
+  }
+}

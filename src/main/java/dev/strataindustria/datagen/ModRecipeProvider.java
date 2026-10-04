@@ -514,6 +514,31 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
                 .unlockedBy("has_bronze_boiler", has(Tier4Items.BRONZE_BOILER.get()))
                 .save(output, key("steam_engine"));
+        // Spec 11.2: the crusher, and what it does better than a quern.
+        shaped(RecipeCategory.REDSTONE, Tier4Items.CRUSHER.get())
+                .pattern("PGP")
+                .pattern("TAT")
+                .pattern("PPP")
+                .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .define('G', ModItems.GEARS.get(Metal.STEEL).get())
+                .define('T', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('A', Tier4Items.IRON_AXLE.get())
+                .unlockedBy("has_steam_engine", has(Tier4Items.STEAM_ENGINE.get()))
+                .save(output, key("crusher"));
+        crushing();
+        // Spec 11.3: the washer, a treated wood tub with bronze bands.
+        List<Item> bronzePlates = new java.util.ArrayList<>();
+        for (Metal metal : Metal.values()) if (metal.isBronze() && ModItems.PLATES.containsKey(metal)) bronzePlates.add(ModItems.PLATES.get(metal).get());
+        shaped(RecipeCategory.REDSTONE, Tier4Items.WASHER.get())
+                .pattern("TPT")
+                .pattern("TGT")
+                .pattern("TRT")
+                .define('T', Tier4Items.TREATED_PLANKS.get())
+                .define('P', Ingredient.of(bronzePlates.toArray(Item[]::new)))
+                .define('G', ModItems.GEARS.get(Metal.BRASS).get())
+                .define('R', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .unlockedBy("has_crusher", has(Tier4Items.CRUSHER.get()))
+                .save(output, key("washer"));
         // Spec 10.4: a cracked boiler is good for four of its plates.
         shapeless(RecipeCategory.MISC, ModItems.PLATES.get(Metal.BRONZE).get(), 4)
                 .requires(Tier4Items.CRACKED_BRONZE_BOILER.get())
@@ -935,6 +960,9 @@ final class ModRecipeProvider extends RecipeProvider {
         odds.put(OreMineral.HEMATITE, 0.15f);
         byproduct.put(OreMineral.MAGNETITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get());
         odds.put(OreMineral.MAGNETITE, 0.10f);
+        // Tier 4 spec 11.3: galena gives up a little bismuthinite.
+        byproduct.put(OreMineral.GALENA, ModItems.SMALL_ORES.get(OreMineral.BISMUTHINITE).get());
+        odds.put(OreMineral.GALENA, 0.15f);
         for (OreMineral mineral : OreMineral.washableValues()) {
             for (OreGrade grade : OreGrade.values()) {
                 List<WashingRecipe.Chance> chances = byproduct.containsKey(mineral)
@@ -992,6 +1020,50 @@ final class ModRecipeProvider extends RecipeProvider {
     private void roast(String path, Item input, Item result, int ticks, int gas) {
         output.accept(key("roasting/" + path), new RoastingRecipe(Ingredient.of(input), new ItemStackTemplate(result), 800, ticks,
                 Optional.of(new FluidAmount(Tier4Fluids.SULFUR_DIOXIDE.get(), gas))), null);
+    }
+
+    /**
+     * Tier 4 spec 11.2 and 11.5: an ore piece gives its crushed piece, a 10% chance of a second, and the
+     * crusher byproduct (doubled for rich ore, halved for poor). Rock goes to gravel, gravel to sand, and
+     * carbonate rock to flux.
+     */
+    private void crushing() {
+        Map<OreMineral, Item> byproduct = new java.util.EnumMap<>(OreMineral.class);
+        byproduct.put(OreMineral.NATIVE_COPPER, ModItems.SMALL_ORES.get(OreMineral.MALACHITE).get());
+        byproduct.put(OreMineral.MALACHITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get());
+        byproduct.put(OreMineral.TENNANTITE, ModItems.SMALL_ORES.get(OreMineral.GALENA).get());
+        byproduct.put(OreMineral.CASSITERITE, ModItems.SMALL_ORES.get(OreMineral.BISMUTHINITE).get());
+        byproduct.put(OreMineral.BISMUTHINITE, ModItems.SMALL_ORES.get(OreMineral.GALENA).get());
+        byproduct.put(OreMineral.GALENA, ModItems.crushedOre(OreMineral.SPHALERITE, OreGrade.POOR));
+        byproduct.put(OreMineral.SPHALERITE, ModItems.crushedOre(OreMineral.GALENA, OreGrade.POOR));
+        byproduct.put(OreMineral.LIMONITE, Items.CLAY_BALL);
+        byproduct.put(OreMineral.HEMATITE, ModItems.SMALL_ORES.get(OreMineral.MAGNETITE).get());
+        byproduct.put(OreMineral.MAGNETITE, ModItems.SMALL_ORES.get(OreMineral.HEMATITE).get());
+        byproduct.put(OreMineral.NATIVE_GOLD, ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get());
+        for (OreMineral mineral : OreMineral.withPieces()) {
+            for (OreGrade grade : OreGrade.values()) {
+                Item crushed = ModItems.crushedOre(mineral, grade);
+                List<WashingRecipe.Chance> chances = new java.util.ArrayList<>();
+                chances.add(new WashingRecipe.Chance(new ItemStackTemplate(crushed), 0.10f));
+                Item extra = byproduct.get(mineral);
+                if (extra != null) {
+                    float odds = grade == OreGrade.RICH ? 0.20f : grade == OreGrade.POOR ? 0.05f : 0.10f;
+                    chances.add(new WashingRecipe.Chance(new ItemStackTemplate(extra), odds));
+                }
+                crush(name(crushed), Ingredient.of(ModItems.orePiece(mineral, grade)), new ItemStackTemplate(crushed), chances);
+            }
+        }
+        for (Rock rock : Rock.values()) {
+            Item cobbled = ModItems.COBBLED_ROCK.get(rock).get();
+            boolean carbonate = rock == Rock.LIMESTONE || rock == Rock.MARBLE;
+            ItemStackTemplate result = carbonate ? new ItemStackTemplate(ModItems.FLUX.get(), 8) : new ItemStackTemplate(Items.GRAVEL);
+            crush((carbonate ? "flux_from_" : "gravel_from_") + name(cobbled), Ingredient.of(cobbled), result, List.of());
+        }
+        crush("sand_from_gravel", Ingredient.of(Items.GRAVEL), new ItemStackTemplate(Items.SAND), List.of());
+    }
+
+    private void crush(String path, Ingredient input, ItemStackTemplate result, List<WashingRecipe.Chance> chances) {
+        output.accept(key("crushing/" + path), new dev.strataindustria.processing.CrushingRecipe(input, result, chances), null);
     }
 
     private void grind(String path, Ingredient input, Item result, int count) {

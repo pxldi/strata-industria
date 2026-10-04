@@ -35,6 +35,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(ModCreativeTabs.MAIN_TAB_TITLE, "Strata Industria");
         StructureData.lang(this::add);
         Tier5Language.add(this::add);
+        recipeViewer();
 
         addItem(ModItems.PLANT_FIBRE, "Plant Fibre");
         addItem(ModItems.STRAW, "Straw");
@@ -390,6 +391,14 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "steam_engine.start", "Steam engine starts");
         add(subtitles + "steam_engine.stop", "Steam engine stops");
         add(subtitles + "mechanical_pump.run", "Pump thumps");
+        addBlock(Tier4Blocks.CRUSHER, "Crusher");
+        add("container." + id + ".crusher", "Crusher");
+        add(subtitles + "crusher.crush", "Crusher grinds");
+        addBlock(Tier4Blocks.WASHER, "Washer");
+        add("container." + id + ".washer", "Washer");
+        add(subtitles + "washer.wash", "Washer sloshes");
+        add(id + ".machine.no_water", "Needs water: pipe it in");
+        add(id + ".washer.water", "Water: %s / %s mB");
     }
 
     private void ironAge() {
@@ -579,6 +588,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.boiler.hint", "Set a bronze boiler on a burning firebox, fill it with water and wait for the needle to rise.");
         add(journal + "t4.steam_engine", "Steam Power");
         add(journal + "t4.steam_engine.hint", "Pipe a boiler's steam into the back of a steam engine. At 2 bar it turns a shaft at 32 RPM.");
+        add(journal + "t4.crusher", "Crushing Power");
+        add(journal + "t4.crusher.hint", "Drive a crusher at 16 RPM or more. Ore comes out crushed, sometimes with a second piece and a bit of another mineral.");
         add(journal + "t4.steel_anvil", "Steel Anvil");
         add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }
@@ -827,5 +838,49 @@ final class ModLanguageProvider extends LanguageProvider {
         for (String grade : new String[] {"crude", "rough", "standard", "fine", "masterwork"}) {
             add(id + ".quality." + grade, title(grade) + " quality");
         }
+    }
+
+    /** Recipe viewer pages (compat/jei); keys under {@code recipe_view.strataindustria.}. */
+    private void recipeViewer() {
+        String k = dev.strataindustria.compat.recipeview.RecipeText.KEY;
+        add(k + "category.knapping", "Knapping");
+        add(k + "category.clay_forming", "Clay Forming");
+        add(k + "category.pit_kiln", "Pit Kiln");
+        add(k + "category.charcoal_pit", "Charcoal Pit");
+        add(k + "category.quern", "Grinding");
+        add(k + "category.alloying", "Crucible Alloying");
+        add(k + "category.casting", "Casting");
+        add(k + "category.anvil", "Anvil Smithing");
+        add(k + "category.welding", "Welding");
+        add(k + "category.bloomery", "Bloomery");
+        add(k + "category.sawing", "Saw Mill");
+        add(k + "category.washing", "Ore Washing");
+        add(k + "category.barrel", "Soaking Barrel");
+        add(k + "category.roasting", "Roasting");
+        add(k + "category.coking", "Coke Oven");
+        add(k + "category.firebox_fuel", "Firebox Fuel");
+        add(k + "heat.work", "Work at %s heat");
+        add(k + "heat.weld", "Weld at %s heat");
+        add(k + "heat.melt", "Melts at %s heat");
+        add(k + "heat.roast", "Roast at %s heat");
+        add(k + "heat.bloom", "Fire to %s heat");
+        add(k + "heat.fuel", "Up to %s heat");
+        add(k + "heat.tooltip", "Heat it until it glows this colour");
+        add(k + "time.seconds", "%s s");
+        add(k + "time.minutes", "%s min");
+        add(k + "time.minutes_seconds", "%s min %s s");
+        add(k + "kinetic.rated", "at %s RPM");
+        add(k + "chance", "%s%% chance");
+        add(k + "washing.sluice_only", "in a sluice");
+        add(k + "knapping.mirror", "or mirrored");
+        add(k + "knapping.grid", "Strike out the dark cells; what is left is the shape");
+        add(k + "knapping.grid_mirror", "Its mirror image works too");
+        add(k + "pit_kiln.fuel", "Under straw and logs");
+        add(k + "charcoal_pit.cover", "Covered on every side");
+        add(k + "alloying.share", "%s %s\u2013%s%%");
+        add(k + "crucible.refractory", "Refractory crucible only");
+        add(k + "casting.units", "%s units");
+        add(k + "bloomery.per_level", "Per chimney level");
+        add(k + "firebox.heat", "%s HU per tick");
     }
 }

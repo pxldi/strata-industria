@@ -124,6 +124,22 @@ public final class Tier4Blocks {
                     .noOcclusion()
                     .sound(HEAVY_METAL));
 
+    // Spec 11.2: ore processing on a shaft.
+    public static final DeferredBlock<dev.strataindustria.processing.ProcessingBlock<dev.strataindustria.processing.CrusherBlockEntity>> CRUSHER =
+            ModBlocks.BLOCKS.registerBlock("crusher", p -> new dev.strataindustria.processing.ProcessingBlock<dev.strataindustria.processing.CrusherBlockEntity>(
+                    () -> Tier4BlockEntities.CRUSHER.get(), dev.strataindustria.processing.CrusherBlockEntity::new, p),
+                    p -> p.mapColor(MapColor.METAL)
+                            .strength(4.0f, 8.0f)
+                            .requiresCorrectToolForDrops()
+                            .sound(HEAVY_METAL));
+
+    public static final DeferredBlock<dev.strataindustria.processing.ProcessingBlock<dev.strataindustria.processing.WasherBlockEntity>> WASHER =
+            ModBlocks.BLOCKS.registerBlock("washer", p -> new dev.strataindustria.processing.ProcessingBlock<dev.strataindustria.processing.WasherBlockEntity>(
+                    () -> Tier4BlockEntities.WASHER.get(), dev.strataindustria.processing.WasherBlockEntity::new, p),
+                    p -> p.mapColor(MapColor.WOOD)
+                            .strength(2.5f, 4.0f)
+                            .sound(SoundType.WOOD));
+
     private static Block.Properties boiler(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BROWN)
                 .strength(4.0f, 8.0f)

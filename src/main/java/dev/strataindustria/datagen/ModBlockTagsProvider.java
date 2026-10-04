@@ -108,10 +108,11 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(Tier4Blocks.IRON_STEP_UP_GEARBOX.getKey()).add(Tier4Blocks.FIREBOX.getKey()).add(Tier4Blocks.BRONZE_BOILER.getKey())
                 .add(Tier4Blocks.CRACKED_BRONZE_BOILER.getKey()).add(Tier4Blocks.COPPER_FLUID_PIPE.getKey())
                 .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey())
-                .add(Tier4Blocks.MECHANICAL_PUMP.getKey()).add(Tier4Blocks.STEAM_ENGINE.getKey());
+                .add(Tier4Blocks.MECHANICAL_PUMP.getKey()).add(Tier4Blocks.STEAM_ENGINE.getKey())
+                .add(Tier4Blocks.CRUSHER.getKey());
         tag(dev.strataindustria.registry.ModTags.Blocks.FLUID_PIPES).add(Tier4Blocks.COPPER_FLUID_PIPE.getKey())
                 .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey());
-        tag(BlockTags.MINEABLE_WITH_AXE).add(Tier4Blocks.TREATED_PLANKS.getKey()).add(Tier4Blocks.TREATED_SLAB.getKey())
+        tag(BlockTags.MINEABLE_WITH_AXE).add(Tier4Blocks.WASHER.getKey()).add(Tier4Blocks.TREATED_PLANKS.getKey()).add(Tier4Blocks.TREATED_SLAB.getKey())
                 .add(Tier4Blocks.TREATED_STAIRS.getKey()).add(Tier4Blocks.TREATED_FENCE.getKey());
         tag(BlockTags.WOODEN_SLABS).add(Tier4Blocks.TREATED_SLAB.getKey());
         tag(BlockTags.WOODEN_STAIRS).add(Tier4Blocks.TREATED_STAIRS.getKey());

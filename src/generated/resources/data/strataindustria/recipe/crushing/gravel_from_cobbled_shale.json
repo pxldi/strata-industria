@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:crushing",
+  "ingredient": "strataindustria:cobbled_shale",
+  "result": {
+    "id": "minecraft:gravel"
+  }
+}

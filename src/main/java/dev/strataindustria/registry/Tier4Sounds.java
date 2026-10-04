@@ -54,6 +54,12 @@ public final class Tier4Sounds {
     /** The rhythmic suck and thump of a mechanical pump. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MECHANICAL_PUMP_RUN = register("mechanical_pump.run");
 
+    /** Rock cracking between iron jaws. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRUSHER_CRUSH = register("crusher.crush");
+
+    /** A drum of wet gravel sloshing round. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> WASHER_WASH = register("washer.wash");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

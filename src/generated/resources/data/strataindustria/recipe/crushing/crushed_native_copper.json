@@ -1,0 +1,21 @@
+{
+  "type": "strataindustria:crushing",
+  "chances": [
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:crushed_native_copper"
+      }
+    },
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:small_malachite"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:native_copper",
+  "result": {
+    "id": "strataindustria:crushed_native_copper"
+  }
+}

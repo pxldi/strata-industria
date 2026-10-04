@@ -1,0 +1,21 @@
+{
+  "type": "strataindustria:crushing",
+  "chances": [
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:crushed_rich_galena"
+      }
+    },
+    {
+      "chance": 0.2,
+      "item": {
+        "id": "strataindustria:crushed_poor_sphalerite"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:rich_galena",
+  "result": {
+    "id": "strataindustria:crushed_rich_galena"
+  }
+}
