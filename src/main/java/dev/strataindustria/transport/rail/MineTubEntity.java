@@ -4,6 +4,11 @@ import com.mojang.datafixers.util.Pair;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.Config;
 import dev.strataindustria.transport.foot.FootRegistry;
+import dev.strataindustria.transport.signal.SignalRegistry;
+import dev.strataindustria.transport.signal.Signals;
+import dev.strataindustria.transport.signal.Timetable;
+import dev.strataindustria.transport.signal.TimetableStops;
+import dev.strataindustria.journal.Journal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -92,6 +97,10 @@ public class MineTubEntity extends AbstractMinecartContainer {
     private int winchStamp = -100;
     private Vec3 winchVelocity = Vec3.ZERO;
     private @Nullable Vec3 winchAnchor;
+    private @Nullable Timetable timetable;
+    private boolean signalWait;
+    private @Nullable Direction lastTravel;
+    private int signalNag;
     // client
     private float tipVisual, tipVisualO;
 
@@ -254,6 +263,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
             tipple(server);
             roll(server);
             track(server);
+            signals(server);
             MineTubEntity follower = follower();
             if (follower != null) follower.driveFrom(this);
         } else {
@@ -304,7 +314,130 @@ public class MineTubEntity extends AbstractMinecartContainer {
         else if (!isOnRails()) trace.lose();
         if (holdPos == null && state.getBlock() instanceof TubStopBlock && !pos.equals(ignoreStop)
                 && server.getBlockEntity(pos) instanceof TubStopBlockEntity stop && !stop.isHolding()) {
-            stop.capture(server, this);
+            // A lead on a timetable goes by every stop but the one it is bound for.
+            if (timetable != null && !timetable.wants(stop.name())) ignoreStop = pos.immutable();
+            else stop.capture(server, this);
+        }
+    }
+
+    // ---------------------------------------------------------------- signals
+
+    /** The signal ahead (outposts spec 9.4): a lead eases down for a signal at stop and rests at its line until the arm drops. */
+    private void signals(ServerLevel server) {
+        if (leaderId != null || holdPos != null) {
+            signalWait = false;
+            return;
+        }
+        Vec3 motion = getDeltaMovement();
+        double speed = Math.hypot(motion.x, motion.z);
+        if (speed > 0.02) lastTravel = Direction.getApproximateNearest(motion.x, 0, motion.z);
+        Direction travel = lastTravel;
+        boolean waiting = false;
+        if (travel != null) {
+            BlockPos rail = getCurrentBlockPosOrRailBelow();
+            for (int k = 0; k <= Signals.LOOKAHEAD; k++) {
+                BlockPos probe = rail.relative(travel, k);
+                BlockPos guarded = null;
+                for (BlockPos candidate : new BlockPos[] {probe, probe.below(), probe.above()}) {
+                    if (server.hasChunkAt(candidate) && Signals.stopAt(server, candidate, travel)) {
+                        guarded = candidate;
+                        break;
+                    }
+                }
+                if (guarded == null) continue;
+                double along = (guarded.getX() + 0.5 - getX()) * travel.getStepX() + (guarded.getZ() + 0.5 - getZ()) * travel.getStepZ();
+                double distance = along - Signals.STOP_LINE;
+                if (distance < -0.6) break;
+                double moving = motion.x * travel.getStepX() + motion.z * travel.getStepZ();
+                if (distance <= 0.02) {
+                    if (distance < 0) setPos(getX() + travel.getStepX() * distance, getY(), getZ() + travel.getStepZ() * distance);
+                    if (moving > 0) {
+                        setDeltaMovement(travel.getAxis() == Direction.Axis.X ? 0 : motion.x, motion.y, travel.getAxis() == Direction.Axis.Z ? 0 : motion.z);
+                    }
+                } else if (speed > 0) {
+                    double cap = Math.max(0.04, Math.sqrt(2 * 0.014 * distance));
+                    if (speed > cap) {
+                        double next = Math.max(cap, speed - 0.05) / speed;
+                        setDeltaMovement(motion.x * next, motion.y, motion.z * next);
+                    }
+                }
+                waiting = distance <= 0.15;
+                break;
+            }
+        }
+        if (waiting && !signalWait) signalNag = 0;
+        signalWait = waiting;
+        if (waiting && signalNag-- <= 0 && getFirstPassenger() instanceof ServerPlayer rider) {
+            signalNag = 60;
+            rider.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".signal.waiting"));
+        }
+    }
+
+    /** True while this lead stands at a signal at stop. */
+    public final boolean atSignal() {
+        return signalWait;
+    }
+
+    // ---------------------------------------------------------------- timetables
+
+    /** Vehicles with a mind of their own can run a timetable: the pony, the locomotive and the tram. */
+    public boolean runsTimetable() {
+        return this instanceof PonyEntity || this instanceof SteamLocomotiveEntity || this instanceof ElectricTramEntity;
+    }
+
+    public @Nullable Timetable timetable() {
+        return timetable;
+    }
+
+    public void setTimetable(@Nullable Timetable timetable) {
+        this.timetable = timetable;
+    }
+
+    /** Whether a lead going by {@code stop} should bother to stand there: yes without a timetable, else only at the stop it is bound for. */
+    public boolean wantsStop(BlockPos stop) {
+        if (timetable == null) return true;
+        return level().getBlockEntity(stop) instanceof TubStopBlockEntity block && timetable.wants(block.name());
+    }
+
+    /** A timetable item used on the vehicle: it takes the timetable, or drops it when the item is blank. */
+    protected final InteractionResult loadTimetable(Player player, ItemStack held) {
+        if (!(level() instanceof ServerLevel server)) return InteractionResult.SUCCESS;
+        String key = StrataIndustria.MOD_ID + ".timetable.";
+        if (!runsTimetable()) {
+            player.sendOverlayMessage(Component.translatable(key + "no_mind"));
+            return InteractionResult.CONSUME;
+        }
+        if (leaderId != null) {
+            player.sendOverlayMessage(Component.translatable(key + "lead_only"));
+            return InteractionResult.CONSUME;
+        }
+        TimetableStops stops = held.getOrDefault(SignalRegistry.TIMETABLE_STOPS.get(), TimetableStops.EMPTY);
+        Timetable table = Timetable.of(stops);
+        timetable = table;
+        if (table == null) {
+            player.sendOverlayMessage(Component.translatable(key + "cleared"));
+            server.playSound(null, getX(), getY(), getZ(), SignalRegistry.TIMETABLE_LOAD.get(), SoundSource.NEUTRAL, 0.6f, 0.7f);
+        } else {
+            StringBuilder names = new StringBuilder();
+            for (var entry : table.entries()) names.append(names.isEmpty() ? "" : ", ").append(entry.name());
+            player.sendOverlayMessage(Component.translatable(key + "loaded", names.toString()));
+            server.playSound(null, getX(), getY(), getZ(), SignalRegistry.TIMETABLE_LOAD.get(), SoundSource.NEUTRAL, 0.8f, 1.0f);
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.HAPPY_VILLAGER, getX(), getY() + 0.9, getZ(), 6, 0.35, 0.25, 0.35, 0.0);
+        }
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    /** The lead has just stood at a stop of its timetable: tell the rider, mark the arrival, and count a round. */
+    public void timetableArrived(ServerLevel server, String stopName) {
+        Timetable table = timetable;
+        if (table == null) return;
+        server.playSound(null, getX(), getY(), getZ(), SignalRegistry.TIMETABLE_ARRIVE.get(), SoundSource.NEUTRAL, 0.6f, table.completedRound() ? 1.3f : 1.0f);
+        if (getFirstPassenger() instanceof ServerPlayer rider) {
+            rider.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".timetable.arrived", stopName, table.target().name()));
+        }
+        if (table.completedRound() && table.size() >= 3) {
+            Journal.awardNear(server, blockPosition(), Journal.TIMETABLE_LOOP);
+            if (getFirstPassenger() instanceof ServerPlayer rider) Journal.award(rider, Journal.TIMETABLE_LOOP);
         }
     }
 
@@ -542,6 +675,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
     public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         pusher = player.getUUID();
         ItemStack held = player.getItemInHand(hand);
+        if (held.is(SignalRegistry.TIMETABLE.get())) return loadTimetable(player, held);
         if (held.is(Items.IRON_CHAIN) || held.is(FootRegistry.ROPE.get())) {
             if (player instanceof ServerPlayer serverPlayer) tryCouple(serverPlayer);
             return InteractionResult.SUCCESS;
@@ -768,6 +902,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
         super.addAdditionalSaveData(output);
         output.storeNullable("Leader", UUIDUtil.CODEC, leaderId);
         output.storeNullable("Follower", UUIDUtil.CODEC, followerId);
+        output.storeNullable("Timetable", Timetable.CODEC, timetable);
     }
 
     @Override
@@ -775,6 +910,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
         super.readAdditionalSaveData(input);
         leaderId = input.read("Leader", UUIDUtil.CODEC).orElse(null);
         followerId = input.read("Follower", UUIDUtil.CODEC).orElse(null);
+        timetable = input.read("Timetable", Timetable.CODEC).orElse(null);
         entityData.set(DATA_COUPLED, leaderId != null || followerId != null);
     }
 

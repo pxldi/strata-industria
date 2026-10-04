@@ -92,6 +92,7 @@ public final class Journal {
     public static final String OUTPOST_GROWN = "outpost_grown";
     // Tier 5 electric line
     public static final String TRAM_DISTANCE = "tram_distance";
+    public static final String TIMETABLE_LOOP = "timetable_loop";
     /** Items a ropeway has to deliver before the goal counts. */
     public static final int ROPEWAY_ITEMS = 64;
     public static final String ROPEWAY_DELIVERED = "ropeway_delivered";

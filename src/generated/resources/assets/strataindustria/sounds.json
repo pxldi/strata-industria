@@ -4513,6 +4513,29 @@
     ],
     "subtitle": "subtitles.strataindustria.ropeway.top_up"
   },
+  "route_switch.throw": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.3,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.piston.extend",
+        "pitch": 1.9,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.2,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.route_switch.throw"
+  },
   "saw_mill.blade_break": {
     "sounds": [
       {
@@ -4570,6 +4593,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.shaping.true_blow"
+  },
+  "signal.arm": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 0.85,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.7,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 1.9,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.signal.arm"
   },
   "sluice.wash": {
     "sounds": [
@@ -5036,6 +5082,46 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.telegraph.wire_strung"
+  },
+  "timetable.arrive": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.chime",
+        "pitch": 1.2,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.6,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.timetable.arrive"
+  },
+  "timetable.load": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 1.1,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.4,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "entity.item_frame.add_item",
+        "pitch": 1.2,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.timetable.load"
   },
   "tipple.dump": {
     "sounds": [

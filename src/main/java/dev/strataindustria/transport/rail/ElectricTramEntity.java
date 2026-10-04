@@ -221,7 +221,7 @@ public class ElectricTramEntity extends MineTubEntity {
     /** How fast the rider or the line wants it to go this tick, before the wire and the rail have their say. */
     private double wantedSpeed(BlockPos rail) {
         intent = 0;
-        if (isHeld() || turnLeft > 0) return 0;
+        if (isHeld() || atSignal() || turnLeft > 0) return 0;
         boolean ridden = riderPlayer() != null;
         int step = ridden ? throttle : parked || !driverlessReady() ? 0 : FULL;
         if (step <= 0) return 0;
@@ -246,7 +246,7 @@ public class ElectricTramEntity extends MineTubEntity {
             BlockPos ahead = rail.offset(dx * k, 0, dz * k);
             if (!level().hasChunkAt(ahead)) return wanted;
             for (BlockPos probe : new BlockPos[] {ahead, ahead.above(), ahead.below()}) {
-                if (level().getBlockState(probe).getBlock() instanceof TubStopBlock && !probe.equals(ignoredStop())) {
+                if (level().getBlockState(probe).getBlock() instanceof TubStopBlock && !probe.equals(ignoredStop()) && wantsStop(probe)) {
                     return Math.min(wanted, 0.06 + 0.09 * (k - 1));
                 }
             }
@@ -567,6 +567,7 @@ public class ElectricTramEntity extends MineTubEntity {
     @Override
     public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         ItemStack held = player.getItemInHand(hand);
+        if (held.is(dev.strataindustria.transport.signal.SignalRegistry.TIMETABLE.get())) return loadTimetable(player, held);
         if (held.is(Items.IRON_CHAIN) || held.is(dev.strataindustria.transport.foot.FootRegistry.ROPE.get())) {
             if (player instanceof ServerPlayer serverPlayer) tryCouple(serverPlayer);
             return InteractionResult.SUCCESS;

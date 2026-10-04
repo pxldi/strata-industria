@@ -257,7 +257,7 @@ public class PonyEntity extends MineTubEntity {
     /** The speed it wants this tick; zero while held, balking, ridden and told to stop, or at an end of the line. */
     private double walkSpeedFor(BlockPos rail) {
         if (balkLeft > 0 || turnLeft > 0) return 0;
-        if (isHeld()) return 0;
+        if (isHeld() || atSignal()) return 0;
         if (hasPassenger(e -> e instanceof Player) && !rideWalk) return 0;
         return uphill(rail, heading) ? UPHILL : WALK;
     }
@@ -437,6 +437,7 @@ public class PonyEntity extends MineTubEntity {
     @Override
     public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
         ItemStack held = player.getItemInHand(hand);
+        if (held.is(dev.strataindustria.transport.signal.SignalRegistry.TIMETABLE.get())) return loadTimetable(player, held);
         if (player.isSecondaryUseActive() && held.isEmpty()) {
             if (level() instanceof ServerLevel server) {
                 server.playSound(null, getX(), getY(), getZ(), RailRegistry.PONY_HARNESS.get(), SoundSource.NEUTRAL, 0.8f, 0.8f);

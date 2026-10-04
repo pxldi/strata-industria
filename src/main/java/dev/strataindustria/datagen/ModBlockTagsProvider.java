@@ -238,6 +238,11 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.rail.TramRegistry.TROLLEY_BRACKET.getKey());
+        // Outposts spec 9.4: the route switch is steel track; the signal is a post.
+        tag(BlockTags.RAILS).add(dev.strataindustria.transport.signal.SignalRegistry.ROUTE_SWITCH.getKey());
+        tag(dev.strataindustria.transport.rail.RailRegistry.TRACK).add(dev.strataindustria.transport.signal.SignalRegistry.ROUTE_SWITCH.getKey());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.signal.SignalRegistry.ROUTE_SWITCH.getKey())
+                .add(dev.strataindustria.transport.signal.SignalRegistry.BLOCK_SIGNAL.getKey());
         // Ropeway (outposts spec 8): wooden towers are timber, the rest is steel.
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.ropeway.RopewayRegistry.WOODEN_TOWER.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.ropeway.RopewayRegistry.TERMINAL.getKey())

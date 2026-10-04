@@ -883,6 +883,21 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.chain.break", event).pitch(1.2f).volume(0.6f))
                 .with(sound("minecraft:block.tripwire.detach", event).pitch(1.2f).volume(0.7f)));
         telegraphSounds(event);
+        add(dev.strataindustria.transport.signal.SignalRegistry.SIGNAL_ARM, definition().subtitle(subtitle("signal.arm"))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(0.85f).volume(0.7f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.7f).volume(0.55f))
+                .with(sound("minecraft:block.piston.contract", event).pitch(1.9f).volume(0.2f)));
+        add(dev.strataindustria.transport.signal.SignalRegistry.SWITCH_THROW, definition().subtitle(subtitle("route_switch.throw"))
+                .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.3f).volume(0.6f))
+                .with(sound("minecraft:block.piston.extend", event).pitch(1.9f).volume(0.3f))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.2f).volume(0.5f)));
+        add(dev.strataindustria.transport.signal.SignalRegistry.TIMETABLE_LOAD, definition().subtitle(subtitle("timetable.load"))
+                .with(sound("minecraft:item.book.page_turn", event).pitch(1.1f).volume(0.7f))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.4f).volume(0.4f))
+                .with(sound("minecraft:entity.item_frame.add_item", event).pitch(1.2f).volume(0.5f)));
+        add(dev.strataindustria.transport.signal.SignalRegistry.TIMETABLE_ARRIVE, definition().subtitle(subtitle("timetable.arrive"))
+                .with(sound("minecraft:block.note_block.chime", event).pitch(1.2f).volume(0.5f))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.6f).volume(0.3f)));
         add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
                 .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
                 .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))

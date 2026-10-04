@@ -75,6 +75,7 @@ final class ModModelProvider extends ModelProvider {
         RailwayData.models(blockModels, itemModels);
         RopewayData.models(blockModels, itemModels);
         TramData.models(blockModels, itemModels);
+        SignalData.models(blockModels, itemModels);
         TelegraphData.models(blockModels, itemModels);
         LogisticsData.models(blockModels, itemModels);
         tier6(blockModels, itemModels);
