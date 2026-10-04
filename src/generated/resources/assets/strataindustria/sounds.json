@@ -592,6 +592,29 @@
     ],
     "subtitle": "subtitles.strataindustria.crucible.pour"
   },
+  "crusher.crush": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.5,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.45,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 0.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crusher.crush"
+  },
   "fire_pit.extinguish": {
     "sounds": [
       "random/fizz"

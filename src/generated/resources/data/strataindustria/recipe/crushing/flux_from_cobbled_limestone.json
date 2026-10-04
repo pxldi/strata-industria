@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:crushing",
+  "ingredient": "strataindustria:cobbled_limestone",
+  "result": {
+    "count": 8,
+    "id": "strataindustria:flux"
+  }
+}

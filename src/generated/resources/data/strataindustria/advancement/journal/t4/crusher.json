@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t4/steam_engine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "crusher"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.crusher.hint"
+    },
+    "icon": {
+      "id": "strataindustria:crusher"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.crusher"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
