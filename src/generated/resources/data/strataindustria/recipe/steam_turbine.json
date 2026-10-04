@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "strataindustria:brass_gear",
+    "F": "strataindustria:bronze_fluid_pipe",
+    "H": "strataindustria:lv_machine_hull",
+    "P": "strataindustria:steel_plate",
+    "R": "strataindustria:steel_rod"
+  },
+  "pattern": [
+    "PBP",
+    "RHR",
+    "PFP"
+  ],
+  "result": {
+    "id": "strataindustria:steam_turbine"
+  }
+}

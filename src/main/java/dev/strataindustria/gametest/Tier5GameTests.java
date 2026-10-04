@@ -3,6 +3,12 @@ package dev.strataindustria.gametest;
 import com.mojang.authlib.GameProfile;
 import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.BatteryBoxBlockEntity;
+import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
+import dev.strataindustria.electric.GeneratorBlock;
+import dev.strataindustria.electric.SteamTurbineBlockEntity;
+import dev.strataindustria.registry.Tier4Fluids;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
@@ -77,6 +83,8 @@ final class Tier5GameTests {
         tests.put("tier5_macerator_second_piece", Tier5GameTests::maceratorSecondPiece);
         tests.put("tier5_machine_low_power", Tier5GameTests::machineLowPower);
         tests.put("tier5_electric_furnace", Tier5GameTests::electricFurnace);
+        tests.put("tier5_steam_turbine", Tier5GameTests::steamTurbine);
+        tests.put("tier5_combustion_generator", Tier5GameTests::combustionGenerator);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -467,6 +475,73 @@ final class Tier5GameTests {
             if (furnace.getItem(ElectricMachineLayout.ELECTRIC_FURNACE.outputSlot(0, 0)).is(result)) return tick;
         }
         return -1;
+    }
+
+    // Spec 7.2 and 24: a bronze boiler's 15 mB/t at 3 bar settles at 30 J/t after a 200 tick spin-up; with no
+    // demand it takes no steam; 1.5 bar halves the output; below 1 bar it takes nothing and spins down.
+    private static void steamTurbine(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 2)), boxPos = pos.east();
+        level.setBlock(pos, Tier5Blocks.STEAM_TURBINE.get().defaultBlockState().setValue(GeneratorBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        SteamTurbineBlockEntity turbine = (SteamTurbineBlockEntity) level.getBlockEntity(pos);
+        BatteryBoxBlockEntity box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, pos);
+        Fluid steam = Tier4Fluids.STEAM.get();
+        helper.assertValueEqual(turbine.fill(Direction.WEST, steam, 15, 3.0f, true), 0, "steam only goes in at the back");
+        int[] drawn = {0};
+        for (int tick = 0; tick < SteamTurbineBlockEntity.RISE_TICKS + 20; tick++) {
+            drawn[0] = turbine.fill(Direction.SOUTH, steam, 15, 3.0f, false);
+            turbine.tick(level, pos, level.getBlockState(pos));
+            network.tick();
+        }
+        helper.assertTrue(turbine.spin() >= 1.0f, "full spin after 200 ticks, got " + turbine.spin());
+        helper.assertTrue(network.report(pos).drawn() > 29.0 && network.report(pos).drawn() <= 30.0, "30 J/t on 15 mB/t, got " + network.report(pos).drawn());
+        helper.assertValueEqual(level.getBlockState(pos).getValue(GeneratorBlock.STATUS), StatusLight.RUN, "green lamp");
+        // Full box: no demand, so no steam taken beyond the buffer.
+        box.setStored(box.capacity());
+        helper.assertValueEqual(turbine.fill(Direction.SOUTH, steam, 15, 3.0f, true) >= 0, true, "buffer query works");
+        for (int tick = 0; tick < 5; tick++) network.tick();
+        helper.assertTrue(turbine.fill(Direction.SOUTH, steam, 100, 3.0f, false) <= 32, "buffer is two ticks of full use");
+        // 1.5 bar: half output.
+        turbine.fill(Direction.SOUTH, steam, 1, 1.5f, false);
+        helper.assertTrue(turbine.maxOutput() <= 16.0, "1 to 2 bar caps an LV turbine at 16 J/t, got " + turbine.maxOutput());
+        // Below 1 bar: nothing in, spins down.
+        helper.assertValueEqual(turbine.fill(Direction.SOUTH, steam, 15, 0.5f, false), 0, "no steam below 1 bar");
+        for (int tick = 0; tick < SteamTurbineBlockEntity.FALL_TICKS + 10; tick++) {
+            turbine.fill(Direction.SOUTH, steam, 15, 0.5f, false);
+            turbine.tick(level, pos, level.getBlockState(pos));
+        }
+        helper.assertTrue(turbine.spin() <= 0.0f, "spun down after 100 ticks, got " + turbine.spin());
+        helper.assertValueEqual(level.getBlockState(pos).getValue(GeneratorBlock.ACTIVE), false, "rotor stops with the steam");
+        helper.succeed();
+    }
+
+    // Spec 7.3 and 24: 16 000 mB of creosote gives 128 000 J at 32 J/t; an empty tank gives nothing.
+    private static void combustionGenerator(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 2)), boxPos = pos.east();
+        level.setBlock(pos, Tier5Blocks.COMBUSTION_GENERATOR.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        CombustionGeneratorBlockEntity generator = (CombustionGeneratorBlockEntity) level.getBlockEntity(pos);
+        BatteryBoxBlockEntity box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, pos);
+        Fluid creosote = Tier4Fluids.CREOSOTE.get();
+        helper.assertValueEqual(generator.fill(Direction.UP, Fluids.WATER, 1000, 0, false), 0, "water does not burn");
+        helper.assertValueEqual(generator.fill(Direction.UP, creosote, 20_000, 0, false), 8000, "the tank holds 8000 mB");
+        helper.assertValueEqual(generator.fill(Direction.DOWN, creosote, 1000, 0, false), 0, "and no more");
+        for (int tick = 0; tick < 100; tick++) network.tick();
+        helper.assertTrue(Math.abs(box.stored() - 3200) < 1.0, "100 ticks at 32 J/t, got " + box.stored());
+        helper.assertTrue(Math.abs(generator.amount() - 7600) <= 1, "4 mB per tick, got " + generator.amount());
+        generator.tick(level, pos, level.getBlockState(pos));
+        helper.assertValueEqual(level.getBlockState(pos).getValue(GeneratorBlock.STATUS), StatusLight.RUN, "green lamp");
+        // Run it dry: the whole tank is worth 64 000 J.
+        for (int tick = 0; tick < 3000; tick++) network.tick();
+        box.setStored(0);
+        helper.assertTrue(generator.amount() == 0, "tank empty, got " + generator.amount());
+        for (int tick = 0; tick < 10; tick++) network.tick();
+        helper.assertTrue(box.stored() == 0, "an empty generator gives nothing");
+        helper.succeed();
     }
 
     private static void heatCrucible(ServerLevel level, FakePlayer smith, BlockPos bellowsPos, BellowsBlockEntity bellows, BlockPos forgePos,

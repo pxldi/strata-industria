@@ -29,7 +29,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(dev.strataindustria.rubber.Tappable.TAG).add(net.minecraft.world.level.block.Blocks.JUNGLE_LOG.builtInRegistryHolder().key());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_DYNAMO.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.BATTERY_BOX.getKey()).add(dev.strataindustria.registry.Tier5Blocks.LV_MACHINE_HULL.getKey())
-                .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_FURNACE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.MACERATOR.getKey());
+                .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_FURNACE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.MACERATOR.getKey())
+                .add(dev.strataindustria.registry.Tier5Blocks.STEAM_TURBINE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.COMBUSTION_GENERATOR.getKey());
         for (RockCategory category : RockCategory.values()) {
             var categoryTag = tag(ModTags.Blocks.rocks(category));
             for (Rock rock : Rock.values()) {

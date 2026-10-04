@@ -1,6 +1,9 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.electric.BatteryBoxBlock;
+import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
+import dev.strataindustria.electric.GeneratorBlock;
+import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
@@ -51,6 +54,13 @@ public final class Tier5Blocks {
                     .sound(SoundType.METAL)
                     .noOcclusion());
     public static final DeferredBlock<BatteryBoxBlock> BATTERY_BOX = ModBlocks.BLOCKS.registerBlock("battery_box", BatteryBoxBlock::new,
+            Tier5Blocks::machine);
+
+    // Spec 7.2 and 7.3: the fuel-driven generators.
+    public static final DeferredBlock<GeneratorBlock<SteamTurbineBlockEntity>> STEAM_TURBINE = ModBlocks.BLOCKS.registerBlock("steam_turbine",
+            p -> new GeneratorBlock<>(Tier5BlockEntities.STEAM_TURBINE, SteamTurbineBlockEntity::new, p), Tier5Blocks::machine);
+    public static final DeferredBlock<GeneratorBlock<CombustionGeneratorBlockEntity>> COMBUSTION_GENERATOR = ModBlocks.BLOCKS.registerBlock(
+            "combustion_generator", p -> new GeneratorBlock<>(Tier5BlockEntities.COMBUSTION_GENERATOR, CombustionGeneratorBlockEntity::new, p),
             Tier5Blocks::machine);
 
     /** Spec 9.5: the shell every electric machine is built around; also a decorative block. */

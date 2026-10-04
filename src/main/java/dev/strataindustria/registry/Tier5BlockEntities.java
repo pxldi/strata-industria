@@ -2,6 +2,8 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.electric.BatteryBoxBlockEntity;
 import dev.strataindustria.electric.CableBlockEntity;
+import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
+import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
 import dev.strataindustria.electric.machine.MaceratorBlockEntity;
@@ -32,6 +34,13 @@ public final class Tier5BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MaceratorBlockEntity>> MACERATOR =
             ModBlockEntities.BLOCK_ENTITIES.register("macerator", () -> new BlockEntityType<>(MaceratorBlockEntity::new,
                     Tier5Blocks.MACERATOR.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamTurbineBlockEntity>> STEAM_TURBINE =
+            ModBlockEntities.BLOCK_ENTITIES.register("steam_turbine", () -> new BlockEntityType<>(SteamTurbineBlockEntity::new,
+                    Tier5Blocks.STEAM_TURBINE.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CombustionGeneratorBlockEntity>> COMBUSTION_GENERATOR =
+            ModBlockEntities.BLOCK_ENTITIES.register("combustion_generator", () -> new BlockEntityType<>(CombustionGeneratorBlockEntity::new,
+                    Tier5Blocks.COMBUSTION_GENERATOR.get()));
 
     public static void init() {}
 

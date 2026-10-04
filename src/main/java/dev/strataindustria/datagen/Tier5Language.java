@@ -37,6 +37,14 @@ final class Tier5Language {
         lang.accept(block + "lv_machine_hull", "LV Machine Hull");
         lang.accept(block + "electric_furnace", "Electric Furnace");
         lang.accept(block + "macerator", "Macerator");
+        lang.accept(block + "steam_turbine", "Steam Turbine");
+        lang.accept(block + "combustion_generator", "Combustion Generator");
+        String turbine = id + ".steam_turbine.", combustion = id + ".combustion_generator.";
+        lang.accept(turbine + "running", "Rotor at %s%%, steam at %s bar, up to %s J/t");
+        lang.accept(turbine + "no_steam", "No steam: needs at least %s bar");
+        lang.accept(turbine + "spinning_down", "Spinning down: steam below %s bar");
+        lang.accept(combustion + "empty", "Out of fuel");
+        lang.accept(combustion + "tank", "%s: %s / %s mB");
 
         // Spec 10.1: machine status lines and screen tooltips.
         String machine = id + ".electric_machine.";
@@ -92,5 +100,9 @@ final class Tier5Language {
         lang.accept(subtitles + "block.machine.low_power", "Machine beeps");
         lang.accept(subtitles + "block.electric_furnace.run", "Electric furnace hums");
         lang.accept(subtitles + "block.macerator.grind", "Macerator grinds");
+        lang.accept(subtitles + "block.steam_turbine.run", "Steam turbine whines");
+        lang.accept(subtitles + "block.steam_turbine.spin_down", "Steam turbine spins down");
+        lang.accept(subtitles + "block.combustion_generator.ignite", "Combustion generator coughs");
+        lang.accept(subtitles + "block.combustion_generator.run", "Combustion generator putters");
     }
 }

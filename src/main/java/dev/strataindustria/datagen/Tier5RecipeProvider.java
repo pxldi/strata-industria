@@ -40,6 +40,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         rubber();
         components();
         electric();
+        generators();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -194,6 +195,35 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .define('M', Tier5Items.ELECTRIC_MOTOR.get())
                 .unlockedBy("has_lv_machine_hull", has(hull))
                 .save(output, key("macerator"));
+    }
+
+    // Spec 7.2 and 7.3: P steel plate, H hull, B brass gear, R steel rod, F bronze fluid pipe, G steel gear, C basic circuit.
+    private void generators() {
+        Item plate = ModItems.PLATES.get(Metal.STEEL).get();
+        Item hull = Tier5Items.LV_MACHINE_HULL.get();
+        Item pipe = Tier4Items.BRONZE_FLUID_PIPE.get();
+        shaped(RecipeCategory.REDSTONE, Tier5Items.STEAM_TURBINE.get())
+                .pattern("PBP")
+                .pattern("RHR")
+                .pattern("PFP")
+                .define('P', plate)
+                .define('B', ModItems.GEARS.get(Metal.BRASS).get())
+                .define('R', ModItems.RODS.get(Metal.STEEL).get())
+                .define('H', hull)
+                .define('F', pipe)
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("steam_turbine"));
+        shaped(RecipeCategory.REDSTONE, Tier5Items.COMBUSTION_GENERATOR.get())
+                .pattern("PFP")
+                .pattern("GHG")
+                .pattern("PCP")
+                .define('P', plate)
+                .define('F', pipe)
+                .define('G', ModItems.GEARS.get(Metal.STEEL).get())
+                .define('H', hull)
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("combustion_generator"));
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {

@@ -1,0 +1,11 @@
+{
+  "parent": "strataindustria:block/electric_generator",
+  "textures": {
+    "back": "strataindustria:block/casing/lv_side",
+    "bottom": "strataindustria:block/casing/lv_bottom",
+    "front": "strataindustria:block/combustion_generator_front_lv_active",
+    "side": "strataindustria:block/casing/lv_side",
+    "status": "strataindustria:block/overlay/status_run",
+    "top": "strataindustria:block/combustion_generator_top_lv"
+  }
+}

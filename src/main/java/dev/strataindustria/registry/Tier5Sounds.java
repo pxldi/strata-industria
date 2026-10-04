@@ -31,6 +31,15 @@ public final class Tier5Sounds {
     /** The macerator's metallic grinding with grit. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MACERATOR_GRIND = register("block.macerator.grind");
 
+    /** Spec 23.6: a rising jet whine over a steam rush; pitch and volume follow the spin. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_TURBINE_RUN = register("block.steam_turbine.run");
+    /** A long falling whine when the steam is cut. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_TURBINE_SPIN_DOWN = register("block.steam_turbine.spin_down");
+    /** A cough as the burner catches. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> COMBUSTION_GENERATOR_IGNITE = register("block.combustion_generator.ignite");
+    /** A steady puttering thrum. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> COMBUSTION_GENERATOR_RUN = register("block.combustion_generator.run");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

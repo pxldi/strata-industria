@@ -1124,6 +1124,182 @@ public final class ElectricTextures {
         TextureGen.saveRaw(sp + "eject_highlighted", ejectHighlight());
     }
 
+    // ---------------------------------------------------------------- generators (steam turbine, combustion generator)
+
+    static final TextureGen.Ramp BRONZE = TextureGen.BRONZE;
+    static final TextureGen.Ramp BLUE = TextureGen.WATER;
+
+    /** Round porthole: dark steel bezel (d 4..5), brass rotor with 6 blades and a hub inside; phase rotates the blades. */
+    static BufferedImage steamTurbineFront(boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 731 : 730);
+        rivets(im, r, base, new int[][]{{2, 2}});
+        double cx = 7.5, cy = 8.5;
+        double phase = active ? frame * (Math.PI / 3) / 4 : 0.2;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double ox = x + 0.5 - cx, oy = y + 0.5 - cy, d = Math.sqrt(ox * ox + oy * oy);
+                if (d > 5.0) continue;
+                boolean lit = ox + oy < 0;
+                int col;
+                if (d > 4.0) {
+                    col = c(r, lit ? base - 1 : base + 2);
+                } else {
+                    col = c(STEEL, 1);
+                    double ang = Math.atan2(oy, ox) - phase;
+                    double sector = Math.PI / 3;
+                    double delta = Math.abs(Math.IEEEremainder(ang, sector));
+                    boolean blade = d > 1.2 && Math.sin(delta) * d <= 0.62 && Math.cos(delta) > 0 && d <= 3.9;
+                    if (d <= 1.2) {
+                        col = c(BRASS, ox < 0 && oy < 0 ? 5 : (ox > 0 && oy > 0 ? 2 : 4));
+                    } else if (blade) {
+                        col = c(BRASS, d > 3.1 ? 3 : (lit ? 5 : 4));
+                        if (d > 3.1 && lit) col = c(BRASS, 4);
+                    } else if (active && d > 3.0) {
+                        col = ((x + y) & 1) == 0 ? c(STEEL, 3) : c(BRASS, 2);
+                    } else if (d > 3.0) {
+                        col = c(STEEL, 2);
+                    }
+                }
+                TextureGen.px(im, x, y, col);
+            }
+        // glass glint on the bezel edge of the window, top-left
+        TextureGen.px(im, 5, 5, c(STEEL, 5));
+        TextureGen.px(im, 4, 6, c(STEEL, 5));
+        lampOff(im, mv);
+        return im;
+    }
+
+    static BufferedImage strip(java.util.function.IntFunction<BufferedImage> frames) {
+        BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(frames.apply(f), 0, f * 16, null);
+        return strip;
+    }
+
+    /** Casing side with a large round bronze steam inlet flange, 4 bolts and a dark bore. */
+    static BufferedImage steamTurbineBack(boolean mv) {
+        BufferedImage im;
+        if (mv) {
+            im = mvSide();
+        } else {
+            im = casing(STEEL, 3, 51);
+            stripe(im, 14, 3);
+        }
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double ox = x + 0.5 - 8, oy = y + 0.5 - 8, d = Math.sqrt(ox * ox + oy * oy);
+                if (d > 6.0) continue;
+                boolean lit = ox + oy < 0;
+                int col;
+                if (d > 5.2) col = c(BRONZE, lit ? 5 : 2);
+                else if (d > 2.9) col = c(BRONZE, 3);
+                else if (d > 2.1) col = c(BRONZE, lit ? 1 : 4);
+                else col = c(STEEL, 1);
+                TextureGen.px(im, x, y, col);
+            }
+        for (int[] p : new int[][]{{4, 4}, {11, 4}, {4, 11}, {11, 11}}) {
+            TextureGen.px(im, p[0], p[1], c(BRONZE, 5));
+            TextureGen.px(im, p[0] + 1, p[1] + 1, c(BRONZE, 1));
+        }
+        TextureGen.px(im, 9, 9, c(STEEL, 2));
+        return im;
+    }
+
+    static final String[][] FLAME = {
+            {".....", ".roo.", "bbyor", "bbyo.", ".r..."},
+            {"..r..", ".ooy.", "bbywo", "bbyor", "....."},
+            {".....", "..r..", "bbyo.", "bbyor", ".ro.."},
+            {".r...", ".oy..", "bbyoo", "bbyo.", ".r.r."}};
+
+    static int flameColor(char ch) {
+        return switch (ch) {
+            case 'b' -> c(BLUE, 5);
+            case 'r' -> HEAT[2];
+            case 'o' -> HEAT[3];
+            case 'y' -> HEAT[4];
+            default -> 0;
+        };
+    }
+
+    /** Small square window 4..11, 6..11 onto a dark burner chamber with a nozzle; fuel gauge ticks above. */
+    static BufferedImage combustionFront(boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 741 : 740);
+        // fuel gauge: baseline with long and short ticks
+        for (int x = 2; x <= 9; x++) TextureGen.px(im, x, 4, c(r, base - 1));
+        for (int x = 2; x <= 8; x += 2) {
+            TextureGen.px(im, x, 3, c(r, base + 2));
+            if (x == 2 || x == 8) TextureGen.px(im, x, 2, c(r, base + 2));
+        }
+        lip(im, mv);
+        // window frame and dark chamber
+        for (int y = 6; y <= 11; y++) {
+            TextureGen.px(im, 3, y, c(r, base - 1));
+            TextureGen.px(im, 12, y, c(r, base + 2));
+        }
+        fill(im, 4, 6, 11, 11, c(STEEL, 1));
+        for (int x = 4; x <= 11; x++) TextureGen.px(im, x, 11, c(STEEL, 2));
+        // nozzle on the left wall
+        TextureGen.px(im, 4, 7, c(STEEL, 3));
+        TextureGen.px(im, 4, 8, c(STEEL, 4));
+        TextureGen.px(im, 5, 8, c(STEEL, 4));
+        TextureGen.px(im, 6, 8, c(STEEL, 5));
+        TextureGen.px(im, 4, 9, c(STEEL, 2));
+        TextureGen.px(im, 5, 9, c(STEEL, 3));
+        TextureGen.px(im, 6, 9, c(STEEL, 2));
+        if (active) {
+            String[] f = FLAME[frame];
+            for (int j = 0; j < 5; j++)
+                for (int i = 0; i < 5; i++) {
+                    int col = flameColor(f[j].charAt(i));
+                    if (col != 0) TextureGen.px(im, 7 + i, 6 + j, col);
+                }
+        }
+        // glass reflection, top-left
+        TextureGen.px(im, 4, 6, c(STEEL, 5));
+        TextureGen.px(im, 5, 6, c(STEEL, 5));
+        lampOff(im, mv);
+        return im;
+    }
+
+    /** Casing top with a round exhaust stack: dark bore, dark ring, soot-stained rim. */
+    static BufferedImage combustionTop(boolean mv) {
+        BufferedImage im = mv ? casing(ALUMINIUM, 4, 62) : casing(STEEL, 3, 52);
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double ox = x + 0.5 - 8, oy = y + 0.5 - 8, d = Math.sqrt(ox * ox + oy * oy);
+                if (d > 4.8) continue;
+                boolean lit = ox + oy < 0;
+                int col;
+                if (d > 3.6) col = (x * 3 + y * 5) % 4 == 0 ? c(STEEL, 3) : c(STEEL, lit ? 3 : 2);
+                else if (d > 2.5) col = c(STEEL, 2);
+                else col = c(STEEL, 1);
+                if (d > 4.2 && !lit) col = c(STEEL, 1 + (x + y) % 2);
+                TextureGen.px(im, x, y, col);
+            }
+        TextureGen.px(im, 7, 7, c(STEEL, 1));
+        TextureGen.px(im, 9, 6, c(r, base - 1));
+        return im;
+    }
+
+    static void generators() throws IOException {
+        for (boolean mv : new boolean[]{false, true}) {
+            String t = mv ? "mv" : "lv";
+            save("block/steam_turbine_front_" + t, steamTurbineFront(mv, 0, false));
+            TextureGen.saveAnimated("block/steam_turbine_front_" + t + "_active",
+                    strip(f -> steamTurbineFront(mv, f, true)), 2);
+            save("block/steam_turbine_back_" + t, steamTurbineBack(mv));
+            save("block/combustion_generator_front_" + t, combustionFront(mv, 0, false));
+            TextureGen.saveAnimated("block/combustion_generator_front_" + t + "_active",
+                    strip(f -> combustionFront(mv, f, true)), 2);
+            save("block/combustion_generator_top_" + t, combustionTop(mv));
+        }
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -1135,6 +1311,7 @@ public final class ElectricTextures {
         rubber();
         redAlloy();
         machines();
+        generators();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");
     }
