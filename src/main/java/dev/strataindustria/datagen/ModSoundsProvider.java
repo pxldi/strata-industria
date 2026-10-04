@@ -344,6 +344,13 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:item.firecharge.use", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f)));
         add(Tier4Sounds.CONVERTER_DONE, definition().subtitle(subtitle("converter.done"))
                 .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.8f)));
+        // Spec 21.7: a metal clatter as an item leaves a chute, and a paper rustle as a filter is set.
+        add(Tier4Sounds.CHUTE_DROP, definition().subtitle(subtitle("chute.drop"))
+                .with(sound("minecraft:block.chain.hit", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.5f))
+                .with(sound("minecraft:block.chain.hit", SoundDefinition.SoundType.EVENT).pitch(1.25f).volume(0.45f)));
+        add(Tier4Sounds.FILTER_CONFIGURE, definition().subtitle(subtitle("filter.configure"))
+                .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(1.1f))
+                .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(1.25f)));
         add(Tier4Sounds.MULTIBLOCK_FORM, definition().subtitle(subtitle("multiblock.form"))
                 .with(sound("minecraft:block.iron_door.close", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
     }

@@ -43,6 +43,9 @@ public final class Tier4Menus {
     public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.ironworks.ConverterMenu>> CONVERTER =
             ModMenus.MENUS.register("converter", () -> IMenuTypeExtension.create(dev.strataindustria.ironworks.ConverterMenu::new));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.automation.FilterMenu>> FILTER =
+            ModMenus.MENUS.register("filter", () -> IMenuTypeExtension.create(dev.strataindustria.automation.FilterMenu::new));
+
     public static void init() {}
 
     private Tier4Menus() {}
