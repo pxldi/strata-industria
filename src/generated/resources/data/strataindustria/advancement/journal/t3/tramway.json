@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t3/refine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "tub_arrived"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.tramway.hint"
+    },
+    "icon": {
+      "id": "strataindustria:mine_tub"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t3.tramway"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

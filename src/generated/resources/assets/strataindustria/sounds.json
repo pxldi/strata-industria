@@ -3665,6 +3665,145 @@
     ],
     "subtitle": "subtitles.strataindustria.tap.thud"
   },
+  "tipple.dump": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/gravel4",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone1",
+        "pitch": 0.9,
+        "volume": 0.5
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 0.9,
+        "volume": 0.5
+      },
+      {
+        "name": "dig/stone3",
+        "pitch": 0.9,
+        "volume": 0.5
+      },
+      {
+        "name": "dig/stone4",
+        "pitch": 0.9,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tipple.dump"
+  },
+  "tub.couple": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 0.7,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tub.couple"
+  },
+  "tub.roll_wood": {
+    "sounds": [
+      {
+        "name": "step/wood1",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "step/wood2",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "step/wood3",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "step/wood4",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "name": "step/gravel1",
+        "pitch": 0.7,
+        "volume": 0.35
+      },
+      {
+        "name": "step/gravel2",
+        "pitch": 0.7,
+        "volume": 0.35
+      },
+      {
+        "name": "step/gravel3",
+        "pitch": 0.7,
+        "volume": 0.35
+      },
+      {
+        "name": "step/gravel4",
+        "pitch": 0.7,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tub.roll_wood"
+  },
+  "tub.thud": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.close",
+        "pitch": 0.6,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tub.thud"
+  },
+  "tub_stop.brake": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.barrel.close",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.9,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tub_stop.brake"
+  },
   "ui.journal.place": {
     "sounds": [
       {

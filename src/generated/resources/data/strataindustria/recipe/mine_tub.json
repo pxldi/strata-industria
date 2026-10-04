@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": "strataindustria:wrought_iron_rod",
+    "P": "#minecraft:planks",
+    "W": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "W W",
+    "WPW",
+    " I "
+  ],
+  "result": {
+    "id": "strataindustria:mine_tub"
+  }
+}

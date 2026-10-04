@@ -36,6 +36,7 @@ final class ModLanguageProvider extends LanguageProvider {
         StructureData.lang(this::add);
         Tier5Language.add(this::add);
         FootData.lang(this::add);
+        RailData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
         recipeViewer();

@@ -70,6 +70,7 @@ final class ModModelProvider extends ModelProvider {
     protected void registerModels(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         Tier5Models.register(blockModels, itemModels);
         FootData.models(blockModels, itemModels);
+        RailData.models(blockModels, itemModels);
         LogisticsData.models(blockModels, itemModels);
         tier6(blockModels, itemModels);
         for (Rock rock : Rock.values()) {

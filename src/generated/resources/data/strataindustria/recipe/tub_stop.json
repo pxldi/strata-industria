@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:wooden_rail",
+    "strataindustria:wooden_gear",
+    "#minecraft:planks"
+  ],
+  "result": {
+    "id": "strataindustria:tub_stop"
+  }
+}
