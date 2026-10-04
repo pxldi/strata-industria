@@ -81,6 +81,23 @@ public class BlastFurnaceMenu extends AbstractContainerMenu {
     }
 
     /** Hearth heat, 0 to 1. */
+    /** How many heat inlets the furnace has; the hot blast line shows only with one. */
+    public int inlets() {
+        return data.get(BlastFurnaceBlockEntity.DATA_INLETS);
+    }
+
+    public int hotTemperature() {
+        return data.get(BlastFurnaceBlockEntity.DATA_HOT_TEMPERATURE);
+    }
+
+    public int hotHeat() {
+        return data.get(BlastFurnaceBlockEntity.DATA_HOT_HEAT);
+    }
+
+    public int hotLimit() {
+        return data.get(BlastFurnaceBlockEntity.DATA_HOT_LIMIT);
+    }
+
     public float warmth() {
         return Math.min(1.0f, data.get(BlastFurnaceBlockEntity.DATA_WARMTH) / 1000.0f);
     }

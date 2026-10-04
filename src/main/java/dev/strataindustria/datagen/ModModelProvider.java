@@ -553,6 +553,32 @@ final class ModModelProvider extends ModelProvider {
             blockModels.blockStateOutput.accept(parts);
             itemModels.itemModelOutput.accept(pipe.get().asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
         }
+        // Spec 8.2: heat pipes, with glowing variants of the hand-built core and arm while they carry heat.
+        for (var pipe : java.util.List.of(Tier4Blocks.COPPER_HEAT_PIPE, Tier4Blocks.REFRACTORY_HEAT_DUCT)) {
+            String name = pipe.getId().getPath();
+            MultiPartGenerator parts = MultiPartGenerator.multiPart(pipe.get());
+            for (boolean hot : new boolean[] {false, true}) {
+                String suffix = hot ? "_hot" : "";
+                parts.with(BlockModelGenerators.condition().term(dev.strataindustria.heat.HeatPipeBlock.HOT, hot),
+                        BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_core" + suffix)));
+                var arm = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_arm" + suffix));
+                var props = dev.strataindustria.heat.HeatPipeBlock.PROPERTIES;
+                java.util.Map<net.minecraft.core.Direction, MultiVariant> turned = java.util.Map.of(
+                        net.minecraft.core.Direction.NORTH, arm,
+                        net.minecraft.core.Direction.EAST, arm.with(BlockModelGenerators.Y_ROT_90),
+                        net.minecraft.core.Direction.SOUTH, arm.with(BlockModelGenerators.Y_ROT_180),
+                        net.minecraft.core.Direction.WEST, arm.with(BlockModelGenerators.Y_ROT_270),
+                        net.minecraft.core.Direction.UP, arm.with(BlockModelGenerators.X_ROT_270),
+                        net.minecraft.core.Direction.DOWN, arm.with(BlockModelGenerators.X_ROT_90));
+                for (var side : net.minecraft.core.Direction.values()) {
+                    parts.with(BlockModelGenerators.condition().term(props.get(side), true).term(dev.strataindustria.heat.HeatPipeBlock.HOT, hot),
+                            turned.get(side));
+                }
+            }
+            blockModels.blockStateOutput.accept(parts);
+            itemModels.itemModelOutput.accept(pipe.get().asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
+        }
+        blockModels.createTrivialCube(Tier4Blocks.HEAT_INLET.get());
         MultiPartGenerator gauge = MultiPartGenerator.multiPart(Tier4Blocks.PRESSURE_GAUGE.get());
         for (int reading = 0; reading <= 4; reading++) {
             gauge.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.PressureGaugeBlock.READING, reading),

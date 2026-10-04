@@ -129,6 +129,10 @@ public final class Config {
             .comment("Holding an item at 480 °C or hotter without tongs in the off hand burns the player.")
             .define("burnPlayer", true);
 
+    public static final ModConfigSpec.IntValue HEAT_MAX_PIPE_LENGTH = BUILDER
+            .comment("How many heat pipe blocks heat crosses at most on its way from a firebox to a consumer.")
+            .defineInRange("maxPipeLength", 32, 1, 256);
+
     static {
         BUILDER.pop();
     }

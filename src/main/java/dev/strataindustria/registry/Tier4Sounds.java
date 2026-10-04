@@ -26,6 +26,8 @@ public final class Tier4Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> FIREBOX_LIGHT = register("firebox.light");
     /** The steady draughty crackle of a burning firebox. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIREBOX_BURN = register("firebox.burn");
+    /** Metal ticking as a heat pipe network heats up or cools. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> HEAT_PIPE_TICK = register("heat_pipe.tick");
     /** A pipe refuses fluid too hot for it. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FLUID_PIPE_REFUSE = register("fluid_pipe.refuse");
     /** Water warming in a boiler: a rising hiss and creaking metal. */

@@ -5,6 +5,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.fluid.FluidPipes;
 import dev.strataindustria.fluid.FluidPort;
 import dev.strataindustria.heat.HeatConsumer;
+import dev.strataindustria.heat.HeatPort;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.Tier4BlockEntities;
 import dev.strataindustria.registry.Tier4Blocks;
@@ -44,7 +45,7 @@ import net.minecraft.world.level.storage.ValueOutput;
  * buffer vents. Water comes in by pipe on the other faces or by bucket. Firing it nearly dry costs
  * integrity, and at zero it cracks.
  */
-public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, FluidPort, MenuProvider {
+public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, HeatPort, FluidPort, MenuProvider {
     public static final int WATER_CAPACITY = 8000;
     public static final int STEAM_CAPACITY = 4000;
     public static final float RATED_PRESSURE = 4.0f;
@@ -171,6 +172,26 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     private float warmthShare() {
         float need = warmUpNeeded();
         return need <= 0 ? 0 : Math.min(1.0f, warmth / need);
+    }
+
+    @Override
+    public int heatDemand(float temperature) {
+        return temperature < MIN_TEMPERATURE ? 0 : Math.max(0, MAX_HEAT - pendingHeat);
+    }
+
+    /** Heat pipes join it on any face. */
+    @Override
+    public boolean connectsHeat(Direction side) {
+        return true;
+    }
+
+    /** The temperature and HU it was offered last tick, for tests. */
+    public float heatTemperature() {
+        return lastTemperature;
+    }
+
+    public int heatTaken() {
+        return lastHeat;
     }
 
     @Override

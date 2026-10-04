@@ -13,7 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * The blast furnace's shape (tier 4 spec 12.1): a 3 x 3 hearth of refractory casing with the controller,
  * a tap hatch and one or two tuyeres on its edges; a casing bosh; two layers of any refractory block
- * around the open shaft; and a refractory throat with the charging hatch over the shaft.
+ * around the open shaft; and a refractory throat with the charging hatch over the shaft. Heat inlets may
+ * stand in for casing in the hearth and the bosh (spec 8.4).
  */
 public final class BlastFurnaceStructure {
     public static final int HEIGHT = 5;
@@ -27,16 +28,16 @@ public final class BlastFurnaceStructure {
     }
 
     /**
-     * What a check found: the first problem and where, and on success the hatches and tuyeres with the
-     * side each faces out of the furnace.
+     * What a check found: the first problem and where, and on success the hatches, the tuyeres with the
+     * side each faces out of the furnace, and the heat inlets.
      */
-    public record Result(Problem problem, BlockPos at, List<Opening> tuyeres, BlockPos tap, BlockPos hatch) {
+    public record Result(Problem problem, BlockPos at, List<Opening> tuyeres, BlockPos tap, BlockPos hatch, List<BlockPos> inlets) {
         public boolean complete() {
             return problem == Problem.NONE;
         }
 
         static Result fail(Problem problem, BlockPos at) {
-            return new Result(problem, at, List.of(), BlockPos.ZERO, BlockPos.ZERO);
+            return new Result(problem, at, List.of(), BlockPos.ZERO, BlockPos.ZERO, List.of());
         }
     }
 
@@ -56,6 +57,7 @@ public final class BlastFurnaceStructure {
         BlockPos centre = hearth(controller, facing);
         // Layer 1, the hearth: casing at the corners and the middle; tuyeres and the tap on the edges.
         List<Opening> tuyeres = new ArrayList<>();
+        List<BlockPos> inlets = new ArrayList<>();
         BlockPos tap = null;
         for (int dx = -1; dx <= 1; dx++)
             for (int dz = -1; dz <= 1; dz++) {
@@ -67,18 +69,18 @@ public final class BlastFurnaceStructure {
                     tuyeres.add(new Opening(pos, dx > 0 ? Direction.EAST : dx < 0 ? Direction.WEST : dz > 0 ? Direction.SOUTH : Direction.NORTH));
                 } else if (edge && state.is(Tier4Blocks.TAP_HATCH.get()) && tap == null) {
                     tap = pos;
-                } else if (!state.is(Tier4Blocks.REFRACTORY_CASING.get())) {
+                } else if (!casing(state, pos, inlets)) {
                     return Result.fail(Problem.NEEDS_CASING, pos);
                 }
             }
         if (tap == null) return Result.fail(Problem.NEEDS_TAP_HATCH, freeEdge(level, centre, controller));
         if (tuyeres.isEmpty()) return Result.fail(Problem.NEEDS_TUYERE, freeEdge(level, centre, controller));
         // Layer 2, the bosh: casing around the shaft.
-        Result ring = ring(level, centre.above(), Problem.NEEDS_CASING);
+        Result ring = ring(level, centre.above(), Problem.NEEDS_CASING, inlets);
         if (ring != null) return ring;
         // Layers 3 and 4, the stack, and layer 5, the throat: any refractory block.
         for (int y = 2; y <= 4; y++) {
-            ring = ring(level, centre.above(y), Problem.NEEDS_REFRACTORY);
+            ring = ring(level, centre.above(y), Problem.NEEDS_REFRACTORY, inlets);
             if (ring != null) return ring;
         }
         for (int y = 1; y <= 3; y++) {
@@ -87,20 +89,29 @@ public final class BlastFurnaceStructure {
         }
         BlockPos hatch = centre.above(4);
         if (!level.getBlockState(hatch).is(Tier4Blocks.CHARGING_HATCH.get())) return Result.fail(Problem.NEEDS_CHARGING_HATCH, hatch);
-        return new Result(Problem.NONE, BlockPos.ZERO, List.copyOf(tuyeres), tap, hatch);
+        return new Result(Problem.NONE, BlockPos.ZERO, List.copyOf(tuyeres), tap, hatch, List.copyOf(inlets));
     }
 
     /** The eight blocks around the shaft at one height, or null if they are all right. */
-    private static Result ring(Level level, BlockPos middle, Problem missing) {
+    private static Result ring(Level level, BlockPos middle, Problem missing, List<BlockPos> inlets) {
         for (int dx = -1; dx <= 1; dx++)
             for (int dz = -1; dz <= 1; dz++) {
                 if (dx == 0 && dz == 0) continue;
                 BlockPos pos = middle.offset(dx, 0, dz);
                 BlockState state = level.getBlockState(pos);
-                boolean ok = missing == Problem.NEEDS_CASING ? state.is(Tier4Blocks.REFRACTORY_CASING.get()) : state.is(ModTags.Blocks.REFRACTORY);
+                boolean ok = missing == Problem.NEEDS_CASING ? casing(state, pos, inlets) : state.is(ModTags.Blocks.REFRACTORY);
                 if (!ok) return Result.fail(missing, pos);
             }
         return null;
+    }
+
+    /** Refractory casing, or a heat inlet in its place, which is noted in {@code inlets}. */
+    static boolean casing(BlockState state, BlockPos pos, List<BlockPos> inlets) {
+        if (state.is(Tier4Blocks.HEAT_INLET.get())) {
+            inlets.add(pos.immutable());
+            return true;
+        }
+        return state.is(Tier4Blocks.REFRACTORY_CASING.get());
     }
 
     /** An edge of the hearth that holds plain casing, where a missing tap hatch or tuyere could go. */

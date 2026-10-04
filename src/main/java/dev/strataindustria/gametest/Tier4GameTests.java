@@ -75,6 +75,9 @@ final class Tier4GameTests {
         tests.put("tier4_washer", Tier4GameTests::washer);
         tests.put("tier4_blast_furnace", Tier4GameTests::blastFurnace);
         tests.put("tier4_converter", Tier4GameTests::converter);
+        tests.put("tier4_heat_pipes", Tier4GameTests::heatPipes);
+        tests.put("tier4_hot_blast", Tier4GameTests::hotBlast);
+        tests.put("tier4_converter_preheat", Tier4GameTests::converterPreheat);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -548,24 +551,8 @@ final class Tier4GameTests {
         // The hearth is the test floor's layer, so all five layers fit inside the test area.
         BlockPos controllerPos = helper.absolutePos(new BlockPos(4, 0, 2));
         BlockPos centre = controllerPos.south();
-        BlockState casing = Tier4Blocks.REFRACTORY_CASING.get().defaultBlockState();
-        for (int y = 0; y <= 4; y++)
-            for (int dx = -1; dx <= 1; dx++)
-                for (int dz = -1; dz <= 1; dz++) {
-                    BlockPos pos = centre.offset(dx, y, dz);
-                    boolean shaft = dx == 0 && dz == 0 && y >= 1 && y <= 3;
-                    BlockState state = shaft ? Blocks.AIR.defaultBlockState() : y >= 2 ? ModBlocks.FIRE_BRICKS.get().defaultBlockState() : casing;
-                    level.setBlock(pos, state, Block.UPDATE_ALL);
-                }
+        blastFurnaceShell(level, controllerPos);
         BlockPos tuyerePos = centre.west(), tapPos = centre.east(), hatchPos = centre.above(4), blowerPos = tuyerePos.west();
-        level.setBlock(controllerPos, Tier4Blocks.BLAST_FURNACE_CONTROLLER.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.BlastFurnaceBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
-        level.setBlock(tuyerePos, Tier4Blocks.TUYERE.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.FurnacePartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
-        level.setBlock(tapPos, Tier4Blocks.TAP_HATCH.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.TapHatchBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
-        level.setBlock(blowerPos, Tier4Blocks.BLOWER.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.BlowerBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
         var furnace = (dev.strataindustria.ironworks.BlastFurnaceBlockEntity) level.getBlockEntity(controllerPos);
 
         smelt(level, controllerPos, furnace, 1);
@@ -620,25 +607,8 @@ final class Tier4GameTests {
         ServerLevel level = helper.getLevel();
         BlockPos controllerPos = helper.absolutePos(new BlockPos(4, 0, 2));
         BlockPos centre = controllerPos.south();
-        BlockState casing = Tier4Blocks.REFRACTORY_CASING.get().defaultBlockState();
-        for (int y = 0; y <= 2; y++)
-            for (int dx = -1; dx <= 1; dx++)
-                for (int dz = -1; dz <= 1; dz++) {
-                    BlockPos pos = centre.offset(dx, y, dz);
-                    BlockState state = dx == 0 && dz == 0 && y == 1 ? Blocks.AIR.defaultBlockState()
-                            : y == 2 ? ModBlocks.FIRE_BRICKS.get().defaultBlockState() : casing;
-                    level.setBlock(pos, state, Block.UPDATE_ALL);
-                }
+        converterShell(level, controllerPos);
         BlockPos tuyerePos = centre.west(), tapPos = centre.above().east(), hatchPos = centre.above(2), blowerPos = tuyerePos.west();
-        level.setBlock(controllerPos, Tier4Blocks.CONVERTER_CONTROLLER.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.ConverterBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
-        level.setBlock(tuyerePos, Tier4Blocks.TUYERE.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.FurnacePartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
-        level.setBlock(tapPos, Tier4Blocks.TAP_HATCH.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.TapHatchBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
-        level.setBlock(hatchPos, Tier4Blocks.CHARGING_HATCH.get().defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(blowerPos, Tier4Blocks.BLOWER.get().defaultBlockState()
-                .setValue(dev.strataindustria.ironworks.BlowerBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
         var converter = (dev.strataindustria.ironworks.ConverterBlockEntity) level.getBlockEntity(controllerPos);
         var hatch = (dev.strataindustria.ironworks.FurnaceHatchBlockEntity) level.getBlockEntity(hatchPos);
         Item pig = ModItems.ingot(Metal.PIG_IRON), steel = ModItems.ingot(Metal.STEEL);
@@ -682,6 +652,206 @@ final class Tier4GameTests {
         helper.assertValueEqual(tap.getItem(steelSlot).getCount(), 13, "5 more steel");
         helper.assertValueEqual(tap.getItem(slagSlot).getCount(), 3, "one more slag");
         helper.succeed();
+    }
+
+    /**
+     * A blast furnace with its hearth on the floor, controller facing north, a tuyere on the west with a
+     * still blower behind it and the tap on the east; everything but the charging hatch.
+     */
+    private static void blastFurnaceShell(ServerLevel level, BlockPos controllerPos) {
+        BlockPos centre = controllerPos.south();
+        BlockState casing = Tier4Blocks.REFRACTORY_CASING.get().defaultBlockState();
+        for (int y = 0; y <= 4; y++)
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos pos = centre.offset(dx, y, dz);
+                    boolean shaft = dx == 0 && dz == 0 && y >= 1 && y <= 3;
+                    BlockState state = shaft ? Blocks.AIR.defaultBlockState() : y >= 2 ? ModBlocks.FIRE_BRICKS.get().defaultBlockState() : casing;
+                    level.setBlock(pos, state, Block.UPDATE_ALL);
+                }
+        BlockPos tuyerePos = centre.west();
+        level.setBlock(controllerPos, Tier4Blocks.BLAST_FURNACE_CONTROLLER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlastFurnaceBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(tuyerePos, Tier4Blocks.TUYERE.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.FurnacePartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(centre.east(), Tier4Blocks.TAP_HATCH.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.TapHatchBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(tuyerePos.west(), Tier4Blocks.BLOWER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlowerBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+    }
+
+    /** A complete converter on the floor, controller facing north, tuyere and still blower on the west, tap on the east. */
+    private static void converterShell(ServerLevel level, BlockPos controllerPos) {
+        BlockPos centre = controllerPos.south();
+        BlockState casing = Tier4Blocks.REFRACTORY_CASING.get().defaultBlockState();
+        for (int y = 0; y <= 2; y++)
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos pos = centre.offset(dx, y, dz);
+                    BlockState state = dx == 0 && dz == 0 && y == 1 ? Blocks.AIR.defaultBlockState()
+                            : y == 2 ? ModBlocks.FIRE_BRICKS.get().defaultBlockState() : casing;
+                    level.setBlock(pos, state, Block.UPDATE_ALL);
+                }
+        BlockPos tuyerePos = centre.west();
+        level.setBlock(controllerPos, Tier4Blocks.CONVERTER_CONTROLLER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.ConverterBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(tuyerePos, Tier4Blocks.TUYERE.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.FurnacePartBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(centre.above().east(), Tier4Blocks.TAP_HATCH.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.TapHatchBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(centre.above(2), Tier4Blocks.CHARGING_HATCH.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(tuyerePos.west(), Tier4Blocks.BLOWER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlowerBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+    }
+
+    // Spec 8.2 and 23: a coke firebox (1600 °C) on 10 copper heat pipes delivers 900 °C, capped to 1000
+    // and less 10 °C a block, and loses 1% of the heat a block; on refractory ducts it delivers 1550 °C.
+    // Two boilers on one coal firebox (30 HU/t) asking 30 HU/t each get half each, less the pipe losses;
+    // a blower makes the fire give half again as much.
+    private static void heatPipes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(0, 1, 0));
+        java.util.List<BlockPos> line = new java.util.ArrayList<>();
+        for (int x = 1; x <= 8; x++) line.add(helper.absolutePos(new BlockPos(x, 1, 0)));
+        line.add(helper.absolutePos(new BlockPos(8, 1, 1)));
+        line.add(helper.absolutePos(new BlockPos(8, 1, 2)));
+        BlockPos boilerPos = helper.absolutePos(new BlockPos(8, 1, 3));
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        for (BlockPos pos : line) level.setBlock(pos, Tier4Blocks.COPPER_HEAT_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 4));
+        firebox.preheat(1600.0f);
+
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 1);
+        helper.assertValueEqual(Math.round(boiler.heatTemperature()), 900, "°C at the boiler over 10 copper pipes from a 1600 °C fire");
+        helper.assertValueEqual(firebox.taken(), 30, "the boiler asks for its 30 HU/t");
+        helper.assertValueEqual(boiler.heatTaken(), 27, "HU/t left after 10% lost on the way");
+        helper.assertTrue(level.getBlockState(line.get(0)).getValue(dev.strataindustria.heat.HeatPipeBlock.HOT), "pipes glow over 580 °C");
+
+        for (BlockPos pos : line) level.setBlock(pos, Tier4Blocks.REFRACTORY_HEAT_DUCT.get().defaultBlockState(), Block.UPDATE_ALL);
+        dev.strataindustria.heat.HeatNetwork.changed();
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 1);
+        helper.assertValueEqual(Math.round(boiler.heatTemperature()), 1550, "°C at the boiler over 10 refractory ducts");
+
+        level.setBlock(line.get(4), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        steam(level, fireboxPos, firebox, boilerPos, boiler, 1);
+        helper.assertValueEqual(boiler.heatTaken(), 0, "a gap in the line cuts the boiler off");
+        helper.assertTrue(!level.getBlockState(line.get(6)).getValue(dev.strataindustria.heat.HeatPipeBlock.HOT), "pipes cut off from the fire cool");
+
+        // Two boilers five copper pipes away on either side of one coal firebox.
+        BlockPos coalPos = helper.absolutePos(new BlockPos(4, 1, 7));
+        level.setBlock(coalPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        for (int x = 0; x <= 3; x++) level.setBlock(helper.absolutePos(new BlockPos(x, 1, 7)), Tier4Blocks.COPPER_HEAT_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        for (int x = 5; x <= 8; x++) level.setBlock(helper.absolutePos(new BlockPos(x, 1, 7)), Tier4Blocks.COPPER_HEAT_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(helper.absolutePos(new BlockPos(0, 1, 6)), Tier4Blocks.COPPER_HEAT_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(helper.absolutePos(new BlockPos(8, 1, 6)), Tier4Blocks.COPPER_HEAT_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos westPos = helper.absolutePos(new BlockPos(0, 1, 5)), eastPos = helper.absolutePos(new BlockPos(8, 1, 5));
+        level.setBlock(westPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(eastPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity coal = (FireboxBlockEntity) level.getBlockEntity(coalPos);
+        BoilerBlockEntity west = (BoilerBlockEntity) level.getBlockEntity(westPos), east = (BoilerBlockEntity) level.getBlockEntity(eastPos);
+        coal.setItem(0, new ItemStack(Items.COAL, 4));
+        coal.preheat(1400.0f);
+        share(level, coalPos, coal, westPos, west, eastPos, east);
+        helper.assertValueEqual(coal.taken(), 30, "the coal fire's 30 HU/t all goes");
+        helper.assertValueEqual(west.heatTaken(), 14, "half of it, less 5% on 5 pipes, to the west boiler");
+        helper.assertValueEqual(east.heatTaken(), 14, "and as much to the east one");
+        helper.assertValueEqual(Math.round(west.heatTemperature()), 950, "1000 °C copper cap less 5 pipes");
+
+        BlockPos blowerPos = coalPos.north();
+        level.setBlock(blowerPos, Tier4Blocks.BLOWER.get().defaultBlockState()
+                .setValue(dev.strataindustria.ironworks.BlowerBlock.FACING, Direction.SOUTH), Block.UPDATE_ALL);
+        drive(level, blowerPos.north(), Direction.SOUTH, blowerPos);
+        share(level, coalPos, coal, westPos, west, eastPos, east);
+        helper.assertTrue(coal.blown(), "the blower blows into the firebox");
+        helper.assertValueEqual(coal.output(), 45, "a blower makes 30 HU/t into 45");
+        helper.assertValueEqual(coal.taken(), 44, "22 HU/t to each boiler");
+        helper.succeed();
+    }
+
+    private static void share(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos westPos, BoilerBlockEntity west,
+            BlockPos eastPos, BoilerBlockEntity east) {
+        FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+        BoilerBlockEntity.serverTick(level, westPos, level.getBlockState(westPos), west);
+        BoilerBlockEntity.serverTick(level, eastPos, level.getBlockState(eastPos), east);
+    }
+
+    // Spec 8.3 and 12.1: 40 HU/t of hot blast at 800 °C or more through a heat inlet in the hearth halves
+    // the coke, to a quarter an ingot.
+    private static void hotBlast(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos controllerPos = helper.absolutePos(new BlockPos(4, 0, 2));
+        BlockPos centre = controllerPos.south();
+        blastFurnaceShell(level, controllerPos);
+        level.setBlock(centre.above(4), Tier4Blocks.CHARGING_HATCH.get().defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos inletPos = centre.offset(-1, 0, -1), fireboxPos = inletPos.west();
+        level.setBlock(inletPos, Tier4Blocks.HEAT_INLET.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos blowerPos = centre.west(2);
+        drive(level, blowerPos.west(), Direction.EAST, blowerPos);
+        var furnace = (dev.strataindustria.ironworks.BlastFurnaceBlockEntity) level.getBlockEntity(controllerPos);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+        firebox.preheat(1600.0f);
+        furnace.setItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.ORE,
+                new ItemStack(ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL), 16));
+        furnace.setItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.FUEL, new ItemStack(Tier4Items.COKE.get(), 3));
+        furnace.setItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.FLUX, new ItemStack(ModItems.FLUX.get(), 3));
+        furnace.heatUp();
+
+        for (int i = 0; i < 1000; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            smelt(level, controllerPos, furnace, 1);
+        }
+        helper.assertValueEqual(furnace.hotBlast(), dev.strataindustria.ironworks.BlastFurnaceBlockEntity.HOT_BLAST_HEAT, "HU/t of hot blast");
+        helper.assertValueEqual(furnace.getItem(dev.strataindustria.ironworks.BlastFurnaceBlockEntity.PIG_IRON).getCount(), 5,
+                "five ingots in 1000 ticks");
+        helper.assertValueEqual(furnace.fuel(), 12 - 5, "a quarter of a coke an ingot on hot blast");
+        helper.succeed();
+    }
+
+    // Spec 8.3 and 12.2: a heat inlet at 1250 °C or more preheats a blow instead of a coke. Copper pipe
+    // holds the heat down to 1000 °C, which is not enough; a refractory duct carries it.
+    private static void converterPreheat(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos controllerPos = helper.absolutePos(new BlockPos(4, 0, 2));
+        BlockPos centre = controllerPos.south();
+        converterShell(level, controllerPos);
+        BlockPos inletPos = centre.offset(-1, 0, -1), pipePos = inletPos.west(), fireboxPos = pipePos.west();
+        level.setBlock(inletPos, Tier4Blocks.HEAT_INLET.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pipePos, Tier4Blocks.COPPER_HEAT_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos blowerPos = centre.west(2);
+        drive(level, blowerPos.west(), Direction.EAST, blowerPos);
+        var converter = (dev.strataindustria.ironworks.ConverterBlockEntity) level.getBlockEntity(controllerPos);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+        firebox.preheat(1600.0f);
+        converter.setItem(dev.strataindustria.ironworks.ConverterBlockEntity.PIG_IRON, new ItemStack(ModItems.ingot(Metal.PIG_IRON), 8));
+
+        preheat(level, fireboxPos, firebox, controllerPos, converter, 3);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.NEEDS_PREHEAT,
+                "copper pipe holds the heat under 1250 °C");
+        helper.assertValueEqual(converter.preheat().limit(), 1000, "the copper pipe's rating is what holds it");
+        helper.assertValueEqual(Math.round(converter.preheat().temperature()), 990, "1000 °C less one pipe");
+
+        level.setBlock(pipePos, Tier4Blocks.REFRACTORY_HEAT_DUCT.get().defaultBlockState(), Block.UPDATE_ALL);
+        dev.strataindustria.heat.HeatNetwork.changed();
+        preheat(level, fireboxPos, firebox, controllerPos, converter, 2);
+        helper.assertValueEqual(converter.status(), dev.strataindustria.ironworks.ConverterBlockEntity.Status.BLOWING,
+                "a duct carries 1595 °C, and the blow starts without coke");
+        helper.assertValueEqual(converter.blowing(), 8, "pig iron in the blow");
+        helper.succeed();
+    }
+
+    private static void preheat(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos controllerPos,
+            dev.strataindustria.ironworks.ConverterBlockEntity converter, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            blow(level, controllerPos, converter, 1);
+        }
     }
 
     private static void blow(ServerLevel level, BlockPos pos, dev.strataindustria.ironworks.ConverterBlockEntity converter, int ticks) {
