@@ -69,7 +69,7 @@ public final class StoneAgeEvents {
         ItemStack tool = event.getTool();
         RandomSource random = level.getRandom();
 
-        if (state.is(ModTags.Blocks.FIBRE_PLANTS) && tool.is(ModTags.Items.KNIVES)) {
+        if (state.is(ModTags.Blocks.FIBRE_PLANTS) && cuts(tool)) {
             drop(event, new ItemStack(ModItems.PLANT_FIBRE.get()));
             if (random.nextFloat() < STRAW_CHANCE) drop(event, new ItemStack(ModItems.STRAW.get()));
             player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
@@ -83,6 +83,14 @@ public final class StoneAgeEvents {
                 drop(event, new ItemStack(Items.FLINT));
             }
         }
+    }
+
+    /**
+     * A knife cuts fibre, and so does a bare knapped knife blade: the knife itself is bound with twine,
+     * so the very first fibre has to come from the blade alone.
+     */
+    static boolean cuts(ItemStack tool) {
+        return tool.is(ModTags.Items.KNIVES) || tool.is(ModItems.STONE_KNIFE_BLADE.get());
     }
 
     private static void drop(BlockDropsEvent event, ItemStack stack) {
