@@ -1,0 +1,41 @@
+{
+  "parent": "strataindustria:journal/t4/automated_chain",
+  "criteria": {
+    "bucket": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:latex_bucket"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "piped": {
+      "conditions": {
+        "event": "latex_piped"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.latex.hint"
+    },
+    "icon": {
+      "id": "strataindustria:latex_bucket"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.latex"
+    }
+  },
+  "requirements": [
+    [
+      "bucket",
+      "piped"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

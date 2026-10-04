@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t5/cable",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "first_machine"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.first_machine.hint"
+    },
+    "icon": {
+      "id": "strataindustria:electric_furnace"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.first_machine"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

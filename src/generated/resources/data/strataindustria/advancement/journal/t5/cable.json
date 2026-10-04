@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t5/dynamo",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "strataindustria:lv_cable"
+        }
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.cable.hint"
+    },
+    "icon": {
+      "id": "strataindustria:lv_cable"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.cable"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/transformer",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "power_line"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.power_line.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:pole_insulator"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.power_line"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

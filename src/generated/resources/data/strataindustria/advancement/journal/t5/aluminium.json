@@ -1,0 +1,35 @@
+{
+  "parent": "strataindustria:journal/t5/alumina",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:aluminium_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.aluminium.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:aluminium_ingot"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.aluminium"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

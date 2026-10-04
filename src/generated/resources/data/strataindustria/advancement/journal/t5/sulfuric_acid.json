@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t5/assembler",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "sulfuric_acid"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.sulfuric_acid.hint"
+    },
+    "icon": {
+      "id": "strataindustria:sulfuric_acid_bucket"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.sulfuric_acid"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

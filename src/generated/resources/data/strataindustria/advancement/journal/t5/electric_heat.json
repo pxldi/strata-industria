@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t5/first_machine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "electric_heat"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.electric_heat.hint"
+    },
+    "icon": {
+      "id": "strataindustria:electric_heater"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.electric_heat"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

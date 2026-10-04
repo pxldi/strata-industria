@@ -56,6 +56,29 @@ public final class Journal {
     public static final String CONVERTER = "converter";
     public static final String HEAT_NETWORK = "heat_network";
     public static final String AUTOMATED_CHAIN = "automated_chain";
+    // Tier 5 (spec 15)
+    public static final String LATEX_PIPED = "latex_piped";
+    public static final String CINNABAR_MINED = "cinnabar_mined";
+    public static final String DYNAMO = "dynamo";
+    public static final String FIRST_MACHINE = "first_machine";
+    public static final String TURBINE = "turbine";
+    public static final String MACERATOR = "macerator";
+    public static final String ASSEMBLER = "assembler";
+    public static final String POWER_HAMMER = "power_hammer";
+    public static final String BATTERY = "battery";
+    public static final String ELECTRIC_HEAT = "electric_heat";
+    public static final String SULFURIC_ACID = "sulfuric_acid";
+    public static final String ELECTROLYSIS = "electrolysis";
+    public static final String MV_UPGRADE = "mv_upgrade";
+    public static final String TRANSFORMER = "transformer";
+    public static final String POWER_LINE = "power_line";
+    public static final String ITEM_PIPE = "item_pipe";
+    public static final String STORAGE = "storage";
+    public static final String ORE_SCAN = "ore_scan";
+    public static final String ELECTRIC_CHAIN = "electric_chain";
+
+    /** Blocks of overhead span a consumer must be served across for the power line goal. */
+    public static final int POWER_LINE_SPAN = 64;
 
     /** Block events count for players this close: whoever lit the kiln is standing near it. */
     static final double NEARBY = 16;

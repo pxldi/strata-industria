@@ -126,6 +126,7 @@ final class Tier5GameTests {
         tests.put("tier5_liquid_fuel_burner", Tier5GameTests::liquidFuelBurner);
         tests.put("tier5_kinetic_motor", Tier5GameTests::kineticMotor);
         tests.put("tier5_electric_pump", Tier5GameTests::electricPump);
+        tests.put("tier5_journal_goals", Tier5GameTests::journalGoals);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -430,6 +431,41 @@ final class Tier5GameTests {
         }
         helper.assertValueEqual(sand, done, tier.label() + " sand out");
         return done;
+    }
+
+    // Spec 15: a macerator finishing a recipe next to a player closes goals 83 and 85 (and their leads open from the
+    // tier 4 exit); a named event closes its own goal; the span count of a plain cable network is zero.
+    @SuppressWarnings("removal")
+    private static void journalGoals(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        BlockPos boxPos = helper.absolutePos(new BlockPos(1, 1, 1)), machinePos = boxPos.east();
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(machinePos, Tier5Blocks.MACERATOR.get().defaultBlockState(), Block.UPDATE_ALL);
+        ((BatteryBoxBlockEntity) level.getBlockEntity(boxPos)).setStored(100_000);
+        MaceratorBlockEntity machine = (MaceratorBlockEntity) level.getBlockEntity(machinePos);
+        machine.setItem(0, new ItemStack(Items.GRAVEL, 4));
+        machine.setBuffer(machine.bufferCapacity());
+        player.teleportTo(machinePos.getX() + 0.5, machinePos.getY(), machinePos.getZ() + 2.5);
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, boxPos);
+        for (int tick = 0; tick < 150; tick++) {
+            ElectricMachineBlockEntity.serverTick(level, machinePos, level.getBlockState(machinePos), machine);
+            network.tick();
+        }
+        helper.assertTrue(machine.finishedCount() > 0, "the macerator finished something");
+        helper.assertTrue(goalDone(player, "t5/first_machine"), "goal 83 closed by a finished recipe");
+        helper.assertTrue(goalDone(player, "t5/macerator"), "goal 85 closed by the macerator");
+        helper.assertTrue(!goalDone(player, "t5/assembler"), "goal 86 is still open");
+        helper.assertTrue(network.spanBlocks(machinePos) == 0, "no overhead span on a plain network");
+        dev.strataindustria.journal.Journal.award(player, dev.strataindustria.journal.Journal.ITEM_PIPE);
+        helper.assertTrue(goalDone(player, "t5/item_pipe"), "a named event closes its goal");
+        level.getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
+    private static boolean goalDone(net.minecraft.server.level.ServerPlayer player, String path) {
+        var holder = player.level().getServer().getAdvancements().get(dev.strataindustria.journal.Journal.goal(path));
+        return holder != null && player.getAdvancements().getOrStartProgress(holder).isDone();
     }
 
     // Spec 10.3 and 24: an ore piece gives a second crushed piece 25% of the time: the chance itself is checked exactly, and
