@@ -82,6 +82,7 @@ final class Tier4GameTests {
         tests.put("tier4_roaster", Tier4GameTests::roaster);
         tests.put("tier4_smelter", Tier4GameTests::smelter);
         tests.put("tier4_steam_hammer", Tier4GameTests::steamHammer);
+        tests.put("tier4_fluid_tank", Tier4GameTests::fluidTank);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -972,6 +973,50 @@ final class Tier4GameTests {
         helper.assertTrue(smelter.melt().isEmpty(), "the pot is empty");
         helper.assertTrue(smelter.getItem(out).getCount() == 2, "the castings stack though they came out at different heats");
         helper.succeed();
+    }
+
+    // Fluid tank and valve (spec 9.3): two stacked tanks hold one fluid, filling from the bottom. Through an
+    // open valve below them they drain from the top into a third tank, at the copper pipe's 100 mB/t; shut
+    // by hand or held shut by redstone, nothing passes.
+
+    private static void fluidTank(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos valvePos = helper.absolutePos(new BlockPos(2, 1, 2)), bottomPos = valvePos.above(), topPos = bottomPos.above();
+        BlockPos pipePos = valvePos.east(), otherPos = pipePos.east();
+        level.setBlock(bottomPos, Tier4Blocks.FLUID_TANK.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(topPos, Tier4Blocks.FLUID_TANK.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(otherPos, Tier4Blocks.FLUID_TANK.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(valvePos, Tier4Blocks.VALVE.get().defaultBlockState().setValue(dev.strataindustria.fluid.ValveBlock.OPEN, false),
+                Block.UPDATE_ALL);
+        level.setBlock(pipePos, Tier4Blocks.COPPER_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        var bottom = (dev.strataindustria.fluid.FluidTankBlockEntity) level.getBlockEntity(bottomPos);
+        var top = (dev.strataindustria.fluid.FluidTankBlockEntity) level.getBlockEntity(topPos);
+        var other = (dev.strataindustria.fluid.FluidTankBlockEntity) level.getBlockEntity(otherPos);
+        helper.assertTrue(level.getBlockState(bottomPos).getValue(dev.strataindustria.fluid.FluidTankBlock.UP), "the bottom tank joins the one above");
+
+        int capacity = dev.strataindustria.fluid.FluidTankBlockEntity.CAPACITY;
+        helper.assertValueEqual(top.fill(net.minecraft.world.level.material.Fluids.WATER, 20_000, 0, false), 20_000, "water taken by the stack");
+        helper.assertValueEqual(bottom.amount(), capacity, "the bottom tank fills first");
+        helper.assertValueEqual(top.amount(), 20_000 - capacity, "the rest goes in the top tank");
+        helper.assertValueEqual(bottom.fill(Tier4Fluids.CREOSOTE.get(), 1000, 0, true), 0, "a stack holding water refuses creosote");
+
+        tankTick(level, bottomPos, bottom, 10);
+        helper.assertValueEqual(other.amount(), 0, "nothing passes a shut valve");
+        level.setBlock(valvePos, level.getBlockState(valvePos).setValue(dev.strataindustria.fluid.ValveBlock.OPEN, true), Block.UPDATE_ALL);
+        tankTick(level, bottomPos, bottom, 10);
+        helper.assertValueEqual(other.amount(), 1000, "ten ticks through a copper pipe");
+        helper.assertValueEqual(top.amount(), 20_000 - capacity - 1000, "the stack drains from the top");
+        helper.assertValueEqual(bottom.amount(), capacity, "the bottom tank stays full while the top one drains");
+
+        level.setBlock(valvePos.west(), Blocks.REDSTONE_BLOCK.defaultBlockState(), Block.UPDATE_ALL);
+        helper.assertTrue(level.getBlockState(valvePos).getValue(dev.strataindustria.fluid.ValveBlock.POWERED), "redstone reaches the valve");
+        tankTick(level, bottomPos, bottom, 10);
+        helper.assertValueEqual(other.amount(), 1000, "redstone holds the valve shut");
+        helper.succeed();
+    }
+
+    private static void tankTick(ServerLevel level, BlockPos pos, dev.strataindustria.fluid.FluidTankBlockEntity tank, int ticks) {
+        for (int i = 0; i < ticks; i++) dev.strataindustria.fluid.FluidTankBlockEntity.serverTick(level, pos, level.getBlockState(pos), tank);
     }
 
     // Steam hammer (spec 10.5 and acceptance 23): over a coke firebox it heats two cold steel ingots itself,

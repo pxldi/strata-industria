@@ -111,6 +111,15 @@ public final class Tier4Blocks {
             p -> new FluidPipeBlock(400, 400, p), p -> pipe(p, MapColor.METAL, HEAVY_METAL));
     public static final DeferredBlock<PressureGaugeBlock> PRESSURE_GAUGE = ModBlocks.BLOCKS.registerBlock("pressure_gauge",
             p -> new PressureGaugeBlock(220, 200, p), p -> pipe(p, MapColor.GOLD, BRASS_SOUND));
+    public static final DeferredBlock<dev.strataindustria.fluid.ValveBlock> VALVE = ModBlocks.BLOCKS.registerBlock("valve",
+            p -> new dev.strataindustria.fluid.ValveBlock(220, 200, p), p -> pipe(p, MapColor.GOLD, BRASS_SOUND));
+    public static final DeferredBlock<dev.strataindustria.fluid.FluidTankBlock> FLUID_TANK = ModBlocks.BLOCKS.registerBlock("fluid_tank",
+            dev.strataindustria.fluid.FluidTankBlock::new, p -> p.mapColor(MapColor.COLOR_ORANGE)
+                    .strength(3.0f, 6.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .isViewBlocking((state, level, pos) -> false)
+                    .sound(SoundType.COPPER));
 
     // Spec 9.3 and 10.5: the mechanical pump, and the steam engine that turns a shaft.
     public static final DeferredBlock<MechanicalPumpBlock> MECHANICAL_PUMP = ModBlocks.BLOCKS.registerBlock("mechanical_pump",

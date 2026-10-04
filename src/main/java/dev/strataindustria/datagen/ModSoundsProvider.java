@@ -290,6 +290,16 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.65f).volume(0.55f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.25f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        // Spec 21.7: the valve's wheel squeak and thunk, and liquid poured into a metal tank.
+        add(Tier4Sounds.VALVE_OPEN, definition().subtitle(subtitle("valve.open"))
+                .with(sound("minecraft:block.iron_trapdoor.open", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:block.iron_trapdoor.open", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.7f)));
+        add(Tier4Sounds.VALVE_CLOSE, definition().subtitle(subtitle("valve.close"))
+                .with(sound("minecraft:block.iron_trapdoor.close", SoundDefinition.SoundType.EVENT).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:block.iron_trapdoor.close", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f)));
+        add(Tier4Sounds.FLUID_TANK_FILL, definition().subtitle(subtitle("fluid_tank.fill"))
+                .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.8f))
+                .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
         // Spec 21.7: a hiss, then the heavy ringing blow.
         add(Tier4Sounds.STEAM_HAMMER_STRIKE, definition().subtitle(subtitle("steam_hammer.strike"))
                 .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.6f))

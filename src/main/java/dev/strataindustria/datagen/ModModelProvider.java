@@ -663,6 +663,27 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(gauge);
         itemModels.itemModelOutput.accept(Tier4Items.PRESSURE_GAUGE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/pressure_gauge")));
 
+        // Spec 9.3: the valve's wheel turns a quarter and shows a red tab while shut.
+        MultiPartGenerator valve = MultiPartGenerator.multiPart(Tier4Blocks.VALVE.get());
+        var valveOpen = BlockModelGenerators.plainVariant(StrataIndustria.id("block/valve_open"));
+        var valveShut = BlockModelGenerators.plainVariant(StrataIndustria.id("block/valve_shut"));
+        valve.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.ValveBlock.OPEN, true)
+                .term(dev.strataindustria.fluid.ValveBlock.POWERED, false), valveOpen);
+        valve.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.ValveBlock.OPEN, false), valveShut);
+        valve.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.ValveBlock.OPEN, true)
+                .term(dev.strataindustria.fluid.ValveBlock.POWERED, true), valveShut);
+        arms(valve, StrataIndustria.id("block/bronze_fluid_pipe_arm"));
+        blockModels.blockStateOutput.accept(valve);
+        itemModels.itemModelOutput.accept(Tier4Items.VALVE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/valve_open")));
+        // Spec 21.4: a column of tanks draws as one, with end caps only at its ends.
+        PropertyDispatch.C2<MultiVariant, Boolean, Boolean> tank = PropertyDispatch.initial(dev.strataindustria.fluid.FluidTankBlock.UP,
+                dev.strataindustria.fluid.FluidTankBlock.DOWN);
+        tank.select(false, false, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fluid_tank")));
+        tank.select(true, false, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fluid_tank_bottom")));
+        tank.select(true, true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fluid_tank_middle")));
+        tank.select(false, true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fluid_tank_top")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.FLUID_TANK.get()).with(tank));
+        itemModels.itemModelOutput.accept(Tier4Items.FLUID_TANK.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/fluid_tank")));
         // Spec 9.3 and 10.5: hand-built models facing north; the engine's flywheel is drawn by its renderer.
         for (var machine : java.util.List.of(Tier4Blocks.MECHANICAL_PUMP, Tier4Blocks.STEAM_ENGINE)) {
             var model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + machine.getId().getPath()));
