@@ -6971,6 +6971,201 @@ public final class TextureGen {
         }
     }
 
+    /** Heat pipes and ducts: copper tube with soldered joints, fire brick sleeve with steel bands, and the inlet flange. */
+    static final class Hp {
+        static final int BORE = 0x0e0c0c;
+        static int st(int s) { return STEEL.get(s); }
+        static int cu(int s) { return COPPER.get(s); }
+        static int so(int s) { return SOLDER.get(s); }
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+
+        /** Heat band colour for glow g in 0..1: dull red up to yellow. */
+        static int band(double g) {
+            double f = Math.max(0, Math.min(1, g)) * 4;
+            int i = (int) Math.min(3, Math.floor(f));
+            return mix(HEAT_BAND[i], HEAT_BAND[i + 1], f - i);
+        }
+        static void glow(BufferedImage im, int x, int y, double g, double strength) {
+            if (g <= 0) return;
+            px(im, x, y, mix(rgb(im, x, y), band(g), Math.min(1, g * strength)));
+        }
+
+        // ---- copper pipe
+        static BufferedImage copper(boolean hot) {
+            BufferedImage im = img();
+            int[] across = {5, 4, 4, 3, 3, 2, 2};
+            double[] mid = {0.30, 0.52, 0.72, 0.85, 0.72, 0.52, 0.30};
+            // Tube side everywhere first (plain tube for break particles).
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int a = y % 7;
+                    int step = across[a];
+                    if (x == 3) step = 0; // solder band marker
+                    if (step == 0) px(im, x, y, so(a == 0 ? 5 : a < 3 ? 4 : a < 5 ? 3 : 2));
+                    else px(im, x, y, cu(step));
+                    if (y < 7 && x == 1 && a == 1) px(im, x, y, COPPER.spec());
+                }
+            // Hub: collar block with a solder ring round a copper boss.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    boolean edge = x == 4 || y == 4 || x == 11 || y == 11;
+                    boolean ring = !edge && (x == 5 || y == 5 || x == 10 || y == 10);
+                    int c;
+                    if (edge) c = cu(x == 4 || y == 4 ? 5 : 2);
+                    else if (ring) c = so(x == 5 || y == 5 ? 5 : x == 10 || y == 10 ? 2 : 4);
+                    else c = cu((x + y) < 15 ? 4 : 3);
+                    px(im, x, y, c);
+                }
+            px(im, 6, 6, COPPER.spec());
+            px(im, 9, 9, cu(2)); px(im, 9, 8, cu(2)); px(im, 8, 9, cu(2));
+            // End: copper ring round a dark bore.
+            for (int y = 9; y <= 15; y++)
+                for (int x = 0; x <= 6; x++) {
+                    int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                    boolean lit = x + (y - 9) < 6;
+                    int c;
+                    if (d == 0) c = cu(lit ? 5 : 2);
+                    else if (d == 1) c = cu(lit ? 4 : 3);
+                    else c = (y == 11 || x == 2) ? cu(1) : BORE;
+                    px(im, x, y, c);
+                }
+            if (hot) {
+                for (int y = 0; y < 16; y++)
+                    for (int x = 0; x < 16; x++) {
+                        boolean hub = x >= 4 && x <= 11 && y >= 4 && y <= 11;
+                        boolean end = x <= 6 && y >= 9;
+                        if (hub) {
+                            double d = Math.hypot(x - 7.5, y - 7.5);
+                            glow(im, x, y, Math.max(0.2, 0.9 - d * 0.14), 0.85);
+                        } else if (end) {
+                            int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                            if (d >= 2) px(im, x, y, band(d == 2 ? 0.85 : 1.0));
+                            else glow(im, x, y, d == 1 ? 0.6 : 0.4, 0.85);
+                        } else glow(im, x, y, mid[y % 7], 0.85);
+                    }
+                // Hot spots on the tube: lit crest stays brighter.
+                for (int y = 0; y < 16; y++) if (y % 7 == 3) for (int x = 0; x < 4; x++) if (y < 7) px(im, x, y, band(x == 3 ? 0.9 : 1.0));
+            }
+            return im;
+        }
+
+        // ---- refractory duct
+        static BufferedImage duct(boolean hot) {
+            BufferedImage im = img();
+            // Side: brick courses (7 rows: 3 brick, mortar, 3 brick), staggered joints, steel band at x=3.
+            int[] rowStep = {5, 4, 3, 1, 5, 4, 3};
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int a = y % 7;
+                    int step = rowStep[a];
+                    int joint = a < 3 ? 1 : 2;
+                    if (step != 1 && x == joint) step = 1;
+                    if (step != 1 && x == joint + 1 && a != 0) step = Math.max(2, step - 1);
+                    if (step != 1) step = Math.max(2, step);
+                    px(im, x, y, fb(step));
+                }
+            for (int y = 0; y < 16; y++) {
+                int a = y % 7;
+                px(im, 3, y, st(a == 0 ? 5 : a < 3 ? 4 : a < 5 ? 3 : 2));
+            }
+            // Hub: brick block, one mortar course and a staggered joint, steel brackets in each corner.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    int step = (y - 4) % 4 == 0 ? 5 : 4;
+                    if (y == 7 || y == 11) step = 1;
+                    if (y < 7 && x == 8 && y != 7) step = 1;
+                    if (y > 7 && y < 11 && x == 6) step = 1;
+                    if (step != 1 && (x == 11)) step = 3;
+                    px(im, x, y, fb(step));
+                }
+            // Corner brackets: 3x3 L shapes of steel, lit top-left.
+            for (int[] c : new int[][] {{4, 4}, {9, 4}, {4, 9}, {9, 9}}) {
+                for (int j = 0; j < 3; j++)
+                    for (int i = 0; i < 3; i++) {
+                        boolean left = c[0] == 4, top = c[1] == 4;
+                        boolean onX = left ? i == 0 : i == 2, onY = top ? j == 0 : j == 2;
+                        if (!(onX || onY)) continue;
+                        int s = 3;
+                        if (j == 0 && top || i == 0 && left) s = 5;
+                        if (j == 2 && !top || i == 2 && !left) s = 2;
+                        if (i == (left ? 0 : 2) && j == (top ? 0 : 2)) s = left && top ? 5 : left || top ? 4 : 2;
+                        px(im, c[0] + i, c[1] + j, st(s));
+                    }
+            }
+            // End: square brick sleeve round a dark square bore, steel corner pins.
+            for (int y = 9; y <= 15; y++)
+                for (int x = 0; x <= 6; x++) {
+                    int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                    boolean lit = x + (y - 9) < 6;
+                    int c;
+                    if (d == 0) c = fb(lit ? 5 : 3);
+                    else if (d == 1) c = fb(lit ? 4 : 2);
+                    else c = (y == 11 || x == 2) ? fb(1) : BORE;
+                    px(im, x, y, c);
+                }
+            px(im, 0, 9, st(5)); px(im, 6, 9, st(4)); px(im, 0, 15, st(3)); px(im, 6, 15, st(2));
+            if (hot) {
+                for (int y = 0; y < 16; y++)
+                    for (int x = 0; x < 16; x++) {
+                        int c = rgb(im, x, y);
+                        boolean hub = x >= 4 && x <= 11 && y >= 4 && y <= 11;
+                        boolean end = x <= 6 && y >= 9;
+                        boolean mortar = c == fb(1);
+                        boolean steel = false;
+                        for (int s = 1; s <= 5; s++) if (c == st(s)) steel = true;
+                        if (end) {
+                            int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                            if (d >= 2 && !mortar) px(im, x, y, band(1.0));
+                            else if (mortar) px(im, x, y, band(0.7));
+                            else if (!steel) glow(im, x, y, d == 1 ? 0.45 : 0.3, 0.8);
+                            continue;
+                        }
+                        if (mortar) { px(im, x, y, band(0.78)); continue; }
+                        if (steel) { glow(im, x, y, 0.2, 0.5); continue; }
+                        if (hub) {
+                            double d = Math.hypot(x - 7.5, y - 7.5);
+                            glow(im, x, y, Math.max(0.15, 0.7 - d * 0.1), 0.8);
+                        } else glow(im, x, y, 0.32, 0.8);
+                    }
+                // Heat seeps along the middle mortar course of the side.
+                for (int y = 0; y < 16; y++) if (y % 7 == 3 && !(y >= 4 && y <= 11)) for (int x = 0; x < 3; x++) px(im, x, y, band(0.95));
+            }
+            return im;
+        }
+
+        // ---- heat inlet: refractory casing with a round steel duct flange
+        static BufferedImage inlet() {
+            BufferedImage im = Bf.casing();
+            double cx = 7.5, cy = 7.5;
+            for (int y = 2; y < 14; y++)
+                for (int x = 2; x < 14; x++) {
+                    double dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
+                    if (d > 5.3) continue;
+                    double t = dx + dy;
+                    int c;
+                    if (d > 4.6) c = t < 0 ? st(5) : st(2);
+                    else if (d > 2.9) c = t < 1 ? st(3) : st(2);
+                    else if (d > 2.2) c = t < 0 ? st(1) : st(3);
+                    else c = BORE;
+                    px(im, x, y, c);
+                }
+            // Bolt heads on the flange face (pinwheel), lit top-left with a shadow pixel.
+            for (int[] b : new int[][] {{4, 6}, {9, 4}, {11, 9}, {6, 11}}) {
+                px(im, b[0], b[1], st(5));
+                px(im, b[0] + 1, b[1] + 1, st(1));
+            }
+            return im;
+        }
+    }
+
+    static void heatPipes() throws IOException {
+        save("block/copper_heat_pipe", Hp.copper(false));
+        save("block/copper_heat_pipe_hot", Hp.copper(true));
+        save("block/refractory_heat_duct", Hp.duct(false));
+        save("block/refractory_heat_duct_hot", Hp.duct(true));
+        save("block/heat_inlet", Hp.inlet());
+    }
+
     static void converter() throws IOException {
         save("block/converter_controller_front", Cv.front(-1));
         saveAnimated("block/converter_controller_front_blowing", Cv.blowing(), 2);
@@ -6991,6 +7186,7 @@ public final class TextureGen {
         washer();
         blastFurnace();
         converter();
+        heatPipes();
     }
 
     static void steam() throws IOException {

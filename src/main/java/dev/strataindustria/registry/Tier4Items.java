@@ -82,6 +82,10 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> CONVERTER_CONTROLLER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CONVERTER_CONTROLLER);
     public static final DeferredItem<BlockItem> BLOWER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BLOWER);
     public static final DeferredItem<Item> SLAG = ModItems.ITEMS.registerSimpleItem("slag");
+    // Spec 8.2 and 8.4: heat pipes and the heat inlet.
+    public static final DeferredItem<BlockItem> COPPER_HEAT_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.COPPER_HEAT_PIPE);
+    public static final DeferredItem<BlockItem> REFRACTORY_HEAT_DUCT = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.REFRACTORY_HEAT_DUCT);
+    public static final DeferredItem<BlockItem> HEAT_INLET = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.HEAT_INLET);
     /** Spec 4.6: ground slag, a fertiliser worth two bone meal. */
     public static final DeferredItem<dev.strataindustria.ironworks.SlagDustItem> SLAG_DUST = ModItems.ITEMS.registerItem("slag_dust",
             dev.strataindustria.ironworks.SlagDustItem::new);

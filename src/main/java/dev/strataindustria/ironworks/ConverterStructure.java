@@ -12,7 +12,8 @@ import net.minecraft.world.level.block.state.BlockState;
 /**
  * The converter's shape (tier 4 spec 12.2): a 3 x 3 x 3 vessel. The bottom is refractory casing with the
  * controller and one or two tuyeres on its edges; the middle layer is casing around the open vessel with
- * the tap hatch on one edge; the top is any refractory block with the charging hatch in the middle.
+ * the tap hatch on one edge; the top is any refractory block with the charging hatch in the middle. Heat
+ * inlets may stand in for casing in the bottom layer (spec 8.4).
  */
 public final class ConverterStructure {
     public static final int HEIGHT = 3;
@@ -27,6 +28,7 @@ public final class ConverterStructure {
         BlockPos centre = vessel(controller, facing);
         // Layer 1: casing, with tuyeres on the edges.
         List<BlastFurnaceStructure.Opening> tuyeres = new ArrayList<>();
+        List<BlockPos> inlets = new ArrayList<>();
         for (int dx = -1; dx <= 1; dx++)
             for (int dz = -1; dz <= 1; dz++) {
                 BlockPos pos = centre.offset(dx, 0, dz);
@@ -35,7 +37,7 @@ public final class ConverterStructure {
                 boolean edge = (dx == 0) != (dz == 0);
                 if (edge && state.is(Tier4Blocks.TUYERE.get())) {
                     tuyeres.add(new BlastFurnaceStructure.Opening(pos, side(dx, dz)));
-                } else if (!state.is(Tier4Blocks.REFRACTORY_CASING.get())) {
+                } else if (!BlastFurnaceStructure.casing(state, pos, inlets)) {
                     return BlastFurnaceStructure.Result.fail(BlastFurnaceStructure.Problem.NEEDS_CASING, pos);
                 }
             }
@@ -69,7 +71,7 @@ public final class ConverterStructure {
         if (!level.getBlockState(top).is(Tier4Blocks.CHARGING_HATCH.get())) {
             return BlastFurnaceStructure.Result.fail(BlastFurnaceStructure.Problem.NEEDS_CHARGING_HATCH, top);
         }
-        return new BlastFurnaceStructure.Result(BlastFurnaceStructure.Problem.NONE, BlockPos.ZERO, List.copyOf(tuyeres), tap, top);
+        return new BlastFurnaceStructure.Result(BlastFurnaceStructure.Problem.NONE, BlockPos.ZERO, List.copyOf(tuyeres), tap, top, List.copyOf(inlets));
     }
 
     private static Direction side(int dx, int dz) {

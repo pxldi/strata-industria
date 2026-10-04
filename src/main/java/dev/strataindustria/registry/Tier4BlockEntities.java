@@ -58,6 +58,10 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.FurnaceHatchBlockEntity>> FURNACE_HATCH =
             ModBlockEntities.BLOCK_ENTITIES.register("furnace_hatch", () -> new BlockEntityType<>(dev.strataindustria.ironworks.FurnaceHatchBlockEntity::new,
                     Tier4Blocks.CHARGING_HATCH.get(), Tier4Blocks.TAP_HATCH.get()));
+    // Spec 8.4: the heat inlet's link to its multiblock.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.heat.HeatInletBlockEntity>> HEAT_INLET =
+            ModBlockEntities.BLOCK_ENTITIES.register("heat_inlet", () -> new BlockEntityType<>(dev.strataindustria.heat.HeatInletBlockEntity::new,
+                    Tier4Blocks.HEAT_INLET.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.BlowerBlockEntity>> BLOWER =
             ModBlockEntities.BLOCK_ENTITIES.register("blower", () -> new BlockEntityType<>(dev.strataindustria.ironworks.BlowerBlockEntity::new,
                     Tier4Blocks.BLOWER.get()));

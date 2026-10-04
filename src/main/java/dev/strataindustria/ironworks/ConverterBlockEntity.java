@@ -1,6 +1,10 @@
 package dev.strataindustria.ironworks;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.heat.HeatInletBlockEntity;
+import dev.strataindustria.heat.HeatIntake;
+import dev.strataindustria.heat.HeatPipeBlock;
+import dev.strataindustria.heat.InletHost;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Quality;
@@ -40,18 +44,23 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The Bessemer converter (tier 4 spec 12.2). Up to 8 pig iron and 2 pieces of iron or steel scrap per 8
- * pig iron go in; a coke preheats each blow. With air on a tuyere a blow takes 30 seconds: the flame at
+ * pig iron go in; a coke preheats each blow, or 30 HU/t at 1250 °C or more through a heat inlet. With
+ * air on a tuyere a blow takes 30 seconds: the flame at
  * the throat climbs to white and then drops, and the charge comes out as one steel ingot per pig iron
  * and per scrap item, with a slag for every 4 pig iron.
  */
-public class ConverterBlockEntity extends BaseContainerBlockEntity implements FurnaceHost {
+public class ConverterBlockEntity extends BaseContainerBlockEntity implements FurnaceHost, InletHost {
     public static final int PIG_IRON = 0, SCRAP = 1, COKE = 2, STEEL = 3, SLAG = 4, SLOTS = 5;
     public static final int MAX_PIG_IRON = 8, MAX_SCRAP = 2, MAX_COKE = 8;
     public static final int BLOW_TICKS = 600;
+    /** Preheat over a heat inlet instead of a coke (spec 8.3 and 12.2). */
+    public static final int PREHEAT_TEMPERATURE = 1250, PREHEAT_HEAT = 30;
+    public static final float PREHEATED = 0.75f;
     /** A charge short of 8 pig iron waits this long for more before it is blown as it is. */
     public static final int SETTLE_TICKS = 40;
     public static final int DATA_STATUS = 0, DATA_PROGRESS = 1, DATA_FLAME = 2, DATA_PROBLEM = 3, DATA_WHERE = 4, DATA_AIR = 5,
-            DATA_CHARGE_PIG = 6, DATA_CHARGE_SCRAP = 7, DATA_COUNT = 8;
+            DATA_CHARGE_PIG = 6, DATA_CHARGE_SCRAP = 7, DATA_INLETS = 8, DATA_HOT_TEMPERATURE = 9, DATA_HOT_HEAT = 10,
+            DATA_HOT_LIMIT = 11, DATA_COUNT = 12;
 
     public enum Status {
         INCOMPLETE, EMPTY, CHARGING, NO_AIR, NEEDS_PREHEAT, OUTPUT_FULL, BLOWING;
@@ -80,6 +89,7 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
     private boolean checked;
     private Status status = Status.INCOMPLETE;
     private BlastFurnaceStructure.Result structure = BlastFurnaceStructure.INCOMPLETE;
+    private final HeatIntake preheat = new HeatIntake(PREHEAT_TEMPERATURE, PREHEAT_HEAT);
 
     private final ContainerData data = new ContainerData() {
         @Override
@@ -93,6 +103,10 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
                 case DATA_AIR -> air;
                 case DATA_CHARGE_PIG -> blowPig;
                 case DATA_CHARGE_SCRAP -> blowScrap;
+                case DATA_INLETS -> structure.inlets().size();
+                case DATA_HOT_TEMPERATURE -> Math.round(preheat.temperature());
+                case DATA_HOT_HEAT -> preheat.heat();
+                case DATA_HOT_LIMIT -> preheat.limit();
                 default -> 0;
             };
         }
@@ -176,12 +190,15 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         if (structure.complete()) {
             claim(structure.tap());
             claim(structure.hatch());
+            for (BlockPos inlet : structure.inlets()) claim(inlet);
         }
         return structure;
     }
 
     private void claim(BlockPos pos) {
-        if (level != null && level.getBlockEntity(pos) instanceof FurnaceHatchBlockEntity hatch) hatch.claim(worldPosition);
+        if (level == null) return;
+        if (level.getBlockEntity(pos) instanceof FurnaceHatchBlockEntity hatch) hatch.claim(worldPosition);
+        if (level.getBlockEntity(pos) instanceof HeatInletBlockEntity inlet) inlet.claim(worldPosition);
     }
 
     /**
@@ -207,6 +224,7 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
             converter.built = complete;
             converter.setChanged();
         }
+        converter.preheat.roll();
         Status before = converter.status;
         converter.status = converter.work(level, pos);
         if (converter.status != before || converter.status == Status.BLOWING) converter.setChanged();
@@ -244,17 +262,20 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         if (pig.isEmpty()) return Status.EMPTY;
         if (pig.getCount() < MAX_PIG_IRON && settle < SETTLE_TICKS) return Status.CHARGING;
         if (air <= 0) return Status.NO_AIR;
-        if (items.get(COKE).isEmpty()) return Status.NEEDS_PREHEAT;
+        // Most of a full supply last tick, after what the pipes lose, does for a coke.
+        boolean heated = preheat.share() >= PREHEATED;
+        if (!heated && items.get(COKE).isEmpty()) return Status.NEEDS_PREHEAT;
         int pigCount = pig.getCount();
         int scrapCount = Math.min(items.get(SCRAP).getCount(), pigCount * MAX_SCRAP / MAX_PIG_IRON);
         if (!fits(STEEL, steel(0), pigCount + scrapCount) || !fits(SLAG, new ItemStack(Tier4Items.SLAG.get()), (slagQuarters + pigCount) / 4)) {
             return Status.OUTPUT_FULL;
         }
-        start(pigCount, scrapCount);
+        start(pigCount, scrapCount, heated);
         return Status.BLOWING;
     }
 
-    private void start(int pigCount, int scrapCount) {
+    /** Starts a blow, preheated by the heat inlet when it is hot enough or else by a coke. */
+    private void start(int pigCount, int scrapCount, boolean heated) {
         ItemStack pig = items.get(PIG_IRON), scrapStack = items.get(SCRAP);
         blowPig = pigCount;
         blowScrap = scrapCount;
@@ -262,7 +283,7 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         blown = 0;
         pig.shrink(pigCount);
         scrapStack.shrink(scrapCount);
-        items.get(COKE).shrink(1);
+        if (!heated) items.get(COKE).shrink(1);
         lastPig = 0;
         settle = 0;
     }
@@ -327,7 +348,35 @@ public class ConverterBlockEntity extends BaseContainerBlockEntity implements Fu
         }
     }
 
+    // ------------------------------------------------------------------ preheat
+
+    @Override
+    public boolean usesInlet(BlockPos inlet) {
+        return structure.complete() && structure.inlets().contains(inlet);
+    }
+
+    /** It draws while a charge waits in the vessel and through the blow. */
+    @Override
+    public int heatDemand(float temperature) {
+        return preheat.demand(temperature, structure.complete() && (blowPig > 0 || !items.get(PIG_IRON).isEmpty()));
+    }
+
+    @Override
+    public int offerHeat(float temperature, int heat) {
+        return preheat.offer(temperature, heat);
+    }
+
+    @Override
+    public void heatRoute(int pipes, @Nullable HeatPipeBlock limitedBy) {
+        preheat.route(limitedBy);
+    }
+
     // ------------------------------------------------------------------ for tests and the screen
+
+    /** The heat that came in through the inlets last tick. */
+    public HeatIntake preheat() {
+        return preheat;
+    }
 
     public Status status() {
         return status;

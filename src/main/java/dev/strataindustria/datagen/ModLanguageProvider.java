@@ -333,6 +333,9 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.BRONZE_FLUID_PIPE, "Bronze Fluid Pipe");
         addBlock(Tier4Blocks.STEEL_FLUID_PIPE, "Steel Fluid Pipe");
         addBlock(Tier4Blocks.PRESSURE_GAUGE, "Pressure Gauge");
+        addBlock(Tier4Blocks.COPPER_HEAT_PIPE, "Copper Heat Pipe");
+        addBlock(Tier4Blocks.REFRACTORY_HEAT_DUCT, "Refractory Heat Duct");
+        addBlock(Tier4Blocks.HEAT_INLET, "Heat Inlet");
         add("fluid_type." + id + ".steam", "Steam");
         add("container." + id + ".firebox", "Firebox");
         add("container." + id + ".bronze_boiler", "Bronze Boiler");
@@ -342,6 +345,18 @@ final class ModLanguageProvider extends LanguageProvider {
         add(firebox + "status.heating", "Heating: %s / %s HU/t");
         add(firebox + "status.cooling", "Out of fuel, cooling");
         add(firebox + "temperature", "%s °C");
+        add(firebox + "blower", "Blower: +%s °C, 1.5× heat");
+        // Spec 8.3: the line a multiblock shows about the heat coming in through its inlets.
+        String heatLine = id + ".heat_line.";
+        add(heatLine + "hot_blast", "Hot blast");
+        add(heatLine + "preheat", "Preheat");
+        add(heatLine + "none", "%s: no heat");
+        add(heatLine + "cold", "%s: %3$s of %2$s °C");
+        add(heatLine + "limited", "%s: pipes cap %s °C");
+        add(heatLine + "fine", "%s: %s °C, %s HU/t");
+        add(heatLine + "limited_by", "Limited by %s (%s °C)");
+        add(heatLine + "needs", "Needs %s °C over a heat inlet");
+        add(heatLine + "pipes", "the pipes");
         String boiler = id + ".boiler.";
         add(boiler + "status.no_heat", "No heat");
         add(boiler + "status.too_cool", "Fire too cool: %2$s °C");
@@ -364,6 +379,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(gauge + "flow", "%s flowing, %s mB/t");
         add(subtitles + "firebox.light", "Firebox catches");
         add(subtitles + "firebox.burn", "Firebox roars");
+        add(subtitles + "heat_pipe.tick", "Heat pipe ticks");
         add(subtitles + "fluid_pipe.refuse", "Pipe clanks");
         add(subtitles + "boiler.heat", "Boiler creaks");
         add(subtitles + "boiler.run", "Boiler rumbles");
@@ -643,6 +659,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.pipe.hint", "Join copper plates with solder into pipe. Copper carries a bronze boiler's steam.");
         add(journal + "t4.boiler", "Raising Steam");
         add(journal + "t4.boiler.hint", "Set a bronze boiler on a burning firebox, fill it with water and wait for the needle to rise.");
+        add(journal + "t4.heat_network", "Heat on the Move");
+        add(journal + "t4.heat_network.hint", "Lay four or more heat pipes from a burning firebox to a boiler or a heat inlet. Copper pipe holds the heat down to 1000 °C.");
         add(journal + "t4.steam_engine", "Steam Power");
         add(journal + "t4.steam_engine.hint", "Pipe a boiler's steam into the back of a steam engine. At 2 bar it turns a shaft at 32 RPM.");
         add(journal + "t4.crusher", "Crushing Power");

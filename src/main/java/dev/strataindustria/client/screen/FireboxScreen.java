@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 
 /**
  * Firebox: four fuel slots under the fire, the gauge on the right (0 to 1750 °C, as on the forge),
- * and two lines saying what the fire makes and where it goes.
+ * and two lines saying what the fire makes, where it goes, and whether a blower fans it.
  */
 public class FireboxScreen extends AbstractContainerScreen<FireboxMenu> {
     private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/firebox.png");
@@ -59,6 +59,9 @@ public class FireboxScreen extends AbstractContainerScreen<FireboxMenu> {
         };
         int colour = status == FireboxBlockEntity.Status.IDLE ? 0xFF8A6A2A : 0xFF404040;
         g.text(font, line, TEXT_X, TEXT_Y, colour, false);
+        if (menu.blown() && menu.output() > 0) {
+            g.text(font, Component.translatable(KEY + "blower", FireboxBlockEntity.BLOWER_TEMPERATURE), TEXT_X, TEXT_Y + 9, 0xFF404040, false);
+        }
         HeatBand band = HeatBand.of(menu.temperature());
         if (band != HeatBand.NONE) {
             Component name = band.displayName();
