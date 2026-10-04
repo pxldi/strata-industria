@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
 
 /**
  * Textures for the world structures (structures spec 10): fibre canvas, pit props, the survey notes item and
- * the survey notes page. Follows the style guide like {@code TextureGen}: 16x16, ramps only, light from the
+ * the survey notes page, and the cracked fire bricks and slag heaps of a ruined bloomery. Follows the style guide like {@code TextureGen}: 16x16, ramps only, light from the
  * top-left, 1 px coloured outline on items.
  *
  * <p>Run from the repository root: {@code java tools/texturegen/StructureTextures.java}. Output is
@@ -24,6 +24,11 @@ public final class StructureTextures {
     static final int[] INK = {0x1e1c1a, 0x2e2a26, 0x46403a, 0x5e5646, 0x7a705e};
     static final int[] MALACHITE = {0x163828, 0x1e4a36, 0x2e6b4a, 0x4a9466, 0x78bf8a};
     static final int[] RUST = {0x3a1a14, 0x5a2a1e, 0x7a3c2a, 0x9a5638, 0xb8744c};
+    // Shared with TextureGen, so the ruin matches the fire bricks and slag the player makes later.
+    static final int[] FIRE_BRICK = {0x6a5434, 0x8c7044, 0xae9058, 0xc8ac72, 0xe0c890};
+    static final int[] CHARCOAL = {0x141416, 0x232327, 0x34343a, 0x4a4a52, 0x626270};
+    static final int[] SLAG = {0x2a2420, 0x3e3632, 0x544a44, 0x6e625a, 0x887c72};
+    static final int[] HEMATITE = {0x2a1416, 0x4a2020, 0x6e3226, 0x8e4a34, 0xae6a4c};
 
     public static void main(String[] args) throws IOException {
         BufferedImage[] preview = {
@@ -32,6 +37,9 @@ public final class StructureTextures {
                 save("block/pit_prop_end", propEnd()),
                 save("item/survey_notes", outline(notes())),
                 save("item/survey_notes_overlay", swatch()),
+                save("block/cracked_fire_bricks", crackedBricks(false)),
+                save("block/cracked_fire_bricks_sooted", crackedBricks(true)),
+                save("block/slag_heap", slagHeap()),
         };
         save("gui/survey_notes", page());
         save("gui/survey_arrows", arrows());
@@ -125,6 +133,115 @@ public final class StructureTextures {
     static int indexOf(int[] ramp, int c) {
         for (int i = 0; i < ramp.length; i++) if (ramp[i] == c) return i;
         return 2;
+    }
+
+    // ---------------------------------------------------------------- ruined bloomery
+
+    /** Hairline cracks across the fire brick bond: stepped diagonals, never straight runs. */
+    static final int[][][] CRACKS = {
+            {{1, 1}, {2, 1}, {3, 2}, {4, 2}, {5, 3}},
+            {{9, 4}, {10, 5}, {10, 6}, {11, 6}, {12, 7}},
+            {{3, 9}, {3, 10}, {4, 10}, {5, 11}},
+            {{12, 12}, {13, 13}, {13, 14}, {14, 14}, {15, 15}, {0, 15}},
+    };
+
+    /**
+     * The fire bricks of the bloomery, broken: the same bond and ramp read from {@code fire_bricks.png}, with
+     * hairline cracks, two chipped corners filled with mortar, and in the sooted variant a cloud of soot over
+     * the upper third.
+     */
+    static BufferedImage crackedBricks(boolean sooted) throws IOException {
+        BufferedImage base = ImageIO.read(OUT.resolve("block/fire_bricks.png").toFile());
+        BufferedImage im = img(16, 16);
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) px(im, x, y, rgb(base, x, y));
+        boolean[][] cracked = new boolean[16][16];
+        for (int[][] crack : CRACKS) {
+            for (int i = 0; i < crack.length; i++) {
+                int x = crack[i][0], y = crack[i][1];
+                // The crack is darkest in the middle and fades into the brick at its ends.
+                boolean end = i == 0 || i == crack.length - 1;
+                px(im, x, y, end ? FIRE_BRICK[0] : CHARCOAL[3]);
+                cracked[y][x] = true;
+            }
+        }
+        // Each crack catches the light on its lower edge, which is what makes it read as a crack.
+        for (int[][] crack : CRACKS) {
+            for (int[] c : crack) {
+                int x = c[0], y = Math.min(15, c[1] + 1);
+                if (!cracked[y][x] && rgb(base, x, y) != FIRE_BRICK[0]) px(im, x, y, FIRE_BRICK[4]);
+            }
+        }
+        // Chipped corners: a brick's corner pixels broken off, showing the mortar behind.
+        int[][] chips = {{6, 4}, {7, 4}, {6, 5}, {13, 8}, {13, 9}};
+        for (int[] c : chips) px(im, c[0], c[1], FIRE_BRICK[c[1] == 5 || c[1] == 9 ? 1 : 0]);
+        if (sooted) {
+            // A cloud of soot over the upper third, thickest at the top, with a ragged lower edge.
+            Random r = new Random(5150);
+            int[] reach = new int[16];
+            // One billow of soot that wraps around the tile edge, so neighbouring blocks do not form a band.
+            for (int x = 0; x < 16; x++) {
+                reach[x] = (int) Math.round(1.5 + 3.5 * Math.sin(Math.PI * 2 * x / 16 + 0.6)) + r.nextInt(2);
+            }
+            for (int y = 0; y < 6; y++) {
+                for (int x = 0; x < 16; x++) {
+                    if (y > reach[x]) continue;
+                    boolean mortar = rgb(base, x, y) == FIRE_BRICK[0];
+                    int depth = reach[x] - y;
+                    int c = mortar ? CHARCOAL[0] : depth >= 3 ? CHARCOAL[1] : CHARCOAL[2];
+                    // Highlights of the brick still show faintly through thin soot.
+                    if (!mortar && depth == 0 && rgb(base, x, y) == FIRE_BRICK[4]) c = CHARCOAL[3];
+                    px(im, x, y, c);
+                }
+            }
+        }
+        return im;
+    }
+
+    /** Up-face rectangles of the slag heap model (x0, y0, x1, y1), each one lump seen from above. */
+    static final int[][] SLAG_LUMPS = {{1, 1, 6, 6}, {9, 3, 13, 7}, {3, 7, 6, 10}, {10, 9, 12, 11}};
+
+    /**
+     * Glassy dark lumps for the slag heap model: each lump's top lit along its top-left edge (step 5), a
+     * rust streak on one lump, a couple of pores, and darker side bands along the bottom rows.
+     */
+    static BufferedImage slagHeap() {
+        BufferedImage im = img(16, 16);
+        Random r = new Random(4242);
+        for (int y = 0; y < 16; y++) {
+            for (int x = 0; x < 16; x++) {
+                int step = y >= 11 ? 1 : 2;
+                if (r.nextInt(5) == 0) step += r.nextBoolean() ? 1 : -1;
+                px(im, x, y, SLAG[Math.max(0, step)]);
+            }
+        }
+        for (int[] l : SLAG_LUMPS) {
+            for (int y = l[1]; y < l[3]; y++) {
+                for (int x = l[0]; x < l[2]; x++) {
+                    int step = 3;
+                    if (y == l[1] && x < l[2] - 1) step = 4;
+                    if (x == l[0] && y < l[3] - 1) step = 4;
+                    if (x == l[2] - 1 || y == l[3] - 1) step = 2;
+                    px(im, x, y, SLAG[step]);
+                }
+            }
+            // The sharp glassy glint where the light catches the corner.
+            px(im, l[0] + 1, l[1], SLAG[4]);
+            px(im, l[0], l[1], SLAG[4]);
+            px(im, l[0] + 1, l[1] + 1, 0xa49a8e);
+        }
+        // Side bands: lit at the top edge, dark at the foot.
+        for (int x = 0; x < 16; x++) {
+            px(im, x, 11, SLAG[2]);
+            px(im, x, 12, SLAG[3]);
+            px(im, x, 15, SLAG[0]);
+        }
+        // Rust weeping out of the second lump, and pores.
+        int[][] rust = {{10, 5}, {11, 5}, {11, 6}, {12, 13}, {13, 14}};
+        for (int[] p : rust) px(im, p[0], p[1], HEMATITE[p[1] == 5 ? 3 : 2]);
+        px(im, 4, 3, SLAG[0]);
+        px(im, 4, 9, SLAG[0]);
+        px(im, 11, 4, SLAG[1]);
+        return im;
     }
 
     // ---------------------------------------------------------------- pit prop

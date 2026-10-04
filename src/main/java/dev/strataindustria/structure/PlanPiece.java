@@ -206,12 +206,14 @@ public class PlanPiece extends StructurePiece {
             case '=' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.X);
             case '|' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z);
             case 'o' -> wood.log();
-            case 'L', 'W' -> ModBlocks.LOG_PILE.get().defaultBlockState();
+            case 'L', 'W', 'l' -> ModBlocks.LOG_PILE.get().defaultBlockState();
             case 'f' -> ModBlocks.FIRE_PIT.get().defaultBlockState();
             case 'F' -> ModBlocks.FORGE.get().defaultBlockState();
             case 'c' -> ModBlocks.CRUCIBLE.get().defaultBlockState();
             case 'A' -> rock.anvil().setValue(AnvilBlock.FACING, Direction.SOUTH);
-            case 'B' -> Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP);
+            case 'B', 'b' -> Blocks.BARREL.defaultBlockState().setValue(BarrelBlock.FACING, Direction.UP);
+            case 'K', 'Y' -> StructureContent.CRACKED_FIRE_BRICKS.get().defaultBlockState();
+            case 'S', 'Z' -> StructureContent.SLAG_HEAP.get().defaultBlockState();
             case 'E' -> bed(BedPart.HEAD);
             case 'e' -> bed(BedPart.FOOT);
             case 'k' -> wood.fence();
@@ -240,7 +242,7 @@ public class PlanPiece extends StructurePiece {
     /** Loot, logs and fuel for the blocks that hold things. */
     private void fill(WorldGenLevel level, RandomSource random, BlockPos pos, char c) {
         switch (c) {
-            case 'B' -> {
+            case 'B', 'b' -> {
                 var table = CampLoot.barrel(planId, mineral);
                 if (table != null) RandomizableContainer.setBlockEntityLootTable(level, random, pos, table);
             }
@@ -249,9 +251,9 @@ public class PlanPiece extends StructurePiece {
                     dig.setLootTable(CampLoot.dig(planId, mineral), Weathering.hash(pos, seed));
                 }
             }
-            case 'L', 'W' -> {
+            case 'L', 'W', 'l' -> {
                 if (level.getBlockEntity(pos) instanceof LogPileBlockEntity pile) {
-                    int logs = c == 'L' ? 4 : 6;
+                    int logs = c == 'l' ? 2 : c == 'L' ? 4 : 6;
                     for (int i = 0; i < logs; i++) pile.add(new ItemStack(wood.logItem()));
                 }
             }

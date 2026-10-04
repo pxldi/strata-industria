@@ -90,6 +90,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.PULLEY.getKey()).add(ModBlocks.WINDMILL_BEARING.getKey()).add(ModBlocks.WINDMILL_SAIL.getKey())
                 .add(ModBlocks.SOAKING_BARREL.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MILLSTONE.getKey());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(StructureContent.CRACKED_FIRE_BRICKS.getKey());
         tag(BlockTags.SLABS).add(ModBlocks.FIRE_BRICK_SLAB.getKey());
         tag(BlockTags.STAIRS).add(ModBlocks.FIRE_BRICK_STAIRS.getKey());
         tag(BlockTags.WALLS).add(ModBlocks.FIRE_BRICK_WALL.getKey());

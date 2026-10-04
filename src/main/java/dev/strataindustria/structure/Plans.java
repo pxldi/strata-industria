@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Every building plan of the wave 1 structures (structures spec 6.1 to 6.4). Plans face south: the open
+ * Every building plan of the world structures (structures spec 6). Plans face south: the open
  * side of a tent or shed is at the bottom of the drawing. A portal's mouth is at the top and the tunnel
  * runs south into the hill. The pieces turn them to face the right way.
  */
@@ -444,6 +444,73 @@ public final class Plans {
                     "mRRRRRm",
                     " RRRRR ",
                     " ===== ",
+            }));
+
+    // ---------------------------------------------------------------- 6.5 ruined bloomery
+
+    /**
+     * The stump of a bloomery: the base ring around its chamber, broken where the door stood, and two
+     * courses of the chimney above it, with fallen bricks and slag around. The footprint matches a real
+     * bloomery, so a player holding a controller sees the preview line up with the ruin.
+     */
+    public static final Plan BLOOMERY_STUMP = add(Plan.of("ruined_bloomery/stump", Kind.LEVELLED,
+            new String[] {
+                    "",
+                    "",
+                    "    ,,,    ",
+                    "   ,,,,,   ",
+                    "   ,,,,,   ",
+                    "   ,,K,,   ",
+                    "    ,,,    ",
+                    "",
+                    "     b     ",
+            },
+            new String[] {
+                    "",
+                    "  S     Z  ",
+                    "",
+                    "    KKK    ",
+                    "    KSK    ",
+                    "    # #    ",
+                    "",
+                    "  K     S  ",
+                    "      #    ",
+                    "   Z       ",
+                    "",
+            },
+            new String[] {
+                    "",
+                    "",
+                    "",
+                    "     K     ",
+                    "    Y.K    ",
+            },
+            new String[] {
+                    "",
+                    "",
+                    "",
+                    "     K     ",
+            }));
+
+    /** Where the bloomery's charcoal was burned: a scorched ring, and a row of piles nobody came back for. */
+    public static final Plan CHARCOAL_SCAR = add(Plan.of("ruined_bloomery/charcoal_scar", Kind.TERRAIN,
+            new String[] {
+                    " ,,,,, ",
+                    ",,ddd,,",
+                    ",d,,,d,",
+                    ",d,,,d,",
+                    ",d,,,d,",
+                    ",,ddd,,",
+                    " ,,,,, ",
+            },
+            new String[] {
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    " llll  ",
             }));
 
     private static String[] portalWalls() {

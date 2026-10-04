@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/slag_heap"
+      },
+      {
+        "model": "strataindustria:block/slag_heap",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/slag_heap",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/slag_heap",
+        "y": 270
+      }
+    ]
+  }
+}
