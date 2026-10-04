@@ -2925,8 +2925,74 @@ public final class ElectricTextures {
         chemistry();
         hammerAndExtruder();
         overheadLines();
+        handTools();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");
+    }
+
+    // ---------------------------------------------------------------- hand tools (spec 13)
+
+    static final TextureGen.Ramp SCREEN = TextureGen.ramp(0xcff5c0, 0x0e2a14, 0x1e4a26, 0x2e7a36, 0x4fae4a, 0x8ad66a);
+
+    /** Spec 13.1: a steel spanner on the diagonal with an open jaw at the top right and a rubber grip, 16x16. */
+    static BufferedImage wrenchImage() {
+        BufferedImage im = TextureGen.img();
+        double ax = 3.5, ay = 12.5, bx = 10.0, by = 6.0; // handle axis
+        double hx = 11.0, hy = 4.5, hr = 3.4;            // head centre and radius
+        double dx = bx - ax, dy = by - ay, len2 = dx * dx + dy * dy, len = Math.sqrt(len2);
+        for (int y = 0; y < 16; y++) {
+            for (int x = 0; x < 16; x++) {
+                double px = x + 0.5, py = y + 0.5;
+                double t = Math.clamp(((px - ax) * dx + (py - ay) * dy) / len2, 0, 1);
+                double dist = Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+                // signed offset across the handle: negative on the lit top-left side
+                double across = ((px - ax) * dy - (py - ay) * dx) / len;
+                boolean handle = dist <= 1.15;
+                double hd = Math.hypot(px - hx, py - hy);
+                boolean head = hd <= hr;
+                // the jaw: a slot opening up and to the right of the head centre
+                double along = ((px - hx) * 1 + (py - hy) * -1) / Math.sqrt(2);
+                double side = ((px - hx) * 1 + (py - hy) * 1) / Math.sqrt(2);
+                if (head && along > 0.2 && Math.abs(side) < 1.1) head = false;
+                if (!handle && !head) continue;
+                int level;
+                if (head) {
+                    double lit = (px - hx) + (py - hy);
+                    level = lit < -2.0 ? 5 : lit < -0.4 ? 4 : lit < 1.6 ? 3 : 2;
+                } else {
+                    level = across < -0.6 ? 5 : across < 0.4 ? 4 : 2;
+                }
+                boolean grip = handle && !head && t < 0.42;
+                int colour = grip ? RUBBER.get(Math.max(2, level - 1)) : STEEL.get(level);
+                TextureGen.px(im, x, y, colour);
+            }
+        }
+        return TextureGen.outline(im);
+    }
+
+    /** Spec 13.2: a handheld scanner, steel casing, green screen with ore blips, copper aerial and buttons, 10x14. */
+    static String[] scannerRows() {
+        return new String[]{
+                "....c.....",
+                "....c.....",
+                ".55555555.",
+                "4444444443",
+                "43ffffff32",
+                "43fhhhhf32",
+                "43fhihjf32",
+                "43fhhhhf32",
+                "43ffffff32",
+                "4333333332",
+                "43c3dd3332",
+                "4333333332",
+                "3222222221",
+                ".11111111.",
+        };
+    }
+
+    static void handTools() throws IOException {
+        save("item/wrench", wrenchImage());
+        save("item/ore_scanner", grid(scannerRows(), STEEL, COPPER, SCREEN));
     }
 
     static void preview() throws IOException {

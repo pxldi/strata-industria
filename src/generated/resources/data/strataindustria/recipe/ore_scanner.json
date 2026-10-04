@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "E": "strataindustria:lead_acid_cell",
+    "G": "minecraft:glass_pane",
+    "P": "strataindustria:steel_plate",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    "GCG",
+    "WEW",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:ore_scanner"
+  }
+}

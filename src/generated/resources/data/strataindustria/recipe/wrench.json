@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "P": "strataindustria:steel_plate",
+    "R": "strataindustria:steel_rod"
+  },
+  "pattern": [
+    "P P",
+    " P ",
+    " R "
+  ],
+  "result": {
+    "id": "strataindustria:wrench"
+  }
+}

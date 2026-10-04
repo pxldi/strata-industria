@@ -490,6 +490,15 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier5Sounds.MACHINE_POWER_ON, definition().subtitle(subtitle("block.machine.power_on"))
                 .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.6f))
                 .with(sound("minecraft:block.beacon.activate", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));
+        add(Tier5Sounds.WRENCH_TURN, definition().subtitle(subtitle("item.wrench.turn"))
+                .with(sound("minecraft:block.chain.hit", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.7f))
+                .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.5f)));
+        add(Tier5Sounds.ORE_SCANNER_SCAN, definition().subtitle(subtitle("item.ore_scanner.scan"))
+                .with(sound("minecraft:block.beacon.power_select", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.35f))
+                .with(sound("minecraft:block.amethyst_block.resonate", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.4f)));
+        add(Tier5Sounds.ORE_SCANNER_DONE, definition().subtitle(subtitle("item.ore_scanner.done"))
+                .with(sound("minecraft:block.note_block.bell", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.6f))
+                .with(sound("minecraft:block.note_block.bell", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.5f)));
         add(Tier5Sounds.MACHINE_UPGRADE, definition().subtitle(subtitle("block.machine.upgrade"))
                 .with(sound("minecraft:block.smithing_table.use", SoundDefinition.SoundType.EVENT).pitch(1.1f))
                 .with(sound("minecraft:block.chain.place", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.6f))

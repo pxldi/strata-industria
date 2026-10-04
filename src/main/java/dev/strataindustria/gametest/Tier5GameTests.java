@@ -2,6 +2,9 @@ package dev.strataindustria.gametest;
 
 import com.mojang.authlib.GameProfile;
 import dev.strataindustria.electric.BatteryBoxBlock;
+import dev.strataindustria.electric.TransformerBlock;
+import dev.strataindustria.electric.WrenchItem;
+import dev.strataindustria.prospecting.OreScannerItem;
 import dev.strataindustria.electric.ElectricHeaterBlockEntity;
 import dev.strataindustria.electric.ElectricPumpBlock;
 import dev.strataindustria.electric.ElectricPumpBlockEntity;
@@ -111,6 +114,8 @@ final class Tier5GameTests {
         tests.put("tier5_power_hammer_weld", Tier5GameTests::powerHammerWeld);
         tests.put("tier5_extruder", Tier5GameTests::extruder);
         tests.put("tier5_mv_upgrade", Tier5GameTests::mvUpgrade);
+        tests.put("tier5_wrench", Tier5GameTests::wrench);
+        tests.put("tier5_ore_scanner", Tier5GameTests::oreScanner);
         tests.put("tier5_transformer", Tier5GameTests::transformer);
         tests.put("tier5_energy_adapter", Tier5GameTests::energyAdapter);
         tests.put("tier5_overhead_line", Tier5GameTests::overheadLine);
@@ -572,6 +577,77 @@ final class Tier5GameTests {
     // into hydrogen and oxygen; a full hydrogen tank stops the electrolyser.
     // Spec 9.5: sneak-using a kit makes an LV machine MV in place, keeping its contents and facing and costing one
     // kit; the machine drops with machine_tier = mv and places back as MV; a battery box keeps its charge too.
+    // Spec 13.1: the wrench turns a machine to the clicked side, flips a transformer, and with sneak takes an MV machine
+    // back to LV (contents kept, kit returned); it does nothing to blocks it does not know.
+    @SuppressWarnings("removal")
+    private static void wrench(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(pos, Tier5Blocks.MACERATOR.get().defaultBlockState().setValue(ElectricMachineBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        ElectricMachineBlockEntity macerator = (ElectricMachineBlockEntity) level.getBlockEntity(pos);
+        macerator.setItem(0, new ItemStack(Items.COBBLESTONE, 3));
+        player.setShiftKeyDown(false);
+        net.minecraft.world.phys.BlockHitResult east = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.EAST, pos, false);
+        helper.assertTrue(WrenchItem.apply(level, pos, player, east) == net.minecraft.world.InteractionResult.SUCCESS, "the wrench handles a machine");
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.FACING), Direction.EAST, "the machine faces the clicked side");
+        net.minecraft.world.phys.BlockHitResult up = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.UP, pos, false);
+        WrenchItem.apply(level, pos, player, up);
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.FACING), Direction.SOUTH, "the top turns it a quarter");
+
+        BlockPos tPos = pos.south(2);
+        level.setBlock(tPos, Tier5Blocks.TRANSFORMER.get().defaultBlockState(), Block.UPDATE_ALL);
+        boolean before = level.getBlockState(tPos).getValue(TransformerBlock.STEP_UP);
+        WrenchItem.apply(level, tPos, player, new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(tPos), Direction.UP, tPos, false));
+        helper.assertTrue(level.getBlockState(tPos).getValue(TransformerBlock.STEP_UP) != before, "the wrench flips the transformer");
+
+        player.setShiftKeyDown(true);
+        WrenchItem.apply(level, pos, player, up);
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.TIER), ElectricTier.LV, "an LV machine stays LV");
+        level.setBlock(pos, level.getBlockState(pos).setValue(ElectricMachineBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
+        WrenchItem.apply(level, pos, player, up);
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.TIER), ElectricTier.LV, "sneak takes an MV machine back to LV");
+        helper.assertValueEqual(macerator.getItem(0).getCount(), 3, "contents are kept");
+        helper.assertTrue(player.getInventory().contains(new ItemStack(Tier5Items.MV_UPGRADE_KIT.get())), "the kit comes back");
+
+        BlockPos stone = pos.south(4);
+        level.setBlock(stone, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        helper.assertTrue(WrenchItem.apply(level, stone, player, up) == net.minecraft.world.InteractionResult.PASS, "stone is none of its business");
+        helper.succeed();
+    }
+
+    // Spec 13.2: a battery box charges the scanner; a scan costs 1000 J, covers the 3 x 3 chunks around the player and
+    // reports the ore with its count, Y range and grade; the result stays on the item.
+    @SuppressWarnings("removal")
+    private static void oreScanner(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        BlockPos boxPos = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        ((BatteryBoxBlockEntity) level.getBlockEntity(boxPos)).setStored(4000);
+        ItemStack scanner = new ItemStack(Tier5Items.ORE_SCANNER.get());
+        helper.assertTrue(!OreScannerItem.scan(level, player, scanner), "an empty scanner cannot scan");
+        OreScannerItem.charge(level, boxPos, player, scanner);
+        helper.assertValueEqual(OreScannerItem.energy(scanner), 4000, "the scanner takes what the box has");
+        helper.assertValueEqual(((BatteryBoxBlockEntity) level.getBlockEntity(boxPos)).stored(), 0.0, "and the box is drained");
+
+        BlockPos ore = helper.absolutePos(new BlockPos(2, 1, 2));
+        level.setBlock(ore, ModBlocks.BOG_IRON.get().defaultBlockState(), Block.UPDATE_ALL);
+        player.setPos(ore.getX() + 0.5, ore.getY(), ore.getZ() + 0.5);
+        helper.assertTrue(OreScannerItem.scan(level, player, scanner), "a charged scanner scans");
+        helper.assertValueEqual(OreScannerItem.energy(scanner), 3000, "a scan costs 1000 J");
+        dev.strataindustria.prospecting.OreScan scan = scanner.get(Tier5DataComponents.ORE_SCAN.get());
+        helper.assertTrue(scan != null, "the result stays on the item");
+        helper.assertValueEqual(scan.tiles().size(), 9, "nine chunks");
+        Integer count = scan.totals().get("limonite");
+        helper.assertTrue(count != null && count >= 1, "the bog iron is found");
+        helper.assertTrue(scan.tiles().stream().anyMatch(tile -> tile.finds().stream().anyMatch(find -> find.ore().equals("limonite")
+                && find.minY() <= ore.getY() && find.maxY() >= ore.getY())), "with the Y range");
+        helper.succeed();
+    }
+
     @SuppressWarnings("removal")
     private static void mvUpgrade(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();

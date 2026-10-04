@@ -365,6 +365,26 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .requires(Tier5Items.ELECTRIC_MOTOR.get())
                 .unlockedBy("has_aluminium_plate", has(ModItems.PLATES.get(Metal.ALUMINIUM).get()))
                 .save(output, key("mv_upgrade_kit"));
+        // Spec 13.1 and 13.2: the wrench and the ore scanner.
+        shaped(RecipeCategory.TOOLS, Tier5Items.WRENCH.get())
+                .pattern("P P")
+                .pattern(" P ")
+                .pattern(" R ")
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('R', ModItems.RODS.get(Metal.STEEL).get())
+                .unlockedBy("has_steel_rod", has(ModItems.RODS.get(Metal.STEEL).get()))
+                .save(output, key("wrench"));
+        shaped(RecipeCategory.TOOLS, Tier5Items.ORE_SCANNER.get())
+                .pattern("GCG")
+                .pattern("WEW")
+                .pattern("PPP")
+                .define('G', Items.GLASS_PANE)
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('W', Tier5Items.COPPER_WIRE.get())
+                .define('E', Tier5Items.LEAD_ACID_CELL.get())
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .unlockedBy("has_lead_acid_cell", has(Tier5Items.LEAD_ACID_CELL.get()))
+                .save(output, key("ore_scanner"));
         // Spec 8.2 and 8.5: the transformer and the energy adapter.
         shaped(RecipeCategory.REDSTONE, Tier5Items.TRANSFORMER.get())
                 .pattern(" Q ")

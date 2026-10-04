@@ -1868,6 +1868,40 @@
     ],
     "subtitle": "subtitles.strataindustria.item.bucket.fill_crude_oil"
   },
+  "item.ore_scanner.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bell",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.bell",
+        "pitch": 2.0,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.item.ore_scanner.done"
+  },
+  "item.ore_scanner.scan": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.power_select",
+        "pitch": 1.4,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.resonate",
+        "pitch": 1.6,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.item.ore_scanner.scan"
+  },
   "item.survey_notes.found": {
     "sounds": [
       {
@@ -1902,6 +1936,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.survey_notes.open"
+  },
+  "item.wrench.turn": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.5,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 1.2,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.item.wrench.turn"
   },
   "journal.cross_off": {
     "sounds": [

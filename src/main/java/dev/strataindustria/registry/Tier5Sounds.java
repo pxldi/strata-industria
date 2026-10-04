@@ -54,6 +54,13 @@ public final class Tier5Sounds {
     /** A steady puttering thrum. */
     public static final DeferredHolder<SoundEvent, SoundEvent> COMBUSTION_GENERATOR_RUN = register("block.combustion_generator.run");
 
+    /** Spec 13.1: a short ratchet click as the wrench turns a nut. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> WRENCH_TURN = register("item.wrench.turn");
+    /** Spec 13.2: the scanner charges up with a rising chirp. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ORE_SCANNER_SCAN = register("item.ore_scanner.scan");
+    /** Spec 13.2: two clear pings when the scan is done. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ORE_SCANNER_DONE = register("item.ore_scanner.done");
+
     /** Spec 23.6: the mixer's paddle sloshing. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MIXER_STIR = register("block.mixer.stir");
     /** Fizzing bubbles with a low hum. */

@@ -89,6 +89,13 @@ public final class Tier5Items {
     public static final DeferredItem<BlockItem> ELECTRIC_PUMP = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTRIC_PUMP);
     public static final DeferredItem<MachineBlockItem> KINETIC_MOTOR = machineItem("kinetic_motor", Tier5Blocks.KINETIC_MOTOR);
 
+    /** Spec 13.1: turns machines, steps item pipe faces, flips transformers and takes MV machines back to LV. */
+    public static final DeferredItem<dev.strataindustria.electric.WrenchItem> WRENCH = ModItems.ITEMS.registerItem("wrench",
+            dev.strataindustria.electric.WrenchItem::new, p -> p.stacksTo(1));
+    /** Spec 13.2: prospecting IV, a 3 x 3 chunk ore map for 1000 J a scan. */
+    public static final DeferredItem<dev.strataindustria.prospecting.OreScannerItem> ORE_SCANNER = ModItems.ITEMS.registerItem("ore_scanner",
+            dev.strataindustria.prospecting.OreScannerItem::new, p -> p.stacksTo(1));
+
     public static final DeferredItem<net.minecraft.world.item.BlockItem> TRANSFORMER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.TRANSFORMER);
     public static final DeferredItem<MachineBlockItem> ENERGY_ADAPTER = machineItem("energy_adapter", Tier5Blocks.ENERGY_ADAPTER);
 
