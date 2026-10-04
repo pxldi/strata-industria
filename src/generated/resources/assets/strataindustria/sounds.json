@@ -104,6 +104,35 @@
     ],
     "subtitle": "subtitles.strataindustria.firestarter.drill"
   },
+  "forge.ignite": {
+    "sounds": [
+      {
+        "name": "fire/ignite",
+        "pitch": 0.7
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 0.8,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.forge.ignite"
+  },
+  "heat.quench": {
+    "sounds": [
+      {
+        "name": "random/fizz",
+        "pitch": 1.4,
+        "volume": 0.6
+      },
+      {
+        "name": "random/fizz",
+        "pitch": 1.7,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.heat.quench"
+  },
   "knapping.finish": {
     "sounds": [
       {

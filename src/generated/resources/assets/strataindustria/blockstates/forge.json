@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "hot=false,lit=false": {
+      "model": "strataindustria:block/forge"
+    },
+    "hot=false,lit=true": {
+      "model": "strataindustria:block/forge_lit"
+    },
+    "hot=true,lit=false": {
+      "model": "strataindustria:block/forge_hot"
+    },
+    "hot=true,lit=true": {
+      "model": "strataindustria:block/forge_lit"
+    }
+  }
+}
