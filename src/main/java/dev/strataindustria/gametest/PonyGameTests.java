@@ -94,7 +94,7 @@ final class PonyGameTests {
     }
 
     private static List<PonyEntity> ponies(GameTestHelper helper) {
-        return helper.getLevel().getEntitiesOfClass(PonyEntity.class, AABB.encapsulatingFullBlocks(helper.absolutePos(new BlockPos(-4, 0, -4)), helper.absolutePos(new BlockPos(30, 30, 12))));
+        return helper.getLevel().getEntitiesOfClass(PonyEntity.class, helper.getBounds().inflate(2));
     }
 
     // ---------------------------------------------------------------- harness
