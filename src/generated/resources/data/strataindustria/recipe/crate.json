@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": "#minecraft:planks",
+    "T": "strataindustria:twine"
+  },
+  "pattern": [
+    "PPP",
+    "T T",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:crate"
+  }
+}

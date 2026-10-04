@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_rubble_1",
+  "textures": {
+    "rock": "strataindustria:block/cobbled_shale"
+  }
+}

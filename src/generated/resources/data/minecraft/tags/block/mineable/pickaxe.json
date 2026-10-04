@@ -186,6 +186,22 @@
     "strataindustria:granite_anvil",
     "strataindustria:gabbro_anvil",
     "strataindustria:basalt_anvil",
-    "strataindustria:rhyolite_anvil"
+    "strataindustria:rhyolite_anvil",
+    "strataindustria:cracked_limestone",
+    "strataindustria:mossy_cobbled_limestone",
+    "strataindustria:cracked_shale",
+    "strataindustria:mossy_cobbled_shale",
+    "strataindustria:cracked_slate",
+    "strataindustria:mossy_cobbled_slate",
+    "strataindustria:cracked_marble",
+    "strataindustria:mossy_cobbled_marble",
+    "strataindustria:cracked_granite",
+    "strataindustria:mossy_cobbled_granite",
+    "strataindustria:cracked_gabbro",
+    "strataindustria:mossy_cobbled_gabbro",
+    "strataindustria:cracked_basalt",
+    "strataindustria:mossy_cobbled_basalt",
+    "strataindustria:cracked_rhyolite",
+    "strataindustria:mossy_cobbled_rhyolite"
   ]
 }

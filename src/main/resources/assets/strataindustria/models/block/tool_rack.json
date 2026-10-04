@@ -1,0 +1,260 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "rack": "strataindustria:block/tool_rack",
+    "particle": "#rack"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        13
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#rack"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#rack",
+          "cullface": "south"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            3,
+            16
+          ],
+          "texture": "#rack",
+          "cullface": "east"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            3,
+            16
+          ],
+          "texture": "#rack",
+          "cullface": "west"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ],
+          "texture": "#rack",
+          "cullface": "up"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            3
+          ],
+          "texture": "#rack",
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        9,
+        10
+      ],
+      "to": [
+        4,
+        11,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            5,
+            4,
+            7
+          ],
+          "texture": "#rack"
+        },
+        "east": {
+          "uv": [
+            1,
+            6,
+            4,
+            8
+          ],
+          "texture": "#rack"
+        },
+        "west": {
+          "uv": [
+            1,
+            6,
+            4,
+            8
+          ],
+          "texture": "#rack"
+        },
+        "up": {
+          "uv": [
+            2,
+            1,
+            4,
+            4
+          ],
+          "texture": "#rack"
+        },
+        "down": {
+          "uv": [
+            2,
+            1,
+            4,
+            4
+          ],
+          "texture": "#rack"
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        9,
+        10
+      ],
+      "to": [
+        9,
+        11,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            5,
+            9,
+            7
+          ],
+          "texture": "#rack"
+        },
+        "east": {
+          "uv": [
+            1,
+            6,
+            4,
+            8
+          ],
+          "texture": "#rack"
+        },
+        "west": {
+          "uv": [
+            1,
+            6,
+            4,
+            8
+          ],
+          "texture": "#rack"
+        },
+        "up": {
+          "uv": [
+            7,
+            1,
+            9,
+            4
+          ],
+          "texture": "#rack"
+        },
+        "down": {
+          "uv": [
+            7,
+            1,
+            9,
+            4
+          ],
+          "texture": "#rack"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        9,
+        10
+      ],
+      "to": [
+        14,
+        11,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            5,
+            14,
+            7
+          ],
+          "texture": "#rack"
+        },
+        "east": {
+          "uv": [
+            1,
+            6,
+            4,
+            8
+          ],
+          "texture": "#rack"
+        },
+        "west": {
+          "uv": [
+            1,
+            6,
+            4,
+            8
+          ],
+          "texture": "#rack"
+        },
+        "up": {
+          "uv": [
+            12,
+            1,
+            14,
+            4
+          ],
+          "texture": "#rack"
+        },
+        "down": {
+          "uv": [
+            12,
+            1,
+            14,
+            4
+          ],
+          "texture": "#rack"
+        }
+      }
+    }
+  ]
+}

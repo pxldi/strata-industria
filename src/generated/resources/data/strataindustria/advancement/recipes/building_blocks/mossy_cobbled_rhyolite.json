@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cobbled": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:cobbled_rhyolite"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:mossy_cobbled_rhyolite"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cobbled"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:mossy_cobbled_rhyolite"
+    ]
+  }
+}

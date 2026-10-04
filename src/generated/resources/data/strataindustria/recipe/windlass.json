@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "L": "#minecraft:logs",
+    "S": "minecraft:stick",
+    "T": "strataindustria:twine"
+  },
+  "pattern": [
+    "S S",
+    "SLS",
+    "T T"
+  ],
+  "result": {
+    "id": "strataindustria:windlass"
+  }
+}

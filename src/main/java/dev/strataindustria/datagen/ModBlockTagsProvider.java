@@ -1,5 +1,6 @@
 package dev.strataindustria.datagen;
 
+import dev.strataindustria.structure.SharedBlocks;
 import dev.strataindustria.structure.StructureContent;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.geology.OreMineral;
@@ -191,5 +192,12 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.PIT_KILN.getKey()).add(ModBlocks.CHARCOAL_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(StructureContent.PIT_PROP.getKey());
+        // Structures v2 shared blocks.
+        tag(BlockTags.MINEABLE_WITH_AXE).add(SharedBlocks.CRATE.getKey()).add(SharedBlocks.ORE_CART.getKey())
+                .add(SharedBlocks.TOOL_RACK.getKey()).add(SharedBlocks.WINDLASS.getKey()).add(SharedBlocks.SLUICE_BOX.getKey())
+                .add(SharedBlocks.SMOULDERING_LOG_PILE.getKey());
+        for (Rock rock : Rock.values()) {
+            tag(BlockTags.MINEABLE_WITH_PICKAXE).add(SharedBlocks.CRACKED.get(rock).getKey()).add(SharedBlocks.MOSSY_COBBLED.get(rock).getKey());
+        }
     }
 }

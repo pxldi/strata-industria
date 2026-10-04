@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "locked=false": {
+      "model": "strataindustria:block/crate"
+    },
+    "locked=true": {
+      "model": "strataindustria:block/crate_locked"
+    }
+  }
+}

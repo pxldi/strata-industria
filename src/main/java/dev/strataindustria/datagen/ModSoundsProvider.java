@@ -6,6 +6,7 @@ import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.registry.Tier5Sounds;
 import dev.strataindustria.registry.Tier6Sounds;
+import dev.strataindustria.structure.SharedBlocks;
 import dev.strataindustria.structure.StructureContent;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.SoundDefinition;
@@ -21,6 +22,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
     public void registerSounds() {
         tier5();
         tier6();
+        shared();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -535,5 +537,49 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier5Sounds.TRANSFORMER_SWITCH, definition().subtitle(subtitle("block.transformer.switch"))
                 .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.9f))
                 .with(sound("minecraft:block.iron_trapdoor.close", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f)));
+    }
+
+    /** The shared structure blocks (structures v2 section 5), built from vanilla wood, fire, chain and gravel sounds. */
+    private void shared() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(SharedBlocks.CRATE_OPEN, definition().subtitle(subtitle("crate.open"))
+                .with(sound("minecraft:block.barrel.open", event).pitch(1.25f).volume(0.7f)));
+        add(SharedBlocks.CRATE_CLOSE, definition().subtitle(subtitle("crate.close"))
+                .with(sound("minecraft:block.barrel.close", event).pitch(1.3f).volume(0.7f)));
+        add(SharedBlocks.CRATE_LOCKED, definition().subtitle(subtitle("crate.locked"))
+                .with(sound("minecraft:block.wood.hit", event).pitch(0.7f).weight(2))
+                .with(sound("minecraft:block.chest.locked", event).pitch(1.5f).volume(0.5f)));
+        add(SharedBlocks.CRATE_UNLOCK, definition().subtitle(subtitle("crate.unlock"))
+                .with(sound("minecraft:block.wooden_trapdoor.open", event).pitch(1.3f).volume(0.8f))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.1f).volume(0.6f)));
+        add(SharedBlocks.MINERS_LAMP_LIGHT, definition().subtitle(subtitle("miners_lamp.light"))
+                .with(sound("minecraft:item.flintandsteel.use", event).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.fire.ambient", event).pitch(1.6f).volume(0.5f)));
+        add(SharedBlocks.MINERS_LAMP_SNUFF, definition().subtitle(subtitle("miners_lamp.snuff"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.7f).volume(0.35f)));
+        add(SharedBlocks.MINERS_LAMP_FLUTTER, definition().subtitle(subtitle("miners_lamp.flutter"))
+                .with(sound("minecraft:block.candle.ambient", event).pitch(1.0f).volume(0.5f))
+                .with(sound("minecraft:block.fire.ambient", event).pitch(1.9f).volume(0.3f)));
+        add(SharedBlocks.ORE_CART_RATTLE, definition().subtitle(subtitle("ore_cart.rattle"))
+                .with(sound("minecraft:block.chain.place", event).pitch(0.7f).weight(2))
+                .with(sound("minecraft:block.gravel.hit", event).pitch(0.8f).volume(0.7f)));
+        add(SharedBlocks.TOOL_RACK_CLINK, definition().subtitle(subtitle("tool_rack.clink"))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.4f).volume(0.6f))
+                .with(sound("minecraft:item.armor.equip_iron", event).pitch(1.3f).volume(0.35f)));
+        add(SharedBlocks.RUBBLE_BREAK, definition().subtitle(subtitle("rubble.break"))
+                .with(sound("minecraft:block.gravel.break", event).pitch(0.8f).weight(3))
+                .with(sound("minecraft:block.stone.break", event).pitch(1.4f).volume(0.5f)));
+        add(SharedBlocks.RUBBLE_STEP, definition().subtitle("subtitles.block.generic.footsteps")
+                .with(sound("minecraft:block.gravel.step", event).weight(3))
+                .with(sound("minecraft:block.stone.step", event).pitch(1.3f).volume(0.4f)));
+        add(SharedBlocks.CRACKED_ROCK_BREAK, definition().subtitle(subtitle("cracked_rock.break"))
+                .with(sound("minecraft:block.stone.break", event).pitch(0.85f).weight(2))
+                .with(sound("minecraft:block.gravel.break", event).pitch(1.1f).volume(0.5f)));
+        add(SharedBlocks.SMOULDERING_CRACKLE, definition().subtitle(subtitle("smouldering_log_pile.crackle"))
+                .with(sound("minecraft:block.campfire.crackle", event).pitch(0.6f).volume(0.7f))
+                .with(sound("minecraft:block.fire.ambient", event).pitch(0.5f).volume(0.5f)));
+        add(SharedBlocks.WINDLASS_CREAK, definition().subtitle(subtitle("windlass.creak"))
+                .with(sound("minecraft:block.scaffolding.place", event).pitch(0.65f).volume(0.5f))
+                .with(sound("minecraft:block.ladder.step", event).pitch(0.6f).volume(0.6f)));
     }
 }

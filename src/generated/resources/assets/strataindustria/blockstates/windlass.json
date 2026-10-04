@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/windlass",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/windlass"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/windlass",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/windlass",
+      "y": 270
+    }
+  }
+}

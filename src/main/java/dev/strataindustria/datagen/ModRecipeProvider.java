@@ -99,6 +99,7 @@ final class ModRecipeProvider extends RecipeProvider {
         tier4();
         new Tier5RecipeProvider(recipeContext, advancementContext).buildRecipes();
         new StructureData.CollectibleRecipes(recipeContext, advancementContext).buildRecipes();
+        new SharedBlockData.Recipes(recipeContext, advancementContext).buildRecipes();
         vanillaOverrides();
     }
 

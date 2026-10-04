@@ -64,6 +64,7 @@ public final class DataGenerators {
                                         ModBlockLoot::new,
                                         LootContextParamSets.BLOCK),
                                         new LootTableProvider.SubProviderEntry(StructureData.BlockLoot::new, LootContextParamSets.BLOCK),
+                                        new LootTableProvider.SubProviderEntry(SharedBlockData.Loot::new, LootContextParamSets.BLOCK),
                                         new LootTableProvider.SubProviderEntry(StructureData.ChestLoot::new, LootContextParamSets.CHEST),
                                         new LootTableProvider.SubProviderEntry(StructureData.ArchaeologyLoot::new,
                                                 LootContextParamSets.ARCHAEOLOGY)))),

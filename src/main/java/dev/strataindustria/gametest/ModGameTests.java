@@ -123,6 +123,7 @@ public final class ModGameTests {
         JournalGameTests.register(TESTS);
         StructureGameTests.register(TESTS);
         CollectibleGameTests.register(TESTS);
+        SharedBlockGameTests.register(TESTS);
     }
 
     private ModGameTests() {}
