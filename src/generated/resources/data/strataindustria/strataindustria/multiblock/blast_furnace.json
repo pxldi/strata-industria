@@ -1,0 +1,194 @@
+{
+  "controller": "strataindustria:blast_furnace_controller",
+  "layers": [
+    {
+      "rows": [
+        "h@h",
+        "the",
+        "hph"
+      ]
+    },
+    {
+      "rows": [
+        "hhh",
+        "h_h",
+        "hhh"
+      ]
+    },
+    {
+      "rows": [
+        "rrr",
+        "r_r",
+        "rrr"
+      ]
+    },
+    {
+      "rows": [
+        "rrr",
+        "r_r",
+        "rrr"
+      ]
+    },
+    {
+      "rows": [
+        "rrr",
+        "rHr",
+        "rrr"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "layer": 0,
+      "max": 1,
+      "problem": "needs_tap_hatch",
+      "role": "tap"
+    },
+    {
+      "layer": 0,
+      "problem": "needs_tuyere",
+      "role": "tuyere"
+    }
+  ],
+  "symbols": {
+    "H": {
+      "accepts": [
+        {
+          "block": "strataindustria:charging_hatch",
+          "roles": [
+            "hatch"
+          ]
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:charging_hatch"
+      },
+      "problem": "needs_charging_hatch"
+    },
+    "_": {
+      "accepts": [
+        {
+          "special": "open"
+        }
+      ],
+      "problem": "needs_air"
+    },
+    "e": {
+      "accepts": [
+        {
+          "block": "strataindustria:tuyere",
+          "roles": [
+            "tuyere"
+          ]
+        },
+        {
+          "block": "strataindustria:tap_hatch",
+          "roles": [
+            "tap"
+          ]
+        },
+        {
+          "block": "strataindustria:refractory_casing"
+        },
+        {
+          "block": "strataindustria:heat_inlet",
+          "roles": [
+            "inlet"
+          ]
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:refractory_casing"
+      },
+      "problem": "needs_casing"
+    },
+    "h": {
+      "accepts": [
+        {
+          "block": "strataindustria:refractory_casing"
+        },
+        {
+          "block": "strataindustria:heat_inlet",
+          "roles": [
+            "inlet"
+          ]
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:refractory_casing"
+      },
+      "problem": "needs_casing"
+    },
+    "p": {
+      "accepts": [
+        {
+          "block": "strataindustria:tuyere",
+          "roles": [
+            "tuyere"
+          ]
+        },
+        {
+          "block": "strataindustria:tap_hatch",
+          "roles": [
+            "tap"
+          ]
+        },
+        {
+          "block": "strataindustria:refractory_casing"
+        },
+        {
+          "block": "strataindustria:heat_inlet",
+          "roles": [
+            "inlet"
+          ]
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:tap_hatch",
+        "facing": "back"
+      },
+      "problem": "needs_casing"
+    },
+    "r": {
+      "accepts": [
+        {
+          "tag": "strataindustria:refractory"
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:fire_bricks"
+      },
+      "problem": "needs_refractory"
+    },
+    "t": {
+      "accepts": [
+        {
+          "block": "strataindustria:tuyere",
+          "roles": [
+            "tuyere"
+          ]
+        },
+        {
+          "block": "strataindustria:tap_hatch",
+          "roles": [
+            "tap"
+          ]
+        },
+        {
+          "block": "strataindustria:refractory_casing"
+        },
+        {
+          "block": "strataindustria:heat_inlet",
+          "roles": [
+            "inlet"
+          ]
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:tuyere",
+        "facing": "left"
+      },
+      "problem": "needs_casing"
+    }
+  }
+}

@@ -1,14 +1,15 @@
 package dev.strataindustria.bloomery;
 
-import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.multiblock.Multiblock;
+import dev.strataindustria.multiblock.Multiblocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * The bloomery's shape (spec 5.1): the controller in front of a one-block chamber, fire bricks around
- * the chamber and under it, and one to three chimney levels of bricks around the chamber column.
+ * the chamber and under it, and one to three chimney levels of bricks around the chamber column. The pattern
+ * is data, {@code multiblock/bloomery.json}.
  */
 public final class BloomeryStructure {
     public static final int MAX_CHIMNEY = 3;
@@ -37,49 +38,14 @@ public final class BloomeryStructure {
         return controller.relative(facing.getOpposite());
     }
 
+    /** Index of the repeating chimney layer in the pattern. */
+    private static final int CHIMNEY_LAYER = 2;
+
     public static Result check(Level level, BlockPos controller, Direction facing) {
-        BlockPos chamber = chamber(controller, facing);
-        // Floor and base level.
-        if (!brick(level, chamber.below())) return new Result(0, Problem.NEEDS_BRICK, chamber.below());
-        if (!open(level, chamber)) return new Result(0, Problem.NEEDS_AIR, chamber);
-        for (Direction side : Direction.Plane.HORIZONTAL) {
-            if (side == facing) continue;
-            BlockPos pos = chamber.relative(side);
-            if (!brick(level, pos)) return new Result(0, Problem.NEEDS_BRICK, pos);
+        Multiblock.Match match = Multiblocks.check(level, Multiblocks.BLOOMERY, controller, facing);
+        if (!match.complete()) {
+            return new Result(0, "needs_air".equals(match.problem()) ? Problem.NEEDS_AIR : Problem.NEEDS_BRICK, match.at());
         }
-        // Chimney: level 1 must be whole; further levels count while they are whole.
-        int chimney = 0;
-        for (int k = 1; k <= MAX_CHIMNEY; k++) {
-            BlockPos core = chamber.above(k);
-            BlockPos missing = null;
-            if (!open(level, core)) missing = core;
-            for (Direction side : Direction.Plane.HORIZONTAL) {
-                if (missing != null) break;
-                if (!brick(level, core.relative(side))) missing = core.relative(side);
-            }
-            if (missing != null) {
-                if (k == 1) return new Result(0, open(level, core) ? Problem.NEEDS_BRICK : Problem.NEEDS_AIR, missing);
-                break;
-            }
-            chimney = k;
-        }
-        BlockPos top = chamber.above(chimney + 1);
-        if (blocksDraught(level, top)) return new Result(0, Problem.NEEDS_AIR, top);
-        return new Result(chimney, Problem.NONE, BlockPos.ZERO);
-    }
-
-    private static boolean brick(Level level, BlockPos pos) {
-        return level.getBlockState(pos).is(ModTags.Blocks.REFRACTORY);
-    }
-
-    /** The chamber column is open space; item entities dropped in fall down it. */
-    private static boolean open(Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        return state.isAir() || state.getCollisionShape(level, pos).isEmpty() && state.getFluidState().isEmpty();
-    }
-
-    private static boolean blocksDraught(Level level, BlockPos pos) {
-        BlockState state = level.getBlockState(pos);
-        return state.isCollisionShapeFullBlock(level, pos) || !state.getFluidState().isEmpty();
+        return new Result(match.repeats()[CHIMNEY_LAYER], Problem.NONE, BlockPos.ZERO);
     }
 }

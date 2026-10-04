@@ -48,7 +48,7 @@ public final class Stamping {
             }
         }
         Stamping job = new Stamping(level, player.getUUID(), controller);
-        for (Plan.Part part : plan.parts(controller, facing)) {
+        for (Plan.Part part : plan.parts(level, controller, facing)) {
             BlockState there = level.getBlockState(part.pos());
             if (there.is(part.state().getBlock())) continue;
             if (!there.isAir() && !there.canBeReplaced()) job.inTheWay++;

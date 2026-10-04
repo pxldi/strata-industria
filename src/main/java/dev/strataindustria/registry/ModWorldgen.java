@@ -63,6 +63,7 @@ public final class ModWorldgen {
     private static void registerDatapackRegistries(NewDatapackRegistryEvent event) {
         event.worldRegistry(Province.REGISTRY, Province.CODEC);
         event.worldRegistry(VeinType.REGISTRY, VeinType.CODEC);
+        event.worldRegistry(dev.strataindustria.multiblock.Multiblock.REGISTRY, dev.strataindustria.multiblock.Multiblock.CODEC);
     }
 
     private static ResourceKey<Feature> feature(String name) {

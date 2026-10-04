@@ -126,6 +126,7 @@ public final class ModGameTests {
         GridGameTests.register(TESTS);
         MarkGameTests.register(TESTS);
         LedgerGameTests.register(TESTS);
+        MultiblockGameTests.register(TESTS);
         FootGameTests.register(TESTS);
         RailGameTests.register(TESTS);
         OutpostGameTests.register(TESTS);
