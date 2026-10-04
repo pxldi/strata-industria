@@ -33,6 +33,7 @@ public final class CampLoot {
     public static final String MINING_SMITHY = "chests/mining_camp/smithy";
     public static final String MINING_ORE_CART = "chests/mining_camp/ore_cart";
     public static final String ADIT_CACHE = "chests/collapsed_adit/cache";
+    public static final String ADIT_HIDDEN = "chests/collapsed_adit/hidden";
     public static final String BLOOMERY_CACHE = "chests/ruined_bloomery/cache";
     public static final String PLACER_CACHE = "chests/placer_workings/cache";
     public static final String DIG_PROSPECTOR = "archaeology/prospector_camp";

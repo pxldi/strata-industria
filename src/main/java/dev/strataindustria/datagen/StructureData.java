@@ -409,16 +409,19 @@ final class StructureData {
                 add(CampLoot.key(CampLoot.ADIT_CACHE, mineral), CampLoot.ADIT_CACHE + "/" + mineral.id(), () -> {
                     LootTable.Builder cache = LootTable.lootTable().withPool(pool(0.8f, item(Items.TORCH, 8, 24)));
                     if (early(mineral)) cache.withPool(pool(0.7f, item(ModItems.orePiece(mineral, OreGrade.POOR), 6, 12)));
-                    return cache.withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 4, 10)))
-                            .withPool(pool(0.4f, worn(ModItems.STONE_PICKAXE.get())))
+                    return cache.withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 4, 12)))
+                            .withPool(pool(0.5f, worn(ModItems.STONE_PICKAXE.get())))
                             .withPool(pool(0.25f, notes(ADIT_NOTES)))
                             .withPool(pool(1, ledger("collapsed_adit", 2)))
-                            .withPool(pool(0.6f, sherd("collapsed_adit")))
-                            .withPool(pool(0.5f, specimen(mineral)))
-                            .withPool(pool(0.5f, item(Items.BREAD, 8, 16)))
-                            .withPool(pool(0.5f, item(Items.EMERALD, 1, 3)))
-                            .withPool(book(context, 0.2f));
+                            .withPool(pool(0.5f, item(Items.BREAD, 4, 10)));
                 });
+
+                // Hidden behind two cracked blocks in the miner's chamber.
+                add(CampLoot.key(CampLoot.ADIT_HIDDEN, mineral), CampLoot.ADIT_HIDDEN + "/" + mineral.id(), () -> LootTable.lootTable()
+                        .withPool(pool(1, sherd("collapsed_adit")))
+                        .withPool(pool(1, specimen(mineral)))
+                        .withPool(pool(0.7f, item(Items.EMERALD, 1, 3)))
+                        .withPool(book(context, 0.25f)));
             }
         }
     }
