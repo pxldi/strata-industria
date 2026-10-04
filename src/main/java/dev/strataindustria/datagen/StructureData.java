@@ -107,7 +107,8 @@ final class StructureData {
                 CampStructure.Layout.PROSPECTOR_CAMP, new int[] {24, 8, 611407329},
                 CampStructure.Layout.MINING_CAMP, new int[] {34, 12, 718204551},
                 CampStructure.Layout.COLLAPSED_ADIT, new int[] {18, 6, 829366117},
-                CampStructure.Layout.RUINED_BLOOMERY, new int[] {36, 12, 934521187});
+                CampStructure.Layout.RUINED_BLOOMERY, new int[] {36, 12, 934521187},
+                CampStructure.Layout.PLACER_WORKINGS, new int[] {10, 3, 145287613});
         spread.forEach((layout, s) -> context.register(set(layout.id()), new StructureSet(structures.getOrThrow(layout.key()),
                 new RandomSpreadStructurePlacement(net.minecraft.core.Vec3i.ZERO, AbstractSpreadingStructurePlacement.FrequencyReductionMethod.DEFAULT,
                         1.0f, s[2], villages, s[0], s[1], RandomSpreadType.LINEAR))));
@@ -158,6 +159,11 @@ final class StructureData {
             tag(biomes(CampStructure.Layout.RUINED_BLOOMERY))
                     .addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_SAVANNA)
                     .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SNOWY_PLAINS, Biomes.MEADOW, Biomes.SWAMP);
+
+            // Rivers and the land along them; the structure itself checks for river water within reach.
+            tag(biomes(CampStructure.Layout.PLACER_WORKINGS))
+                    .addTag(BiomeTags.IS_RIVER).addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_SAVANNA)
+                    .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SNOWY_PLAINS, Biomes.MEADOW, Biomes.SWAMP);
         }
     }
 
@@ -168,6 +174,7 @@ final class StructureData {
     private static final SurveyNotes MINING_NOTES = SurveyNotes.looking("hematite", "magnetite", "fire_clay", "cassiterite");
     private static final SurveyNotes ADIT_NOTES = SurveyNotes.looking("cassiterite", "hematite", "magnetite");
     private static final SurveyNotes BLOOMERY_NOTES = SurveyNotes.looking("fire_clay", "hematite", "magnetite");
+    private static final SurveyNotes PLACER_NOTES = SurveyNotes.looking("native_gold");
 
     /** One pool with a chance to give {@code min} to {@code max} of an item. */
     private static LootPool.Builder pool(float chance, LootPoolEntry entry) {
@@ -258,6 +265,17 @@ final class StructureData {
                     .withPool(pool(0.6f, item(ModItems.ASH.get(), 1, 4)))
                     .withPool(pool(0.5f, item(Items.IRON_NUGGET, 1, 3)))
                     .withPool(pool(0.4f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 2, 6))));
+
+            // Placer workings (H = 2): a few grains of gold, never the washed ore itself.
+            add(CampLoot.PLACER_CACHE, LootTable.lootTable()
+                    .withPool(pool(0.7f, item(Items.GOLD_NUGGET, 1, 3)))
+                    .withPool(pool(0.5f, notes(PLACER_NOTES)))
+                    .withPool(LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
+                            .when(LootItemRandomChanceCondition.randomChance(0.7f))
+                            .add(item(Items.BREAD, 1, 3).builder())
+                            .add(item(Items.COOKED_SALMON, 1, 3).builder()))
+                    .withPool(pool(0.5f, item(Items.BOWL, 1, 1)))
+                    .withPool(pool(0.5f, item(ModItems.TWINE.get(), 1, 4))));
 
             for (OreMineral mineral : OreMineral.values()) {
                 // Abandoned prospector's camp (H = 1).
@@ -361,7 +379,8 @@ final class StructureData {
                 CampStructure.Layout.PROSPECTOR_CAMP, ModItems.STONE_PICKAXE.get(),
                 CampStructure.Layout.MINING_CAMP, StructureContent.PIT_PROP_ITEM.get(),
                 CampStructure.Layout.COLLAPSED_ADIT, Items.GRAVEL,
-                CampStructure.Layout.RUINED_BLOOMERY, ModItems.BLOOMERY_SLAG.get());
+                CampStructure.Layout.RUINED_BLOOMERY, ModItems.BLOOMERY_SLAG.get(),
+                CampStructure.Layout.PLACER_WORKINGS, ModItems.PLACER_GRAVEL.get());
         for (CampStructure.Layout layout : CampStructure.Layout.values()) {
             String key = "journal." + StrataIndustria.MOD_ID + ".place." + layout.id();
             Advancement.Builder.advancement()
@@ -472,6 +491,10 @@ final class StructureData {
         add.accept(place + ".ruined_bloomery.hint", "A chimney of pale bricks, cracked by heat, and heaps of glassy slag. Smiths "
                 + "once made iron here: not by melting it, but by baking ore with charcoal in a tall brick stack. These bricks "
                 + "were made from a special pale clay. The slag still holds a little iron.");
+        add.accept(place + ".placer_workings", "Placer workings");
+        add.accept(place + ".placer_workings.hint", "Panners washed river gravel here and left a heap they never finished. "
+                + "Heavy grains settle when gravel is swirled in water; the light stuff washes away. Look for glints in river "
+                + "gravel.");
     }
 
     /** The prospector's own words, six per mineral family (structures spec 5.2 and 14). */

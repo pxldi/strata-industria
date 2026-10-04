@@ -40,7 +40,7 @@ import net.minecraft.world.level.levelgen.structure.StructureType;
  */
 public class CampStructure extends Structure {
     public enum Layout implements StringRepresentable {
-        CHARCOAL_BURNERS_CLEARING, PROSPECTOR_CAMP, MINING_CAMP, COLLAPSED_ADIT, RUINED_BLOOMERY;
+        CHARCOAL_BURNERS_CLEARING, PROSPECTOR_CAMP, MINING_CAMP, COLLAPSED_ADIT, RUINED_BLOOMERY, PLACER_WORKINGS;
 
         public static final Codec<Layout> CODEC = StringRepresentable.fromEnum(Layout::values);
 
@@ -90,6 +90,7 @@ public class CampStructure extends Structure {
             case MINING_CAMP -> miningCamp(site);
             case COLLAPSED_ADIT -> collapsedAdit(site);
             case RUINED_BLOOMERY -> ruinedBloomery(site);
+            case PLACER_WORKINGS -> placerWorkings(site);
         };
     }
 
@@ -406,6 +407,56 @@ public class CampStructure extends Structure {
         }));
     }
 
+    // ---------------------------------------------------------------- 6.6 placer workings
+
+    private static Optional<GenerationStub> placerWorkings(Site site) {
+        int sea = site.context.chunkGenerator().getSeaLevel();
+        int x0 = site.context.chunkPos().getMinBlockX(), z0 = site.context.chunkPos().getMinBlockZ();
+        RandomSource random = site.context.random();
+        int offset = random.nextInt(2);
+        // Look for low land with river water close by, on a coarse grid over the chunk.
+        for (int i = 0; i < 64; i++) {
+            int x = x0 + (i % 8) * 2 + offset, z = z0 + (i / 8) * 2 + offset;
+            if (site.wet(x, z) || Math.abs(site.surface(x, z) - (sea - 1)) > 2) continue;
+            for (Direction d : Direction.Plane.HORIZONTAL) {
+                int k = waterAt(site, x, z, d);
+                if (k < 1) continue;
+                // The bank's south edge is the last dry block before the water.
+                int ex = x + d.getStepX() * (k - 1), ez = z + d.getStepZ() * (k - 1);
+                return placerBank(site, ex, ez, d, random);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /** Distance to the first river water within 6 blocks along {@code d}, or -1 if other water or none. */
+    private static int waterAt(Site site, int x, int z, Direction d) {
+        for (int k = 1; k <= 6; k++) {
+            int wx = x + d.getStepX() * k, wz = z + d.getStepZ() * k;
+            if (!site.wet(wx, wz)) continue;
+            return site.river(wx, wz) ? k : -1;
+        }
+        return -1;
+    }
+
+    private static Optional<GenerationStub> placerBank(Site site, int edgeX, int edgeZ, Direction toWater, RandomSource random) {
+        Plan plan = Plans.PLACER_BANK;
+        Rotation rotation = facing(toWater);
+        Frame frame = Frame.centred(edgeX, edgeZ, rotation, 5, plan.depth() - 1);
+        int[] r = frame.rect(0, 0, plan.width() - 1, plan.depth() - 1);
+        OptionalInt ground = site.level(r[0], r[1], r[2], r[3], 2);
+        if (ground.isEmpty()) return Optional.empty();
+        int y = ground.getAsInt();
+        PlanPiece.Wood wood = site.wood(edgeX, y, edgeZ);
+        PlanPiece bank = new PlanPiece(plan, rotation, r[0], r[1], y, OreMineral.NATIVE_GOLD, wood, random.nextLong());
+        SluicePiece sluice = new SluicePiece(new BlockPos(edgeX, y, edgeZ), toWater);
+        int cx = frame.x(plan.width() / 2, plan.depth() / 2), cz = frame.z(plan.width() / 2, plan.depth() / 2);
+        return Optional.of(new GenerationStub(new BlockPos(cx, y, cz), builder -> {
+            builder.addPiece(bank);
+            builder.addPiece(sluice);
+        }));
+    }
+
     // ---------------------------------------------------------------- shared
 
     /**
@@ -545,6 +596,12 @@ public class CampStructure extends Structure {
         OptionalInt level(Frame frame, int lx0, int lz0, int lx1, int lz1, int maxUneven) {
             int[] r = frame.rect(lx0, lz0, lx1, lz1);
             return level(r[0], r[1], r[2], r[3], maxUneven);
+        }
+
+        boolean river(int x, int z) {
+            int y = context.chunkGenerator().getSeaLevel() - 1;
+            return context.biomeResolver().getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z))
+                    .is(BiomeTags.IS_RIVER);
         }
 
         /** Spruce in cold forests, dark oak in dark ones, oak elsewhere (structures spec 3.6). */
