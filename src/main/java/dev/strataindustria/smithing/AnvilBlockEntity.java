@@ -465,7 +465,10 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
             if (input.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
             else input.remove(ModDataComponents.SMITHING_PROGRESS.get());
             items.set(OUTPUT, out);
-            if (player != null) MakerMarks.stampOrAsk(out, player, worldPosition);
+            if (player != null) {
+                MakerMarks.stampOrAsk(out, player, worldPosition);
+                if (out.has(dev.strataindustria.mark.MarkRegistry.STAMP.get())) stampFeedback(server);
+            }
         }
         finishedAt = now;
         glintPending = false;
@@ -526,11 +529,20 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         }
     }
 
+    /** The mark going into a finished piece: a tick of sound, a puff and a few bright flecks, a beat after the finish. */
+    private void stampFeedback(ServerLevel server) {
+        double x = worldPosition.getX() + 0.5, y = worldPosition.getY() + faceHeight() + 0.15, z = worldPosition.getZ() + 0.5;
+        server.playSound(null, worldPosition, ModSounds.ANVIL_STAMP.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
+        server.sendParticles(ParticleTypes.CRIT, x, y, z, 6, 0.1, 0.05, 0.1, 0.2);
+        server.sendParticles(ParticleTypes.WAX_ON, x, y, z, 3, 0.1, 0.05, 0.1, 0.0);
+    }
+
     /** Stamps the piece waiting in the output, for a player who has just cut their first mark. */
     public void stampOutput(Player player) {
         ItemStack out = items.get(OUTPUT);
         if (out.has(ModDataComponents.QUALITY.get()) && !out.has(dev.strataindustria.mark.MarkRegistry.STAMP.get())) {
             dev.strataindustria.mark.MakerMarks.stamp(out, player);
+            if (level instanceof ServerLevel server) stampFeedback(server);
             setChanged();
         }
     }
@@ -634,11 +646,14 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         if (a.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
         if (b.isEmpty()) items.set(SECOND, ItemStack.EMPTY);
         items.set(OUTPUT, out);
+        // Two pieces becoming one: a flare of sparks thrown out sideways, a hiss as the scale pops off, steam after.
+        double x = worldPosition.getX() + 0.5, y = worldPosition.getY() + faceHeight() + 0.05, z = worldPosition.getZ() + 0.5;
+        float scale = Config.SMITHING_SPARKS.get() / 100.0f;
         server.playSound(null, worldPosition, ModSounds.ANVIL_WELD.get(), SoundSource.BLOCKS, 0.9f, 0.95f + server.getRandom().nextFloat() * 0.1f);
-        server.sendParticles(ParticleTypes.ELECTRIC_SPARK, worldPosition.getX() + 0.5, worldPosition.getY() + faceHeight() + 0.05, worldPosition.getZ() + 0.5,
-                10, 0.15, 0.05, 0.15, 0.15);
-        server.sendParticles(ParticleTypes.SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + faceHeight() + 0.05, worldPosition.getZ() + 0.5,
-                4, 0.1, 0.0, 0.1, 0.01);
+        server.playSound(null, worldPosition, SoundEvents.LAVA_EXTINGUISH, SoundSource.BLOCKS, 0.3f, 1.5f);
+        server.sendParticles(ParticleTypes.ELECTRIC_SPARK, x, y, z, Math.round(18 * scale), 0.2, 0.05, 0.2, 0.2);
+        server.sendParticles(ParticleTypes.LAVA, x, y, z, Math.max(1, Math.round(5 * scale)), 0.15, 0.0, 0.15, 0.0);
+        server.sendParticles(ParticleTypes.CLOUD, x, y + 0.05, z, 4, 0.1, 0.02, 0.1, 0.01);
         finishedAt = now;
         setChanged();
     }

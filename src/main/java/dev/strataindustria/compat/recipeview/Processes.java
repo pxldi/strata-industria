@@ -33,6 +33,13 @@ import net.minecraft.world.level.material.Fluid;
 public final class Processes {
     private Processes() {}
 
+    /** Work at the anvil: one piece struck into a shape, or two pieces welded ({@code second} is empty for a strike). */
+    public record AnvilWork(List<ItemStack> piece, List<ItemStack> second, ItemStack result, int blows) {
+        public boolean weld() {
+            return !second.isEmpty();
+        }
+    }
+
     /** An unfired piece fired in a pit kiln. */
     public record Firing(ItemStack input, ItemStack result, int ticks) {}
 

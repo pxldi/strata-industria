@@ -13,8 +13,6 @@ import dev.strataindustria.processing.MixingRecipe;
 import dev.strataindustria.processing.OilStillRecipe;
 import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.roasting.RoastingRecipe;
-import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.WeldingRecipe;
 import dev.strataindustria.tanning.BarrelRecipe;
 import dev.strataindustria.washing.WashingRecipe;
 import mezz.jei.api.recipe.types.IRecipeHolderType;
@@ -29,8 +27,6 @@ public final class JeiTypes {
     public static final IRecipeHolderType<SawingRecipe> SAWING = IRecipeHolderType.create(StrataIndustria.id("sawing"));
     public static final IRecipeHolderType<WashingRecipe> WASHING = IRecipeHolderType.create(StrataIndustria.id("washing"));
     public static final IRecipeHolderType<BarrelRecipe> BARREL = IRecipeHolderType.create(StrataIndustria.id("barrel"));
-    public static final IRecipeHolderType<AnvilRecipe> ANVIL = IRecipeHolderType.create(StrataIndustria.id("anvil"));
-    public static final IRecipeHolderType<WeldingRecipe> WELDING = IRecipeHolderType.create(StrataIndustria.id("welding"));
     public static final IRecipeHolderType<RoastingRecipe> ROASTING = IRecipeHolderType.create(StrataIndustria.id("roasting"));
     public static final IRecipeHolderType<CrushingRecipe> CRUSHING = IRecipeHolderType.create(StrataIndustria.id("crushing"));
     public static final IRecipeHolderType<MachiningRecipe> MACHINING = IRecipeHolderType.create(StrataIndustria.id("machining"));
@@ -41,6 +37,8 @@ public final class JeiTypes {
 
     public static final IRecipeHolderType<OilStillRecipe> OIL_STILL = IRecipeHolderType.create(StrataIndustria.id("oil_still"));
 
+    /** Striking and welding share one page: both are work at the anvil. */
+    public static final IRecipeType<Processes.AnvilWork> ANVIL = IRecipeType.create(StrataIndustria.id("anvil"), Processes.AnvilWork.class);
     public static final IRecipeType<Processes.Firing> PIT_KILN = IRecipeType.create(StrataIndustria.id("pit_kiln"), Processes.Firing.class);
     public static final IRecipeType<Processes.CharcoalPit> CHARCOAL_PIT = IRecipeType.create(StrataIndustria.id("charcoal_pit"), Processes.CharcoalPit.class);
     public static final IRecipeType<Processes.Alloying> ALLOYING = IRecipeType.create(StrataIndustria.id("alloying"), Processes.Alloying.class);
