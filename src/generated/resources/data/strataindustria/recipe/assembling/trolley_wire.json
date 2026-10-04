@@ -1,0 +1,19 @@
+{
+  "type": "strataindustria:assembling",
+  "item_results": [
+    {
+      "count": 8,
+      "id": "strataindustria:trolley_wire"
+    }
+  ],
+  "items": [
+    {
+      "count": 4,
+      "ingredient": "strataindustria:copper_wire"
+    },
+    {
+      "ingredient": "strataindustria:steel_wire"
+    }
+  ],
+  "ticks": 200
+}

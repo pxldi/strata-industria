@@ -68,7 +68,9 @@ public final class RailPayloads {
         registrar.playToClient(OpenStop.TYPE, OpenStop.CODEC, (payload, context) ->
                 context.enqueueWork(() -> dev.strataindustria.client.RailClient.openStop(payload.data(), payload.station())));
         registrar.playToServer(Whistle.TYPE, Whistle.CODEC, (payload, context) -> context.enqueueWork(() -> {
-            if (context.player() instanceof ServerPlayer player && player.getVehicle() instanceof SteamLocomotiveEntity loco) loco.whistleBy(player.level(), player);
+            if (!(context.player() instanceof ServerPlayer player)) return;
+            if (player.getVehicle() instanceof SteamLocomotiveEntity loco) loco.whistleBy(player.level(), player);
+            else if (player.getVehicle() instanceof ElectricTramEntity tram) tram.bellBy(player.level(), player);
         }));
         registrar.playToServer(UpdateStop.TYPE, UpdateStop.CODEC, (payload, context) -> context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer player) update(player, payload.data());

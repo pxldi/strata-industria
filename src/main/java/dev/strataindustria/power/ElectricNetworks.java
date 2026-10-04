@@ -76,6 +76,7 @@ public final class ElectricNetworks {
             BlockPos fault = network.overvoltageCable();
             if (fault != null && level.getGameTime() % 10 == 0) sparks(level, fault);
             dev.strataindustria.grid.GridVoices.hum(level, network);
+            if (level.getGameTime() % 100 == 0) dev.strataindustria.transport.outpost.PowerLinks.check(level, network);
         }
     }
 

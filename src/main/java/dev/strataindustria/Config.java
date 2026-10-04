@@ -477,6 +477,9 @@ public final class Config {
     public static final ModConfigSpec.IntValue TRANSPORT_MAX_CONSIST_T4 = BUILDER
             .comment("Wagons that can follow the lead of a steam locomotive.")
             .defineInRange("maxConsistT4", 8, 1, 32);
+    public static final ModConfigSpec.IntValue TRANSPORT_MAX_CONSIST_T5 = BUILDER
+            .comment("Wagons that can follow the lead of an electric tram.")
+            .defineInRange("maxConsistT5", 4, 1, 32);
     public static final ModConfigSpec.DoubleValue TRANSPORT_LOCOMOTIVE_WATER_PER_TICK = BUILDER
             .comment("Millibuckets of water a steam locomotive boils away each tick at full throttle.")
             .defineInRange("locomotiveWaterPerTick", 4.0, 0.0, 100.0);

@@ -44,12 +44,12 @@ public final class RailClient {
         event.register(WHISTLE_KEY);
     }
 
-    /** The whistle key blows the engine's whistle while its rider holds it down; the server limits how often. */
+    /** The whistle key blows the engine's whistle, or rings the tram's bell; the server limits how often. */
     @SubscribeEvent
     static void onTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         while (WHISTLE_KEY.consumeClick()) {
-            if (minecraft.player != null && minecraft.player.getVehicle() instanceof SteamLocomotiveEntity) {
+            if (minecraft.player != null && (minecraft.player.getVehicle() instanceof SteamLocomotiveEntity || minecraft.player.getVehicle() instanceof dev.strataindustria.transport.rail.ElectricTramEntity)) {
                 ClientPacketDistributor.sendToServer(new RailPayloads.Whistle());
             }
         }
@@ -59,6 +59,7 @@ public final class RailClient {
     static void layers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(MineTubModel.LAYER, MineTubModel::createBodyLayer);
         event.registerLayerDefinition(LocomotiveModel.LAYER, LocomotiveModel::createBodyLayer);
+        event.registerLayerDefinition(dev.strataindustria.client.rail.TramModel.LAYER, dev.strataindustria.client.rail.TramModel::createBodyLayer);
         event.registerLayerDefinition(WagonModel.ORE_LAYER, WagonModel::createOreLayer);
         event.registerLayerDefinition(WagonModel.TANK_LAYER, WagonModel::createTankLayer);
         event.registerLayerDefinition(WagonModel.FLAT_LAYER, WagonModel::createFlatLayer);
@@ -69,6 +70,9 @@ public final class RailClient {
         event.registerEntityRenderer(RailRegistry.MINE_TUB_ENTITY.get(), MineTubRenderer::new);
         event.registerEntityRenderer(RailRegistry.PONY_ENTITY.get(), PonyRenderer::new);
         event.registerEntityRenderer(RailwayRegistry.STEAM_LOCOMOTIVE_ENTITY.get(), LocomotiveRenderer::new);
+        event.registerEntityRenderer(dev.strataindustria.transport.rail.TramRegistry.ELECTRIC_TRAM_ENTITY.get(), dev.strataindustria.client.rail.TramRenderer::new);
+        event.registerBlockEntityRenderer(dev.strataindustria.transport.rail.TramRegistry.TROLLEY_BRACKET_ENTITY.get(),
+                dev.strataindustria.client.render.TrolleyBracketRenderer::new);
         event.registerEntityRenderer(RailwayRegistry.ORE_WAGON_ENTITY.get(),
                 context -> WagonRenderer.of(context, WagonModel.ORE_LAYER, "ore_wagon", 0.47f));
         event.registerEntityRenderer(RailwayRegistry.TANK_WAGON_ENTITY.get(),

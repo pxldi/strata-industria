@@ -129,6 +129,7 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
     public void preRemoveSideEffects(BlockPos pos, BlockState state) {
         super.preRemoveSideEffects(pos, state);
         if (level == null || level.isClientSide() || spans.isEmpty()) return;
+        if (level instanceof net.minecraft.server.level.ServerLevel server) dev.strataindustria.transport.outpost.RouteIndex.get(server).cut(server, pos);
         int conductors = 0;
         for (BlockPos other : spans) {
             conductors += OverheadLine.conductorsFor(pos, other);

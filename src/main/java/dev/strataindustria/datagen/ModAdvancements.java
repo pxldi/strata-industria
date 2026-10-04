@@ -272,7 +272,10 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder mv = goal(assembler, "t5/mv", Tier5Items.MV_UPGRADE_KIT.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.MV_UPGRADE));
         AdvancementHolder transformer = goal(mv, "t5/transformer", Tier5Items.TRANSFORMER.get(), JournalTrigger.TriggerInstance.of(Journal.TRANSFORMER));
-        goal(transformer, "t5/power_line", Tier5Items.POLE_INSULATOR.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.POWER_LINE));
+        AdvancementHolder powerLine = goal(transformer, "t5/power_line", Tier5Items.POLE_INSULATOR.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.POWER_LINE));
+        // Outposts spec 11: a tram runs 256 blocks on wire power.
+        goal(powerLine, "t5/tram", dev.strataindustria.transport.rail.TramRegistry.ELECTRIC_TRAM.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.TRAM_DISTANCE));
         AdvancementHolder pipe = goal(machine, "t5/item_pipe", Tier5Logistics.ITEM_PIPE_ITEM.get(), JournalTrigger.TriggerInstance.of(Journal.ITEM_PIPE));
         AdvancementHolder storage = goal(pipe, "t5/storage", Tier5Logistics.STORAGE_CONTROLLER_ITEM.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.STORAGE));

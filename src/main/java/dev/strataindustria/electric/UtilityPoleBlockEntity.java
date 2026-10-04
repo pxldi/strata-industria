@@ -23,7 +23,7 @@ public class UtilityPoleBlockEntity extends BlockEntity implements ElectricCondu
     public boolean connectsElectric(Direction side) {
         if (level == null) return false;
         var neighbour = level.getBlockState(worldPosition.relative(side)).getBlock();
-        if (neighbour instanceof PoleInsulatorBlock) return true;
+        if (neighbour instanceof PoleInsulatorBlock || neighbour instanceof dev.strataindustria.transport.rail.TrolleyBracketBlock) return true;
         if (side.getAxis() == Direction.Axis.Y && neighbour instanceof UtilityPoleBlock) return true;
         // Only the bottom block of a column reaches sideways and downwards.
         return !(level.getBlockState(worldPosition.below()).getBlock() instanceof UtilityPoleBlock) && side != Direction.UP;

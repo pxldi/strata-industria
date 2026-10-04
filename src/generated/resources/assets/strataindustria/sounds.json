@@ -4899,6 +4899,154 @@
     ],
     "subtitle": "subtitles.strataindustria.tipple.dump"
   },
+  "tram.bell": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bell.use",
+        "pitch": 1.7,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.bell",
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.2,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tram.bell"
+  },
+  "tram.contact": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.8,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.4,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 2.0,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tram.contact"
+  },
+  "tram.lose_wire": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.8,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 1.4,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tram.lose_wire"
+  },
+  "tram.motor": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.6,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.beacon.ambient",
+        "pitch": 1.9,
+        "volume": 0.22
+      },
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 2.0,
+        "volume": 0.08
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tram.motor"
+  },
+  "tram.spark": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.hit",
+        "pitch": 2.0,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.lava.extinguish",
+        "pitch": 2.0,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tram.spark"
+  },
+  "trolley_wire.cut": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.break",
+        "pitch": 1.2,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.tripwire.detach",
+        "pitch": 1.2,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.trolley_wire.cut"
+  },
+  "trolley_wire.strung": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.4,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 1.8,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.hit",
+        "pitch": 1.5,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.trolley_wire.strung"
+  },
   "tub.couple": {
     "sounds": [
       {

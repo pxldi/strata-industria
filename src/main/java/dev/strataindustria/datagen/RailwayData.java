@@ -147,7 +147,7 @@ final class RailwayData {
         add.accept(id + ".locomotive.full_fuel", "Firebox is full.");
         add.accept(id + ".water_tower.holds", "%s of %s mB.");
         add.accept(id + ".water_tower.no_tank", "No tank on the trestle.");
-        add.accept("key." + id + ".whistle", "Blow Whistle");
+        add.accept("key." + id + ".whistle", "Whistle or Bell");
 
         String subtitles = "subtitles." + id + ".";
         add.accept(subtitles + "locomotive.chuff", "Engine chuffs");

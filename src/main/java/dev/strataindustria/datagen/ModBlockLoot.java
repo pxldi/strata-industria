@@ -148,6 +148,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 dev.strataindustria.transport.ropeway.RopewayRegistry.ANGLE_STATION)) {
             dropSelf(block.get());
         }
+        dropSelf(dev.strataindustria.transport.rail.TramRegistry.TROLLEY_BRACKET.get());
         dropSelf(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.get());
         dropSelf(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.get());
         dropSelf(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.get());

@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/power_line",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "tram_distance"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.tram.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:electric_tram"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.tram"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
