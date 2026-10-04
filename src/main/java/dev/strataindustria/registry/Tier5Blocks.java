@@ -94,6 +94,12 @@ public final class Tier5Blocks {
     public static final DeferredBlock<ChemicalMachineBlock<ElectrolyserBlockEntity>> ELECTROLYSER = ModBlocks.BLOCKS.registerBlock(
             "electrolyser", p -> new ChemicalMachineBlock<>(Tier5BlockEntities.ELECTROLYSER, ElectrolyserBlockEntity::new, p), Tier5Blocks::machine);
 
+    /** Spec 9.5: every machine that comes in LV and MV; the kit upgrades these and they drop with their tier. */
+    public static java.util.List<DeferredBlock<? extends Block>> upgradable() {
+        return java.util.List.of(BATTERY_BOX, ELECTRIC_FURNACE, MACERATOR, WIREMILL, BENDER, LATHE, MIXER, ELECTROLYSER, STEAM_TURBINE,
+                COMBUSTION_GENERATOR);
+    }
+
     private static Block.Properties cable(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BLACK)
                 .strength(0.4f)

@@ -10,6 +10,9 @@ import dev.strataindustria.registry.Tier4Fluids;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import dev.strataindustria.electric.KineticDynamoBlock;
+import dev.strataindustria.electric.MachineBlockItem;
+import dev.strataindustria.electric.MvUpgradeKitItem;
+import dev.strataindustria.registry.Tier5DataComponents;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ChemicalMachineBlockEntity;
 import dev.strataindustria.electric.machine.ElectrolyserBlockEntity;
@@ -94,6 +97,7 @@ final class Tier5GameTests {
         tests.put("tier5_combustion_generator", Tier5GameTests::combustionGenerator);
         tests.put("tier5_shaping_machines", Tier5GameTests::shapingMachines);
         tests.put("tier5_aluminium_chain", Tier5GameTests::aluminiumChain);
+        tests.put("tier5_mv_upgrade", Tier5GameTests::mvUpgrade);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -541,6 +545,75 @@ final class Tier5GameTests {
     // Spec 24: 100 mB SO2 + 50 mB oxygen + 100 mB water make 100 mB acid in 40 ticks; 4 clay + 100 mB acid make alum in
     // 200; alum roasts to alumina; 2 alumina + coke dust make a 700 degree aluminium ingot for 19 200 J; water splits
     // into hydrogen and oxygen; a full hydrogen tank stops the electrolyser.
+    // Spec 9.5: sneak-using a kit makes an LV machine MV in place, keeping its contents and facing and costing one
+    // kit; the machine drops with machine_tier = mv and places back as MV; a battery box keeps its charge too.
+    @SuppressWarnings("removal")
+    private static void mvUpgrade(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(pos, Tier5Blocks.MACERATOR.get().defaultBlockState().setValue(ElectricMachineBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        ElectricMachineBlockEntity macerator = (ElectricMachineBlockEntity) level.getBlockEntity(pos);
+        macerator.setItem(0, new ItemStack(Items.COBBLESTONE, 5));
+        helper.assertValueEqual(macerator.lanes(), 1, "an LV machine runs one lane");
+
+        ItemStack kit = new ItemStack(Tier5Items.MV_UPGRADE_KIT.get(), 2);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, kit);
+        net.minecraft.world.phys.BlockHitResult hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.UP, pos, false);
+        player.setShiftKeyDown(false);
+        kit.useOn(new net.minecraft.world.item.context.UseOnContext(player, net.minecraft.world.InteractionHand.MAIN_HAND, hit));
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.TIER), ElectricTier.LV, "a kit does nothing without sneaking");
+
+        player.setShiftKeyDown(true);
+        kit.useOn(new net.minecraft.world.item.context.UseOnContext(player, net.minecraft.world.InteractionHand.MAIN_HAND, hit));
+        BlockState upgraded = level.getBlockState(pos);
+        helper.assertValueEqual(upgraded.getValue(ElectricMachineBlock.TIER), ElectricTier.MV, "the machine is MV");
+        helper.assertValueEqual(upgraded.getValue(ElectricMachineBlock.FACING), Direction.EAST, "orientation is kept");
+        helper.assertTrue(level.getBlockEntity(pos) == macerator, "the same block entity stays");
+        helper.assertValueEqual(macerator.getItem(0).getCount(), 5, "contents are kept");
+        helper.assertValueEqual(macerator.lanes(), 2, "an MV machine runs two lanes");
+        helper.assertValueEqual(kit.getCount(), 1, "one kit is spent");
+        kit.useOn(new net.minecraft.world.item.context.UseOnContext(player, net.minecraft.world.InteractionHand.MAIN_HAND, hit));
+        helper.assertValueEqual(kit.getCount(), 1, "an MV machine takes no second kit");
+
+        BlockPos boxPos = pos.south(2);
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        ((BatteryBoxBlockEntity) level.getBlockEntity(boxPos)).setStored(50_000);
+        net.minecraft.world.phys.BlockHitResult boxHit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(boxPos), Direction.UP, boxPos, false);
+        kit.useOn(new net.minecraft.world.item.context.UseOnContext(player, net.minecraft.world.InteractionHand.MAIN_HAND, boxHit));
+        BatteryBoxBlockEntity box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        helper.assertValueEqual(box.tier(), ElectricTier.MV, "the battery box is MV");
+        helper.assertValueEqual(box.capacity(), 400_000.0, "an MV box holds 400 000 J");
+        helper.assertValueEqual(box.stored(), 50_000.0, "its charge is kept");
+
+        BlockPos dynamoPos = pos.south(4);
+        level.setBlock(dynamoPos, Tier5Blocks.KINETIC_DYNAMO.get().defaultBlockState(), Block.UPDATE_ALL);
+        helper.assertTrue(!MvUpgradeKitItem.canUpgrade(level.getBlockState(dynamoPos)), "the dynamo cannot be upgraded");
+
+        // Breaking an MV machine drops it as MV; an LV one drops plain.
+        List<ItemStack> drops = Block.getDrops(upgraded, level, pos, macerator);
+        helper.assertValueEqual(drops.size(), 1, "one drop");
+        helper.assertValueEqual(MachineBlockItem.tierOf(drops.get(0)), ElectricTier.MV, "the drop is an MV machine");
+        List<ItemStack> boxDrops = Block.getDrops(level.getBlockState(boxPos), level, boxPos, box);
+        helper.assertValueEqual(MachineBlockItem.tierOf(boxDrops.get(0)), ElectricTier.MV, "the battery box drops as MV");
+        helper.assertValueEqual(boxDrops.get(0).getOrDefault(Tier5DataComponents.ENERGY.get(), 0), 50_000, "and keeps its charge");
+        BlockState lv = Tier5Blocks.MACERATOR.get().defaultBlockState();
+        helper.assertTrue(!Block.getDrops(lv, level, pos, macerator).get(0).has(Tier5DataComponents.MACHINE_TIER.get()), "an LV machine drops without a tier");
+
+        // Placing the dropped stack gives MV again.
+        BlockPos floor = pos.south(6).below();
+        level.setBlock(floor, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        ItemStack placed = drops.get(0);
+        player.setItemInHand(net.minecraft.world.InteractionHand.MAIN_HAND, placed);
+        placed.useOn(new net.minecraft.world.item.context.UseOnContext(player, net.minecraft.world.InteractionHand.MAIN_HAND,
+                new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(floor), Direction.UP, floor, false)));
+        helper.assertValueEqual(level.getBlockState(floor.above()).getValue(ElectricMachineBlock.TIER), ElectricTier.MV, "it places back as MV");
+
+        level.getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
     private static void aluminiumChain(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos base = helper.absolutePos(new BlockPos(1, 1, 1));

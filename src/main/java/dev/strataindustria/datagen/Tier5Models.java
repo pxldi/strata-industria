@@ -10,6 +10,7 @@ import dev.strataindustria.electric.machine.LatheBlock;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.power.StatusLight;
 import dev.strataindustria.registry.Tier5Blocks;
+import dev.strataindustria.registry.Tier5DataComponents;
 import dev.strataindustria.rubber.TreeTapBlock;
 import dev.strataindustria.registry.Tier5Items;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -39,7 +40,7 @@ final class Tier5Models {
                 Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER, Tier5Items.LATEX_BUCKET, Tier5Items.TREE_TAP,
                 Tier5Items.RED_ALLOY_ROD, Tier5Items.RED_ALLOY_WIRE, Tier5Items.DRAW_PLATE, Tier5Items.CIRCUIT_BOARD, Tier5Items.BASIC_CIRCUIT,
                 Tier5Items.ELECTRIC_MOTOR, Tier5Items.ALUMINIUM_WIRE, Tier5Items.STEEL_WIRE, Tier5Items.SULFURIC_ACID_BUCKET, Tier5Items.ALUM,
-                Tier5Items.ALUMINA)) {
+                Tier5Items.ALUMINA, Tier5Items.LEAD_ACID_CELL, Tier5Items.MV_UPGRADE_KIT)) {
             itemModels.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
         }
         treeTap(blockModels);
@@ -134,7 +135,7 @@ final class Tier5Models {
             }
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.BATTERY_BOX.get()).with(dispatch));
-        plainItem(itemModels, Tier5Items.BATTERY_BOX.get(), StrataIndustria.id("block/battery_box_lv_0"));
+        tieredItem(itemModels, Tier5Items.BATTERY_BOX.get(), "block/battery_box_lv_0", "block/battery_box_mv_0");
     }
 
     private static final TextureSlot STATUS = TextureSlot.create("status");
@@ -167,7 +168,7 @@ final class Tier5Models {
             }
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
-        plainItem(itemModels, block.asItem(), StrataIndustria.id("block/" + name + "_lv_off"));
+        tieredItem(itemModels, block.asItem(), "block/" + name + "_lv_off", "block/" + name + "_mv_off");
     }
 
     // Spec 23.2: like machine(), with the rod or gear icon of the mode on the front.
@@ -199,7 +200,7 @@ final class Tier5Models {
             }
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
-        plainItem(itemModels, block.asItem(), StrataIndustria.id("block/lathe_lv_off"));
+        tieredItem(itemModels, block.asItem(), "block/lathe_lv_off", "block/lathe_mv_off");
     }
 
     private static final TextureSlot BACK = TextureSlot.create("back");
@@ -234,7 +235,13 @@ final class Tier5Models {
             }
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
-        plainItem(itemModels, block.asItem(), StrataIndustria.id("block/" + name + "_lv_off"));
+        tieredItem(itemModels, block.asItem(), "block/" + name + "_lv_off", "block/" + name + "_mv_off");
+    }
+
+    /** Spec 23.7: a machine item shows the MV casing once it carries the {@code machine_tier} component. */
+    private static void tieredItem(ItemModelGenerators itemModels, Item item, String lv, String mv) {
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.conditional(new net.minecraft.client.renderer.item.properties.conditional.HasComponent(
+                Tier5DataComponents.MACHINE_TIER.get(), false), ItemModelUtils.plainModel(StrataIndustria.id(mv)), ItemModelUtils.plainModel(StrataIndustria.id(lv))));
     }
 
     private static void plainItem(ItemModelGenerators itemModels, Item item, Identifier model) {

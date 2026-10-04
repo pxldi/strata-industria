@@ -1,6 +1,8 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.electric.BatteryBoxItem;
+import dev.strataindustria.electric.MachineBlockItem;
+import dev.strataindustria.electric.MvUpgradeKitItem;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Alloy;
 import dev.strataindustria.metal.Melt;
@@ -52,18 +54,30 @@ public final class Tier5Items {
     public static final DeferredItem<BlockItem> KINETIC_DYNAMO = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.KINETIC_DYNAMO);
     public static final DeferredItem<BatteryBoxItem> BATTERY_BOX = ModItems.ITEMS.registerItem("battery_box",
             p -> new BatteryBoxItem(Tier5Blocks.BATTERY_BOX.get(), p), p -> p.stacksTo(1).useBlockDescriptionPrefix());
+
+    /** Spec 9.4: the heart of a battery box; a crafting component, not a portable battery. */
+    public static final DeferredItem<Item> LEAD_ACID_CELL = ModItems.ITEMS.registerSimpleItem("lead_acid_cell");
+    /** Spec 9.5: sneak and right-click an LV machine with it to make it MV. */
+    public static final DeferredItem<MvUpgradeKitItem> MV_UPGRADE_KIT = ModItems.ITEMS.registerItem("mv_upgrade_kit", MvUpgradeKitItem::new,
+            p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> LV_MACHINE_HULL = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_MACHINE_HULL);
-    public static final DeferredItem<BlockItem> ELECTRIC_FURNACE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTRIC_FURNACE);
-    public static final DeferredItem<BlockItem> MACERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MACERATOR);
-    public static final DeferredItem<BlockItem> WIREMILL = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.WIREMILL);
-    public static final DeferredItem<BlockItem> BENDER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.BENDER);
-    public static final DeferredItem<BlockItem> LATHE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LATHE);
+    public static final DeferredItem<MachineBlockItem> ELECTRIC_FURNACE = machineItem("electric_furnace", Tier5Blocks.ELECTRIC_FURNACE);
+    public static final DeferredItem<MachineBlockItem> MACERATOR = machineItem("macerator", Tier5Blocks.MACERATOR);
+    public static final DeferredItem<MachineBlockItem> WIREMILL = machineItem("wiremill", Tier5Blocks.WIREMILL);
+    public static final DeferredItem<MachineBlockItem> BENDER = machineItem("bender", Tier5Blocks.BENDER);
+    public static final DeferredItem<MachineBlockItem> LATHE = machineItem("lathe", Tier5Blocks.LATHE);
 
-    public static final DeferredItem<BlockItem> MIXER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MIXER);
-    public static final DeferredItem<BlockItem> ELECTROLYSER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTROLYSER);
+    public static final DeferredItem<MachineBlockItem> MIXER = machineItem("mixer", Tier5Blocks.MIXER);
+    public static final DeferredItem<MachineBlockItem> ELECTROLYSER = machineItem("electrolyser", Tier5Blocks.ELECTROLYSER);
 
-    public static final DeferredItem<BlockItem> STEAM_TURBINE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.STEAM_TURBINE);
-    public static final DeferredItem<BlockItem> COMBUSTION_GENERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.COMBUSTION_GENERATOR);
+    public static final DeferredItem<MachineBlockItem> STEAM_TURBINE = machineItem("steam_turbine", Tier5Blocks.STEAM_TURBINE);
+    public static final DeferredItem<MachineBlockItem> COMBUSTION_GENERATOR = machineItem("combustion_generator", Tier5Blocks.COMBUSTION_GENERATOR);
+
+    /** A machine's block item: it places at the tier its {@code machine_tier} component names (spec 9.5). */
+    private static <B extends net.minecraft.world.level.block.Block> DeferredItem<MachineBlockItem> machineItem(String name,
+            net.neoforged.neoforge.registries.DeferredBlock<B> block) {
+        return ModItems.ITEMS.registerItem(name, p -> new MachineBlockItem(block.get(), p), p -> p.useBlockDescriptionPrefix());
+    }
 
     /** Metal content of the new forms (spec 4.1): rods are half an ingot, wire a quarter, plates a whole one. */
     public static void metalContent(Map<Item, Melt> map) {

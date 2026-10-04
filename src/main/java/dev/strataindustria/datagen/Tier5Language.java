@@ -32,6 +32,11 @@ final class Tier5Language {
         lang.accept(item + "circuit_board", "Circuit Board");
         lang.accept(item + "basic_circuit", "Basic Circuit");
         lang.accept(item + "electric_motor", "Electric Motor");
+        lang.accept(item + "lead_acid_cell", "Lead-Acid Cell");
+        lang.accept(item + "mv_upgrade_kit", "MV Upgrade Kit");
+        lang.accept(id + ".machine.upgraded", "%s machine");
+        lang.accept(id + ".machine.upgraded_now", "Upgraded to %s");
+        lang.accept(id + ".machine.already_mv", "Already MV");
         lang.accept(dev.strataindustria.metal.CrucibleStatus.REDSTONE_WAITING.key(), "Redstone needs molten copper");
         lang.accept("fluid_type." + id + ".latex", "Latex");
         lang.accept("fluid_type." + id + ".sulfuric_acid", "Sulfuric Acid");
@@ -115,6 +120,7 @@ final class Tier5Language {
         lang.accept(subtitles + "battery_box.charge", "Battery hums");
         lang.accept(subtitles + "block.tree_tap.place", "Tree tap knocked in");
         lang.accept(subtitles + "block.tree_tap.drip", "Latex drips");
+        lang.accept(subtitles + "block.machine.upgrade", "Machine upgraded");
         lang.accept(subtitles + "block.machine.power_on", "Machine powers up");
         lang.accept(subtitles + "block.machine.power_off", "Machine powers down");
         lang.accept(subtitles + "block.machine.low_power", "Machine beeps");
