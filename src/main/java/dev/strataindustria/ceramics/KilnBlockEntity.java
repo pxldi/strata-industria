@@ -147,8 +147,10 @@ public class KilnBlockEntity extends BaseContainerBlockEntity implements Worldly
             ItemStack input = items.get(slot);
             ItemStack made = fired(input);
             if (made.isEmpty()) continue;
+            // Merging drains the stack, so count the wool before it goes in.
+            int count = made.getCount();
             insert(made);
-            if (input.is(Tier4Items.SLAG_DUST.get())) input.shrink(made.getCount() * SLAG_PER_WOOL);
+            if (input.is(Tier4Items.SLAG_DUST.get())) input.shrink(count * SLAG_PER_WOOL);
             else items.set(slot, ItemStack.EMPTY);
         }
     }
