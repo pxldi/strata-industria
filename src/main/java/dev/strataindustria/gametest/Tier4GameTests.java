@@ -116,7 +116,7 @@ final class Tier4GameTests {
         Melt brass = melt(Items.COPPER_INGOT, 2).plus(melt(ModItems.ingot(Metal.ZINC), 1));
         helper.assertValueEqual(Alloy.resultOf(brass).orElse(null), Metal.BRASS, "2 copper + 1 zinc");
         Melt solder = melt(ModItems.NUGGETS.get(Metal.TIN).get(), 6).plus(melt(ModItems.NUGGETS.get(Metal.LEAD).get(), 4));
-        helper.assertValueEqual(Alloy.resultOf(solder).orElse(null), Metal.SOLDER, "6 tin + 4 lead nuggets");
+        helper.assertValueEqual(Alloy.resultOf(solder).orElse(null), Metal.SOLDER, "3 tin : 2 lead as nuggets");
 
         // Spec 4.4: galena melts like the tier 2 ores; sphalerite has to be roasted first.
         helper.assertValueEqual(Alloy.resultOf(melt(ModItems.crushedOre(OreMineral.GALENA, OreGrade.NORMAL), 2)).orElse(null),

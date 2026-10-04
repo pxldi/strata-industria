@@ -32,7 +32,7 @@ public record BellTone(float pitch) {
         float share = 0;
         int total = Math.max(1, melt.total());
         for (var entry : melt.units().entrySet()) share += weight(entry.getKey()) * entry.getValue() / total;
-        float pitch = Mth.clamp(LOWEST + 5.0f * share, LOWEST, HIGHEST);
+        float pitch = Mth.clamp(LOWEST + 3.0f * share, LOWEST, HIGHEST);
         return new BellTone(Math.round(pitch * 100) / 100f);
     }
 
