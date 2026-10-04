@@ -104,7 +104,7 @@ public final class BlastFurnaceStructure {
     }
 
     /** An edge of the hearth that holds plain casing, where a missing tap hatch or tuyere could go. */
-    private static BlockPos freeEdge(Level level, BlockPos centre, BlockPos controller) {
+    static BlockPos freeEdge(Level level, BlockPos centre, BlockPos controller) {
         for (Direction side : Direction.Plane.HORIZONTAL) {
             BlockPos pos = centre.relative(side);
             if (!pos.equals(controller) && level.getBlockState(pos).is(Tier4Blocks.REFRACTORY_CASING.get())) return pos;
@@ -112,7 +112,21 @@ public final class BlastFurnaceStructure {
         return centre;
     }
 
-    private static boolean open(Level level, BlockPos pos) {
+    /**
+     * Where a missing block is, for a screen: layer (from 0) times 9, plus row (front, middle, back) times
+     * 3, plus column (left, centre, right) as seen standing at the controller.
+     */
+    public static int where(BlockPos controller, Direction facing, BlockPos at, int height) {
+        Direction back = facing.getOpposite();
+        Direction left = back.getCounterClockWise();
+        BlockPos rel = at.subtract(controller);
+        int depth = rel.getX() * back.getStepX() + rel.getZ() * back.getStepZ();
+        int side = rel.getX() * left.getStepX() + rel.getZ() * left.getStepZ();
+        int layer = Math.clamp(rel.getY(), 0, height - 1);
+        return layer * 9 + Math.clamp(depth, 0, 2) * 3 + (1 - Math.clamp(side, -1, 1));
+    }
+
+    static boolean open(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         return state.isAir() || state.getCollisionShape(level, pos).isEmpty() && state.getFluidState().isEmpty();
     }

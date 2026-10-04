@@ -52,6 +52,9 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.BlastFurnaceBlockEntity>> BLAST_FURNACE =
             ModBlockEntities.BLOCK_ENTITIES.register("blast_furnace", () -> new BlockEntityType<>(dev.strataindustria.ironworks.BlastFurnaceBlockEntity::new,
                     Tier4Blocks.BLAST_FURNACE_CONTROLLER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.ConverterBlockEntity>> CONVERTER =
+            ModBlockEntities.BLOCK_ENTITIES.register("converter", () -> new BlockEntityType<>(dev.strataindustria.ironworks.ConverterBlockEntity::new,
+                    Tier4Blocks.CONVERTER_CONTROLLER.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.ironworks.FurnaceHatchBlockEntity>> FURNACE_HATCH =
             ModBlockEntities.BLOCK_ENTITIES.register("furnace_hatch", () -> new BlockEntityType<>(dev.strataindustria.ironworks.FurnaceHatchBlockEntity::new,
                     Tier4Blocks.CHARGING_HATCH.get(), Tier4Blocks.TAP_HATCH.get()));

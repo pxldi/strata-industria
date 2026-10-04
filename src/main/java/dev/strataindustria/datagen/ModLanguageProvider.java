@@ -437,6 +437,23 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "blast_furnace.roar", "Blast furnace roars");
         add(subtitles + "blast_furnace.tap", "Pig iron pours");
         add(subtitles + "multiblock.form", "Structure complete");
+        addBlock(Tier4Blocks.CONVERTER_CONTROLLER, "Converter Controller");
+        add("container." + id + ".converter", "Converter");
+        String converter = id + ".converter.";
+        add(converter + "status.incomplete", "Structure incomplete");
+        add(converter + "status.empty", "Needs pig iron");
+        add(converter + "status.charging", "Charging: waiting for more pig iron");
+        add(converter + "status.no_air", "No air blast");
+        add(converter + "status.needs_preheat", "Needs preheat: add a coke");
+        add(converter + "status.output_full", "Output full");
+        add(converter + "status.blowing", "Blowing (%s%%)");
+        add(converter + "charge_pig", "Pig iron in the blow: %s / %s");
+        add(converter + "charge_scrap", "Scrap in the blow: %s / %s");
+        add(converter + "preheated", "Preheated with coke");
+        add(converter + "not_preheated", "One coke preheats each blow");
+        add(converter + "flame", "The flame climbs to white, then drops when the steel is done");
+        add(subtitles + "converter.blow", "Converter roars");
+        add(subtitles + "converter.done", "Converter blow ends");
         add(config + "ticksPerIngot", "Ticks per pig iron ingot");
         add(config + "warmupTicks", "Hearth warm-up (ticks)");
     }
@@ -632,6 +649,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.crusher.hint", "Drive a crusher at 16 RPM or more. Ore comes out crushed, sometimes with a second piece and a bit of another mineral.");
         add(journal + "t4.blast_furnace", "Blast Furnace");
         add(journal + "t4.blast_furnace.hint", "Build a five-high refractory furnace, blow air into its tuyere and charge it with iron ore, coke and flux. Tap the pig iron.");
+        add(journal + "t4.converter", "Bessemer Steel");
+        add(journal + "t4.converter.hint", "Blow air through pig iron in a converter, with a coke to preheat it. Watch the flame: when it drops, the steel is done.");
         add(journal + "t4.steel_anvil", "Steel Anvil");
         add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }

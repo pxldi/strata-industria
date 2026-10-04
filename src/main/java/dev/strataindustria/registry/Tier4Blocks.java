@@ -152,6 +152,10 @@ public final class Tier4Blocks {
     public static final DeferredBlock<dev.strataindustria.ironworks.TapHatchBlock> TAP_HATCH = ModBlocks.BLOCKS.registerBlock("tap_hatch",
             dev.strataindustria.ironworks.TapHatchBlock::new,
             p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ironworks.TapHatchBlock.HOT) ? 9 : 0));
+    // Spec 12.2: the converter's controller; the rest of it is blast furnace parts.
+    public static final DeferredBlock<dev.strataindustria.ironworks.ConverterBlock> CONVERTER_CONTROLLER =
+            ModBlocks.BLOCKS.registerBlock("converter_controller", dev.strataindustria.ironworks.ConverterBlock::new,
+                    p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ironworks.ConverterBlock.LIT) ? 12 : 0));
     public static final DeferredBlock<dev.strataindustria.ironworks.BlowerBlock> BLOWER = ModBlocks.BLOCKS.registerBlock("blower",
             dev.strataindustria.ironworks.BlowerBlock::new, p -> p.mapColor(MapColor.METAL)
                     .strength(3.5f, 6.0f)

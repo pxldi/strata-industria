@@ -6777,6 +6777,20 @@ public final class TextureGen {
             }
         }
 
+        static void gaugeFill30(BufferedImage im, int u, int v, int[] c, long seed) {
+            Random r = new Random(seed);
+            for (int y = 0; y < 6; y++)
+                for (int x = 0; x < 30; x++) {
+                    int k = y == 0 ? c[4] : y >= 5 ? c[1] : y == 4 ? c[2] : c[3];
+                    im.setRGB(u + x, v + y, 0xff000000 | k);
+                }
+            for (int i = 0; i < 8; i++) {
+                int x = 1 + r.nextInt(26), y = 1 + r.nextInt(3), w = 2 + r.nextInt(2);
+                for (int k = 0; k < w; k++) im.setRGB(u + x + k, v + y, 0xff000000 | c[2]);
+                im.setRGB(u + x, v + y - 1, 0xff000000 | c[4]);
+            }
+        }
+
         static BufferedImage gui() {
             BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             panel(im, 176, 190);
@@ -6840,6 +6854,129 @@ public final class TextureGen {
         saveRaw("gui/blast_furnace", Bf.gui());
     }
 
+    static final class Cv {
+        static int st(int step) { return STEEL.get(step); }
+
+        static BufferedImage front(int frame) {
+            BufferedImage im = Bf.casing();
+            boolean hot = frame >= 0;
+            // Steel bands: one under the rim slot, one through the trunnion axle.
+            for (int[] b : new int[][] {{5, 6}, {9, 10}}) {
+                for (int x = 2; x < 14; x++) {
+                    px(im, x, b[0], st(x % 5 == 2 ? 5 : 4));
+                    px(im, x, b[1], st(2));
+                }
+                px(im, 2, b[0], st(5)); px(im, 13, b[0], st(3));
+                for (int x = 2; x < 14; x++) px(im, x, b[1] + 1, FIRE_BRICK.get(1));
+                for (int x : new int[] {3, 12}) px(im, x, b[0], st(5));
+            }
+            // Rim slot near the top: dark mouth, steel lip below it.
+            int[][] fl = {{2, 3, 2, 3, 2, 2, 3, 2}, {3, 2, 3, 2, 3, 3, 2, 2}, {2, 3, 3, 2, 3, 2, 3, 3}, {3, 2, 2, 3, 2, 3, 2, 3}};
+            for (int y = 3; y <= 4; y++)
+                for (int x = 4; x <= 11; x++) {
+                    int c = (y == 3 || x == 4) ? 0x050404 : Bf.BORE;
+                    if (hot) {
+                        int h = fl[frame][x - 4];
+                        int depth = 4 - y; // 0 at the lip, 1 above
+                        if (depth < h - 1) {
+                            c = depth == 0 ? ((x + frame) % 3 == 0 ? 0xfffbe6 : 0xffe488) : HEAT_BAND[4];
+                        } else if (depth == 0) c = HEAT_BAND[3];
+                        else c = mix(Bf.BORE, HEAT_BAND[1], 0.5);
+                        if (y == 3 && h == 3) c = HEAT_BAND[(x + frame) % 2 == 0 ? 4 : 3];
+                    }
+                    px(im, x, y, c);
+                }
+            if (hot) for (int x = 3; x <= 12; x++) px(im, x, 2, mix(FIRE_BRICK.get(3), HEAT_BAND[2], ((x + frame) % 3 == 0) ? 0.6 : 0.4));
+            // Trunnion hub: steel ring round a dark bearing, lit top left.
+            double cx = 7.5, cy = 9.5;
+            for (int y = 6; y < 14; y++)
+                for (int x = 3; x < 13; x++) {
+                    double dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
+                    if (d > 3.5) continue;
+                    int c;
+                    double t = dx + dy;
+                    if (d > 2.7) c = t < 0 ? st(5) : st(1);
+                    else if (d > 1.5) c = t < -1 ? st(4) : t < 1.5 ? st(3) : st(2);
+                    else c = t < 0 ? PIG_IRON.get(2) : Bf.BORE;
+                    if (hot && d <= 2.7) c = mix(c, HEAT_BAND[d < 1.6 ? 4 : 3], d < 1.6 ? 0.6 : 0.4);
+                    else if (hot) c = mix(c, HEAT_BAND[3], 0.2);
+                    px(im, x, y, c);
+                }
+            // Brass pressure gauge, lower right.
+            int gx = 11, gy = 11;
+            px(im, gx + 1, gy, BRASS.get(5));
+            px(im, gx, gy + 1, BRASS.get(4)); px(im, gx + 1, gy + 1, 0xdcd8cf); px(im, gx + 2, gy + 1, BRASS.get(2));
+            px(im, gx, gy + 2, BRASS.get(3)); px(im, gx + 1, gy + 2, BRASS.get(1)); px(im, gx + 2, gy + 2, BRASS.get(2));
+            return im;
+        }
+
+        static BufferedImage blowing() {
+            BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+            for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(front(f), 0, f * 16, null);
+            return strip;
+        }
+
+        static final String[] GHOST_INGOT = {
+                "................", "................", "................", "................", "................",
+                "....########....", "...##########...", "..############..", "..############..",
+                ".##############.", ".##############.", "................", "................", "................", "................", "................",
+        };
+        static final String[] GHOST_SCRAP = {
+                "................", "................", "...........##...", "..........###...", ".........###....",
+                "........###.....", ".......###......", "......###.......", ".....###........",
+                "....###.........", "...###..........", "..###...........", "................", "................", "................", "................",
+        };
+
+        static BufferedImage gui() {
+            BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            panel(im, 176, 190);
+            for (int y : new int[] {18, 38, 58}) slot(im, 8, y);
+            ghost(im, 8, 18, edgeRows(GHOST_INGOT));
+            ghost(im, 8, 38, edgeRows(GHOST_SCRAP));
+            ghost(im, 8, 58, edgeRows(Bf.GHOST_COKE));
+            for (int y : new int[] {23, 43, 63}) well(im, 29, y - 1, 32, 8, 0x2a2a2a);
+            well(im, 79, 17, 16, 58, 0x2a2a2a);
+            arrow(im, 104, 36);
+            slot(im, 132, 36);
+            slot(im, 152, 36);
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 108 + row * 18);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 166);
+            // Flame column 14x56, hot at the top: bottom deep orange, through yellow, to near white.
+            Random r = new Random(9801);
+            for (int y = 0; y < 56; y++) {
+                double t = 1.0 - y / 55.0; // 1 at top
+                for (int x = 0; x < 14; x++) {
+                    double e = Math.abs(x - 6.5) / 6.5;
+                    double v = t + (r.nextInt(5) - 2) * 0.012 - e * 0.10 * (1 - t) ;
+                    v = Math.max(0, Math.min(1, v));
+                    double f = v * 5;
+                    int i0 = (int) Math.min(4, Math.floor(f));
+                    int c = mix(HEAT_BAND[i0], HEAT_BAND[i0 + 1], f - i0);
+                    if (v < 0.04) c = HEAT_BAND[1];
+                    if (x == 0) c = mix(c, 0xfff4d0, 0.15);
+                    if (x == 13) c = mix(c, 0x3a1410, 0.25);
+                    im.setRGB(176 + x, y, 0xff000000 | c);
+                }
+            }
+            for (int j = 0; j < 15; j++) {
+                int d = Math.abs(j - 7);
+                if (d <= 2) for (int i = 0; i < 15; i++) im.setRGB(192 + i, j, 0xff000000 | GUI_LIGHT);
+                for (int i = 15; i < 22 - d; i++) im.setRGB(192 + i, j, 0xff000000 | GUI_LIGHT);
+            }
+            Bf.gaugeFill30(im, 192, 16, new int[] {PIG_IRON.get(5), PIG_IRON.get(1), PIG_IRON.get(2), PIG_IRON.get(3), PIG_IRON.get(4)}, 9811);
+            Bf.gaugeFill30(im, 192, 22, new int[] {STEEL.get(5), STEEL.get(1), STEEL.get(2), STEEL.get(3), STEEL.get(4)}, 9812);
+            Bf.gaugeFill30(im, 192, 28, new int[] {COKE.get(5), COKE.get(1), COKE.get(2), COKE.get(3), COKE.get(4)}, 9813);
+            return im;
+        }
+    }
+
+    static void converter() throws IOException {
+        save("block/converter_controller_front", Cv.front(-1));
+        saveAnimated("block/converter_controller_front_blowing", Cv.blowing(), 2);
+        saveRaw("gui/converter", Cv.gui());
+    }
+
     static void engines() throws IOException {
         save("block/steam_engine_base", engineBase());
         save("block/steam_engine_cylinder", engineCylinder());
@@ -6853,6 +6990,7 @@ public final class TextureGen {
         crusher();
         washer();
         blastFurnace();
+        converter();
     }
 
     static void steam() throws IOException {

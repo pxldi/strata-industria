@@ -1111,6 +1111,15 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('A', Tier4Items.IRON_AXLE.get())
                 .unlockedBy("has_iron_axle", has(Tier4Items.IRON_AXLE.get()))
                 .save(output, key("blower"));
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.CONVERTER_CONTROLLER.get())
+                .pattern("PGP")
+                .pattern("PCP")
+                .pattern("PPP")
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('G', Tier4Items.PRESSURE_GAUGE.get())
+                .define('C', casing)
+                .unlockedBy("has_blast_furnace_controller", has(Tier4Items.BLAST_FURNACE_CONTROLLER.get()))
+                .save(output, key("converter_controller"));
         // Spec 11.2: the crusher gets three dust from slag, the quern two.
         crush("slag_dust_from_slag", Ingredient.of(Tier4Items.SLAG.get()), new ItemStackTemplate(Tier4Items.SLAG_DUST.get(), 3), List.of());
         grind("slag_dust_from_slag", Ingredient.of(Tier4Items.SLAG.get()), Tier4Items.SLAG_DUST.get(), 2);

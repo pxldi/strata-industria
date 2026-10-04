@@ -55,8 +55,6 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
     /** Flux in halves: one flux item is 2, an ingot takes 1. */
     public static final int MAX_FLUX = 32 * 2, FLUX_ITEM = 2, FLUX_PER_INGOT = 1;
     public static final int IRON_PER_INGOT = MetalContent.INGOT_UNITS;
-    /** At most two blowers' worth of air counts. */
-    public static final int MAX_AIR = 2;
     /** How long a stopped furnace keeps its heat before it starts to cool. */
     public static final int STAYS_HOT = 600;
     public static final int DATA_IRON = 0, DATA_FUEL = 1, DATA_FLUX = 2, DATA_WARMTH = 3, DATA_PROGRESS = 4, DATA_STATUS = 5,
@@ -114,7 +112,7 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
                 case DATA_PROGRESS -> (int) ((long) progress * 1000 / ticksPerIngot());
                 case DATA_STATUS -> status.ordinal();
                 case DATA_PROBLEM -> structure.problem().ordinal();
-                case DATA_WHERE -> where(structure.at());
+                case DATA_WHERE -> structure.complete() ? 0 : BlastFurnaceStructure.where(worldPosition, facing(), structure.at(), BlastFurnaceStructure.HEIGHT);
                 case DATA_AIR -> air;
                 default -> 0;
             };
@@ -208,16 +206,6 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
         if (level != null && level.getBlockEntity(pos) instanceof FurnaceHatchBlockEntity hatch) hatch.claim(worldPosition);
     }
 
-    /** Air from blowers on the tuyeres' outer faces, at most two blowers' worth. */
-    private int countAir(Level level) {
-        int total = 0;
-        for (BlastFurnaceStructure.Opening tuyere : structure.tuyeres()) {
-            BlockPos outside = tuyere.pos().relative(tuyere.out());
-            if (level.getBlockEntity(outside) instanceof AirBlast blast) total += blast.airOut(tuyere.out().getOpposite());
-        }
-        return Math.min(MAX_AIR, total);
-    }
-
     public static void serverTick(Level level, BlockPos pos, BlockState state, BlastFurnaceBlockEntity furnace) {
         if (level.getGameTime() % 20 == 0 || !furnace.checked) {
             furnace.checked = true;
@@ -257,7 +245,7 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
             cool();
             return Status.INCOMPLETE;
         }
-        air = countAir(level);
+        air = AirBlast.into(level, structure.tuyeres());
         Status stopped = air <= 0 ? Status.NO_AIR : fuel < FUEL_PER_INGOT ? Status.NEEDS_FUEL : null;
         if (stopped != null) {
             cool();
@@ -334,21 +322,6 @@ public class BlastFurnaceBlockEntity extends BaseContainerBlockEntity implements
 
     private static int ticksPerIngot() {
         return Math.max(1, Config.BLAST_FURNACE_TICKS_PER_INGOT.getAsInt());
-    }
-
-    /**
-     * Where a missing block is, for the screen: layer 1 to 5 times 9, plus row (front, middle, back) times
-     * 3, plus column (left, centre, right) as seen standing at the controller.
-     */
-    private int where(BlockPos at) {
-        if (level == null || structure.complete()) return 0;
-        Direction back = facing().getOpposite();
-        Direction left = back.getCounterClockWise();
-        BlockPos rel = at.subtract(worldPosition);
-        int depth = rel.getX() * back.getStepX() + rel.getZ() * back.getStepZ();
-        int side = rel.getX() * left.getStepX() + rel.getZ() * left.getStepZ();
-        int layer = Math.clamp(rel.getY(), 0, BlastFurnaceStructure.HEIGHT - 1);
-        return layer * 9 + Math.clamp(depth, 0, 2) * 3 + (1 - Math.clamp(side, -1, 1));
     }
 
     // ------------------------------------------------------------------ for tests and the screen

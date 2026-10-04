@@ -301,6 +301,12 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.BLAST_FURNACE_TAP, definition().subtitle(subtitle("blast_furnace.tap"))
                 .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
                 .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.9f)));
+        add(Tier4Sounds.CONVERTER_BLOW, definition().subtitle(subtitle("converter.blow"))
+                .with(sound("minecraft:entity.blaze.burn", SoundDefinition.SoundType.EVENT).pitch(0.5f))
+                .with(sound("minecraft:entity.blaze.burn", SoundDefinition.SoundType.EVENT).pitch(0.45f).volume(0.9f))
+                .with(sound("minecraft:item.firecharge.use", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f)));
+        add(Tier4Sounds.CONVERTER_DONE, definition().subtitle(subtitle("converter.done"))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.8f)));
         add(Tier4Sounds.MULTIBLOCK_FORM, definition().subtitle(subtitle("multiblock.form"))
                 .with(sound("minecraft:block.iron_door.close", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
     }

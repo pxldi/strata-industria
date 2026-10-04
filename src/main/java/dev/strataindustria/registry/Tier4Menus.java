@@ -28,6 +28,9 @@ public final class Tier4Menus {
     public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.ironworks.BlastFurnaceMenu>> BLAST_FURNACE =
             ModMenus.MENUS.register("blast_furnace", () -> IMenuTypeExtension.create(dev.strataindustria.ironworks.BlastFurnaceMenu::new));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.ironworks.ConverterMenu>> CONVERTER =
+            ModMenus.MENUS.register("converter", () -> IMenuTypeExtension.create(dev.strataindustria.ironworks.ConverterMenu::new));
+
     public static void init() {}
 
     private Tier4Menus() {}
