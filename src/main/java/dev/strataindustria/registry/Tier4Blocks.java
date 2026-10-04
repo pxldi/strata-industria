@@ -115,6 +115,12 @@ public final class Tier4Blocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .sound(HEAVY_METAL));
+    // Spec 13.1: the conveyor belt.
+    public static final DeferredBlock<dev.strataindustria.automation.ConveyorBlock> CONVEYOR_BELT = ModBlocks.BLOCKS.registerBlock("conveyor_belt",
+            dev.strataindustria.automation.ConveyorBlock::new, p -> p.mapColor(MapColor.WOOD)
+                    .strength(1.5f, 3.0f)
+                    .noOcclusion()
+                    .sound(SoundType.WOOD));
     // Spec 10.3: the steel boiler multiblock.
     public static final DeferredBlock<dev.strataindustria.steam.SteelBoilerShellBlock> STEEL_BOILER_SHELL = ModBlocks.BLOCKS.registerBlock(
             "steel_boiler_shell", dev.strataindustria.steam.SteelBoilerShellBlock::new, Tier4Blocks::steelBoiler);

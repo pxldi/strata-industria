@@ -810,6 +810,18 @@ final class ModModelProvider extends ModelProvider {
                 .term(dev.strataindustria.automation.InserterBlock.FACING, net.minecraft.core.Direction.WEST), tag.with(BlockModelGenerators.Y_ROT_270));
         blockModels.blockStateOutput.accept(inserter);
         itemModels.itemModelOutput.accept(Tier4Items.INSERTER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/inserter_item")));
+        // Spec 13.1: the belt's frame is hand-built for each slope; the leather top is drawn by its renderer so it can run at network speed.
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, dev.strataindustria.automation.ConveyorBlock.Slope> beltState = PropertyDispatch.initial(
+                dev.strataindustria.automation.ConveyorBlock.FACING, dev.strataindustria.automation.ConveyorBlock.SLOPE);
+        for (var slope : dev.strataindustria.automation.ConveyorBlock.Slope.values()) {
+            var base = BlockModelGenerators.plainVariant(StrataIndustria.id("block/conveyor_" + slope.getSerializedName()));
+            beltState.select(net.minecraft.core.Direction.NORTH, slope, base);
+            beltState.select(net.minecraft.core.Direction.EAST, slope, base.with(BlockModelGenerators.Y_ROT_90));
+            beltState.select(net.minecraft.core.Direction.SOUTH, slope, base.with(BlockModelGenerators.Y_ROT_180));
+            beltState.select(net.minecraft.core.Direction.WEST, slope, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.CONVEYOR_BELT.get()).with(beltState));
+        itemModels.itemModelOutput.accept(Tier4Items.CONVEYOR_BELT.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/conveyor_item")));
         flatItem(itemModels, Tier4Items.FILTER.get());
         flatItem(itemModels, Tier4Items.SLAG_WOOL.get());
     }

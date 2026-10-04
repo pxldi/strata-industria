@@ -351,6 +351,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.INSERTER_SWING, definition().subtitle(subtitle("block.inserter.swing"))
                 .with(sound("minecraft:block.dispenser.dispense", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.4f))
                 .with(sound("minecraft:block.chain.hit", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.3f)));
+        add(Tier4Sounds.CONVEYOR_RUN, definition().subtitle(subtitle("block.conveyor.run"))
+                .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.5f))
+                .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.45f))
+                .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.5f)));
         add(Tier4Sounds.FILTER_CONFIGURE, definition().subtitle(subtitle("filter.configure"))
                 .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(1.1f))
                 .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(1.25f)));

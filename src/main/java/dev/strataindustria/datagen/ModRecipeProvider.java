@@ -582,6 +582,15 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('A', Tier4Items.IRON_AXLE.get())
                 .unlockedBy("has_iron_axle", has(Tier4Items.IRON_AXLE.get()))
                 .save(output, key("inserter"));
+        // Spec 13.1: the conveyor belt.
+        shaped(RecipeCategory.REDSTONE, Tier4Items.CONVEYOR_BELT.get(), 6)
+                .pattern("LLL")
+                .pattern("TGT")
+                .define('L', Items.LEATHER)
+                .define('T', Tier4Items.TREATED_PLANKS.get())
+                .define('G', ModItems.GEARS.get(Metal.BRASS).get())
+                .unlockedBy("has_brass_gear", has(ModItems.GEARS.get(Metal.BRASS).get()))
+                .save(output, key("conveyor_belt"));
         shapeless(RecipeCategory.REDSTONE, Tier4Items.FILTER.get())
                 .requires(Items.PAPER)
                 .requires(ModItems.PLATES.get(Metal.BRASS).get())
