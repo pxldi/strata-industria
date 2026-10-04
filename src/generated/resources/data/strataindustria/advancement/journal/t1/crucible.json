@@ -1,5 +1,5 @@
 {
-  "parent": "strataindustria:journal/t1/pit_kiln",
+  "parent": "strataindustria:journal/t1/fired_pottery",
   "criteria": {
     "done": {
       "conditions": {

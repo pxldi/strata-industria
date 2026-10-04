@@ -112,12 +112,12 @@ public final class Config {
 
     // ---------------------------------------------------------------- kiln
     static {
-        BUILDER.comment("Pit kiln firing.").push("kiln");
+        BUILDER.comment("Firing clay on the fire pit.").push("kiln");
     }
 
-    public static final ModConfigSpec.IntValue KILN_BURN_TICKS = BUILDER
-            .comment("Ticks a lit pit kiln burns before its pieces are fired.")
-            .defineInRange("burnTicks", 2400, 20, 72000);
+    public static final ModConfigSpec.IntValue FIRING_TICKS = BUILDER
+            .comment("Ticks a piece on the fire pit hearth must stay in the heat before it is fired.")
+            .defineInRange("firingTicks", 900, 20, 72000);
 
     static {
         BUILDER.pop();

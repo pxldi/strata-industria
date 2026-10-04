@@ -74,7 +74,7 @@ public class SoakingBarrelBlock extends BaseEntityBlock {
             }
             return InteractionResult.SUCCESS;
         }
-        // An empty bucket takes water or latex back out. Lye and tannin cannot be carried, so they are tipped away.
+        // An empty bucket takes water or latex back out. Tannin and lye cannot be carried, so they are tipped away.
         ItemStack taken = level.isClientSide() ? ItemStack.EMPTY : barrel.takeBucket();
         if (level.isClientSide() ? !barrel.fluid().isSame(net.minecraft.world.level.material.Fluids.WATER) : taken.isEmpty()) {
             if (level.isClientSide()) return barrel.amount() > 0 && !barrel.fluid().isSame(net.minecraft.world.level.material.Fluids.WATER)

@@ -17,8 +17,6 @@ import dev.strataindustria.block.OreBlock;
 import dev.strataindustria.ceramics.CrucibleBlock;
 import dev.strataindustria.charcoal.CharcoalPileBlock;
 import dev.strataindustria.charcoal.LogPileBlock;
-import dev.strataindustria.ceramics.LargeVesselBlock;
-import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
@@ -68,22 +66,6 @@ public final class ModBlocks {
                     .lightLevel(state -> state.getValue(FirePitBlock.LIT) ? 15 : 0)
                     .pushReaction(PushReaction.POPPED));
 
-    /** Clay pieces under straw and logs (spec 4.2). Light 15 while burning. */
-    public static final DeferredBlock<PitKilnBlock> PIT_KILN = BLOCKS.registerBlock("pit_kiln", PitKilnBlock::new,
-            p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
-                    .strength(0.6f)
-                    .sound(SoundType.GRASS)
-                    .noOcclusion()
-                    .noLootTable()
-                    .lightLevel(state -> state.getValue(PitKilnBlock.LIT) ? 15 : 0)
-                    .pushReaction(PushReaction.IMMOVEABLE));
-    /** Fired clay storage jar (spec 4.3). */
-    public static final DeferredBlock<LargeVesselBlock> LARGE_VESSEL = BLOCKS.registerBlock("large_vessel", LargeVesselBlock::new,
-            p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
-                    .strength(1.0f)
-                    .sound(SoundType.DECORATED_POT)
-                    .noOcclusion()
-                    .pushReaction(PushReaction.POPPED));
     public static final DeferredBlock<CrucibleBlock> CRUCIBLE = BLOCKS.registerBlock("crucible", CrucibleBlock::new,
             p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
                     .strength(1.0f)

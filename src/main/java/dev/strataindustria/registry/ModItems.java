@@ -2,9 +2,7 @@ package dev.strataindustria.registry;
 
 
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.ceramics.LargeVesselItem;
 import dev.strataindustria.ceramics.MoldType;
-import dev.strataindustria.ceramics.SmallVesselItem;
 import dev.strataindustria.charcoal.AshItem;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
@@ -68,16 +66,10 @@ public final class ModItems {
     // Fire (spec 3.5).
     public static final DeferredItem<BlockItem> FIRE_PIT = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_PIT);
 
-    // Clay (spec 4.1 to 4.3). Unfired pieces are formed on the grid and fired in a pit kiln.
-    public static final DeferredItem<Item> UNFIRED_SMALL_VESSEL = ITEMS.registerSimpleItem("unfired_small_vessel", p -> p.stacksTo(1));
-    public static final DeferredItem<Item> UNFIRED_LARGE_VESSEL = ITEMS.registerSimpleItem("unfired_large_vessel", p -> p.stacksTo(1));
+    // Clay (spec 4.1 to 4.3). Unfired pieces are shaped by hand and fired on the fire pit.
     public static final DeferredItem<Item> UNFIRED_CRUCIBLE = ITEMS.registerSimpleItem("unfired_crucible", p -> p.stacksTo(1));
     public static final DeferredItem<Item> UNFIRED_INGOT_MOLD = ITEMS.registerSimpleItem("unfired_ingot_mold", p -> p.stacksTo(16));
     public static final DeferredItem<Item> UNFIRED_BRICK = ITEMS.registerSimpleItem("unfired_brick");
-    public static final DeferredItem<SmallVesselItem> SMALL_VESSEL = ITEMS.registerItem("small_vessel", SmallVesselItem::new,
-            p -> p.stacksTo(1));
-    public static final DeferredItem<LargeVesselItem> LARGE_VESSEL = ITEMS.registerItem("large_vessel",
-            p -> new LargeVesselItem(ModBlocks.LARGE_VESSEL.get(), p), p -> p.stacksTo(1).useBlockDescriptionPrefix());
     public static final DeferredItem<BlockItem> CRUCIBLE = ITEMS.registerSimpleBlockItem(ModBlocks.CRUCIBLE, p -> p.stacksTo(1));
     public static final DeferredItem<CastMoldItem> INGOT_MOLD = ITEMS.registerItem("ingot_mold", p -> new CastMoldItem(null, p),
             p -> p.stacksTo(16));
@@ -118,8 +110,6 @@ public final class ModItems {
             dev.strataindustria.power.LeatherBeltItem::new, p -> p.stacksTo(16));
     // Tier 3 spec 12.1: hides and the soaking barrel.
     public static final DeferredItem<Item> RAW_HIDE = ITEMS.registerSimpleItem("raw_hide");
-    public static final DeferredItem<Item> LIMED_HIDE = ITEMS.registerSimpleItem("limed_hide");
-    public static final DeferredItem<Item> SCRAPED_HIDE = ITEMS.registerSimpleItem("scraped_hide");
     public static final DeferredItem<BlockItem> SOAKING_BARREL = ITEMS.registerSimpleBlockItem(ModBlocks.SOAKING_BARREL);
     // Tier 3 spec 11: washing.
     public static final DeferredItem<dev.strataindustria.washing.WashingPanItem> WASHING_PAN = ITEMS.registerItem("washing_pan",

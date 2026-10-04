@@ -269,6 +269,11 @@ public class SoakingBarrelBlockEntity extends BaseContainerBlockEntity implement
             else out.grow(made.getCount());
         }
         level.playSound(null, worldPosition, ModSounds.SOAKING_BARREL_DONE.get(), SoundSource.BLOCKS, 0.7f, 1.0f);
+        // A little puff of bubbles from the lid when a batch is ready.
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            server.sendParticles(net.minecraft.core.particles.ParticleTypes.BUBBLE_POP, worldPosition.getX() + 0.5, worldPosition.getY() + 1.05,
+                    worldPosition.getZ() + 0.5, 10, 0.25, 0.05, 0.25, 0.02);
+        }
         sync();
         return Status.EMPTY;
     }
