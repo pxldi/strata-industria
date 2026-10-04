@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:copper_heat_pipe",
+    "strataindustria:slag_wool"
+  ],
+  "result": {
+    "id": "strataindustria:insulated_copper_heat_pipe"
+  }
+}

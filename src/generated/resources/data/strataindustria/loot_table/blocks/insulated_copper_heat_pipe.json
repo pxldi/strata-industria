@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "strataindustria:insulated_copper_heat_pipe"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:blocks/insulated_copper_heat_pipe"
+}

@@ -1101,6 +1101,43 @@
     ],
     "subtitle": "subtitles.strataindustria.journal.open"
   },
+  "kiln.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.decorated_pot.hit",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.4,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.kiln.done"
+  },
+  "kiln.work": {
+    "sounds": [
+      {
+        "name": "block/furnace/fire_crackle1",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "block/furnace/fire_crackle2",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "block/furnace/fire_crackle3",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.kiln.work"
+  },
   "kinetic.overstress": {
     "sounds": [
       {
