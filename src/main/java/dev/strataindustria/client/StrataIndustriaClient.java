@@ -18,6 +18,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -31,6 +33,8 @@ public final class StrataIndustriaClient {
         modBus.addListener(StrataIndustriaClient::registerScreens);
         modBus.addListener(StrataIndustriaClient::registerGuiLayers);
         modBus.addListener(StrataIndustriaClient::registerRenderers);
+        modBus.addListener(StrataIndustriaClient::registerTints);
+        modBus.addListener(StrataIndustriaClient::registerItemProperties);
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
@@ -46,6 +50,14 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANVIL.get(), AnvilRenderer::new);
+    }
+
+    private static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {
+        event.register(StrataIndustria.id("heat_glow"), HeatGlow.Tint.MAP_CODEC);
+    }
+
+    private static void registerItemProperties(RegisterConditionalItemModelPropertyEvent event) {
+        event.register(StrataIndustria.id("glowing"), HeatGlow.Glowing.MAP_CODEC);
     }
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
