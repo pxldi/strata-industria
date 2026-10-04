@@ -2802,6 +2802,503 @@ public final class TextureGen {
         return im;
     }
 
+    // ---------------------------------------------------------------- tier 3: kinetics (spec 21)
+
+    // Worn, hand-darkened wood for crank handles; weathered wet wood for water wheels (built per SG 3).
+    static final Ramp DARK_WOOD = ramp(0, 0x281a16, 0x3c281e, 0x553b29, 0x705136, 0x8c6a46);
+    static final Ramp WET_WOOD = ramp(0, 0x221d20, 0x332b28, 0x4a3e33, 0x625340, 0x7c6a50);
+
+    static int clampStep(int s) { return Math.max(1, Math.min(5, s)); }
+
+    /**
+     * Fills a rectangle with wood grain: every line (a column if {@code vertical}, else a row) wanders
+     * one step above or below {@code base} in runs of 2 to 5 px, and every third line or so is a dark latewood streak.
+     */
+    static void grain(BufferedImage im, Ramp a, Random r, int x0, int y0, int w, int h, int base, boolean vertical) {
+        int lines = vertical ? w : h, len = vertical ? h : w;
+        for (int l = 0; l < lines; l++) {
+            int bias = r.nextInt(3) == 0 ? -1 : 0;
+            int i = 0;
+            while (i < len) {
+                int run = 2 + r.nextInt(4);
+                int roll = r.nextInt(6);
+                int step = clampStep(base + bias + (roll == 0 ? 1 : roll == 1 ? -1 : 0));
+                for (int k = 0; k < run && i < len; k++, i++) {
+                    if (vertical) px(im, x0 + l, y0 + i, a.get(step));
+                    else px(im, x0 + i, y0 + l, a.get(step));
+                }
+            }
+        }
+    }
+
+    /** A treenail: a 2x2 dowel end, lit top-left, sitting in a dark bore. */
+    static void peg(BufferedImage im, Ramp a, int x, int y) {
+        px(im, x, y, a.get(5));
+        px(im, x + 1, y, a.get(4));
+        px(im, x, y + 1, a.get(4));
+        px(im, x + 1, y + 1, a.get(2));
+    }
+
+    /** End grain: growth rings round the centre with a little wobble, a dark heart and one radial check. */
+    static BufferedImage endGrain(Ramp a, long seed, double cx, double cy, double spacing) {
+        double[][] n = fractal(seed);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - cx, y - cy) + (n[y][x] - 0.5) * 0.9;
+                int ring = (int) Math.floor(d / spacing);
+                double f = d / spacing - ring;
+                int step = f < 0.3 ? 2 : (ring % 2 == 0 ? 4 : 3);
+                if (d < 1.0) step = 2;
+                px(im, x, y, a.get(step));
+            }
+        // A drying check running out from the heart towards the bottom-right.
+        for (int i = 1; i < 5; i++) px(im, (int) Math.round(cx + 0.5 + i * 0.8), (int) Math.round(cy + 0.5 + i * 0.45), a.get(i < 3 ? 1 : 2));
+        return im;
+    }
+
+    /** Hewn axle side: lengthwise grain, two fibre twine lashings wound diagonally round the shaft. */
+    static BufferedImage axleSide() {
+        BufferedImage im = img();
+        grain(im, WOOD, new Random(8101), 0, 0, 16, 16, 3, true);
+        for (int b0 : new int[] {2, 10}) {
+            for (int x = 0; x < 16; x++) {
+                for (int j = 0; j < 3; j++) {
+                    int k = Math.floorMod(x - j, 3);
+                    px(im, x, b0 + j, FIBRE.get(clampStep((k == 0 ? 3 : k == 1 ? 2 : 1) + (j == 0 && k == 0 ? 1 : 0))));
+                }
+                px(im, x, b0 + 3, WOOD.get(1)); // the rope's shadow on the shaft
+            }
+        }
+        // A tight knot in the grain.
+        px(im, 7, 6, WOOD.get(1)); px(im, 8, 6, WOOD.get(2)); px(im, 7, 7, WOOD.get(2)); px(im, 6, 6, WOOD.get(4));
+        return im;
+    }
+
+    static BufferedImage axleEnd() {
+        BufferedImage im = endGrain(WOOD, 8102, 7.5, 7.5, 1.6);
+        return im;
+    }
+
+    /** Gearbox face: plank panel in a pegged frame, a round opening with an eight-tooth cog turning behind it. */
+    static BufferedImage gearboxFace() {
+        BufferedImage im = img();
+        Random r = new Random(8201);
+        // Panel boards, vertical, three wide.
+        grain(im, WOOD, r, 2, 2, 12, 12, 2, true);
+        for (int y = 2; y < 14; y++) {
+            px(im, 5, y, WOOD.get(1));
+            px(im, 10, y, WOOD.get(1));
+            px(im, 6, y, WOOD.get(3));
+            px(im, 11, y, WOOD.get(3));
+        }
+        // Frame: horizontal rails over vertical stiles, lit top-left.
+        grain(im, WOOD, r, 0, 0, 16, 2, 3, false);
+        grain(im, WOOD, r, 0, 14, 16, 2, 3, false);
+        grain(im, WOOD, r, 0, 2, 2, 12, 3, true);
+        grain(im, WOOD, r, 14, 2, 2, 12, 3, true);
+        for (int i = 0; i < 16; i++) {
+            px(im, i, 0, WOOD.get(4));
+            px(im, i, 15, WOOD.get(2));
+            if (i > 1 && i < 14) {
+                px(im, 0, i, WOOD.get(4));
+                px(im, 15, i, WOOD.get(2));
+                px(im, i, 2, WOOD.get(2)); // frame shadow on the panel
+                px(im, 2, i, WOOD.get(2));
+            }
+        }
+        // Round opening with the cog behind it; deep shadow in the gaps, the far (bottom-right) wall lit.
+        boolean[][] hole = new boolean[16][16], cog = gearMask();
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) hole[y][x] = Math.hypot(x - 7.5, y - 7.5) <= 6.1;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                if (!hole[y][x] || cog[y][x]) continue;
+                boolean farWall = !hole[y + 1][x] || !hole[y][x + 1];
+                px(im, x, y, farWall ? WOOD.get(2) : DARK_WOOD.get(1));
+            }
+        drawGear(im, 4);
+        // Lit rim of the panel round the opening's top-left (light catches the cut edge).
+        for (int y = 2; y < 14; y++)
+            for (int x = 2; x < 14; x++)
+                if (!hole[y][x] && ((y + 1 < 16 && hole[y + 1][x]) || (x + 1 < 16 && hole[y][x + 1]))) px(im, x, y, WOOD.get(4));
+        // Corner pegs.
+        peg(im, WOOD, 0, 0); peg(im, WOOD, 14, 0); peg(im, WOOD, 0, 14); peg(im, WOOD, 14, 14);
+        return im;
+    }
+
+    /** Hand-worn dark wood: grain with a few polished streaks and scuffs. */
+    static BufferedImage crankWood() {
+        BufferedImage im = img();
+        Random r = new Random(8301);
+        grain(im, DARK_WOOD, r, 0, 0, 16, 16, 3, true);
+        int[][] polish = {{2, 3}, {9, 1}, {5, 9}, {12, 7}, {14, 12}, {7, 13}};
+        for (int[] p : polish) { px(im, p[0], p[1], DARK_WOOD.get(5)); px(im, p[0], p[1] + 1, DARK_WOOD.get(4)); }
+        int[][] scuff = {{4, 6}, {11, 3}, {10, 11}, {1, 13}};
+        for (int[] p : scuff) { px(im, p[0], p[1], DARK_WOOD.get(1)); px(im, p[0] + 1, p[1], DARK_WOOD.get(2)); }
+        return im;
+    }
+
+    /** Water wheel boards: weathered wet planks, lit upper edges, damp dark lower edges with a little algae, pegged butt joints. */
+    static BufferedImage wheelPlanks() {
+        BufferedImage im = img();
+        Random r = new Random(8401);
+        grain(im, WET_WOOD, r, 0, 0, 16, 16, 3, false);
+        int[] joints = {11, 4, 13, 6};
+        for (int p = 0; p < 4; p++) {
+            int y0 = p * 4;
+            for (int x = 0; x < 16; x++) {
+                px(im, x, y0, WET_WOOD.get(4));
+                px(im, x, y0 + 3, WET_WOOD.get(r.nextInt(5) == 0 ? 2 : 1));
+            }
+            int j = joints[p];
+            px(im, j, y0 + 1, WET_WOOD.get(1)); px(im, j, y0 + 2, WET_WOOD.get(1));
+            px(im, j + 1, y0 + 1, WET_WOOD.get(4)); px(im, j + 1, y0 + 2, WET_WOOD.get(3));
+            // Treenails either side of the joint.
+            px(im, Math.floorMod(j - 2, 16), y0 + 1, WET_WOOD.get(5)); px(im, Math.floorMod(j - 2, 16), y0 + 2, WET_WOOD.get(2));
+            px(im, Math.floorMod(j + 3, 16), y0 + 1, WET_WOOD.get(5)); px(im, Math.floorMod(j + 3, 16), y0 + 2, WET_WOOD.get(2));
+        }
+        // Algae where the water sits along the seams, and a few wet glints.
+        int[][] algae = {{2, 3}, {3, 3}, {7, 7}, {8, 7}, {14, 11}, {15, 11}, {5, 15}, {6, 15}, {9, 3}};
+        for (int[] a : algae) px(im, a[0], a[1], FIBRE.get(1));
+        int[][] glint = {{4, 1}, {13, 5}, {1, 9}, {9, 13}};
+        for (int[] g : glint) { px(im, g[0], g[1], WET_WOOD.get(5)); px(im, g[0] + 1, g[1], WET_WOOD.get(5)); }
+        return im;
+    }
+
+    /** Water wheel hub: wet end grain with a square axle socket and four wedges. */
+    static BufferedImage wheelHub() {
+        BufferedImage im = endGrain(WET_WOOD, 8402, 7.5, 7.5, 1.5);
+        for (int y = 6; y <= 9; y++) for (int x = 6; x <= 9; x++) px(im, x, y, (x == 9 || y == 9) ? WET_WOOD.get(2) : WOOD.get(3));
+        for (int y = 7; y <= 8; y++) for (int x = 7; x <= 8; x++) px(im, x, y, WOOD.get(x == 7 && y == 7 ? 4 : 2));
+        int[][] wedges = {{7, 5}, {5, 7}, {10, 8}, {8, 10}};
+        for (int[] w : wedges) px(im, w[0], w[1], WET_WOOD.get(1));
+        return im;
+    }
+
+    /** Millstone housing side: post grain above, a pegged wooden curb band, two courses of dressed limestone below. */
+    static BufferedImage millstoneSide() {
+        BufferedImage im = img();
+        Random r = new Random(8501);
+        grain(im, WOOD, r, 0, 0, 16, 7, 3, true);
+        grain(im, WOOD, r, 0, 7, 16, 2, 3, false);
+        for (int x = 0; x < 16; x++) { px(im, x, 6, WOOD.get(2)); px(im, x, 7, WOOD.get(4)); }
+        peg(im, WOOD, 2, 7); peg(im, WOOD, 12, 7);
+        double[][] n = fractal(8502);
+        int[][] joints = {{5, 13}, {1, 9}};
+        for (int y = 9; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int course = y < 12 ? 0 : 1, top = course == 0 ? 9 : 12;
+                int step = n[y][x] > 0.6 ? 4 : 3;
+                if (y == top) step = 4;
+                if (y == 15) step = 2;
+                boolean joint = false, afterJoint = false;
+                for (int j : joints[course]) { if (x == j) joint = true; if (x == j + 1) afterJoint = true; }
+                if (afterJoint) step = 4;
+                if (joint) step = 1;
+                if (y == 12 && !joint) step = 1;
+                if (y == 13 && !joint) step = Math.max(step, 4);
+                px(im, x, y, LIMESTONE.get(step));
+            }
+        // Shadow under the curb, and a few diagonal chisel strokes.
+        for (int x = 0; x < 16; x++) if (rgb(im, x, 9) != LIMESTONE.get(1)) px(im, x, 9, LIMESTONE.get(2));
+        int[][] tool = {{3, 10}, {8, 11}, {10, 10}, {4, 14}, {11, 14}, {14, 13}};
+        for (int[] t : tool) { px(im, t[0], t[1], LIMESTONE.get(2)); px(im, t[0] + 1, t[1] - 1, LIMESTONE.get(2)); }
+        return im;
+    }
+
+    /** Millstone housing top: a mitred wooden curb round a limestone bed, its meal channel and the granite bedstone. */
+    static BufferedImage millstoneTop() {
+        BufferedImage im = img();
+        double[][] n = fractal(8503);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x - 7.5, dy = y - 7.5, d = Math.hypot(dx, dy);
+                if (d <= 4.8) {
+                    // The granite bedstone the runner turns on, furrowed like the runner.
+                    int step = n[y][x] > 0.6 ? 4 : 3;
+                    if (d > 1.5 && (Math.abs(dx) < 0.6 || Math.abs(dy) < 0.6 || Math.abs(Math.abs(dx) - Math.abs(dy)) < 0.6)) step = 2;
+                    if (d < 1.5) step = 1;
+                    px(im, x, y, GRANITE.get(step));
+                    continue;
+                }
+                int step = n[y][x] > 0.58 ? 4 : n[y][x] < 0.4 ? 2 : 3;
+                if (d < 6.0) step = (dx + dy > 0) ? 4 : 1; // meal channel: shadowed upper-left wall, lit far wall
+                px(im, x, y, LIMESTONE.get(step));
+            }
+        Random r = new Random(8504);
+        grain(im, WOOD, r, 0, 0, 16, 2, 3, false);
+        grain(im, WOOD, r, 0, 14, 16, 2, 3, false);
+        grain(im, WOOD, r, 0, 2, 2, 12, 3, true);
+        grain(im, WOOD, r, 14, 2, 2, 12, 3, true);
+        for (int i = 0; i < 16; i++) {
+            px(im, i, 0, WOOD.get(4));
+            px(im, 0, i, WOOD.get(4));
+            px(im, i, 15, WOOD.get(2));
+            px(im, 15, i, WOOD.get(2));
+        }
+        for (int i = 2; i < 14; i++) { px(im, i, 2, LIMESTONE.get(2)); px(im, 2, i, LIMESTONE.get(2)); }
+        // Mitre joints.
+        px(im, 1, 1, WOOD.get(1)); px(im, 14, 1, WOOD.get(1)); px(im, 1, 14, WOOD.get(1)); px(im, 14, 14, WOOD.get(1));
+        peg(im, WOOD, 7, 0); peg(im, WOOD, 0, 7); peg(im, WOOD, 7, 14); peg(im, WOOD, 14, 7);
+        return im;
+    }
+
+    /**
+     * Runner stone: dressed granite. Eight straight furrows run out from the eye, each with a lit lip,
+     * lands speckled with crystals, a plain skirt round the edge so the sides read as tooled stone.
+     */
+    static BufferedImage millstoneRunner() {
+        double[][] n = fractal(8601);
+        BufferedImage im = img();
+        Random r = new Random(8602);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double px0 = x - 7.5, py0 = y - 7.5, d = Math.hypot(px0, py0);
+                int step = n[y][x] > 0.62 ? 4 : n[y][x] < 0.36 ? 2 : 3;
+                boolean skirt = x < 2 || y < 2 || x > 13 || y > 13;
+                if (!skirt && d > 2.2) {
+                    for (int k = 0; k < 8; k++) {
+                        double a = k * Math.PI / 4, dx = Math.cos(a), dy = Math.sin(a);
+                        double along = px0 * dx + py0 * dy, across = px0 * -dy + py0 * dx;
+                        if (along > 0.5 && Math.abs(across) < 0.5) step = 1;
+                        else if (along > 0.5 && across > 0.5 && across < 1.2 && step != 1) step = 4;
+                    }
+                }
+                if (skirt) step = n[y][x] > 0.55 ? 4 : 3;
+                px(im, x, y, GRANITE.get(step));
+            }
+        // Skirt tooling: short vertical pick marks.
+        for (int x = 1; x < 16; x += 3) { px(im, x, 0, GRANITE.get(2)); px(im, x, 15, GRANITE.get(2)); px(im, 0, x, GRANITE.get(2)); px(im, 15, x, GRANITE.get(2)); }
+        // The eye.
+        for (int y = 6; y <= 9; y++) for (int x = 6; x <= 9; x++) px(im, x, y, GRANITE.get((x == 9 || y == 9) ? 4 : 2));
+        for (int y = 7; y <= 8; y++) for (int x = 7; x <= 8; x++) px(im, x, y, GRANITE.get(1));
+        for (int k = 0; k < 6; k++) speck(im, r, 2 + r.nextInt(12), 2 + r.nextInt(12), GRANITE.get(5), GRANITE.get(2), 2);
+        return im;
+    }
+
+    /** Leather pleats seen from the side: ridge lit from above, face, dark crease, with some sheen and wrinkles. */
+    static void pleats(BufferedImage im, int y0, int y1, long seed) {
+        Random r = new Random(seed);
+        for (int y = y0; y < y1; y++)
+            for (int x = 0; x < 16; x++) {
+                int k = Math.floorMod(y - y0 - 1, 3);
+                // The bag bulges: folds are fullest mid-face and tuck in towards the ends.
+                boolean end = x < 2 || x > 13, mid = x > 3 && x < 12;
+                int step = k == 0 ? (mid ? 4 : end ? 2 : 3) : k == 1 ? (end ? 2 : 3) : 1;
+                if (k == 2 && (x == 0 || x == 15)) step = 1;
+                if (y == y0) step = 1; // shadow under the board
+                px(im, x, y, LEATHER.get(step));
+            }
+        for (int i = 0; i < 5; i++) {
+            int x = 1 + r.nextInt(13), y = y0 + 1 + 3 * r.nextInt((y1 - y0 - 1) / 3);
+            px(im, x, y, LEATHER.get(5)); px(im, x + 1, y, LEATHER.get(5));
+        }
+        for (int i = 0; i < 4; i++) {
+            int x = 1 + r.nextInt(14), y = y0 + 2 + 3 * r.nextInt((y1 - y0 - 1) / 3);
+            if (y < y1) px(im, x, y, LEATHER.get(2));
+        }
+    }
+
+    static void boardEdge(BufferedImage im, Random r, int y) {
+        grain(im, WOOD, r, 0, y, 16, 2, 3, false);
+        for (int x = 0; x < 16; x++) { px(im, x, y, WOOD.get(4)); }
+        px(im, 0, y, WOOD.get(3)); px(im, 0, y + 1, WOOD.get(2)); px(im, 15, y, WOOD.get(3)); px(im, 15, y + 1, WOOD.get(2));
+    }
+
+    static BufferedImage bellowsSide() {
+        BufferedImage im = img();
+        Random r = new Random(8701);
+        pleats(im, 2, 14, 8702);
+        boardEdge(im, r, 0);
+        boardEdge(im, r, 14);
+        // Brass-free, iron-free: the bag is nailed with wooden pegs along the boards.
+        for (int x = 2; x < 16; x += 4) { px(im, x, 1, WOOD.get(5)); px(im, x, 14, WOOD.get(5)); }
+        return im;
+    }
+
+    /** Front: the nose block between the boards, its nozzle bore ringed with an iron band. */
+    static BufferedImage bellowsFront() {
+        BufferedImage im = img();
+        Random r = new Random(8711);
+        grain(im, WOOD, r, 0, 2, 16, 12, 2, true);
+        for (int x = 0; x < 16; x++) px(im, x, 2, WOOD.get(1));
+        boardEdge(im, r, 0);
+        boardEdge(im, r, 14);
+        for (int y = 5; y <= 10; y++)
+            for (int x = 5; x <= 10; x++) {
+                boolean ring = x == 5 || x == 10 || y == 5 || y == 10;
+                if (ring) px(im, x, y, WROUGHT_IRON.get(x == 10 || y == 10 ? 2 : (x == 5 && y == 5) ? 5 : 4));
+                else px(im, x, y, WOOD.get(x == 6 || y == 6 ? 4 : 3));
+            }
+        for (int y = 7; y <= 8; y++) for (int x = 7; x <= 8; x++) px(im, x, y, CHARCOAL.get(1));
+        px(im, 7, 7, CHARCOAL.get(1)); px(im, 8, 8, CHARCOAL.get(3));
+        // Iron rivets on the band, and the band's straps running up and down to the boards.
+        for (int y = 3; y <= 12; y++) if (y < 5 || y > 10) { px(im, 7, y, WROUGHT_IRON.get(3)); px(im, 8, y, WROUGHT_IRON.get(2)); }
+        px(im, 7, 3, WROUGHT_IRON.get(4)); px(im, 7, 12, WROUGHT_IRON.get(4));
+        return im;
+    }
+
+    /** Back: pleats between the boards, with a worn wooden pull handle hanging from the top board. */
+    static BufferedImage bellowsBack() {
+        BufferedImage im = img();
+        Random r = new Random(8721);
+        pleats(im, 2, 14, 8722);
+        boardEdge(im, r, 0);
+        boardEdge(im, r, 14);
+        for (int y = 2; y <= 4; y++) { px(im, 3, y, DARK_WOOD.get(4)); px(im, 4, y, DARK_WOOD.get(2)); px(im, 11, y, DARK_WOOD.get(4)); px(im, 12, y, DARK_WOOD.get(2)); }
+        for (int x = 2; x <= 13; x++) { px(im, x, 5, DARK_WOOD.get(x < 4 ? 5 : 4)); px(im, x, 6, DARK_WOOD.get(2)); }
+        px(im, 2, 6, DARK_WOOD.get(3));
+        for (int x = 2; x <= 13; x++) px(im, x, 7, LEATHER.get(1));
+        return im;
+    }
+
+    /** Top board: three planks running front to back, pegged to cross battens underneath. */
+    static BufferedImage bellowsTop() {
+        BufferedImage im = img();
+        Random r = new Random(8731);
+        grain(im, WOOD, r, 0, 0, 16, 16, 3, true);
+        for (int y = 0; y < 16; y++) {
+            px(im, 5, y, WOOD.get(1)); px(im, 6, y, WOOD.get(4));
+            px(im, 10, y, WOOD.get(1)); px(im, 11, y, WOOD.get(4));
+            px(im, 0, y, WOOD.get(4)); px(im, 15, y, WOOD.get(2));
+        }
+        for (int bx : new int[] {2, 7, 12}) { peg(im, WOOD, bx, 2); peg(im, WOOD, bx, 12); }
+        return im;
+    }
+
+    // Items.
+
+    /** Shades a mask lit top-left: pixels whose top or left neighbour is outside the part are one step lighter, bottom/right one darker. */
+    static void shadeMask(BufferedImage im, boolean[][] m, Ramp a, int base) {
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                if (!m[y][x]) continue;
+                boolean lit = y == 0 || x == 0 || !m[y - 1][x] || !m[y][x - 1];
+                boolean dark = y == 15 || x == 15 || !m[y + 1][x] || !m[y][x + 1];
+                px(im, x, y, a.get(clampStep(base + (lit ? 1 : 0) - (dark && !lit ? 1 : 0))));
+            }
+    }
+
+    /** Water wheel front-on: octagonal rim on a cross of spokes, eight paddle boards, open between the spokes. */
+    static BufferedImage waterWheelItem() {
+        BufferedImage im = img();
+        boolean[][] rim = new boolean[16][16], paddle = new boolean[16][16], spoke = new boolean[16][16], open = new boolean[16][16];
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = Math.abs(x - 7.5), dy = Math.abs(y - 7.5);
+                boolean outer = Math.max(dx, dy) <= 4.5 && dx + dy <= 6.5;
+                boolean inner = Math.max(dx, dy) <= 3.5 && dx + dy <= 5.5;
+                if (outer && !inner) rim[y][x] = true;
+                else if (inner && (dx < 1 || dy < 1)) spoke[y][x] = true;
+                else if (inner) open[y][x] = true;
+            }
+        int[][] paddles = {{7, 2}, {8, 2}, {7, 13}, {8, 13}, {2, 7}, {2, 8}, {13, 7}, {13, 8},
+                {4, 4}, {3, 4}, {4, 3}, {11, 4}, {12, 4}, {11, 3}, {4, 11}, {3, 11}, {4, 12}, {11, 11}, {12, 11}, {11, 12}};
+        for (int[] p : paddles) paddle[p[1]][p[0]] = true;
+        shadeMask(im, spoke, WET_WOOD, 3);
+        shadeMask(im, rim, WET_WOOD, 4);
+        shadeMask(im, paddle, WOOD, 3);
+        // Hub with its square axle.
+        for (int y = 6; y <= 9; y++) for (int x = 6; x <= 9; x++) px(im, x, y, WOOD.get(x == 6 || y == 6 ? 5 : x == 9 || y == 9 ? 2 : 4));
+        px(im, 7, 7, DARK_WOOD.get(1)); px(im, 8, 7, DARK_WOOD.get(2)); px(im, 7, 8, DARK_WOOD.get(2)); px(im, 8, 8, DARK_WOOD.get(1));
+        BufferedImage out = outline(im);
+        // Keep the gaps between the spokes see-through rather than filled with outline.
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) if (open[y][x]) clear(out, x, y);
+        return out;
+    }
+
+    static BufferedImage handCrankItem() {
+        BufferedImage im = img();
+        boolean[][] arm = new boolean[16][16], grip = new boolean[16][16];
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                // Arm from the hub (bottom-left) up to the grip (top-right).
+                double t = ((x - 4.5) + -(y - 10.5)) / 2.0, across = ((x - 4.5) + (y - 10.5)) / Math.sqrt(2);
+                if (t >= 0 && t <= 6.5 && Math.abs(across) <= 0.8) arm[y][x] = true;
+                if (x >= 10 && x <= 12 && y >= 2 && y <= 6 && !(y == 2 && x == 12)) grip[y][x] = true;
+            }
+        shadeMask(im, arm, DARK_WOOD, 3);
+        shadeMask(im, grip, DARK_WOOD, 4);
+        // Polished band where the hand turns it.
+        px(im, 10, 4, DARK_WOOD.get(5)); px(im, 10, 5, DARK_WOOD.get(5));
+        // Square shaft end at the hub, end grain with a dark heart.
+        for (int y = 9; y <= 13; y++)
+            for (int x = 2; x <= 6; x++) {
+                int step = (x == 2 || y == 9) ? 5 : (x == 6 || y == 13) ? 2 : 4;
+                px(im, x, y, WOOD.get(step));
+            }
+        px(im, 4, 11, WOOD.get(2)); px(im, 3, 11, WOOD.get(3)); px(im, 4, 10, WOOD.get(3));
+        return outline(im);
+    }
+
+    /** An eight-tooth cog, 12 px across: a round body with square teeth on the axes and diagonals. */
+    static boolean[][] gearMask() {
+        boolean[][] m = new boolean[16][16];
+        for (int y = 0; y < 16; y++) for (int x = 0; x < 16; x++) if (Math.hypot(x - 7.5, y - 7.5) <= 4.5) m[y][x] = true;
+        int[][] teeth = {{7, 2}, {8, 2}, {7, 3}, {8, 3}, {7, 12}, {8, 12}, {7, 13}, {8, 13}, {2, 7}, {2, 8}, {3, 7}, {3, 8}, {12, 7}, {12, 8}, {13, 7}, {13, 8},
+                {4, 3}, {3, 4}, {4, 4}, {11, 3}, {12, 4}, {11, 4}, {3, 11}, {4, 12}, {4, 11}, {12, 11}, {11, 12}, {11, 11}};
+        for (int[] t : teeth) m[t[1]][t[0]] = true;
+        return m;
+    }
+
+    /** Shades the cog lit top-left, then adds the hub boss, square axle hole and four treenails. */
+    static void drawGear(BufferedImage im, int base) {
+        shadeMask(im, gearMask(), WOOD, base);
+        for (int y = 5; y <= 10; y++)
+            for (int x = 5; x <= 10; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                if (d > 2.0 && d < 3.0) px(im, x, y, WOOD.get(x + y < 15 ? base - 1 : base + 1));
+            }
+        px(im, 7, 7, DARK_WOOD.get(1)); px(im, 8, 7, DARK_WOOD.get(1)); px(im, 7, 8, DARK_WOOD.get(1)); px(im, 8, 8, DARK_WOOD.get(2));
+        int[][] pegs = {{5, 5}, {10, 5}, {5, 10}, {10, 10}};
+        for (int[] p : pegs) px(im, p[0], p[1], WOOD.get(5));
+    }
+
+    static BufferedImage woodenGearItem() {
+        BufferedImage im = img();
+        drawGear(im, 3);
+        return outline(im);
+    }
+
+    /** Millstone (spec 21.4): input, vanilla-style progress arrow, large output slot; strip y 60-72 left for the status line. */
+    static BufferedImage millstoneGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        slot(im, 56, 35);
+        well(im, 111, 30, 26, 26, SLOT_FILL);
+        arrow(im, 79, 34);
+        // Filled arrow sprite at u=176, v=14, drawn with the same shape as the empty arrow.
+        for (int j = 0; j < 15; j++) {
+            int d = Math.abs(j - 7);
+            if (d <= 2) for (int i = 0; i < 15; i++) im.setRGB(176 + i, 14 + j, 0xff000000 | GUI_LIGHT);
+            for (int i = 15; i < 22 - d; i++) im.setRGB(176 + i, 14 + j, 0xff000000 | GUI_LIGHT);
+        }
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 84 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 142);
+        return im;
+    }
+
+    static void kinetics() throws IOException {
+        save("block/wooden_axle", axleSide());
+        save("block/wooden_axle_end", axleEnd());
+        save("block/wooden_gearbox", gearboxFace());
+        save("block/hand_crank", crankWood());
+        save("block/water_wheel", wheelPlanks());
+        save("block/water_wheel_hub", wheelHub());
+        save("block/millstone_side", millstoneSide());
+        save("block/millstone_top", millstoneTop());
+        save("block/millstone_runner", millstoneRunner());
+        save("block/bellows_side", bellowsSide());
+        save("block/bellows_front", bellowsFront());
+        save("block/bellows_back", bellowsBack());
+        save("block/bellows_top", bellowsTop());
+        save("item/water_wheel", waterWheelItem());
+        save("item/hand_crank", handCrankItem());
+        save("item/wooden_gear", woodenGearItem());
+        saveRaw("gui/millstone", millstoneGui());
+    }
+
     // ---------------------------------------------------------------- output
 
     static void save(String path, BufferedImage im) throws IOException {
@@ -2982,6 +3479,7 @@ public final class TextureGen {
         save("item/quernstone", art(GRANITE, QUERNSTONE_ITEM));
 
         tier3();
+        kinetics();
 
         // Glow layers for hot metal: written last, from the finished item textures.
         glowLayers();
