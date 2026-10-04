@@ -8,6 +8,7 @@ import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.RockCategory;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.registry.ModTags;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
@@ -74,6 +75,11 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         // Tier 3.
         tag(ModTags.Items.BLOOMERY_FUEL).add(key(Items.CHARCOAL));
         tag(ItemTags.WALLS).add(ModItems.FIRE_BRICK_WALL.getKey());
+        // Tier 4 spec 5.
+        tag(ItemTags.WOODEN_SLABS).add(Tier4Items.TREATED_SLAB.getKey());
+        tag(ItemTags.WOODEN_STAIRS).add(Tier4Items.TREATED_STAIRS.getKey());
+        tag(ItemTags.WOODEN_FENCES).add(Tier4Items.TREATED_FENCE.getKey());
+        tag(Tags.Items.STORAGE_BLOCKS).add(Tier4Items.COKE_BLOCK.getKey());
 
         tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.LOOSE_ROCKS).add(key(Items.FLINT));
         tag(Tags.Items.STRINGS).add(ModItems.TWINE.getKey());
@@ -84,7 +90,7 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         }
         var fireable = tag(ModTags.Items.PIT_KILN_FIREABLE).addTag(ModTags.Items.PIT_KILN_LARGE)
                 .add(ModItems.UNFIRED_INGOT_MOLD.getKey()).add(ModItems.UNFIRED_BRICK.getKey())
-                .add(ModItems.UNFIRED_FIRE_BRICK.getKey());
+                .add(ModItems.UNFIRED_FIRE_BRICK.getKey()).add(Tier4Items.UNFIRED_COKE_OVEN_BRICK.getKey());
         for (MoldType type : MoldType.values()) fireable.add(ModItems.UNFIRED_MOLDS.get(type).getKey());
 
         // Our tools join the vanilla tool tags, which also makes them enchantable like vanilla tools.

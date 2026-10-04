@@ -14,7 +14,12 @@ import dev.strataindustria.registry.ModMenus;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.ModWorldgen;
+import dev.strataindustria.registry.Tier4BlockEntities;
+import dev.strataindustria.registry.Tier4Blocks;
+import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Items;
+import dev.strataindustria.registry.Tier4Menus;
+import dev.strataindustria.registry.Tier4Sounds;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -28,8 +33,14 @@ public final class StrataIndustria {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public StrataIndustria(IEventBus modEventBus, ModContainer modContainer) {
-        ModBlocks.BLOCKS.register(modEventBus);
+        // Tier 4 registers its entries into the shared registers; load those classes first.
+        Tier4Blocks.init();
         Tier4Items.init();
+        Tier4Fluids.init();
+        Tier4BlockEntities.init();
+        Tier4Menus.init();
+        Tier4Sounds.init();
+        ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         ModCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);

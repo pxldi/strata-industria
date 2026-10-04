@@ -11,6 +11,8 @@ import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModCreativeTabs;
 import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.registry.Tier4Blocks;
+import dev.strataindustria.registry.Tier4Items;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -247,6 +249,39 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(dev.strataindustria.registry.Tier4Items.SULFUR, "Sulfur");
         addItem(dev.strataindustria.registry.Tier4Items.SULFUR_DUST, "Sulfur Dust");
         addItem(dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST, "Charcoal Dust");
+
+        // Tier 4 spec 5: coke, the coke oven and creosote.
+        String id = StrataIndustria.MOD_ID;
+        addItem(Tier4Items.COKE, "Coke");
+        addItem(Tier4Items.COKE_DUST, "Coke Dust");
+        addBlock(Tier4Blocks.COKE_BLOCK, "Block of Coke");
+        addItem(Tier4Items.UNFIRED_COKE_OVEN_BRICK, "Unfired Coke Oven Brick");
+        addItem(Tier4Items.COKE_OVEN_BRICK, "Coke Oven Brick");
+        addBlock(Tier4Blocks.COKE_OVEN_BRICKS, "Coke Oven Bricks");
+        addBlock(Tier4Blocks.COKE_OVEN_DOOR, "Coke Oven Door");
+        addItem(Tier4Items.CREOSOTE_BUCKET, "Creosote Bucket");
+        add("fluid_type." + id + ".creosote", "Creosote");
+        addBlock(Tier4Blocks.TREATED_PLANKS, "Treated Planks");
+        addBlock(Tier4Blocks.TREATED_SLAB, "Treated Slab");
+        addBlock(Tier4Blocks.TREATED_STAIRS, "Treated Stairs");
+        addBlock(Tier4Blocks.TREATED_FENCE, "Treated Fence");
+        addItem(Tier4Items.TREATED_STICK, "Treated Stick");
+        String oven = id + ".coke_oven.";
+        add("container." + id + ".coke_oven", "Coke Oven");
+        add(oven + "status.incomplete", "Oven incomplete");
+        add(oven + "status.empty", "Empty");
+        add(oven + "status.no_recipe", "This will not coke");
+        add(oven + "status.working", "Baking... %s%%");
+        add(oven + "status.output_full", "Output full");
+        add(oven + "status.tank_full", "Creosote tank full");
+        add(oven + "problem.brick", "Needs bricks at %s, %s, %s");
+        add(oven + "problem.air", "Needs air at %s, %s, %s");
+        add(oven + "tank", "Creosote %s / %s mB");
+        add(oven + "tank_empty", "No creosote yet");
+        String subtitles = "subtitles." + id + ".";
+        add(subtitles + "coke_oven.working", "Coke oven smoulders");
+        add(subtitles + "coke_oven.done", "Coke settles");
+        add(subtitles + "creosote.fill", "Creosote glugs");
     }
 
     private void ironAge() {
@@ -408,6 +443,16 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.leather.hint", "Soak hides in lye, scrape them with a knife, then soak them in tannin in a sealed barrel.");
         add(journal + "t3.iron_anvil", "Wrought Iron Anvil");
         add(journal + "t3.iron_anvil.hint", "Build a wrought iron anvil from double ingots. It can work steel later on.");
+        add(journal + "t4.coal", "Black Rock");
+        add(journal + "t4.coal.hint", "Coal lies in deep shale and arkose seams. Bronze will not cut it.");
+        add(journal + "t4.coke_oven", "Coke Oven");
+        add(journal + "t4.coke_oven.hint", "Fire coke oven bricks and build a hollow 3x3x3 oven with a door in the middle of one side.");
+        add(journal + "t4.coke", "Coke");
+        add(journal + "t4.coke.hint", "Bake coal in the coke oven. Coke burns hot enough to melt steel.");
+        add(journal + "t4.creosote", "Creosote");
+        add(journal + "t4.creosote.hint", "Draw the creosote from the oven into a bucket and treat planks with it.");
+        add(journal + "t4.sphalerite", "Zinc Blende");
+        add(journal + "t4.sphalerite.hint", "Find sphalerite. Zinc is the key to brass.");
     }
 
     /** Spec 9: anvils, the smithing screen, and tongs. */
