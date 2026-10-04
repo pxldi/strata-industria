@@ -4,29 +4,25 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.7
+        "chance": 0.6
       },
       "entries": [
         {
           "type": "minecraft:item",
           "modifier": {
-            "type": "minecraft:set_count",
-            "count": {
+            "type": "minecraft:set_damage",
+            "damage": {
               "type": "minecraft:uniform",
-              "max": 6,
-              "min": 2
+              "max": 0.8,
+              "min": 0.25
             }
           },
-          "name": "minecraft:gold_nugget"
+          "name": "strataindustria:washing_pan"
         }
       ],
       "rolls": 1
     },
     {
-      "condition": {
-        "type": "minecraft:random_chance",
-        "chance": 0.5
-      },
       "entries": [
         {
           "type": "minecraft:item",
@@ -56,81 +52,6 @@
             }
           },
           "name": "strataindustria:survey_notes"
-        }
-      ],
-      "rolls": 1
-    },
-    {
-      "condition": {
-        "type": "minecraft:random_chance",
-        "chance": 0.7
-      },
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_count",
-            "count": {
-              "type": "minecraft:uniform",
-              "max": 16,
-              "min": 8
-            }
-          },
-          "name": "minecraft:bread"
-        },
-        {
-          "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_count",
-            "count": {
-              "type": "minecraft:uniform",
-              "max": 12,
-              "min": 6
-            }
-          },
-          "name": "minecraft:cooked_salmon"
-        }
-      ],
-      "rolls": 1
-    },
-    {
-      "condition": {
-        "type": "minecraft:random_chance",
-        "chance": 0.5
-      },
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_count",
-            "count": {
-              "type": "minecraft:uniform",
-              "max": 3,
-              "min": 1
-            }
-          },
-          "name": "minecraft:bowl"
-        }
-      ],
-      "rolls": 1
-    },
-    {
-      "condition": {
-        "type": "minecraft:random_chance",
-        "chance": 0.5
-      },
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_count",
-            "count": {
-              "type": "minecraft:uniform",
-              "max": 8,
-              "min": 2
-            }
-          },
-          "name": "strataindustria:twine"
         }
       ],
       "rolls": 1
@@ -191,7 +112,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.2
+        "chance": 0.3
       },
       "entries": [
         {
@@ -199,11 +120,7 @@
           "modifier": {
             "type": "minecraft:set_enchantments",
             "enchantments": {
-              "minecraft:unbreaking": {
-                "type": "minecraft:uniform",
-                "max": 2,
-                "min": 1
-              }
+              "minecraft:lure": 1
             }
           },
           "name": "minecraft:enchanted_book"
@@ -213,53 +130,7 @@
           "modifier": {
             "type": "minecraft:set_enchantments",
             "enchantments": {
-              "minecraft:protection": {
-                "type": "minecraft:uniform",
-                "max": 2,
-                "min": 1
-              }
-            }
-          },
-          "name": "minecraft:enchanted_book"
-        },
-        {
-          "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_enchantments",
-            "enchantments": {
-              "minecraft:feather_falling": {
-                "type": "minecraft:uniform",
-                "max": 2,
-                "min": 1
-              }
-            }
-          },
-          "name": "minecraft:enchanted_book"
-        },
-        {
-          "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_enchantments",
-            "enchantments": {
-              "minecraft:sharpness": {
-                "type": "minecraft:uniform",
-                "max": 2,
-                "min": 1
-              }
-            }
-          },
-          "name": "minecraft:enchanted_book"
-        },
-        {
-          "type": "minecraft:item",
-          "modifier": {
-            "type": "minecraft:set_enchantments",
-            "enchantments": {
-              "minecraft:efficiency": {
-                "type": "minecraft:uniform",
-                "max": 2,
-                "min": 1
-              }
+              "minecraft:luck_of_the_sea": 1
             }
           },
           "name": "minecraft:enchanted_book"

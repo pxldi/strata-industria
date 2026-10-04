@@ -375,7 +375,7 @@ final class StructureData {
                     .withPool(pool(0.7f, item(Items.BREAD, 4, 12)))
                     .withPool(pool(0.6f, item(Items.BOWL, 1, 3)))
                     .withPool(pool(0.6f, item(ModItems.TWINE.get(), 2, 8)))
-                    .withPool(pool(0.6f, worn(Items.FISHING_ROD)))
+                    .withPool(pool(0.6f, item(Items.FISHING_ROD, 1, 1)))
                     .withPool(pool(0.6f, item(Items.TORCH, 4, 12))));
             add(CampLoot.PLACER_TIN, () -> LootTable.lootTable()
                     .withPool(pool(1, item(Items.GOLD_NUGGET, 2, 3))));
