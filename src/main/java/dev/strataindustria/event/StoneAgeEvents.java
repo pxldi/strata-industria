@@ -25,6 +25,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -33,7 +34,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
-/** Tier 0 rules that live outside items and blocks: no punching logs, fibre and straw, extra flint. */
+/** Tier 0 rules that live outside items and blocks: no punching logs, straw from grass and wheat, extra flint. */
 @EventBusSubscriber(modid = StrataIndustria.MOD_ID)
 public final class StoneAgeEvents {
     static final float STRAW_CHANCE = 0.5f;
@@ -69,10 +70,18 @@ public final class StoneAgeEvents {
         ItemStack tool = event.getTool();
         RandomSource random = level.getRandom();
 
-        if (state.is(ModTags.Blocks.FIBRE_PLANTS) && cuts(tool)) {
-            drop(event, new ItemStack(ModItems.PLANT_FIBRE.get()));
-            if (random.nextFloat() < STRAW_CHANCE) drop(event, new ItemStack(ModItems.STRAW.get()));
-            player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+        if (state.is(ModTags.Blocks.FIBRE_PLANTS)) {
+            // Straw comes off tall grass by hand; a knife takes a clean armful.
+            if (cuts(tool)) {
+                drop(event, new ItemStack(ModItems.STRAW.get()));
+                if (random.nextFloat() < STRAW_CHANCE) drop(event, new ItemStack(ModItems.STRAW.get()));
+                player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+            } else if (random.nextFloat() < STRAW_CHANCE) {
+                drop(event, new ItemStack(ModItems.STRAW.get()));
+            }
+        } else if (state.is(Blocks.WHEAT) && state.getValue(CropBlock.AGE) == CropBlock.MAX_AGE) {
+            // Cutting ripe wheat leaves the stalks behind as straw.
+            drop(event, new ItemStack(ModItems.STRAW.get(), 1 + random.nextInt(2)));
         } else if (state.is(Blocks.GRAVEL) && Config.GRAVEL_FLINT_CHANCE.getAsBoolean() && !hasSilkTouch(level, tool)) {
             boolean gaveFlint = event.getDrops().stream().anyMatch(e -> e.getItem().is(Items.FLINT));
             if (!gaveFlint && random.nextFloat() < EXTRA_FLINT_CHANCE) {
@@ -82,10 +91,7 @@ public final class StoneAgeEvents {
         }
     }
 
-    /**
-     * A knife cuts fibre, and so does a bare knapped knife blade: the knife itself is bound with twine,
-     * so the very first fibre has to come from the blade alone.
-     */
+    /** A knife cuts grass cleanly, and so does a bare knapped knife blade. */
     static boolean cuts(ItemStack tool) {
         return tool.is(ModTags.Items.KNIVES) || tool.is(ModItems.STONE_KNIFE_BLADE.get());
     }

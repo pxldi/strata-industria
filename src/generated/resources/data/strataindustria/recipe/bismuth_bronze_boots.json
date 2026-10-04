@@ -2,7 +2,7 @@
   "type": "strataindustria:metal_armour",
   "category": "equipment",
   "key": {
-    "C": "strataindustria:fibre_cloth",
+    "C": "strataindustria:bark_cloth",
     "P": "strataindustria:bismuth_bronze_plate"
   },
   "pattern": [

@@ -104,7 +104,7 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(dev.strataindustria.registry.ModTags.Items.FLUX).add(ModItems.FLUX.getKey()).add(ModItems.BLOOMERY_SLAG.getKey());
 
         tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.ROCK_SHARDS).add(key(Items.FLINT));
-        tag(Tags.Items.STRINGS).add(ModItems.TWINE.getKey());
+        tag(Tags.Items.STRINGS).add(ModItems.CORD.getKey());
 
         tag(dev.strataindustria.registry.Tier5Tags.TREATED_WOOD).add(dev.strataindustria.registry.Tier5Items.TREATED_LOG.getKey());
         var fireable = tag(ModTags.Items.FIREABLE)

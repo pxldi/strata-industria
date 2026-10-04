@@ -83,7 +83,7 @@
               "min": 2
             }
           },
-          "name": "strataindustria:twine"
+          "name": "strataindustria:cord"
         }
       ],
       "rolls": 1
@@ -104,7 +104,7 @@
               "min": 2
             }
           },
-          "name": "strataindustria:fibre_cloth"
+          "name": "strataindustria:bark_cloth"
         }
       ],
       "rolls": 1

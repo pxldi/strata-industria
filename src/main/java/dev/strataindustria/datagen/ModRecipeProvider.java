@@ -225,30 +225,21 @@ final class ModRecipeProvider extends RecipeProvider {
         output.accept(key("knapping/" + name(result)), recipe, null);
     }
 
-    // Spec 3.3.
+    // Cord is twisted from bark strips and cloth beaten from cord, in the hand (redesign R3).
     private void fibre() {
-        shapeless(RecipeCategory.MISC, ModItems.TWINE.get())
-                .requires(ModItems.PLANT_FIBRE.get(), 2)
-                .unlockedBy("has_plant_fibre", has(ModItems.PLANT_FIBRE.get()))
-                .save(output, key("twine"));
-        shaped(RecipeCategory.MISC, ModItems.FIBRE_CLOTH.get())
-                .pattern("TT")
-                .pattern("TT")
-                .define('T', ModItems.TWINE.get())
-                .unlockedBy("has_twine", has(ModItems.TWINE.get()))
-                .save(output, key("fibre_cloth"));
+        // Cord and bark cloth are made by hand, not at the bench (redesign R3).
         // Spec 3.6.
         shapeless(RecipeCategory.MISC, ModItems.FIELD_JOURNAL.get())
                 .requires(ModItems.STRAW.get(), 2)
-                .requires(ModItems.TWINE.get())
-                .unlockedBy("has_twine", has(ModItems.TWINE.get()))
+                .requires(ModItems.CORD.get())
+                .unlockedBy("has_cord", has(ModItems.CORD.get()))
                 .save(output, key("field_journal"));
         // Structures spec 9.
         shaped(RecipeCategory.BUILDING_BLOCKS, StructureContent.FIBRE_CANVAS_ITEM.get())
                 .pattern("CC")
                 .pattern("CC")
-                .define('C', ModItems.FIBRE_CLOTH.get())
-                .unlockedBy("has_fibre_cloth", has(ModItems.FIBRE_CLOTH.get()))
+                .define('C', ModItems.BARK_CLOTH.get())
+                .unlockedBy("has_bark_cloth", has(ModItems.BARK_CLOTH.get()))
                 .save(output, key("fibre_canvas"));
         shaped(RecipeCategory.DECORATIONS, StructureContent.FIBRE_CANVAS_CARPET_ITEM.get(), 3)
                 .pattern("CC")
@@ -280,7 +271,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .save(output, key("fire_pit"));
     }
 
-    // Spec 3.4: head + stick + twine.
+    // Spec 3.4: head + stick + cord.
     private void stoneTools() {
         knappedTool(ModItems.STONE_AXE.get(), ModItems.STONE_AXE_HEAD.get(), ModItems.KNAPPED_DURABILITY);
         knappedTool(ModItems.STONE_KNIFE.get(), ModItems.STONE_KNIFE_BLADE.get(), ModItems.KNAPPED_DURABILITY);
@@ -295,7 +286,7 @@ final class ModRecipeProvider extends RecipeProvider {
         var recipe = new KnappedToolRecipe(new Recipe.CommonInfo(true),
                 new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.EQUIPMENT, ""),
                 new ItemStackTemplate(tool),
-                List.of(Ingredient.of(head), Ingredient.of(Items.STICK), Ingredient.of(ModItems.TWINE.get())),
+                List.of(Ingredient.of(head), Ingredient.of(Items.STICK), Ingredient.of(ModItems.CORD.get())),
                 durability);
         save(key(name(tool)), recipe, RecipeCategory.TOOLS, "has_" + name(head), has(head));
     }
@@ -389,11 +380,11 @@ final class ModRecipeProvider extends RecipeProvider {
                 .save(output, key("tongs"));
     }
 
-    // Spec 8.4: armour from plates over fibre cloth, 14 plates a set.
+    // Spec 8.4: armour from plates over bark cloth, 14 plates a set.
     private void armour(Metal metal) {
         Item plate = ModItems.PLATES.get(metal).get();
-        // Tier 3 spec 10.4: iron and gold plates are laced onto leather instead of fibre cloth.
-        Item cloth = metal == Metal.WROUGHT_IRON || metal == Metal.GOLD || metal == Metal.STEEL ? Items.LEATHER : ModItems.FIBRE_CLOTH.get();
+        // Tier 3 spec 10.4: iron and gold plates are laced onto leather instead of bark cloth.
+        Item cloth = metal == Metal.WROUGHT_IRON || metal == Metal.GOLD || metal == Metal.STEEL ? Items.LEATHER : ModItems.BARK_CLOTH.get();
         var pieces = ModItems.ARMOUR.get(metal);
         // Shapes from the spec table: helmet, chestplate, leggings, boots.
         String[][] shapes = {{"PPP", " C "}, {"P P", "PCP", " P "}, {"PCP", "P P"}, {"PCP"}};
@@ -631,7 +622,7 @@ final class ModRecipeProvider extends RecipeProvider {
         shapeless(RecipeCategory.REDSTONE, Tier4Items.FILTER.get())
                 .requires(Items.PAPER)
                 .requires(ModItems.PLATES.get(Metal.BRASS).get())
-                .requires(ModItems.TWINE.get())
+                .requires(ModItems.CORD.get())
                 .unlockedBy("has_brass_plate", has(ModItems.PLATES.get(Metal.BRASS).get()))
                 .save(output, key("filter"));
         // Spec 10.3: the steel boiler.
@@ -682,7 +673,7 @@ final class ModRecipeProvider extends RecipeProvider {
         shapeless(RecipeCategory.TOOLS, dev.strataindustria.ledger.LedgerRegistry.BUILDERS_LEDGER.get())
                 .requires(Items.BOOK)
                 .requires(ModItems.ingot(Metal.BRONZE))
-                .requires(ModItems.TWINE.get())
+                .requires(ModItems.CORD.get())
                 .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
                 .save(output, key("builders_ledger"));
         shaped(RecipeCategory.DECORATIONS, dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE_ITEM.get())
@@ -1030,7 +1021,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .save(output, key("pulley"));
         shapeless(RecipeCategory.REDSTONE, ModItems.LEATHER_BELT.get())
                 .requires(Items.LEATHER, 3)
-                .requires(ModItems.TWINE.get())
+                .requires(ModItems.CORD.get())
                 .unlockedBy("has_pulley", has(ModItems.PULLEY.get()))
                 .save(output, key("leather_belt"));
         Item ironPlate = ModItems.PLATES.get(Metal.WROUGHT_IRON).get();
@@ -1046,7 +1037,7 @@ final class ModRecipeProvider extends RecipeProvider {
         shapeless(RecipeCategory.REDSTONE, ModItems.WINDMILL_SAIL.get(), 2)
                 .requires(ItemTags.PLANKS)
                 .requires(ItemTags.PLANKS)
-                .requires(ModItems.FIBRE_CLOTH.get())
+                .requires(ModItems.BARK_CLOTH.get())
                 .unlockedBy("has_windmill_bearing", has(ModItems.WINDMILL_BEARING.get()))
                 .save(output, key("windmill_sail"));
 

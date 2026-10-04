@@ -103,6 +103,12 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addRecipes(JeiTypes.EXTRUDING, ClientRecipes.byType(Tier5Recipes.EXTRUDING.get()));
         registration.addRecipes(JeiTypes.OIL_STILL, ClientRecipes.byType(dev.strataindustria.registry.Tier6Recipes.OIL_STILL.get()));
 
+        // Hand work with no screen: how bark becomes cord and cord becomes cloth (redesign R3).
+        registration.addItemStackInfo(ModItems.BARK.get().getDefaultInstance(), net.minecraft.network.chat.Component.translatable("jei.strataindustria.info.bark"));
+        registration.addItemStackInfo(ModItems.CORD.get().getDefaultInstance(), net.minecraft.network.chat.Component.translatable("jei.strataindustria.info.cord"));
+        registration.addItemStackInfo(ModItems.BARK_CLOTH.get().getDefaultInstance(), net.minecraft.network.chat.Component.translatable("jei.strataindustria.info.bark_cloth"));
+        registration.addItemStackInfo(ModItems.STRAW.get().getDefaultInstance(), net.minecraft.network.chat.Component.translatable("jei.strataindustria.info.straw"));
+
         registration.addRecipes(JeiTypes.FIRING, Processes.kilnFiring());
         registration.addRecipes(JeiTypes.CHARCOAL_PIT, Processes.charcoalPit());
         registration.addRecipes(JeiTypes.ALLOYING, Processes.alloying());

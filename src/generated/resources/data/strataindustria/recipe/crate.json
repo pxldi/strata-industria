@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "key": {
     "P": "#minecraft:planks",
-    "T": "strataindustria:twine"
+    "T": "strataindustria:cord"
   },
   "pattern": [
     "PPP",

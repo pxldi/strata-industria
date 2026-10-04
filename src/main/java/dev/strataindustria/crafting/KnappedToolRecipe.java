@@ -21,7 +21,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
 /**
- * Shapeless assembly of a knapped tool (head + stick + twine). The tool inherits {@code knapped_from}
+ * Shapeless assembly of a knapped tool (head + stick + cord). The tool inherits {@code knapped_from}
  * from the head and its durability is {@code base_durability} times the rock's multiplier.
  */
 public class KnappedToolRecipe extends ShapelessRecipe {

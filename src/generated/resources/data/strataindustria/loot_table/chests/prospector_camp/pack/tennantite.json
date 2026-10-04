@@ -131,7 +131,7 @@
               "min": 4
             }
           },
-          "name": "strataindustria:twine"
+          "name": "strataindustria:cord"
         }
       ],
       "rolls": 1
@@ -152,7 +152,7 @@
               "min": 4
             }
           },
-          "name": "strataindustria:plant_fibre"
+          "name": "strataindustria:bark"
         }
       ],
       "rolls": 1

@@ -139,15 +139,15 @@ final class FootData {
         @Override
         protected void buildRecipes() {
             shapeless(RecipeCategory.MISC, FootRegistry.ROPE.get())
-                    .requires(ModItems.TWINE.get(), 3)
-                    .unlockedBy("has_twine", has(ModItems.TWINE.get()))
+                    .requires(ModItems.CORD.get(), 3)
+                    .unlockedBy("has_cord", has(ModItems.CORD.get()))
                     .save(output, key("rope"));
             shaped(RecipeCategory.TOOLS, FootRegistry.PACK_FRAME.get())
                     .pattern("S S")
                     .pattern("TLT")
                     .pattern("S S")
                     .define('S', Items.STICK)
-                    .define('T', ModItems.TWINE.get())
+                    .define('T', ModItems.CORD.get())
                     .define('L', Items.LEATHER)
                     .unlockedBy("has_leather", has(Items.LEATHER))
                     .save(output, key("pack_frame"));

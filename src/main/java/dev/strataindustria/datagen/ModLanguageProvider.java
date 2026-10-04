@@ -45,10 +45,9 @@ final class ModLanguageProvider extends LanguageProvider {
         FellingData.lang(this::add);
         recipeViewer();
 
-        addItem(ModItems.PLANT_FIBRE, "Plant Fibre");
         addItem(ModItems.STRAW, "Straw");
-        addItem(ModItems.TWINE, "Twine");
-        addItem(ModItems.FIBRE_CLOTH, "Fibre Cloth");
+        addItem(ModItems.CORD, "Bark Cord");
+        addItem(ModItems.BARK_CLOTH, "Bark Cloth");
         addItem(ModItems.FIELD_JOURNAL, "Field Journal");
         addItem(ModItems.STONE_AXE_HEAD, "Stone Axe Head");
         addItem(ModItems.STONE_KNIFE_BLADE, "Stone Knife Blade");
@@ -182,7 +181,17 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "branch.shake", "Branch creaks");
         add(subtitles + "branch.snap", "Branch snaps");
         add(subtitles + "branch.bare", "Dry leaves rustle");
+        add(subtitles + "cord.twist", "Bark fibres creak");
+        add(subtitles + "cord.tight", "Cord snaps tight");
+        add(subtitles + "cord.beat", "Cord thumps on stone");
+        add(subtitles + "cord.cloth", "Bark cloth comes free");
         add("message." + StrataIndustria.MOD_ID + ".branch.bare", "This branch is bare. Try another.");
+        add("jei.strataindustria.info.bark", "Snap a branch off a tree, or strip a log with an axe. Hold use with two strips in your hand to twist them into cord.");
+        add("jei.strataindustria.info.cord", "Hold use with two bark strips to twist one. Use four cord on stone, three blows, to beat a cloth.");
+        add("jei.strataindustria.info.bark_cloth", "Use four cord on stone. Three blows beat them flat and the cloth pops free.");
+        add("jei.strataindustria.info.straw", "Break grass or ripe wheat by hand. A knife takes more.");
+        add("message." + StrataIndustria.MOD_ID + ".cord.need_strips", "Two bark strips make a cord.");
+        add("message." + StrataIndustria.MOD_ID + ".cord.need_cord", "Four cord make a cloth.");
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
@@ -781,13 +790,13 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.knap", "First Edge");
         add(journal + "t0.knap.hint", "Hold two rock shards or one flint and use it to strike. Sneak and use picks which head. A few blows and it breaks free.");
         add(journal + "t0.stone_axe", "Stone Axe");
-        add(journal + "t0.stone_axe.hint", "Bind a knapped axe head to a stick with twine.");
+        add(journal + "t0.stone_axe.hint", "Bind a knapped axe head to a stick with cord.");
         add(journal + "t0.log", "Timber");
         add(journal + "t0.log.hint", "Fell a tree with your axe. Bare hands will not do.");
         add(journal + "t0.crafting_table", "A Proper Workbench");
         add(journal + "t0.crafting_table.hint", "Build a crafting table.");
-        add(journal + "t0.twine", "Twisted Fibre");
-        add(journal + "t0.twine.hint", "Cut grass with a knapped knife blade for plant fibre, then twist two fibres into twine.");
+        add(journal + "t0.twine", "Bark Cord");
+        add(journal + "t0.twine.hint", "Snap a branch off a tree for bark strips. Hold use with two strips to twist them into cord.");
         add(journal + "t0.fire", "Firelight");
         add(journal + "t0.fire.hint", "Build a fire pit from sticks and straw, put fuel in, and strike flint on a rock over it.");
         add(journal + "t0.clay", "Riverbank Clay");
