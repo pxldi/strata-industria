@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget",
+    "strataindustria:steel_nugget"
+  ],
+  "result": {
+    "id": "strataindustria:steel_ingot"
+  }
+}

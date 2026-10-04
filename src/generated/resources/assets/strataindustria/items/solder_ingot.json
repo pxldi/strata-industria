@@ -1,0 +1,23 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/solder_ingot"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/solder_ingot_glowing",
+      "tints": [
+        {
+          "type": "minecraft:constant",
+          "value": -1
+        },
+        {
+          "type": "strataindustria:heat_glow"
+        }
+      ]
+    },
+    "property": "strataindustria:glowing"
+  }
+}

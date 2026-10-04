@@ -1,0 +1,22 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 60,
+  "ingredient": "strataindustria:brass_ingot",
+  "result": {
+    "id": "strataindustria:brass_plate"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "hit",
+      "where": "second_last"
+    },
+    {
+      "hit": "hit",
+      "where": "third_last"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:metal_armour",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:leather",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "PPP",
+    " C "
+  ],
+  "result": {
+    "id": "strataindustria:steel_helmet"
+  }
+}

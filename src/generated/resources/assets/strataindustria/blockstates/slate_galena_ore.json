@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "grade=normal": {
+      "model": "strataindustria:block/slate_galena_ore"
+    },
+    "grade=poor": {
+      "model": "strataindustria:block/slate_galena_ore_poor"
+    },
+    "grade=rich": {
+      "model": "strataindustria:block/slate_galena_ore_rich"
+    }
+  }
+}

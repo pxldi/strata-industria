@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:metal_armour",
+  "category": "equipment",
+  "key": {
+    "C": "minecraft:leather",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "PCP"
+  ],
+  "result": {
+    "id": "strataindustria:steel_boots"
+  }
+}

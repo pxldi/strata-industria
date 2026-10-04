@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "grade=normal": {
+      "model": "strataindustria:block/rhyolite_bituminous_coal_ore"
+    },
+    "grade=poor": {
+      "model": "strataindustria:block/rhyolite_bituminous_coal_ore_poor"
+    },
+    "grade=rich": {
+      "model": "strataindustria:block/rhyolite_bituminous_coal_ore_rich"
+    }
+  }
+}

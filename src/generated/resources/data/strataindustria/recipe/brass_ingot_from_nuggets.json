@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget",
+    "strataindustria:brass_nugget"
+  ],
+  "result": {
+    "id": "strataindustria:brass_ingot"
+  }
+}

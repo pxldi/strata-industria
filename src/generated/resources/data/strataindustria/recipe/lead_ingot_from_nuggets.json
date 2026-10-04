@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget",
+    "strataindustria:lead_nugget"
+  ],
+  "result": {
+    "id": "strataindustria:lead_ingot"
+  }
+}
