@@ -1,0 +1,48 @@
+name: API probe
+
+on:
+  pull_request:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Minecraft artifacts
+        run: ./gradlew createMinecraftArtifacts --stacktrace || true
+      - name: Dump sources
+        run: |
+          set +e
+          find build ~/.gradle -name "*sources*.jar" 2>/dev/null | head -20
+          SRC=$(find build -name "*sources*.jar" | head -1)
+          mkdir -p /tmp/src && cd /tmp/src && unzip -q -o "$GITHUB_WORKSPACE/$SRC"
+          echo "===== LIST structure"; find net/minecraft/world/level/levelgen/structure -name "*.java" | sort
+          full() { for f in "$@"; do echo "===== FILE $f"; cat "$f"; done; }
+          sigs() { for f in "$@"; do echo "===== SIGS $f"; grep -nE "^\s*(public|protected|abstract|static|record|class|interface|enum|private static final)" "$f"; done; }
+          S=net/minecraft/world/level/levelgen/structure
+          full $S/Structure.java $S/TemplateStructurePiece.java $S/structures/JigsawStructure.java $S/StructureType.java $S/StructurePieceType.java $S/StructureSet.java
+          full $S/placement/RandomSpreadStructurePlacement.java $S/placement/StructurePlacementType.java
+          sigs $S/placement/StructurePlacement.java $S/StructurePiece.java $S/BoundingBox.java $S/pools/JigsawPlacement.java $S/pools/StructurePoolElement.java $S/pools/SinglePoolElement.java $S/pools/StructureTemplatePool.java $S/templatesystem/StructureTemplate.java $S/templatesystem/StructurePlaceSettings.java $S/templatesystem/StructureTemplateManager.java $S/StructureStart.java $S/PoolElementStructurePiece.java $S/pieces/StructurePiecesBuilder.java $S/pieces/StructurePieceSerializationContext.java
+          full $S/templatesystem/StructureProcessor.java $S/templatesystem/StructureProcessorType.java $S/templatesystem/RuleProcessor.java $S/templatesystem/ProcessorRule.java $S/templatesystem/BlockRotProcessor.java $S/templatesystem/ProtectedBlockProcessor.java $S/templatesystem/RandomBlockMatchTest.java $S/templatesystem/StructureProcessorList.java $S/templatesystem/BlockIgnoreProcessor.java
+          full net/minecraft/data/worldgen/ProcessorLists.java | head -150
+          full net/minecraft/data/worldgen/Pools.java
+          sigs net/minecraft/data/worldgen/Structures.java net/minecraft/data/worldgen/StructureSets.java
+          sed -n 1,140p net/minecraft/data/worldgen/Structures.java
+          sed -n 1,120p net/minecraft/data/worldgen/StructureSets.java
+          full net/minecraft/data/worldgen/TrailRuinsStructurePools.java 2>/dev/null | head -120
+          full net/minecraft/world/level/storage/loot/functions/LootItemConditionalFunction.java net/minecraft/world/level/storage/loot/functions/SetItemDamageFunction.java net/minecraft/world/level/storage/loot/functions/LootItemFunctionType.java
+          sigs net/minecraft/world/level/storage/loot/functions/LootItemFunctions.java net/minecraft/world/level/storage/loot/LootContext.java net/minecraft/world/level/storage/loot/parameters/LootContextParams.java
+          sigs net/minecraft/world/level/block/entity/BrushableBlockEntity.java net/minecraft/world/RandomizableContainer.java net/minecraft/nbt/NbtIo.java net/minecraft/data/DataProvider.java net/minecraft/data/CachedOutput.java net/minecraft/data/PackOutput.java
+          full net/minecraft/data/structures/SnbtToNbt.java
+          sigs net/minecraft/advancements/criterion/LocationPredicate.java net/minecraft/advancements/critereon/LocationPredicate.java
+          sigs net/minecraft/data/loot/packs/VanillaChestLoot.java | head -40
+          sed -n 1,80p net/minecraft/data/loot/packs/VanillaChestLoot.java
+          sigs net/minecraft/data/tags/StructureTagsProvider.java net/minecraft/data/tags/KeyTagProvider.java net/minecraft/data/tags/TagsProvider.java
+          ls net/minecraft/data/tags/
+          sigs net/minecraft/world/level/levelgen/structure/structures/MineshaftPieces.java | head -60
+          sed -n 1,200p $S/structures/MineshaftPieces.java
