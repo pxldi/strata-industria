@@ -129,7 +129,7 @@ public class KnappingMenu extends AbstractContainerMenu {
             if (extra > 0) taker.getItemInHand(hand).shrink(extra);
         }
         finished.set(1);
-        taker.level().playSound(null, taker.getX(), taker.getY(), taker.getZ(), ModSounds.KNAP_FINISH.get(),
+        taker.level().playSound(null, taker.getX(), taker.getY(), taker.getZ(), Knapping.finishSound(material),
                 SoundSource.PLAYERS, 0.8f, 1.0f);
         broadcastChanges();
     }

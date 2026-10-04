@@ -48,6 +48,8 @@
     "strataindustria:rhyolite_malachite_ore",
     "strataindustria:rhyolite_tennantite_ore",
     "strataindustria:rhyolite_cassiterite_ore",
-    "strataindustria:rhyolite_bismuthinite_ore"
+    "strataindustria:rhyolite_bismuthinite_ore",
+    "strataindustria:large_vessel",
+    "strataindustria:crucible"
   ]
 }

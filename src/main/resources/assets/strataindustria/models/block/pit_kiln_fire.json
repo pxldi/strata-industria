@@ -1,0 +1,122 @@
+{
+  "parent": "block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "minecraft:block/campfire_fire",
+    "fire": "minecraft:block/campfire_fire",
+    "embers": "strataindustria:block/pit_kiln_embers"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        9,
+        8
+      ],
+      "to": [
+        15,
+        25,
+        8
+      ],
+      "shade": false,
+      "light_emission": 15,
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#fire"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#fire"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        9,
+        8
+      ],
+      "to": [
+        15,
+        25,
+        8
+      ],
+      "shade": false,
+      "light_emission": 15,
+      "rotation": {
+        "angle": -45,
+        "axis": "y",
+        "origin": [
+          8,
+          8,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#fire"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#fire"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        16.02,
+        0
+      ],
+      "to": [
+        16,
+        16.02,
+        16
+      ],
+      "shade": false,
+      "light_emission": 12,
+      "faces": {
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#embers"
+        }
+      }
+    }
+  ]
+}

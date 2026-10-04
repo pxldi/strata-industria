@@ -85,11 +85,9 @@ public class KnappingScreen extends AbstractContainerScreen<KnappingMenu> {
     private void spawnChips(int cell) {
         int cx = cell % GridPattern.SIZE, cy = cell / GridPattern.SIZE;
         float centreX = cellX(cx) + CELL / 2f, centreY = cellY(cy) + CELL / 2f;
-        boolean flint = Knapping.isFlint(menu.material());
         for (int i = 0; i < 7; i++) {
             float shade = 0.55f + random.nextFloat() * 0.35f;
-            int grey = (int) (shade * (flint ? 150 : 200));
-            int colour = 0xFF000000 | grey << 16 | grey << 8 | Math.min(255, grey + (flint ? 18 : 6));
+            int colour = Knapping.chipColour(menu.material(), shade);
             chips.add(new Chip(centreX, centreY, (random.nextFloat() - 0.5f) * 3.2f, -1.0f - random.nextFloat() * 2.2f,
                     1 + random.nextInt(2), colour, 10 + random.nextInt(8)));
         }

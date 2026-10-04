@@ -16,6 +16,17 @@ public final class ModSounds {
     /** The finished head comes free of the stone. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FINISH = register("knapping.finish");
 
+    /** Pressing a lump of clay into shape. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CLAY_SHAPE = register("clay.shape");
+    /** The formed piece comes away from the leftover clay. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CLAY_FINISH = register("clay.finish");
+    /** Straw thatch laid on a pit kiln. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KILN_STRAW = register("pit_kiln.straw");
+    /** A log stacked on a pit kiln. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KILN_LOG = register("pit_kiln.log");
+    /** The kiln burns out and the pots are fired. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KILN_FIRED = register("pit_kiln.fired");
+
     /** The spindle of a bow drill working against the hearth board. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRESTARTER_DRILL = register("firestarter.drill");
     /** Tinder catches in the fire pit. */

@@ -1,6 +1,7 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.ceramics.SmallVesselMenu;
 import dev.strataindustria.fire.FirePitMenu;
 import dev.strataindustria.knapping.KnappingMenu;
 import net.minecraft.core.registries.Registries;
@@ -17,6 +18,9 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<FirePitMenu>> FIRE_PIT =
             MENUS.register("fire_pit", () -> IMenuTypeExtension.create((id, inventory, buf) -> new FirePitMenu(id, inventory)));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<SmallVesselMenu>> SMALL_VESSEL =
+            MENUS.register("small_vessel", () -> IMenuTypeExtension.create(SmallVesselMenu::new));
 
     private ModMenus() {}
 }

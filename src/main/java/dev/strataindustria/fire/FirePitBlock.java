@@ -93,6 +93,8 @@ public class FirePitBlock extends BaseEntityBlock implements Ignitable {
             }
             return InteractionResult.SUCCESS;
         }
+        // The firestarter lights the pit through its own held use instead of opening the menu.
+        if (!lit && stack.getItem() instanceof FirestarterItem) return InteractionResult.PASS;
         return InteractionResult.TRY_WITH_EMPTY_HAND;
     }
 
