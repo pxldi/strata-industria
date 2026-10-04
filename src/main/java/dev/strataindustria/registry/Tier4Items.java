@@ -91,6 +91,8 @@ public final class Tier4Items {
             ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT);
     // Spec 8.6 and 4.6: the kiln, and the slag wool it makes for pipe insulation.
     public static final DeferredItem<BlockItem> KILN = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.KILN);
+    // Spec 8.5: the roaster.
+    public static final DeferredItem<BlockItem> ROASTER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.ROASTER);
     public static final DeferredItem<Item> SLAG_WOOL = ModItems.ITEMS.registerSimpleItem("slag_wool");
     /** Spec 4.6: ground slag, a fertiliser worth two bone meal. */
     public static final DeferredItem<dev.strataindustria.ironworks.SlagDustItem> SLAG_DUST = ModItems.ITEMS.registerItem("slag_dust",

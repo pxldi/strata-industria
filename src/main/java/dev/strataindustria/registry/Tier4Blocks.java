@@ -185,6 +185,11 @@ public final class Tier4Blocks {
             dev.strataindustria.ceramics.KilnBlock::new,
             p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ceramics.KilnBlock.LIT) ? 10 : 0));
 
+    // Spec 8.5: the roaster.
+    public static final DeferredBlock<dev.strataindustria.roasting.RoasterBlock> ROASTER = ModBlocks.BLOCKS.registerBlock("roaster",
+            dev.strataindustria.roasting.RoasterBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.roasting.RoasterBlock.LIT) ? 8 : 0));
+
     private static int heatGlow(BlockState state) {
         return state.getValue(dev.strataindustria.heat.HeatPipeBlock.HOT) ? 6 : 0;
     }

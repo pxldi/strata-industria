@@ -601,6 +601,26 @@ final class ModModelProvider extends ModelProvider {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(kiln).with(kilnState));
         itemModels.itemModelOutput.accept(Tier4Items.KILN.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/kiln")));
+        // Spec 8.5: the roaster's hearth faces the player, its gas flange on the back; the ore bed glows while it roasts.
+        Block roaster = Tier4Blocks.ROASTER.get();
+        TextureMapping roasterCold = new TextureMapping().put(TextureSlot.NORTH, blockTexture("roaster_front"))
+                .put(TextureSlot.SOUTH, blockTexture("roaster_back")).put(TextureSlot.EAST, blockTexture("roaster_side"))
+                .put(TextureSlot.WEST, blockTexture("roaster_side")).put(TextureSlot.UP, blockTexture("roaster_top"))
+                .put(TextureSlot.DOWN, blockTexture("fire_bricks")).put(TextureSlot.PARTICLE, blockTexture("roaster_side"));
+        var roasterIdle = BlockModelGenerators.plainVariant(ModelTemplates.CUBE.create(roaster, roasterCold, blockModels.modelOutput));
+        var roasterLit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE.createWithSuffix(roaster, "_active",
+                roasterCold.copyAndUpdate(TextureSlot.NORTH, blockTexture("roaster_front_active")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> roasterState = PropertyDispatch.initial(
+                dev.strataindustria.roasting.RoasterBlock.FACING, dev.strataindustria.roasting.RoasterBlock.LIT);
+        for (boolean on : new boolean[] {false, true}) {
+            var base = on ? roasterLit : roasterIdle;
+            roasterState.select(net.minecraft.core.Direction.NORTH, on, base);
+            roasterState.select(net.minecraft.core.Direction.EAST, on, base.with(BlockModelGenerators.Y_ROT_90));
+            roasterState.select(net.minecraft.core.Direction.SOUTH, on, base.with(BlockModelGenerators.Y_ROT_180));
+            roasterState.select(net.minecraft.core.Direction.WEST, on, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(roaster).with(roasterState));
+        itemModels.itemModelOutput.accept(Tier4Items.ROASTER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/roaster")));
         MultiPartGenerator gauge = MultiPartGenerator.multiPart(Tier4Blocks.PRESSURE_GAUGE.get());
         for (int reading = 0; reading <= 4; reading++) {
             gauge.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.PressureGaugeBlock.READING, reading),
