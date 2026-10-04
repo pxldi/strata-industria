@@ -65,6 +65,8 @@ public final class KineticNetworks {
         Map<BlockPos, Kinetic> members = new LinkedHashMap<>();
         // Speed of each block relative to the start block, from the gear ratios crossed on the way.
         Map<BlockPos, Float> ratios = new HashMap<>();
+        // The face each block was reached through; none for the start block and for blocks reached by a belt.
+        Map<BlockPos, Direction> entered = new HashMap<>();
         members.put(start, first);
         ratios.put(start, 1.0f);
         ArrayDeque<BlockPos> queue = new ArrayDeque<>();
@@ -88,7 +90,8 @@ public final class KineticNetworks {
                     continue;
                 }
                 members.put(next, neighbour);
-                ratios.put(next, ratio * throughRatio(block, pos, side, ratios, members));
+                ratios.put(next, ratio * block.ratio(entered.get(pos), side));
+                entered.put(next, side.getOpposite());
                 queue.add(next);
             }
             // Belts join blocks that do not touch; both ends must name each other.
@@ -169,20 +172,5 @@ public final class KineticNetworks {
             level.playSound(null, start, ModSounds.KINETIC_OVERSTRESS.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
         }
         if (running && !wasRunning) Journal.awardNear(level, start, Journal.ROTATION);
-    }
-
-    /** The ratio between {@code pos} and its neighbour on {@code side}, through the block at {@code pos}. */
-    private static float throughRatio(Kinetic block, BlockPos pos, Direction side, Map<BlockPos, Float> ratios,
-            Map<BlockPos, Kinetic> members) {
-        // Rotation enters a block from the neighbour it was reached through. For a block reached from
-        // several sides the first side found decides; the start block measures from itself.
-        for (Direction from : Direction.values()) {
-            if (from == side || !block.connects(from)) continue;
-            BlockPos prev = pos.relative(from);
-            if (ratios.containsKey(prev) && members.get(prev) != null && !prev.equals(pos.relative(side))) {
-                return block.ratio(from, side);
-            }
-        }
-        return block.ratio(null, side);
     }
 }
