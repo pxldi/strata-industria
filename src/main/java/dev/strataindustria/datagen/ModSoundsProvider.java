@@ -41,6 +41,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         transport();
         bronze();
         branches();
+        cord();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -556,6 +557,28 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.azalea_leaves.break", event).pitch(0.9f).volume(0.8f)));
         add(dev.strataindustria.branch.BranchSounds.BARE, definition().subtitle(subtitle("branch.bare"))
                 .with(sound("minecraft:block.azalea_leaves.hit", event).pitch(0.8f).volume(0.4f)));
+    }
+
+    /** Twisting bark into cord and beating cord into cloth (redesign R3), from vanilla wool, bamboo and leather samples. */
+    private void cord() {
+        var event = SoundDefinition.SoundType.EVENT;
+        // Fibres winding on each other: a dry creak over a soft scrape.
+        add(dev.strataindustria.cord.CordSounds.TWIST, definition().subtitle(subtitle("cord.twist"))
+                .with(sound("minecraft:block.bamboo.hit", event).pitch(1.4f).volume(0.35f))
+                .with(sound("minecraft:block.wool.step", event).pitch(1.5f).volume(0.7f))
+                .with(sound("minecraft:block.hanging_roots.step", event).pitch(1.3f).volume(0.6f)));
+        // The cord pulls tight: a rope knot and a bright snap.
+        add(dev.strataindustria.cord.CordSounds.TIGHT, definition().subtitle(subtitle("cord.tight"))
+                .with(sound("minecraft:entity.leash_knot.place", event).pitch(1.2f).volume(0.9f))
+                .with(sound("minecraft:block.bamboo.break", event).pitch(1.6f).volume(0.5f)));
+        // A damp bundle on rock.
+        add(dev.strataindustria.cord.CordSounds.BEAT, definition().subtitle(subtitle("cord.beat"))
+                .with(sound("minecraft:block.wool.hit", event).pitch(0.8f).volume(0.9f))
+                .with(sound("minecraft:block.stone.hit", event).pitch(0.7f).volume(0.7f)));
+        // The flat cloth peels off the stone.
+        add(dev.strataindustria.cord.CordSounds.CLOTH, definition().subtitle(subtitle("cord.cloth"))
+                .with(sound("minecraft:item.armor.equip_leather", event).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:block.wool.place", event).pitch(1.3f).volume(0.7f)));
     }
 
     private void transport() {

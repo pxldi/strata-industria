@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_fibre_cloth": {
+    "has_bark_cloth": {
       "conditions": {
         "items": [
           {
-            "items": "strataindustria:fibre_cloth"
+            "items": "strataindustria:bark_cloth"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_fibre_cloth"
+      "has_bark_cloth"
     ]
   ],
   "rewards": {

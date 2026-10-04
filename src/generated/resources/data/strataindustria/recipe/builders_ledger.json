@@ -4,7 +4,7 @@
   "ingredients": [
     "minecraft:book",
     "strataindustria:bronze_ingot",
-    "strataindustria:twine"
+    "strataindustria:cord"
   ],
   "result": {
     "id": "strataindustria:builders_ledger"

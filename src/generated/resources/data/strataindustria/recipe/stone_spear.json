@@ -5,7 +5,7 @@
   "ingredients": [
     "strataindustria:stone_spear_head",
     "minecraft:stick",
-    "strataindustria:twine"
+    "strataindustria:cord"
   ],
   "result": {
     "id": "minecraft:stone_spear"

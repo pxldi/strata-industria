@@ -57,8 +57,8 @@ final class JournalLanguage {
                 "The trunk came down with a crack that echoed through the woods.");
         lead.add("t0/crafting_table", "I keep working on my knees in the dirt. A bench would help.",
                 "A flat top and four legs. Everything is easier with a place to work.");
-        lead.add("t0/twine", "Grass stems are tough when they dry. Could I twist them into cord?",
-                "Two strands twisted against each other hold far more than either alone.");
+        lead.add("t0/twine", "Bark comes off a branch in long strips. Could I twist two together?",
+                "Two strips wound against each other held far better than either alone.");
         lead.add("t0/fire", "The nights are cold and the meat is raw. How do I make fire?",
                 "Smoke, then a glow, then flame. I sat by it a long while.");
         lead.add("t0/clay", "The banks of the river are slick and grey. Is that clay?",

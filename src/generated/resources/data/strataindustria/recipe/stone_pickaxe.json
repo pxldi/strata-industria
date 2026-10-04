@@ -5,7 +5,7 @@
   "ingredients": [
     "strataindustria:stone_pickaxe_head",
     "minecraft:stick",
-    "strataindustria:twine"
+    "strataindustria:cord"
   ],
   "result": {
     "id": "strataindustria:stone_pickaxe"

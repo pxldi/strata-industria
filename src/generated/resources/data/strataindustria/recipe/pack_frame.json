@@ -4,7 +4,7 @@
   "key": {
     "L": "minecraft:leather",
     "S": "minecraft:stick",
-    "T": "strataindustria:twine"
+    "T": "strataindustria:cord"
   },
   "pattern": [
     "S S",

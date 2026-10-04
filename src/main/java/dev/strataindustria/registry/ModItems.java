@@ -6,6 +6,8 @@ import dev.strataindustria.ceramics.LargeVesselItem;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.ceramics.SmallVesselItem;
 import dev.strataindustria.charcoal.AshItem;
+import dev.strataindustria.cord.BarkStripItem;
+import dev.strataindustria.cord.CordItem;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -31,10 +33,17 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(StrataIndustria.MOD_ID);
 
-    public static final DeferredItem<Item> PLANT_FIBRE = ITEMS.registerSimpleItem("plant_fibre", p -> p);
     public static final DeferredItem<Item> STRAW = ITEMS.registerSimpleItem("straw", p -> p);
-    public static final DeferredItem<Item> TWINE = ITEMS.registerSimpleItem("twine", p -> p);
-    public static final DeferredItem<Item> FIBRE_CLOTH = ITEMS.registerSimpleItem("fibre_cloth", p -> p);
+    /** Two bark strips twisted in the hand (redesign R3); replaces plant fibre and twine. */
+    public static final DeferredItem<CordItem> CORD = ITEMS.registerItem("cord", CordItem::new);
+    /** Four cord beaten flat on a stone; replaces fibre cloth. */
+    public static final DeferredItem<Item> BARK_CLOTH = ITEMS.registerSimpleItem("bark_cloth", p -> p);
+    static {
+        // Plant fibre and twine are gone: the old items in a world turn into cord, fibre cloth into bark cloth.
+        ITEMS.addAlias(StrataIndustria.id("plant_fibre"), StrataIndustria.id("cord"));
+        ITEMS.addAlias(StrataIndustria.id("twine"), StrataIndustria.id("cord"));
+        ITEMS.addAlias(StrataIndustria.id("fibre_cloth"), StrataIndustria.id("bark_cloth"));
+    }
     /** Spec 3.6: opens the journal tab of the advancements screen. */
     public static final DeferredItem<FieldJournalItem> FIELD_JOURNAL = ITEMS.registerItem("field_journal", FieldJournalItem::new,
             p -> p.stacksTo(1));
@@ -126,7 +135,7 @@ public final class ModItems {
             dev.strataindustria.washing.WashingPanItem::new, p -> p.durability(128));
     public static final DeferredItem<BlockItem> SLUICE = ITEMS.registerSimpleBlockItem(ModBlocks.SLUICE);
     /** Tier 3 spec 12.4: from the saw mill; tannin later in tier 3, and a weak fuel meanwhile. */
-    public static final DeferredItem<Item> BARK = ITEMS.registerSimpleItem("bark");
+    public static final DeferredItem<BarkStripItem> BARK = ITEMS.registerItem("bark", BarkStripItem::new);
     // Quern (spec 10.1).
     public static final DeferredItem<Item> QUERNSTONE = ITEMS.registerSimpleItem("quernstone", p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> QUERN = ITEMS.registerSimpleBlockItem(ModBlocks.QUERN);

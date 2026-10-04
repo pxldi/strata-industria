@@ -36,7 +36,7 @@ public final class ModTags {
         public static final TagKey<Block> MINEABLE_WITH_KNIFE = tag("mineable/knife");
         /** Nothing yet: the hammer is a smithing tool and a weapon. */
         public static final TagKey<Block> MINEABLE_WITH_HAMMER = tag("mineable/hammer");
-        /** Grass and ferns that give plant fibre and straw when cut with a knife. */
+        /** Grass and ferns that give straw when broken, and more with a knife. */
         public static final TagKey<Block> FIBRE_PLANTS = tag("fibre_plants");
 
         public static TagKey<Block> rocks(RockCategory category) {

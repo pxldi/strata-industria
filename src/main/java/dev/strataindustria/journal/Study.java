@@ -44,7 +44,7 @@ public final class Study {
     static {
         SUBJECTS.put("t0/loose_rock", state -> state.is(ModTags.Blocks.LOOSE_ROCKS));
         SUBJECTS.put("t0/knap", state -> state.is(ModTags.Blocks.LOOSE_ROCKS));
-        SUBJECTS.put("t0/twine", state -> state.is(ModTags.Blocks.FIBRE_PLANTS));
+        SUBJECTS.put("t0/twine", state -> state.is(BlockTags.LEAVES));
         SUBJECTS.put("t0/log", state -> state.is(BlockTags.LOGS));
         SUBJECTS.put("t0/stone_axe", state -> state.is(BlockTags.LOGS));
         SUBJECTS.put("t0/clay", state -> state.is(Blocks.CLAY));

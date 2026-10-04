@@ -15,7 +15,7 @@ public final class ModCreativeTabs {
 
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = CREATIVE_MODE_TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable(MAIN_TAB_TITLE))
-            .icon(() -> ModItems.PLANT_FIBRE.get().getDefaultInstance())
+            .icon(() -> ModItems.CORD.get().getDefaultInstance())
             .displayItems((parameters, output) -> {
                 ModItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
                 StructureContent.ITEMS.getEntries().forEach(item -> output.accept(item.get()));

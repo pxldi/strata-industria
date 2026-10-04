@@ -1062,67 +1062,71 @@ public final class TextureGen {
             "................",
     };
 
-    /** A small hank of twisted twine: two loops and a loose end. */
-    static final String[] TWINE_HANK = {
-            "................",
-            "................",
-            ".....455543.....",
-            "...4432..2344...",
-            "..443......343..",
-            "..43..4554..43..",
-            ".443.432234.432.",
-            ".43..43..34..32.",
-            ".43..432234..32.",
-            ".343..4332..332.",
-            "..343......332..",
-            "...3432..23322..",
-            ".....433322.....",
-            "..........32....",
-            "...........32...",
-            "................",
-    };
-
-    /** A loose bundle of long grass fibres laid on the diagonal, tied once at the middle, ends splayed. */
-    static BufferedImage plantFibre() {
-        Ramp a = V2.FIBRE_V2;
+    /**
+     * Bark cord: one loop of tightly twisted cord, the twist showing as short light and dark bands round the loop,
+     * a loose tail with frayed fibres curling off the lower right.
+     */
+    static BufferedImage cordItem() {
         BufferedImage im = img();
-        // Two strands side by side, a lit one and a shaded one, bowed slightly in the middle.
-        for (int i = 0; i < 13; i++) {
-            int bow = i >= 5 && i <= 8 ? 1 : 0;
-            px(im, 1 + i + bow, 14 - i, a.get(i % 5 == 4 ? 5 : 4));
-            px(im, 2 + i + bow, 14 - i, a.get(i % 4 == 1 ? 2 : 3));
+        Random r = new Random(9602);
+        double cx = 7.0, cy = 7.0;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x - cx, dy = y - cy, d = Math.sqrt(dx * dx + dy * dy);
+                if (d < 3.0 || d > 5.7) continue;
+                double a = Math.atan2(dy, dx);
+                // Twist bands run across the cord, so they step with the angle round the loop.
+                int band = (int) Math.floor((a + Math.PI) * 14.0 / (2 * Math.PI));
+                int step = (band & 1) == 0 ? 5 : 3;
+                // Round section: the outer and inner edges fall away, the loop is lit from the upper left.
+                if (d > 5.1 || d < 3.5) step--;
+                if (dx + dy > 3.0) step--;
+                px(im, x, y, LEATHER.get(clampStep(step)));
+            }
+        // The tail leaves the loop at the lower right and curls out, still twisted.
+        int[][] tail = {{10, 10}, {11, 11}, {11, 12}, {12, 13}, {13, 13}, {14, 13}};
+        for (int i = 0; i < tail.length; i++) {
+            int step = i % 2 == 0 ? 4 : 3;
+            px(im, tail[i][0], tail[i][1], LEATHER.get(step));
+            px(im, tail[i][0] + (i < 3 ? 1 : 0), tail[i][1] + (i < 3 ? 0 : 1), BARK.get(i % 2 == 0 ? 4 : 3));
         }
-        // The tie, across both strands.
-        px(im, 6, 8, a.get(1));
-        px(im, 7, 8, a.get(1));
-        px(im, 7, 7, a.get(2));
-        px(im, 8, 7, a.get(1));
-        // Frayed ends: single strands splayed away from the bundle.
-        px(im, 0, 14, a.get(3));
-        px(im, 1, 15, a.get(2));
-        px(im, 15, 1, a.get(4));
-        px(im, 14, 0, a.get(5));
-        px(im, 15, 3, a.get(3));
+        // Frayed fibres at the very end.
+        px(im, 15, 12, LEATHER.get(4));
+        px(im, 15, 14, LEATHER.get(3));
+        px(im, 14, 14, BARK.get(4));
         return outline(im);
     }
 
-    /** A square of woven fibre cloth with a frayed lower edge. */
-    static BufferedImage fibreCloth() {
+    /**
+     * Bark cloth: bark beaten into a flat pale sheet. Fine fibre lines run the length of the sheet, the edges are
+     * uneven and a corner is turned over.
+     */
+    static BufferedImage barkCloth() {
         BufferedImage im = img();
+        Random r = new Random(9603);
         for (int y = 3; y < 13; y++)
             for (int x = 2; x < 14; x++) {
-                boolean warp = ((x + y) & 1) == 0;
-                int step = warp ? 4 : 3;
+                // Uneven edges: each side loses a pixel here and there.
+                if ((x == 2 && (y == 3 || y == 9)) || (x == 13 && (y == 4 || y == 11)) || (y == 3 && (x == 7 || x == 12)) || (y == 12 && (x == 4 || x == 9))) continue;
+                int step = 4;
+                // Fibres run lengthwise: a darker thread every third row, a lighter one between some.
+                if (Math.floorMod(y + (x / 5), 3) == 0) step = 3;
+                else if (Math.floorMod(y * 2 + x / 4, 5) == 1) step = 5;
+                if (r.nextInt(7) == 0) step--;
                 if (y == 3) step++;
                 if (x == 13 || y == 12) step--;
-                if (((x * 7 + y * 3) % 11) == 0) step--;
-                px(im, x, y, FIBRE.get(step));
+                px(im, x, y, LEATHER.get(clampStep(step)));
             }
-        // Fraying threads.
-        px(im, 3, 13, FIBRE.get(2));
-        px(im, 6, 13, FIBRE.get(3));
-        px(im, 10, 13, FIBRE.get(2));
-        px(im, 12, 13, FIBRE.get(3));
+        // The turned-over corner at the lower right, its back side paler with a fold shadow.
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j <= i; j++) {
+                int x = 13 - j, y = 12 - (i - j);
+                if (x >= 2) px(im, x, y, LEATHER.get(i == 3 ? 3 : 5));
+            }
+        // Beaten-in bark flecks.
+        px(im, 5, 6, BARK.get(4));
+        px(im, 9, 8, BARK.get(4));
+        px(im, 4, 10, BARK.get(3));
         return outline(im);
     }
 
@@ -8013,10 +8017,9 @@ public final class TextureGen {
 
         // Stone age (tier 0-2 spec 3).
         save("item/straw", art(V2.STRAW_V2, STRAW_SHEAF));
-        save("item/twine", art(V2.FIBRE_V2, TWINE_HANK));
-        save("item/plant_fibre", plantFibre());
+        save("item/cord", cordItem());
         save("item/field_journal", art(FIELD_JOURNAL, V2.STRAW_V2, V2.FIBRE_V2, PAPER));
-        save("item/fibre_cloth", fibreCloth());
+        save("item/bark_cloth", barkCloth());
         save("item/stone_axe_head", map(V2.FLINT_V2, KNAPPED_AXE_HEAD));
         save("item/stone_knife_blade", map(V2.FLINT_V2, KNAPPED_KNIFE_BLADE));
         save("item/stone_shovel_head", map(V2.FLINT_V2, KNAPPED_SHOVEL_HEAD));

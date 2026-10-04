@@ -175,10 +175,9 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(quern);
         itemModels.itemModelOutput.accept(ModItems.QUERN.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/quern")));
         flatItem(itemModels, ModItems.QUERNSTONE.get());
-        flatItem(itemModels, ModItems.PLANT_FIBRE.get());
         flatItem(itemModels, ModItems.STRAW.get());
-        flatItem(itemModels, ModItems.TWINE.get());
-        flatItem(itemModels, ModItems.FIBRE_CLOTH.get());
+        flatItem(itemModels, ModItems.CORD.get());
+        flatItem(itemModels, ModItems.BARK_CLOTH.get());
         flatItem(itemModels, ModItems.FIELD_JOURNAL.get());
         for (var head : java.util.List.of(ModItems.STONE_AXE_HEAD, ModItems.STONE_KNIFE_BLADE, ModItems.STONE_SHOVEL_HEAD,
                 ModItems.STONE_HOE_HEAD, ModItems.STONE_HAMMER_HEAD, ModItems.STONE_SPEAR_HEAD, ModItems.STONE_PICKAXE_HEAD)) {

@@ -73,7 +73,7 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder log = goal(stoneAxe, "t0/log", Items.OAK_LOG,
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ItemTags.LOGS)));
         goal(log, "t0/crafting_table", Items.CRAFTING_TABLE, has(Items.CRAFTING_TABLE));
-        AdvancementHolder twine = goal(knap, "t0/twine", ModItems.TWINE.get(), has(ModItems.TWINE.get()));
+        AdvancementHolder twine = goal(knap, "t0/twine", ModItems.CORD.get(), has(ModItems.CORD.get()));
         AdvancementHolder fire = goal(twine, "t0/fire", ModItems.FIRE_PIT.get(), JournalTrigger.TriggerInstance.of(Journal.FIRE_PIT_LIT));
         AdvancementHolder clay = goal(fire, "t0/clay", Items.CLAY_BALL, InventoryChangeTrigger.TriggerInstance.hasItems(
                 ItemPredicate.Builder.item().of(items, Items.CLAY_BALL).withCount(MinMaxBounds.Ints.atLeast(5))));

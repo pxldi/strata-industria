@@ -4,7 +4,7 @@
   "ingredients": [
     "minecraft:paper",
     "strataindustria:brass_plate",
-    "strataindustria:twine"
+    "strataindustria:cord"
   ],
   "result": {
     "id": "strataindustria:filter"
