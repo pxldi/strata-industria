@@ -1,0 +1,78 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "strataindustria:block/mv_cable",
+    "cable": "strataindustria:block/mv_cable",
+    "end": "strataindustria:block/mv_cable_end"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        4,
+        1
+      ],
+      "to": [
+        12,
+        12,
+        15
+      ],
+      "faces": {
+        "east": {
+          "texture": "#cable",
+          "uv": [
+            1,
+            4,
+            15,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#cable",
+          "uv": [
+            1,
+            4,
+            15,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#cable",
+          "uv": [
+            4,
+            1,
+            12,
+            15
+          ]
+        },
+        "down": {
+          "texture": "#cable",
+          "uv": [
+            4,
+            1,
+            12,
+            15
+          ]
+        },
+        "north": {
+          "texture": "#end",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#end",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    }
+  ]
+}
