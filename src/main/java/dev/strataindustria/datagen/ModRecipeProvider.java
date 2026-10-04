@@ -31,6 +31,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
@@ -311,30 +312,30 @@ final class ModRecipeProvider extends RecipeProvider {
         }
         grind("bone_meal", Ingredient.of(Items.BONE), Items.BONE_MEAL, 4);
         // Every vanilla flower that crafts into a dye gives two of it.
-        flower(Items.DANDELION, Items.YELLOW_DYE);
-        flower(Items.POPPY, Items.RED_DYE);
-        flower(Items.BLUE_ORCHID, Items.LIGHT_BLUE_DYE);
-        flower(Items.ALLIUM, Items.MAGENTA_DYE);
-        flower(Items.AZURE_BLUET, Items.LIGHT_GRAY_DYE);
-        flower(Items.RED_TULIP, Items.RED_DYE);
-        flower(Items.ORANGE_TULIP, Items.ORANGE_DYE);
-        flower(Items.WHITE_TULIP, Items.LIGHT_GRAY_DYE);
-        flower(Items.PINK_TULIP, Items.PINK_DYE);
-        flower(Items.OXEYE_DAISY, Items.LIGHT_GRAY_DYE);
-        flower(Items.CORNFLOWER, Items.BLUE_DYE);
-        flower(Items.LILY_OF_THE_VALLEY, Items.WHITE_DYE);
-        flower(Items.WITHER_ROSE, Items.BLACK_DYE);
-        flower(Items.SUNFLOWER, Items.YELLOW_DYE);
-        flower(Items.LILAC, Items.MAGENTA_DYE);
-        flower(Items.ROSE_BUSH, Items.RED_DYE);
-        flower(Items.PEONY, Items.PINK_DYE);
-        flower(Items.TORCHFLOWER, Items.ORANGE_DYE);
-        flower(Items.PITCHER_PLANT, Items.CYAN_DYE);
-        flower(Items.PINK_PETALS, Items.PINK_DYE);
-        flower(Items.CLOSED_EYEBLOSSOM, Items.GRAY_DYE);
-        flower(Items.OPEN_EYEBLOSSOM, Items.ORANGE_DYE);
-        flower(Items.WILDFLOWERS, Items.YELLOW_DYE);
-        flower(Items.CACTUS_FLOWER, Items.PINK_DYE);
+        flower(Items.DANDELION, Items.DYE.pick(DyeColor.YELLOW));
+        flower(Items.POPPY, Items.DYE.pick(DyeColor.RED));
+        flower(Items.BLUE_ORCHID, Items.DYE.pick(DyeColor.LIGHT_BLUE));
+        flower(Items.ALLIUM, Items.DYE.pick(DyeColor.MAGENTA));
+        flower(Items.AZURE_BLUET, Items.DYE.pick(DyeColor.LIGHT_GRAY));
+        flower(Items.RED_TULIP, Items.DYE.pick(DyeColor.RED));
+        flower(Items.ORANGE_TULIP, Items.DYE.pick(DyeColor.ORANGE));
+        flower(Items.WHITE_TULIP, Items.DYE.pick(DyeColor.LIGHT_GRAY));
+        flower(Items.PINK_TULIP, Items.DYE.pick(DyeColor.PINK));
+        flower(Items.OXEYE_DAISY, Items.DYE.pick(DyeColor.LIGHT_GRAY));
+        flower(Items.CORNFLOWER, Items.DYE.pick(DyeColor.BLUE));
+        flower(Items.LILY_OF_THE_VALLEY, Items.DYE.pick(DyeColor.WHITE));
+        flower(Items.WITHER_ROSE, Items.DYE.pick(DyeColor.BLACK));
+        flower(Items.SUNFLOWER, Items.DYE.pick(DyeColor.YELLOW));
+        flower(Items.LILAC, Items.DYE.pick(DyeColor.MAGENTA));
+        flower(Items.ROSE_BUSH, Items.DYE.pick(DyeColor.RED));
+        flower(Items.PEONY, Items.DYE.pick(DyeColor.PINK));
+        flower(Items.TORCHFLOWER, Items.DYE.pick(DyeColor.ORANGE));
+        flower(Items.PITCHER_PLANT, Items.DYE.pick(DyeColor.CYAN));
+        flower(Items.PINK_PETALS, Items.DYE.pick(DyeColor.PINK));
+        flower(Items.CLOSED_EYEBLOSSOM, Items.DYE.pick(DyeColor.GRAY));
+        flower(Items.OPEN_EYEBLOSSOM, Items.DYE.pick(DyeColor.ORANGE));
+        flower(Items.WILDFLOWERS, Items.DYE.pick(DyeColor.YELLOW));
+        flower(Items.CACTUS_FLOWER, Items.DYE.pick(DyeColor.PINK));
     }
 
     private void flower(Item flower, Item dye) {
