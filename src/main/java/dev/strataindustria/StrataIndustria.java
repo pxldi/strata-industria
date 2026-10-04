@@ -1,15 +1,16 @@
 package dev.strataindustria;
 
 import com.mojang.logging.LogUtils;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModConditions;
+import dev.strataindustria.registry.ModCreativeTabs;
 import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModMenus;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.registry.ModSounds;
-import dev.strataindustria.registry.ModCreativeTabs;
-import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModWorldgen;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
@@ -35,6 +36,7 @@ public final class StrataIndustria {
         ModRecipes.TYPES.register(modEventBus);
         ModRecipes.SERIALIZERS.register(modEventBus);
         ModConditions.CONDITIONS.register(modEventBus);
+        Journal.TRIGGERS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }

@@ -1,0 +1,80 @@
+{
+  "parent": "strataindustria:journal/t2/smith",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "strataindustria:bronze_pickaxe",
+              "strataindustria:arsenical_bronze_pickaxe",
+              "strataindustria:bismuth_bronze_pickaxe"
+            ]
+          },
+          {
+            "items": [
+              "strataindustria:bronze_axe",
+              "strataindustria:arsenical_bronze_axe",
+              "strataindustria:bismuth_bronze_axe"
+            ]
+          },
+          {
+            "items": [
+              "strataindustria:bronze_shovel",
+              "strataindustria:arsenical_bronze_shovel",
+              "strataindustria:bismuth_bronze_shovel"
+            ]
+          },
+          {
+            "items": [
+              "strataindustria:bronze_knife",
+              "strataindustria:arsenical_bronze_knife",
+              "strataindustria:bismuth_bronze_knife"
+            ]
+          },
+          {
+            "items": [
+              "strataindustria:bronze_hammer",
+              "strataindustria:arsenical_bronze_hammer",
+              "strataindustria:bismuth_bronze_hammer"
+            ]
+          },
+          {
+            "items": [
+              "strataindustria:bronze_saw",
+              "strataindustria:arsenical_bronze_saw",
+              "strataindustria:bismuth_bronze_saw"
+            ]
+          },
+          {
+            "items": [
+              "strataindustria:bronze_sword",
+              "strataindustria:arsenical_bronze_sword",
+              "strataindustria:bismuth_bronze_sword"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.bronze_tools.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:bronze_pickaxe"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.bronze_tools"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

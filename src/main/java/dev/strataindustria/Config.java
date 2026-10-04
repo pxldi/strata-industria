@@ -147,6 +147,19 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- journal
+    static {
+        BUILDER.comment("The field journal.").push("journal");
+    }
+
+    public static final ModConfigSpec.BooleanValue JOURNAL_GIVE_ON_JOIN = BUILDER
+            .comment("Give each player a field journal the first time they join.")
+            .define("giveOnJoin", true);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

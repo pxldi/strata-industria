@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t1/clay_forming",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "pit_kiln_fired"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t1.pit_kiln.hint"
+    },
+    "icon": {
+      "id": "strataindustria:small_vessel"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t1.pit_kiln"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

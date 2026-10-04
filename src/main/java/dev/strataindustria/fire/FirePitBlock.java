@@ -1,5 +1,6 @@
 package dev.strataindustria.fire;
 
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModSounds;
 import net.minecraft.core.BlockPos;
@@ -119,6 +120,7 @@ public class FirePitBlock extends BaseEntityBlock implements Ignitable {
         if (!canIgnite(level, pos, state) || !(level.getBlockEntity(pos) instanceof FirePitBlockEntity pit)) return false;
         level.setBlock(pos, state.setValue(LIT, true), Block.UPDATE_ALL);
         pit.onIgnite();
+        Journal.awardNear(level, pos, Journal.FIRE_PIT_LIT);
         level.playSound(null, pos, ModSounds.FIRE_PIT_IGNITE.get(), SoundSource.BLOCKS, 1.0f, 0.9f + level.getRandom().nextFloat() * 0.2f);
         return true;
     }

@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/root",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#strataindustria:loose_rocks"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t0.loose_rock.hint"
+    },
+    "icon": {
+      "id": "strataindustria:loose_limestone"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t0.loose_rock"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

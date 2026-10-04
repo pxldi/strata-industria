@@ -209,6 +209,23 @@
     ],
     "subtitle": "subtitles.strataindustria.heat.quench"
   },
+  "journal.open": {
+    "sounds": [
+      {
+        "name": "item/book/open_flip1",
+        "volume": 0.8
+      },
+      {
+        "name": "item/book/open_flip2",
+        "volume": 0.8
+      },
+      {
+        "name": "item/book/open_flip3",
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.open"
+  },
   "knapping.finish": {
     "sounds": [
       {

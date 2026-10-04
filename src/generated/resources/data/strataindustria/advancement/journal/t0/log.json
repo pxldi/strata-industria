@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t0/stone_axe",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#minecraft:logs"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t0.log.hint"
+    },
+    "icon": {
+      "id": "minecraft:oak_log"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t0.log"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

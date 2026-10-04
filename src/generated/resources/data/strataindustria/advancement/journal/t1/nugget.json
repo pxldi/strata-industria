@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t0/loose_rock",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#strataindustria:small_ores"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t1.nugget.hint"
+    },
+    "icon": {
+      "id": "strataindustria:small_native_copper"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t1.nugget"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

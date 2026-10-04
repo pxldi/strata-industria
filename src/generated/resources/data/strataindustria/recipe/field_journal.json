@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:straw",
+    "strataindustria:straw",
+    "strataindustria:twine"
+  ],
+  "result": {
+    "id": "strataindustria:field_journal"
+  }
+}

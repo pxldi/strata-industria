@@ -149,6 +149,12 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('T', ModItems.TWINE.get())
                 .unlockedBy("has_twine", has(ModItems.TWINE.get()))
                 .save(output, key("fibre_cloth"));
+        // Spec 3.6.
+        shapeless(RecipeCategory.MISC, ModItems.FIELD_JOURNAL.get())
+                .requires(ModItems.STRAW.get(), 2)
+                .requires(ModItems.TWINE.get())
+                .unlockedBy("has_twine", has(ModItems.TWINE.get()))
+                .save(output, key("field_journal"));
     }
 
     // Spec 3.5.

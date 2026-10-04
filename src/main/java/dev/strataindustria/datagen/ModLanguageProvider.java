@@ -36,6 +36,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.STRAW, "Straw");
         addItem(ModItems.TWINE, "Twine");
         addItem(ModItems.FIBRE_CLOTH, "Fibre Cloth");
+        addItem(ModItems.FIELD_JOURNAL, "Field Journal");
         addItem(ModItems.STONE_AXE_HEAD, "Stone Axe Head");
         addItem(ModItems.STONE_KNIFE_BLADE, "Stone Knife Blade");
         addItem(ModItems.STONE_SHOVEL_HEAD, "Stone Shovel Head");
@@ -93,6 +94,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.FORGE, "Forge");
         addBlock(ModBlocks.QUERN, "Quern");
         smithing();
+        journal();
         addItem(ModItems.QUERNSTONE, "Quernstone");
         add("container." + StrataIndustria.MOD_ID + ".forge", "Forge");
         metals();
@@ -116,6 +118,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "quern.grind", "Quern grinds");
         add(subtitles + "anvil.hit", "Hammer rings");
         add(subtitles + "prospect", "Pick taps rock");
+        add(subtitles + "journal.open", "Pages turn");
         add(subtitles + "anvil.done", "Piece finished");
         add(subtitles + "anvil.dress", "Stone dressed");
         add(subtitles + "quern.load", "Quern loaded");
@@ -187,6 +190,70 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "toolMoldBreak", "Tool mold break chance");
         add(config + "smithing", "Smithing");
         add(config + "randomTargets", "Random targets per world");
+        add(config + "journal", "Field Journal");
+        add(config + "giveOnJoin", "Give a journal on first join");
+    }
+
+    /** Spec 11: the field journal's goals and hints. */
+    private void journal() {
+        String journal = "journal." + StrataIndustria.MOD_ID + ".";
+        add(journal + "next", "Field journal, next: %s");
+        add(journal + "root", "Field Journal");
+        add(journal + "root.hint", "From the first loose rock to a bronze anvil. Use the journal to open this page.");
+        add(journal + "t0.loose_rock", "A Rock to Start With");
+        add(journal + "t0.loose_rock.hint", "Pick up a loose rock lying on the ground.");
+        add(journal + "t0.knap", "First Edge");
+        add(journal + "t0.knap.hint", "Knap a tool head: use loose rocks or flint and strike away the waste.");
+        add(journal + "t0.stone_axe", "Stone Axe");
+        add(journal + "t0.stone_axe.hint", "Haft a knapped axe head onto a stick.");
+        add(journal + "t0.log", "Timber");
+        add(journal + "t0.log.hint", "Fell a tree with your axe. Bare hands will not do.");
+        add(journal + "t0.crafting_table", "A Proper Workbench");
+        add(journal + "t0.crafting_table.hint", "Build a crafting table.");
+        add(journal + "t0.twine", "Twisted Fibre");
+        add(journal + "t0.twine.hint", "Cut grass with a knife for plant fibre, then twist it into twine.");
+        add(journal + "t0.fire", "Firelight");
+        add(journal + "t0.fire.hint", "Build a fire pit and light it with a firestarter.");
+        add(journal + "t0.clay", "Riverbank Clay");
+        add(journal + "t0.clay.hint", "Gather five clay balls. Look along riverbanks and in swamps.");
+        add(journal + "t1.clay_forming", "Shaped by Hand");
+        add(journal + "t1.clay_forming.hint", "Form something from clay: use five clay balls to open the forming grid.");
+        add(journal + "t1.pit_kiln", "Fired Pottery");
+        add(journal + "t1.pit_kiln.hint", "Fire clay pieces in a pit kiln under straw and logs, and let it burn out.");
+        add(journal + "t1.charcoal", "Charcoal Burner");
+        add(journal + "t1.charcoal.hint", "Stack logs into a pile, light it, then cover every face with soil or stone.");
+        add(journal + "t1.forge", "The Forge");
+        add(journal + "t1.forge.hint", "Build a forge. It burns charcoal far hotter than a fire pit.");
+        add(journal + "t1.nugget", "Signs in the Soil");
+        add(journal + "t1.nugget.hint", "Find a small ore on the surface. A vein lies somewhere below it.");
+        add(journal + "t1.crucible", "Vessel and Mold");
+        add(journal + "t1.crucible.hint", "Fire a crucible and an ingot mold in the pit kiln.");
+        add(journal + "t2.melt", "Molten");
+        add(journal + "t2.melt.hint", "Set a crucible on a lit forge and melt ore in it.");
+        add(journal + "t2.copper_ingot", "First Metal");
+        add(journal + "t2.copper_ingot.hint", "Pour molten copper into an ingot mold and knock the ingot out once it cools.");
+        add(journal + "t2.copper_pickaxe", "Copper Pick");
+        add(journal + "t2.copper_pickaxe.hint", "Make a copper pickaxe. It breaks ore a stone pick cannot.");
+        add(journal + "t2.alloy_metal", "Tin, Bismuth or Arsenic");
+        add(journal + "t2.alloy_metal.hint", "Mine cassiterite, bismuthinite or tennantite ore.");
+        add(journal + "t2.quern", "Ground Fine");
+        add(journal + "t2.quern.hint", "Grind ore in a quern. Crushed ore melts down to more metal.");
+        add(journal + "t2.bronze", "Bronze Age");
+        add(journal + "t2.bronze.hint", "Melt copper with tin, bismuth or arsenic in the right shares and cast a bronze ingot.");
+        add(journal + "t2.stone_anvil", "Dressed Stone");
+        add(journal + "t2.stone_anvil.hint", "Sneak and strike the top of raw igneous rock with a hammer to dress it into an anvil.");
+        add(journal + "t2.smith", "Hammer Work");
+        add(journal + "t2.smith.hint", "Heat an ingot in the forge and smith it into a plate on an anvil.");
+        add(journal + "t2.bronze_tools", "Full Kit");
+        add(journal + "t2.bronze_tools.hint", "Own a bronze pickaxe, axe, shovel, knife, hammer, saw and sword.");
+        add(journal + "t2.bronze_armour", "Clad in Bronze");
+        add(journal + "t2.bronze_armour.hint", "Wear a full set of bronze armour.");
+        add(journal + "t2.prospectors_pick", "Listening to the Rock");
+        add(journal + "t2.prospectors_pick.hint", "Strike rock with a prospector's pick to learn what ore lies nearby.");
+        add(journal + "t2.bronze_anvil", "Bronze Anvil");
+        add(journal + "t2.bronze_anvil.hint", "Build a bronze anvil, the last tool of the bronze age.");
+        add(journal + "t3.iron", "Tier 3: Iron");
+        add(journal + "t3.iron.hint", "Bronze cannot melt iron. You will need a bloomery.");
     }
 
     /** Spec 9: anvils, the smithing screen, and tongs. */

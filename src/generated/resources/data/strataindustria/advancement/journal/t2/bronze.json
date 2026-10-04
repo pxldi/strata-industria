@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t2/alloy_metal",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#strataindustria:ingots/any_bronze"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.bronze.hint"
+    },
+    "icon": {
+      "id": "strataindustria:bronze_ingot"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.bronze"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

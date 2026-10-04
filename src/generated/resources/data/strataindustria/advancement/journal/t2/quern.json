@@ -1,0 +1,49 @@
+{
+  "parent": "strataindustria:journal/t2/alloy_metal",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "strataindustria:crushed_poor_native_copper",
+              "strataindustria:crushed_native_copper",
+              "strataindustria:crushed_rich_native_copper",
+              "strataindustria:crushed_poor_malachite",
+              "strataindustria:crushed_malachite",
+              "strataindustria:crushed_rich_malachite",
+              "strataindustria:crushed_poor_tennantite",
+              "strataindustria:crushed_tennantite",
+              "strataindustria:crushed_rich_tennantite",
+              "strataindustria:crushed_poor_cassiterite",
+              "strataindustria:crushed_cassiterite",
+              "strataindustria:crushed_rich_cassiterite",
+              "strataindustria:crushed_poor_bismuthinite",
+              "strataindustria:crushed_bismuthinite",
+              "strataindustria:crushed_rich_bismuthinite"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.quern.hint"
+    },
+    "icon": {
+      "id": "strataindustria:quern"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.quern"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

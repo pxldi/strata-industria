@@ -5,6 +5,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.forge.ForgeBlockEntity;
 import dev.strataindustria.heat.Heat;
 import dev.strataindustria.heat.Temperature;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModDataComponents;
@@ -140,7 +141,11 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         boolean changed = Math.abs(crucible.temperature - before) > 0.01f;
         changed |= crucible.meltInputs(level, pos);
         changed |= crucible.pour(level, pos);
+        CrucibleStatus was = crucible.status;
         crucible.status = crucible.computeStatus(forgeBelow);
+        if (crucible.status == CrucibleStatus.MOLTEN && was != CrucibleStatus.MOLTEN) {
+            Journal.awardNear(level, pos, Journal.CRUCIBLE_MOLTEN);
+        }
         if (changed) setChanged(level, pos, state);
     }
 

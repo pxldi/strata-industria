@@ -1,0 +1,43 @@
+{
+  "parent": "strataindustria:journal/t2/copper_pickaxe",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "strataindustria:poor_tennantite",
+              "strataindustria:tennantite",
+              "strataindustria:rich_tennantite",
+              "strataindustria:poor_cassiterite",
+              "strataindustria:cassiterite",
+              "strataindustria:rich_cassiterite",
+              "strataindustria:poor_bismuthinite",
+              "strataindustria:bismuthinite",
+              "strataindustria:rich_bismuthinite"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.alloy_metal.hint"
+    },
+    "icon": {
+      "id": "strataindustria:cassiterite"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t2.alloy_metal"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
