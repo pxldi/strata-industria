@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "strataindustria:fire_bricks",
+    "C": "strataindustria:basic_circuit",
+    "H": "strataindustria:lv_machine_hull",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    " B ",
+    "CHW",
+    " B "
+  ],
+  "result": {
+    "id": "strataindustria:electric_furnace"
+  }
+}

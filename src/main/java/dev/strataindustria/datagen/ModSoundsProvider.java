@@ -425,6 +425,21 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.pointed_dripstone.drip_water", SoundDefinition.SoundType.EVENT).pitch(0.7f))
                 .with(sound("minecraft:block.pointed_dripstone.drip_water", SoundDefinition.SoundType.EVENT).pitch(0.62f).volume(0.9f))
                 .with(sound("minecraft:block.pointed_dripstone.drip_water_into_cauldron", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.7f)));
+        add(Tier5Sounds.MACHINE_POWER_ON, definition().subtitle(subtitle("block.machine.power_on"))
+                .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.6f))
+                .with(sound("minecraft:block.beacon.activate", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));
+        add(Tier5Sounds.MACHINE_POWER_OFF, definition().subtitle(subtitle("block.machine.power_off"))
+                .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.6f))
+                .with(sound("minecraft:block.beacon.deactivate", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.25f)));
+        add(Tier5Sounds.MACHINE_LOW_POWER, definition().subtitle(subtitle("block.machine.low_power"))
+                .with(sound("minecraft:block.note_block.bit", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.5f)));
+        add(Tier5Sounds.ELECTRIC_FURNACE_RUN, definition().subtitle(subtitle("block.electric_furnace.run"))
+                .with(sound("minecraft:block.furnace.fire_crackle", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.5f))
+                .with(sound("minecraft:block.furnace.fire_crackle", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.45f)));
+        add(Tier5Sounds.MACERATOR_GRIND, definition().subtitle(subtitle("block.macerator.grind"))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.5f))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.82f).volume(0.45f))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.98f).volume(0.45f)));
         add(Tier5Sounds.BATTERY_BOX_CHARGE, definition().subtitle(subtitle("battery_box.charge"))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.15f))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.12f)));

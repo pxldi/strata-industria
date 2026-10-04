@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "G": "strataindustria:steel_gear",
+    "H": "strataindustria:lv_machine_hull",
+    "M": "strataindustria:electric_motor"
+  },
+  "pattern": [
+    " G ",
+    "CHM",
+    " G "
+  ],
+  "result": {
+    "id": "strataindustria:macerator"
+  }
+}

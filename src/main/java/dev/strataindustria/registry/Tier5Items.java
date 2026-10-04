@@ -45,6 +45,8 @@ public final class Tier5Items {
     public static final DeferredItem<BatteryBoxItem> BATTERY_BOX = ModItems.ITEMS.registerItem("battery_box",
             p -> new BatteryBoxItem(Tier5Blocks.BATTERY_BOX.get(), p), p -> p.stacksTo(1).useBlockDescriptionPrefix());
     public static final DeferredItem<BlockItem> LV_MACHINE_HULL = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_MACHINE_HULL);
+    public static final DeferredItem<BlockItem> ELECTRIC_FURNACE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTRIC_FURNACE);
+    public static final DeferredItem<BlockItem> MACERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MACERATOR);
 
     /** Metal content of the new forms (spec 4.1): rods are half an ingot, wire a quarter, plates a whole one. */
     public static void metalContent(Map<Item, Melt> map) {

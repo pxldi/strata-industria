@@ -20,6 +20,17 @@ public final class Tier5Sounds {
     /** A thick, soft drip into the tap's bowl. */
     public static final DeferredHolder<SoundEvent, SoundEvent> TREE_TAP_DRIP = register("block.tree_tap.drip");
 
+    /** Spec 23.6: a relay clack and a rising whine when a machine gets power. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_POWER_ON = register("block.machine.power_on");
+    /** A relay clack and a falling whine when a machine loses power. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_POWER_OFF = register("block.machine.power_off");
+    /** Two soft descending beeps as a machine runs short of power. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MACHINE_LOW_POWER = register("block.machine.low_power");
+    /** The electric furnace's low even hum with a soft crackle. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELECTRIC_FURNACE_RUN = register("block.electric_furnace.run");
+    /** The macerator's metallic grinding with grit. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MACERATOR_GRIND = register("block.macerator.grind");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.electric.machine.ElectricMachineBlockEntity;
 import dev.strataindustria.power.ElectricStatus;
 import dev.strataindustria.rubber.TreeTapBlockEntity;
 import java.util.function.BiConsumer;
@@ -34,6 +35,22 @@ final class Tier5Language {
         lang.accept(block + "kinetic_dynamo", "Kinetic Dynamo");
         lang.accept(block + "battery_box", "Battery Box");
         lang.accept(block + "lv_machine_hull", "LV Machine Hull");
+        lang.accept(block + "electric_furnace", "Electric Furnace");
+        lang.accept(block + "macerator", "Macerator");
+
+        // Spec 10.1: machine status lines and screen tooltips.
+        String machine = id + ".electric_machine.";
+        lang.accept(ElectricMachineBlockEntity.Status.EMPTY.key(), "Idle");
+        lang.accept(ElectricMachineBlockEntity.Status.WORKING.key(), "Running");
+        lang.accept(ElectricMachineBlockEntity.Status.LOW_POWER.key(), "Low power (%s%%)");
+        lang.accept(ElectricMachineBlockEntity.Status.NO_POWER.key(), "No power");
+        lang.accept(ElectricMachineBlockEntity.Status.NO_RECIPE.key(), "Can't process this");
+        lang.accept(ElectricMachineBlockEntity.Status.OUTPUT_FULL.key(), "Output full");
+        lang.accept(ElectricMachineBlockEntity.Status.OVERVOLTAGE.key(), "Overvoltage");
+        lang.accept(ElectricMachineBlockEntity.Status.TOO_FAR.key(), "Too far from a source");
+        lang.accept(machine + "buffer", "Buffer: %s%%");
+        lang.accept(machine + "eject_on", "Auto-eject on: outputs go into the block behind");
+        lang.accept(machine + "eject_off", "Auto-eject off");
 
         // Spec 6.5: diagnostics and status lines.
         String electric = id + ".electric.";
@@ -70,5 +87,10 @@ final class Tier5Language {
         lang.accept(subtitles + "battery_box.charge", "Battery hums");
         lang.accept(subtitles + "block.tree_tap.place", "Tree tap knocked in");
         lang.accept(subtitles + "block.tree_tap.drip", "Latex drips");
+        lang.accept(subtitles + "block.machine.power_on", "Machine powers up");
+        lang.accept(subtitles + "block.machine.power_off", "Machine powers down");
+        lang.accept(subtitles + "block.machine.low_power", "Machine beeps");
+        lang.accept(subtitles + "block.electric_furnace.run", "Electric furnace hums");
+        lang.accept(subtitles + "block.macerator.grind", "Macerator grinds");
     }
 }
