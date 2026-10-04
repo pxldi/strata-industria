@@ -114,7 +114,7 @@ public class PlanPiece extends StructurePiece {
         int margin = plan.kind() == Plan.Kind.LEVELLED ? MARGIN : 0;
         int base = Plans.base(plan);
         return new BoundingBox(minX - margin, groundY - base - 12, minZ - margin,
-                minX + size[0] - 1 + margin, groundY + plan.height() - base + HEADROOM, minZ + size[1] - 1 + margin);
+                minX + size[0] - 1 + margin, groundY + plan.height() - base + HEADROOM + Terrain.TREE_TOP, minZ + size[1] - 1 + margin);
     }
 
     // ---------------------------------------------------------------- coordinates

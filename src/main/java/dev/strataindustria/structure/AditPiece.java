@@ -182,13 +182,17 @@ public class AditPiece extends StructurePiece {
         // The last horizontal steps are the worked face: dug, but not yet propped.
         int lastHorizontal = -1;
         for (int i = 0; i < count; i++) if ((steps[i * STRIDE + 4] & VERTICAL) == 0) lastHorizontal = i;
+        // Vertical steps before the first level one are the entry shaft; later ones are a winze.
+        int lastShaftStep = -1;
+        while (lastShaftStep + 1 < count && (steps[(lastShaftStep + 1) * STRIDE + 4] & VERTICAL) != 0) lastShaftStep++;
         boolean digPlaced = false;
         for (int i = 0; i < count; i++) {
             int x = steps[i * STRIDE], y = steps[i * STRIDE + 1], z = steps[i * STRIDE + 2];
             Direction h = Direction.from3DDataValue(steps[i * STRIDE + 3]);
             int flags = steps[i * STRIDE + 4];
             if ((flags & VERTICAL) != 0) {
-                shaft(level, chunkBB, x, y, z);
+                // A winze below the tunnel hangs its ladder on the wall ahead, away from the tunnel it opens off.
+                shaft(level, chunkBB, x, y, z, i > lastShaftStep ? h : ladderSide);
                 continue;
             }
             Direction side = h.getClockWise();
@@ -201,7 +205,14 @@ public class AditPiece extends StructurePiece {
             if ((flags & PROPS) != 0 && i < lastHorizontal - 1 && !Weathering.chance(new BlockPos(x, y, z), seed, 0.06)) {
                 props(level, chunkBB, x, y, z, side);
             }
-            if (i == lastHorizontal) face(level, random, chunkBB, x, y, z, side, geology);
+            if (i == lastHorizontal && i == count - 1) face(level, random, chunkBB, x, y, z, side, geology);
+        }
+        // A tunnel that ends in a winze is worked at the bottom of it; a face cut beside the last level
+        // step would only be dug away again by the winze.
+        int last = count - 1;
+        if (last >= 0 && last != lastHorizontal) {
+            Direction h = Direction.from3DDataValue(steps[last * STRIDE + 3]);
+            face(level, random, chunkBB, steps[last * STRIDE], steps[last * STRIDE + 1], steps[last * STRIDE + 2], h.getClockWise(), geology);
         }
     }
 
@@ -218,7 +229,9 @@ public class AditPiece extends StructurePiece {
         for (int o = -1; o <= 1; o++) {
             for (int dy = 1; dy <= 3; dy++) {
                 pos.set(x + side.getStepX() * o, y + dy, z + side.getStepZ() * o);
-                if (!chunkBB.isInside(pos) || isFluid(level, pos) || level.getBlockState(pos).isAir()) continue;
+                // The shaft's ladder runs down to the tunnel floor; leave it for the climb back out.
+                BlockState state = level.getBlockState(pos);
+                if (!chunkBB.isInside(pos) || isFluid(level, pos) || state.isAir() || state.is(Blocks.LADDER)) continue;
                 level.setBlock(pos, Blocks.CAVE_AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
             }
         }
@@ -285,7 +298,7 @@ public class AditPiece extends StructurePiece {
     }
 
     /** One block of a laddered shaft, three by three. */
-    private void shaft(WorldGenLevel level, BoundingBox chunkBB, int x, int y, int z) {
+    private void shaft(WorldGenLevel level, BoundingBox chunkBB, int x, int y, int z, Direction ladderSide) {
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int ox = -1; ox <= 1; ox++) {
             for (int oz = -1; oz <= 1; oz++) {

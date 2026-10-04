@@ -231,7 +231,7 @@ public class SawMillBlockEntity extends BaseContainerBlockEntity implements Kine
 
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
-        return slot == INPUT;
+        return slot == INPUT && canPlaceItem(slot, stack);
     }
 
     @Override
@@ -242,7 +242,8 @@ public class SawMillBlockEntity extends BaseContainerBlockEntity implements Kine
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
         return switch (slot) {
-            case INPUT -> true;
+            // Only what the saw can cut, so a hopper cannot jam it with anything else.
+            case INPUT -> level == null || level.isClientSide() || recipeFor(level, stack).isPresent();
             case BLADE -> bladeLife(stack) > 0;
             default -> false;
         };
