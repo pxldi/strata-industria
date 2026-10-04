@@ -1,0 +1,58 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/ropeway_cable",
+    "c": "strataindustria:block/ropeway_cable"
+  },
+  "elements": [
+    {
+      "from": [
+        7.25,
+        7.25,
+        0
+      ],
+      "to": [
+        8.75,
+        8.75,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#c",
+          "uv": [
+            0,
+            0,
+            1.5,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#c",
+          "uv": [
+            0,
+            0,
+            1.5,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#c",
+          "uv": [
+            0,
+            0,
+            1.5,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#c",
+          "uv": [
+            0,
+            0,
+            1.5,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

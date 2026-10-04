@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t4/steam_engine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "ropeway_delivered"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.ropeway.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:ropeway_bucket"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t4.ropeway"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

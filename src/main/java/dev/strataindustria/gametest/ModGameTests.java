@@ -135,6 +135,7 @@ public final class ModGameTests {
         PonyGameTests.register(TESTS);
         RailwayGameTests.register(TESTS);
         LocomotiveGameTests.register(TESTS);
+        RopewayGameTests.register(TESTS);
         OutpostGameTests.register(TESTS);
         BronzeGameTests.register(TESTS);
         BellGameTests.register(TESTS);

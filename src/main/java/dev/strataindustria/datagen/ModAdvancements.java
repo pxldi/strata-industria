@@ -218,6 +218,9 @@ final class ModAdvancements extends AdvancementSubProvider {
                 JournalTrigger.TriggerInstance.of(Journal.DRIVERLESS_TRIPS));
         goal(railway, "t4/outpost_5", dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER_ITEM.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.OUTPOST_GROWN));
+        // Outposts spec 11: sixty-four items over a valley by ropeway.
+        goal(engine, "t4/ropeway", dev.strataindustria.transport.ropeway.RopewayRegistry.BUCKET.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.ROPEWAY_DELIVERED));
         // Spec 15, goal 65: a steam hammer finishes a recipe.
         goal(engine, "t4/steam_hammer", Tier4Items.STEAM_HAMMER.get(), JournalTrigger.TriggerInstance.of(Journal.STEAM_HAMMER));
         // Spec 15, goal 69: a powered crusher finishes something.
