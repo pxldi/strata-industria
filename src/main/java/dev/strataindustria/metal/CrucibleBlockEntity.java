@@ -384,7 +384,9 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         // Tier 4 spec 3: clay molds crack under metal hotter than 1300 degrees.
         if (!cast.takes(mixMeltingPoint(melt))) return Optional.of("mold_too_weak");
         Optional<Metal> result = result();
-        if (cast.isGear()) {
+        if (cast.isBell()) {
+            if (result.isEmpty() || !CastMoldItem.ringsAsBell(result.get())) return Optional.of("no_alloy");
+        } else if (cast.isGear()) {
             if (result.isEmpty() || !result.get().hasGear()) return Optional.of("no_gear");
         } else if (cast.type() == null) {
             if (result.isEmpty() && melt.units().size() < 2) return Optional.of("no_alloy");

@@ -102,6 +102,15 @@
     ],
     "subtitle": "subtitles.strataindustria.battery_box.charge"
   },
+  "bell.ring": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bell.use"
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.bell.ring"
+  },
   "bellows.pump": {
     "sounds": [
       {
@@ -1520,6 +1529,39 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.brick_kiln.work"
+  },
+  "cabinet.set": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.close",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.glass.hit",
+        "pitch": 1.7,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.cabinet.set"
+  },
+  "cabinet.shelf": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 1.2,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.cabinet.shelf"
   },
   "casting_table.knock": {
     "sounds": [

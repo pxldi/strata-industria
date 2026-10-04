@@ -483,6 +483,14 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
     /** Bronze age touches (uniqueness 4.2, 4.3), from vanilla fire and fizz samples. */
     private void bronze() {
         var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.cabinet.CabinetRegistry.SET, definition().subtitle(subtitle("cabinet.set"))
+                .with(sound("minecraft:block.wooden_trapdoor.close", event).pitch(1.5f).volume(0.5f))
+                .with(sound("minecraft:block.glass.hit", event).pitch(1.7f).volume(0.3f)));
+        add(dev.strataindustria.cabinet.CabinetRegistry.SHELF, definition().subtitle(subtitle("cabinet.shelf"))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:block.wood.hit", event).pitch(1.2f).volume(0.4f)));
+        add(dev.strataindustria.bronze.BronzeRegistry.BELL_RING, definition().subtitle(subtitle("bell.ring"))
+                .with(sound("minecraft:block.bell.use", event).volume(1.0f)));
         add(dev.strataindustria.bronze.BronzeRegistry.FUMES, definition().subtitle(subtitle("crucible.fumes"))
                 .with(sound("minecraft:block.fire.extinguish", event).pitch(1.5f).volume(0.5f))
                 .with(sound("minecraft:block.lava.extinguish", event).pitch(1.8f).volume(0.4f)));
