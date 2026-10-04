@@ -131,6 +131,23 @@ final class ModAdvancements extends AdvancementSubProvider {
         goal(refine, "t3/iron_pickaxe", Items.IRON_PICKAXE, has(Items.IRON_PICKAXE));
         goal(refine, "t3/bucket", Items.BUCKET, has(Items.BUCKET));
         goal(fireBrick, "t3/furnace", Items.FURNACE, has(Items.FURNACE));
+        AdvancementHolder rotation = goal(refine, "t3/rotation", ModItems.WOODEN_AXLE.get(), JournalTrigger.TriggerInstance.of(Journal.ROTATION));
+        AdvancementHolder waterPower = goal(rotation, "t3/water_power", ModItems.WATER_WHEEL.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.WATER_POWER));
+        goal(waterPower, "t3/millstone", ModItems.MILLSTONE.get(), JournalTrigger.TriggerInstance.of(Journal.MILLSTONE));
+        goal(waterPower, "t3/bellows", ModItems.BELLOWS.get(), JournalTrigger.TriggerInstance.of(Journal.BELLOWS));
+        goal(waterPower, "t3/saw_mill", ModItems.SAW_MILL.get(), JournalTrigger.TriggerInstance.of(Journal.SAW_MILL));
+        AdvancementHolder weld = goal(refine, "t3/weld", ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), has(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()));
+        AdvancementHolder pattern = goal(weld, "t3/pattern", ModItems.SMITHING_PATTERN.get(),
+                JournalTrigger.TriggerInstance.of(Journal.PATTERN_RECORDED));
+        goal(pattern, "t3/trip_hammer", ModItems.TRIP_HAMMER.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.TRIP_HAMMER));
+        goal(rotation, "t3/core_sample", ModItems.CORE_SAMPLE.get(), has(ModItems.CORE_SAMPLE.get()));
+        goal(refine, "t3/wash", ModItems.WASHING_PAN.get(), JournalTrigger.TriggerInstance.of(Journal.WASH));
+        AdvancementHolder hide = goal(waterPower, "t3/hide", ModItems.RAW_HIDE.get(), has(ModItems.RAW_HIDE.get()));
+        goal(hide, "t3/leather", Items.LEATHER, AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.LEATHER));
+        goal(weld, "t3/iron_anvil", ModItems.WROUGHT_IRON_ANVIL.get(), AdvancementType.GOAL,
+                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.WROUGHT_IRON_ANVIL.get()));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

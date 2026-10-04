@@ -75,6 +75,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue REMOVE_BLAST_FURNACE = BUILDER
             .comment("Remove the vanilla blast furnace recipe.")
             .define("removeBlastFurnace", true);
+    public static final ModConfigSpec.BooleanValue HIDES_INSTEAD_OF_LEATHER = BUILDER
+            .comment("Animals drop raw hides instead of leather; leather is tanned in a soaking barrel.")
+            .define("hidesInsteadOfLeather", true);
     public static final ModConfigSpec.BooleanValue REPLACE_IRON_GEAR = BUILDER
             .comment("Replace the recipes of vanilla iron tools and armour with smithing and plates.")
             .define("replaceIronGear", true);
@@ -189,6 +192,19 @@ public final class Config {
     public static final ModConfigSpec.IntValue BLOOMERY_BURN_TICKS = BUILDER
             .comment("Ticks a bloomery run takes at 1200 °C or hotter, before bellows shorten it.")
             .defineInRange("runTicks", 12000, 200, 240000);
+
+    static {
+        BUILDER.pop();
+    }
+
+    // ---------------------------------------------------------------- kinetics
+    static {
+        BUILDER.comment("Mechanical power.").push("kinetics");
+    }
+
+    public static final ModConfigSpec.IntValue KINETIC_MAX_NETWORK = BUILDER
+            .comment("Most kinetic blocks one network may have; a larger network stops.")
+            .defineInRange("maxNetworkSize", 512, 16, 4096);
 
     static {
         BUILDER.pop();

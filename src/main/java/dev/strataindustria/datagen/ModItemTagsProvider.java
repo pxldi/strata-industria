@@ -62,7 +62,8 @@ final class ModItemTagsProvider extends ItemTagsProvider {
             if (mineral.isIron()) {
                 var iron = tag(ModTags.Items.IRON_ORES).add(ModItems.SMALL_ORES.get(mineral).getKey());
                 for (OreGrade grade : OreGrade.values()) {
-                    iron.add(ModItems.ORE_PIECES.get(mineral).get(grade).getKey()).add(ModItems.CRUSHED_ORES.get(mineral).get(grade).getKey());
+                    iron.add(ModItems.ORE_PIECES.get(mineral).get(grade).getKey()).add(ModItems.CRUSHED_ORES.get(mineral).get(grade).getKey())
+                            .add(ModItems.WASHED_ORES.get(mineral).get(grade).getKey());
                 }
             }
         }

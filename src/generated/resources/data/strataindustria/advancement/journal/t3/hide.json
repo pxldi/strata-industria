@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/water_power",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:raw_hide"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.hide.hint"
+    },
+    "icon": {
+      "id": "strataindustria:raw_hide"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.hide"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -27,13 +27,15 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
     public static final int BUTTONS_Y = 74;
     public static final int[] BUTTON_X = {8, 28, 48, 68, 90, 110, 130, 150};
     public static final int RULES_X = 8, RECENT_X = 116, BOXES_Y = 106;
-    public static final int STATUS_Y = 132;
+    public static final int STATUS_Y = 151;
     public static final int HEAT_X = 26, HEAT_Y = 27;
     // Sprite sheet, to the right of the panel.
     private static final int BUTTON_U = 176, BUTTON_V = 0, ICON_U = 176, ICON_V = 18, ANY_HIT_U = 240, ANY_HIT_V = 18;
+    /** Weld button faces (normal, hovered, disabled), below the hit icons. */
+    private static final int WELD_U = 176, WELD_V = 52;
 
     public AnvilScreen(AnvilMenu menu, Inventory inventory, Component title) {
-        super(menu, inventory, title, 176, 234);
+        super(menu, inventory, title, 176, 252);
         this.inventoryLabelY = AnvilMenu.INVENTORY_Y - 11;
     }
 
@@ -43,6 +45,11 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
             if (x >= 0 && x < 18 && y >= 0 && y < 18) return i;
         }
         return -1;
+    }
+
+    private boolean overWeld(double mouseX, double mouseY) {
+        double x = mouseX - leftPos - AnvilMenu.WELD_BUTTON_X, y = mouseY - topPos - AnvilMenu.WELD_Y + 1;
+        return x >= 0 && x < 18 && y >= 0 && y < 18;
     }
 
     private int hoveredPlan(double mouseX, double mouseY) {
@@ -59,6 +66,14 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
             int button = hoveredButton(event.x(), event.y());
             if (button >= 0) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, button);
+                return true;
+            }
+            if (overWeld(event.x(), event.y())) {
+                if (menu.weldStatus() == AnvilBlockEntity.WeldStatus.READY) {
+                    minecraft.gameMode.handleInventoryButtonClick(menu.containerId, AnvilMenu.WELD_BUTTON);
+                } else if (minecraft.player != null) {
+                    minecraft.player.playSound(dev.strataindustria.registry.ModSounds.ANVIL_WELD_FAIL.get(), 0.6f, 1.0f);
+                }
                 return true;
             }
             int plan = hoveredPlan(event.x(), event.y());
@@ -117,6 +132,11 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
             g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos + BUTTON_X[i], topPos + BUTTONS_Y, u, BUTTON_V, 18, 18, 256, 256);
             icon(g, HitType.VALUES[i], leftPos + BUTTON_X[i] + 1, topPos + BUTTONS_Y + 1);
         }
+
+        boolean weldReady = menu.weldStatus() == AnvilBlockEntity.WeldStatus.READY;
+        int weldU = WELD_U + (!weldReady ? 36 : overWeld(mouseX, mouseY) ? 18 : 0);
+        g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos + AnvilMenu.WELD_BUTTON_X, topPos + AnvilMenu.WELD_Y - 1, weldU, WELD_V,
+                18, 18, 256, 256);
 
         for (int i = 0; i < 3; i++) {
             Rule rule = menu.rule(i);
@@ -177,6 +197,15 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         super.extractLabels(g, mouseX, mouseY);
         g.text(font, Component.translatable(StrataIndustria.MOD_ID + ".anvil.rules"), RULES_X, BOXES_Y - 10, 0xFF404040, false);
         g.text(font, Component.translatable(StrataIndustria.MOD_ID + ".anvil.recent"), RECENT_X, BOXES_Y - 10, 0xFF404040, false);
+        g.text(font, Component.translatable(StrataIndustria.MOD_ID + ".anvil.pattern"), AnvilMenu.PATTERN_X - 4
+                - font.width(Component.translatable(StrataIndustria.MOD_ID + ".anvil.pattern")), AnvilMenu.WELD_Y + 4, 0xFF404040, false);
+        // While two pieces sit on the anvil the line speaks for the weld; otherwise for the smithing.
+        AnvilBlockEntity.WeldStatus weld = menu.weldStatus();
+        if (weld != AnvilBlockEntity.WeldStatus.NONE) {
+            g.text(font, Component.translatable(weld.key(), menu.weldingTemperature()), 8, STATUS_Y,
+                    weld == AnvilBlockEntity.WeldStatus.READY ? 0xFF404040 : 0xFF7A4A20, false);
+            return;
+        }
         AnvilBlockEntity.Status status = menu.status();
         Component line = status == AnvilBlockEntity.Status.READY
                 ? Component.translatable(status.key(), menu.hits())
@@ -187,6 +216,14 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
     @Override
     protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         super.extractTooltip(g, mouseX, mouseY);
+        if (overWeld(mouseX, mouseY)) {
+            AnvilBlockEntity.WeldStatus weld = menu.weldStatus();
+            Component tip = weld == AnvilBlockEntity.WeldStatus.READY || weld == AnvilBlockEntity.WeldStatus.NONE
+                    ? Component.translatable(StrataIndustria.MOD_ID + ".anvil.weld")
+                    : Component.translatable(weld.key(), menu.weldingTemperature());
+            g.setTooltipForNextFrame(tip, mouseX, mouseY);
+            return;
+        }
         int button = hoveredButton(mouseX, mouseY);
         if (button >= 0) {
             HitType hit = HitType.VALUES[button];

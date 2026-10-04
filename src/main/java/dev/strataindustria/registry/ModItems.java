@@ -87,8 +87,45 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> FORGE = ITEMS.registerSimpleBlockItem(ModBlocks.FORGE);
     // Smithing (spec 9).
     public static final DeferredItem<BlockItem> BRONZE_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.BRONZE_ANVIL);
+    public static final DeferredItem<BlockItem> WROUGHT_IRON_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.WROUGHT_IRON_ANVIL);
+    /** Tier 3 spec 9.4: welding flux, ground from sand or carbonate rock. */
+    public static final DeferredItem<Item> FLUX = ITEMS.registerSimpleItem("flux");
+    /** Tier 3 spec 9.5: blank until it records a smithing sequence on the anvil. */
+    public static final DeferredItem<Item> SMITHING_PATTERN = ITEMS.registerSimpleItem("smithing_pattern", p -> p.stacksTo(16));
     public static final DeferredItem<Item> TONGS_JAW = ITEMS.registerSimpleItem("tongs_jaw", p -> p.stacksTo(16));
     public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", p -> p.durability(250));
+    // Tier 3 spec 7 and 8: mechanical power and machines.
+    public static final DeferredItem<BlockItem> WOODEN_AXLE = ITEMS.registerSimpleBlockItem(ModBlocks.WOODEN_AXLE);
+    public static final DeferredItem<Item> WOODEN_GEAR = ITEMS.registerSimpleItem("wooden_gear");
+    public static final DeferredItem<BlockItem> WOODEN_GEARBOX = ITEMS.registerSimpleBlockItem(ModBlocks.WOODEN_GEARBOX);
+    public static final DeferredItem<BlockItem> HAND_CRANK = ITEMS.registerSimpleBlockItem(ModBlocks.HAND_CRANK);
+    public static final DeferredItem<BlockItem> WATER_WHEEL = ITEMS.registerSimpleBlockItem(ModBlocks.WATER_WHEEL);
+    public static final DeferredItem<BlockItem> MILLSTONE = ITEMS.registerSimpleBlockItem(ModBlocks.MILLSTONE);
+    public static final DeferredItem<BlockItem> BELLOWS = ITEMS.registerSimpleBlockItem(ModBlocks.BELLOWS);
+    public static final DeferredItem<BlockItem> SAW_MILL = ITEMS.registerSimpleBlockItem(ModBlocks.SAW_MILL);
+    public static final DeferredItem<BlockItem> TRIP_HAMMER = ITEMS.registerSimpleBlockItem(ModBlocks.TRIP_HAMMER);
+    public static final DeferredItem<BlockItem> CORE_SAMPLER = ITEMS.registerSimpleBlockItem(ModBlocks.CORE_SAMPLER);
+    /** Tier 3 spec 8.5: a drilled core; use it to read the ground below the sampler. */
+    public static final DeferredItem<dev.strataindustria.prospecting.CoreSampleItem> CORE_SAMPLE = ITEMS.registerItem("core_sample",
+            dev.strataindustria.prospecting.CoreSampleItem::new, p -> p.stacksTo(1));
+    // Tier 3 spec 7.2 and 7.3.
+    public static final DeferredItem<BlockItem> STEP_UP_GEARBOX = ITEMS.registerSimpleBlockItem(ModBlocks.STEP_UP_GEARBOX);
+    public static final DeferredItem<BlockItem> PULLEY = ITEMS.registerSimpleBlockItem(ModBlocks.PULLEY);
+    public static final DeferredItem<BlockItem> WINDMILL_BEARING = ITEMS.registerSimpleBlockItem(ModBlocks.WINDMILL_BEARING);
+    public static final DeferredItem<BlockItem> WINDMILL_SAIL = ITEMS.registerSimpleBlockItem(ModBlocks.WINDMILL_SAIL);
+    public static final DeferredItem<dev.strataindustria.power.LeatherBeltItem> LEATHER_BELT = ITEMS.registerItem("leather_belt",
+            dev.strataindustria.power.LeatherBeltItem::new, p -> p.stacksTo(16));
+    // Tier 3 spec 12.1: hides and the soaking barrel.
+    public static final DeferredItem<Item> RAW_HIDE = ITEMS.registerSimpleItem("raw_hide");
+    public static final DeferredItem<Item> LIMED_HIDE = ITEMS.registerSimpleItem("limed_hide");
+    public static final DeferredItem<Item> SCRAPED_HIDE = ITEMS.registerSimpleItem("scraped_hide");
+    public static final DeferredItem<BlockItem> SOAKING_BARREL = ITEMS.registerSimpleBlockItem(ModBlocks.SOAKING_BARREL);
+    // Tier 3 spec 11: washing.
+    public static final DeferredItem<dev.strataindustria.washing.WashingPanItem> WASHING_PAN = ITEMS.registerItem("washing_pan",
+            dev.strataindustria.washing.WashingPanItem::new, p -> p.durability(128));
+    public static final DeferredItem<BlockItem> SLUICE = ITEMS.registerSimpleBlockItem(ModBlocks.SLUICE);
+    /** Tier 3 spec 12.4: from the saw mill; tannin later in tier 3, and a weak fuel meanwhile. */
+    public static final DeferredItem<Item> BARK = ITEMS.registerSimpleItem("bark");
     // Quern (spec 10.1).
     public static final DeferredItem<Item> QUERNSTONE = ITEMS.registerSimpleItem("quernstone", p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> QUERN = ITEMS.registerSimpleBlockItem(ModBlocks.QUERN);
@@ -141,6 +178,8 @@ public final class ModItems {
     public static final Map<OreMineral, DeferredItem<GroundCoverItem>> SMALL_ORES = new EnumMap<>(OreMineral.class);
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> ORE_PIECES = new EnumMap<>(OreMineral.class);
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> CRUSHED_ORES = new EnumMap<>(OreMineral.class);
+    /** Tier 3 spec 11.2: crushed ore washed clean, worth a tenth more. */
+    public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> WASHED_ORES = new EnumMap<>(OreMineral.class);
 
     static {
         for (Metal metal : Metal.values()) {
@@ -212,6 +251,11 @@ public final class ModItems {
                 pieces.put(grade, ITEMS.registerSimpleItem(grade.prefix() + mineral.id()));
                 crushed.put(grade, ITEMS.registerSimpleItem("crushed_" + grade.prefix() + mineral.id()));
             }
+            Map<OreGrade, DeferredItem<Item>> washed = new EnumMap<>(OreGrade.class);
+            for (OreGrade grade : OreGrade.values()) {
+                washed.put(grade, ITEMS.registerSimpleItem("washed_" + grade.prefix() + mineral.id()));
+            }
+            WASHED_ORES.put(mineral, washed);
             ORE_PIECES.put(mineral, pieces);
             CRUSHED_ORES.put(mineral, crushed);
         }
@@ -329,6 +373,10 @@ public final class ModItems {
 
     public static Item crushedOre(OreMineral mineral, OreGrade grade) {
         return CRUSHED_ORES.get(mineral).get(grade).get();
+    }
+
+    public static Item washedOre(OreMineral mineral, OreGrade grade) {
+        return WASHED_ORES.get(mineral).get(grade).get();
     }
 
     private ModItems() {}

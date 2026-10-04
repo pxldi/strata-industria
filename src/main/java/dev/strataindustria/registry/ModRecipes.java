@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.machine.SawingRecipe;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.crafting.KnappedToolRecipe;
 import dev.strataindustria.crafting.MetalArmourRecipe;
@@ -8,6 +9,7 @@ import dev.strataindustria.crafting.ToolShapelessRecipe;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
+import dev.strataindustria.smithing.WeldingRecipe;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -47,6 +49,30 @@ public final class ModRecipes {
             TYPES.register("anvil", () -> RecipeType.simple(StrataIndustria.id("anvil")));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<AnvilRecipe>> ANVIL_SERIALIZER =
             SERIALIZERS.register("anvil", () -> AnvilRecipe.SERIALIZER);
+
+    /** Welding on the anvil (tier 3 spec 9.4). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<WeldingRecipe>> WELDING =
+            TYPES.register("welding", () -> RecipeType.simple(StrataIndustria.id("welding")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<WeldingRecipe>> WELDING_SERIALIZER =
+            SERIALIZERS.register("welding", () -> WeldingRecipe.SERIALIZER);
+
+    /** The saw mill (tier 3 spec 8.2). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<SawingRecipe>> SAWING =
+            TYPES.register("sawing", () -> RecipeType.simple(StrataIndustria.id("sawing")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SawingRecipe>> SAWING_SERIALIZER =
+            SERIALIZERS.register("sawing", () -> SawingRecipe.SERIALIZER);
+
+    /** Washing in a pan or a sluice (tier 3 spec 11). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<dev.strataindustria.washing.WashingRecipe>> WASHING =
+            TYPES.register("washing", () -> RecipeType.simple(StrataIndustria.id("washing")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<dev.strataindustria.washing.WashingRecipe>> WASHING_SERIALIZER =
+            SERIALIZERS.register("washing", () -> dev.strataindustria.washing.WashingRecipe.SERIALIZER);
+
+    /** Soaking in a barrel (tier 3 spec 12.1). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<dev.strataindustria.tanning.BarrelRecipe>> BARREL =
+            TYPES.register("barrel", () -> RecipeType.simple(StrataIndustria.id("barrel")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<dev.strataindustria.tanning.BarrelRecipe>> BARREL_SERIALIZER =
+            SERIALIZERS.register("barrel", () -> dev.strataindustria.tanning.BarrelRecipe.SERIALIZER);
 
     private ModRecipes() {}
 }

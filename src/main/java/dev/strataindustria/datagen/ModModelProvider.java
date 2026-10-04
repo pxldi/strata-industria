@@ -10,6 +10,9 @@ import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
+import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.machine.SawMillBlock;
+import dev.strataindustria.machine.TripHammerBlock;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.registry.ModBlocks;
@@ -86,6 +89,7 @@ final class ModModelProvider extends ModelProvider {
             for (OreGrade grade : OreGrade.values()) {
                 flatItem(itemModels, ModItems.orePiece(mineral, grade));
                 flatItem(itemModels, ModItems.crushedOre(mineral, grade));
+                flatItem(itemModels, ModItems.washedOre(mineral, grade));
             }
         }
 
@@ -123,6 +127,8 @@ final class ModModelProvider extends ModelProvider {
 
         metals(itemModels);
         ironAge(blockModels, itemModels);
+        kinetics(blockModels, itemModels);
+        windAndBelts(blockModels, itemModels);
 
         // Spec 9.1: stone anvils are the raw rock with a dressed face; the bronze anvil turns like a vanilla anvil.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
@@ -132,14 +138,8 @@ final class ModModelProvider extends ModelProvider {
                     .put(TextureSlot.TOP, blockTexture(entry.getKey().id() + "_anvil_top")), blockModels.modelOutput);
             blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(anvil, BlockModelGenerators.plainVariant(model)));
         }
-        var bronzeAnvil = BlockModelGenerators.plainVariant(StrataIndustria.id("block/bronze_anvil"));
-        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> anvilFacing = PropertyDispatch.initial(AnvilBlock.FACING);
-        anvilFacing.select(net.minecraft.core.Direction.SOUTH, bronzeAnvil);
-        anvilFacing.select(net.minecraft.core.Direction.WEST, bronzeAnvil.with(BlockModelGenerators.Y_ROT_90));
-        anvilFacing.select(net.minecraft.core.Direction.NORTH, bronzeAnvil.with(BlockModelGenerators.Y_ROT_180));
-        anvilFacing.select(net.minecraft.core.Direction.EAST, bronzeAnvil.with(BlockModelGenerators.Y_ROT_270));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.BRONZE_ANVIL.get()).with(anvilFacing));
-        itemModels.itemModelOutput.accept(ModItems.BRONZE_ANVIL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bronze_anvil")));
+        metalAnvil(blockModels, itemModels, ModBlocks.BRONZE_ANVIL.get(), ModItems.BRONZE_ANVIL.get(), "bronze_anvil");
+        metalAnvil(blockModels, itemModels, ModBlocks.WROUGHT_IRON_ANVIL.get(), ModItems.WROUGHT_IRON_ANVIL.get(), "wrought_iron_anvil");
         heatable(itemModels, ModItems.TONGS_JAW.get());
         itemModels.generateFlatItem(ModItems.TONGS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
@@ -295,6 +295,113 @@ final class ModModelProvider extends ModelProvider {
 
         heatable(itemModels, ModItems.WROUGHT_IRON_ROD.get());
         heatable(itemModels, ModItems.WROUGHT_IRON_DOUBLE_INGOT.get());
+
+        // Spec 9.4 and 9.5: flux, and a pattern that shows its notes once a sequence is recorded on it.
+        flatItem(itemModels, ModItems.FLUX.get());
+        Item pattern = ModItems.SMITHING_PATTERN.get();
+        var blank = itemModels.createFlatItemModel(pattern, ModelTemplates.FLAT_ITEM);
+        var recorded = itemModels.createFlatItemModel(pattern, "_recorded", ModelTemplates.FLAT_ITEM);
+        itemModels.itemModelOutput.accept(pattern, ItemModelUtils.conditional(
+                ItemModelUtils.hasComponent(ModDataComponents.SMITHING_PATTERN.get()),
+                ItemModelUtils.plainModel(recorded), ItemModelUtils.plainModel(blank)));
+    }
+
+    /**
+     * Tier 3 spec 7 and 8. Turning parts are drawn by the rotor renderer, so the axle, crank and wheel
+     * blocks carry particle-only models; the hand-written models live in the main resources.
+     */
+    private static void kinetics(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        for (var block : java.util.List.of(ModBlocks.WOODEN_AXLE, ModBlocks.WOODEN_GEARBOX, ModBlocks.HAND_CRANK, ModBlocks.WATER_WHEEL,
+                ModBlocks.MILLSTONE)) {
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block.get(),
+                    BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + block.getId().getPath()))));
+        }
+        itemModels.itemModelOutput.accept(ModItems.WOODEN_AXLE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/rotor/wooden_axle")));
+        itemModels.itemModelOutput.accept(ModItems.WOODEN_GEARBOX.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/wooden_gearbox")));
+        itemModels.itemModelOutput.accept(ModItems.MILLSTONE.get(), ItemModelUtils.composite(
+                ItemModelUtils.plainModel(StrataIndustria.id("block/millstone")),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/rotor/millstone_runner"))));
+        flatItem(itemModels, ModItems.HAND_CRANK.get());
+        flatItem(itemModels, ModItems.WATER_WHEEL.get());
+        flatItem(itemModels, ModItems.WOODEN_GEAR.get());
+
+        // The bellows model faces north and squashes while it blows.
+        var open = BlockModelGenerators.plainVariant(StrataIndustria.id("block/bellows"));
+        var squeezed = BlockModelGenerators.plainVariant(StrataIndustria.id("block/bellows_compressed"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> bellows =
+                PropertyDispatch.initial(BellowsBlock.FACING, BellowsBlock.COMPRESSED);
+        for (boolean compressed : new boolean[] {false, true}) {
+            var base = compressed ? squeezed : open;
+            bellows.select(net.minecraft.core.Direction.NORTH, compressed, base);
+            bellows.select(net.minecraft.core.Direction.EAST, compressed, base.with(BlockModelGenerators.Y_ROT_90));
+            bellows.select(net.minecraft.core.Direction.SOUTH, compressed, base.with(BlockModelGenerators.Y_ROT_180));
+            bellows.select(net.minecraft.core.Direction.WEST, compressed, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.BELLOWS.get()).with(bellows));
+        itemModels.itemModelOutput.accept(ModItems.BELLOWS.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bellows")));
+
+        // Spec 8.2 and 8.4: both face north in their models.
+        var sawIdle = BlockModelGenerators.plainVariant(StrataIndustria.id("block/saw_mill"));
+        var sawActive = BlockModelGenerators.plainVariant(StrataIndustria.id("block/saw_mill_active"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> saw =
+                PropertyDispatch.initial(SawMillBlock.FACING, SawMillBlock.ACTIVE);
+        for (boolean active : new boolean[] {false, true}) {
+            var base = active ? sawActive : sawIdle;
+            saw.select(net.minecraft.core.Direction.NORTH, active, base);
+            saw.select(net.minecraft.core.Direction.EAST, active, base.with(BlockModelGenerators.Y_ROT_90));
+            saw.select(net.minecraft.core.Direction.SOUTH, active, base.with(BlockModelGenerators.Y_ROT_180));
+            saw.select(net.minecraft.core.Direction.WEST, active, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SAW_MILL.get()).with(saw));
+        itemModels.itemModelOutput.accept(ModItems.SAW_MILL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/saw_mill")));
+        var frame = BlockModelGenerators.plainVariant(StrataIndustria.id("block/trip_hammer"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> hammer = PropertyDispatch.initial(TripHammerBlock.FACING);
+        hammer.select(net.minecraft.core.Direction.NORTH, frame);
+        hammer.select(net.minecraft.core.Direction.EAST, frame.with(BlockModelGenerators.Y_ROT_90));
+        hammer.select(net.minecraft.core.Direction.SOUTH, frame.with(BlockModelGenerators.Y_ROT_180));
+        hammer.select(net.minecraft.core.Direction.WEST, frame.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.TRIP_HAMMER.get()).with(hammer));
+        itemModels.itemModelOutput.accept(ModItems.TRIP_HAMMER.get(), ItemModelUtils.composite(
+                ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer")),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer_arm"))));
+        flatItem(itemModels, ModItems.BARK.get());
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.CORE_SAMPLER.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/core_sampler"))));
+        itemModels.itemModelOutput.accept(ModItems.CORE_SAMPLER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/core_sampler")));
+        flatItem(itemModels, ModItems.CORE_SAMPLE.get());
+
+        // Tier 3 spec 11: the sluice faces north in its models; the pan shows its load.
+        var dry = BlockModelGenerators.plainVariant(StrataIndustria.id("block/sluice"));
+        var wet = BlockModelGenerators.plainVariant(StrataIndustria.id("block/sluice_wet"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> sluice =
+                PropertyDispatch.initial(dev.strataindustria.washing.SluiceBlock.FACING, dev.strataindustria.washing.SluiceBlock.WET);
+        for (boolean flowing : new boolean[] {false, true}) {
+            var base = flowing ? wet : dry;
+            sluice.select(net.minecraft.core.Direction.NORTH, flowing, base);
+            sluice.select(net.minecraft.core.Direction.EAST, flowing, base.with(BlockModelGenerators.Y_ROT_90));
+            sluice.select(net.minecraft.core.Direction.SOUTH, flowing, base.with(BlockModelGenerators.Y_ROT_180));
+            sluice.select(net.minecraft.core.Direction.WEST, flowing, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SLUICE.get()).with(sluice));
+        itemModels.itemModelOutput.accept(ModItems.SLUICE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/sluice")));
+        Item washingPan = ModItems.WASHING_PAN.get();
+        var emptyPan = itemModels.createFlatItemModel(washingPan, ModelTemplates.FLAT_ITEM);
+        var loadedPan = itemModels.createFlatItemModel(washingPan, "_loaded", ModelTemplates.FLAT_ITEM);
+        itemModels.itemModelOutput.accept(washingPan, ItemModelUtils.conditional(
+                ItemModelUtils.hasComponent(ModDataComponents.PAN_CONTENTS.get()),
+                ItemModelUtils.plainModel(loadedPan), ItemModelUtils.plainModel(emptyPan)));
+    }
+
+    /** Metal anvils turn like a vanilla anvil; the model JSON is hand-written on the vanilla anvil template. */
+    private static void metalAnvil(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, Item item, String name) {
+        var model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> facing = PropertyDispatch.initial(AnvilBlock.FACING);
+        facing.select(net.minecraft.core.Direction.SOUTH, model);
+        facing.select(net.minecraft.core.Direction.WEST, model.with(BlockModelGenerators.Y_ROT_90));
+        facing.select(net.minecraft.core.Direction.NORTH, model.with(BlockModelGenerators.Y_ROT_180));
+        facing.select(net.minecraft.core.Direction.EAST, model.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(facing));
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
     }
 
     private static void oreBlock(BlockModelGenerators blockModels, Rock rock, OreMineral mineral) {
@@ -332,6 +439,59 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(item, ItemModelUtils.conditional(HeatGlow.Glowing.INSTANCE,
                 ItemModelUtils.tintedModel(glowing, ItemModelUtils.constantTint(-1), HeatGlow.Tint.INSTANCE),
                 ItemModelUtils.plainModel(cold)));
+    }
+
+    /**
+     * Tier 3 spec 7.2 to 7.4. The step-up gearbox and the windmill bearing face north in their models
+     * and the sail lies across the z axis; pulleys and their belts are drawn by the pulley renderer.
+     */
+    private static void windAndBelts(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        var gearbox = BlockModelGenerators.plainVariant(StrataIndustria.id("block/step_up_gearbox"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> stepUp =
+                PropertyDispatch.initial(dev.strataindustria.power.StepUpGearboxBlock.FACING);
+        stepUp.select(net.minecraft.core.Direction.NORTH, gearbox);
+        stepUp.select(net.minecraft.core.Direction.EAST, gearbox.with(BlockModelGenerators.Y_ROT_90));
+        stepUp.select(net.minecraft.core.Direction.SOUTH, gearbox.with(BlockModelGenerators.Y_ROT_180));
+        stepUp.select(net.minecraft.core.Direction.WEST, gearbox.with(BlockModelGenerators.Y_ROT_270));
+        stepUp.select(net.minecraft.core.Direction.UP, gearbox.with(BlockModelGenerators.X_ROT_270));
+        stepUp.select(net.minecraft.core.Direction.DOWN, gearbox.with(BlockModelGenerators.X_ROT_90));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.STEP_UP_GEARBOX.get()).with(stepUp));
+        itemModels.itemModelOutput.accept(ModItems.STEP_UP_GEARBOX.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/step_up_gearbox")));
+
+        var bearing = BlockModelGenerators.plainVariant(StrataIndustria.id("block/windmill_bearing"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> bearings =
+                PropertyDispatch.initial(dev.strataindustria.power.WindmillBearingBlock.FACING);
+        bearings.select(net.minecraft.core.Direction.NORTH, bearing);
+        bearings.select(net.minecraft.core.Direction.EAST, bearing.with(BlockModelGenerators.Y_ROT_90));
+        bearings.select(net.minecraft.core.Direction.SOUTH, bearing.with(BlockModelGenerators.Y_ROT_180));
+        bearings.select(net.minecraft.core.Direction.WEST, bearing.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.WINDMILL_BEARING.get()).with(bearings));
+        itemModels.itemModelOutput.accept(ModItems.WINDMILL_BEARING.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/windmill_bearing")));
+
+        var sail = BlockModelGenerators.plainVariant(StrataIndustria.id("block/windmill_sail"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction.Axis, Boolean> sails = PropertyDispatch.initial(
+                dev.strataindustria.power.WindmillSailBlock.AXIS, dev.strataindustria.power.WindmillSailBlock.ATTACHED);
+        for (boolean attached : new boolean[] {false, true}) {
+            sails.select(net.minecraft.core.Direction.Axis.Z, attached, sail);
+            sails.select(net.minecraft.core.Direction.Axis.X, attached, sail.with(BlockModelGenerators.Y_ROT_90));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.WINDMILL_SAIL.get()).with(sails));
+        itemModels.itemModelOutput.accept(ModItems.WINDMILL_SAIL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/windmill_sail")));
+
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.PULLEY.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/pulley"))));
+        itemModels.itemModelOutput.accept(ModItems.PULLEY.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/rotor/pulley")));
+        flatItem(itemModels, ModItems.LEATHER_BELT.get());
+
+        // Spec 12.1: the soaking barrel shows its lid when sealed; the fluid is drawn by its renderer.
+        PropertyDispatch.C1<MultiVariant, Boolean> barrel = PropertyDispatch.initial(dev.strataindustria.tanning.SoakingBarrelBlock.SEALED);
+        barrel.select(false, BlockModelGenerators.plainVariant(StrataIndustria.id("block/soaking_barrel")));
+        barrel.select(true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/soaking_barrel_sealed")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SOAKING_BARREL.get()).with(barrel));
+        itemModels.itemModelOutput.accept(ModItems.SOAKING_BARREL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/soaking_barrel_sealed")));
+        flatItem(itemModels, ModItems.RAW_HIDE.get());
+        flatItem(itemModels, ModItems.LIMED_HIDE.get());
+        flatItem(itemModels, ModItems.SCRAPED_HIDE.get());
     }
 
     private static void flatItem(ItemModelGenerators itemModels, Item item) {

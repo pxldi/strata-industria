@@ -83,6 +83,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
                             .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))))));
         }
         dropSelf(ModBlocks.BRONZE_ANVIL.get());
+        dropSelf(ModBlocks.WROUGHT_IRON_ANVIL.get());
 
         // Tier 3 spec 3 and 4.
         oreDrops(ModBlocks.BOG_IRON.get(), OreMineral.LIMONITE, fortune);
@@ -94,6 +95,12 @@ final class ModBlockLoot extends BlockLootSubProvider {
                         .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1)))));
         dropSelf(ModBlocks.FIRE_BRICKS.get());
         dropSelf(ModBlocks.BLOOMERY.get());
+        for (var block : java.util.List.of(ModBlocks.WOODEN_AXLE, ModBlocks.WOODEN_GEARBOX, ModBlocks.HAND_CRANK, ModBlocks.WATER_WHEEL,
+                ModBlocks.MILLSTONE, ModBlocks.BELLOWS, ModBlocks.SAW_MILL, ModBlocks.TRIP_HAMMER, ModBlocks.CORE_SAMPLER, ModBlocks.SLUICE,
+                ModBlocks.STEP_UP_GEARBOX, ModBlocks.PULLEY, ModBlocks.WINDMILL_BEARING, ModBlocks.WINDMILL_SAIL,
+                ModBlocks.SOAKING_BARREL)) {
+            dropSelf(block.get());
+        }
         add(ModBlocks.FIRE_BRICK_SLAB.get(), this::createSlabItemTable);
         dropSelf(ModBlocks.FIRE_BRICK_STAIRS.get());
         dropSelf(ModBlocks.FIRE_BRICK_WALL.get());

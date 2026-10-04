@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "compressed=false,facing=east": {
+      "model": "strataindustria:block/bellows",
+      "y": 90
+    },
+    "compressed=false,facing=north": {
+      "model": "strataindustria:block/bellows"
+    },
+    "compressed=false,facing=south": {
+      "model": "strataindustria:block/bellows",
+      "y": 180
+    },
+    "compressed=false,facing=west": {
+      "model": "strataindustria:block/bellows",
+      "y": 270
+    },
+    "compressed=true,facing=east": {
+      "model": "strataindustria:block/bellows_compressed",
+      "y": 90
+    },
+    "compressed=true,facing=north": {
+      "model": "strataindustria:block/bellows_compressed"
+    },
+    "compressed=true,facing=south": {
+      "model": "strataindustria:block/bellows_compressed",
+      "y": 180
+    },
+    "compressed=true,facing=west": {
+      "model": "strataindustria:block/bellows_compressed",
+      "y": 270
+    }
+  }
+}

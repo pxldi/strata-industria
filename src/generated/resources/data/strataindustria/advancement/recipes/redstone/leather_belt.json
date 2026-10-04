@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pulley": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:pulley"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:leather_belt"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pulley"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:leather_belt"
+    ]
+  }
+}

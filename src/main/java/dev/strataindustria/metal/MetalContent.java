@@ -41,6 +41,8 @@ public final class MetalContent {
                     int crushed = mineral.crushedUnits(grade);
                     map.put(ModItems.orePiece(mineral, grade), ore(mineral, crushed * OreMineral.RAW_MELT_EFFICIENCY, grade));
                     map.put(ModItems.crushedOre(mineral, grade), ore(mineral, crushed, grade));
+                    // Tier 3 spec 11.2: washing is worth a tenth more.
+                    map.put(ModItems.washedOre(mineral, grade), ore(mineral, (float) Math.floor(crushed * OreMineral.WASHED_BONUS), grade));
                 }
             }
             for (Metal metal : Metal.values()) {

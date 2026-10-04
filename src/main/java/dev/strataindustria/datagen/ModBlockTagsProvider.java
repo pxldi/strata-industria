@@ -82,6 +82,14 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_BRICKS.getKey())
                 .add(ModBlocks.BLOOMERY.getKey())
                 .add(ModBlocks.FIRE_BRICK_SLAB.getKey()).add(ModBlocks.FIRE_BRICK_STAIRS.getKey()).add(ModBlocks.FIRE_BRICK_WALL.getKey());
+        // Tier 3 spec 7 and 8: wooden power parts take an axe, the millstone a pickaxe.
+        tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.WOODEN_AXLE.getKey()).add(ModBlocks.WOODEN_GEARBOX.getKey())
+                .add(ModBlocks.HAND_CRANK.getKey()).add(ModBlocks.WATER_WHEEL.getKey()).add(ModBlocks.BELLOWS.getKey())
+                .add(ModBlocks.SAW_MILL.getKey()).add(ModBlocks.TRIP_HAMMER.getKey())
+                .add(ModBlocks.CORE_SAMPLER.getKey()).add(ModBlocks.SLUICE.getKey()).add(ModBlocks.STEP_UP_GEARBOX.getKey())
+                .add(ModBlocks.PULLEY.getKey()).add(ModBlocks.WINDMILL_BEARING.getKey()).add(ModBlocks.WINDMILL_SAIL.getKey())
+                .add(ModBlocks.SOAKING_BARREL.getKey());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MILLSTONE.getKey());
         tag(BlockTags.SLABS).add(ModBlocks.FIRE_BRICK_SLAB.getKey());
         tag(BlockTags.STAIRS).add(ModBlocks.FIRE_BRICK_STAIRS.getKey());
         tag(BlockTags.WALLS).add(ModBlocks.FIRE_BRICK_WALL.getKey());
@@ -125,7 +133,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(ModTags.Blocks.MINEABLE_WITH_HAMMER);
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LARGE_VESSEL.getKey()).add(ModBlocks.CRUCIBLE.getKey())
-                .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey()).add(ModBlocks.BRONZE_ANVIL.getKey());
+                .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey()).add(ModBlocks.BRONZE_ANVIL.getKey())
+                .add(ModBlocks.WROUGHT_IRON_ANVIL.getKey());
         for (var anvil : ModBlocks.STONE_ANVILS.values()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(anvil.getKey());
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.PIT_KILN.getKey()).add(ModBlocks.CHARCOAL_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());

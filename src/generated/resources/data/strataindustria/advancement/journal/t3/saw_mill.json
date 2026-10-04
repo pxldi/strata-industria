@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t3/water_power",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "saw_mill"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.saw_mill.hint"
+    },
+    "icon": {
+      "id": "strataindustria:saw_mill"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.saw_mill"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

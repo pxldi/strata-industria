@@ -10,6 +10,7 @@ import dev.strataindustria.metal.Melt;
 import dev.strataindustria.metal.Quality;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.ModTags;
@@ -44,16 +45,23 @@ import net.minecraft.world.level.storage.ValueOutput;
  * on the workpiece, so it can go back into the forge and come back half done.
  */
 public class AnvilBlockEntity extends BaseContainerBlockEntity {
-    public static final int INPUT = 0, OUTPUT = 1, SLOTS = 2;
+    public static final int INPUT = 0, OUTPUT = 1, SECOND = 2, FLUX = 3, PATTERN = 4, SLOTS = 5;
     public static final int MAX_PLANS = 12;
 
     public static final int DATA_POSITION = 0, DATA_TARGET = 1, DATA_RECENT = 2, DATA_RULES = 5, DATA_SELECTED = 8,
-            DATA_STATUS = 9, DATA_HITS = 10, DATA_WORKING = 11, DATA_COUNT = 12;
+            DATA_STATUS = 9, DATA_HITS = 10, DATA_WORKING = 11, DATA_WELD = 12, DATA_WELD_TEMP = 13, DATA_COUNT = 14;
 
     /** What the screen shows under the bar. */
     public enum Status { EMPTY, CHOOSE, READY, TOO_COLD, NO_HAMMER, TOO_WEAK, OUTPUT_FULL, NOT_ENOUGH, NO_PLAN;
         public String key() {
             return StrataIndustria.MOD_ID + ".anvil.status." + name().toLowerCase(java.util.Locale.ROOT);
+        }
+    }
+
+    /** Why the Weld button is greyed out, or READY (tier 3 spec 9.4). NONE when there is nothing to weld. */
+    public enum WeldStatus { NONE, READY, NO_RECIPE, TOO_WEAK, OUTPUT_FULL, TOO_COLD, NO_FLUX, NO_HAMMER;
+        public String key() {
+            return StrataIndustria.MOD_ID + ".anvil.weld." + name().toLowerCase(java.util.Locale.ROOT);
         }
     }
 
@@ -139,7 +147,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         return off.is(ModTags.Items.HAMMERS) ? off : ItemStack.EMPTY;
     }
 
-    public Status status(Player player) {
+    public Status status(@org.jspecify.annotations.Nullable Player player) {
         refreshPlans();
         ItemStack input = input();
         if (input.isEmpty()) return Status.EMPTY;
@@ -163,22 +171,62 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
             if (status != Status.EMPTY) player.sendOverlayMessage(Component.translatable(status.key()));
             return;
         }
-        ItemStack input = input();
-        RecipeHolder<AnvilRecipe> recipe = selected().orElseThrow();
-        SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get());
-        int next = progress.position() + type.delta();
-        if (next < 0 || next > Smithing.MAX_POSITION) {
+        if (!inRange(type)) {
             player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".anvil.out_of_range"));
             return;
         }
-        progress = progress.hit(type);
+        hammer(player).hurtAndBreak(1, server, player,
+                broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
+        strike(server, type);
+    }
+
+    /** What a blow from a machine did (tier 3 spec 8.4). */
+    public enum MachineHit { STRUCK, DONE, TOO_COLD, REFUSED }
+
+    /**
+     * One blow from a trip hammer: the same rules as a hand blow, but no hammer is needed or worn.
+     */
+    public MachineHit machineHit(HitType type) {
+        if (!(level instanceof ServerLevel server)) return MachineHit.REFUSED;
+        Status status = status(null);
+        if (status == Status.TOO_COLD) return MachineHit.TOO_COLD;
+        if (status != Status.READY || !inRange(type)) return MachineHit.REFUSED;
+        return strike(server, type) ? MachineHit.DONE : MachineHit.STRUCK;
+    }
+
+    /** Puts the workpiece on recipe {@code id}, as if its plan had been picked. Returns whether that plan exists for it. */
+    public boolean select(net.minecraft.resources.ResourceKey<net.minecraft.world.item.crafting.Recipe<?>> id) {
+        refreshPlans();
+        for (RecipeHolder<AnvilRecipe> holder : candidates) {
+            if (!holder.id().equals(id)) continue;
+            ItemStack input = input();
+            SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get());
+            if (progress == null || !progress.recipe().equals(id)) {
+                input.set(ModDataComponents.SMITHING_PROGRESS.get(), progress == null ? SmithingProgress.start(id) : progress.withRecipe(id));
+                setChanged();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private boolean inRange(HitType type) {
+        SmithingProgress progress = input().get(ModDataComponents.SMITHING_PROGRESS.get());
+        if (progress == null) return false;
+        int next = progress.position() + type.delta();
+        return next >= 0 && next <= Smithing.MAX_POSITION;
+    }
+
+    /** Lands one blow on the selected plan. Returns whether it finished the piece. */
+    private boolean strike(ServerLevel server, HitType type) {
+        ItemStack input = input();
+        RecipeHolder<AnvilRecipe> recipe = selected().orElseThrow();
+        SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get()).hit(type);
         input.set(ModDataComponents.SMITHING_PROGRESS.get(), progress);
         // Tier 3 spec 9.2: iron loses heat to every blow, so careless work means a trip back to the forge.
         if (metalOf(input).map(m -> m.tier() >= 3).orElse(false)) {
             Heat.set(input, Heat.get(input, server) - Config.SMITHING_HIT_COOLING.get(), server.getGameTime());
         }
-        hammer(player).hurtAndBreak(1, server, player,
-                broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
 
         float pitch = 0.9f + (type.delta() < 0 ? -type.delta() : type.delta()) * -0.012f + server.getRandom().nextFloat() * 0.1f;
         server.playSound(null, worldPosition, hitSound(input), SoundSource.BLOCKS, 0.7f, pitch + 0.3f);
@@ -186,10 +234,10 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
                 3 + server.getRandom().nextInt(3), 0.12, 0.0, 0.12, 0.04);
 
         int target = Smithing.target(server, recipe.id(), recipe.value());
-        if (Smithing.done(progress.position(), target, recipe.value().rules(), progress.recent(0), progress.recent(1), progress.recent(2))) {
-            finish(server, recipe, progress, target);
-        }
+        boolean done = Smithing.done(progress.position(), target, recipe.value().rules(), progress.recent(0), progress.recent(1), progress.recent(2));
+        if (done) finish(server, recipe, progress, target);
         setChanged();
+        return done;
     }
 
     /** Bronze rings; wrought iron rings lower; a raw bloom only thuds (tier 3 spec 20.6). */
@@ -215,9 +263,114 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         input.shrink(recipe.value().count());
         if (input.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
         items.set(OUTPUT, out);
+        recordPattern(server, recipe, progress, target, craft, out);
         server.playSound(null, worldPosition, ModSounds.SMITH_DONE.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
         server.sendParticles(ParticleTypes.LAVA, worldPosition.getX() + 0.5, worldPosition.getY() + 1.05, worldPosition.getZ() + 0.5,
                 4, 0.15, 0.0, 0.15, 0.0);
+    }
+
+    // ------------------------------------------------------------------ smithing patterns (tier 3 spec 9.5)
+
+    public static boolean isBlankPattern(ItemStack stack) {
+        return stack.is(ModItems.SMITHING_PATTERN.get()) && !stack.has(ModDataComponents.SMITHING_PATTERN.get());
+    }
+
+    /** A blank pattern in the pattern slot takes down the hits that just finished a piece. */
+    private void recordPattern(ServerLevel server, RecipeHolder<AnvilRecipe> recipe, SmithingProgress progress, int target, int craft,
+            ItemStack out) {
+        ItemStack pattern = items.get(PATTERN);
+        if (!isBlankPattern(pattern) || progress.history().isEmpty()) return;
+        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new SmithingPattern(recipe.id(),
+                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(out.getItem()), target, progress.history(), craft));
+        server.playSound(null, worldPosition, SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS, 0.8f, 1.1f);
+        for (ServerPlayer player : server.getEntitiesOfClass(ServerPlayer.class, new net.minecraft.world.phys.AABB(worldPosition).inflate(8))) {
+            dev.strataindustria.journal.Journal.award(player, dev.strataindustria.journal.Journal.PATTERN_RECORDED);
+        }
+    }
+
+    // ------------------------------------------------------------------ welding (tier 3 spec 9.4)
+
+    public static boolean isFlux(ItemStack stack) {
+        return stack.is(ModItems.FLUX.get());
+    }
+
+    /** Two partial blooms with at most a full bloom between them press into one. */
+    private static boolean bloomMerge(ItemStack a, ItemStack b) {
+        Melt x = a.get(ModDataComponents.BLOOM_CONTENTS.get()), y = b.get(ModDataComponents.BLOOM_CONTENTS.get());
+        return x != null && y != null && x.total() + y.total() <= dev.strataindustria.bloomery.BloomeryBlockEntity.BLOOM_UNITS;
+    }
+
+    private Optional<ItemStack> weldResult() {
+        ItemStack a = input(), b = items.get(SECOND);
+        if (a.isEmpty() || b.isEmpty() || !(level instanceof ServerLevel server)) return Optional.empty();
+        if (bloomMerge(a, b)) {
+            ItemStack bloom = new ItemStack(ModItems.RAW_BLOOM.get());
+            bloom.set(ModDataComponents.BLOOM_CONTENTS.get(),
+                    a.get(ModDataComponents.BLOOM_CONTENTS.get()).plus(b.get(ModDataComponents.BLOOM_CONTENTS.get())));
+            return Optional.of(bloom);
+        }
+        WeldingInput weld = new WeldingInput(a.copyWithCount(1), b.copyWithCount(1));
+        return server.recipeAccess().recipeMap().getRecipesFor(ModRecipes.WELDING.get(), weld, server)
+                .findFirst().map(h -> h.value().assemble(weld));
+    }
+
+    /** The higher of the two pieces' welding temperatures. */
+    private static int weldingTemperature(ItemStack a, ItemStack b) {
+        return Math.max(metalOf(a).map(Metal::weldingTemperature).orElse(0), metalOf(b).map(Metal::weldingTemperature).orElse(0));
+    }
+
+    public WeldStatus weldStatus(Player player) {
+        ItemStack a = input(), b = items.get(SECOND);
+        if (a.isEmpty() || b.isEmpty()) return WeldStatus.NONE;
+        if (weldResult().isEmpty()) return WeldStatus.NO_RECIPE;
+        int metalTier = Math.max(metalOf(a).map(Metal::tier).orElse(0), metalOf(b).map(Metal::tier).orElse(0));
+        if (metalTier > tier()) return WeldStatus.TOO_WEAK;
+        if (!items.get(OUTPUT).isEmpty()) return WeldStatus.OUTPUT_FULL;
+        int needed = weldingTemperature(a, b);
+        if (level != null && (Heat.get(a, level) < needed || Heat.get(b, level) < needed)) return WeldStatus.TOO_COLD;
+        if (!isFlux(items.get(FLUX))) return WeldStatus.NO_FLUX;
+        if (player != null && hammer(player).isEmpty()) return WeldStatus.NO_HAMMER;
+        return WeldStatus.READY;
+    }
+
+    /** The Weld button: joins the two pieces, using one flux and one hammer blow. */
+    public void weld(ServerPlayer player) {
+        if (!(level instanceof ServerLevel server)) return;
+        WeldStatus status = weldStatus(player);
+        if (status != WeldStatus.READY) {
+            if (status != WeldStatus.NONE) {
+                player.sendOverlayMessage(Component.translatable(status.key(), weldingTemperature(input(), items.get(SECOND))));
+            }
+            return;
+        }
+        ItemStack a = input(), b = items.get(SECOND);
+        ItemStack out = weldResult().orElseThrow();
+        long now = server.getGameTime();
+        // Spec 4.5: material by units, the better craft part of the two, never worse for welding.
+        Melt ma = MetalContent.of(a.copyWithCount(1)).orElse(Melt.EMPTY), mb = MetalContent.of(b.copyWithCount(1)).orElse(Melt.EMPTY);
+        int material = ma.plus(mb).quality();
+        int craft = Math.max(craftOf(a), craftOf(b));
+        if (!out.has(ModDataComponents.BLOOM_CONTENTS.get())) out.set(ModDataComponents.QUALITY.get(), new Quality(material, craft));
+        Heat.set(out, Math.max(Heat.get(a, now), Heat.get(b, now)), now);
+        a.shrink(1);
+        b.shrink(1);
+        items.get(FLUX).shrink(1);
+        if (a.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
+        if (b.isEmpty()) items.set(SECOND, ItemStack.EMPTY);
+        items.set(OUTPUT, out);
+        hammer(player).hurtAndBreak(1, server, player,
+                broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
+        server.playSound(null, worldPosition, ModSounds.ANVIL_WELD.get(), SoundSource.BLOCKS, 0.9f, 0.95f + server.getRandom().nextFloat() * 0.1f);
+        server.sendParticles(ParticleTypes.ELECTRIC_SPARK, worldPosition.getX() + 0.5, worldPosition.getY() + 1.05, worldPosition.getZ() + 0.5,
+                10, 0.15, 0.05, 0.15, 0.15);
+        server.sendParticles(ParticleTypes.SMOKE, worldPosition.getX() + 0.5, worldPosition.getY() + 1.05, worldPosition.getZ() + 0.5,
+                4, 0.1, 0.0, 0.1, 0.01);
+        setChanged();
+    }
+
+    private static int craftOf(ItemStack stack) {
+        Quality quality = stack.get(ModDataComponents.QUALITY.get());
+        return quality == null ? 0 : quality.craft();
     }
 
     /** Menu data, read fresh each sync so it follows the workpiece as it cools. */
@@ -246,6 +399,8 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
                 if (index == DATA_STATUS) return status(player).ordinal();
                 if (index == DATA_HITS) return progress == null ? 0 : progress.hits();
                 if (index == DATA_WORKING) return workingTemperature(input);
+                if (index == DATA_WELD) return weldStatus(player).ordinal();
+                if (index == DATA_WELD_TEMP) return weldingTemperature(input, items.get(SECOND));
                 return 0;
             }
 
@@ -279,7 +434,12 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return slot == INPUT;
+        return switch (slot) {
+            case INPUT, SECOND -> true;
+            case FLUX -> isFlux(stack);
+            case PATTERN -> stack.is(ModItems.SMITHING_PATTERN.get());
+            default -> false;
+        };
     }
 
     @Override

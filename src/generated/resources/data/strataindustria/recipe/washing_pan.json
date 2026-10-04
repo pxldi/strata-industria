@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    [
+      "strataindustria:copper_plate",
+      "strataindustria:bronze_plate",
+      "strataindustria:arsenical_bronze_plate",
+      "strataindustria:bismuth_bronze_plate"
+    ],
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "strataindustria:washing_pan"
+  }
+}

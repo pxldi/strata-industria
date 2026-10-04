@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:sawing",
+  "extra": {
+    "id": "strataindustria:bark"
+  },
+  "ingredient": "#minecraft:jungle_logs",
+  "result": {
+    "count": 6,
+    "id": "minecraft:jungle_planks"
+  }
+}

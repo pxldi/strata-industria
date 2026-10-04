@@ -7,6 +7,9 @@ import dev.strataindustria.fire.FirePitMenu;
 import dev.strataindustria.forge.ForgeMenu;
 import dev.strataindustria.metal.CrucibleMenu;
 import dev.strataindustria.knapping.KnappingMenu;
+import dev.strataindustria.machine.MillstoneMenu;
+import dev.strataindustria.machine.SawMillMenu;
+import dev.strataindustria.machine.TripHammerMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -36,6 +39,20 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<BloomeryMenu>> BLOOMERY =
             MENUS.register("bloomery", () -> IMenuTypeExtension.create(BloomeryMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<MillstoneMenu>> MILLSTONE =
+            MENUS.register("millstone", () -> IMenuTypeExtension.create(MillstoneMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<SawMillMenu>> SAW_MILL =
+            MENUS.register("saw_mill", () -> IMenuTypeExtension.create(SawMillMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<TripHammerMenu>> TRIP_HAMMER =
+            MENUS.register("trip_hammer", () -> IMenuTypeExtension.create(TripHammerMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.machine.CoreSamplerMenu>> CORE_SAMPLER =
+            MENUS.register("core_sampler", () -> IMenuTypeExtension.create(dev.strataindustria.machine.CoreSamplerMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.tanning.SoakingBarrelMenu>> SOAKING_BARREL =
+            MENUS.register("soaking_barrel", () -> IMenuTypeExtension.create(dev.strataindustria.tanning.SoakingBarrelMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.washing.SluiceMenu>> SLUICE =
+            MENUS.register("sluice", () -> IMenuTypeExtension.create(dev.strataindustria.washing.SluiceMenu::new));
 
     private ModMenus() {}
 }

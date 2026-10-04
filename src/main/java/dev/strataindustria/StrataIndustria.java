@@ -8,6 +8,7 @@ import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModConditions;
 import dev.strataindustria.registry.ModCreativeTabs;
 import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.registry.ModFluids;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModMenus;
 import dev.strataindustria.registry.ModRecipes;
@@ -34,6 +35,8 @@ public final class StrataIndustria {
         ModDataComponents.COMPONENTS.register(modEventBus);
         ModSounds.SOUND_EVENTS.register(modEventBus);
         ModMenus.MENUS.register(modEventBus);
+        ModFluids.TYPES.register(modEventBus);
+        ModFluids.FLUIDS.register(modEventBus);
         ModRecipes.TYPES.register(modEventBus);
         ModRecipes.SERIALIZERS.register(modEventBus);
         dev.strataindustria.structure.StructureContent.register(modEventBus);

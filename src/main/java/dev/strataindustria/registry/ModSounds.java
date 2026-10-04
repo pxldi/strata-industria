@@ -76,6 +76,32 @@ public final class ModSounds {
     /** A hammer on wrought iron: heavier and lower than bronze. */
     public static final DeferredHolder<SoundEvent, SoundEvent> WROUGHT_IRON_HIT = register("wrought_iron.hit");
 
+    /** Tier 3 spec 9.4: a weld takes, or the button is pressed when it cannot. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD = register("anvil.weld");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD_FAIL = register("anvil.weld_fail");
+
+    /** Tier 3 spec 20.6: mechanical power and machines. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> HAND_CRANK_TURN = register("hand_crank.turn");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WATER_WHEEL_TURN = register("water_wheel.turn");
+    public static final DeferredHolder<SoundEvent, SoundEvent> KINETIC_OVERSTRESS = register("kinetic.overstress");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MILLSTONE_GRIND = register("millstone.grind");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BELLOWS_PUMP = register("bellows.pump");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SAW_MILL_SAW = register("saw_mill.saw");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SAW_MILL_BLADE_BREAK = register("saw_mill.blade_break");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLER_DRILL = register("core_sampler.drill");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLER_DONE = register("core_sampler.done");
+    public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLE_OPEN = register("core_sample.open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SLUICE_WASH = register("sluice.wash");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_SEAL = register("soaking_barrel.seal");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_OPEN = register("soaking_barrel.open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_FILL = register("soaking_barrel.fill");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_DONE = register("soaking_barrel.done");
+    public static final DeferredHolder<SoundEvent, SoundEvent> HIDE_SCRAPE = register("hide.scrape");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WINDMILL_TURN = register("windmill.turn");
+    public static final DeferredHolder<SoundEvent, SoundEvent> BELT_ATTACH = register("belt.attach");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WASHING_PAN_SWIRL = register("washing_pan.swirl");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WASHING_PAN_FIND = register("washing_pan.find");
+
     /** Pages of the field journal turning. */
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");
 

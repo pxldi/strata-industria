@@ -1,5 +1,12 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.machine.BellowsBlockEntity;
+import dev.strataindustria.machine.MillstoneBlockEntity;
+import dev.strataindustria.machine.SawMillBlockEntity;
+import dev.strataindustria.machine.TripHammerBlockEntity;
+import dev.strataindustria.power.HandCrankBlockEntity;
+import dev.strataindustria.power.KineticBlockEntity;
+import dev.strataindustria.power.WaterWheelBlockEntity;
 import dev.strataindustria.bloomery.BloomeryBlockEntity;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.LargeVesselBlockEntity;
@@ -41,6 +48,7 @@ public final class ModBlockEntities {
                 java.util.List<net.minecraft.world.level.block.Block> anvils = new java.util.ArrayList<>();
                 ModBlocks.STONE_ANVILS.values().forEach(b -> anvils.add(b.get()));
                 anvils.add(ModBlocks.BRONZE_ANVIL.get());
+                anvils.add(ModBlocks.WROUGHT_IRON_ANVIL.get());
                 return new BlockEntityType<>(AnvilBlockEntity::new, anvils.toArray(new net.minecraft.world.level.block.Block[0]));
             });
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
@@ -48,6 +56,39 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloomeryBlockEntity>> BLOOMERY =
             BLOCK_ENTITIES.register("bloomery", () -> new BlockEntityType<>(BloomeryBlockEntity::new, ModBlocks.BLOOMERY.get()));
+
+    // Tier 3 spec 7 and 8: axles and gearboxes share one block entity type.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KineticBlockEntity>> KINETIC_TRANSMISSION =
+            BLOCK_ENTITIES.register("kinetic_transmission", () -> new BlockEntityType<>(
+                    (pos, state) -> new KineticBlockEntity(ModBlockEntities.KINETIC_TRANSMISSION.get(), pos, state),
+                    ModBlocks.WOODEN_AXLE.get(), ModBlocks.WOODEN_GEARBOX.get(), ModBlocks.STEP_UP_GEARBOX.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.power.PulleyBlockEntity>> PULLEY =
+            BLOCK_ENTITIES.register("pulley", () -> new BlockEntityType<>(dev.strataindustria.power.PulleyBlockEntity::new, ModBlocks.PULLEY.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.power.WindmillBearingBlockEntity>> WINDMILL_BEARING =
+            BLOCK_ENTITIES.register("windmill_bearing", () -> new BlockEntityType<>(dev.strataindustria.power.WindmillBearingBlockEntity::new,
+                    ModBlocks.WINDMILL_BEARING.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.tanning.SoakingBarrelBlockEntity>> SOAKING_BARREL =
+            BLOCK_ENTITIES.register("soaking_barrel", () -> new BlockEntityType<>(dev.strataindustria.tanning.SoakingBarrelBlockEntity::new,
+                    ModBlocks.SOAKING_BARREL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HandCrankBlockEntity>> HAND_CRANK =
+            BLOCK_ENTITIES.register("hand_crank", () -> new BlockEntityType<>(HandCrankBlockEntity::new, ModBlocks.HAND_CRANK.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WaterWheelBlockEntity>> WATER_WHEEL =
+            BLOCK_ENTITIES.register("water_wheel", () -> new BlockEntityType<>(WaterWheelBlockEntity::new, ModBlocks.WATER_WHEEL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MillstoneBlockEntity>> MILLSTONE =
+            BLOCK_ENTITIES.register("millstone", () -> new BlockEntityType<>(MillstoneBlockEntity::new, ModBlocks.MILLSTONE.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BellowsBlockEntity>> BELLOWS =
+            BLOCK_ENTITIES.register("bellows", () -> new BlockEntityType<>(BellowsBlockEntity::new, ModBlocks.BELLOWS.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SawMillBlockEntity>> SAW_MILL =
+            BLOCK_ENTITIES.register("saw_mill", () -> new BlockEntityType<>(SawMillBlockEntity::new, ModBlocks.SAW_MILL.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.machine.CoreSamplerBlockEntity>> CORE_SAMPLER =
+            BLOCK_ENTITIES.register("core_sampler", () -> new BlockEntityType<>(dev.strataindustria.machine.CoreSamplerBlockEntity::new,
+                    ModBlocks.CORE_SAMPLER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.washing.SluiceBlockEntity>> SLUICE =
+            BLOCK_ENTITIES.register("sluice", () -> new BlockEntityType<>(dev.strataindustria.washing.SluiceBlockEntity::new,
+                    ModBlocks.SLUICE.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TripHammerBlockEntity>> TRIP_HAMMER =
+            BLOCK_ENTITIES.register("trip_hammer", () -> new BlockEntityType<>(TripHammerBlockEntity::new, ModBlocks.TRIP_HAMMER.get()));
 
     private ModBlockEntities() {}
 }

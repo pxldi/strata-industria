@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:sluice"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_washing_pan": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:washing_pan"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_washing_pan"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:sluice"
+    ]
+  }
+}

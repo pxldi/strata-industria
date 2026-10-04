@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:sawing",
+  "extra": {
+    "id": "strataindustria:bark"
+  },
+  "ingredient": "#minecraft:poplar_logs",
+  "result": {
+    "count": 6,
+    "id": "minecraft:poplar_planks"
+  }
+}

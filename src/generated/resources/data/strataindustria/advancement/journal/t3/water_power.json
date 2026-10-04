@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t3/rotation",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "water_power"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.water_power.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:water_wheel"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.water_power"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

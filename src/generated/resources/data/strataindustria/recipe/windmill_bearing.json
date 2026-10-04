@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:wooden_axle",
+    "I": "strataindustria:wrought_iron_plate",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "PIP",
+    " A ",
+    "PIP"
+  ],
+  "result": {
+    "id": "strataindustria:windmill_bearing"
+  }
+}

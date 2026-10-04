@@ -1,5 +1,13 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.machine.MillstoneBlock;
+import dev.strataindustria.machine.SawMillBlock;
+import dev.strataindustria.machine.TripHammerBlock;
+import dev.strataindustria.power.AxleBlock;
+import dev.strataindustria.power.GearboxBlock;
+import dev.strataindustria.power.HandCrankBlock;
+import dev.strataindustria.power.WaterWheelBlock;
 import dev.strataindustria.bloomery.BloomeryBlock;
 import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.smithing.AnvilBlock;
@@ -101,6 +109,14 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .pushReaction(PushReaction.IMMOVEABLE));
+    /** Wrought iron anvil (tier 3 spec 9.1): tier 4, the tier 3 exit item. */
+    public static final DeferredBlock<AnvilBlock> WROUGHT_IRON_ANVIL = BLOCKS.registerBlock("wrought_iron_anvil", p -> new AnvilBlock(4, false, p),
+            p -> p.mapColor(MapColor.METAL)
+                    .strength(5.0f, 1200.0f)
+                    .sound(SoundType.ANVIL)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .pushReaction(PushReaction.IMMOVEABLE));
 
     /** Logs stacked for a charcoal pit (spec 4.4). */
     public static final DeferredBlock<LogPileBlock> LOG_PILE = BLOCKS.registerBlock("log_pile", LogPileBlock::new,
@@ -143,6 +159,42 @@ public final class ModBlocks {
     /** Bloomery controller (spec 5.1): a fire brick block with a door. Light 13 while it burns. */
     public static final DeferredBlock<BloomeryBlock> BLOOMERY = BLOCKS.registerBlock("bloomery", BloomeryBlock::new,
             p -> fireBrick(p).lightLevel(state -> state.getValue(BloomeryBlock.LIT) ? 13 : 0));
+
+    // Tier 3 spec 7: mechanical power. Wooden parts sound and burn like wood.
+    public static final DeferredBlock<AxleBlock> WOODEN_AXLE = BLOCKS.registerBlock("wooden_axle", AxleBlock::new,
+            p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<GearboxBlock> WOODEN_GEARBOX = BLOCKS.registerBlock("wooden_gearbox", GearboxBlock::new,
+            ModBlocks::kineticWood);
+    public static final DeferredBlock<HandCrankBlock> HAND_CRANK = BLOCKS.registerBlock("hand_crank", HandCrankBlock::new,
+            p -> kineticWood(p).noOcclusion().pushReaction(PushReaction.POPPED));
+    public static final DeferredBlock<WaterWheelBlock> WATER_WHEEL = BLOCKS.registerBlock("water_wheel", WaterWheelBlock::new,
+            p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<MillstoneBlock> MILLSTONE = BLOCKS.registerBlock("millstone", MillstoneBlock::new,
+            p -> p.mapColor(MapColor.STONE).strength(2.5f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.STONE).noOcclusion());
+    public static final DeferredBlock<BellowsBlock> BELLOWS = BLOCKS.registerBlock("bellows", BellowsBlock::new,
+            p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<SawMillBlock> SAW_MILL = BLOCKS.registerBlock("saw_mill", SawMillBlock::new,
+            p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.machine.CoreSamplerBlock> CORE_SAMPLER = BLOCKS.registerBlock("core_sampler",
+            dev.strataindustria.machine.CoreSamplerBlock::new, p -> kineticWood(p).strength(2.5f, 4.0f).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.washing.SluiceBlock> SLUICE = BLOCKS.registerBlock("sluice",
+            dev.strataindustria.washing.SluiceBlock::new, p -> kineticWood(p).noOcclusion());
+    // Tier 3 spec 7.2 and 7.3: wind power and transmission.
+    public static final DeferredBlock<dev.strataindustria.power.StepUpGearboxBlock> STEP_UP_GEARBOX = BLOCKS.registerBlock("step_up_gearbox",
+            dev.strataindustria.power.StepUpGearboxBlock::new, ModBlocks::kineticWood);
+    public static final DeferredBlock<dev.strataindustria.power.PulleyBlock> PULLEY = BLOCKS.registerBlock("pulley",
+            dev.strataindustria.power.PulleyBlock::new, p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.power.WindmillBearingBlock> WINDMILL_BEARING = BLOCKS.registerBlock("windmill_bearing",
+            dev.strataindustria.power.WindmillBearingBlock::new, p -> kineticWood(p).strength(2.5f, 4.0f).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.power.WindmillSailBlock> WINDMILL_SAIL = BLOCKS.registerBlock("windmill_sail",
+            dev.strataindustria.power.WindmillSailBlock::new, p -> p.mapColor(MapColor.WOOL).strength(0.8f).sound(SoundType.WOOL)
+                    .noOcclusion().ignitedByLava());
+    // Tier 3 spec 12.1: tanning.
+    public static final DeferredBlock<dev.strataindustria.tanning.SoakingBarrelBlock> SOAKING_BARREL = BLOCKS.registerBlock("soaking_barrel",
+            dev.strataindustria.tanning.SoakingBarrelBlock::new, p -> p.mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)
+                    .noOcclusion().ignitedByLava());
+    public static final DeferredBlock<TripHammerBlock> TRIP_HAMMER = BLOCKS.registerBlock("trip_hammer", TripHammerBlock::new,
+            p -> kineticWood(p).strength(3.0f, 4.0f).noOcclusion());
 
     // Tier 3 spec 4.3: deposits that are a single block, whatever the rock around them.
     public static final DeferredBlock<Block> LIGNITE_SEAM = BLOCKS.registerSimpleBlock("lignite_seam", p -> p
@@ -208,6 +260,10 @@ public final class ModBlocks {
                     p -> new GroundCoverBlock(Block.box(3, 0, 3, 13, 3, 13), p),
                     p -> groundCover(p).sound(SoundType.GRAVEL)));
         }
+    }
+
+    private static Block.Properties kineticWood(Block.Properties p) {
+        return p.mapColor(MapColor.WOOD).strength(2.0f, 3.0f).sound(SoundType.WOOD).ignitedByLava();
     }
 
     private static Block.Properties fireBrick(Block.Properties p) {

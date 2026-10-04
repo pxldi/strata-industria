@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.smithing.SmithingPattern;
 import dev.strataindustria.smithing.SmithingProgress;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.Temperature;
@@ -61,6 +62,30 @@ public final class ModDataComponents {
             COMPONENTS.registerComponentType("bloom_contents", b -> b
                     .persistent(Melt.CODEC)
                     .networkSynchronized(Melt.STREAM_CODEC));
+
+    /** Tier 3 spec 9.5: a recorded smithing sequence. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<SmithingPattern>> SMITHING_PATTERN =
+            COMPONENTS.registerComponentType("smithing_pattern", b -> b
+                    .persistent(SmithingPattern.CODEC)
+                    .networkSynchronized(SmithingPattern.STREAM_CODEC));
+
+    /** Tier 3 spec 8.5: the column a core sampler drilled. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.strataindustria.prospecting.CoreSample>> CORE_SAMPLE =
+            COMPONENTS.registerComponentType("core_sample", b -> b
+                    .persistent(dev.strataindustria.prospecting.CoreSample.CODEC)
+                    .networkSynchronized(dev.strataindustria.prospecting.CoreSample.STREAM_CODEC));
+
+    /** Tier 3 spec 11.1: what a loaded washing pan holds. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.strataindustria.washing.PanContents>> PAN_CONTENTS =
+            COMPONENTS.registerComponentType("pan_contents", b -> b
+                    .persistent(dev.strataindustria.washing.PanContents.CODEC)
+                    .networkSynchronized(dev.strataindustria.washing.PanContents.STREAM_CODEC));
+
+    /** Tier 3 spec 7.3: the pulley a leather belt was first used on. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.core.BlockPos>> BELT_START =
+            COMPONENTS.registerComponentType("belt_start", b -> b
+                    .persistent(net.minecraft.core.BlockPos.CODEC)
+                    .networkSynchronized(net.minecraft.core.BlockPos.STREAM_CODEC));
 
     private ModDataComponents() {}
 }

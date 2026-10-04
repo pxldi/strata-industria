@@ -1,6 +1,11 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.structure.StructureContent;
+import java.util.Optional;
+import net.minecraft.world.level.material.Fluids;
+import dev.strataindustria.registry.ModFluids;
+import dev.strataindustria.tanning.FluidAmount;
+import dev.strataindustria.tanning.BarrelRecipe;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.crafting.ConfigCondition;
@@ -14,12 +19,15 @@ import dev.strataindustria.geology.Rock;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
+import dev.strataindustria.machine.SawingRecipe;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
 import dev.strataindustria.smithing.Rule;
+import dev.strataindustria.smithing.WeldingRecipe;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.washing.WashingRecipe;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.advancements.Advancement;
@@ -383,6 +391,36 @@ final class ModRecipeProvider extends RecipeProvider {
         anvil("bloom_refining", ModItems.RAW_BLOOM.get(), 1, Items.IRON_INGOT, 60,
                 rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
 
+        // Spec 9.4: flux from the quern, welding, and the wrought iron anvil.
+        grind("flux_from_sand", Ingredient.of(Items.SAND), ModItems.FLUX.get(), 2);
+        grind("flux_from_limestone", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
+        grind("flux_from_marble", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
+        output.accept(key("welding/wrought_iron_double_ingot"), new WeldingRecipe(Ingredient.of(Items.IRON_INGOT),
+                Ingredient.of(Items.IRON_INGOT), new ItemStackTemplate(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get())), null);
+        Item doubleIngot = ModItems.WROUGHT_IRON_DOUBLE_INGOT.get();
+        shaped(RecipeCategory.DECORATIONS, ModItems.WROUGHT_IRON_ANVIL.get())
+                .pattern("DDD")
+                .pattern(" I ")
+                .pattern("III")
+                .define('D', doubleIngot)
+                .define('I', Items.IRON_INGOT)
+                .unlockedBy("has_double_ingot", has(doubleIngot))
+                .save(output, key("wrought_iron_anvil"));
+
+        // Spec 9.5: a blank pattern, and wiping a recorded one.
+        Item pattern = ModItems.SMITHING_PATTERN.get();
+        shapeless(RecipeCategory.MISC, pattern, 2)
+                .requires(Items.PAPER, 2)
+                .requires(Items.CHARCOAL)
+                .unlockedBy("has_double_ingot", has(doubleIngot))
+                .save(output, key("smithing_pattern"));
+        shapeless(RecipeCategory.MISC, pattern)
+                .requires(pattern)
+                .unlockedBy("has_smithing_pattern", has(pattern))
+                .save(output, key("smithing_pattern_wipe"));
+
+        kinetics();
+
         // Spec 2: the furnace returns in tier 3, built from fire bricks.
         shaped(RecipeCategory.DECORATIONS, Items.FURNACE)
                 .pattern("FFF")
@@ -391,6 +429,174 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('F', fireBrick)
                 .unlockedBy("has_fire_brick", has(fireBrick))
                 .save(output.withConditions(new ConfigCondition("vanilla.gateFurnace", true)), key("furnace_from_fire_bricks"));
+    }
+
+    // Spec 14.3: mechanical power and the first machines.
+    private void kinetics() {
+        Item axle = ModItems.WOODEN_AXLE.get(), gear = ModItems.WOODEN_GEAR.get(), rod = ModItems.WROUGHT_IRON_ROD.get();
+        shaped(RecipeCategory.REDSTONE, axle, 4)
+                .pattern("P")
+                .pattern("P")
+                .pattern("P")
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_planks", has(ItemTags.PLANKS))
+                .save(output, key("wooden_axle"));
+        shaped(RecipeCategory.MISC, gear, 2)
+                .pattern(" S ")
+                .pattern("SPS")
+                .pattern(" S ")
+                .define('S', Items.STICK)
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_wooden_axle", has(axle))
+                .save(output, key("wooden_gear"));
+        shaped(RecipeCategory.REDSTONE, ModItems.WOODEN_GEARBOX.get())
+                .pattern("PGP")
+                .pattern("GAG")
+                .pattern("PGP")
+                .define('P', ItemTags.PLANKS)
+                .define('G', gear)
+                .define('A', axle)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("wooden_gearbox"));
+        shapeless(RecipeCategory.REDSTONE, ModItems.HAND_CRANK.get())
+                .requires(axle)
+                .requires(Items.STICK, 2)
+                .requires(ItemTags.PLANKS)
+                .unlockedBy("has_wooden_axle", has(axle))
+                .save(output, key("hand_crank"));
+        shaped(RecipeCategory.REDSTONE, ModItems.WATER_WHEEL.get())
+                .pattern("PSP")
+                .pattern("SRS")
+                .pattern("PSP")
+                .define('P', ItemTags.PLANKS)
+                .define('S', Items.STICK)
+                .define('R', rod)
+                .unlockedBy("has_wrought_iron_rod", has(rod))
+                .save(output, key("water_wheel"));
+        shaped(RecipeCategory.REDSTONE, ModItems.MILLSTONE.get())
+                .pattern(" A ")
+                .pattern("QGQ")
+                .pattern("PPP")
+                .define('A', axle)
+                .define('Q', ModItems.QUERNSTONE.get())
+                .define('G', gear)
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("millstone"));
+        // Leather comes from tanning later in tier 3; until then vanilla leather does.
+        shaped(RecipeCategory.REDSTONE, ModItems.BELLOWS.get())
+                .pattern("PPP")
+                .pattern("LLL")
+                .pattern("PRP")
+                .define('P', ItemTags.PLANKS)
+                .define('L', Items.LEATHER)
+                .define('R', rod)
+                .unlockedBy("has_wrought_iron_rod", has(rod))
+                .save(output, key("bellows"));
+
+        // Spec 8.2 and 8.4: the saw mill and the trip hammer.
+        shaped(RecipeCategory.REDSTONE, ModItems.SAW_MILL.get())
+                .pattern("PRP")
+                .pattern("GAG")
+                .pattern("PPP")
+                .define('P', ItemTags.PLANKS)
+                .define('R', rod)
+                .define('G', gear)
+                .define('A', axle)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("saw_mill"));
+        List<Item> hammerHeads = new java.util.ArrayList<>();
+        for (Metal metal : Metal.values()) {
+            if ((metal.isBronze() || metal == Metal.WROUGHT_IRON) && metal.toolTypes().contains(MoldType.HAMMER_HEAD)) {
+                hammerHeads.add(ModItems.head(metal, MoldType.HAMMER_HEAD));
+            }
+        }
+        shaped(RecipeCategory.REDSTONE, ModItems.TRIP_HAMMER.get())
+                .pattern(" H ")
+                .pattern("RAR")
+                .pattern("PGP")
+                .define('H', Ingredient.of(hammerHeads.toArray(Item[]::new)))
+                .define('R', rod)
+                .define('A', axle)
+                .define('P', ItemTags.PLANKS)
+                .define('G', gear)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("trip_hammer"));
+        // Spec 8.5: the core sampler.
+        shaped(RecipeCategory.TOOLS, ModItems.CORE_SAMPLER.get())
+                .pattern("PAP")
+                .pattern("RGR")
+                .pattern(" R ")
+                .define('P', ItemTags.PLANKS)
+                .define('A', axle)
+                .define('R', rod)
+                .define('G', gear)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("core_sampler"));
+        washing();
+        // Spec 7.2 and 7.3: wind, gearing and belts.
+        shapeless(RecipeCategory.REDSTONE, ModItems.STEP_UP_GEARBOX.get())
+                .requires(ModItems.WOODEN_GEARBOX.get())
+                .requires(gear, 2)
+                .requires(rod)
+                .unlockedBy("has_wooden_gearbox", has(ModItems.WOODEN_GEARBOX.get()))
+                .save(output, key("step_up_gearbox"));
+        shaped(RecipeCategory.REDSTONE, ModItems.PULLEY.get())
+                .pattern(" P ")
+                .pattern("PAP")
+                .pattern(" P ")
+                .define('P', ItemTags.PLANKS)
+                .define('A', axle)
+                .unlockedBy("has_wooden_axle", has(axle))
+                .save(output, key("pulley"));
+        shapeless(RecipeCategory.REDSTONE, ModItems.LEATHER_BELT.get())
+                .requires(Items.LEATHER, 3)
+                .requires(ModItems.TWINE.get())
+                .unlockedBy("has_pulley", has(ModItems.PULLEY.get()))
+                .save(output, key("leather_belt"));
+        Item ironPlate = ModItems.PLATES.get(Metal.WROUGHT_IRON).get();
+        shaped(RecipeCategory.REDSTONE, ModItems.WINDMILL_BEARING.get())
+                .pattern("PIP")
+                .pattern(" A ")
+                .pattern("PIP")
+                .define('P', ItemTags.PLANKS)
+                .define('I', ironPlate)
+                .define('A', axle)
+                .unlockedBy("has_wrought_iron_plate", has(ironPlate))
+                .save(output, key("windmill_bearing"));
+        shapeless(RecipeCategory.REDSTONE, ModItems.WINDMILL_SAIL.get(), 2)
+                .requires(ItemTags.PLANKS)
+                .requires(ItemTags.PLANKS)
+                .requires(ModItems.FIBRE_CLOTH.get())
+                .unlockedBy("has_windmill_bearing", has(ModItems.WINDMILL_BEARING.get()))
+                .save(output, key("windmill_sail"));
+
+        tanning();
+
+        Item bark = ModItems.BARK.get();
+        saw("oak_planks", ItemTags.OAK_LOGS, Items.OAK_PLANKS, bark);
+        saw("spruce_planks", ItemTags.SPRUCE_LOGS, Items.SPRUCE_PLANKS, bark);
+        saw("birch_planks", ItemTags.BIRCH_LOGS, Items.BIRCH_PLANKS, bark);
+        saw("jungle_planks", ItemTags.JUNGLE_LOGS, Items.JUNGLE_PLANKS, bark);
+        saw("acacia_planks", ItemTags.ACACIA_LOGS, Items.ACACIA_PLANKS, bark);
+        saw("dark_oak_planks", ItemTags.DARK_OAK_LOGS, Items.DARK_OAK_PLANKS, bark);
+        saw("mangrove_planks", ItemTags.MANGROVE_LOGS, Items.MANGROVE_PLANKS, bark);
+        saw("cherry_planks", ItemTags.CHERRY_LOGS, Items.CHERRY_PLANKS, bark);
+        saw("pale_oak_planks", ItemTags.PALE_OAK_LOGS, Items.PALE_OAK_PLANKS, bark);
+        saw("poplar_planks", ItemTags.POPLAR_LOGS, Items.POPLAR_PLANKS, bark);
+        // Nether stems have no bark worth tanning with.
+        saw("crimson_planks", ItemTags.CRIMSON_STEMS, Items.CRIMSON_PLANKS, null);
+        saw("warped_planks", ItemTags.WARPED_STEMS, Items.WARPED_PLANKS, null);
+        output.accept(key("sawing/bamboo_planks"), new SawingRecipe(Ingredient.of(Items.BAMBOO_BLOCK, Items.STRIPPED_BAMBOO_BLOCK),
+                new ItemStackTemplate(Items.BAMBOO_PLANKS, 3), java.util.Optional.empty(), SawingRecipe.DEFAULT_TICKS), null);
+        output.accept(key("sawing/sticks"), new SawingRecipe(tag(ItemTags.PLANKS), new ItemStackTemplate(Items.STICK, 3),
+                java.util.Optional.empty(), SawingRecipe.DEFAULT_TICKS / 2), null);
+    }
+
+    /** A log gives six planks and, for overworld wood, a strip of bark (spec 8.2). */
+    private void saw(String path, TagKey<Item> logs, Item planks, @org.jspecify.annotations.Nullable Item bark) {
+        output.accept(key("sawing/" + path), new SawingRecipe(tag(logs), new ItemStackTemplate(planks, 6),
+                java.util.Optional.ofNullable(bark).map(ItemStackTemplate::new), SawingRecipe.DEFAULT_TICKS), null);
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {
@@ -448,6 +654,99 @@ final class ModRecipeProvider extends RecipeProvider {
 
     private void flower(Item flower, Item dye) {
         grind(name(dye) + "_from_" + name(flower), Ingredient.of(flower), dye, 2);
+    }
+
+    /** Tier 3 spec 11: the pan, the sluice, and the washing recipes they share. */
+    private void washing() {
+        List<Item> panPlates = new java.util.ArrayList<>();
+        for (Metal metal : Metal.values()) {
+            if ((metal == Metal.COPPER || metal.isBronze()) && ModItems.PLATES.containsKey(metal)) panPlates.add(ModItems.PLATES.get(metal).get());
+        }
+        shapeless(RecipeCategory.TOOLS, ModItems.WASHING_PAN.get())
+                .requires(Ingredient.of(panPlates.toArray(Item[]::new)))
+                .requires(Items.STICK)
+                .unlockedBy("has_placer_gravel", has(ModItems.PLACER_GRAVEL.get()))
+                .unlockedBy("has_stick", has(Items.STICK))
+                .save(output, key("washing_pan"));
+        shaped(RecipeCategory.MISC, ModItems.SLUICE.get())
+                .pattern("S  ")
+                .pattern("PS ")
+                .pattern("PPP")
+                .define('S', Items.STICK)
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_washing_pan", has(ModItems.WASHING_PAN.get()))
+                .save(output, key("sluice"));
+
+        Map<OreMineral, Item> byproduct = new java.util.EnumMap<>(OreMineral.class);
+        Map<OreMineral, Float> odds = new java.util.EnumMap<>(OreMineral.class);
+        byproduct.put(OreMineral.NATIVE_COPPER, ModItems.SMALL_ORES.get(OreMineral.NATIVE_GOLD).get());
+        odds.put(OreMineral.NATIVE_COPPER, 0.08f);
+        byproduct.put(OreMineral.MALACHITE, Items.DYE.pick(DyeColor.GREEN));
+        odds.put(OreMineral.MALACHITE, 0.15f);
+        byproduct.put(OreMineral.TENNANTITE, ModItems.SMALL_ORES.get(OreMineral.BISMUTHINITE).get());
+        odds.put(OreMineral.TENNANTITE, 0.15f);
+        byproduct.put(OreMineral.CASSITERITE, ModItems.SMALL_ORES.get(OreMineral.MAGNETITE).get());
+        odds.put(OreMineral.CASSITERITE, 0.15f);
+        byproduct.put(OreMineral.BISMUTHINITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_GOLD).get());
+        odds.put(OreMineral.BISMUTHINITE, 0.10f);
+        byproduct.put(OreMineral.LIMONITE, Items.CLAY_BALL);
+        odds.put(OreMineral.LIMONITE, 0.30f);
+        byproduct.put(OreMineral.HEMATITE, Items.DYE.pick(DyeColor.RED));
+        odds.put(OreMineral.HEMATITE, 0.15f);
+        byproduct.put(OreMineral.MAGNETITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get());
+        odds.put(OreMineral.MAGNETITE, 0.10f);
+        for (OreMineral mineral : OreMineral.values()) {
+            for (OreGrade grade : OreGrade.values()) {
+                List<WashingRecipe.Chance> chances = byproduct.containsKey(mineral)
+                        ? List.of(new WashingRecipe.Chance(new ItemStackTemplate(byproduct.get(mineral)), odds.get(mineral)))
+                        : List.of();
+                Item washed = ModItems.washedOre(mineral, grade);
+                output.accept(key("washing/" + name(washed)), new WashingRecipe(Ingredient.of(ModItems.crushedOre(mineral, grade)),
+                        new ItemStackTemplate(washed), chances, WashingRecipe.DEFAULT_TICKS), null);
+            }
+        }
+        Item gold = ModItems.SMALL_ORES.get(OreMineral.NATIVE_GOLD).get(), magnetite = ModItems.SMALL_ORES.get(OreMineral.MAGNETITE).get(),
+                cassiterite = ModItems.SMALL_ORES.get(OreMineral.CASSITERITE).get();
+        output.accept(key("washing/placer_gravel"), new WashingRecipe(Ingredient.of(ModItems.PLACER_GRAVEL.get()),
+                new ItemStackTemplate(Items.GRAVEL), List.of(new WashingRecipe.Chance(new ItemStackTemplate(gold), 0.30f),
+                new WashingRecipe.Chance(new ItemStackTemplate(magnetite), 0.20f), new WashingRecipe.Chance(new ItemStackTemplate(cassiterite), 0.10f)),
+                WashingRecipe.DEFAULT_TICKS), null);
+        output.accept(key("washing/placer_sand"), new WashingRecipe(Ingredient.of(ModItems.PLACER_SAND.get()),
+                new ItemStackTemplate(Items.SAND), List.of(new WashingRecipe.Chance(new ItemStackTemplate(gold), 0.25f),
+                new WashingRecipe.Chance(new ItemStackTemplate(magnetite), 0.25f), new WashingRecipe.Chance(new ItemStackTemplate(cassiterite), 0.05f)),
+                WashingRecipe.DEFAULT_TICKS), null);
+    }
+
+    /** Tier 3 spec 12.1: the soaking barrel, its four soaks, and scraping limed hides with a knife. */
+    private void tanning() {
+        shaped(RecipeCategory.MISC, ModItems.SOAKING_BARREL.get())
+                .pattern("P P")
+                .pattern("P P")
+                .pattern("PPP")
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_raw_hide", has(ModItems.RAW_HIDE.get()))
+                .save(output, key("soaking_barrel"));
+        FluidAmount water = new FluidAmount(Fluids.WATER, 1000);
+        soak("lye", Optional.of(Ingredient.of(ModItems.ASH.get())), 2, water,
+                Optional.empty(), Optional.of(new FluidAmount(ModFluids.LYE.get(), 1000)), 600);
+        soak("tannin", Optional.of(Ingredient.of(ModItems.BARK.get())), 4, water,
+                Optional.empty(), Optional.of(new FluidAmount(ModFluids.TANNIN.get(), 1000)), 2400);
+        soak("limed_hide", Optional.of(Ingredient.of(ModItems.RAW_HIDE.get())), 1, new FluidAmount(ModFluids.LYE.get(), 250),
+                Optional.of(new ItemStackTemplate(ModItems.LIMED_HIDE.get())), Optional.empty(), 4000);
+        soak("leather", Optional.of(Ingredient.of(ModItems.SCRAPED_HIDE.get())), 1, new FluidAmount(ModFluids.TANNIN.get(), 250),
+                Optional.of(new ItemStackTemplate(Items.LEATHER, 2)), Optional.empty(), 8000);
+        Ingredient knife = tag(ModTags.Items.KNIVES);
+        var scraping = new ToolShapelessRecipe(new Recipe.CommonInfo(true),
+                new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
+                new ItemStackTemplate(ModItems.SCRAPED_HIDE.get()),
+                List.of(Ingredient.of(ModItems.LIMED_HIDE.get()), knife),
+                knife);
+        save(key("scraped_hide"), scraping, RecipeCategory.MISC, "has_limed_hide", has(ModItems.LIMED_HIDE.get()));
+    }
+
+    private void soak(String path, Optional<Ingredient> input, int count, FluidAmount fluid, Optional<ItemStackTemplate> result,
+                      Optional<FluidAmount> fluidResult, int ticks) {
+        output.accept(key("barrel/" + path), new BarrelRecipe(input, count, Optional.of(fluid), result, fluidResult, ticks), null);
     }
 
     private void grind(String path, Ingredient input, Item result, int count) {

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sealed=false": {
+      "model": "strataindustria:block/soaking_barrel"
+    },
+    "sealed=true": {
+      "model": "strataindustria:block/soaking_barrel_sealed"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:wooden_axle",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    " P ",
+    "PAP",
+    " P "
+  ],
+  "result": {
+    "id": "strataindustria:pulley"
+  }
+}

@@ -118,6 +118,56 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.RAW_BLOOM_HIT, bloomHit);
         add(ModSounds.WROUGHT_IRON_HIT, definition().subtitle(subtitle("wrought_iron.hit"))
                 .with(sound("minecraft:random/anvil_use").pitch(0.85f).volume(0.8f)));
+        // Spec 9.4: a weld is two heavy blows close together with a hiss of flux; a refusal is a dull click.
+        add(ModSounds.ANVIL_WELD, definition().subtitle(subtitle("anvil.weld"))
+                .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.7f))
+                .with(sound("minecraft:random/anvil_land").pitch(1.1f).volume(0.4f)));
+        add(ModSounds.ANVIL_WELD_FAIL, definition().subtitle(subtitle("anvil.weld_fail"))
+                .with(sound("minecraft:random/click").pitch(0.6f).volume(0.5f)));
+        // Spec 20.6: mechanical power. These reuse vanilla events, retuned.
+        add(ModSounds.HAND_CRANK_TURN, definition().subtitle(subtitle("hand_crank.turn"))
+                .with(sound("minecraft:block.wooden_door.open", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.4f)));
+        add(ModSounds.WATER_WHEEL_TURN, definition().subtitle(subtitle("water_wheel.turn"))
+                .with(sound("minecraft:entity.boat.paddle_water", SoundDefinition.SoundType.EVENT).volume(0.7f)));
+        add(ModSounds.KINETIC_OVERSTRESS, definition().subtitle(subtitle("kinetic.overstress"))
+                .with(sound("minecraft:block.wood.break", SoundDefinition.SoundType.EVENT).pitch(0.5f)));
+        add(ModSounds.MILLSTONE_GRIND, definition().subtitle(subtitle("millstone.grind"))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f)));
+        add(ModSounds.BELLOWS_PUMP, definition().subtitle(subtitle("bellows.pump"))
+                .with(sound("minecraft:entity.horse.breathe", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
+        add(ModSounds.SAW_MILL_SAW, definition().subtitle(subtitle("saw_mill.saw"))
+                .with(sound("minecraft:entity.sheep.shear", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.6f)));
+        add(ModSounds.SAW_MILL_BLADE_BREAK, definition().subtitle(subtitle("saw_mill.blade_break"))
+                .with(sound("minecraft:entity.item.break", SoundDefinition.SoundType.EVENT)));
+        add(ModSounds.CORE_SAMPLER_DRILL, definition().subtitle(subtitle("core_sampler.drill"))
+                .with(sound("minecraft:block.stone.hit", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.7f))
+                .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
+        add(ModSounds.CORE_SAMPLER_DONE, definition().subtitle(subtitle("core_sampler.done"))
+                .with(sound("minecraft:block.note_block.bell", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
+        add(ModSounds.WINDMILL_TURN, definition().subtitle(subtitle("windmill.turn"))
+                .with(sound("minecraft:block.wood.step", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
+                .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.4f)));
+        add(ModSounds.BELT_ATTACH, definition().subtitle(subtitle("belt.attach"))
+                .with(sound("minecraft:entity.leash_knot.place", SoundDefinition.SoundType.EVENT)));
+        add(ModSounds.SOAKING_BARREL_SEAL, definition().subtitle(subtitle("soaking_barrel.seal"))
+                .with(sound("minecraft:block.barrel.close", SoundDefinition.SoundType.EVENT).pitch(0.85f)));
+        add(ModSounds.SOAKING_BARREL_OPEN, definition().subtitle(subtitle("soaking_barrel.open"))
+                .with(sound("minecraft:block.barrel.open", SoundDefinition.SoundType.EVENT).pitch(0.85f)));
+        add(ModSounds.SOAKING_BARREL_FILL, definition().subtitle(subtitle("soaking_barrel.fill"))
+                .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.9f)));
+        add(ModSounds.SOAKING_BARREL_DONE, definition().subtitle(subtitle("soaking_barrel.done"))
+                .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).volume(0.6f).pitch(0.8f)));
+        add(ModSounds.HIDE_SCRAPE, definition().subtitle(subtitle("hide.scrape"))
+                .with(sound("minecraft:entity.sheep.shear", SoundDefinition.SoundType.EVENT).pitch(1.2f)));
+        add(ModSounds.SLUICE_WASH, definition().subtitle(subtitle("sluice.wash"))
+                .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).volume(0.6f)));
+        add(ModSounds.WASHING_PAN_SWIRL, definition().subtitle(subtitle("washing_pan.swirl"))
+                .with(sound("minecraft:item.bucket.fill", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f))
+                .with(sound("minecraft:block.gravel.step", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.4f)));
+        add(ModSounds.WASHING_PAN_FIND, definition().subtitle(subtitle("washing_pan.find"))
+                .with(sound("minecraft:entity.experience_orb.pickup", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.4f)));
+        add(ModSounds.CORE_SAMPLE_OPEN, definition().subtitle(subtitle("core_sample.open"))
+                .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(0.8f)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
 

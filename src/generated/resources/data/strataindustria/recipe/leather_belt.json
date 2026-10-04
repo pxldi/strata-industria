@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "minecraft:leather",
+    "minecraft:leather",
+    "minecraft:leather",
+    "strataindustria:twine"
+  ],
+  "result": {
+    "id": "strataindustria:leather_belt"
+  }
+}
