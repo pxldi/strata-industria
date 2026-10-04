@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.fire.FirePitBlock;
+import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -98,6 +99,16 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.LOG_PILE.get(), BlockModelGenerators.plainVariant(logPile)));
         blockModels.createTrivialCube(ModBlocks.CHARCOAL_PILE.get());
         flatItem(itemModels, ModItems.ASH.get());
+
+        // Spec 4.5: cold coals, glowing coals, and flames while fuel burns.
+        var forge = StrataIndustria.id("block/forge");
+        PropertyDispatch.C2<MultiVariant, Boolean, Boolean> forgeState = PropertyDispatch.initial(ForgeBlock.LIT, ForgeBlock.HOT);
+        forgeState.select(false, false, BlockModelGenerators.plainVariant(forge));
+        forgeState.select(false, true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/forge_hot")));
+        forgeState.select(true, false, BlockModelGenerators.plainVariant(StrataIndustria.id("block/forge_lit")));
+        forgeState.select(true, true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/forge_lit")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.FORGE.get()).with(forgeState));
+        itemModels.itemModelOutput.accept(ModItems.FORGE.get(), ItemModelUtils.plainModel(forge));
 
         flatItem(itemModels, ModItems.PLANT_FIBRE.get());
         flatItem(itemModels, ModItems.STRAW.get());
