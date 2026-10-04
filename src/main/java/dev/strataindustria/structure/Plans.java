@@ -766,48 +766,117 @@ public final class Plans {
     // ---------------------------------------------------------------- 6.5 ruined bloomery
 
     /**
-     * The stump of a bloomery: the base ring around its chamber, broken where the door stood, and two
-     * courses of the chimney above it, with fallen bricks and slag around. The footprint matches a real
-     * bloomery, so a player holding a controller sees the preview line up with the ruin.
+     * The smiths' works, burnt down: a roofless workshop with charred posts, fallen beams over a floor crate, a
+     * cracked hearth, a quench trough, a roasting pad, a half-collapsed charcoal store, a grave, and the bloomery
+     * stack with three bricks missing (the backtick cells). The stack's footprint matches a real bloomery, so a
+     * player holding a controller sees the preview line up with the ruin. The three bricks are in the workshop crate.
      */
-    public static final Plan BLOOMERY_STUMP = add(Plan.of("ruined_bloomery/stump", Kind.LEVELLED,
-            new String[] {
-                    "",
-                    "",
-                    "    ,,,    ",
-                    "   ,,,,,   ",
-                    "   ,,,,,   ",
-                    "   ,,K,,   ",
-                    "    ,,,    ",
-                    "",
-                    "     b     ",
-            },
-            new String[] {
-                    "",
-                    "  S     Z  ",
-                    "",
-                    "    KKK    ",
-                    "    KSK    ",
-                    "    # #    ",
-                    "",
-                    "  K     S  ",
-                    "      #    ",
-                    "   Z       ",
-                    "",
-            },
-            new String[] {
-                    "",
-                    "",
-                    "",
-                    "     K     ",
-                    "    Y.K    ",
-            },
-            new String[] {
-                    "",
-                    "",
-                    "",
-                    "     K     ",
-            }));
+    public static final Plan BLOOMERY_WORKS = add(bloomeryWorks());
+
+    private static Plan bloomeryWorks() {
+        int w = 19, d = 15, h = 4;
+        char[][][] g = new char[h][d][w];
+        for (char[][] layer : g) for (char[] row : layer) java.util.Arrays.fill(row, ' ');
+
+        // The workshop: x 1-7, z 1-9, door gap in the south wall.
+        for (int x = 1; x <= 7; x++) for (int z = 1; z <= 9; z++) g[0][z][x] = ',';
+        for (int x = 1; x <= 7; x++) {
+            for (int z = 1; z <= 9; z++) {
+                boolean edge = x == 1 || x == 7 || z == 1 || z == 9;
+                if (edge) {
+                    int k = (x * 7 + z * 13) % 5;
+                    g[1][z][x] = k == 4 ? ' ' : k == 0 ? 'm' : '#';
+                    if ((x + z) % 3 == 0 && k != 4) g[2][z][x] = '#';
+                } else if ((x * 3 + z * 5) % 4 == 0) {
+                    g[1][z][x] = ':';
+                }
+            }
+        }
+        g[1][9][4] = ' ';
+        g[2][9][4] = ' ';
+        g[1][9][3] = ' ';
+        int[][] posts = {{1, 1, 3}, {7, 1, 2}, {1, 9, 3}, {7, 9, 1}};
+        for (int[] post : posts) {
+            for (int y = 1; y <= post[2]; y++) g[y][post[1]][post[0]] = '[';
+        }
+        // The hearth in the north-east corner.
+        g[1][2][5] = 'K';
+        g[1][2][6] = 'K';
+        g[1][3][6] = 'K';
+        g[2][2][6] = 'K';
+        g[1][3][5] = 'S';
+        g[1][2][3] = 'a';
+        g[1][5][3] = 'A';
+        g[1][7][2] = 'u';
+        // The cache crate in the floor, and the beams that came down on it.
+        g[0][6][5] = 'X';
+        g[1][6][4] = '{';
+        g[1][6][5] = '{';
+        g[1][6][6] = '{';
+        g[1][7][5] = '}';
+        g[2][6][5] = '}';
+        g[2][5][5] = '}';
+        g[1][8][2] = '{';
+        g[1][8][3] = '{';
+        g[1][4][6] = '}';
+        g[1][5][6] = '}';
+
+        // The stack, stamped at (8, 4) with three bricks left out.
+        String[][] stack = {
+                {"", "", "    ,,,    ", "   ,,,,,   ", "   ,,,,,   ", "   ,,K,,   ", "    ,,,    "},
+                {"", "  S     Z  ", "", "    KKK    ", "    KSK    ", "    # #    ", "", "  K     S  ", "      #    ", "   Z       "},
+                {"", "", "", "     K     ", "    K.K    "},
+                {"", "", "", "     K     "}};
+        for (int y = 0; y < stack.length; y++) {
+            for (int z = 0; z < stack[y].length; z++) {
+                for (int x = 0; x < stack[y][z].length(); x++) {
+                    char c = stack[y][z].charAt(x);
+                    if (c != ' ') g[y][z + 4][x + 8] = c;
+                }
+            }
+        }
+        g[1][7][14] = '`';
+        g[1][8][12] = '`';
+        g[2][8][14] = '`';
+
+        // The quench trough, and a bellows that gave up.
+        g[1][8][9] = '#';
+        g[1][9][9] = 'y';
+        g[1][10][9] = '#';
+        g[1][6][8] = 'v';
+        g[1][6][9] = 'T';
+        g[1][5][8] = 'x';
+
+        // The roasting pad: four by four, rust-coloured, with slag lying about.
+        for (int x = 1; x <= 4; x++) for (int z = 11; z <= 14; z++) g[0][z][x] = (x + z) % 3 == 0 ? '<' : '>';
+        g[1][12][2] = 'S';
+        g[1][13][3] = 'Z';
+        g[1][11][1] = 'Z';
+        g[1][14][4] = 'S';
+
+        // The charcoal store, half fallen in.
+        for (int x = 10; x <= 16; x++) for (int z = 0; z <= 3; z++) g[0][z][x] = ',';
+        int[][] fence = {{10, 0}, {16, 0}, {10, 3}};
+        for (int[] f : fence) {
+            g[1][f[1]][f[0]] = 'k';
+            g[2][f[1]][f[0]] = 'k';
+        }
+        g[1][3][16] = 'k';
+        for (int x = 10; x <= 13; x++) for (int z = 0; z <= 3; z++) g[3][z][x] = 's';
+        g[1][2][15] = 's';
+        g[1][1][16] = 's';
+        for (int[] pile : new int[][] {{11, 0}, {12, 0}, {13, 0}, {11, 1}, {12, 1}}) g[1][pile[1]][pile[0]] = 'l';
+
+        // A grave at the edge of the clearing.
+        for (int x = 16; x <= 18; x++) for (int z = 11; z <= 14; z++) g[0][z][x] = ',';
+        g[1][12][17] = '#';
+        g[2][12][17] = '#';
+        g[1][13][17] = '/';
+
+        String[][] layers = new String[h][d];
+        for (int y = 0; y < h; y++) for (int z = 0; z < d; z++) layers[y][z] = new String(g[y][z]).stripTrailing();
+        return Plan.of("ruined_bloomery/works", Kind.LEVELLED, layers);
+    }
 
     /** Where the bloomery's charcoal was burned: a scorched ring, and a row of piles nobody came back for. */
     public static final Plan CHARCOAL_SCAR = add(Plan.of("ruined_bloomery/charcoal_scar", Kind.TERRAIN,

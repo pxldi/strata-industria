@@ -261,6 +261,15 @@ public class PlanPiece extends StructurePiece {
             case '^' -> wood.stairs().setValue(StairBlock.FACING, Direction.NORTH);
             case 'z' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y);
             case 'w' -> Blocks.GLASS_PANE.defaultBlockState();
+            case '[' -> Blocks.STRIPPED_DARK_OAK_LOG.defaultBlockState();
+            case '{' -> Blocks.STRIPPED_DARK_OAK_LOG.defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.X);
+            case '}' -> Blocks.STRIPPED_DARK_OAK_LOG.defaultBlockState().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z);
+            case ':' -> named("gray_carpet");
+            case '<' -> named("red_terracotta");
+            case '>' -> named("terracotta");
+            case '`' -> Blocks.AIR.defaultBlockState();
+            case '/' -> BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(wood.name().toLowerCase(java.util.Locale.ROOT) + "_sign"))
+                    .defaultBlockState();
             case 'u', 'j', 'X' -> SharedBlocks.CRATE.get().defaultBlockState();
             case 'T' -> wood.trapdoor();
             case 't' -> wood.trapdoor().setValue(TrapDoorBlock.OPEN, true).setValue(TrapDoorBlock.FACING, Direction.WEST);
@@ -301,6 +310,10 @@ public class PlanPiece extends StructurePiece {
         }
     }
 
+    private static BlockState named(String id) {
+        return BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(id)).defaultBlockState();
+    }
+
     private static BlockState chain() {
         for (String id : new String[] {"iron_chain", "chain"}) {
             Block block = BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(id));
@@ -326,11 +339,24 @@ public class PlanPiece extends StructurePiece {
                 var table = switch (planId) {
                     case "charcoal_burners_clearing" -> CampLoot.key(CampLoot.CLEARING_CACHE);
                     case "prospector_camp" -> CampLoot.key(CampLoot.PROSPECTOR_CACHE, mineral);
+                    case "ruined_bloomery/works" -> CampLoot.key(CampLoot.BLOOMERY_CACHE);
                     default -> CampLoot.key(CampLoot.MINING_CACHE);
                 };
                 RandomizableContainer.setBlockEntityLootTable(level, random, pos, table);
                 if (planId.equals("prospector_camp") && level.getBlockEntity(pos) instanceof CrateBlockEntity crate) {
                     crate.lock(sampleOrder(rock));
+                }
+                if (planId.equals("ruined_bloomery/works") && level.getBlockEntity(pos) instanceof CrateBlockEntity crate) {
+                    crate.lock(brickGaps());
+                }
+            }
+            case '/' -> {
+                if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity sign) {
+                    var empty = net.minecraft.network.chat.CommonComponents.EMPTY;
+                    var lines = List.of(empty, net.minecraft.network.chat.Component.literal("Here lies"),
+                            net.minecraft.network.chat.Component.literal("the smith."), empty);
+                    sign.setText(new net.minecraft.world.level.block.entity.SignText(lines, lines, net.minecraft.world.item.DyeColor.BLACK, false),
+                            net.minecraft.world.level.block.entity.SignTextSlot.FRONT);
                 }
             }
             case 'a' -> ToolRackBlockEntity.stock(level.getLevel(), pos, java.util.List.of(
@@ -381,6 +407,21 @@ public class PlanPiece extends StructurePiece {
             int[] slot = slots.get(i);
             BlockPos at = new BlockPos(worldX(slot[0], slot[2]), groundY + slot[1] - Plans.base(plan), worldZ(slot[0], slot[2]));
             steps.add(new PuzzleLock.Step(at, BuiltInRegistries.BLOCK.getKey(rock.loose(order.get(i)).getBlock()).toString()));
+        }
+        return PuzzleLock.blocks(steps);
+    }
+
+    /** The crate under the beams stays shut until the three missing bricks are back in the stack. */
+    private PuzzleLock brickGaps() {
+        String bricks = BuiltInRegistries.BLOCK.getKey(StructureContent.CRACKED_FIRE_BRICKS.get()).toString();
+        List<PuzzleLock.Step> steps = new ArrayList<>();
+        for (int pz = 0; pz < plan.depth(); pz++) {
+            for (int px = 0; px < plan.width(); px++) {
+                for (int layer = 0; layer < plan.height(); layer++) {
+                    if (plan.at(px, layer, pz) != '`') continue;
+                    steps.add(new PuzzleLock.Step(new BlockPos(worldX(px, pz), groundY + layer - Plans.base(plan), worldZ(px, pz)), bricks));
+                }
+            }
         }
         return PuzzleLock.blocks(steps);
     }

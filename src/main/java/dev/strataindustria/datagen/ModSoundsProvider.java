@@ -209,6 +209,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(StructureContent.CRACKED_FIRE_BRICKS_BREAK, definition().subtitle(subtitle("cracked_fire_bricks.break"))
                 .with(sound("minecraft:block.decorated_pot.shatter", SoundDefinition.SoundType.EVENT).pitch(0.8f).weight(2))
                 .with(sound("minecraft:block.deepslate_bricks.break", SoundDefinition.SoundType.EVENT).pitch(0.95f)));
+        add(StructureContent.CRACKED_FIRE_BRICKS_SETTLE, definition().subtitle(subtitle("cracked_fire_bricks.settle"))
+                .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.6f).weight(2))
+                .with(sound("minecraft:block.calcite.hit", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:block.gravel.fall", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.35f)));
         add(StructureContent.SLAG_HEAP_BREAK, definition().subtitle(subtitle("slag_heap.break"))
                 .with(sound("minecraft:block.gravel.break", SoundDefinition.SoundType.EVENT).pitch(0.9f).weight(3))
                 .with(sound("minecraft:block.glass.break", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f)));

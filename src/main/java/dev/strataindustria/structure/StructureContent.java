@@ -76,7 +76,8 @@ public final class StructureContent {
                     .ignitedByLava());
 
     /** Fire bricks from an old bloomery, cracked by heat; they can no longer hold one (structures spec 9). */
-    public static final DeferredBlock<Block> CRACKED_FIRE_BRICKS = BLOCKS.registerSimpleBlock("cracked_fire_bricks",
+    public static final DeferredBlock<CrackedFireBricksBlock> CRACKED_FIRE_BRICKS = BLOCKS.registerBlock("cracked_fire_bricks",
+            CrackedFireBricksBlock::new,
             p -> p.mapColor(MapColor.SAND)
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .strength(1.8f, 6.0f)
@@ -181,6 +182,8 @@ public final class StructureContent {
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_PLACE = sound("ui.journal.place");
     /** Heat-cracked brick crumbling apart. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CRACKED_FIRE_BRICKS_BREAK = sound("block.cracked_fire_bricks.break");
+    /** A rare ceramic tick and a trickle of grit from a cracked stack that is still cooling. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRACKED_FIRE_BRICKS_SETTLE = sound("block.cracked_fire_bricks.settle");
     /** Gravel with a glassy clink. */
     public static final DeferredHolder<SoundEvent, SoundEvent> SLAG_HEAP_BREAK = sound("block.slag_heap.break");
     public static final DeferredHolder<SoundEvent, SoundEvent> SLAG_HEAP_STEP = sound("block.slag_heap.step");
