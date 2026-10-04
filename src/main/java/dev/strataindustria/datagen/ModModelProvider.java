@@ -92,6 +92,13 @@ final class ModModelProvider extends ModelProvider {
 
         clay(blockModels, itemModels);
 
+        // Spec 4.4: one look for the log pile, lit or not, since a lit pile is buried.
+        var logPile = ModelTemplates.CUBE_COLUMN.create(ModBlocks.LOG_PILE.get(), TextureMapping.column(ModBlocks.LOG_PILE.get()),
+                blockModels.modelOutput);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.LOG_PILE.get(), BlockModelGenerators.plainVariant(logPile)));
+        blockModels.createTrivialCube(ModBlocks.CHARCOAL_PILE.get());
+        flatItem(itemModels, ModItems.ASH.get());
+
         flatItem(itemModels, ModItems.PLANT_FIBRE.get());
         flatItem(itemModels, ModItems.STRAW.get());
         flatItem(itemModels, ModItems.TWINE.get());

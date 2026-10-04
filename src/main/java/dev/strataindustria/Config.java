@@ -93,6 +93,22 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- charcoal
+    static {
+        BUILDER.comment("Charcoal pits.").push("charcoal");
+    }
+
+    public static final ModConfigSpec.IntValue CHARCOAL_BURN_TICKS = BUILDER
+            .comment("Ticks a covered log pile burns before it turns to charcoal.")
+            .defineInRange("burnTicks", 12000, 20, 72000);
+    public static final ModConfigSpec.DoubleValue CHARCOAL_PER_LOG = BUILDER
+            .comment("Charcoal per log in the pile.")
+            .defineInRange("perLog", 0.5, 0.0625, 1.0);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}
