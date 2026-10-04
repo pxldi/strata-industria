@@ -740,7 +740,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.wash.hint", "Scoop placer gravel from a river bed with a washing pan and swirl it standing in water.");
         add(journal + "t3.core_sample", "Core Sample");
         add(journal + "t3.core_sample.hint", "Turn a core sampler and press Drill to read the ground 64 blocks down.");
-        add(journal + "t3.trip_hammer.hint", "Give a trip hammer a recorded pattern and a forge beside its anvil, and let it smith.");
+        add(journal + "t3.trip_hammer.hint", "Put a hot raw bloom in a trip hammer, or give it a recorded pattern and a forge beside its anvil.");
         add(journal + "t3.weld", "Forge Weld");
         add(journal + "t3.weld.hint", "Heat two iron ingots, add flux, and weld them into a double ingot on the anvil.");
         add(journal + "t2.brick_kiln", "Brick Kiln");
@@ -951,7 +951,7 @@ final class ModLanguageProvider extends LanguageProvider {
         for (OreGrade grade : OreGrade.values()) add(id + ".grade." + grade.getSerializedName(), grade.getSerializedName());
         String hammer = id + ".trip_hammer.";
         add(hammer + "no_anvil", "No anvil in front");
-        add(hammer + "no_pattern", "Needs a recorded pattern");
+        add(hammer + "no_pattern", "Needs a pattern or a raw bloom");
         add(hammer + "not_turning", "Needs a turning shaft");
         add(hammer + "too_slow", "Too slow: needs %s RPM");
         add(hammer + "waiting", "Waiting for a hot workpiece");
