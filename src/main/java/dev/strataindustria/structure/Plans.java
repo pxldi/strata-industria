@@ -902,36 +902,102 @@ public final class Plans {
     // ---------------------------------------------------------------- 6.6 placer workings
 
     /**
-     * The panners' bank, water to the south: a canvas lean-to with their barrel, and the heap of river
-     * gravel they never got through. The sluice runs from column 5 of the south edge into the river.
+     * The panners' bank, water to the south: a stilt hut over a backwater cut into the bank, a porch with the
+     * scale and a tin, a line of sluice boxes feeding the trough that runs into the river (column 5 of the
+     * south edge), a rocker box, a drying rack and the gravel they never got through. The crate lies in the
+     * bed under the hut. Three layers lie below ground.
      */
-    public static final Plan PLACER_BANK = add(Plan.of("placer_workings/bank", Kind.LEVELLED,
-            new String[] {
-                    "",
-                    " ,,,,,      ",
-                    " ,,,,, ,,,, ",
-                    "  ,,,,,,,,, ",
-                    "   ,,,,,,,, ",
-                    "    ,,,,    ",
-            },
-            new String[] {
-                    "",
-                    " PCCCP      ",
-                    " C_B_C  GG  ",
-                    "  ___  GGGG ",
-                    "",
-            },
-            new String[] {
-                    "",
-                    " PCCCP      ",
-                    " C   C      ",
-                    " CCCCC  GG  ",
-            },
-            new String[] {
-                    "",
-                    " CCCCC      ",
-                    " CCCCC      ",
-            }));
+    public static final Plan PLACER_BANK = add(placerWorkings(), 3);
+
+    private static Plan placerWorkings() {
+        int w = 17, d = 15, base = 3, h = 11;
+        char[][][] g = new char[h][d][w];
+        for (char[][] layer : g) for (char[] row : layer) java.util.Arrays.fill(row, ' ');
+
+        // The backwater: two deep, a gravel bed, the cache sunk in it under the hut.
+        for (int x = 9; x <= 15; x++) {
+            for (int z = 3; z <= 8; z++) {
+                put(g, base, -2, x, z, 'g');
+                put(g, base, -1, x, z, ')');
+                put(g, base, 0, x, z, ')');
+            }
+        }
+        put(g, base, -2, 12, 5, 'X');
+
+        // Stilts, then the deck: a porch in the west two columns, the hut in the east five.
+        for (int[] s : new int[][] {{9, 3}, {9, 7}, {11, 3}, {11, 7}, {15, 3}, {15, 7}}) {
+            for (int y = -2; y <= 2; y++) put(g, base, y, s[0], s[1], 'o');
+        }
+        for (int x = 9; x <= 15; x++) for (int z = 3; z <= 7; z++) put(g, base, 3, x, z, 'p');
+        for (int y = 1; y <= 3; y++) put(g, base, y, 8, 3, '5');
+
+        // The hut: 5 x 5 outside, a door in the west wall, windows north, south and east.
+        for (int x = 11; x <= 15; x++) {
+            for (int z = 3; z <= 7; z++) {
+                if (x > 11 && x < 15 && z > 3 && z < 7) continue;
+                boolean corner = (x == 11 || x == 15) && (z == 3 || z == 7);
+                for (int y = 4; y <= 5; y++) put(g, base, y, x, z, corner ? 'z' : 'p');
+            }
+        }
+        put(g, base, 4, 11, 5, '.');
+        put(g, base, 5, 11, 5, '.');
+        for (int[] win : new int[][] {{13, 3}, {13, 7}, {15, 5}}) put(g, base, 5, win[0], win[1], 'w');
+        put(g, base, 4, 12, 4, 'B');
+        put(g, base, 4, 14, 4, 'E');
+        put(g, base, 4, 14, 5, 'e');
+        put(g, base, 5, 13, 5, '(');
+        for (int x = 11; x <= 15; x++) {
+            put(g, base, 6, x, 3, '^');
+            for (int z = 4; z <= 6; z++) put(g, base, 6, x, z, 'p');
+            put(g, base, 6, x, 7, 'v');
+            put(g, base, 7, x, 4, '^');
+            put(g, base, 7, x, 5, 'p');
+            put(g, base, 7, x, 6, 'v');
+        }
+
+        // The porch: a rail, the rack with the rod, the scale on a table and the tin.
+        for (int z = 4; z <= 7; z++) put(g, base, 4, 9, z, 'k');
+        put(g, base, 4, 10, 3, 'k');
+        put(g, base, 4, 10, 4, 'a');
+        put(g, base, 4, 10, 6, 's');
+        put(g, base, 5, 10, 6, '6');
+        put(g, base, 4, 10, 7, 'j');
+
+        // Sluice boxes on the bank, fed from a cauldron, running down to the trough at the south edge.
+        put(g, base, 1, 5, 9, 'y');
+        for (int z = 10; z <= 12; z++) put(g, base, 1, 5, z, '4');
+        // The rocker box: a cradle of boards with a handle.
+        put(g, base, 1, 2, 10, '^');
+        put(g, base, 1, 2, 11, 'p');
+        put(g, base, 1, 2, 12, 'v');
+        put(g, base, 2, 2, 11, 'k');
+        // A drying rack with a sheet over the rail.
+        for (int y = 1; y <= 2; y++) {
+            put(g, base, y, 8, 12, 'k');
+            put(g, base, y, 11, 12, 'k');
+        }
+        put(g, base, 2, 9, 12, 'k');
+        put(g, base, 2, 10, 12, 'k');
+        put(g, base, 3, 9, 12, '_');
+        put(g, base, 3, 10, 12, '_');
+        // Gravel bars, half in the water.
+        for (int[] bar : new int[][] {{9, 8}, {10, 8}, {14, 8}, {15, 8}}) put(g, base, 0, bar[0], bar[1], 'G');
+        for (int[] heap : new int[][] {{12, 10}, {13, 10}, {12, 11}, {15, 9}, {16, 8}}) put(g, base, 1, heap[0], heap[1], 'G');
+        put(g, base, 2, 12, 10, 'G');
+        // Trampled ground from the ladder to the boxes.
+        for (int z = 3; z <= 9; z++) put(g, base, 0, 8, z, ',');
+        for (int x = 5; x <= 8; x++) put(g, base, 0, x, 9, ',');
+        for (int z = 10; z <= 13; z++) put(g, base, 0, 4, z, ',');
+
+        String[][] layers = new String[h][d];
+        for (int y = 0; y < h; y++) for (int z = 0; z < d; z++) layers[y][z] = new String(g[y][z]).stripTrailing();
+        return Plan.of("placer_workings/bank", Kind.LEVELLED, layers);
+    }
+
+    /** Sets the block at height {@code y} above the ground layer; {@code base} layers lie below it. */
+    private static void put(char[][][] g, int base, int y, int x, int z, char c) {
+        g[base + y][z][x] = c;
+    }
 
     private static String[] portalWalls() {
         return new String[] {

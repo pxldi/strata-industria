@@ -37,6 +37,8 @@ public final class CampLoot {
     public static final String BLOOMERY_CACHE = "chests/ruined_bloomery/cache";
     public static final String BLOOMERY_WORKSHOP = "chests/ruined_bloomery/workshop";
     public static final String PLACER_CACHE = "chests/placer_workings/cache";
+    public static final String PLACER_HUT = "chests/placer_workings/hut";
+    public static final String PLACER_TIN = "chests/placer_workings/tin";
     public static final String DIG_PROSPECTOR = "archaeology/prospector_camp";
     public static final String DIG_SPOIL = "archaeology/mining_camp_spoil";
     public static final String DIG_ADIT = "archaeology/collapsed_adit";
@@ -51,7 +53,7 @@ public final class CampLoot {
             case "mining_camp/ore_sorting", "mining_camp/tramway" -> key(MINING_ORE_CART, mineral);
             case "adit/cache" -> key(ADIT_CACHE, mineral);
             case "ruined_bloomery/works" -> key(BLOOMERY_WORKSHOP);
-            case "placer_workings/bank" -> key(PLACER_CACHE);
+            case "placer_workings/bank" -> key(PLACER_HUT);
             default -> null;
         };
     }
