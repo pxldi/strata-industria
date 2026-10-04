@@ -2,7 +2,13 @@ package dev.strataindustria.smithing;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import dev.strataindustria.registry.ModBlockEntities;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -20,15 +26,15 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * An anvil (spec 9.1). Stone anvils are raw igneous rock with a worked top; the bronze anvil is a
- * proper anvil. Both open the smithing screen; {@code tier} is the highest metal tier they can work.
+ * An anvil (spec 9.1). Stone anvils are raw igneous rock with a worked top; the iron anvil is a
+ * proper anvil. Work happens in the world (see {@link AnvilBlockEntity}); {@code tier} is the highest metal tier they can work.
  */
 public class AnvilBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
     private static final VoxelShape STONE = Block.box(0, 0, 0, 16, 15, 16);
-    private static final VoxelShape BRONZE_X = Shapes.or(Block.box(2, 0, 2, 14, 4, 14), Block.box(4, 4, 3, 12, 5, 13),
+    private static final VoxelShape IRON_X = Shapes.or(Block.box(2, 0, 2, 14, 4, 14), Block.box(4, 4, 3, 12, 5, 13),
             Block.box(6, 5, 4, 10, 10, 12), Block.box(3, 10, 0, 13, 16, 16));
-    private static final VoxelShape BRONZE_Z = Shapes.or(Block.box(2, 0, 2, 14, 4, 14), Block.box(3, 4, 4, 13, 5, 12),
+    private static final VoxelShape IRON_Z = Shapes.or(Block.box(2, 0, 2, 14, 4, 14), Block.box(3, 4, 4, 13, 5, 12),
             Block.box(4, 5, 6, 12, 10, 10), Block.box(0, 10, 3, 16, 16, 13));
 
     private final int tier;
@@ -62,13 +68,32 @@ public class AnvilBlock extends BaseEntityBlock {
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (stone) return STONE;
-        return state.getValue(FACING).getAxis() == Direction.Axis.X ? BRONZE_X : BRONZE_Z;
+        return state.getValue(FACING).getAxis() == Direction.Axis.X ? IRON_X : IRON_Z;
+    }
+
+    /** A metal piece in hand is laid on the anvil, one at a time. Hammers and patterns are handled in SmithingEvents. */
+    @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        if (!AnvilBlockEntity.workable(stack)) return InteractionResult.TRY_WITH_EMPTY_HAND;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (player instanceof ServerPlayer server && level.getBlockEntity(pos) instanceof AnvilBlockEntity anvil && anvil.place(server, stack)) {
+            return InteractionResult.SUCCESS;
+        }
+        return InteractionResult.TRY_WITH_EMPTY_HAND;
+    }
+
+    /** Empty hand: take back the finished piece, else what is lying on the anvil. */
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (player instanceof ServerPlayer server && level.getBlockEntity(pos) instanceof AnvilBlockEntity anvil) anvil.take(server);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof AnvilBlockEntity anvil) player.openMenu(anvil);
-        return InteractionResult.SUCCESS;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide() ? null : createTickerHelper(type, ModBlockEntities.ANVIL.get(), AnvilBlockEntity::serverTick);
     }
 
     @Override

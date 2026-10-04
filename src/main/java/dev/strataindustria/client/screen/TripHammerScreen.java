@@ -6,15 +6,19 @@ import dev.strataindustria.machine.TripHammerMenu;
 import dev.strataindustria.power.Kinetic;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
-/** Trip hammer: pattern and workpiece slots, then what it is doing and its network line. */
+/** Trip hammer: shape button and workpiece slot, then what it is doing and its network line. */
 public class TripHammerScreen extends AbstractContainerScreen<TripHammerMenu> {
     private static final Identifier BACKGROUND = StrataIndustria.id("textures/gui/trip_hammer.png");
     public static final int STATUS_Y = 62;
+    private final ShapeButton shapeButton = new ShapeButton(TripHammerMenu.SHAPE_X, TripHammerMenu.SLOT_Y);
 
     public TripHammerScreen(TripHammerMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, 176, 166);
@@ -25,6 +29,22 @@ public class TripHammerScreen extends AbstractContainerScreen<TripHammerMenu> {
     public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         super.extractBackground(g, mouseX, mouseY, partialTick);
         g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+        shapeButton.extract(g, leftPos, topPos, menu.shape(), mouseX, mouseY);
+    }
+
+    @Override
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (shapeButton.click(event, menu.containerId, leftPos, topPos)) {
+            minecraft.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
+            return true;
+        }
+        return super.mouseClicked(event, doubleClick);
+    }
+
+    @Override
+    protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractTooltip(g, mouseX, mouseY);
+        if (shapeButton.over(mouseX, mouseY, leftPos, topPos)) shapeButton.tooltip(g, font, menu.shape(), mouseX, mouseY);
     }
 
     @Override

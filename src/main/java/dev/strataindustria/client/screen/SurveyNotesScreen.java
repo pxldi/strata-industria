@@ -27,6 +27,8 @@ import net.minecraft.world.item.ItemStack;
  */
 public class SurveyNotesScreen extends Screen {
     private static final Identifier PAGE = StrataIndustria.id("textures/gui/survey_notes.png");
+    /** The same parchment without the compass rose, for handwritten ledger pages. */
+    private static final Identifier LEDGER_PAGE = StrataIndustria.id("textures/gui/survey_ledger.png");
     /** Eight hand-drawn arrows (ahead, then clockwise) and a tick mark, 16 px each. */
     private static final Identifier ARROWS = StrataIndustria.id("textures/gui/survey_arrows.png");
     private static final int WIDTH = 176, HEIGHT = 166;
@@ -57,8 +59,8 @@ public class SurveyNotesScreen extends Screen {
     @Override
     public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         super.extractRenderState(g, mouseX, mouseY, partialTick);
-        g.blit(RenderPipelines.GUI_TEXTURED, PAGE, left, top, 0, 0, WIDTH, HEIGHT, 256, 256);
         String ledger = SurveyNotesItem.ledger(stack);
+        g.blit(RenderPipelines.GUI_TEXTURED, ledger != null ? LEDGER_PAGE : PAGE, left, top, 0, 0, WIDTH, HEIGHT, 256, 256);
         g.centeredText(font, ledger != null ? Component.translatable("item." + StrataIndustria.MOD_ID + ".survey_notes.ledger") : title,
                 left + WIDTH / 2, top + 8, INK);
 

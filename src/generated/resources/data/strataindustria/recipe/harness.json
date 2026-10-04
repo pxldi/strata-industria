@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "I": "strataindustria:wrought_iron_rod",
+    "L": "minecraft:leather",
+    "R": "strataindustria:rope"
+  },
+  "pattern": [
+    "L L",
+    "LRL",
+    " I "
+  ],
+  "result": {
+    "id": "strataindustria:harness"
+  }
+}

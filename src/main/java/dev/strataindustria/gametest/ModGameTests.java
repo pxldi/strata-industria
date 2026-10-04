@@ -16,9 +16,6 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.heat.Heat;
-import dev.strataindustria.knapping.GridPattern;
-import dev.strataindustria.knapping.KnappingInput;
-import dev.strataindustria.knapping.KnappingMenu;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.machine.BellowsBlock;
 import dev.strataindustria.machine.MillstoneBlockEntity;
@@ -41,12 +38,9 @@ import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.HitType;
-import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.smithing.Smithing;
-import java.util.ArrayDeque;
+import dev.strataindustria.smithing.SmithingProgress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,10 +93,11 @@ public final class ModGameTests {
     private static final Map<String, Consumer<GameTestHelper>> TESTS = new LinkedHashMap<>();
 
     static {
-        TESTS.put("knapping_patterns", ModGameTests::knappingPatterns);
-        TESTS.put("knapping_clicks", ModGameTests::knappingClicks);
+        ShapingGameTests.register(TESTS);
+        FellingGameTests.register(TESTS);
+        FlintStrikeGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
-        TESTS.put("smithing_solvable", ModGameTests::smithingSolvable);
+        TESTS.put("smithing_shapes", ModGameTests::smithingShapes);
         TESTS.put("item_heat", ModGameTests::itemHeat);
         TESTS.put("pit_kiln", ModGameTests::pitKiln);
         TESTS.put("easy_defaults", ModGameTests::easyDefaults);
@@ -110,7 +105,17 @@ public final class ModGameTests {
         TESTS.put("charcoal_pit_exposed", ModGameTests::charcoalPitExposed);
         TESTS.put("crucible_casting", ModGameTests::crucibleCasting);
         TESTS.put("anvil_smithing", ModGameTests::anvilSmithing);
-        TESTS.put("anvil_quick_smith", ModGameTests::anvilQuickSmith);
+        TESTS.put("anvil_true_blow", ModGameTests::anvilTrueBlow);
+        TESTS.put("anvil_cold_thud", ModGameTests::anvilColdThud);
+        TESTS.put("anvil_reheat_keeps_progress", ModGameTests::anvilReheat);
+        TESTS.put("anvil_working_heat", ModGameTests::anvilWorkingHeat);
+        TESTS.put("anvil_cycle_shape", ModGameTests::anvilCycleShape);
+        TESTS.put("anvil_place_and_take", ModGameTests::anvilPlaceAndTake);
+        TESTS.put("anvil_weld", ModGameTests::anvilWeld);
+        TESTS.put("anvil_weld_cold", ModGameTests::anvilWeldCold);
+        TESTS.put("anvil_bloom_weld", ModGameTests::anvilBloomWeld);
+        TESTS.put("anvil_bloom_refine", ModGameTests::anvilBloomRefine);
+        TESTS.put("anvil_quench", ModGameTests::anvilQuench);
         TESTS.put("kinetic_network", ModGameTests::kineticNetwork);
         TESTS.put("core_sample", ModGameTests::coreSample);
         TESTS.put("sluice_washing", ModGameTests::sluiceWashing);
@@ -129,9 +134,13 @@ public final class ModGameTests {
         MultiblockGameTests.register(TESTS);
         FootGameTests.register(TESTS);
         RailGameTests.register(TESTS);
+        PonyGameTests.register(TESTS);
+        RailwayGameTests.register(TESTS);
+        LocomotiveGameTests.register(TESTS);
         OutpostGameTests.register(TESTS);
         BronzeGameTests.register(TESTS);
         BellGameTests.register(TESTS);
+        TwoAnvilGameTests.register(TESTS);
         CabinetGameTests.register(TESTS);
         JournalGameTests.register(TESTS);
         FloraGameTests.register(TESTS);
@@ -139,6 +148,7 @@ public final class ModGameTests {
         PreviewExport.register(TESTS);
         CollectibleGameTests.register(TESTS);
         SharedBlockGameTests.register(TESTS);
+        BranchGameTests.register(TESTS);
     }
 
     private ModGameTests() {}
@@ -185,109 +195,28 @@ public final class ModGameTests {
         }
     }
 
-    // Knapping and clay forming (spec 3.2, 4.1): every pattern finds exactly one recipe, mirrored too.
-
-    private static void knappingPatterns(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        ItemStack rock = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.GRANITE).get());
-        ItemStack flint = new ItemStack(Items.FLINT);
-        ItemStack clay = new ItemStack(Items.CLAY_BALL);
-
-        Map<ItemStack, List<String[]>> expected = new LinkedHashMap<>();
-        List<String[]> stone = List.of(
-                pattern(ModItems.STONE_AXE_HEAD.getId().getPath(), ".#...", "####.", "#####", "####.", ".#..."),
-                pattern(ModItems.STONE_KNIFE_BLADE.getId().getPath(), "#....", "##...", ".##..", "..##.", "...##"),
-                pattern(ModItems.STONE_SHOVEL_HEAD.getId().getPath(), ".###.", ".###.", ".###.", ".###.", "..#.."),
-                pattern(ModItems.STONE_HOE_HEAD.getId().getPath(), "#####", "##...", ".....", ".....", "....."),
-                pattern(ModItems.STONE_HAMMER_HEAD.getId().getPath(), "#####", "#####", "..#..", ".....", "....."),
-                pattern(ModItems.STONE_SPEAR_HEAD.getId().getPath(), "..#..", ".###.", ".###.", "..#..", "..#.."),
-                pattern(ModItems.STONE_PICKAXE_HEAD.getId().getPath(), ".###.", "#...#", ".....", ".....", "....."));
-        expected.put(flint, stone);
-        List<String[]> rockPatterns = new ArrayList<>(stone);
-        rockPatterns.add(pattern(ModItems.QUERNSTONE.getId().getPath(), ".###.", "#####", "##.##", "#####", ".###."));
-        expected.put(rock, rockPatterns);
-        expected.put(clay, List.of(
-                pattern("unfired_small_vessel", ".....", ".###.", "#####", "#####", ".###."),
-                pattern("unfired_large_vessel", ".###.", "#####", "#####", "#####", ".###."),
-                pattern("unfired_crucible", "##.##", "#...#", "#...#", "#...#", "#####"),
-                pattern("unfired_ingot_mold", ".....", "#####", "#...#", "#####", "....."),
-                pattern("unfired_brick", "##.##", "##.##", ".....", "##.##", "##.##"),
-                pattern("unfired_pickaxe_head_mold", "#...#", ".###.", "#####", "#####", "#####"),
-                pattern("unfired_axe_head_mold", "#.###", "....#", ".....", "....#", "#.###"),
-                pattern("unfired_shovel_head_mold", "#...#", "#...#", "#...#", "#...#", "##.##"),
-                pattern("unfired_hoe_head_mold", ".....", "..###", "#####", "#####", "#####"),
-                pattern("unfired_knife_blade_mold", ".####", "..###", "#..##", "##..#", "###.."),
-                pattern("unfired_hammer_head_mold", ".....", ".....", "##.##", "#####", "#####"),
-                pattern("unfired_saw_blade_mold", "#####", "#####", ".....", ".....", "#####"),
-                pattern("unfired_sword_blade_mold", "###..", "##..#", "#..##", "..###", ".####")));
-
-        for (var entry : expected.entrySet()) {
-            ItemStack material = entry.getKey();
-            for (String[] p : entry.getValue()) {
-                int mask = GridPattern.parse(List.of(p).subList(1, 6)).getOrThrow();
-                for (int shape : new int[] {mask, GridPattern.mirror(mask)}) {
-                    List<RecipeHolder<KnappingRecipe>> found = level.recipeAccess().recipeMap()
-                            .getRecipesFor(ModRecipes.KNAPPING.get(), new KnappingInput(material, shape), level).toList();
-                    helper.assertValueEqual(found.size(), 1, "recipes for " + p[0] + " from " + material.getItem());
-                    ItemStack result = found.get(0).value().assemble(new KnappingInput(material, shape));
-                    helper.assertValueEqual(result.getItem().builtInRegistryHolder().key().identifier().getPath(), p[0],
-                            "knapping result from " + material.getItem());
-                }
-            }
-        }
-        // Clay has no stone patterns and stone has no clay patterns.
-        int crucible = GridPattern.parse(List.of("##.##", "#...#", "#...#", "#...#", "#####")).getOrThrow();
-        helper.assertTrue(level.recipeAccess().recipeMap()
-                .getRecipesFor(ModRecipes.KNAPPING.get(), new KnappingInput(flint, crucible), level).findAny().isEmpty(),
-                "flint should not form a crucible");
-        helper.succeed();
-    }
-
-    private static String[] pattern(String result, String... rows) {
-        String[] out = new String[6];
-        out[0] = result;
-        System.arraycopy(rows, 0, out, 1, 5);
-        return out;
-    }
-
     // Alloys (spec 7.2 and 7.4): the three example batches, a near miss, and slag at 90%.
 
-    /** Right-click opens the grid exactly once, and a strike from the open menu removes a cell and spends the material. */
-    private static void knappingClicks(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        for (String stone : new String[] {"loose_basalt", "flint"}) {
-            FakePlayer knapper = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "knapper"));
-            var item = stone.equals("flint") ? (net.minecraft.world.item.Item) Items.FLINT : ModItems.LOOSE_ROCK.get(Rock.BASALT).get();
-            knapper.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item, 16));
-            var result = knapper.gameMode.useItem(knapper, level, knapper.getMainHandItem(), InteractionHand.MAIN_HAND);
-            helper.assertTrue(result.consumesAction(), stone + ": use should succeed, got " + result);
-            // FakePlayer cannot open screens, so the menu is built the way Knapping.tryOpen builds it.
-            KnappingMenu menu = new KnappingMenu(7, knapper.getInventory(), knapper.getMainHandItem().copyWithCount(1), InteractionHand.MAIN_HAND);
-            knapper.containerMenu = menu;
-            int id = menu.containerId;
-            helper.assertTrue(menu.isKept(12), stone + ": every cell starts kept");
-            helper.assertTrue(menu.clickMenuButton(knapper, 12), stone + ": striking a cell should be accepted");
-            helper.assertTrue(!menu.isKept(12), stone + ": the struck cell should be gone");
-            helper.assertTrue(menu.hasStarted(), stone + ": the first strike starts the work");
-            helper.assertTrue(knapper.containerMenu == menu && knapper.containerMenu.containerId == id, stone + ": the menu stays open");
-        }
-        helper.succeed();
-    }
-
     private static void alloyRules(GameTestHelper helper) {
-        Melt bronze = melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 9)
-                .plus(melt(ModItems.crushedOre(OreMineral.CASSITERITE, OreGrade.NORMAL), 1));
-        helper.assertValueEqual(bronze.total(), 350, "bronze batch units");
-        helper.assertValueEqual(Alloy.resultOf(bronze).orElse(null), Metal.BRONZE, "9 copper + 1 cassiterite");
+        Melt bronze = melt(Items.COPPER_INGOT, 3).plus(melt(ModItems.ingot(Metal.TIN), 1));
+        helper.assertValueEqual(bronze.total(), 400, "bronze batch units");
+        helper.assertValueEqual(Alloy.resultOf(bronze).orElse(null), Metal.BRONZE, "3 copper + 1 tin");
+        helper.assertValueEqual(Alloy.resultOf(melt(Items.COPPER_INGOT, 6).plus(melt(ModItems.ingot(Metal.TIN), 2))).orElse(null),
+                Metal.BRONZE, "any multiple works");
+        Melt nuggets = melt(ModItems.NUGGETS.get(Metal.COPPER).get(), 9).plus(melt(ModItems.NUGGETS.get(Metal.TIN).get(), 3));
+        helper.assertValueEqual(Alloy.resultOf(nuggets).orElse(null), Metal.BRONZE, "3 copper + 1 tin as nuggets");
+        helper.assertTrue(Alloy.resultOf(melt(Items.COPPER_INGOT, 2).plus(melt(ModItems.ingot(Metal.TIN), 1))).isEmpty(), "2 copper + 1 tin is no alloy");
+        Alloy.Missing missing = Alloy.BRONZE.missing(melt(Items.COPPER_INGOT, 3)).orElseThrow();
+        helper.assertValueEqual(missing.metal(), Metal.TIN, "bronze wants tin");
+        helper.assertValueEqual(missing.units(), 100, "one tin ingot");
 
-        Melt arsenical = melt(ModItems.crushedOre(OreMineral.TENNANTITE, OreGrade.NORMAL), 5)
-                .plus(melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 4));
-        helper.assertValueEqual(Alloy.resultOf(arsenical).orElse(null), Metal.ARSENICAL_BRONZE, "5 tennantite + 4 copper");
+        Melt arsenical = new Melt(Map.of(Metal.COPPER, 700, Metal.ARSENIC, 100));
+        helper.assertValueEqual(Alloy.resultOf(arsenical).orElse(null), Metal.ARSENICAL_BRONZE, "7 copper + 1 arsenic");
 
-        Melt bismuth = melt(Items.COPPER_INGOT, 3).plus(melt(ModItems.crushedOre(OreMineral.BISMUTHINITE, OreGrade.RICH), 1));
-        helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "3 copper ingots + 1 rich bismuthinite");
+        Melt bismuth = new Melt(Map.of(Metal.COPPER, 500, Metal.BISMUTH, 100));
+        helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "5 copper + 1 bismuth");
 
-        Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13), 0);
+        Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13));
         helper.assertTrue(Alloy.resultOf(off).isEmpty(), "87% copper and 13% tin should be no known alloy");
 
         ItemStack slag = new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
@@ -307,67 +236,26 @@ public final class ModGameTests {
         return total;
     }
 
-    // Smithing (spec 9.2): every recipe can be finished at every target the world can pick.
+    // Anvil striking (redesign L2): every shape is a few blows, nothing takes more than a dozen.
 
-    private static void smithingSolvable(GameTestHelper helper) {
+    private static void smithingShapes(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        Map<String, List<Rule>> ruleSets = new LinkedHashMap<>();
         int recipes = 0;
         for (Metal metal : Metal.values()) {
             if (!metal.isToolMetal()) continue;
             ItemStack ingot = new ItemStack(ModItems.ingot(metal), 2);
             for (RecipeHolder<AnvilRecipe> recipe : level.recipeAccess().recipeMap()
                     .getRecipesFor(ModRecipes.ANVIL.get(), new SingleRecipeInput(ingot), level).toList()) {
-                List<Rule> rules = recipe.value().rules();
-                StringBuilder key = new StringBuilder();
-                for (Rule rule : rules) key.append(rule.encode()).append(',');
-                ruleSets.putIfAbsent(key.toString(), rules);
+                int blows = AnvilBlockEntity.blowsFor(recipe.value(), ingot);
+                helper.assertTrue(blows >= 1 && blows <= 8, recipe.id().identifier() + " takes " + blows + " blows");
                 recipes++;
             }
         }
-        helper.assertTrue(recipes >= 40, "expected at least 40 anvil recipes, found " + recipes);
-        for (var entry : ruleSets.entrySet()) {
-            for (int target = Smithing.MIN_TARGET; target <= Smithing.MAX_TARGET; target++) {
-                if (Smithing.minHits(target, entry.getValue()) <= 0) {
-                    throw helper.assertionException("rules %s cannot reach target %s", entry.getKey(), target);
-                }
-            }
-            // The cached solver agrees with an independent search.
-            for (int target : new int[] {Smithing.MIN_TARGET, 75, Smithing.MAX_TARGET}) {
-                helper.assertValueEqual(solve(target, entry.getValue()).size(), Smithing.minHits(target, entry.getValue()),
-                        "fewest hits for rules " + entry.getKey() + " at " + target);
-            }
-        }
+        helper.assertTrue(recipes >= 40, "expected at least 40 anvil shapes, found " + recipes);
+        helper.assertValueEqual(Smithing.totalBlows(5, Metal.COPPER), 5, "copper blows");
+        helper.assertValueEqual(Smithing.totalBlows(5, Metal.WROUGHT_IRON), 6, "iron takes one more");
+        helper.assertValueEqual(Smithing.totalBlows(5, Metal.STEEL), 7, "steel takes two more");
         helper.succeed();
-    }
-
-    /** Fewest hits to finish, by breadth-first search over position and the last three hits. */
-    static List<HitType> solve(int target, List<Rule> rules) {
-        record State(int position, HitType last, HitType second, HitType third) {}
-        Map<State, State> parent = new HashMap<>();
-        Map<State, HitType> via = new HashMap<>();
-        State start = new State(0, null, null, null);
-        ArrayDeque<State> queue = new ArrayDeque<>();
-        queue.add(start);
-        parent.put(start, start);
-        while (!queue.isEmpty()) {
-            State state = queue.poll();
-            if (Smithing.done(state.position, target, rules, state.last, state.second, state.third)) {
-                List<HitType> path = new ArrayList<>();
-                for (State s = state; s != start; s = parent.get(s)) path.add(0, via.get(s));
-                return path;
-            }
-            for (HitType hit : HitType.VALUES) {
-                int next = state.position + hit.delta();
-                if (next < 0 || next > Smithing.MAX_POSITION) continue;
-                State to = new State(next, hit, state.last, state.second);
-                if (parent.containsKey(to)) continue;
-                parent.put(to, state);
-                via.put(to, hit);
-                queue.add(to);
-            }
-        }
-        return List.of();
     }
 
     // Heat (spec 5.2): the lazy temperature after a minute out of the forge.
@@ -519,91 +407,291 @@ public final class ModGameTests {
         helper.succeed();
     }
 
-    // Smithing on an anvil (spec 9.2): a hot copper ingot smithed in the fewest hits makes a +10 plate.
+    // ---------------------------------------------------------------- the anvil, struck in the world
 
-    private static void anvilSmithing(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+    private static final long STEP = 20, BEAT = Smithing.BEAT_TICKS;
+
+    private static AnvilBlockEntity anvilAt(ServerLevel level, BlockPos pos) {
         level.setBlock(pos, ModBlocks.STONE_ANVILS.get(Rock.BASALT).get().defaultBlockState(), Block.UPDATE_ALL);
-        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
-
-        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
-        smith.getInventory().setItem(0, new ItemStack(ModItems.STONE_HAMMER.get()));
-
-        ItemStack ingot = new ItemStack(Items.COPPER_INGOT);
-        Heat.set(ingot, 1000.0f, level.getGameTime());
-        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
-
-        RecipeHolder<AnvilRecipe> plate = level.recipeAccess().recipeMap()
-                .getRecipesFor(ModRecipes.ANVIL.get(), new SingleRecipeInput(ingot), level)
-                .filter(r -> r.value().result().create().is(ModItems.PLATES.get(Metal.COPPER).get()))
-                .findFirst().orElseThrow(() -> helper.assertionException("no copper plate recipe"));
-        int plan = -1;
-        for (int i = 0; i < AnvilBlockEntity.MAX_PLANS; i++) {
-            if (anvil.plans().getItem(i).is(ModItems.PLATES.get(Metal.COPPER).get())) plan = i;
-        }
-        helper.assertTrue(plan >= 0, "the anvil should offer a copper plate");
-        anvil.choose(plan);
-        helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.READY, "anvil status");
-
-        int target = Smithing.target(level, plate.id(), plate.value());
-        List<HitType> hits = solve(target, plate.value().rules());
-        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable at target " + target);
-        for (HitType hit : hits) anvil.hit(smith, hit);
-
-        ItemStack out = anvil.getItem(AnvilBlockEntity.OUTPUT);
-        helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "the anvil should hold a copper plate, got " + out);
-        Quality quality = out.get(ModDataComponents.QUALITY.get());
-        helper.assertTrue(quality != null && quality.craft() == 10, "a perfect smith should give +10 craft quality, got " + quality);
-        helper.assertTrue(anvil.getItem(AnvilBlockEntity.INPUT).isEmpty(), "the ingot should be used up");
-        helper.succeed();
+        return (AnvilBlockEntity) level.getBlockEntity(pos);
     }
 
-    // Quick smith: a plan finished by hand once can be finished again at normal quality; a stranger cannot.
-
-    private static void anvilQuickSmith(GameTestHelper helper) {
-        ServerLevel level = helper.getLevel();
-        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.STONE_ANVILS.get(Rock.BASALT).get().defaultBlockState(), Block.UPDATE_ALL);
-        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+    private static FakePlayer smithWithHammer(ServerLevel level) {
         FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
         smith.getInventory().setItem(0, new ItemStack(ModItems.STONE_HAMMER.get()));
-        FakePlayer stranger = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "stranger"));
-        stranger.getInventory().setItem(0, new ItemStack(ModItems.STONE_HAMMER.get()));
+        return smith;
+    }
 
-        ItemStack ingot = new ItemStack(Items.COPPER_INGOT);
-        Heat.set(ingot, 1000.0f, level.getGameTime());
-        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
+    private static ItemStack hotIngot(ServerLevel level, net.minecraft.world.item.Item item, float temperature) {
+        ItemStack ingot = new ItemStack(item);
+        Heat.set(ingot, temperature, level.getGameTime());
+        return ingot;
+    }
+
+    /** Puts the copper plate shape on the anvil's piece. */
+    private static void selectCopperPlate(GameTestHelper helper, ServerLevel level, AnvilBlockEntity anvil, ItemStack ingot) {
         RecipeHolder<AnvilRecipe> plate = level.recipeAccess().recipeMap()
                 .getRecipesFor(ModRecipes.ANVIL.get(), new SingleRecipeInput(ingot), level)
                 .filter(r -> r.value().result().create().is(ModItems.PLATES.get(Metal.COPPER).get()))
                 .findFirst().orElseThrow(() -> helper.assertionException("no copper plate recipe"));
         helper.assertTrue(anvil.select(plate.id()), "the anvil should offer a copper plate");
-        helper.assertTrue(!anvil.knowsPlan(smith), "nothing smithed yet");
+    }
 
-        // Before the first hand craft, Quick does nothing.
-        anvil.quick(smith);
-        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "quick smith should wait for a hand craft");
+    private static void strike(AnvilBlockEntity anvil, FakePlayer smith, long... ticks) {
+        for (long tick : ticks) anvil.strikeBy(smith, tick);
+    }
 
-        for (HitType hit : solve(Smithing.target(level, plate.id(), plate.value()), plate.value().rules())) anvil.hit(smith, hit);
-        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(ModItems.PLATES.get(Metal.COPPER).get()), "the hand craft should finish");
-        anvil.setItem(AnvilBlockEntity.OUTPUT, ItemStack.EMPTY);
+    // A hot copper ingot struck three times on bright heat makes a +4 plate; blows too close together are ignored.
 
-        ItemStack second = new ItemStack(Items.COPPER_INGOT);
-        Heat.set(second, 1000.0f, level.getGameTime());
-        anvil.setItem(AnvilBlockEntity.INPUT, second);
-        helper.assertTrue(anvil.select(plate.id()), "the anvil should offer a copper plate again");
-        helper.assertTrue(anvil.knowsPlan(smith), "the smith should know the plan now");
-        helper.assertTrue(!anvil.knowsPlan(stranger), "another player has not smithed it");
+    private static void anvilSmithing(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        AnvilBlockEntity anvil = anvilAt(level, helper.absolutePos(new BlockPos(4, 1, 4)));
+        FakePlayer smith = smithWithHammer(level);
+        ItemStack ingot = hotIngot(level, Items.COPPER_INGOT, 1000.0f);
+        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
+        selectCopperPlate(helper, level, anvil, ingot);
+        helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.READY, "anvil status");
 
-        anvil.quick(stranger);
-        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "a stranger cannot quick smith it");
-        anvil.quick(smith);
+        strike(anvil, smith, 100, 101, 102);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "three clicks in a row are one blow, so nothing is finished");
+        strike(anvil, smith, 100 + STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "two blows are not enough for a plate");
+        strike(anvil, smith, 100 + 2 * STEP);
+
         ItemStack out = anvil.getItem(AnvilBlockEntity.OUTPUT);
-        helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "quick smith should give a copper plate, got " + out);
+        helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "the anvil should hold a copper plate, got " + out);
         Quality quality = out.get(ModDataComponents.QUALITY.get());
-        helper.assertTrue(quality != null && quality.craft() == Smithing.QUICK_CRAFT, "quick smith should give normal craft quality, got " + quality);
+        helper.assertTrue(quality != null && quality.craft() == Smithing.MAX_CRAFT, "bright blows should give +" + Smithing.MAX_CRAFT + " craft quality, got " + quality);
         helper.assertTrue(anvil.getItem(AnvilBlockEntity.INPUT).isEmpty(), "the ingot should be used up");
+        helper.succeed();
+    }
+
+    // A strike on the glint is a true blow and counts twice: a plate takes two clicks instead of three.
+
+    private static void anvilTrueBlow(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        AnvilBlockEntity anvil = anvilAt(level, helper.absolutePos(new BlockPos(4, 1, 4)));
+        FakePlayer smith = smithWithHammer(level);
+        ItemStack ingot = hotIngot(level, Items.COPPER_INGOT, 1000.0f);
+        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
+        selectCopperPlate(helper, level, anvil, ingot);
+
+        strike(anvil, smith, 100);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "one blow does not finish a plate");
+        strike(anvil, smith, 100 + BEAT + 3);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(ModItems.PLATES.get(Metal.COPPER).get()),
+                "the second click was on the glint, so it counts twice and finishes the plate");
+
+        // Outside the window it is a normal blow.
+        anvil.setItem(AnvilBlockEntity.OUTPUT, ItemStack.EMPTY);
+        ItemStack second = hotIngot(level, Items.COPPER_INGOT, 1000.0f);
+        anvil.setItem(AnvilBlockEntity.INPUT, second);
+        selectCopperPlate(helper, level, anvil, second);
+        strike(anvil, smith, 1000, 1000 + BEAT + 5);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "a click off the glint counts once");
+        helper.succeed();
+    }
+
+    // Cold metal only thuds: nothing is struck, nothing is lost, and the hammer is not worn.
+
+    private static void anvilColdThud(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        AnvilBlockEntity anvil = anvilAt(level, helper.absolutePos(new BlockPos(4, 1, 4)));
+        FakePlayer smith = smithWithHammer(level);
+        ItemStack ingot = new ItemStack(Items.COPPER_INGOT);
+        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
+        selectCopperPlate(helper, level, anvil, ingot);
+        helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.TOO_COLD, "a cold ingot");
+        strike(anvil, smith, 100, 100 + STEP, 100 + 2 * STEP, 100 + 3 * STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "cold metal does not take a shape");
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.INPUT).is(Items.COPPER_INGOT), "the ingot stays");
+        SmithingProgress progress = anvil.getItem(AnvilBlockEntity.INPUT).get(ModDataComponents.SMITHING_PROGRESS.get());
+        helper.assertTrue(progress == null || progress.blows() == 0, "no progress on cold metal");
+        helper.assertValueEqual(smith.getInventory().getItem(0).getDamageValue(), 0, "the hammer is not worn by a thud");
+        helper.succeed();
+    }
+
+    // Back to the forge and back again: the piece keeps the blows it has taken.
+
+    private static void anvilReheat(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        AnvilBlockEntity anvil = anvilAt(level, helper.absolutePos(new BlockPos(4, 1, 4)));
+        FakePlayer smith = smithWithHammer(level);
+        ItemStack ingot = hotIngot(level, Items.COPPER_INGOT, 1000.0f);
+        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
+        selectCopperPlate(helper, level, anvil, ingot);
+        strike(anvil, smith, 100);
+
+        helper.assertTrue(anvil.take(smith), "an empty hand takes the piece back");
+        ItemStack back = smith.getInventory().getItem(1);
+        SmithingProgress progress = back.get(ModDataComponents.SMITHING_PROGRESS.get());
+        helper.assertTrue(progress != null && progress.blows() == 1, "the piece carries its blow, got " + progress);
+        Heat.set(back, 1000.0f, level.getGameTime());
+        helper.assertTrue(anvil.place(smith, back), "the reheated piece goes back on the anvil");
+        strike(anvil, smith, 200, 200 + STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(ModItems.PLATES.get(Metal.COPPER).get()),
+                "two more blows finish the plate: 1 + 2 = 3");
+        helper.succeed();
+    }
+
+    // Working heat (hot enough, not glowing) still forges, but earns no craft quality.
+
+    private static void anvilWorkingHeat(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        AnvilBlockEntity anvil = anvilAt(level, helper.absolutePos(new BlockPos(4, 1, 4)));
+        FakePlayer smith = smithWithHammer(level);
+        int working = Metal.COPPER.workingTemperature();
+        float dull = working + 10.0f;
+        helper.assertTrue(!Smithing.isBright(dull, working), "just over working heat is not bright");
+        ItemStack ingot = hotIngot(level, Items.COPPER_INGOT, dull);
+        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
+        selectCopperPlate(helper, level, anvil, ingot);
+        strike(anvil, smith, 100, 100 + STEP, 100 + 2 * STEP);
+        ItemStack out = anvil.getItem(AnvilBlockEntity.OUTPUT);
+        helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "working heat finishes the plate, got " + out);
+        Quality quality = out.get(ModDataComponents.QUALITY.get());
+        helper.assertTrue(quality != null && quality.craft() == 0, "no bright blows, no craft part, got " + quality);
+        helper.assertValueEqual(Smithing.craftQuality(2, 4), 2, "half bright blows");
+        helper.succeed();
+    }
+
+    // Sneak + hammer walks through the shapes the metal can take, and the anvil remembers the last one.
+
+    private static void anvilCycleShape(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        AnvilBlockEntity anvil = anvilAt(level, helper.absolutePos(new BlockPos(4, 1, 4)));
+        FakePlayer smith = smithWithHammer(level);
+        anvil.setItem(AnvilBlockEntity.INPUT, hotIngot(level, Items.COPPER_INGOT, 1000.0f));
+        var shapes = anvil.shapes(level);
+        helper.assertTrue(shapes.size() >= 4, "copper takes several shapes, found " + shapes.size());
+        var first = anvil.current(level).orElseThrow();
+        anvil.cycleShape(smith);
+        var second = anvil.current(level).orElseThrow();
+        helper.assertTrue(!first.key().equals(second.key()), "cycling changes the shape");
+        for (int i = 1; i < shapes.size(); i++) anvil.cycleShape(smith);
+        helper.assertValueEqual(anvil.current(level).orElseThrow().key(), first.key(), "a full turn comes back round");
+        anvil.cycleShape(smith);
+        ItemStack taken = anvil.input().copy();
+        anvil.take(smith);
+        Heat.set(taken, 1000.0f, level.getGameTime());
+        taken.remove(ModDataComponents.SMITHING_PROGRESS.get());
+        anvil.place(smith, taken);
+        helper.assertValueEqual(anvil.current(level).orElseThrow().key(), second.key(), "the anvil starts on the last shape used");
+        helper.succeed();
+    }
+
+    // An empty hand takes the finished piece first; pieces go down one at a time.
+
+    private static void anvilPlaceAndTake(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        AnvilBlockEntity anvil = anvilAt(level, helper.absolutePos(new BlockPos(4, 1, 4)));
+        FakePlayer smith = smithWithHammer(level);
+        ItemStack held = hotIngot(level, Items.COPPER_INGOT, 900.0f);
+        held.setCount(3);
+        smith.getInventory().setItem(1, held);
+        helper.assertTrue(!anvil.place(smith, new ItemStack(Items.STICK)), "a stick does not go on the anvil");
+        helper.assertTrue(anvil.place(smith, held), "an ingot goes down");
+        helper.assertValueEqual(held.getCount(), 2, "one ingot placed");
+        helper.assertValueEqual(anvil.input().getCount(), 1, "one ingot on the anvil");
+        anvil.setItem(AnvilBlockEntity.OUTPUT, new ItemStack(ModItems.PLATES.get(Metal.COPPER).get()));
+        anvil.take(smith);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "the finished piece came back first");
+        helper.assertTrue(anvil.input().is(Items.COPPER_INGOT), "the ingot is still on the anvil");
+        helper.succeed();
+    }
+
+    // Two hot iron ingots on the anvil strike together into a double ingot, with no flux.
+
+    private static void anvilWeld(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = smithWithHammer(level);
+        float heat = Metal.WROUGHT_IRON.weldingTemperature() + 80.0f;
+        smith.getInventory().setItem(1, hotIngot(level, Items.IRON_INGOT, heat));
+        smith.getInventory().setItem(2, hotIngot(level, Items.IRON_INGOT, heat));
+        helper.assertTrue(anvil.place(smith, smith.getInventory().getItem(1)), "the first ingot goes down");
+        helper.assertTrue(anvil.place(smith, smith.getInventory().getItem(2)), "the second goes beside it");
+        helper.assertTrue(!anvil.getItem(AnvilBlockEntity.SECOND).isEmpty(), "the second ingot is the weld partner");
+        int blows = Smithing.totalBlows(Smithing.WELD_BLOWS, Metal.WROUGHT_IRON);
+        for (int i = 0; i < blows - 1; i++) strike(anvil, smith, 100 + i * STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "the weld takes " + blows + " blows");
+        strike(anvil, smith, 100 + (blows - 1) * STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()),
+                "a double ingot, got " + anvil.getItem(AnvilBlockEntity.OUTPUT));
+        helper.assertTrue(anvil.input().isEmpty() && anvil.getItem(AnvilBlockEntity.SECOND).isEmpty(), "both ingots are used up");
+        helper.succeed();
+    }
+
+    // Ingots that have gone dull will not weld: the anvil thuds and says so.
+
+    private static void anvilWeldCold(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = smithWithHammer(level);
+        anvil.setItem(AnvilBlockEntity.INPUT, hotIngot(level, Items.IRON_INGOT, 200.0f));
+        anvil.setItem(AnvilBlockEntity.SECOND, hotIngot(level, Items.IRON_INGOT, 200.0f));
+        helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.TOO_COLD, "cold ingots do not weld");
+        for (int i = 0; i < 6; i++) strike(anvil, smith, 100 + i * STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "nothing welds cold");
+        helper.assertTrue(!anvil.input().isEmpty() && !anvil.getItem(AnvilBlockEntity.SECOND).isEmpty(), "both ingots are still there");
+        helper.succeed();
+    }
+
+    // Two part-blooms strike into one bloom holding both their iron.
+
+    private static void anvilBloomWeld(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = smithWithHammer(level);
+        for (int slot = 1; slot <= 2; slot++) {
+            ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1300.0f);
+            bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, 40));
+            smith.getInventory().setItem(slot, bloom);
+            helper.assertTrue(anvil.place(smith, bloom), "bloom " + slot + " goes on the anvil");
+        }
+        helper.assertTrue(!anvil.getItem(AnvilBlockEntity.SECOND).isEmpty(), "the second bloom is the partner");
+        for (int i = 0; i < 12 && anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(); i++) strike(anvil, smith, 100 + i * STEP);
+        ItemStack out = anvil.getItem(AnvilBlockEntity.OUTPUT);
+        helper.assertTrue(out.is(ModItems.RAW_BLOOM.get()), "one bloom, got " + out);
+        Melt contents = out.get(ModDataComponents.BLOOM_CONTENTS.get());
+        helper.assertTrue(contents != null && contents.total() == 80, "the iron of both, got " + contents);
+        helper.succeed();
+    }
+
+    // A full bloom hammered by hand squeezes out an iron ingot, and the player is told the bloom is refined.
+
+    private static void anvilBloomRefine(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = smithWithHammer(level);
+        ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1200.0f);
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, dev.strataindustria.bloomery.BloomeryBlockEntity.BLOOM_UNITS));
+        anvil.setItem(AnvilBlockEntity.INPUT, bloom);
+        helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.READY, "a hot bloom is ready to work");
+        for (int i = 0; i < 12 && anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(); i++) strike(anvil, smith, 100 + i * STEP);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(Items.IRON_INGOT), "an iron ingot, got " + anvil.getItem(AnvilBlockEntity.OUTPUT));
+        helper.assertTrue(anvil.input().isEmpty(), "the bloom is used up");
+        helper.succeed();
+    }
+
+    // Quench: a hot piece in a water cauldron goes cold at once.
+
+    private static void anvilQuench(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 2));
+        ItemStack hot = hotIngot(level, Items.COPPER_INGOT, 900.0f);
+        helper.assertTrue(Heat.isHot(hot, level), "the ingot starts hot");
+        dev.strataindustria.event.SmithingEvents.quenchAt(level, pos, hot);
+        helper.assertTrue(Heat.get(hot, level) < Heat.BURN_FROM, "quenched metal is safe to hold, got " + Heat.get(hot, level));
+        helper.assertTrue(!hot.has(ModDataComponents.TEMPERATURE.get()), "the heat component is gone");
         helper.succeed();
     }
 

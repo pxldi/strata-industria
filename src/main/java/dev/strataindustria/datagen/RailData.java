@@ -3,6 +3,8 @@ package dev.strataindustria.datagen;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.material.Metal;
+import dev.strataindustria.transport.rail.HayRackBlock;
+import dev.strataindustria.transport.rail.InclineWinchBlock;
 import dev.strataindustria.transport.rail.RailBufferBlock;
 import dev.strataindustria.transport.rail.RailRegistry;
 import dev.strataindustria.transport.rail.TubStopBlock;
@@ -76,9 +78,31 @@ final class RailData {
         flatItem(blockModels, RailRegistry.RAIL_BUFFER_ITEM.get(), "rail_buffer");
 
         itemModels.generateFlatItem(RailRegistry.MINE_TUB.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(RailRegistry.HARNESS.get(), ModelTemplates.FLAT_ITEM);
+
+        // Hay rack and incline winch: hand-made models turned to face.
+        MultiVariant empty = BlockModelGenerators.plainVariant(StrataIndustria.id("block/hay_rack"));
+        MultiVariant filled = BlockModelGenerators.plainVariant(StrataIndustria.id("block/hay_rack_filled"));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(RailRegistry.HAY_RACK.get()).with(
+                PropertyDispatch.initial(HayRackBlock.FACING, HayRackBlock.FILLED).generate((facing, hay) -> turn(hay ? filled : empty, facing))));
+        blockModels.itemModelOutput.accept(RailRegistry.HAY_RACK_ITEM.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/hay_rack")));
+        MultiVariant winch = BlockModelGenerators.plainVariant(StrataIndustria.id("block/incline_winch"));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(RailRegistry.INCLINE_WINCH.get()).with(
+                PropertyDispatch.initial(InclineWinchBlock.FACING).generate(facing -> turn(winch, facing))));
+        blockModels.itemModelOutput.accept(RailRegistry.INCLINE_WINCH_ITEM.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/incline_winch")));
     }
 
-    private static void straight(BlockModelGenerators blockModels, Block block, Item item, String texture, boolean powered) {
+    /** A model drawn facing north, turned to face {@code facing}. */
+    static MultiVariant turn(MultiVariant north, Direction facing) {
+        return switch (facing) {
+            case EAST -> north.with(BlockModelGenerators.Y_ROT_90);
+            case SOUTH -> north.with(BlockModelGenerators.Y_ROT_180);
+            case WEST -> north.with(BlockModelGenerators.Y_ROT_270);
+            default -> north;
+        };
+    }
+
+    static void straight(BlockModelGenerators blockModels, Block block, Item item, String texture, boolean powered) {
         TextureMapping mapping = TextureMapping.rail(block);
         MultiVariant flat = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_FLAT.create(block, mapping, blockModels.modelOutput));
         MultiVariant risingNE = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_RAISED_NE.create(block, mapping, blockModels.modelOutput));
@@ -109,7 +133,7 @@ final class RailData {
     }
 
     /** A flat item model that shows the block's own texture, as the vanilla rails do. */
-    private static void flatItem(BlockModelGenerators blockModels, Item item, String blockTexture) {
+    static void flatItem(BlockModelGenerators blockModels, Item item, String blockTexture) {
         Identifier model = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(item),
                 TextureMapping.layer0(new Material(StrataIndustria.id("block/" + blockTexture))), blockModels.modelOutput);
         blockModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(model));
@@ -125,11 +149,27 @@ final class RailData {
         add.accept("block." + id + ".rail_buffer", "Rail Buffer");
         add.accept("item." + id + ".mine_tub", "Mine Tub");
         add.accept("entity." + id + ".mine_tub", "Mine Tub");
+        add.accept("block." + id + ".hay_rack", "Hay Rack");
+        add.accept("block." + id + ".incline_winch", "Incline Winch");
+        add.accept("item." + id + ".harness", "Harness");
+        add.accept("entity." + id + ".pony", "Pony");
+
+        add.accept(id + ".pony.leads", "The pony leads. Couple the tubs behind it.");
+        add.accept(id + ".pony.untamed", "Only a tame horse will wear it.");
+        add.accept(id + ".pony.cannot", "Too young, or busy.");
+        add.accept(id + ".pony.no_track", "Stand it beside the wooden rail.");
+        add.accept(id + ".pony.hungry", "Pony hungry.");
+        add.accept(id + ".pony.no_line", "No line free.");
+        add.accept(id + ".pony.balks", "The pony won't take that hill.");
+        add.accept(id + ".pony.hay", "Hay in it: %s bales.");
+        add.accept(id + ".hay_rack.stock", "Hay: %s bales.");
+        add.accept(id + ".winch.hauls", "Winch hauls.");
+        add.accept(id + ".winch.lowers", "Winch lets down.");
 
         add.accept(id + ".tub.coupled", "Coupled.");
         add.accept(id + ".tub.none", "No free tub within reach.");
         add.accept(id + ".tub.following", "That tub is already coupled to one ahead.");
-        add.accept(id + ".tub.too_long", "Only %s tubs follow the first.");
+        add.accept(id + ".tub.too_long", "Only %s follow the first.");
         add.accept(id + ".outposts.vanilla_rails", "Line not proven: vanilla rails at %s.");
 
         add.accept(id + ".stop.name", "Stop name");
@@ -153,12 +193,26 @@ final class RailData {
         add.accept(subtitles + "tub.thud", "Tub thuds");
         add.accept(subtitles + "tub_stop.brake", "Brake catches");
         add.accept(subtitles + "tipple.dump", "Tub tips");
+        add.accept(subtitles + "pony.harness", "Harness jingles");
+        add.accept(subtitles + "pony.step", "Pony clops");
+        add.accept(subtitles + "pony.eat", "Pony eats");
+        add.accept(subtitles + "pony.snort", "Pony snorts");
+        add.accept(subtitles + "winch.haul", "Winch creaks");
 
         String journal = "journal." + id + ".";
         add.accept(journal + "t3.tramway", "Run a Tub");
         add.accept(journal + "t3.tramway.hint", "Set a tub on wooden rail between two tub stops and let it roll in. Stops hold it until their rule lets it go.");
         add.accept(journal + "t3.tramway.lead", "A handcart is no good on a long haul. What if the load rode on rails?");
         add.accept(journal + "t3.tramway.note", "Plank rails and a tub on wheels. Slow, and it stops short if I don't push, but it keeps to the line.");
+        add.accept(journal + "t3.pony", "Harness a Pony");
+        add.accept(journal + "t3.pony.hint", "A harness puts a horse on the rails. It wants hay at the stops.");
+        add.accept(journal + "t3.pony.lead", "Pushing tubs this far is no good.");
+        add.accept(journal + "t3.pony.note", "Put the old horse on the tramway. Two trips a bale.");
+        add.accept(journal + "t3.incline", "Haul up an Incline");
+        add.accept(journal + "t3.incline.hint", "A winch at the top of a slope hauls tubs up on its rope. Turn it with a shaft.");
+        add.accept(journal + "t3.incline.lead", "The pony won't take that hill.");
+        add.accept(journal + "t3.incline.note", "Winch at the top, rope to the tub. Shaft turning, it climbs. Shaft stopped, it stays put.");
+        add.accept(journal + "observe.hungry_pony", "Pony stopped at the stop. No hay left.");
     }
 
     // ---------------------------------------------------------------- recipes
@@ -204,6 +258,34 @@ final class RailData {
                     .define('P', ItemTags.PLANKS)
                     .unlockedBy("has_wooden_rail", has(RailRegistry.WOODEN_RAIL_ITEM.get()))
                     .save(output, key("rail_buffer"));
+            shaped(RecipeCategory.TRANSPORTATION, RailRegistry.HARNESS.get())
+                    .pattern("L L")
+                    .pattern("LRL")
+                    .pattern(" I ")
+                    .define('L', Items.LEATHER)
+                    .define('R', dev.strataindustria.transport.foot.FootRegistry.ROPE.get())
+                    .define('I', ModItems.WROUGHT_IRON_ROD.get())
+                    .unlockedBy("has_leather", has(Items.LEATHER))
+                    .save(output, key("harness"));
+            shaped(RecipeCategory.TRANSPORTATION, RailRegistry.HAY_RACK_ITEM.get())
+                    .pattern("S S")
+                    .pattern("PSP")
+                    .pattern("PPP")
+                    .define('S', Items.STICK)
+                    .define('P', ItemTags.PLANKS)
+                    .unlockedBy("has_hay_block", has(Items.HAY_BLOCK))
+                    .save(output, key("hay_rack"));
+            shaped(RecipeCategory.TRANSPORTATION, RailRegistry.INCLINE_WINCH_ITEM.get())
+                    .pattern("R R")
+                    .pattern("GAG")
+                    .pattern("PWP")
+                    .define('R', dev.strataindustria.transport.foot.FootRegistry.ROPE.get())
+                    .define('G', ModItems.WOODEN_GEAR.get())
+                    .define('A', ModItems.WOODEN_AXLE.get())
+                    .define('P', ItemTags.PLANKS)
+                    .define('W', plate)
+                    .unlockedBy("has_wooden_rail", has(RailRegistry.WOODEN_RAIL_ITEM.get()))
+                    .save(output, key("incline_winch"));
             shaped(RecipeCategory.TRANSPORTATION, RailRegistry.MINE_TUB.get())
                     .pattern("W W")
                     .pattern("WPW")

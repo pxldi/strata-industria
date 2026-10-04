@@ -99,7 +99,7 @@ final class Tier4GameTests {
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
     private static void alloyRules(GameTestHelper helper) {
-        Melt carbon = new Melt(Map.of(Metal.CARBON, 5), 0);
+        Melt carbon = new Melt(Map.of(Metal.CARBON, 5));
         Melt steel = melt(Items.IRON_INGOT, 5).plus(carbon);
         helper.assertValueEqual(Alloy.resultOf(steel).orElse(null), Metal.STEEL, "5 iron ingots + 5 carbon");
 
@@ -110,13 +110,13 @@ final class Tier4GameTests {
         helper.assertValueEqual(Alloy.resultOf(melt(ModItems.ingot(Metal.STEEL), 3)).orElse(null), Metal.STEEL, "steel remelt");
         helper.assertValueEqual(Alloy.resultOf(melt(Items.IRON_INGOT, 4)).orElse(null), Metal.WROUGHT_IRON, "iron remelt");
 
-        Melt gap = new Melt(Map.of(Metal.WROUGHT_IRON, 974, Metal.CARBON, 26), 0);
+        Melt gap = new Melt(Map.of(Metal.WROUGHT_IRON, 974, Metal.CARBON, 26));
         helper.assertTrue(Alloy.resultOf(gap).isEmpty(), "iron with 2.6% carbon should be no known alloy");
 
         Melt brass = melt(Items.COPPER_INGOT, 2).plus(melt(ModItems.ingot(Metal.ZINC), 1));
         helper.assertValueEqual(Alloy.resultOf(brass).orElse(null), Metal.BRASS, "2 copper + 1 zinc");
         Melt solder = melt(ModItems.NUGGETS.get(Metal.TIN).get(), 6).plus(melt(ModItems.NUGGETS.get(Metal.LEAD).get(), 4));
-        helper.assertValueEqual(Alloy.resultOf(solder).orElse(null), Metal.SOLDER, "6 tin + 4 lead nuggets");
+        helper.assertValueEqual(Alloy.resultOf(solder).orElse(null), Metal.SOLDER, "3 tin : 2 lead as nuggets");
 
         // Spec 4.4: galena melts like the tier 2 ores; sphalerite has to be roasted first.
         helper.assertValueEqual(Alloy.resultOf(melt(ModItems.crushedOre(OreMineral.GALENA, OreGrade.NORMAL), 2)).orElse(null),
@@ -1503,17 +1503,9 @@ final class Tier4GameTests {
                 .getRecipesFor(dev.strataindustria.registry.ModRecipes.ANVIL.get(), new net.minecraft.world.item.crafting.SingleRecipeInput(ingot), level)
                 .filter(r -> r.value().result().create().is(steelPlate))
                 .findFirst().orElseThrow(() -> helper.assertionException("no steel plate recipe"));
-        int target = dev.strataindustria.smithing.Smithing.target(level, plate.id(), plate.value());
-        java.util.List<dev.strataindustria.smithing.HitType> hits = ModGameTests.solve(target, plate.value().rules());
-        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable");
-        int craft = dev.strataindustria.smithing.Smithing.craftQuality(hits.size(),
-                dev.strataindustria.smithing.Smithing.minHits(target, plate.value().rules()));
-        ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
-        helper.assertTrue(!hammer.canPlaceItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern),
-                "a blank pattern does not go in");
-        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(),
-                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate), target, hits.stream().map(Enum::ordinal).toList(), craft));
-        hammer.setItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern);
+        int total = dev.strataindustria.smithing.AnvilBlockEntity.blowsFor(plate.value(), ingot);
+        int craft = 2;
+        hammer.shapes().choose(plate.id());
         int queue = dev.strataindustria.steam.SteamHammerBlockEntity.QUEUE, result = dev.strataindustria.steam.SteamHammerBlockEntity.RESULT;
         hammer.setItem(queue, ingot.copyWithCount(plate.value().count() * 2));
 
@@ -1536,9 +1528,9 @@ final class Tier4GameTests {
         for (; ticks < 1000 && hammer.getItem(result).isEmpty(); ticks++) steamTick(level, fireboxPos, firebox, hammerPos, hammer, 2.0f);
         helper.assertTrue(hammer.getItem(result).is(steelPlate), "a steel plate comes out, got " + hammer.getItem(result)
                 + ", status " + hammer.status());
-        helper.assertTrue(ticks <= hits.size() * 5 + 2, hits.size() + " blows at 2 bar took " + ticks + " ticks");
+        helper.assertTrue(ticks <= total * 5 + 2, total + " blows at 2 bar took " + ticks + " ticks");
         var quality = hammer.getItem(result).get(ModDataComponents.QUALITY.get());
-        helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the pattern's craft part " + craft + ", got " + quality);
+        helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the machine's craft part " + craft + ", got " + quality);
 
         // Half pressure: the second, cold ingot heats again, then one blow per 10 ticks.
         int working = 0;
@@ -1547,8 +1539,8 @@ final class Tier4GameTests {
             if (hammer.status() == dev.strataindustria.steam.SteamHammerBlockEntity.Status.WORKING) working++;
         }
         helper.assertValueEqual(hammer.getItem(result).getCount(), 2, "plates after the second run, status " + hammer.status());
-        helper.assertTrue(working >= hits.size() * 10 - 1 && working <= hits.size() * 10 + 2,
-                hits.size() + " blows at 1.5 bar worked for " + working + " ticks");
+        helper.assertTrue(working >= total * 10 - 1 && working <= total * 10 + 2,
+                total + " blows at 1.5 bar worked for " + working + " ticks");
         helper.assertTrue(hammer.getItem(queue).isEmpty() && hammer.input().isEmpty(), "both ingots used up");
         helper.succeed();
     }

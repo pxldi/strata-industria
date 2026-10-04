@@ -1,0 +1,51 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "strataindustria:block/steel_buffer_beam",
+    "rail": "strataindustria:block/steel_buffer",
+    "beam": "strataindustria:block/steel_buffer_beam"
+  },
+  "elements": [
+    {
+      "from": [0, 0.5, 0],
+      "to": [16, 0.5, 16],
+      "faces": {
+        "up": {"uv": [0, 0, 16, 16], "texture": "#rail"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#rail"}
+      }
+    },
+    {
+      "from": [1, 0.5, 0],
+      "to": [15, 8, 2.5],
+      "faces": {
+        "north": {"uv": [1, 8, 15, 16], "texture": "#beam"},
+        "south": {"uv": [1, 8, 15, 16], "texture": "#beam"},
+        "east": {"uv": [0, 8, 2.5, 16], "texture": "#beam"},
+        "west": {"uv": [0, 8, 2.5, 16], "texture": "#beam"},
+        "up": {"uv": [1, 0, 15, 2.5], "texture": "#beam"}
+      }
+    },
+    {
+      "from": [3, 2, 2.5],
+      "to": [6, 6, 5.5],
+      "faces": {
+        "south": {"uv": [0, 0, 3, 4], "texture": "#beam"},
+        "east": {"uv": [0, 0, 3, 4], "texture": "#beam"},
+        "west": {"uv": [0, 0, 3, 4], "texture": "#beam"},
+        "up": {"uv": [0, 0, 3, 3], "texture": "#beam"},
+        "down": {"uv": [0, 0, 3, 3], "texture": "#beam"}
+      }
+    },
+    {
+      "from": [10, 2, 2.5],
+      "to": [13, 6, 5.5],
+      "faces": {
+        "south": {"uv": [0, 0, 3, 4], "texture": "#beam"},
+        "east": {"uv": [0, 0, 3, 4], "texture": "#beam"},
+        "west": {"uv": [0, 0, 3, 4], "texture": "#beam"},
+        "up": {"uv": [0, 0, 3, 3], "texture": "#beam"},
+        "down": {"uv": [0, 0, 3, 3], "texture": "#beam"}
+      }
+    }
+  ]
+}

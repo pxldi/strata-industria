@@ -68,6 +68,7 @@ public final class StrataIndustria {
         Tier6Blocks.init();
         Tier6Items.init();
         Tier6Sounds.init();
+        dev.strataindustria.felling.FellingSounds.init();
         dev.strataindustria.registry.Tier6BlockEntities.init();
         dev.strataindustria.registry.Tier6Menus.init();
         dev.strataindustria.registry.Tier6Recipes.init();
@@ -75,11 +76,14 @@ public final class StrataIndustria {
         dev.strataindustria.registry.PatternRegistry.init();
         dev.strataindustria.mark.MarkRegistry.init();
         dev.strataindustria.registry.TransportBlocks.init();
+        dev.strataindustria.branch.BranchSounds.init();
         dev.strataindustria.ledger.LedgerRegistry.init();
         dev.strataindustria.transport.foot.FootRegistry.init();
         dev.strataindustria.transport.foot.FootRegistry.register(modEventBus);
         dev.strataindustria.transport.rail.RailRegistry.init();
         dev.strataindustria.transport.rail.RailRegistry.register(modEventBus);
+        dev.strataindustria.transport.rail.RailwayRegistry.init();
+        dev.strataindustria.transport.rail.RailwayRegistry.register(modEventBus);
         dev.strataindustria.bronze.BronzeRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.register(modEventBus);
@@ -103,8 +107,7 @@ public final class StrataIndustria {
         ModConditions.CONDITIONS.register(modEventBus);
         Journal.TRIGGERS.register(modEventBus);
         dev.strataindustria.journal.JournalContent.register(modEventBus);
-        dev.strataindustria.smithing.SmithedRecipes.register(modEventBus);
-        dev.strataindustria.knapping.KnappedPatterns.register(modEventBus);
+        dev.strataindustria.knapping.HandShaping.register(modEventBus);
         ModGameTests.INSTANCE_TYPES.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

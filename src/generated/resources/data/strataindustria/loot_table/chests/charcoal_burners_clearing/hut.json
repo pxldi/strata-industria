@@ -63,7 +63,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.6
+        "chance": 0.4
       },
       "entries": [
         {
@@ -72,8 +72,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 12,
-              "min": 4
+              "max": 5,
+              "min": 2
             }
           },
           "name": "minecraft:apple"
@@ -84,7 +84,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.5
+        "chance": 0.4
       },
       "entries": [
         {
@@ -93,8 +93,8 @@
             "type": "minecraft:set_count",
             "count": {
               "type": "minecraft:uniform",
-              "max": 12,
-              "min": 4
+              "max": 5,
+              "min": 2
             }
           },
           "name": "minecraft:bread"
@@ -132,14 +132,14 @@
         {
           "type": "minecraft:item",
           "modifier": {
-            "type": "minecraft:set_damage",
-            "damage": {
+            "type": "minecraft:set_count",
+            "count": {
               "type": "minecraft:uniform",
-              "max": 0.4,
-              "min": 0.2
+              "max": 3,
+              "min": 1
             }
           },
-          "name": "strataindustria:firestarter"
+          "name": "minecraft:flint"
         }
       ],
       "rolls": 1
@@ -231,7 +231,7 @@
     {
       "condition": {
         "type": "minecraft:random_chance",
-        "chance": 0.5
+        "chance": 0.25
       },
       "entries": [
         {

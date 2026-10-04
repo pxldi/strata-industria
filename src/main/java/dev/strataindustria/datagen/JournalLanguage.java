@@ -99,16 +99,14 @@ final class JournalLanguage {
                 "A block of hard rock dressed flat on top. It will take a beating.");
         lead.add("t2/smith", "Can I beat hot metal into a shape a mold cannot give?",
                 "Heat, strike, heat again. The ingot spread into a thin, even plate.");
-        lead.add("t2/quick_smith", "I know this work now. Do I have to count every blow again?",
-                "A known piece goes quicker. Not my best work, but good enough.");
+        lead.add("t2/bright_strike", "The metal glows brightest just out of the forge. What if I never let it dull?",
+                "Every blow landed on bright metal. The piece came out finer than any I had made.");
         lead.add("t2/bronze_tools", "Bronze holds an edge. Every tool I own could be better for it.",
                 "Pick, axe, shovel, knife, hammer, saw and sword, all in bronze. A proper kit.");
         lead.add("t2/bronze_armour", "Bronze plate would turn a blow that would cut through leather.",
                 "Clad head to foot in bronze. Heavy, but I feel far safer.");
         lead.add("t2/prospectors_pick", "Ore hides in the rock. Could I hear it if I tapped the stone?",
                 "The rock rings differently near ore. I am learning to listen.");
-        lead.add("t2/bronze_anvil", "Stone anvils crack under heavy work. Could I cast one from bronze?",
-                "A bronze anvil, solid and true. The bronze age is behind me.");
         // Tier 3: iron
         lead.add("t3/fire_clay", "Bronze cannot melt iron. What could stand a fire hotter than any I have made?",
                 "A pale, gritty clay that does not slump in the fire. Bricks of this would last.");
@@ -140,12 +138,12 @@ final class JournalLanguage {
                 "The saw mill rips a log into planks in moments, with the bark left over.");
         lead.add("t3/charter", "The tin is a long walk off. Could I keep a mine going out there?",
                 "Charter set at the tin workings. The line runs; the place keeps working while I'm home.");
+        lead.add("t3/iron_anvil", "Iron is too hard for my stone anvil. Could I build one from iron itself?",
+                "An iron anvil, heavy as the earth. It takes iron and steel.");
         lead.add("t3/weld", "One ingot is too small for the bigger tools. Could two be joined while hot?",
                 "Hammered together white hot, two ingots became one. The seam does not show.");
-        lead.add("t3/pattern", "I smith the same pieces again and again. Could the anvil remember my hits?",
-                "Every hit marked on a blank pattern. The anvil knows the work now.");
-        lead.add("t3/trip_hammer", "With a pattern and a turning shaft, could a hammer work by itself?",
-                "The trip hammer rises and falls on its own, following my pattern hit for hit.");
+        lead.add("t3/trip_hammer", "I smith the same pieces again and again. With a turning shaft, could a hammer do it for me?",
+                "The trip hammer rises and falls on its own and makes whatever shape I set on it.");
         lead.add("t3/core_sample", "My prospector's pick only hears so far. What lies deep below?",
                 "The core came up in bands: every layer of rock beneath me, laid out in order.");
         lead.add("t3/wash", "There is ore in the river gravel. Could I wash it out?",
@@ -154,8 +152,6 @@ final class JournalLanguage {
                 "A raw hide, stiff and smelly. It will rot unless I treat it.");
         lead.add("t3/leather", "A raw hide rots. How do I turn it into leather that lasts?",
                 "Limed, scraped and soaked in tannin for days. Supple leather, finally.");
-        lead.add("t3/iron_anvil", "My bronze anvil dents under iron. Could I build one from iron itself?",
-                "A wrought iron anvil, heavy as the earth. It will work anything I can heat.");
         // Tier 4: steel and steam
         lead.add("t4/coal", "Charcoal costs a forest. Is there black rock that burns?",
                 "Coal, cut from a deep seam. It burns long and hot, but smoky.");
@@ -171,8 +167,6 @@ final class JournalLanguage {
                 "Iron ran liquid in the crucible. I never thought I would see it.");
         lead.add("t4/steel", "Iron is tough but soft. Would a little carbon make it hard?",
                 "A pinch of carbon stirred into molten iron, and it set as steel.");
-        lead.add("t4/steel_anvil", "Steel is too hard for my iron anvil. What will work it?",
-                "A steel anvil. There is no metal left that it cannot shape.");
         lead.add("t4/sphalerite", "Copper and tin make bronze. Is there an ore that makes something brighter?",
                 "Sphalerite, glittering and brown. The smiths called it blende: zinc ore.");
         lead.add("t4/roast", "Zinc ore stinks of sulfur and will not melt clean. How do I drive the sulfur off?",

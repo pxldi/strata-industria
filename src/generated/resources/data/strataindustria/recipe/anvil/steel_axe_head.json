@@ -1,21 +1,8 @@
 {
   "type": "strataindustria:anvil",
+  "blows": 5,
   "ingredient": "strataindustria:steel_ingot",
   "result": {
     "id": "strataindustria:steel_axe_head"
-  },
-  "rules": [
-    {
-      "hit": "punch",
-      "where": "last"
-    },
-    {
-      "hit": "hit",
-      "where": "second_last"
-    },
-    {
-      "hit": "upset",
-      "where": "third_last"
-    }
-  ]
+  }
 }

@@ -1,7 +1,6 @@
 package dev.strataindustria.client;
 
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.client.hud.FirestarterHud;
 import dev.strataindustria.client.render.PitKilnRenderer;
 import dev.strataindustria.client.render.QuernRenderer;
 import dev.strataindustria.client.render.AnvilRenderer;
@@ -14,12 +13,10 @@ import dev.strataindustria.power.AxleBlock;
 import dev.strataindustria.power.HandCrankBlock;
 import dev.strataindustria.power.WaterWheelBlock;
 import net.minecraft.core.Direction;
-import dev.strataindustria.client.screen.AnvilScreen;
 import dev.strataindustria.client.screen.BloomeryScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
-import dev.strataindustria.client.screen.KnappingScreen;
 import dev.strataindustria.client.screen.SmallVesselScreen;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModMenus;
@@ -30,9 +27,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -42,7 +37,6 @@ public final class StrataIndustriaClient {
     public StrataIndustriaClient(IEventBus modBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modBus.addListener(StrataIndustriaClient::registerScreens);
-        modBus.addListener(StrataIndustriaClient::registerGuiLayers);
         modBus.addListener(StrataIndustriaClient::registerRenderers);
         modBus.addListener(StrataIndustriaClient::registerTints);
         modBus.addListener(StrataIndustriaClient::registerItemProperties);
@@ -51,14 +45,12 @@ public final class StrataIndustriaClient {
     }
 
     private static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(ModMenus.KNAPPING.get(), KnappingScreen::new);
         event.register(dev.strataindustria.mark.MarkRegistry.MENU.get(), dev.strataindustria.client.screen.MarkScreen::new);
         event.register(ModMenus.FIRE_PIT.get(), FirePitScreen::new);
         event.register(ModMenus.SMALL_VESSEL.get(), SmallVesselScreen::new);
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
         event.register(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_MENU.get(), dev.strataindustria.client.screen.BrickKilnScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
-        event.register(ModMenus.ANVIL.get(), AnvilScreen::new);
         event.register(ModMenus.BLOOMERY.get(), BloomeryScreen::new);
         event.register(ModMenus.MILLSTONE.get(), MillstoneScreen::new);
         event.register(ModMenus.SAW_MILL.get(), SawMillScreen::new);
@@ -174,7 +166,4 @@ public final class StrataIndustriaClient {
         event.register(StrataIndustria.id("glowing"), HeatGlow.Glowing.MAP_CODEC);
     }
 
-    private static void registerGuiLayers(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR, StrataIndustria.id("firestarter"), FirestarterHud::render);
-    }
 }

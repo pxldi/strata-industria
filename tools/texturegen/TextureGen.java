@@ -1,3 +1,4 @@
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -23,8 +24,7 @@ import javax.imageio.ImageIO;
 public final class TextureGen {
     static final Path OUT = Path.of("src/main/resources/assets/strataindustria/textures");
     static final Map<String, BufferedImage> PREVIEW = new LinkedHashMap<>();
-    static final java.util.Set<String> HAND_MADE = java.util.Set.of(
-            "item/plant_fibre");
+    static final java.util.Set<String> HAND_MADE = java.util.Set.of();
 
     // ---------------------------------------------------------------- palette (5-step ramps)
 
@@ -1082,6 +1082,30 @@ public final class TextureGen {
             "................",
     };
 
+    /** A loose bundle of long grass fibres laid on the diagonal, tied once at the middle, ends splayed. */
+    static BufferedImage plantFibre() {
+        Ramp a = V2.FIBRE_V2;
+        BufferedImage im = img();
+        // Two strands side by side, a lit one and a shaded one, bowed slightly in the middle.
+        for (int i = 0; i < 13; i++) {
+            int bow = i >= 5 && i <= 8 ? 1 : 0;
+            px(im, 1 + i + bow, 14 - i, a.get(i % 5 == 4 ? 5 : 4));
+            px(im, 2 + i + bow, 14 - i, a.get(i % 4 == 1 ? 2 : 3));
+        }
+        // The tie, across both strands.
+        px(im, 6, 8, a.get(1));
+        px(im, 7, 8, a.get(1));
+        px(im, 7, 7, a.get(2));
+        px(im, 8, 7, a.get(1));
+        // Frayed ends: single strands splayed away from the bundle.
+        px(im, 0, 14, a.get(3));
+        px(im, 1, 15, a.get(2));
+        px(im, 15, 1, a.get(4));
+        px(im, 14, 0, a.get(5));
+        px(im, 15, 3, a.get(3));
+        return outline(im);
+    }
+
     /** A square of woven fibre cloth with a frayed lower edge. */
     static BufferedImage fibreCloth() {
         BufferedImage im = img();
@@ -1196,39 +1220,6 @@ public final class TextureGen {
                 px(im, x, y, c);
             }
         return im;
-    }
-
-    /** A hand drill: spindle stood on a hearth board, a twine wrap, a charred notch. */
-    static final String[] FIRESTARTER = {
-            "................",
-            "................",
-            ".......45.......",
-            ".......43.......",
-            ".......43.......",
-            "......ab3a......",
-            "......bad3......",
-            ".......ab.......",
-            ".......43.......",
-            ".......43.......",
-            ".......32.......",
-            "..444553x5554...",
-            "..33333223333...",
-            "..22222222222...",
-            "................",
-            "................",
-    };
-
-    static BufferedImage firestarter() {
-        String[] rows = FIRESTARTER.clone();
-        BufferedImage im = img();
-        for (int y = 0; y < rows.length; y++)
-            for (int x = 0; x < rows[y].length(); x++) {
-                char ch = rows[y].charAt(x);
-                if (ch >= '1' && ch <= '5') px(im, x, y, WOOD.get(ch - '0'));
-                else if (ch >= 'a' && ch <= 'e') px(im, x, y, STRAW.get(ch - 'a' + 2));
-                else if (ch == 'x') px(im, x, y, CHARCOAL.get(1));
-            }
-        return outline(im);
     }
 
     // ---------------------------------------------------------------- clay and ceramics (spec 4)
@@ -1512,34 +1503,6 @@ public final class TextureGen {
         px(im, 5, 6, p.get(5));
         px(im, 9, 4, p.get(5));
         px(im, 10, 10, p.get(5));
-        return im;
-    }
-
-    /** Bronze anvil body: cast bronze with a soft vertical sheen. */
-    static BufferedImage bronzeAnvilBody() {
-        double[][] n = V2.grain(4141);
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.82 ? 4 : n[y][x] < 0.14 ? 2 : 3;
-                if (x == 3 || x == 4) step = Math.min(5, step + 1);
-                px(im, x, y, BRONZE.get(step));
-            }
-        return im;
-    }
-
-    /** Bronze anvil face: polished from use, lighter in the middle. */
-    static BufferedImage bronzeAnvilTop() {
-        double[][] n = V2.grain(4242);
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                double d = Math.abs(x - 7.5) / 8 + Math.abs(y - 7.5) / 16;
-                int step = d < 0.45 ? 5 : d < 0.75 ? 4 : 3;
-                if (n[y][x] < 0.12) step--;
-                px(im, x, y, BRONZE.get(Math.max(2, step)));
-            }
-        im.setRGB(7, 6, 0xff000000 | BRONZE.spec());
         return im;
     }
 
@@ -1980,85 +1943,6 @@ public final class TextureGen {
         return im;
     }
 
-    /** Anvil (spec 9.2): workpiece, plans, work bar, eight hit buttons, rule and recent-hit boxes. */
-    static BufferedImage anvilGui() {
-        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        panel(im, 176, 252);
-        slot(im, 8, 27);
-        slot(im, 152, 27);
-        for (int i = 0; i < 12; i++) slot(im, 30 + (i % 6) * 18, 18 + (i / 6) * 18);
-        well(im, 25, 26, 4, 18, 0x2a2a2a);
-        // A small arrow from the plans to the finished piece.
-        for (int j = 0; j < 7; j++) {
-            int d = Math.abs(j - 3);
-            for (int i = 0; i < 9 - d; i++) if (i < 5 ? d <= 1 : true) im.setRGB(139 + i, 32 + j, 0xff000000 | SLOT_FILL);
-        }
-        // Work bar: 0 to 150 with a notch every 25.
-        well(im, 12, 60, 152, 8, 0x2a2a2a);
-        for (int t = 25; t < 150; t += 25) fill(im, 13 + t, 68, 1, 2, t % 50 == 0 ? GUI_SHADOW : SLOT_FILL);
-        for (int i = 0; i < 3; i++) {
-            well(im, 8 + i * 20, 106, 18, 18, SLOT_FILL);
-            well(im, 116 + i * 18, 106, 18, 18, SLOT_FILL);
-        }
-        // Weld row: second piece, flux, the weld button, and the pattern slot on the right.
-        slot(im, 8, 130);
-        slot(im, 26, 130);
-        slot(im, 152, 130);
-        ghost(im, 8, 130, GHOST_INGOT);
-        ghost(im, 26, 130, GHOST_FLUX);
-        ghost(im, 152, 130, GHOST_PATTERN);
-        for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 173 + row * 18);
-        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 231);
-
-        // Sprites: button faces (normal, hovered, disabled), then the hit icons.
-        int[] faces = {0xa8a8a8, 0xc8c8d8, 0x6e6e6e};
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            fill(im, x0, 0, 18, 18, faces[b]);
-            fill(im, x0, 0, 18, 1, 0x000000);
-            fill(im, x0, 17, 18, 1, 0x000000);
-            fill(im, x0, 0, 1, 18, 0x000000);
-            fill(im, x0 + 17, 0, 1, 18, 0x000000);
-            fill(im, x0 + 1, 1, 16, 1, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 1, 1, 16, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 16, 16, 1, b == 2 ? 0x4a4a4a : 0x555555);
-            fill(im, x0 + 16, 1, 1, 16, b == 2 ? 0x4a4a4a : 0x555555);
-        }
-        int[] red = {0x5a1a10, 0xa0281a, 0xe0603a};
-        int[] green = {0x1e4a1e, 0x3a8a3a, 0x7ac07a};
-        for (int i = 0; i < 8; i++) {
-            BufferedImage icon = hitIcon(i < 4 ? red : green, i < 4, i % 4);
-            im.getGraphics().drawImage(icon, 176 + (i % 4) * 16, 18 + (i / 4) * 16, null);
-        }
-        im.getGraphics().drawImage(anyHitIcon(), 240, 18, null);
-        // Weld button faces (normal, hovered, disabled) with two bars meeting in a spark.
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            im.getGraphics().drawImage(im.getSubimage(176 + b * 18, 0, 18, 18), x0, 52, null);
-            drawRows(im, x0 + 1, 53, WELD_ICON, b == 2
-                    ? new int[] {0x5a5a5a, 0x6a6a6a, 0x7a7a7a, 0x8a8a8a, 0x8a8a8a}
-                    : new int[] {0x3a3d48, 0x838998, 0xd6dbe2, 0xf0a030, 0xfff0a0});
-        }
-        // Quick-smith button faces (normal, hovered, disabled) at v=72: two forward chevrons, like a fast-forward.
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            im.getGraphics().drawImage(im.getSubimage(176 + b * 18, 0, 18, 18), x0, 72, null);
-            int[] ink = b == 2 ? new int[] {0x5a5a5a, 0x7a7a7a} : new int[] {0x3a3d48, 0xf0a030};
-            for (int c = 0; c < 2; c++) {
-                for (int i = 0; i < 9; i++) {
-                    int dx = i < 5 ? i : 8 - i;
-                    int x = x0 + 4 + c * 5 + dx;
-                    im.setRGB(x, 77 + i, 0xff000000 | ink[0]);
-                    im.setRGB(x + 1, 77 + i, 0xff000000 | ink[1]);
-                    im.setRGB(x + 2, 77 + i, 0xff000000 | ink[1]);
-                    im.setRGB(x + 3, 77 + i, 0xff000000 | ink[0]);
-                }
-            }
-        }
-        return im;
-    }
-
     static final String[] WELD_ICON = {
             "................",
             ".......5........",
@@ -2116,24 +2000,6 @@ public final class TextureGen {
             "................",
     };
 
-    static final String[] GHOST_PATTERN = {
-            "................",
-            "...#########....",
-            "...#.......##...",
-            "...#.......#.#..",
-            "...#.......####.",
-            "...#..........#.",
-            "...#.###.##...#.",
-            "...#..........#.",
-            "...#.##.####..#.",
-            "...#..........#.",
-            "...#.####.##..#.",
-            "...#..........#.",
-            "...#.###......#.",
-            "...#..........#.",
-            "...############.",
-            "................",
-    };
 
     /** A faint outline in an empty slot showing what goes there. */
     static void ghost(BufferedImage im, int itemX, int itemY, String[] rows) {
@@ -2260,6 +2126,27 @@ public final class TextureGen {
         im.setRGB(x, y + h - 1, 0xff000000 | SLOT_FILL);
     }
 
+    /**
+     * The shape button of a hammer machine: a raised 20x20 plate (white bevel top left, grey bottom right, black
+     * rim) around a 16x16 icon at itemX, itemY, with the slot's grey behind the icon. Clicks anywhere on it count.
+     */
+    static void iconButton(BufferedImage im, int itemX, int itemY) {
+        int x = itemX - 2, y = itemY - 2;
+        fill(im, x, y, 20, 20, GUI_EDGE);
+        fill(im, x + 1, y + 1, 18, 18, 0xa8a8a8);
+        fill(im, x + 1, y + 1, 18, 1, GUI_LIGHT);
+        fill(im, x + 1, y + 1, 1, 18, GUI_LIGHT);
+        fill(im, x + 1, y + 18, 18, 1, GUI_SHADOW);
+        fill(im, x + 18, y + 1, 1, 18, GUI_SHADOW);
+        im.setRGB(x + 18, y + 1, 0xff000000 | 0xa8a8a8);
+        im.setRGB(x + 1, y + 18, 0xff000000 | 0xa8a8a8);
+        fill(im, itemX, itemY, 16, 16, SLOT_FILL);
+        // A small dark chevron at the bottom right says it steps on when clicked.
+        im.setRGB(x + 15, y + 15, 0xff000000 | SLOT_DARK);
+        im.setRGB(x + 16, y + 16, 0xff000000 | SLOT_DARK);
+        im.setRGB(x + 15, y + 17, 0xff000000 | SLOT_DARK);
+    }
+
     static void slot(BufferedImage im, int itemX, int itemY) {
         well(im, itemX - 1, itemY - 1, 18, 18, SLOT_FILL);
     }
@@ -2314,70 +2201,6 @@ public final class TextureGen {
             for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 84 + row * 18);
         for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 142);
         return im;
-    }
-
-    /**
-     * Knapping screen, 176x196 on a 256x256 sheet: a 5x5 stone well at (17,18), arrow, large result
-     * slot at (134,50) and the player inventory from y 114. Positions match KnappingMenu.
-     */
-    static BufferedImage knappingGui() {
-        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        panel(im, 176, 196);
-        // The grid well sits one pixel outside the 80x80 cell area; the floor is darker, like a work surface.
-        well(im, 16, 17, 82, 82, 0x6f6f6f);
-        arrow(im, 104, 51);
-        // Large result slot like the crafting table's.
-        well(im, 129, 45, 26, 26, SLOT_FILL);
-        for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 114 + row * 18);
-        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 172);
-        repeatButton(im);
-        return im;
-    }
-
-    /** Repeat-last button faces (normal, hovered, disabled) at (176,0): a circular arrow, inked like the anvil's quick button. */
-    static void repeatButton(BufferedImage im) {
-        int[] faces = {0xa8a8a8, 0xc8c8d8, 0x6e6e6e};
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            fill(im, x0, 0, 18, 18, faces[b]);
-            fill(im, x0, 0, 18, 1, 0x000000);
-            fill(im, x0, 17, 18, 1, 0x000000);
-            fill(im, x0, 0, 1, 18, 0x000000);
-            fill(im, x0 + 17, 0, 1, 18, 0x000000);
-            fill(im, x0 + 1, 1, 16, 1, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 1, 1, 16, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 16, 16, 1, b == 2 ? 0x4a4a4a : 0x555555);
-            fill(im, x0 + 16, 1, 1, 16, b == 2 ? 0x4a4a4a : 0x555555);
-            int[] ink = b == 2 ? new int[] {0x5a5a5a, 0x7a7a7a} : new int[] {0x3a3d48, 0xf0a030};
-            boolean[][] mark = new boolean[18][18];
-            double cx = 8.5, cy = 9.5;
-            // Ring open at the top right, with an arrowhead where it ends.
-            for (int y = 3; y < 16; y++) {
-                for (int x = 3; x < 15; x++) {
-                    double d = Math.hypot(x + 0.5 - cx, y + 0.5 - cy);
-                    double a = Math.toDegrees(Math.atan2(-(y + 0.5 - cy), x + 0.5 - cx));
-                    if (d >= 3.0 && d <= 4.7 && !(a > 5 && a < 65)) mark[y][x] = true;
-                }
-            }
-            int[][] head = {{11, 3}, {12, 3}, {13, 3}, {14, 3}, {12, 4}, {13, 4}, {14, 4}, {13, 5}, {14, 5}, {14, 6}};
-            for (int[] h : head) mark[h[1]][h[0]] = true;
-            for (int y = 0; y < 18; y++) {
-                for (int x = 0; x < 18; x++) {
-                    if (mark[y][x]) continue;
-                    boolean near = false;
-                    for (int dy = -1; dy <= 1; dy++)
-                        for (int dx = -1; dx <= 1; dx++) {
-                            int yy = y + dy, xx = x + dx;
-                            if (yy >= 0 && yy < 18 && xx >= 0 && xx < 18 && mark[yy][xx]) near = true;
-                        }
-                    if (near) im.setRGB(x0 + x, y, 0xff000000 | ink[0]);
-                }
-            }
-            for (int y = 0; y < 18; y++)
-                for (int x = 0; x < 18; x++)
-                    if (mark[y][x]) im.setRGB(x0 + x, y, 0xff000000 | ink[1]);
-        }
     }
 
     // ---------------------------------------------------------------- heat glow
@@ -2669,8 +2492,8 @@ public final class TextureGen {
         }
     }
 
-    /** Wrought iron anvil body: forged iron, hammer-mark clusters, a dark scale edge. */
-    static BufferedImage wroughtAnvilBody() {
+    /** Iron anvil body: forged iron, hammer-mark clusters, a dark scale edge. */
+    static BufferedImage ironAnvilBody() {
         double[][] n = V2.grain(5454), e = noise(5455, 4);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
@@ -2685,8 +2508,8 @@ public final class TextureGen {
         return im;
     }
 
-    /** Wrought iron anvil face (visible columns 3-12): worked bright centre, hammer marks, scaled rim. */
-    static BufferedImage wroughtAnvilTop() {
+    /** Iron anvil face (visible columns 3-12): worked bright centre, hammer marks, scaled rim. */
+    static BufferedImage ironAnvilTop() {
         double[][] n = V2.grain(5656), e = noise(5657, 4);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
@@ -2814,43 +2637,6 @@ public final class TextureGen {
             "................",
             "................",
     };
-    static final String[] SMITHING_PATTERN = {
-            "................",
-            "................",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "....45555554....",
-            "....54444443....",
-            "....54444443....",
-            "....54444443....",
-            "....54444443....",
-            "....44444442....",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "................",
-            "................",
-    };
-    static final String[] SMITHING_PATTERN_RECORDED = {
-            "................",
-            "................",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "....45555554....",
-            "....5ccc4cc3....",
-            "....54444443....",
-            "....5cc4ccc3....",
-            "....54444443....",
-            "....4bbbb442....",
-            "...34444444443..",
-            "..2455555555542.",
-            "..1322222222231.",
-            "................",
-            "................",
-    };
-
     // New shared shapes (spec 20.4).
     static final String[] ROD = {
             "..........45",
@@ -2907,8 +2693,8 @@ public final class TextureGen {
         save("block/bloomery_front", bloomeryFront(-1));
         saveRaw("block/bloomery_front_lit", bloomeryFrontLit());
         Files.writeString(OUT.resolve("block/bloomery_front_lit.png.mcmeta"), "{\"animation\":{\"frametime\":3}}\n");
-        save("block/wrought_iron_anvil", wroughtAnvilBody());
-        save("block/wrought_iron_anvil_top", wroughtAnvilTop());
+        save("block/iron_anvil", ironAnvilBody());
+        save("block/iron_anvil_top", ironAnvilTop());
 
         // Ore items and small ores for the four new minerals.
         for (Mineral m : T3_MINERALS) {
@@ -2932,8 +2718,6 @@ public final class TextureGen {
         save("item/raw_bloom", map(WROUGHT_IRON, LIGNITE, RAW_BLOOM));
         save("item/bloomery_slag", map(SLAG, HEMATITE, BLOOMERY_SLAG));
         save("item/flux", art(MARBLE, FLUX_HEAP));
-        save("item/smithing_pattern", art(SMITHING_PATTERN, PAPER, CHARCOAL, FIBRE));
-        save("item/smithing_pattern_recorded", art(SMITHING_PATTERN_RECORDED, PAPER, CHARCOAL, FIBRE));
 
         // Wrought iron and gold forms (both keep vanilla ingots and nuggets).
         java.util.Map<String, String[]> heads = new java.util.LinkedHashMap<>();
@@ -3853,11 +3637,24 @@ public final class TextureGen {
     static BufferedImage tripHammerGui() {
         BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
         panel(im, 176, 166);
-        slot(im, 44, 35);
+        iconButton(im, 44, 35);
         slot(im, 80, 35);
-        ghost(im, 44, 35, GHOST_PATTERN);
         ghost(im, 80, 35, GHOST_INGOT);
         inventory(im);
+        return im;
+    }
+
+    /**
+     * Steam hammer: the committed sheet with the old pattern slot (7 to 24, 34 to 51) cleared and the shape button
+     * drawn in its place. Redrawing over a sheet that already has the button gives the same sheet.
+     */
+    static BufferedImage steamHammerGui() throws IOException {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = im.createGraphics();
+        g.drawImage(ImageIO.read(OUT.resolve("gui/steam_hammer.png").toFile()), 0, 0, null);
+        g.dispose();
+        fill(im, 5, 32, 22, 22, GUI_FACE);
+        iconButton(im, 8, 35);
         return im;
     }
 
@@ -3930,6 +3727,7 @@ public final class TextureGen {
         save("item/bark", barkItem());
         save("item/core_sample", coreSampleItem());
         saveRaw("gui/trip_hammer", tripHammerGui());
+        saveRaw("gui/steam_hammer", steamHammerGui());
         saveRaw("gui/saw_mill", sawMillGui());
         saveRaw("gui/core_sampler", coreSamplerGui());
     }
@@ -5576,49 +5374,6 @@ public final class TextureGen {
             "3433223b33222",
             ".2222.2a222..",
     };
-
-    /** Steel anvil body: rolled steel, fine-grained and even, with a crisp dark edge and a cool vertical sheen. */
-    static BufferedImage steelAnvilBody() {
-        double[][] n = V2.grain(6161), e = noise(6162, 2);
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                int step = n[y][x] > 0.6 ? 4 : n[y][x] < 0.38 ? 2 : 3;
-                if (e[y][x] > 0.82) step = Math.min(5, step + 1);
-                else if (e[y][x] < 0.12) step = Math.max(2, step - 1);
-                if (x == 3 || x == 4) step = Math.min(5, step + 1);
-                int d = Math.min(Math.min(x, y), Math.min(15 - x, 15 - y));
-                if (d == 0) step = 1;
-                else if (d == 1 && (x == 1 || y == 1)) step = Math.min(5, step + 1);
-                px(im, x, y, STEEL.get(step));
-            }
-        px(im, 3, 4, STEEL.spec());
-        return im;
-    }
-
-    /** Steel anvil face (visible columns 3-12): a ground, bright working face with crisp edges and a polished horn. */
-    static BufferedImage steelAnvilTop() {
-        double[][] n = V2.grain(6262), e = noise(6263, 2);
-        BufferedImage im = img();
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                int step;
-                boolean rim = x <= 3 || x >= 12 || y == 0 || y == 15;
-                boolean edge = x == 4 || x == 11 || y == 1 || y == 14;
-                if (rim) step = e[y][x] > 0.6 ? 3 : 2;
-                else if (edge) step = x == 4 || y == 1 ? 5 : 3;
-                else {
-                    step = x >= 6 && x <= 9 ? 5 : 4;
-                    if (n[y][x] < 0.3) step--;
-                    else if (step == 4 && n[y][x] > 0.7) step = 5;
-                }
-                px(im, x, y, STEEL.get(step));
-            }
-        // The horn end (top) is polished to a highlight.
-        px(im, 7, 2, STEEL.spec());
-        px(im, 8, 3, STEEL.spec());
-        return im;
-    }
 
     // Tier 4 spec 11.7: iron transmission, drawn over the wooden parts' layouts in wrought iron and brass.
 
@@ -8089,13 +7844,11 @@ public final class TextureGen {
         save("block/iron_step_up_gearbox_front", ironise(stepUpFront(), 5.7));
         save("block/iron_step_up_gearbox_back", ironise(stepUpBack(), 6.6));
         save("block/iron_step_up_gearbox_side", ironise(stepUpSide(), 0));
-        // Spec 4.4 and 14.4: zinc calcines and the steel anvil.
+        // Spec 4.4 and 14.4: zinc calcines.
         save("item/poor_zinc_calcine", map(CALCINE, SCORCH, CALCINE_POOR));
         save("item/zinc_calcine", map(CALCINE, SCORCH, CALCINE_NORMAL));
         save("item/rich_zinc_calcine", map(CALCINE, SCORCH, CALCINE_RICH));
         save("item/small_zinc_calcine", map(CALCINE, SCORCH, CALCINE_SMALL));
-        save("block/steel_anvil", steelAnvilBody());
-        save("block/steel_anvil_top", steelAnvilTop());
         // Ores (worldgen spec 14.2 and 14.3).
         for (String grade : List.of("poor", "normal", "rich")) {
             save("block/ore/sphalerite_" + grade, oreOverlay(T4_MINERALS.get(0), grade));
@@ -8261,6 +8014,7 @@ public final class TextureGen {
         // Stone age (tier 0-2 spec 3).
         save("item/straw", art(V2.STRAW_V2, STRAW_SHEAF));
         save("item/twine", art(V2.FIBRE_V2, TWINE_HANK));
+        save("item/plant_fibre", plantFibre());
         save("item/field_journal", art(FIELD_JOURNAL, V2.STRAW_V2, V2.FIBRE_V2, PAPER));
         save("item/fibre_cloth", fibreCloth());
         save("item/stone_axe_head", map(V2.FLINT_V2, KNAPPED_AXE_HEAD));
@@ -8273,7 +8027,6 @@ public final class TextureGen {
         for (String kind : List.of("axe", "knife", "shovel", "hoe", "hammer", "pickaxe"))
             save("item/stone_" + kind, tool(V2.FLINT_V2, V2.WOOD_V2, V2.FIBRE_V2, kind));
         save("gui/knapping/flint", flintSurface());
-        saveRaw("gui/knapping", knappingGui());
 
         // Fire (spec 3.5).
         itemsV2 = false;
@@ -8282,7 +8035,6 @@ public final class TextureGen {
         save("block/fire_pit_ash", ashBed());
         save("block/fire_pit_embers", emberBed());
         itemsV2 = true;
-        save("item/firestarter", firestarter());
         itemsV2 = false;
         saveRaw("gui/fire_pit", firePitGui());
         itemsV2 = true;
@@ -8375,13 +8127,10 @@ public final class TextureGen {
         itemsV2 = false;
         saveRaw("gui/crucible", crucibleGui());
 
-        saveRaw("gui/anvil", anvilGui());
         for (Rock rock : ROCKS) {
             if (rock.category().equals("intrusive") || rock.category().equals("extrusive"))
                 save("block/" + rock.name() + "_anvil_top", stoneAnvilTop(rock));
         }
-        save("block/bronze_anvil", bronzeAnvilBody());
-        save("block/bronze_anvil_top", bronzeAnvilTop());
         itemsV2 = true;
         save("item/tongs_jaw", map(V2.BRONZE_V2, TONGS_JAW_ITEM));
         save("item/tongs", tongs());

@@ -344,9 +344,11 @@ final class Tier5GameTests {
         Melt batch = meltOf(Items.COPPER_INGOT, 2).plus(meltOf(Items.REDSTONE, 8));
         helper.assertValueEqual(batch.total(), 400, "units in 2 copper ingots and 8 redstone");
         helper.assertValueEqual(Alloy.resultOf(batch).orElse(null), Metal.RED_ALLOY, "2 copper + 8 redstone");
+        helper.assertValueEqual(Alloy.resultOf(meltOf(Items.COPPER_INGOT, 1).plus(meltOf(Items.REDSTONE, 4))).orElse(null),
+                Metal.RED_ALLOY, "1 copper + 4 redstone");
         helper.assertValueEqual(Alloy.resultOf(meltOf(ModItems.ingot(Metal.RED_ALLOY), 2)).orElse(null), Metal.RED_ALLOY, "red alloy remelt");
-        helper.assertTrue(Alloy.resultOf(meltOf(Items.COPPER_INGOT, 4).plus(meltOf(Items.REDSTONE, 4))).isEmpty(),
-                "80% copper is outside the red alloy range");
+        helper.assertTrue(Alloy.resultOf(meltOf(Items.COPPER_INGOT, 3).plus(meltOf(Items.REDSTONE, 4))).isEmpty(),
+                "3 copper to 1 redstone ingot is no red alloy");
         helper.assertTrue(Alloy.resultOf(meltOf(Items.REDSTONE, 4)).isEmpty(), "redstone alone is no metal");
 
         ServerLevel level = helper.getLevel();
@@ -1062,8 +1064,8 @@ final class Tier5GameTests {
         helper.succeed();
     }
 
-    // Spec 10.8: replays a recorded pattern with no forge, heating the piece itself; 4 ticks a blow at LV and 2 at MV; it
-    // waits without power; the plate carries the pattern's craft part.
+    // Spec 10.8: works the picked shape with no forge, heating the piece itself; 4 ticks a blow at LV and 2 at MV; it
+    // waits without power; the plate carries the machine's craft part.
     private static void powerHammer(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
@@ -1075,16 +1077,17 @@ final class Tier5GameTests {
                 .getRecipesFor(dev.strataindustria.registry.ModRecipes.ANVIL.get(), new net.minecraft.world.item.crafting.SingleRecipeInput(ingot), level)
                 .filter(r -> r.value().result().create().is(steelPlate))
                 .findFirst().orElseThrow(() -> helper.assertionException("no steel plate recipe"));
-        int target = dev.strataindustria.smithing.Smithing.target(level, plate.id(), plate.value());
-        java.util.List<dev.strataindustria.smithing.HitType> hits = ModGameTests.solve(target, plate.value().rules());
-        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable");
-        int craft = dev.strataindustria.smithing.Smithing.craftQuality(hits.size(),
-                dev.strataindustria.smithing.Smithing.minHits(target, plate.value().rules()));
-        ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
-        helper.assertTrue(!hammer.canPlaceItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern), "a blank pattern does not go in");
-        pattern.set(dev.strataindustria.registry.ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(),
-                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate), target, hits.stream().map(Enum::ordinal).toList(), craft));
-        hammer.setItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern);
+        int total = dev.strataindustria.smithing.AnvilBlockEntity.blowsFor(plate.value(), ingot);
+        int craft = 4;
+        // The shape button steps through the shapes (wrapping), and a pick made for copper still works steel's plate.
+        FakePlayer presser = new FakePlayer(level, new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "presser"));
+        helper.assertTrue(hammer.shapes().chosen() == null, "no shape is picked at first");
+        hammer.cycleShape(presser, 1);
+        helper.assertTrue(hammer.shapes().chosen() != null, "the button picks a shape");
+        net.minecraft.resources.ResourceKey<net.minecraft.world.item.crafting.Recipe<?>> copperPlate =
+                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE, dev.strataindustria.StrataIndustria.id("anvil/copper_plate"));
+        hammer.shapes().choose(copperPlate);
+        helper.assertValueEqual(hammer.shapes().resolve(level, ingot).orElseThrow().id(), plate.id(), "the copper plate pick follows to the steel plate");
         int result = dev.strataindustria.electric.PowerHammerBlockEntity.RESULT;
         hammer.setItem(dev.strataindustria.electric.PowerHammerBlockEntity.QUEUE, ingot.copyWithCount(plate.value().count() * 2));
         helper.assertValueEqual(hammer.hitTicks(), 4, "LV hits every 4 ticks");
@@ -1105,9 +1108,9 @@ final class Tier5GameTests {
         }
         helper.assertTrue(heated, "it heated the piece itself first");
         helper.assertTrue(hammer.getItem(result).is(steelPlate), "a steel plate comes out, got " + hammer.getItem(result) + ", status " + hammer.status() + ", piece " + hammer.input() + " heat " + dev.strataindustria.heat.Heat.get(hammer.input(), level) + " max " + dev.strataindustria.forge.ForgeLimits.maxFor(hammer.input()) + " working " + dev.strataindustria.smithing.AnvilBlockEntity.workingTemperature(hammer.input()));
-        helper.assertTrue(working >= hits.size() * 4 - 1 && working <= hits.size() * 4 + 1, hits.size() + " blows at LV worked for " + working + " ticks");
+        helper.assertTrue(working >= total * 4 - 1 && working <= total * 4 + 1, total + " blows at LV worked for " + working + " ticks");
         var quality = hammer.getItem(result).get(dev.strataindustria.registry.ModDataComponents.QUALITY.get());
-        helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the pattern's craft part " + craft + ", got " + quality);
+        helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the machine's craft part " + craft + ", got " + quality);
 
         // MV: 2 ticks a blow; the second ingot heats again from cold.
         level.setBlock(pos, level.getBlockState(pos).setValue(ElectricMachineBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
@@ -1119,11 +1122,11 @@ final class Tier5GameTests {
             if (hammer.status() == dev.strataindustria.electric.PowerHammerBlockEntity.Status.WORKING) working++;
         }
         helper.assertValueEqual(hammer.getItem(result).getCount(), 2, "plates after the second run, status " + hammer.status());
-        helper.assertTrue(working >= hits.size() * 2 - 1 && working <= hits.size() * 2 + 1, hits.size() + " blows at MV worked for " + working + " ticks");
+        helper.assertTrue(working >= total * 2 - 1 && working <= total * 2 + 1, total + " blows at MV worked for " + working + " ticks");
         helper.succeed();
     }
 
-    // Spec 10.8: with a second piece and flux it welds on its own, heating both pieces; without flux it waits.
+    // Spec 10.8: with a second piece it welds on its own, heating both pieces, and needs no flux.
     private static void powerHammerWeld(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
@@ -1140,8 +1143,6 @@ final class Tier5GameTests {
             hammer.setBuffer(hammer.bufferCapacity());
             dev.strataindustria.electric.PowerHammerBlockEntity.serverTick(level, pos, level.getBlockState(pos), hammer);
         }
-        helper.assertValueEqual(hammer.status(), dev.strataindustria.electric.PowerHammerBlockEntity.Status.NO_FLUX, "no flux, no weld");
-        hammer.setItem(dev.strataindustria.smithing.AnvilBlockEntity.FLUX, new ItemStack(ModItems.FLUX.get(), 4));
         int ticks = 0;
         for (; ticks < 3000 && hammer.getItem(dev.strataindustria.electric.PowerHammerBlockEntity.RESULT).getCount() < 2; ticks++) {
             hammer.setBuffer(hammer.bufferCapacity());
@@ -1149,7 +1150,6 @@ final class Tier5GameTests {
         }
         ItemStack out = hammer.getItem(dev.strataindustria.electric.PowerHammerBlockEntity.RESULT);
         helper.assertTrue(out.is(made) && out.getCount() == 2, "two welded pieces, got " + out + ", status " + hammer.status());
-        helper.assertValueEqual(hammer.getItem(dev.strataindustria.smithing.AnvilBlockEntity.FLUX).getCount(), 2, "two flux used");
         helper.assertTrue(hammer.getItem(dev.strataindustria.electric.PowerHammerBlockEntity.QUEUE).isEmpty() && hammer.getItem(dev.strataindustria.smithing.AnvilBlockEntity.SECOND).isEmpty(),
                 "both stacks used up");
         helper.succeed();

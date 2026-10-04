@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.felling.FellingSounds;
 import dev.strataindustria.journal.JournalContent;
 import dev.strataindustria.grid.GridSounds;
 import dev.strataindustria.listening.ListeningSounds;
@@ -26,6 +27,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         tier5();
         grid();
         tier6();
+        felling();
         oilStill();
         oilField();
         shared();
@@ -36,30 +38,34 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         ledger();
         foot();
         rail();
+        railway();
         transport();
         bronze();
+        branches();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
         add(ModSounds.KNAP_FLINT, stone("knapping.flint", 1.7f, 0.8f));
-        // Crumbly stone gives way: gravel and a dull stone slip.
-        SoundDefinition crumble = definition().subtitle(subtitle("knapping.crumble"));
-        for (int i = 1; i <= 4; i++) crumble.with(sound("minecraft:dig/gravel" + i).pitch(0.8f).volume(0.7f));
-        add(ModSounds.KNAP_CRUMBLE, crumble);
-        // A known pattern cut again in one go: flakes falling in a rush.
-        SoundDefinition rush = definition().subtitle(subtitle("knapping.repeat"));
-        for (int i = 1; i <= 4; i++) {
-            rush.with(sound("minecraft:dig/gravel" + i).pitch(1.3f).volume(0.7f));
-            rush.with(sound("minecraft:dig/stone" + i).pitch(1.5f).volume(0.6f));
-        }
-        add(ModSounds.KNAP_REPEAT, rush);
+        // Flint rings a glassy note over the blow; the true blow is a heavier double crack.
+        add(ModSounds.SHAPING_CHIME, definition().subtitle(subtitle("shaping.chime"))
+                .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.0f).volume(0.5f)));
+        add(ModSounds.SHAPING_TRUE_BLOW, definition().subtitle(subtitle("shaping.true_blow"))
+                .with(sound("minecraft:block.stone.break", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.amethyst_block.hit", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.35f)));
+        add(ModSounds.SHAPING_GLINT, definition().subtitle(subtitle("shaping.glint"))
+                .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.22f)));
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 
-        // Fire: wood friction for the drill, then vanilla fire samples.
-        SoundDefinition drill = definition().subtitle(subtitle("firestarter.drill"));
-        for (int i = 1; i <= 4; i++) drill.with(sound("minecraft:step/wood" + i).pitch(1.6f).volume(0.5f));
-        add(ModSounds.FIRESTARTER_DRILL, drill);
+        // Fire: flint on rock is a sharp stone click over a bright chime (the code raises the pitch with each
+        // strike), the catch a soft rush of air over the first crackle.
+        SoundDefinition strike = definition().subtitle(subtitle("flint.strike"));
+        for (int i = 1; i <= 4; i++) strike.with(sound("minecraft:step/stone" + i).pitch(1.7f).volume(0.7f));
+        strike.with(sound("minecraft:block.amethyst_block.hit", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.45f));
+        add(ModSounds.FLINT_STRIKE, strike);
+        add(ModSounds.FLINT_CATCH, definition().subtitle(subtitle("flint.catch"))
+                .with(sound("minecraft:fire/ignite").pitch(0.8f))
+                .with(sound("minecraft:fire/fire").pitch(1.3f).volume(0.7f)));
         add(ModSounds.FIRE_PIT_IGNITE, definition().subtitle(subtitle("fire_pit.ignite"))
                 .with(sound("minecraft:fire/ignite").pitch(0.9f))
                 .with(sound("minecraft:fire/fire").pitch(1.2f).volume(0.6f)));
@@ -118,10 +124,26 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.5f)));
         add(ModSounds.SMITH_DONE, definition().subtitle(subtitle("anvil.done"))
                 .with(sound("minecraft:random/anvil_land").pitch(1.4f).volume(0.5f)));
-        add(ModSounds.SMITH_QUICK, definition().subtitle(subtitle("anvil.quick"))
-                .with(sound("minecraft:random/anvil_use").pitch(1.5f).volume(0.6f))
-                .with(sound("minecraft:random/anvil_use").pitch(1.7f).volume(0.6f))
-                .with(sound("minecraft:random/anvil_use").pitch(1.4f).volume(0.6f)));
+        SoundDefinition.SoundType event = SoundDefinition.SoundType.EVENT;
+        // Each metal sings its own note over the hammer: copper soft and round, bronze bell-like, iron dry, steel bright and long.
+        add(ModSounds.ANVIL_VOICE_COPPER, definition().subtitle(subtitle("anvil.voice.copper"))
+                .with(sound("minecraft:block.note_block.flute", event).volume(0.55f)));
+        add(ModSounds.ANVIL_VOICE_BRONZE, definition().subtitle(subtitle("anvil.voice.bronze"))
+                .with(sound("minecraft:block.note_block.bell", event).volume(0.6f)));
+        add(ModSounds.ANVIL_VOICE_IRON, definition().subtitle(subtitle("anvil.voice.iron"))
+                .with(sound("minecraft:block.note_block.iron_xylophone", event).volume(0.6f)));
+        add(ModSounds.ANVIL_VOICE_STEEL, definition().subtitle(subtitle("anvil.voice.steel"))
+                .with(sound("minecraft:block.note_block.chime", event).volume(0.65f)));
+        add(ModSounds.ANVIL_TRUE_BLOW, definition().subtitle(subtitle("anvil.true_blow"))
+                .with(sound("minecraft:block.anvil.land", event).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.anvil.land", event).pitch(1.65f).volume(0.35f)));
+        add(ModSounds.ANVIL_COLD, definition().subtitle(subtitle("anvil.cold"))
+                .with(sound("minecraft:block.netherite_block.hit", event).pitch(0.6f).volume(0.8f))
+                .with(sound("minecraft:block.netherite_block.hit", event).pitch(0.7f).volume(0.8f)));
+        add(ModSounds.ANVIL_GLINT, definition().subtitle(subtitle("anvil.glint"))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.8f).volume(0.25f)));
+        add(ModSounds.ANVIL_SET, definition().subtitle(subtitle("anvil.set"))
+                .with(sound("minecraft:block.anvil.place", event).pitch(1.8f).volume(0.35f)));
         SoundDefinition dress = definition().subtitle(subtitle("anvil.dress"));
         for (int i = 1; i <= 4; i++) dress.with(sound("minecraft:dig/stone" + i).pitch(0.7f));
         add(ModSounds.ANVIL_DRESS, dress);
@@ -161,6 +183,11 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.ANVIL_WELD, definition().subtitle(subtitle("anvil.weld"))
                 .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.7f))
                 .with(sound("minecraft:random/anvil_land").pitch(1.1f).volume(0.4f)));
+        // A maker's mark struck into a finished piece: a sharp tick, a short ring and a puff of hiss.
+        add(ModSounds.ANVIL_STAMP, definition().subtitle(subtitle("anvil.stamp"))
+                .with(sound("minecraft:block.anvil.place", event).pitch(1.9f).volume(0.5f))
+                .with(sound("minecraft:block.note_block.iron_xylophone", event).pitch(1.5f).volume(0.45f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(1.6f).volume(0.2f)));
         add(ModSounds.ANVIL_WELD_FAIL, definition().subtitle(subtitle("anvil.weld_fail"))
                 .with(sound("minecraft:random/click").pitch(0.6f).volume(0.5f)));
         // Spec 20.6: mechanical power. These reuse vanilla events, retuned.
@@ -402,6 +429,23 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.iron_door.close", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
     }
 
+    /** Redesign R5: an axe in green wood, the trunk groaning, and the crash, from vanilla wood and ground samples. */
+    private void felling() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(FellingSounds.NOTCH, definition().subtitle(subtitle("felling.notch"))
+                .with(sound("minecraft:block.wood.hit", event).pitch(0.7f).volume(1.0f))
+                .with(sound("minecraft:block.wood.break", event).pitch(1.5f).volume(0.35f)));
+        add(FellingSounds.CREAK, definition().subtitle(subtitle("felling.creak"))
+                .with(sound("minecraft:block.wooden_door.open", event).pitch(0.5f).volume(0.8f))
+                .with(sound("minecraft:block.wooden_trapdoor.open", event).pitch(0.55f).volume(0.6f))
+                .with(sound("minecraft:block.azalea_leaves.break", event).pitch(0.8f).volume(0.7f)));
+        add(FellingSounds.CRASH, definition().subtitle(subtitle("felling.crash"))
+                .with(sound("minecraft:block.wood.break", event).pitch(0.5f).volume(1.0f))
+                .with(sound("minecraft:block.gravel.break", event).pitch(0.5f).volume(0.9f))
+                .with(sound("minecraft:entity.generic.explode", event).pitch(0.5f).volume(0.3f))
+                .with(sound("minecraft:block.azalea_leaves.break", event).pitch(0.6f).volume(1.0f)));
+    }
+
     /** Tier 6 spec 24.6: crude oil buckets use the lava bucket sounds, pitched down and thickened. */
     private void tier6() {
         add(Tier6Sounds.CRUDE_OIL_BUCKET_FILL, definition().subtitle(subtitle("item.bucket.fill_crude_oil"))
@@ -527,6 +571,22 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
     }
 
     /** Outposts and transport (outposts spec 14), from vanilla wood, paper and metal samples. */
+    private void branches() {
+        var event = SoundDefinition.SoundType.EVENT;
+        // A green branch bending: wood groan under a rustle of leaves.
+        add(dev.strataindustria.branch.BranchSounds.SHAKE, definition().subtitle(subtitle("branch.shake"))
+                .with(sound("minecraft:block.wood.hit", event).pitch(1.3f).volume(0.35f))
+                .with(sound("minecraft:block.grass.step", event).pitch(1.1f).volume(0.6f))
+                .with(sound("minecraft:block.azalea_leaves.step", event).pitch(1.2f).volume(0.6f)));
+        // A clean crack and a gust of leaves.
+        add(dev.strataindustria.branch.BranchSounds.SNAP, definition().subtitle(subtitle("branch.snap"))
+                .with(sound("minecraft:block.wood.break", event).pitch(1.5f).volume(0.9f))
+                .with(sound("minecraft:block.bamboo.break", event).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:block.azalea_leaves.break", event).pitch(0.9f).volume(0.8f)));
+        add(dev.strataindustria.branch.BranchSounds.BARE, definition().subtitle(subtitle("branch.bare"))
+                .with(sound("minecraft:block.azalea_leaves.hit", event).pitch(0.8f).volume(0.4f)));
+    }
+
     private void transport() {
         var event = SoundDefinition.SoundType.EVENT;
         add(dev.strataindustria.registry.TransportSounds.CHARTER_PLACE, definition().subtitle(subtitle("charter.place"))
@@ -615,6 +675,65 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 4; i++) dump.with(sound("minecraft:dig/gravel" + i).pitch(0.8f).volume(0.9f));
         for (int i = 1; i <= 4; i++) dump.with(sound("minecraft:dig/stone" + i).pitch(0.9f).volume(0.5f));
         add(dev.strataindustria.transport.rail.RailRegistry.TIPPLE_DUMP, dump);
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_HARNESS, definition().subtitle(subtitle("pony.harness"))
+                .with(sound("minecraft:item.armor.equip_leather", event).pitch(0.9f).volume(0.8f))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.3f).volume(0.5f))
+                .with(sound("minecraft:entity.horse.saddle", event).pitch(1.0f).volume(0.6f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_STEP, definition().subtitle(subtitle("pony.step"))
+                .with(sound("minecraft:entity.horse.step_wood", event).pitch(0.9f).volume(0.7f))
+                .with(sound("minecraft:entity.horse.step", event).pitch(0.8f).volume(0.35f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_EAT, definition().subtitle(subtitle("pony.eat"))
+                .with(sound("minecraft:entity.horse.eat", event).pitch(1.0f).volume(0.7f))
+                .with(sound("minecraft:block.grass.break", event).pitch(1.2f).volume(0.4f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.PONY_SNORT, definition().subtitle(subtitle("pony.snort"))
+                .with(sound("minecraft:entity.horse.breathe", event).pitch(0.8f).volume(0.9f))
+                .with(sound("minecraft:entity.horse.angry", event).pitch(1.1f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.RailRegistry.WINCH_HAUL, definition().subtitle(subtitle("winch.haul"))
+                .with(sound("minecraft:block.wooden_door.open", event).pitch(0.5f).volume(0.45f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.7f).volume(0.4f))
+                .with(sound("minecraft:block.wood.step", event).pitch(0.6f).volume(0.5f)));
+    }
+
+    /** The steel track and wagons, from vanilla iron, chain, anvil and water samples. */
+    private void railway() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.transport.rail.RailwayRegistry.CLATTER_STEEL, definition().subtitle(subtitle("rail.clatter_steel"))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.5f).volume(0.55f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.7f).volume(0.35f))
+                .with(sound("minecraft:block.anvil.step", event).pitch(1.6f).volume(0.4f))
+                .with(sound("minecraft:block.metal.step", event).pitch(1.3f).volume(0.6f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.BUFFER_CLANG, definition().subtitle(subtitle("steel_buffer.clang"))
+                .with(sound("minecraft:block.anvil.land", event).pitch(1.1f).volume(0.55f))
+                .with(sound("minecraft:block.iron_door.close", event).pitch(0.7f).volume(0.7f))
+                .with(sound("minecraft:block.chain.break", event).pitch(1.0f).volume(0.4f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.PORT_FLOW, definition().subtitle(subtitle("wagon_port.flow"))
+                .with(sound("minecraft:block.water.ambient", event).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:item.bucket.fill", event).pitch(1.4f).volume(0.35f))
+                .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.6f).volume(0.2f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_CHUFF, definition().subtitle(subtitle("locomotive.chuff"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.9f).volume(0.55f))
+                .with(sound("minecraft:block.piston.contract", event).pitch(1.9f).volume(0.35f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(1.7f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_WHISTLE, definition().subtitle(subtitle("locomotive.whistle"))
+                .with(sound("minecraft:block.note_block.flute", event).pitch(1.25f).volume(1.0f))
+                .with(sound("minecraft:block.note_block.didgeridoo", event).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.5f).volume(0.4f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_BRAKE, definition().subtitle(subtitle("locomotive.brake"))
+                .with(sound("minecraft:block.grindstone.use", event).pitch(1.7f).volume(0.5f))
+                .with(sound("minecraft:item.axe.scrape", event).pitch(1.3f).volume(0.45f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.8f).volume(0.35f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.WATER_POUR, definition().subtitle(subtitle("water_tower.pour"))
+                .with(sound("minecraft:block.water.ambient", event).pitch(1.0f).volume(0.8f))
+                .with(sound("minecraft:item.bucket.empty", event).pitch(1.3f).volume(0.35f))
+                .with(sound("minecraft:block.pointed_dripstone.drip_water", event).pitch(1.2f).volume(0.5f)));
+        SoundDefinition coal = definition().subtitle(subtitle("coal_stage.load"));
+        for (int i = 1; i <= 3; i++) coal.with(sound("minecraft:dig/gravel" + i).pitch(1.1f).volume(0.7f));
+        coal.with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.8f).volume(0.15f));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.COAL_LOAD, coal);
+        add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
+                .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
+                .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.1f).volume(0.5f)));
     }
 
     /** Pattern casting, from vanilla wood and sand samples. */

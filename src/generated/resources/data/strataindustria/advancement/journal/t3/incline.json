@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t3/tramway",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "winch_hauled"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.incline.hint"
+    },
+    "icon": {
+      "id": "strataindustria:incline_winch"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t3.incline"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

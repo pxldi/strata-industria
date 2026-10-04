@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "A": "strataindustria:wrought_iron_anvil",
+    "A": "strataindustria:iron_anvil",
     "I": "strataindustria:wrought_iron_plate",
     "P": "strataindustria:steel_plate",
     "R": "strataindustria:steel_rod",

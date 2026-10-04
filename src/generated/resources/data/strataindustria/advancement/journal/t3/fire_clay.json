@@ -1,5 +1,5 @@
 {
-  "parent": "strataindustria:journal/t2/bronze_anvil",
+  "parent": "strataindustria:journal/t2/smith",
   "criteria": {
     "done": {
       "conditions": {

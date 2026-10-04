@@ -2,6 +2,7 @@ package dev.strataindustria.electric;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.Heat;
+import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.heat.HeatEmitter;
 import dev.strataindustria.heat.HeatNetwork;
 import dev.strataindustria.heat.HeatPipeBlock;
@@ -166,7 +167,7 @@ public class ElectricHeaterBlockEntity extends BlockEntity implements ElectricCo
     public Component readout() {
         String key = StrataIndustria.MOD_ID + ".electric_heater.";
         if (temperature <= Heat.AMBIENT + 1) return Component.translatable(key + "idle");
-        return Component.translatable(key + "heating", Math.round(temperature), taken, limit());
+        return Component.translatable(key + "heating", HeatBand.words(temperature), taken, limit());
     }
 
     // ------------------------------------------------------------------ lifecycle

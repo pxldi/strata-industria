@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.steam.FireboxBlockEntity;
@@ -60,7 +61,7 @@ public class FireboxScreen extends AbstractContainerScreen<FireboxMenu> {
         int colour = status == FireboxBlockEntity.Status.IDLE ? 0xFF8A6A2A : 0xFF404040;
         g.text(font, line, TEXT_X, TEXT_Y, colour, false);
         if (menu.blown() && menu.output() > 0) {
-            g.text(font, Component.translatable(KEY + "blower", FireboxBlockEntity.BLOWER_TEMPERATURE), TEXT_X, TEXT_Y + 9, 0xFF404040, false);
+            g.text(font, Component.translatable(KEY + "blower"), TEXT_X, TEXT_Y + 9, 0xFF404040, false);
         }
         HeatBand band = HeatBand.of(menu.temperature());
         if (band != HeatBand.NONE) {
@@ -74,7 +75,7 @@ public class FireboxScreen extends AbstractContainerScreen<FireboxMenu> {
         super.extractTooltip(g, mouseX, mouseY);
         int x = mouseX - leftPos, y = mouseY - topPos;
         if (x >= GAUGE_X && x < GAUGE_X + GAUGE_W && y >= GAUGE_Y && y < GAUGE_Y + GAUGE_H) {
-            g.setTooltipForNextFrame(Component.translatable(KEY + "temperature", Math.round(menu.temperature())), mouseX, mouseY);
+            g.setTooltipForNextFrame(Component.translatable(KEY + "temperature", HeatWords.of(menu.temperature())), mouseX, mouseY);
         }
     }
 }

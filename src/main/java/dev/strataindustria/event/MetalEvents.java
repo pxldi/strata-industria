@@ -8,7 +8,6 @@ import dev.strataindustria.metal.Melt;
 import dev.strataindustria.metal.Quality;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
-import dev.strataindustria.smithing.SmithingPattern;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -26,17 +25,16 @@ public final class MetalEvents {
         ItemStack stack = event.getItemStack();
         CastMoldItem.contentsLine(stack).ifPresent(line -> event.getToolTip().add(1, line.copy().withStyle(ChatFormatting.GRAY)));
         Quality quality = stack.get(ModDataComponents.QUALITY.get());
-        if (quality != null) event.getToolTip().add(1, quality.tooltip());
+        if (quality != null) {
+            if (quality.craft() >= dev.strataindustria.smithing.Smithing.MAX_CRAFT) {
+                event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".anvil.bright").withStyle(ChatFormatting.GOLD));
+            }
+            event.getToolTip().add(1, quality.tooltip());
+        }
         Melt bloom = stack.get(ModDataComponents.BLOOM_CONTENTS.get());
         if (bloom != null) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".bloomery.bloom_units", bloom.total())
                     .withStyle(ChatFormatting.GRAY));
-        }
-        SmithingPattern pattern = stack.get(ModDataComponents.SMITHING_PATTERN.get());
-        if (pattern != null) {
-            event.getToolTip().add(1, pattern.tooltip().copy().withStyle(ChatFormatting.GRAY));
-        } else if (stack.is(ModItems.SMITHING_PATTERN.get())) {
-            event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".pattern.blank").withStyle(ChatFormatting.DARK_GRAY));
         }
         if (isSulfide(stack)) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".ore.sulfide").withStyle(ChatFormatting.DARK_GRAY));

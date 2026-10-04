@@ -53,6 +53,10 @@ public final class Observations {
     /** Kinetic network overloaded for the first time. */
     public static final String OVERSTRESS = "overstress";
 
+    /** A pony left standing at a stop with no hay. */
+    public static final String HUNGRY_PONY = "hungry_pony";
+    public static final String BOILER_DRY = "boiler_dry";
+
     private Observations() {}
 
     private static void find(String id, Predicate<ItemStack> matches, Supplier<Item> icon, String reveals) {
@@ -121,6 +125,16 @@ public final class Observations {
     /** The first overloaded kinetic network anyone nearby sees. */
     public static void overstress(Level level, BlockPos pos) {
         Leads.observeNear(level, pos, OVERSTRESS, KEY + OVERSTRESS, List.of(), id(ModItems.WOODEN_AXLE.get()), null);
+    }
+
+    /** The first hungry pony anyone nearby sees. */
+    public static void hungryPony(Level level, BlockPos pos) {
+        Leads.observeNear(level, pos, HUNGRY_PONY, KEY + HUNGRY_PONY, List.of(), id(dev.strataindustria.transport.rail.RailRegistry.HARNESS.get()), null);
+    }
+
+    /** The first locomotive that runs out of water anyone nearby sees. */
+    public static void boilerDry(Level level, BlockPos pos) {
+        Leads.observeNear(level, pos, BOILER_DRY, KEY + BOILER_DRY, List.of(), id(dev.strataindustria.transport.rail.RailwayRegistry.STEAM_LOCOMOTIVE.get()), null);
     }
 
     static Identifier id(Item item) {

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -12,7 +11,6 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -119,7 +117,7 @@ public class TubStopBlockEntity extends BlockEntity {
             contentHash = hash;
             lastChange = now;
         }
-        if (pulsed || ruleMet(server, consist, now)) release(server, lead);
+        if ((pulsed || ruleMet(server, consist, now)) && lead.canDepart(server)) release(server, lead);
         if (now % 4 == 0) server.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
     }
 
@@ -146,12 +144,7 @@ public class TubStopBlockEntity extends BlockEntity {
 
     private static int contentHash(List<MineTubEntity> consist) {
         int hash = 1;
-        for (MineTubEntity tub : consist) {
-            for (int slot = 0; slot < tub.getContainerSize(); slot++) {
-                ItemStack stack = tub.getItem(slot);
-                hash = hash * 31 + (stack.isEmpty() ? 0 : BuiltInRegistries.ITEM.getId(stack.getItem()) * 64 + stack.getCount());
-            }
-        }
+        for (MineTubEntity tub : consist) hash = hash * 31 + tub.contentSignature();
         return hash;
     }
 
@@ -161,11 +154,8 @@ public class TubStopBlockEntity extends BlockEntity {
         double total = 0;
         int slots = 0;
         for (MineTubEntity tub : lead.consist()) {
-            for (int slot = 0; slot < tub.getContainerSize(); slot++) {
-                ItemStack stack = tub.getItem(slot);
-                slots++;
-                if (!stack.isEmpty()) total += (float) stack.getCount() / Math.min(tub.getMaxStackSize(), stack.getMaxStackSize());
-            }
+            slots += tub.fillCapacity();
+            total += tub.fillAmount();
         }
         if (slots == 0 || total == 0) return 0;
         return (int) Math.floor(total / slots * 14.0) + 1;

@@ -23,7 +23,6 @@ import dev.strataindustria.machine.SawingRecipe;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.smithing.WeldingRecipe;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
@@ -106,10 +105,14 @@ final class ModRecipeProvider extends RecipeProvider {
         new SharedBlockData.Recipes(recipeContext, advancementContext).buildRecipes();
         new FootData.Recipes(recipeContext, advancementContext).buildRecipes();
         new RailData.Recipes(recipeContext, advancementContext).buildRecipes();
+        new RailwayData.Recipes(recipeContext, advancementContext).buildRecipes();
         vanillaOverrides();
     }
 
-    // Tier 0-2 spec 3.2. Patterns are written top row first; '#' is kept stone.
+    /** Blows per shape (redesign L5): a tool head is four, a clay press or a carving is three. */
+    private static final int KNAP_BLOWS = 4, CLAY_BLOWS = 3, CARVE_BLOWS = 3;
+
+    // Tier 0-2 spec 3.2. Patterns are written top row first; '#' is the shape that comes out of the stone.
     private void knapping() {
         knap(ModItems.STONE_AXE_HEAD.get(), ".#...", "####.", "#####", "####.", ".#...");
         knap(ModItems.STONE_KNIFE_BLADE.get(), "#....", "##...", ".##..", "..##.", "...##");
@@ -120,11 +123,11 @@ final class ModRecipeProvider extends RecipeProvider {
         knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
         // Spec 10.1: a round stone with a hole, worth four loose rocks.
         int quernstone = GridPattern.parse(List.of(".###.", "#####", "##.##", "#####", ".###.")).getOrThrow();
-        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, quernstone, false,
+        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, 6, quernstone,
                 new ItemStackTemplate(ModItems.QUERNSTONE.get())), null);
     }
 
-    // Spec 4.1: the same grid, worked in five clay balls.
+    // Spec 4.1: the same strikes, worked in five clay balls.
     private void clayForming() {
         form(ModItems.UNFIRED_SMALL_VESSEL.get(), 1, ".....", ".###.", "#####", "#####", ".###.");
         form(ModItems.UNFIRED_LARGE_VESSEL.get(), 1, ".###.", "#####", "#####", "#####", ".###.");
@@ -141,7 +144,7 @@ final class ModRecipeProvider extends RecipeProvider {
         form(mold(MoldType.SWORD_BLADE), 1, "###..", "##..#", "#..##", "..###", ".####");
     }
 
-    // Pattern casting: a plank blank is carved on the clay grid, a flask is a plank frame round damp sand.
+    // Pattern casting: a plank blank is carved with the same strikes, a flask is a plank frame round damp sand.
     private void patterns() {
         shapeless(RecipeCategory.MISC, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get(), 2)
                 .requires(ItemTags.PLANKS)
@@ -170,7 +173,7 @@ final class ModRecipeProvider extends RecipeProvider {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
         Item result = dev.strataindustria.registry.PatternRegistry.PATTERNS.get(shape).get();
         output.accept(key("carving/" + shape + "_pattern"), new KnappingRecipe(
-                Ingredient.of(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get()), 1, pattern, true,
+                Ingredient.of(dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get()), 1, CARVE_BLOWS, pattern,
                 new ItemStackTemplate(result)), null);
     }
 
@@ -210,7 +213,7 @@ final class ModRecipeProvider extends RecipeProvider {
 
     private void form(Item result, int count, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
-        var recipe = new KnappingRecipe(Ingredient.of(Items.CLAY_BALL), Knapping.CLAY_OPENING_COST, pattern, true,
+        var recipe = new KnappingRecipe(Ingredient.of(Items.CLAY_BALL), Knapping.CLAY_OPENING_COST, CLAY_BLOWS, pattern,
                 new ItemStackTemplate(result, count));
         output.accept(key("clay_forming/" + name(result)), recipe, null);
     }
@@ -218,12 +221,12 @@ final class ModRecipeProvider extends RecipeProvider {
     private void formFireClay(Item result, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
         output.accept(key("clay_forming/" + name(result)), new KnappingRecipe(Ingredient.of(ModItems.FIRE_CLAY_BALL.get()),
-                Knapping.CLAY_OPENING_COST, pattern, true, new ItemStackTemplate(result)), null);
+                Knapping.CLAY_OPENING_COST, CLAY_BLOWS, pattern, new ItemStackTemplate(result)), null);
     }
 
     private void knap(Item result, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
-        var recipe = new KnappingRecipe(tag(ModTags.Items.KNAPPABLE), 1, pattern, true, new ItemStackTemplate(result));
+        var recipe = new KnappingRecipe(tag(ModTags.Items.KNAPPABLE), 1, KNAP_BLOWS, pattern, new ItemStackTemplate(result));
         output.accept(key("knapping/" + name(result)), recipe, null);
     }
 
@@ -257,6 +260,13 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('C', StructureContent.FIBRE_CANVAS_ITEM.get())
                 .unlockedBy("has_fibre_canvas", has(StructureContent.FIBRE_CANVAS_ITEM.get()))
                 .save(output, key("fibre_canvas_carpet"));
+        shaped(RecipeCategory.BUILDING_BLOCKS, StructureContent.FIBRE_CANVAS_STAIRS_ITEM.get(), 4)
+                .pattern("C  ")
+                .pattern("CC ")
+                .pattern("CCC")
+                .define('C', StructureContent.FIBRE_CANVAS_ITEM.get())
+                .unlockedBy("has_fibre_canvas", has(StructureContent.FIBRE_CANVAS_ITEM.get()))
+                .save(output, key("fibre_canvas_stairs"));
         shaped(RecipeCategory.BUILDING_BLOCKS, StructureContent.PIT_PROP_ITEM.get(), 4)
                 .pattern("L")
                 .pattern("L")
@@ -268,11 +278,6 @@ final class ModRecipeProvider extends RecipeProvider {
 
     // Spec 3.5.
     private void fire() {
-        shapeless(RecipeCategory.TOOLS, ModItems.FIRESTARTER.get())
-                .requires(Items.STICK, 2)
-                .requires(ModItems.TWINE.get())
-                .unlockedBy("has_twine", has(ModItems.TWINE.get()))
-                .save(output, key("firestarter"));
         shapeless(RecipeCategory.DECORATIONS, ModItems.FIRE_PIT.get())
                 .requires(Items.STICK, 4)
                 .requires(ModItems.STRAW.get())
@@ -338,42 +343,29 @@ final class ModRecipeProvider extends RecipeProvider {
             Item ingot = ModItems.ingot(metal);
             String m = metal.id();
             var types = metal.toolTypes();
-            anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 60,
-                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
-            anvil(m + "_pickaxe_head", ingot, 1, ModItems.head(metal, MoldType.PICKAXE_HEAD), 85,
-                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
-            anvil(m + "_axe_head", ingot, 1, ModItems.head(metal, MoldType.AXE_HEAD), 75,
-                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.UPSET, Rule.Where.THIRD_LAST));
-            anvil(m + "_shovel_head", ingot, 1, ModItems.head(metal, MoldType.SHOVEL_HEAD), 50,
-                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
-            anvil(m + "_hoe_head", ingot, 1, ModItems.head(metal, MoldType.HOE_HEAD), 65,
-                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
+            anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 3);
+            anvil(m + "_pickaxe_head", ingot, 1, ModItems.head(metal, MoldType.PICKAXE_HEAD), 5);
+            anvil(m + "_axe_head", ingot, 1, ModItems.head(metal, MoldType.AXE_HEAD), 5);
+            anvil(m + "_shovel_head", ingot, 1, ModItems.head(metal, MoldType.SHOVEL_HEAD), 5);
+            anvil(m + "_hoe_head", ingot, 1, ModItems.head(metal, MoldType.HOE_HEAD), 5);
             if (types.contains(MoldType.KNIFE_BLADE)) {
-                anvil(m + "_knife_blade", ingot, 1, ModItems.head(metal, MoldType.KNIFE_BLADE), 95,
-                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
-                anvil(m + "_hammer_head", ingot, 1, ModItems.head(metal, MoldType.HAMMER_HEAD), 70,
-                        rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.SHRINK, Rule.Where.NOT_LAST));
-                anvil(m + "_saw_blade", ingot, 1, ModItems.head(metal, MoldType.SAW_BLADE), 55,
-                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST));
-                anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 80,
-                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
+                anvil(m + "_knife_blade", ingot, 1, ModItems.head(metal, MoldType.KNIFE_BLADE), 5);
+                anvil(m + "_hammer_head", ingot, 1, ModItems.head(metal, MoldType.HAMMER_HEAD), 5);
+                anvil(m + "_saw_blade", ingot, 1, ModItems.head(metal, MoldType.SAW_BLADE), 5);
+                anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 4);
             }
             // Tier 3 spec 9.3 and tier 4 spec 14.1: iron and steel sword blades are drawn from one welded double ingot.
             Item doubleIngot = metal == Metal.WROUGHT_IRON ? ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()
                     : metal == Metal.STEEL ? ModItems.STEEL_DOUBLE_INGOT.get() : null;
             Item bladeStock = doubleIngot != null ? doubleIngot : ingot;
-            anvil(m + "_sword_blade", bladeStock, doubleIngot != null ? 1 : 2, ModItems.head(metal, MoldType.SWORD_BLADE), 100,
-                    rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.THIRD_LAST));
+            anvil(m + "_sword_blade", bladeStock, doubleIngot != null ? 1 : 2, ModItems.head(metal, MoldType.SWORD_BLADE), 5);
             if (metal == Metal.WROUGHT_IRON) {
                 output.accept(key("anvil/wrought_iron_rod"), new AnvilRecipe(Ingredient.of(ingot), 1,
-                        new ItemStackTemplate(ModItems.WROUGHT_IRON_ROD.get(), 2),
-                        List.of(rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST),
-                                rule(Rule.Kind.HIT, Rule.Where.NOT_LAST)), 45), null);
+                        new ItemStackTemplate(ModItems.WROUGHT_IRON_ROD.get(), 2), 3), null);
             }
             if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
                 Item head = ModItems.PROSPECTOR_HEADS.get(metal).get();
-                anvil(m + "_prospectors_pick_head", ingot, 1, head, 90,
-                        rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+                anvil(m + "_prospectors_pick_head", ingot, 1, head, 5);
                 Item pick = ModItems.PROSPECTORS_PICKS.get(metal).get();
                 save(key(name(pick)), new MetalToolRecipe(new Recipe.CommonInfo(true),
                         new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.EQUIPMENT, ""), new ItemStackTemplate(pick),
@@ -387,26 +379,14 @@ final class ModRecipeProvider extends RecipeProvider {
             Item ingot = ModItems.ingot(metal);
             String m = metal.id();
             if (!metal.isToolMetal()) {
-                anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 60,
-                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+                anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 3);
             }
             output.accept(key("anvil/" + m + "_rod"), new AnvilRecipe(Ingredient.of(ingot), 1,
-                    new ItemStackTemplate(ModItems.RODS.get(metal).get(), 2),
-                    List.of(rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST),
-                            rule(Rule.Kind.HIT, Rule.Where.NOT_LAST)), 45), null);
+                    new ItemStackTemplate(ModItems.RODS.get(metal).get(), 2), 3), null);
             if (ModItems.GEARS.containsKey(metal)) {
-                anvil(m + "_gear", ingot, 1, ModItems.GEARS.get(metal).get(), 70,
-                        rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.UPSET, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
+                anvil(m + "_gear", ingot, 1, ModItems.GEARS.get(metal).get(), 4);
             }
         }
-        shaped(RecipeCategory.DECORATIONS, ModItems.BRONZE_ANVIL.get())
-                .pattern("PPP")
-                .pattern(" I ")
-                .pattern("III")
-                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
-                .define('I', ModTags.Items.ANY_BRONZE_INGOTS)
-                .unlockedBy("has_bronze_plate", has(ModTags.Items.ANY_BRONZE_PLATES))
-                .save(output, key("bronze_anvil"));
         shapeless(RecipeCategory.TOOLS, ModItems.TONGS.get())
                 .requires(ModItems.TONGS_JAW.get())
                 .requires(Items.STICK, 2)
@@ -474,19 +454,11 @@ final class ModRecipeProvider extends RecipeProvider {
         }
         roast("small_zinc_calcine", ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get(), Tier4Items.SMALL_ZINC_CALCINE.get(), 200, 15);
 
-        // Spec 14.1 and 14.4: welded steel, and the steel anvil built from it.
+        // Spec 14.1: welded steel.
         Item steel = ModItems.ingot(Metal.STEEL);
         Item steelDouble = ModItems.STEEL_DOUBLE_INGOT.get();
         output.accept(key("welding/steel_double_ingot"), new WeldingRecipe(Ingredient.of(steel), Ingredient.of(steel),
                 new ItemStackTemplate(steelDouble)), null);
-        shaped(RecipeCategory.DECORATIONS, Tier4Items.STEEL_ANVIL.get())
-                .pattern("DDD")
-                .pattern(" I ")
-                .pattern("III")
-                .define('D', steelDouble)
-                .define('I', steel)
-                .unlockedBy("has_steel_double_ingot", has(steelDouble))
-                .save(output, key("steel_anvil"));
 
         // Spec 11.7: iron transmission for speeds past the wooden 64 RPM.
         Item ironRod = ModItems.WROUGHT_IRON_ROD.get(), ironAxle = Tier4Items.IRON_AXLE.get(), brassGear = ModItems.GEARS.get(Metal.BRASS).get();
@@ -767,7 +739,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
                 .unlockedBy("has_bronze_boiler", has(Tier4Items.BRONZE_BOILER.get()))
                 .save(output, key("steam_engine"));
-        // Spec 10.5: the steam hammer, around a wrought iron anvil.
+        // Spec 10.5: the steam hammer, around an iron anvil.
         shaped(RecipeCategory.REDSTONE, Tier4Items.STEAM_HAMMER.get())
                 .pattern("PVP")
                 .pattern(" R ")
@@ -776,7 +748,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('V', Tier4Items.VALVE.get())
                 .define('R', ModItems.RODS.get(Metal.STEEL).get())
                 .define('I', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
-                .define('A', ModItems.WROUGHT_IRON_ANVIL.get())
+                .define('A', ModItems.IRON_ANVIL.get())
                 .unlockedBy("has_steam_engine", has(Tier4Items.STEAM_ENGINE.get()))
                 .save(output, key("steam_hammer"));
         // Spec 11.2: the crusher, and what it does better than a quern.
@@ -866,7 +838,7 @@ final class ModRecipeProvider extends RecipeProvider {
     private void ironAge() {
         int brick = GridPattern.parse(List.of("##.##", "##.##", ".....", "##.##", "##.##")).getOrThrow();
         output.accept(key("clay_forming/unfired_fire_brick"), new KnappingRecipe(Ingredient.of(ModItems.FIRE_CLAY_BALL.get()),
-                Knapping.CLAY_OPENING_COST, brick, true, new ItemStackTemplate(ModItems.UNFIRED_FIRE_BRICK.get(), 4)), null);
+                Knapping.CLAY_OPENING_COST, CLAY_BLOWS, brick, new ItemStackTemplate(ModItems.UNFIRED_FIRE_BRICK.get(), 4)), null);
         shapeless(RecipeCategory.MISC, ModItems.FIRE_CLAY_BALL.get(), 2)
                 .requires(Items.CLAY_BALL, 3)
                 .requires(ModItems.GROG.get())
@@ -911,36 +883,23 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_fire_brick", has(fireBrick))
                 .save(output, key("bloomery"));
         // Spec 9.3: hammering the slag out of a bloom. Partial blooms give nuggets instead (AnvilRecipe#assemble).
-        anvil("bloom_refining", ModItems.RAW_BLOOM.get(), 1, Items.IRON_INGOT, 60,
-                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+        anvil("bloom_refining", ModItems.RAW_BLOOM.get(), 1, Items.IRON_INGOT, 6);
 
-        // Spec 9.4: flux from the quern, welding, and the wrought iron anvil.
+        // Spec 9.4: flux from the quern, welding, and the iron anvil.
         grind("flux_from_sand", Ingredient.of(Items.SAND), ModItems.FLUX.get(), 2);
         grind("flux_from_limestone", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.LIMESTONE).get()), ModItems.FLUX.get(), 4);
         grind("flux_from_marble", Ingredient.of(ModItems.LOOSE_ROCK.get(Rock.MARBLE).get()), ModItems.FLUX.get(), 4);
         output.accept(key("welding/wrought_iron_double_ingot"), new WeldingRecipe(Ingredient.of(Items.IRON_INGOT),
                 Ingredient.of(Items.IRON_INGOT), new ItemStackTemplate(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get())), null);
-        Item doubleIngot = ModItems.WROUGHT_IRON_DOUBLE_INGOT.get();
-        shaped(RecipeCategory.DECORATIONS, ModItems.WROUGHT_IRON_ANVIL.get())
-                .pattern("DDD")
+        // Two anvils: the iron anvil is built straight from ingots, so it needs no welding to get started. It
+        // is the anvil that works wrought iron and steel.
+        shaped(RecipeCategory.DECORATIONS, ModItems.IRON_ANVIL.get())
+                .pattern("III")
                 .pattern(" I ")
                 .pattern("III")
-                .define('D', doubleIngot)
                 .define('I', Items.IRON_INGOT)
-                .unlockedBy("has_double_ingot", has(doubleIngot))
-                .save(output, key("wrought_iron_anvil"));
-
-        // Spec 9.5: a blank pattern, and wiping a recorded one.
-        Item pattern = ModItems.SMITHING_PATTERN.get();
-        shapeless(RecipeCategory.MISC, pattern, 2)
-                .requires(Items.PAPER, 2)
-                .requires(Items.CHARCOAL)
-                .unlockedBy("has_double_ingot", has(doubleIngot))
-                .save(output, key("smithing_pattern"));
-        shapeless(RecipeCategory.MISC, pattern)
-                .requires(pattern)
-                .unlockedBy("has_smithing_pattern", has(pattern))
-                .save(output, key("smithing_pattern_wipe"));
+                .unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
+                .save(output, key("iron_anvil"));
 
         kinetics();
 
@@ -1124,13 +1083,8 @@ final class ModRecipeProvider extends RecipeProvider {
                 java.util.Optional.ofNullable(bark).map(ItemStackTemplate::new), SawingRecipe.DEFAULT_TICKS), null);
     }
 
-    private static Rule rule(Rule.Kind kind, Rule.Where where) {
-        return Rule.of(kind, where);
-    }
-
-    private void anvil(String path, Item input, int count, Item result, int defaultTarget, Rule... rules) {
-        output.accept(key("anvil/" + path), new AnvilRecipe(Ingredient.of(input), count, new ItemStackTemplate(result),
-                List.of(rules), defaultTarget), null);
+    private void anvil(String path, Item input, int count, Item result, int blows) {
+        output.accept(key("anvil/" + path), new AnvilRecipe(Ingredient.of(input), count, new ItemStackTemplate(result), blows), null);
     }
 
     // Spec 10.1: the quern, and what it grinds.

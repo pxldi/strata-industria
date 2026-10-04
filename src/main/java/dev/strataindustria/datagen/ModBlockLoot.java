@@ -93,8 +93,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
                     .add(LootItem.lootTableItem(ModItems.LOOSE_ROCK.get(entry.getKey()).get())
                             .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))))));
         }
-        dropSelf(ModBlocks.BRONZE_ANVIL.get());
-        dropSelf(ModBlocks.WROUGHT_IRON_ANVIL.get());
+        dropSelf(ModBlocks.IRON_ANVIL.get());
 
         // Tier 3 spec 3 and 4.
         oreDrops(ModBlocks.BOG_IRON.get(), OreMineral.LIMONITE, fortune);
@@ -123,7 +122,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.PLACER_SAND.get());
         // Tier 4 spec 5.
         for (var block : java.util.List.of(Tier4Blocks.COKE_OVEN_BRICKS, Tier4Blocks.COKE_OVEN_DOOR, Tier4Blocks.COKE_BLOCK,
-                Tier4Blocks.TREATED_PLANKS, Tier4Blocks.TREATED_STAIRS, Tier4Blocks.TREATED_FENCE, Tier4Blocks.STEEL_ANVIL,
+                Tier4Blocks.TREATED_PLANKS, Tier4Blocks.TREATED_STAIRS, Tier4Blocks.TREATED_FENCE,
                 Tier4Blocks.IRON_AXLE, Tier4Blocks.IRON_GEARBOX, Tier4Blocks.IRON_STEP_UP_GEARBOX, Tier4Blocks.FIREBOX,
                 Tier4Blocks.BRONZE_BOILER, Tier4Blocks.CRACKED_BRONZE_BOILER, Tier4Blocks.COPPER_FLUID_PIPE, Tier4Blocks.BRONZE_FLUID_PIPE,
                 Tier4Blocks.STEEL_FLUID_PIPE, Tier4Blocks.PRESSURE_GAUGE, dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE, Tier4Blocks.MECHANICAL_PUMP, Tier4Blocks.STEAM_ENGINE,
@@ -147,6 +146,14 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 dev.strataindustria.transport.rail.RailRegistry.TIPPLE_RAIL, dev.strataindustria.transport.rail.RailRegistry.RAIL_BUFFER)) {
             dropSelf(rail.get());
         }
+        for (var rail : java.util.List.of(dev.strataindustria.transport.rail.RailwayRegistry.STEEL_TRACK, dev.strataindustria.transport.rail.RailwayRegistry.STATION_TRACK,
+                dev.strataindustria.transport.rail.RailwayRegistry.STEEL_BUFFER, dev.strataindustria.transport.rail.RailwayRegistry.WAGON_FLUID_PORT,
+                dev.strataindustria.transport.rail.RailwayRegistry.WATER_TOWER_BASE, dev.strataindustria.transport.rail.RailwayRegistry.WATER_TOWER_SPOUT,
+                dev.strataindustria.transport.rail.RailwayRegistry.COAL_STAGE)) {
+            dropSelf(rail.get());
+        }
+        dropSelf(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.get());
+        dropSelf(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.get());
         dropSelf(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.get());
         dropSelf(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD.get());
         // A specimen cabinet keeps its collection.

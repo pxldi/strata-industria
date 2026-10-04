@@ -1,4 +1,21 @@
 {
+  "anvil.cold": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.netherite_block.hit",
+        "pitch": 0.6,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.netherite_block.hit",
+        "pitch": 0.7,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.cold"
+  },
   "anvil.done": {
     "sounds": [
       {
@@ -30,6 +47,17 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.dress"
   },
+  "anvil.glint": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.8,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.glint"
+  },
   "anvil.hit": {
     "sounds": [
       {
@@ -40,25 +68,96 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.hit"
   },
-  "anvil.quick": {
+  "anvil.set": {
     "sounds": [
       {
-        "name": "random/anvil_use",
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 1.8,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.set"
+  },
+  "anvil.stamp": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 1.9,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.iron_xylophone",
         "pitch": 1.5,
-        "volume": 0.6
+        "volume": 0.45
       },
       {
-        "name": "random/anvil_use",
-        "pitch": 1.7,
-        "volume": 0.6
+        "type": "event",
+        "name": "block.lava.extinguish",
+        "pitch": 1.6,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.stamp"
+  },
+  "anvil.true_blow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.5,
+        "volume": 0.35
       },
       {
-        "name": "random/anvil_use",
-        "pitch": 1.4,
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.65,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.true_blow"
+  },
+  "anvil.voice.bronze": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bell",
         "volume": 0.6
       }
     ],
-    "subtitle": "subtitles.strataindustria.anvil.quick"
+    "subtitle": "subtitles.strataindustria.anvil.voice.bronze"
+  },
+  "anvil.voice.copper": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.flute",
+        "volume": 0.55
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.voice.copper"
+  },
+  "anvil.voice.iron": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.iron_xylophone",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.voice.iron"
+  },
+  "anvil.voice.steel": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.chime",
+        "volume": 0.65
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.voice.steel"
   },
   "anvil.weld": {
     "sounds": [
@@ -1676,6 +1775,63 @@
     ],
     "subtitle": "subtitles.strataindustria.boiler.vent"
   },
+  "branch.bare": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.hit",
+        "pitch": 0.8,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.branch.bare"
+  },
+  "branch.shake": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 1.3,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.grass.step",
+        "pitch": 1.1,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.step",
+        "pitch": 1.2,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.branch.shake"
+  },
+  "branch.snap": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.break",
+        "pitch": 1.5,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "block.bamboo.break",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.break",
+        "pitch": 0.9,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.branch.snap"
+  },
   "brick_kiln.done": {
     "sounds": [
       {
@@ -1963,6 +2119,32 @@
     ],
     "subtitle": "subtitles.strataindustria.clay.shape"
   },
+  "coal_stage.load": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 1.1,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 1.1,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 1.1,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.8,
+        "volume": 0.15
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.coal_stage.load"
+  },
   "coke_oven.done": {
     "sounds": [
       {
@@ -2236,6 +2418,72 @@
     ],
     "subtitle": "subtitles.strataindustria.electric.spark"
   },
+  "felling.crash": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.break",
+        "pitch": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.gravel.break",
+        "pitch": 0.5,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "entity.generic.explode",
+        "pitch": 0.5,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.break",
+        "pitch": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.felling.crash"
+  },
+  "felling.creak": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_door.open",
+        "pitch": 0.5,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.open",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.break",
+        "pitch": 0.8,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.felling.creak"
+  },
+  "felling.notch": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.wood.break",
+        "pitch": 1.5,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.felling.notch"
+  },
   "filter.configure": {
     "sounds": [
       {
@@ -2323,30 +2571,73 @@
     ],
     "subtitle": "subtitles.strataindustria.firebox.light"
   },
-  "firestarter.drill": {
+  "flat_wagon.load": {
     "sounds": [
       {
-        "name": "step/wood1",
-        "pitch": 1.6,
-        "volume": 0.5
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 1.3,
+        "volume": 0.6
       },
       {
-        "name": "step/wood2",
-        "pitch": 1.6,
-        "volume": 0.5
+        "type": "event",
+        "name": "block.wood.place",
+        "pitch": 0.7,
+        "volume": 0.9
       },
       {
-        "name": "step/wood3",
-        "pitch": 1.6,
-        "volume": 0.5
-      },
-      {
-        "name": "step/wood4",
-        "pitch": 1.6,
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.1,
         "volume": 0.5
       }
     ],
-    "subtitle": "subtitles.strataindustria.firestarter.drill"
+    "subtitle": "subtitles.strataindustria.flat_wagon.load"
+  },
+  "flint.catch": {
+    "sounds": [
+      {
+        "name": "fire/ignite",
+        "pitch": 0.8
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 1.3,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.flint.catch"
+  },
+  "flint.strike": {
+    "sounds": [
+      {
+        "name": "step/stone1",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "name": "step/stone2",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "name": "step/stone3",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "name": "step/stone4",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.hit",
+        "pitch": 1.9,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.flint.strike"
   },
   "fluid_pipe.refuse": {
     "sounds": [
@@ -2949,31 +3240,6 @@
     ],
     "subtitle": "subtitles.strataindustria.kinetic_dynamo.run"
   },
-  "knapping.crumble": {
-    "sounds": [
-      {
-        "name": "dig/gravel1",
-        "pitch": 0.8,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/gravel2",
-        "pitch": 0.8,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/gravel3",
-        "pitch": 0.8,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/gravel4",
-        "pitch": 0.8,
-        "volume": 0.7
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.knapping.crumble"
-  },
   "knapping.finish": {
     "sounds": [
       {
@@ -3019,51 +3285,6 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.knapping.flint"
-  },
-  "knapping.repeat": {
-    "sounds": [
-      {
-        "name": "dig/gravel1",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone1",
-        "pitch": 1.5,
-        "volume": 0.6
-      },
-      {
-        "name": "dig/gravel2",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone2",
-        "pitch": 1.5,
-        "volume": 0.6
-      },
-      {
-        "name": "dig/gravel3",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone3",
-        "pitch": 1.5,
-        "volume": 0.6
-      },
-      {
-        "name": "dig/gravel4",
-        "pitch": 1.3,
-        "volume": 0.7
-      },
-      {
-        "name": "dig/stone4",
-        "pitch": 1.5,
-        "volume": 0.6
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.knapping.repeat"
   },
   "knapping.rock": {
     "sounds": [
@@ -3157,6 +3378,74 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.leyden_jar.strike"
+  },
+  "locomotive.brake": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 1.7,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "item.axe.scrape",
+        "pitch": 1.3,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.8,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.locomotive.brake"
+  },
+  "locomotive.chuff": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.9,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.piston.contract",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.lava.extinguish",
+        "pitch": 1.7,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.locomotive.chuff"
+  },
+  "locomotive.whistle": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.flute",
+        "pitch": 1.25
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.didgeridoo",
+        "pitch": 1.5,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.5,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.locomotive.whistle"
   },
   "mark.cut": {
     "sounds": [
@@ -3439,6 +3728,78 @@
     ],
     "subtitle": "subtitles.strataindustria.pit_kiln.straw"
   },
+  "pony.eat": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.horse.eat",
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.grass.break",
+        "pitch": 1.2,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.eat"
+  },
+  "pony.harness": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.armor.equip_leather",
+        "pitch": 0.9,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 1.3,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "entity.horse.saddle",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.harness"
+  },
+  "pony.snort": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.horse.breathe",
+        "pitch": 0.8,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "entity.horse.angry",
+        "pitch": 1.1,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.snort"
+  },
+  "pony.step": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.horse.step_wood",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "entity.horse.step",
+        "pitch": 0.8,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pony.step"
+  },
   "prospect": {
     "sounds": [
       {
@@ -3559,6 +3920,35 @@
     ],
     "subtitle": "subtitles.strataindustria.quern.load"
   },
+  "rail.clatter_steel": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.5,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 1.7,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.step",
+        "pitch": 1.6,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.metal.step",
+        "pitch": 1.3,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.rail.clatter_steel"
+  },
   "raw_bloom.hit": {
     "sounds": [
       {
@@ -3667,6 +4057,44 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.saw_mill.saw"
+  },
+  "shaping.chime": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.shaping.chime"
+  },
+  "shaping.glint": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.9,
+        "volume": 0.22
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.shaping.glint"
+  },
+  "shaping.true_blow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 1.5,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.hit",
+        "pitch": 1.7,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.shaping.true_blow"
   },
   "sluice.wash": {
     "sounds": [
@@ -3858,6 +4286,28 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.steam_whistle.blow"
+  },
+  "steel_buffer.clang": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.1,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.iron_door.close",
+        "pitch": 0.7,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.chain.break",
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steel_buffer.clang"
   },
   "stethoscope.silent": {
     "sounds": [
@@ -4146,6 +4596,29 @@
     ],
     "subtitle": "subtitles.strataindustria.valve.open"
   },
+  "wagon_port.flow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.fill",
+        "pitch": 1.4,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.6,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.wagon_port.flow"
+  },
   "washer.wash": {
     "sounds": [
       {
@@ -4197,6 +4670,28 @@
     ],
     "subtitle": "subtitles.strataindustria.washing_pan.swirl"
   },
+  "water_tower.pour": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.empty",
+        "pitch": 1.3,
+        "volume": 0.35
+      },
+      {
+        "type": "event",
+        "name": "block.pointed_dripstone.drip_water",
+        "pitch": 1.2,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.water_tower.pour"
+  },
   "water_wheel.groan": {
     "sounds": [
       {
@@ -4223,6 +4718,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.water_wheel.turn"
+  },
+  "winch.haul": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_door.open",
+        "pitch": 0.5,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 0.7,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "block.wood.step",
+        "pitch": 0.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.winch.haul"
   },
   "windmill.turn": {
     "sounds": [

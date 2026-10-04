@@ -17,9 +17,9 @@ import dev.strataindustria.registry.Tier5BlockEntities;
 import dev.strataindustria.registry.Tier5Sounds;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.HitType;
 import dev.strataindustria.smithing.Smithing;
-import dev.strataindustria.smithing.SmithingPattern;
+import dev.strataindustria.smithing.ShapeMachine;
+import dev.strataindustria.smithing.ShapeSelector;
 import dev.strataindustria.smithing.SmithingProgress;
 import java.util.Locale;
 import java.util.Optional;
@@ -35,6 +35,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.Level;
@@ -47,13 +49,13 @@ import org.jspecify.annotations.Nullable;
 
 /**
  * The power hammer (tier 5 spec 10.8): the steam hammer's electric mirror with the tier 5 anvil built in.
- * It replays a recorded smithing pattern on workpieces from its input slot, heats the piece itself by
- * induction (to its working temperature + 100 °C, 16 J/t extra while it heats), and with a second piece and
- * flux it welds, heating both. A blow takes 4 ticks (LV) or 2 (MV) of full power; on low power it waits
+ * It works the shape picked with its screen's button on workpieces from its input slot, heats the piece itself by
+ * induction (to its working temperature + 100 °C, 16 J/t extra while it heats), and with a second piece it
+ * welds, heating both. A blow takes 4 ticks (LV) or 2 (MV) of full power; on low power it waits
  * between blows rather than hitting weakly.
  */
-public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyContainer, ElectricConsumer {
-    /** The replayed pattern sits in the anvil's own pattern slot; these two follow the anvil's slots. */
+public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyContainer, ElectricConsumer, ShapeMachine {
+    /** These two follow the anvil's slots. */
     public static final int QUEUE = AnvilBlockEntity.SLOTS, RESULT = AnvilBlockEntity.SLOTS + 1, HAMMER_SLOTS = AnvilBlockEntity.SLOTS + 2;
     public static final int ANVIL_TIER = 5;
     public static final int BASE_HIT_TICKS = 4;
@@ -74,11 +76,11 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     public static final double FACE = 7.0 / 16.0;
 
     public static final int DATA_STATUS = 0, DATA_HITS = 1, DATA_TOTAL = 2, DATA_PIECE_TEMPERATURE = 3, DATA_NEEDED = 4, DATA_POWER = 5,
-            DATA_BUFFER = 6, DATA_EJECT = 7, DATA_COUNT = 8;
+            DATA_BUFFER = 6, DATA_EJECT = 7, DATA_SHAPE = 8, DATA_COUNT = 9;
 
     public enum Status {
-        NO_PATTERN(StatusLight.OFF), OUTDATED_PATTERN(StatusLight.ERROR), WAITING(StatusLight.OFF), WRONG_PIECE(StatusLight.ERROR),
-        OUTPUT_FULL(StatusLight.ERROR), NO_FLUX(StatusLight.WAIT), NO_POWER(StatusLight.WAIT), LOW_POWER(StatusLight.WAIT),
+        WAITING(StatusLight.OFF), WRONG_PIECE(StatusLight.ERROR),
+        OUTPUT_FULL(StatusLight.ERROR), NO_POWER(StatusLight.WAIT), LOW_POWER(StatusLight.WAIT),
         HEATING(StatusLight.RUN), WORKING(StatusLight.RUN), WELDING(StatusLight.RUN), OVERVOLTAGE(StatusLight.ERROR), TOO_FAR(StatusLight.ERROR);
 
         private final StatusLight light;
@@ -105,9 +107,10 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         }
     }
 
-    private static final int[] UP_SLOTS = {QUEUE, FLUX}, SIDE_SLOTS = {SECOND, FLUX, RESULT}, DOWN_SLOTS = {RESULT};
+    private static final int[] UP_SLOTS = {QUEUE}, SIDE_SLOTS = {SECOND, RESULT}, DOWN_SLOTS = {RESULT};
 
-    private Status status = Status.NO_PATTERN;
+    private Status status = Status.WAITING;
+    private final ShapeSelector shape = new ShapeSelector();
     private double buffer;
     private float power;
     private int timer;
@@ -134,6 +137,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
                 case DATA_POWER -> Math.round(power * 100);
                 case DATA_BUFFER -> (int) Math.round(buffer / bufferCapacity() * 100);
                 case DATA_EJECT -> autoEject ? 1 : 0;
+                case DATA_SHAPE -> shapeId();
                 default -> 0;
             };
         }
@@ -252,6 +256,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         if (report.status() == ElectricStatus.OVERVOLTAGE || report.status() == ElectricStatus.CABLE_OVERVOLTAGE) return Status.OVERVOLTAGE;
         if (report.status() == ElectricStatus.TOO_FAR) return Status.TOO_FAR;
         power = 0;
+        spillRetired(level);
         if (!moveResult(level)) return Status.OUTPUT_FULL;
         return getItem(SECOND).isEmpty() ? smith(level) : weld(level);
     }
@@ -292,32 +297,31 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     // ------------------------------------------------------------------ smithing
 
     private Status smith(ServerLevel level) {
-        SmithingPattern pattern = getItem(PATTERN).get(ModDataComponents.SMITHING_PATTERN.get());
-        if (pattern == null) return Status.NO_PATTERN;
-        Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
-        if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
-        // Targets changed since recording (config smithing.randomTargets): the hits would never finish (T3 spec 9.5).
-        if (pattern.target() != Smithing.target(level, pattern.recipe(), recipe)) return Status.OUTDATED_PATTERN;
-        hitsTotal = pattern.hits().size();
-
         ItemStack piece = input();
+        ItemStack queued = getItem(QUEUE);
+        Optional<RecipeHolder<AnvilRecipe>> holder = shape.resolve(level, shapePiece());
+        if (holder.isEmpty()) return piece.isEmpty() && queued.isEmpty() ? Status.WAITING : Status.WRONG_PIECE;
+        AnvilRecipe recipe = holder.get().value();
+        ResourceKey<Recipe<?>> key = holder.get().id();
+        hitsTotal = blowsFor(recipe, piece.isEmpty() ? queued : piece);
+
         if (piece.isEmpty()) {
             hitsDone = 0;
-            ItemStack queued = getItem(QUEUE);
             if (queued.isEmpty()) return Status.WAITING;
-            if (!recipe.matches(new SingleRecipeInput(queued), level)) return Status.WRONG_PIECE;
             if (queued.getCount() < recipe.count()) return Status.WAITING;
             setItem(INPUT, queued.split(recipe.count()));
-            if (!select(pattern.recipe())) return Status.WRONG_PIECE;
+            if (!select(key)) return Status.WRONG_PIECE;
             timer = 0;
             piece = input();
         }
         SmithingProgress progress = piece.get(ModDataComponents.SMITHING_PROGRESS.get());
-        if (!recipe.matches(new SingleRecipeInput(piece), level) || progress != null && !progress.recipe().equals(pattern.recipe())) {
-            return Status.WRONG_PIECE;
+        if (progress != null && !progress.recipe().equals(key)) {
+            // The shape was changed halfway: the work starts over on the new one.
+            piece.remove(ModDataComponents.SMITHING_PROGRESS.get());
+            progress = null;
         }
-        if (progress == null && !select(pattern.recipe())) return Status.WRONG_PIECE;
-        hitsDone = progress == null ? 0 : progress.history().size();
+        if (progress == null && !select(key)) return Status.WRONG_PIECE;
+        hitsDone = progress == null ? 0 : progress.blows();
         if (hitsDone >= hitsTotal) return Status.WRONG_PIECE;
 
         // Induction: the coil heats the piece itself, so no forge or heat pipe is involved.
@@ -343,9 +347,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         if (!drawBlow()) return heating && power <= 0.001f ? Status.NO_POWER : Status.LOW_POWER;
         if (++timer < hitTicks()) return Status.WORKING;
         timer = 0;
-        HitType type = HitType.byId(pattern.hits().get(hitsDone));
-        if (type == null) return Status.WRONG_PIECE;
-        MachineHit result = machineHit(type);
+                MachineHit result = machineBlow(4);
         if (result == MachineHit.TOO_COLD) return Status.HEATING;
         if (result == MachineHit.REFUSED) return Status.WRONG_PIECE;
         hitsDone++;
@@ -377,7 +379,6 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         if (weldResult(piece, second).isEmpty()) return Status.WRONG_PIECE;
         WeldStatus weld = weldStatus(null);
         if (weld == WeldStatus.TOO_WEAK) return Status.WRONG_PIECE;
-        if (!isFlux(getItem(FLUX))) return Status.NO_FLUX;
         hitsDone = 0;
         hitsTotal = 1;
 
@@ -492,18 +493,25 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
 
     // ------------------------------------------------------------------ container
 
-    public static boolean isRecordedPattern(ItemStack stack) {
-        return dev.strataindustria.steam.SteamHammerBlockEntity.isRecordedPattern(stack);
+    @Override
+    public ShapeSelector shapes() {
+        return shape;
+    }
+
+    @Override
+    public ItemStack shapePiece() {
+        return input().isEmpty() ? getItem(QUEUE) : input();
+    }
+
+    /** What the shape button shows: the item the working shape makes. */
+    private int shapeId() {
+        if (!(level instanceof ServerLevel server)) return 0;
+        return ShapeSelector.displayId(shape.resolve(server, shapePiece()).orElse(null));
     }
 
     @Override
     public boolean canPlaceItem(int slot, ItemStack stack) {
-        return switch (slot) {
-            case PATTERN -> isRecordedPattern(stack);
-            case QUEUE, SECOND -> !isFlux(stack);
-            case FLUX -> isFlux(stack);
-            default -> false;
-        };
+        return slot == QUEUE || slot == SECOND;
     }
 
     @Override
@@ -513,7 +521,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
 
     @Override
     public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
-        return (slot == QUEUE || slot == SECOND || slot == FLUX) && canPlaceItem(slot, stack);
+        return (slot == QUEUE || slot == SECOND) && canPlaceItem(slot, stack);
     }
 
     @Override
@@ -534,6 +542,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     @Override
     protected void loadAdditional(ValueInput in) {
         super.loadAdditional(in);
+        shape.load(in);
         buffer = in.getDoubleOr("buffer", 0.0);
         timer = in.getIntOr("timer", 0);
         autoEject = in.getBooleanOr("auto_eject", false);
@@ -543,6 +552,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
     @Override
     protected void saveAdditional(ValueOutput out) {
         super.saveAdditional(out);
+        shape.save(out);
         out.putDouble("buffer", buffer);
         out.putInt("timer", timer);
         out.putBoolean("auto_eject", autoEject);

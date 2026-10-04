@@ -6,6 +6,8 @@ import net.minecraft.util.StringRepresentable;
 public enum LinkKind implements StringRepresentable {
     TRAMWAY("tramway", 3),
     RAILWAY("railway", 4),
+    /** A locomotive ran it, but wooden rail is still in the route: the area stays at the tramway's size. */
+    RAILWAY_MIXED("railway_mixed", 3),
     ROPEWAY("ropeway", 4),
     TRAM("tram", 5),
     POWER("power", 5),

@@ -6,7 +6,6 @@ import dev.strataindustria.ceramics.LargeVesselItem;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.ceramics.SmallVesselItem;
 import dev.strataindustria.charcoal.AshItem;
-import dev.strataindustria.fire.FirestarterItem;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -67,8 +66,6 @@ public final class ModItems {
             p -> p.pickaxe(knapped(2.0f), 1.0f, -2.8f));
 
     // Fire (spec 3.5).
-    public static final DeferredItem<FirestarterItem> FIRESTARTER = ITEMS.registerItem("firestarter", FirestarterItem::new,
-            p -> p.durability(10));
     public static final DeferredItem<BlockItem> FIRE_PIT = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_PIT);
 
     // Clay (spec 4.1 to 4.3). Unfired pieces are formed on the grid and fired in a pit kiln.
@@ -86,12 +83,16 @@ public final class ModItems {
             p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> FORGE = ITEMS.registerSimpleBlockItem(ModBlocks.FORGE);
     // Smithing (spec 9).
-    public static final DeferredItem<BlockItem> BRONZE_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.BRONZE_ANVIL);
-    public static final DeferredItem<BlockItem> WROUGHT_IRON_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.WROUGHT_IRON_ANVIL);
+    public static final DeferredItem<BlockItem> IRON_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.IRON_ANVIL);
     /** Tier 3 spec 9.4: welding flux, ground from sand or carbonate rock. */
     public static final DeferredItem<Item> FLUX = ITEMS.registerSimpleItem("flux");
-    /** Tier 3 spec 9.5: blank until it records a smithing sequence on the anvil. */
-    public static final DeferredItem<Item> SMITHING_PATTERN = ITEMS.registerSimpleItem("smithing_pattern", p -> p.stacksTo(16));
+    static {
+        // Smithing patterns are gone (hammer machines have a shape button); old ones in a world turn into paper.
+        ITEMS.addAlias(StrataIndustria.id("smithing_pattern"), net.minecraft.resources.Identifier.withDefaultNamespace("paper"));
+        for (String old : new String[] {"bronze_anvil", "wrought_iron_anvil", "steel_anvil"}) {
+            ITEMS.addAlias(StrataIndustria.id(old), StrataIndustria.id("iron_anvil"));
+        }
+    }
     public static final DeferredItem<Item> TONGS_JAW = ITEMS.registerSimpleItem("tongs_jaw", p -> p.stacksTo(16));
     public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", p -> p.durability(250));
     // Tier 3 spec 7 and 8: mechanical power and machines.
@@ -156,7 +157,7 @@ public final class ModItems {
     // Wrought iron forms beyond the vanilla ingot and nugget (spec 4.1).
     public static final DeferredItem<Item> WROUGHT_IRON_ROD = ITEMS.registerSimpleItem("wrought_iron_rod");
     public static final DeferredItem<Item> WROUGHT_IRON_DOUBLE_INGOT = ITEMS.registerSimpleItem("wrought_iron_double_ingot", p -> p.stacksTo(16));
-    /** Tier 4 spec 14.1: welded from two steel ingots; the steel sword blade and the steel anvil. */
+    /** Tier 4 spec 14.1: welded from two steel ingots; the steel sword blade. */
     public static final DeferredItem<Item> STEEL_DOUBLE_INGOT = ITEMS.registerSimpleItem("steel_double_ingot", p -> p.stacksTo(16));
     // Metals (spec 6 to 8). Copper's ingot, nugget, armour and five of its tools are vanilla items.
     public static final Map<Metal, Supplier<Item>> INGOTS = new EnumMap<>(Metal.class);

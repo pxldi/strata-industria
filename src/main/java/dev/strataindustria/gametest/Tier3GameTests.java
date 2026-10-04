@@ -19,9 +19,7 @@ import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.HitType;
 import dev.strataindustria.smithing.Smithing;
-import dev.strataindustria.smithing.SmithingPattern;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -49,6 +47,7 @@ final class Tier3GameTests {
         tests.put("bloomery_run", Tier3GameTests::bloomeryRun);
         tests.put("trip_hammer", Tier3GameTests::tripHammer);
         tests.put("trip_hammer_bloom", Tier3GameTests::tripHammerBloom);
+        tests.put("trip_hammer_shape", Tier3GameTests::tripHammerShape);
         tests.put("step_up_gearbox_facings", Tier3GameTests::stepUpGearboxFacings);
         tests.put("overspeed_segment", Tier3GameTests::overspeedSegment);
     }
@@ -113,7 +112,7 @@ final class Tier3GameTests {
     }
 
     // Trip hammer (tier 3 spec 8.4): turned by two hand cranks (one alone is 64 SU, the hammer needs
-    // 128 at 16 RPM), it replays a recorded copper plate pattern
+    // 128 at 16 RPM), it works the copper plate shape
     // on a hot ingot from its own slot and drops the plate into the chest under the anvil.
 
     private static void tripHammer(GameTestHelper helper) {
@@ -138,14 +137,8 @@ final class Tier3GameTests {
                 .getRecipesFor(dev.strataindustria.registry.ModRecipes.ANVIL.get(), new SingleRecipeInput(ingot), level)
                 .filter(r -> r.value().result().create().is(ModItems.PLATES.get(Metal.COPPER).get()))
                 .findFirst().orElseThrow(() -> helper.assertionException("no copper plate recipe"));
-        int target = Smithing.target(level, plate.id(), plate.value());
-        List<HitType> hits = ModGameTests.solve(target, plate.value().rules());
-        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable");
-        ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
-        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new SmithingPattern(plate.id(),
-                BuiltInRegistries.ITEM.getKey(ModItems.PLATES.get(Metal.COPPER).get()), target,
-                hits.stream().map(Enum::ordinal).toList(), 10));
-        hammer.setItem(TripHammerBlockEntity.PATTERN, pattern);
+        int total = dev.strataindustria.smithing.AnvilBlockEntity.blowsFor(plate.value(), ingot);
+        hammer.shapes().choose(plate.id());
         hammer.setItem(TripHammerBlockEntity.INPUT, ingot.copyWithCount(plate.value().count()));
 
         TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
@@ -155,7 +148,7 @@ final class Tier3GameTests {
         ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(smith);
         ((HandCrankBlockEntity) level.getBlockEntity(topCrankPos)).crank(smith);
         KineticNetworks.rebuildNow(level, hammerPos);
-        for (int tick = 0; tick < (hits.size() + 2) * 12; tick++) {
+        for (int tick = 0; tick < (total + 2) * 12; tick++) {
             TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
         }
         Container chest = (Container) level.getBlockEntity(anvilPos.below());
@@ -169,14 +162,92 @@ final class Tier3GameTests {
         helper.succeed();
     }
 
-    /** A trip hammer with no pattern refines a hot raw bloom in one heat. */
+    /**
+     * The shape button: it steps through shapes and wraps, a pick made for one metal carries over to another metal's
+     * piece, a change of shape halfway restarts the work, and anything left in the retired pattern slot is handed back.
+     */
+    private static void tripHammerShape(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos anvilPos = helper.absolutePos(new BlockPos(4, 1, 3));
+        BlockPos hammerPos = anvilPos.south();
+        BlockPos crankPos = hammerPos.south();
+        level.setBlock(anvilPos.below(), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(anvilPos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(hammerPos, ModBlocks.TRIP_HAMMER.get().defaultBlockState().setValue(TripHammerBlock.FACING, Direction.NORTH),
+                Block.UPDATE_ALL);
+        level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.NORTH),
+                Block.UPDATE_ALL);
+        BlockPos topCrankPos = hammerPos.above();
+        level.setBlock(topCrankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.DOWN),
+                Block.UPDATE_ALL);
+        TripHammerBlockEntity hammer = (TripHammerBlockEntity) level.getBlockEntity(hammerPos);
+        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
+        ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(smith);
+        ((HandCrankBlockEntity) level.getBlockEntity(topCrankPos)).crank(smith);
+        KineticNetworks.rebuildNow(level, hammerPos);
+
+        // The button steps forward, wraps round and goes back.
+        ItemStack copper = new ItemStack(Items.COPPER_INGOT);
+        hammer.setItem(TripHammerBlockEntity.INPUT, copper.copyWithCount(4));
+        int options = dev.strataindustria.smithing.ShapeSelector.options(level, copper).size();
+        helper.assertTrue(options > 2, "a copper ingot has several shapes, got " + options);
+        var first = hammer.shapes().resolve(level, copper).orElseThrow().id();
+        hammer.cycleShape(smith, 1);
+        helper.assertTrue(!hammer.shapes().chosen().equals(first), "the button moves to another shape");
+        hammer.cycleShape(smith, -1);
+        helper.assertValueEqual(hammer.shapes().chosen(), first, "right click goes back");
+        for (int i = 0; i < options; i++) hammer.cycleShape(smith, 1);
+        helper.assertValueEqual(hammer.shapes().chosen(), first, "a full turn wraps round to where it began");
+        hammer.setItem(TripHammerBlockEntity.INPUT, ItemStack.EMPTY);
+
+        // A pick made for copper plate makes a bronze plate from a bronze ingot.
+        var key = net.minecraft.resources.ResourceKey.<net.minecraft.world.item.crafting.Recipe<?>>create(net.minecraft.core.registries.Registries.RECIPE,
+                dev.strataindustria.StrataIndustria.id("anvil/copper_plate"));
+        hammer.shapes().choose(key);
+        ItemStack bronze = new ItemStack(ModItems.ingot(Metal.BRONZE));
+        Heat.set(bronze, 1200.0f, level.getGameTime());
+        helper.assertValueEqual(hammer.shapes().resolve(level, bronze).orElseThrow().value().result().create().getItem(),
+                ModItems.PLATES.get(Metal.BRONZE).get(), "the copper plate pick follows to the bronze plate");
+
+        // Halfway through a copper plate the shape is changed to a rod: the work restarts on the rod and the rod comes out.
+        ItemStack hot = new ItemStack(Items.COPPER_INGOT);
+        Heat.set(hot, 1000.0f, level.getGameTime());
+        hammer.setItem(TripHammerBlockEntity.INPUT, hot);
+        var anvil = (dev.strataindustria.smithing.AnvilBlockEntity) level.getBlockEntity(anvilPos);
+        for (int tick = 0; tick < 400 && blowsOn(anvil) < 1; tick++) {
+            TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
+        }
+        helper.assertTrue(blowsOn(anvil) >= 1, "the copper piece is being struck, hammer status " + hammer.status());
+        hammer.shapes().choose(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.RECIPE,
+                dev.strataindustria.StrataIndustria.id("anvil/copper_rod")));
+        for (int tick = 0; tick < 1500; tick++) {
+            TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
+        }
+        Container chest = (Container) level.getBlockEntity(anvilPos.below());
+        ItemStack out = ItemStack.EMPTY;
+        for (int slot = 0; slot < chest.getContainerSize(); slot++) if (!chest.getItem(slot).isEmpty()) out = chest.getItem(slot);
+        helper.assertTrue(out.is(dev.strataindustria.registry.Tier5Items.COPPER_ROD.get()), "the changed shape is what comes out, got " + out + ", status " + hammer.status());
+
+        // Whatever an old save left in the retired pattern slot is handed back.
+        hammer.setItem(0, new ItemStack(Items.PAPER));
+        TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
+        helper.assertTrue(hammer.getItem(0).isEmpty(), "the retired slot is emptied");
+        helper.succeed();
+    }
+
+    private static int blowsOn(dev.strataindustria.smithing.AnvilBlockEntity anvil) {
+        var progress = anvil.input().isEmpty() ? null : anvil.input().get(ModDataComponents.SMITHING_PROGRESS.get());
+        return progress == null ? 0 : progress.blows();
+    }
+
+    /** A trip hammer with no shape picked refines a hot raw bloom in one heat. */
     private static void tripHammerBloom(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos anvilPos = helper.absolutePos(new BlockPos(4, 1, 3));
         BlockPos hammerPos = anvilPos.south();
         BlockPos crankPos = hammerPos.south();
         level.setBlock(anvilPos.below(), Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
-        level.setBlock(anvilPos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(anvilPos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         level.setBlock(hammerPos, ModBlocks.TRIP_HAMMER.get().defaultBlockState().setValue(TripHammerBlock.FACING, Direction.NORTH),
                 Block.UPDATE_ALL);
         level.setBlock(crankPos, ModBlocks.HAND_CRANK.get().defaultBlockState().setValue(HandCrankBlock.FACING, Direction.NORTH),
@@ -187,7 +258,7 @@ final class Tier3GameTests {
         TripHammerBlockEntity hammer = (TripHammerBlockEntity) level.getBlockEntity(hammerPos);
 
         ItemStack bloom = new ItemStack(ModItems.RAW_BLOOM.get());
-        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, BloomeryBlockEntity.BLOOM_UNITS, 0));
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, BloomeryBlockEntity.BLOOM_UNITS));
         Heat.set(bloom, 1200.0f, level.getGameTime());
         hammer.setItem(TripHammerBlockEntity.INPUT, bloom);
 

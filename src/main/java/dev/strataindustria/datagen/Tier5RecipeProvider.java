@@ -18,7 +18,6 @@ import dev.strataindustria.tanning.BarrelRecipe;
 import dev.strataindustria.tanning.FluidAmount;
 import dev.strataindustria.roasting.RoastingRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.Rule;
 import java.util.List;
 import java.util.Optional;
 import net.minecraft.advancements.Advancement;
@@ -61,20 +60,14 @@ final class Tier5RecipeProvider extends RecipeProvider {
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
     private void metals() {
         Item copper = Items.COPPER_INGOT;
-        anvil("copper_rod", copper, Tier5Items.COPPER_ROD.get(), 2, 70,
-                rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+        anvil("copper_rod", copper, Tier5Items.COPPER_ROD.get(), 2, 3);
         // Hand-drawn wire wastes a quarter of the ingot: 3 wires of 25 units.
-        anvil("copper_wire", copper, Tier5Items.COPPER_WIRE.get(), 3, 90,
-                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
-        anvil("lead_plate", ModItems.ingot(Metal.LEAD), Tier5Items.LEAD_PLATE.get(), 1, 60,
-                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+        anvil("copper_wire", copper, Tier5Items.COPPER_WIRE.get(), 3, 3);
+        anvil("lead_plate", ModItems.ingot(Metal.LEAD), Tier5Items.LEAD_PLATE.get(), 1, 3);
         Item redAlloy = ModItems.ingot(Metal.RED_ALLOY);
-        anvil("red_alloy_rod", redAlloy, Tier5Items.RED_ALLOY_ROD.get(), 2, 70,
-                rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
-        anvil("red_alloy_wire", redAlloy, Tier5Items.RED_ALLOY_WIRE.get(), 3, 90,
-                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
-        anvil("draw_plate", ModItems.PLATES.get(Metal.STEEL).get(), Tier5Items.DRAW_PLATE.get(), 1, 80,
-                rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.PUNCH, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+        anvil("red_alloy_rod", redAlloy, Tier5Items.RED_ALLOY_ROD.get(), 2, 3);
+        anvil("red_alloy_wire", redAlloy, Tier5Items.RED_ALLOY_WIRE.get(), 3, 3);
+        anvil("draw_plate", ModItems.PLATES.get(Metal.STEEL).get(), Tier5Items.DRAW_PLATE.get(), 1, 6);
 
         Item magnetite = ModItems.orePiece(OreMineral.MAGNETITE, OreGrade.RICH);
         shapeless(RecipeCategory.MISC, Tier5Items.MAGNET.get())
@@ -465,10 +458,8 @@ final class Tier5RecipeProvider extends RecipeProvider {
         // Spec 4.1 and 10.4: wire from rods, drawn by hand too for aluminium.
         machining("wiremill", null, ModItems.RODS.get(Metal.ALUMINIUM).get(), Tier5Items.ALUMINIUM_WIRE.get(), 2);
         machining("wiremill", null, ModItems.RODS.get(Metal.STEEL).get(), Tier5Items.STEEL_WIRE.get(), 2);
-        anvil("aluminium_wire", ModItems.ingot(Metal.ALUMINIUM), Tier5Items.ALUMINIUM_WIRE.get(), 3, 80,
-                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
-        anvil("steel_wire", ModItems.ingot(Metal.STEEL), Tier5Items.STEEL_WIRE.get(), 3, 90,
-                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+        anvil("aluminium_wire", ModItems.ingot(Metal.ALUMINIUM), Tier5Items.ALUMINIUM_WIRE.get(), 3, 3);
+        anvil("steel_wire", ModItems.ingot(Metal.STEEL), Tier5Items.STEEL_WIRE.get(), 3, 3);
     }
 
     // Spec 10.7: the assembler and the recipes it runs. H hull, C basic circuit, M electric motor, T inserter.
@@ -517,7 +508,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .save(output, key("pole_insulator"));
         int pattern = dev.strataindustria.knapping.GridPattern.parse(List.of(".###.", "..#..", ".###.", "..#..", ".###.")).getOrThrow();
         output.accept(key("clay_forming/unfired_insulator"), new dev.strataindustria.knapping.KnappingRecipe(Ingredient.of(Items.CLAY_BALL),
-                dev.strataindustria.knapping.Knapping.CLAY_OPENING_COST, pattern, true, new ItemStackTemplate(Tier5Items.UNFIRED_INSULATOR.get(), 2)), null);
+                dev.strataindustria.knapping.Knapping.CLAY_OPENING_COST, 3, pattern, new ItemStackTemplate(Tier5Items.UNFIRED_INSULATOR.get(), 2)), null);
         assemble("acsr_conductor", 200, Tier5Items.ACSR_CONDUCTOR.get(), 4, null, Tier5Items.ALUMINIUM_WIRE.get(), 6, Tier5Items.STEEL_WIRE.get(), 1);
     }
 
@@ -612,13 +603,8 @@ final class Tier5RecipeProvider extends RecipeProvider {
         output.accept(key(path), type == Tier5Recipes.MIXING ? new MixingRecipe(io) : new ElectrolysisRecipe(io), null);
     }
 
-    private static Rule rule(Rule.Kind kind, Rule.Where where) {
-        return Rule.of(kind, where);
-    }
-
-    private void anvil(String path, Item input, Item result, int count, int defaultTarget, Rule... rules) {
-        output.accept(key("anvil/" + path), new AnvilRecipe(Ingredient.of(input), 1, new ItemStackTemplate(result, count),
-                List.of(rules), defaultTarget), null);
+    private void anvil(String path, Item input, Item result, int count, int blows) {
+        output.accept(key("anvil/" + path), new AnvilRecipe(Ingredient.of(input), 1, new ItemStackTemplate(result, count), blows), null);
     }
 
     private static ResourceKey<Recipe<?>> key(String path) {

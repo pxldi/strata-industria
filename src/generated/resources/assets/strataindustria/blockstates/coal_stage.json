@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "loading=false": {
+      "model": "strataindustria:block/coal_stage"
+    },
+    "loading=true": {
+      "model": "strataindustria:block/coal_stage_open"
+    }
+  }
+}

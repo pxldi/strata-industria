@@ -55,7 +55,7 @@ The unique hooks, in one sentence each:
 
 | Tier | Name | Key unlock | Power | Core materials |
 |---|---|---|---|---|
-| 0 | Stone | Knapping, firestarter, primitive tools | Muscle | Flint, stone, sticks, fibre |
+| 0 | Stone | Knapping, flint-strike fire, primitive tools | Muscle | Flint, stone, sticks, fibre |
 | 1 | Fire and Clay | Pottery, pit kiln, charcoal, crucible | Fire | Clay, charcoal, fired ceramics |
 | 2 | Copper and Bronze | Smelting and casting, anvil smithing | Fire | Copper, tin, bronze, (arsenical bronze) |
 | 3 | Iron | Bloomery, wrought iron, water wheel | Water, wind (mechanical) | Wrought iron, leather, lumber |
@@ -81,7 +81,7 @@ Tiers 0 to 2 are the first playable slice. Tiers 3 and 4 are the second mileston
 - **Loose items in the world**: loose rocks, sticks and flint generate on the surface. Rock type matches the stone below, so you learn geology from the first minute.
 - **Plant fibre** from tall grass, twisted into string by hand.
 - Tools: stone knife, axe, shovel, hammer, spear. Low durability, quick to make.
-- **Firestarter**: bow drill to light a campfire. Campfire cooks food and can heat small items.
+- **Flint strike**: strike flint on a rock over the fire pit to light it. Campfire cooks food and can heat small items.
 - Crafting table requires a stone axe and sawn planks (axe-chopped planks are 2 per log instead of 4).
 
 Exit condition: having a campfire, stone tools and a stash of clay.
@@ -105,7 +105,7 @@ Exit condition: fired crucible, ingot molds, a forge, and found surface copper.
 
 - **Ore mining** with stone pickaxe is slow; native copper and malachite are minable by stone tools, tin (cassiterite) needs copper tools.
 - **Smelting** in a crucible over the forge. You put ore pieces in by "units" (not whole ingots), watch the melt percentage and composition in the crucible GUI.
-- **Alloying** happens by ratio in the crucible: bronze is 88 to 92% copper, 8 to 12% tin. Wrong ratio gives the wrong alloy or a failed melt. Arsenical bronze and bismuth bronze exist as regional alternatives so geology matters.
+- **Alloying** happens by ratio in the crucible: bronze is 3 parts copper to 1 part tin, in ingots, nuggets or ore, any multiple. Wrong ratio gives the wrong alloy or a failed melt. Arsenical bronze and bismuth bronze exist as regional alternatives so geology matters.
 - **Casting**: pour molten metal into ceramic molds for ingots or tool heads. Fired molds last; a break chance can be set in the config.
 - **Anvil smithing**: a stone anvil first, then a copper/bronze anvil. Smithing is a short, rule-based minigame: each recipe has a target and you choose hits (light, medium, hard, draw, upset, bend, punch, shrink). Matching the last three hits to the rule finishes it. Precision raises the item's quality. It is quick for experienced players and a learning moment for new ones.
 - **Bronze tools and armour**: a real step up.
@@ -208,7 +208,7 @@ One or two flagship megaprojects that act as a "you finished it" moment, for exa
 ### 5.4 Smithing
 
 - Rule-based anvil minigame (see tier 2). Each recipe is data: target position plus up to three final-hit rules.
-- The trip hammer (tier 3) and the power hammer (tier 5) automate smithing recipes once you have smithed them by hand once (a "pattern" is recorded).
+- The trip hammer (tier 3), the steam hammer (tier 4) and the power hammer (tier 5) automate smithing: pick a shape with the button on the machine screen and they work it on every piece you feed them.
 
 ### 5.5 Power
 
@@ -322,7 +322,7 @@ Package name suggestion: `dev.strataindustria` (neutral, no personal names).
 | Milestone | Scope | Done when |
 |---|---|---|
 | M0 Skeleton | Project builds, runs client and server, datagen works, one test block and item, CI green | `./gradlew build runData` clean in CI |
-| M1 First playable (tiers 0 to 2) | Loose rocks and sticks, knapping, fibre, stone tools, campfire and firestarter, clay forming, pit kiln, charcoal pit, forge with heat, crucible smelting and alloying, casting, stone and bronze anvil smithing, bronze tools and armour, surface indicators and prospector's pick, journal with tier 0 to 2 goals. World-gen: 6 to 8 rock types and copper, tin and bismuth veins. | A new player can go from spawn to a full bronze kit without a wiki in 3 to 5 hours |
+| M1 First playable (tiers 0 to 2) | Loose rocks and sticks, knapping, fibre, stone tools, campfire and flint-strike fire, clay forming, pit kiln, charcoal pit, forge with heat, crucible smelting and alloying, casting, stone and bronze anvil smithing, bronze tools and armour, surface indicators and prospector's pick, journal with tier 0 to 2 goals. World-gen: 6 to 8 rock types and copper, tin and bismuth veins. | A new player can go from spawn to a full bronze kit without a wiki in 3 to 5 hours |
 | M2 Iron and mechanical (tier 3) | Bloomery, bloom refining, water wheel and windmill, shafts and gearboxes, mechanical quern, saw mill, trip hammer, bellows, sluice | Playtest pass on M1 + M2 |
 | M3 Steel and steam (tier 4) | Blast furnace, coke oven, boilers, steam engines, heat pipes, fluids, conveyors, ore processing II | |
 | M4+ | Electric and beyond | |

@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t3/tramway",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "pony_harnessed"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.pony.hint"
+    },
+    "icon": {
+      "id": "strataindustria:harness"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t3.pony"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

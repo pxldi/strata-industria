@@ -51,6 +51,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue LOGS_NEED_AXE = BUILDER
             .comment("Logs cannot be broken without an axe.")
             .define("logsNeedAxe", true);
+    public static final ModConfigSpec.BooleanValue FELLING = BUILDER
+            .comment("Chopping the bottom log of a natural tree notches it, and the last blow fells the whole tree. Sneak to chop one log.")
+            .define("felling", true);
     public static final ModConfigSpec.BooleanValue REMOVE_WOOD_TOOLS = BUILDER
             .comment("Remove the recipes of wooden tools.")
             .define("removeWoodTools", true);
@@ -96,9 +99,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue REPLACE_COPPER_GEAR = BUILDER
             .comment("Replace the recipes of vanilla copper tools and armour.")
             .define("replaceCopperGear", true);
-    public static final ModConfigSpec.BooleanValue LEAVES_DROP_STICKS = BUILDER
-            .comment("Leaves broken by hand drop a stick 20% of the time.")
-            .define("leavesDropSticks", true);
+    public static final ModConfigSpec.BooleanValue BRANCH_SNAPPING = BUILDER
+            .comment("Use leaves with an empty hand to snap a branch off for sticks and bark.")
+            .define("branchSnapping", true);
     public static final ModConfigSpec.BooleanValue GRAVEL_FLINT_CHANCE = BUILDER
             .comment("Raise the flint chance of gravel to 15%.")
             .define("gravelFlintChance", true);
@@ -189,12 +192,21 @@ public final class Config {
         BUILDER.comment("Anvil smithing.").push("smithing");
     }
 
-    public static final ModConfigSpec.BooleanValue SMITHING_RANDOM_TARGETS = BUILDER
-            .comment("Each world gets its own smithing targets. Off uses each recipe's default target.")
-            .define("randomTargets", true);
     public static final ModConfigSpec.IntValue SMITHING_HIT_COOLING = BUILDER
-            .comment("Degrees each hit takes off a tier 3 or higher workpiece, on top of normal cooling.")
-            .defineInRange("hitCooling", 20, 0, 200);
+            .comment("Degrees each blow takes off a tier 3 or higher workpiece, on top of normal cooling.")
+            .defineInRange("hitCooling", 15, 0, 200);
+    public static final ModConfigSpec.IntValue SMITHING_BRIGHT_MARGIN = BUILDER
+            .comment("Percent above its working temperature a piece must be for a blow to count as bright.")
+            .defineInRange("brightMargin", 12, 0, 100);
+    public static final ModConfigSpec.IntValue SMITHING_BEAT_WINDOW = BUILDER
+            .comment("Ticks either side of the hammer's rebound glint in which a strike is a true blow (counts twice).")
+            .defineInRange("beatWindow", 3, 0, 8);
+    public static final ModConfigSpec.IntValue SMITHING_SPARKS = BUILDER
+            .comment("Percent of the normal number of sparks a blow throws. 0 turns them off.")
+            .defineInRange("sparks", 100, 0, 300);
+    public static final ModConfigSpec.BooleanValue SMITHING_SCREEN_NUDGE = BUILDER
+            .comment("A small push of the camera on true blows and the last blow.")
+            .define("screenNudge", true);
 
     static {
         BUILDER.pop();
@@ -462,6 +474,21 @@ public final class Config {
     public static final ModConfigSpec.IntValue TRANSPORT_MAX_CONSIST_T3 = BUILDER
             .comment("Tubs that can follow the lead of a wooden tramway consist.")
             .defineInRange("maxConsistT3", 4, 1, 16);
+    public static final ModConfigSpec.IntValue TRANSPORT_MAX_CONSIST_T4 = BUILDER
+            .comment("Wagons that can follow the lead of a steam locomotive.")
+            .defineInRange("maxConsistT4", 8, 1, 32);
+    public static final ModConfigSpec.DoubleValue TRANSPORT_LOCOMOTIVE_WATER_PER_TICK = BUILDER
+            .comment("Millibuckets of water a steam locomotive boils away each tick at full throttle.")
+            .defineInRange("locomotiveWaterPerTick", 4.0, 0.0, 100.0);
+    public static final ModConfigSpec.DoubleValue TRANSPORT_PONY_HAY_PER_TRIP = BUILDER
+            .comment("Hay bales a pony eats per round trip.")
+            .defineInRange("ponyHayPerTrip", 0.5, 0.0, 16.0);
+    public static final ModConfigSpec.IntValue TRANSPORT_WINCH_REACH = BUILDER
+            .comment("Track blocks an incline winch hauls.")
+            .defineInRange("winchReach", 32, 4, 128);
+    public static final ModConfigSpec.IntValue TRANSPORT_MAX_TICKETED_CONSISTS = BUILDER
+            .comment("Driverless consists one owner can have moving at once. Each keeps nine chunks loaded around it.")
+            .defineInRange("maxTicketedConsists", 4, 1, 32);
 
     static {
         BUILDER.pop();

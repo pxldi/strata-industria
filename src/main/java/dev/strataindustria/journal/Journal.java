@@ -36,8 +36,7 @@ public final class Journal {
     public static final String BRONZE_ARMOUR = "bronze_armour";
     public static final String BLOOMERY_BUILT = "bloomery_built";
     public static final String BLOOM_REFINED = "bloom_refined";
-    public static final String PATTERN_RECORDED = "pattern_recorded";
-    public static final String QUICK_SMITH = "quick_smith";
+    public static final String BRIGHT_STRIKE = "bright_strike";
     public static final String ROTATION = "rotation";
     public static final String WATER_POWER = "water_power";
     public static final String MILLSTONE = "millstone";
@@ -85,6 +84,12 @@ public final class Journal {
     // Outposts and transport (outposts spec 11)
     public static final String CHARTER_LINKED = "charter_linked";
     public static final String TUB_ARRIVED = "tub_arrived";
+    public static final String PONY_HARNESSED = "pony_harnessed";
+    public static final String WINCH_HAULED = "winch_hauled";
+    // Tier 4 railway
+    public static final String LOCOMOTIVE_PRESSURE = "locomotive_pressure";
+    public static final String DRIVERLESS_TRIPS = "driverless_trips";
+    public static final String OUTPOST_GROWN = "outpost_grown";
 
     /** Blocks of overhead span a consumer must be served across for the power line goal. */
     public static final int POWER_LINE_SPAN = 64;

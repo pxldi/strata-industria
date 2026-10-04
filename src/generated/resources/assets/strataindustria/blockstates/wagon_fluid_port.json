@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "mode=load": {
+      "model": "strataindustria:block/wagon_fluid_port_load"
+    },
+    "mode=unload": {
+      "model": "strataindustria:block/wagon_fluid_port_unload"
+    }
+  }
+}

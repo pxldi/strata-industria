@@ -1,11 +1,11 @@
 {
-  "parent": "strataindustria:journal/t3/weld",
+  "parent": "strataindustria:journal/t3/refine",
   "criteria": {
     "done": {
       "conditions": {
         "location": {
           "type": "minecraft:match_block",
-          "blocks": "strataindustria:wrought_iron_anvil"
+          "blocks": "strataindustria:iron_anvil"
         }
       },
       "trigger": "minecraft:placed_block"
@@ -18,7 +18,7 @@
     },
     "frame": "goal",
     "icon": {
-      "id": "strataindustria:wrought_iron_anvil"
+      "id": "strataindustria:iron_anvil"
     },
     "show_toast": false,
     "title": {

@@ -1,5 +1,6 @@
 {
   "type": "strataindustria:knapping",
+  "blows": 3,
   "ingredient": "strataindustria:pattern_blank",
   "pattern": [
     "###..",

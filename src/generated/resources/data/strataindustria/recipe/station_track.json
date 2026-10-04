@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:steel_track",
+    "strataindustria:brass_gear",
+    "strataindustria:treated_planks"
+  ],
+  "result": {
+    "id": "strataindustria:station_track"
+  }
+}

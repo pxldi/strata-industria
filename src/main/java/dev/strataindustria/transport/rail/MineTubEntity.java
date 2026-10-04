@@ -59,6 +59,10 @@ public class MineTubEntity extends AbstractMinecartContainer {
     public static final double LOADED_FRICTION = 0.006;
     /** Top speed on the wooden rail (spec 5.1). */
     public static final double RAIL_CAP = 0.2;
+    /** What a steel rail keeps of a vehicle's speed each tick: a little under the vanilla rails. */
+    private static final double STEEL_DRAG = 0.992;
+    /** Fastest a follower is drawn after its lead: a little over the steel track limit. */
+    private static final double FOLLOW_CAP = 0.55;
     /** How far a coupling reaches. */
     public static final double COUPLE_REACH = 3.0;
     /** Past this a follower has lost its lead and the coupling lets go. */
@@ -85,6 +89,9 @@ public class MineTubEntity extends AbstractMinecartContainer {
     private double clackDistance;
     private int lastClack;
     private boolean thudded;
+    private int winchStamp = -100;
+    private Vec3 winchVelocity = Vec3.ZERO;
+    private @Nullable Vec3 winchAnchor;
     // client
     private float tipVisual, tipVisualO;
 
@@ -148,7 +155,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
     // ---------------------------------------------------------------- the track under us
 
     /** The rail block under the tub, if it is on any rail. */
-    private @Nullable BlockPos railBlock() {
+    protected @Nullable BlockPos railBlock() {
         BlockPos pos = getCurrentBlockPosOrRailBelow();
         return BaseRailBlock.isRail(level().getBlockState(pos)) ? pos : null;
     }
@@ -173,18 +180,29 @@ public class MineTubEntity extends AbstractMinecartContainer {
         return new Vec3(1, 0, 0);
     }
 
-    /** Wooden rail is slow; other rails keep the vanilla limit. */
+    /** The grade of the track under the vehicle, or null on a vanilla rail or off the rails. */
+    public @Nullable RailGrade grade() {
+        return RailGrade.of(level().getBlockState(getCurrentBlockPosOrRailBelow()));
+    }
+
+    /** Wooden rail is slow and steel track quick; other rails keep the vanilla limit. */
     @Override
     protected double getMaxSpeed(ServerLevel level) {
-        double vanilla = super.getMaxSpeed(level);
-        return onOurTrack() ? Math.min(vanilla, RAIL_CAP) : vanilla;
+        RailGrade grade = grade();
+        return grade == null ? super.getMaxSpeed(level) : grade.cap();
     }
 
     /** The wooden rail holds a tub back by a fixed amount a tick, more when it is heavy; followers keep what the lead gave. */
     @Override
     protected Vec3 applyNaturalSlowdown(Vec3 movement) {
         if (leaderId != null) return movement;
-        if (!onOurTrack()) return super.applyNaturalSlowdown(movement);
+        if (winched()) return winchVelocity;
+        RailGrade grade = grade();
+        if (grade == RailGrade.STEEL) return movement.multiply(STEEL_DRAG, 0.0, STEEL_DRAG);
+        if (grade == null) {
+            // Off our track the container's drag counts slots, which a tank or a flat wagon has none of.
+            return getContainerSize() == 0 ? movement.multiply(0.98, 0.0, 0.98) : super.applyNaturalSlowdown(movement);
+        }
         double speed = movement.horizontalDistance();
         if (speed < 1.0E-6) return movement;
         double next = Math.max(0, speed - (loaded() ? LOADED_FRICTION : FRICTION));
@@ -194,9 +212,10 @@ public class MineTubEntity extends AbstractMinecartContainer {
 
     /** More than half the slots are in use. */
     public boolean loaded() {
+        int size = getContainerSize();
         int used = 0;
-        for (int slot = 0; slot < SLOTS; slot++) if (!getItem(slot).isEmpty()) used++;
-        return used * 2 > SLOTS;
+        for (int slot = 0; slot < size; slot++) if (!getItem(slot).isEmpty()) used++;
+        return size > 0 && used * 2 > size;
     }
 
     // ---------------------------------------------------------------- ticking
@@ -221,6 +240,14 @@ public class MineTubEntity extends AbstractMinecartContainer {
             if (holdPos != null) settleOnStop();
             super.tick();
             if (holdPos != null && leaderId == null) setDeltaMovement(getDeltaMovement().multiply(0.0, 1.0, 0.0));
+            if (winchAnchor != null) {
+                if (winched()) {
+                    setPos(winchAnchor.x, getY(), winchAnchor.z);
+                    setDeltaMovement(Vec3.ZERO);
+                } else {
+                    winchAnchor = null;
+                }
+            }
             buffer(server);
             tipple(server);
             roll(server);
@@ -256,7 +283,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
         double ux = distance > 1.0E-4 ? dx / distance : 0, uz = distance > 1.0E-4 ? dz / distance : 0;
         Vec3 leadMotion = lead.getDeltaMovement();
         double along = leadMotion.x * ux + leadMotion.z * uz;
-        double speed = Mth.clamp(along + 0.6 * (distance - SPACING), -0.25, 0.25);
+        double speed = Mth.clamp(along + 0.6 * (distance - SPACING), -FOLLOW_CAP, FOLLOW_CAP);
         setDeltaMovement(ux * speed, getDeltaMovement().y, uz * speed);
         driven = true;
         tick();
@@ -273,7 +300,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
         }
         if (BaseRailBlock.isRail(state)) trace.ride(pos, state.is(RailRegistry.TRACK));
         else if (!isOnRails()) trace.lose();
-        if (holdPos == null && state.is(RailRegistry.TUB_STOP.get()) && !pos.equals(ignoreStop)
+        if (holdPos == null && state.getBlock() instanceof TubStopBlock && !pos.equals(ignoreStop)
                 && server.getBlockEntity(pos) instanceof TubStopBlockEntity stop && !stop.isHolding()) {
             stop.capture(server, this);
         }
@@ -291,6 +318,59 @@ public class MineTubEntity extends AbstractMinecartContainer {
         return stop.equals(holdPos);
     }
 
+    /** True while a stop has this vehicle. */
+    protected final boolean isHeld() {
+        return holdPos != null;
+    }
+
+    /** Whether a stop has the vehicle held right now. */
+    public boolean holding() {
+        return holdPos != null;
+    }
+
+    /** The stop holding this vehicle, if any. */
+    protected final @Nullable BlockPos heldAt() {
+        return holdPos;
+    }
+
+    /** The stop this vehicle has just left and will not be taken by again until it is clear of it. */
+    protected final @Nullable BlockPos ignoredStop() {
+        return ignoreStop;
+    }
+
+    /** True while this vehicle is pressed against a rail buffer. */
+    protected final boolean atBuffer() {
+        return thudded;
+    }
+
+    /** Whether the stop may let this consist go now. The pony says no while it is hungry. */
+    public boolean canDepart(ServerLevel server) {
+        return true;
+    }
+
+    /** True for the first vehicle of a consist: nothing is coupled ahead of it. */
+    public boolean isLead() {
+        return leaderId == null;
+    }
+
+    /** The way this vehicle wants to go along the track, a unit vector, or zero when it has no mind of its own. */
+    public Vec3 intent() {
+        return Vec3.ZERO;
+    }
+
+    /** A winch (outposts spec 5.4) takes the lead: it moves at {@code velocity} this tick, or holds still where it is. */
+    public void winchControl(Vec3 velocity, boolean hold) {
+        winchStamp = tickCount;
+        winchVelocity = velocity;
+        if (hold && winchAnchor == null) winchAnchor = position();
+        if (!hold) winchAnchor = null;
+    }
+
+    /** True while a winch has had hold of this vehicle in the last couple of ticks. */
+    public boolean winched() {
+        return tickCount - winchStamp <= 2;
+    }
+
     /** The stop lets go, with a shove along the track. */
     public void release(BlockPos stop, Vec3 push) {
         holdPos = null;
@@ -298,12 +378,58 @@ public class MineTubEntity extends AbstractMinecartContainer {
         setDeltaMovement(push.x, 0, push.z);
     }
 
+    // ---------------------------------------------------------------- walking the line
+
+    /** How far into its block a self-propelled vehicle goes before it is stopped at the end of the line. */
+    private static final double NEAR_EDGE = 0.2;
+
+    /** Whether the track climbs on the way the vehicle is going. */
+    protected boolean uphill(BlockPos rail, Vec3 heading) {
+        BlockState state = level().getBlockState(rail);
+        if (!(state.getBlock() instanceof BaseRailBlock block)) return false;
+        Direction up = switch (state.getValue(block.getShapeProperty())) {
+            case ASCENDING_EAST -> Direction.EAST;
+            case ASCENDING_WEST -> Direction.WEST;
+            case ASCENDING_NORTH -> Direction.NORTH;
+            case ASCENDING_SOUTH -> Direction.SOUTH;
+            default -> null;
+        };
+        return up != null && heading.x * up.getStepX() + heading.z * up.getStepZ() > 0.1;
+    }
+
+    /** True when the track ends ahead: no rail where the vehicle is headed, in a loaded chunk. */
+    protected boolean deadEnd(BlockPos rail, Vec3 heading) {
+        BlockState state = level().getBlockState(rail);
+        if (!(state.getBlock() instanceof BaseRailBlock block)) return false;
+        Vec3 ahead = null;
+        double best = 0.1;
+        for (Vec3i exit : new Vec3i[] {
+                AbstractMinecart.exits(state.getValue(block.getShapeProperty())).getFirst(),
+                AbstractMinecart.exits(state.getValue(block.getShapeProperty())).getSecond()}) {
+            double dot = exit.getX() * heading.x + exit.getZ() * heading.z;
+            if (dot > best) {
+                best = dot;
+                ahead = new Vec3(exit.getX(), exit.getY(), exit.getZ());
+            }
+        }
+        if (ahead == null) return false;
+        BlockPos next = rail.offset((int) ahead.x, (int) ahead.y, (int) ahead.z);
+        if (!level().hasChunkAt(next)) return false;
+        return !(BaseRailBlock.isRail(level(), next) || BaseRailBlock.isRail(level(), next.below()) || BaseRailBlock.isRail(level(), next.above()));
+    }
+
+    /** Whether the vehicle is far enough into its block, going the way it heads, to be stopped before the edge. */
+    protected boolean nearEdge(BlockPos rail, Vec3 heading) {
+        double offset = (getX() - (rail.getX() + 0.5)) * heading.x + (getZ() - (rail.getZ() + 0.5)) * heading.z;
+        return offset > NEAR_EDGE;
+    }
+
     // ---------------------------------------------------------------- buffer
 
     private void buffer(ServerLevel server) {
         BlockPos pos = getCurrentBlockPosOrRailBelow();
         BlockState state = server.getBlockState(pos);
-        if (!state.is(RailRegistry.RAIL_BUFFER.get())) {
+        if (!(state.getBlock() instanceof RailBufferBlock)) {
             thudded = false;
             return;
         }
@@ -314,7 +440,9 @@ public class MineTubEntity extends AbstractMinecartContainer {
         // Rolling up to the timber is free; it only bites once the tub's centre is at it.
         if (offset <= BUFFER_LINE) return;
         if (along > 0.03 && !thudded) {
-            server.playSound(null, getX(), getY(), getZ(), RailRegistry.TUB_THUD.get(), SoundSource.NEUTRAL, 0.5f + (float) along * 2f, 0.9f);
+            boolean steel = state.getBlock() instanceof SteelBufferBlock;
+            server.playSound(null, getX(), getY(), getZ(), (steel ? RailwayRegistry.BUFFER_CLANG : RailRegistry.TUB_THUD).get(),
+                    SoundSource.NEUTRAL, 0.5f + (float) along * 2f, steel ? 0.8f : 0.9f);
         }
         thudded = true;
         if (offset > BUFFER_LINE) {
@@ -329,7 +457,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
 
     private void tipple(ServerLevel server) {
         BlockPos pos = getCurrentBlockPosOrRailBelow();
-        boolean standing = server.getBlockState(pos).is(RailRegistry.TIPPLE_RAIL.get()) && getDeltaMovement().horizontalDistanceSqr() < 1.0E-4
+        boolean standing = tips() && server.getBlockState(pos).is(RailRegistry.TIPPLE_RAIL.get()) && getDeltaMovement().horizontalDistanceSqr() < 1.0E-4
                 && !isEmpty() && noRoomCooldown <= 0;
         if (noRoomCooldown > 0) noRoomCooldown--;
         float target = standing ? 1f : 0f;
@@ -345,7 +473,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
         Container bin = HopperBlockEntity.getContainerAt(server, pos.below());
         boolean moved = false;
         if (bin != null) {
-            for (int slot = 0; slot < SLOTS && !moved; slot++) {
+            for (int slot = 0; slot < getContainerSize() && !moved; slot++) {
                 ItemStack stack = getItem(slot);
                 if (stack.isEmpty()) continue;
                 ItemStack rest = HopperBlockEntity.addItem(null, bin, stack.copy(), Direction.UP);
@@ -362,6 +490,11 @@ public class MineTubEntity extends AbstractMinecartContainer {
         }
     }
 
+    /** Whether the vehicle tips its slots out on a tipple; tanks and flat wagons do not. */
+    protected boolean tips() {
+        return true;
+    }
+
     /** How far the load has tipped, for tests. */
     public float tipAmount() {
         return tip;
@@ -369,7 +502,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
 
     // ---------------------------------------------------------------- sound
 
-    private void roll(ServerLevel server) {
+    protected void roll(ServerLevel server) {
         if (!onOurTrack()) return;
         double speed = getDeltaMovement().horizontalDistance();
         if (speed < 0.02) return;
@@ -377,8 +510,9 @@ public class MineTubEntity extends AbstractMinecartContainer {
         if (clackDistance < 0.5 || tickCount - lastClack < 3) return;
         clackDistance = 0;
         lastClack = tickCount;
-        server.playSound(null, getX(), getY(), getZ(), RailRegistry.TUB_ROLL.get(), SoundSource.NEUTRAL,
-                (leaderId == null ? 0.4f : 0.25f) + (float) speed, 0.8f + (float) speed * 1.5f);
+        boolean steel = grade() == RailGrade.STEEL;
+        server.playSound(null, getX(), getY(), getZ(), (steel ? RailwayRegistry.CLATTER_STEEL : RailRegistry.TUB_ROLL).get(), SoundSource.NEUTRAL,
+                (leaderId == null ? 0.4f : 0.25f) + (float) speed, (steel ? 0.9f : 0.8f) + (float) speed * (steel ? 0.8f : 1.5f));
     }
 
     // ---------------------------------------------------------------- pushing and using
@@ -418,12 +552,17 @@ public class MineTubEntity extends AbstractMinecartContainer {
             }
             return InteractionResult.SUCCESS;
         }
+        return openLoad(player, hand, location);
+    }
+
+    /** What a use on the vehicle does when it is not about coupling: a tub opens its slots; a wagon may do more. */
+    protected InteractionResult openLoad(Player player, InteractionHand hand, Vec3 location) {
         return super.interact(player, hand, location);
     }
 
     // ---------------------------------------------------------------- coupling
 
-    public enum Coupling { OK, NONE, FOLLOWING, TOO_LONG }
+    public enum Coupling { OK, NONE, FOLLOWING, TOO_LONG, LEADS }
 
     /** The tub ahead of this one in its consist, if any. */
     public @Nullable MineTubEntity leader() {
@@ -457,6 +596,30 @@ public class MineTubEntity extends AbstractMinecartContainer {
         return chain;
     }
 
+    /**
+     * The head walks round to the other end of its consist: the chain is turned about and the head put behind what was
+     * the last tub, so it leads the other way. False when there is no rail there to stand on.
+     */
+    protected boolean reverseConsist(Vec3 heading) {
+        List<MineTubEntity> chain = consist();
+        if (chain.size() < 2 || chain.get(0) != this || heading.lengthSqr() < 1.0E-6) return true;
+        MineTubEntity tail = chain.get(chain.size() - 1);
+        Vec3 spot = tail.position().subtract(heading.normalize().scale(SPACING));
+        BlockPos at = BlockPos.containing(spot);
+        if (!(BaseRailBlock.isRail(level(), at) || BaseRailBlock.isRail(level(), at.below()) || BaseRailBlock.isRail(level(), at.above()))) return false;
+        for (int i = chain.size() - 1; i >= 1; i--) {
+            MineTubEntity tub = chain.get(i);
+            tub.leaderId = i == chain.size() - 1 ? getUUID() : chain.get(i + 1).getUUID();
+            tub.followerId = i == 1 ? null : chain.get(i - 1).getUUID();
+            tub.refreshCoupled();
+        }
+        followerId = tail.getUUID();
+        setPos(spot.x, tail.getY(), spot.z);
+        setDeltaMovement(Vec3.ZERO);
+        refreshCoupled();
+        return true;
+    }
+
     /** The tub nearest this one that it can be coupled behind: free at the back, in reach, not in its own consist. */
     private @Nullable MineTubEntity findFront() {
         List<MineTubEntity> mine = consist();
@@ -480,7 +643,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
         MineTubEntity front = findFront();
         if (front == null) return Coupling.NONE;
         int length = front.consist().size() + consist().size();
-        if (length - 1 > Config.TRANSPORT_MAX_CONSIST_T3.getAsInt()) return Coupling.TOO_LONG;
+        if (length - 1 > maxConsist(front.head())) return Coupling.TOO_LONG;
         front.followerId = getUUID();
         leaderId = front.getUUID();
         front.entityData.set(DATA_COUPLED, true);
@@ -489,7 +652,12 @@ public class MineTubEntity extends AbstractMinecartContainer {
         return Coupling.OK;
     }
 
-    private void tryCouple(ServerPlayer player) {
+    /** Vehicles that may follow {@code lead}: a locomotive pulls more than a pony. */
+    private static int maxConsist(MineTubEntity lead) {
+        return lead instanceof SteamLocomotiveEntity ? Config.TRANSPORT_MAX_CONSIST_T4.getAsInt() : Config.TRANSPORT_MAX_CONSIST_T3.getAsInt();
+    }
+
+    protected void tryCouple(ServerPlayer player) {
         Coupling result = couple();
         if (result == Coupling.OK) {
             level().playSound(null, getX(), getY(), getZ(), RailRegistry.TUB_COUPLE.get(), SoundSource.NEUTRAL, 0.8f, 1.0f);
@@ -498,7 +666,8 @@ public class MineTubEntity extends AbstractMinecartContainer {
             case OK -> Component.translatable(StrataIndustria.MOD_ID + ".tub.coupled");
             case NONE -> Component.translatable(StrataIndustria.MOD_ID + ".tub.none");
             case FOLLOWING -> Component.translatable(StrataIndustria.MOD_ID + ".tub.following");
-            case TOO_LONG -> Component.translatable(StrataIndustria.MOD_ID + ".tub.too_long", Config.TRANSPORT_MAX_CONSIST_T3.getAsInt());
+            case TOO_LONG -> Component.translatable(StrataIndustria.MOD_ID + ".tub.too_long", maxConsist(findFront() == null ? this : findFront().head()));
+            case LEADS -> Component.translatable(StrataIndustria.MOD_ID + (this instanceof PonyEntity ? ".pony.leads" : ".locomotive.leads"));
         });
     }
 
@@ -536,14 +705,38 @@ public class MineTubEntity extends AbstractMinecartContainer {
 
     // ---------------------------------------------------------------- loads
 
+    /** A number that changes whenever what the vehicle carries does, for the stop's "until idle" rule. */
+    public int contentSignature() {
+        int hash = 1;
+        for (int slot = 0; slot < getContainerSize(); slot++) {
+            ItemStack stack = getItem(slot);
+            hash = hash * 31 + (stack.isEmpty() ? 0 : net.minecraft.core.registries.BuiltInRegistries.ITEM.getId(stack.getItem()) * 64 + stack.getCount());
+        }
+        return hash;
+    }
+
+    /** How full the vehicle is, in units out of {@link #fillCapacity()} (a slot is one unit), for the stop's comparator. */
+    public double fillAmount() {
+        double total = 0;
+        for (int slot = 0; slot < getContainerSize(); slot++) {
+            ItemStack stack = getItem(slot);
+            if (!stack.isEmpty()) total += (double) stack.getCount() / Math.min(getMaxStackSize(), stack.getMaxStackSize());
+        }
+        return total;
+    }
+
+    public int fillCapacity() {
+        return getContainerSize();
+    }
+
     /** True when nothing more fits: every slot is a full stack, or the hopper above offers only what will not go in. */
     public boolean cannotTakeMore(ServerLevel server) {
         boolean full = true;
-        for (int slot = 0; slot < SLOTS; slot++) {
+        for (int slot = 0; slot < getContainerSize(); slot++) {
             ItemStack stack = getItem(slot);
             if (stack.isEmpty() || stack.getCount() < Math.min(getMaxStackSize(), stack.getMaxStackSize())) full = false;
         }
-        if (full) return true;
+        if (getContainerSize() == 0 || full) return true;
         BlockPos rail = getCurrentBlockPosOrRailBelow();
         if (!(server.getBlockEntity(rail.above()) instanceof HopperBlockEntity hopper)) return false;
         boolean offered = false;
@@ -557,7 +750,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
     }
 
     private boolean accepts(ItemStack offer) {
-        for (int slot = 0; slot < SLOTS; slot++) {
+        for (int slot = 0; slot < getContainerSize(); slot++) {
             ItemStack stack = getItem(slot);
             if (stack.isEmpty()) return true;
             if (ItemStack.isSameItemSameComponents(stack, offer) && stack.getCount() < Math.min(getMaxStackSize(), stack.getMaxStackSize())) return true;

@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.material.Metal;
@@ -131,7 +132,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     static Component statusLine(CrucibleStatus status, Melt melt, int meltingPercent, int maxTemperature) {
         return switch (status) {
             case MELTING -> Component.translatable(status.key(), meltingPercent);
-            case AT_LIMIT -> Component.translatable(status.key(), maxTemperature);
+            case AT_LIMIT -> Component.translatable(status.key(), HeatWords.of(maxTemperature));
             case MOLTEN -> Alloy.resultOf(melt)
                     .map(m -> Component.translatable(status.key(), Component.translatable(StrataIndustria.MOD_ID + ".metal." + m.id())))
                     .orElse(Component.translatable(StrataIndustria.MOD_ID + ".crucible.status.molten_unknown"));
@@ -139,17 +140,32 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
         };
     }
 
-    /** "Bronze needs 8 to 12% tin; you have 5%" for a mix that is close to an alloy but outside it. */
+    /** "Bronze 3:1, add 1 tin" for a mix that is near a part alloy; "Needs 0.5-2% carbon, has 3%" for the iron ones. */
     static Component hintLine(Melt melt) {
         if (melt.units().size() < 2 || Alloy.resultOf(melt).isPresent()) return null;
         Optional<Alloy> closest = Alloy.closest(melt);
         if (closest.isEmpty()) return null;
         Alloy alloy = closest.get();
+        if (alloy.byParts()) {
+            Optional<Alloy.Missing> missing = alloy.missing(melt);
+            if (missing.isEmpty()) return null;
+            return Component.translatable(StrataIndustria.MOD_ID + ".crucible.hint_parts",
+                    Component.translatable(StrataIndustria.MOD_ID + ".metal." + alloy.result().id()),
+                    alloy.baseParts() + ":" + alloy.addedParts(),
+                    ingots(missing.get().units(), missing.get().metal() == Metal.REDSTONE ? 25 : 100),
+                    Component.translatable(StrataIndustria.MOD_ID + ".metal." + missing.get().metal().id()));
+        }
         return Component.translatable(StrataIndustria.MOD_ID + ".crucible.hint",
                 Component.translatable(StrataIndustria.MOD_ID + ".metal." + alloy.result().id()),
                 percent(alloy.addedMin()), percent(alloy.addedMax()),
                 Component.translatable(StrataIndustria.MOD_ID + ".metal." + alloy.added().id()),
                 percent(melt.share(alloy.added())));
+    }
+
+    /** Units as items of {@code perItem} units, rounded up to a tenth: "1", "0.5". */
+    static String ingots(int units, int perItem) {
+        int tenths = Math.max(1, (int) Math.ceil(units * 10.0 / perItem));
+        return tenths % 10 == 0 ? Integer.toString(tenths / 10) : String.format(Locale.ROOT, "%.1f", tenths / 10f);
     }
 
     /** Whole percent, or one decimal below 10% so carbon in steel (0.5 to 2%) reads properly. */

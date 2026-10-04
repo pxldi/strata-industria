@@ -310,17 +310,16 @@ public class CampStructure extends Structure {
         Direction toVein = cardinal(vein.x() - cx, vein.z() - cz);
         Direction side = toVein.getClockWise();
 
-        // Walk toward the vein looking for the foot of a slope that rises at least 5 within 8 blocks.
-        int[] line = new int[21];
+        // Walk toward the vein looking for a hillside to cut into: by the time the tunnel starts behind the
+        // portal the ground is already five blocks up, and it keeps that height for the first stretch, so
+        // the roof never breaks through the surface.
+        int[] line = new int[24];
         for (int i = 0; i < line.length; i++) line[i] = site.surface(cx + toVein.getStepX() * i, cz + toVein.getStepZ() * i);
         int mouth = -1;
         for (int m = 0; m <= 12 && mouth < 0; m++) {
-            for (int k = 1; k <= 8; k++) {
-                if (line[m + k] - line[m] >= 5) {
-                    mouth = m;
-                    break;
-                }
-            }
+            boolean covered = true;
+            for (int k = 4; k <= 10 && covered; k++) covered = line[m + k] - line[m] >= 5;
+            if (covered) mouth = m;
         }
         if (mouth < 0) return Optional.empty();
         int mx = cx + toVein.getStepX() * mouth, mz = cz + toVein.getStepZ() * mouth;

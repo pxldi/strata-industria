@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "ingredients": [
-    "strataindustria:smithing_pattern"
-  ],
-  "result": {
-    "id": "strataindustria:smithing_pattern"
-  }
-}

@@ -1,23 +1,9 @@
 {
   "type": "strataindustria:anvil",
+  "blows": 5,
   "count": 2,
-  "default_target": 100,
   "ingredient": "minecraft:gold_ingot",
   "result": {
     "id": "strataindustria:gold_sword_blade"
-  },
-  "rules": [
-    {
-      "hit": "hit",
-      "where": "last"
-    },
-    {
-      "hit": "bend",
-      "where": "second_last"
-    },
-    {
-      "hit": "bend",
-      "where": "third_last"
-    }
-  ]
+  }
 }

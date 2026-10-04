@@ -4,6 +4,7 @@ import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.knapping.KnappedFrom;
 import dev.strataindustria.knapping.Knapping;
+import dev.strataindustria.knapping.Shaping;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
@@ -32,22 +33,21 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 
-/** Tier 0 rules that live outside items and blocks: no punching logs, fibre and straw, extra sticks and flint. */
+/** Tier 0 rules that live outside items and blocks: no punching logs, fibre and straw, extra flint. */
 @EventBusSubscriber(modid = StrataIndustria.MOD_ID)
 public final class StoneAgeEvents {
     static final float STRAW_CHANCE = 0.5f;
-    static final float LEAF_STICK_CHANCE = 0.2f;
     /** Vanilla gravel gives flint 10% of the time; this extra roll on the rest brings it to 15%. */
     static final float EXTRA_FLINT_CHANCE = 0.05f / 0.9f;
 
     private StoneAgeEvents() {}
 
-    /** Flint has no use of its own, so a right-click with it opens the knapping grid. */
+    /** Flint and clay have no use of their own, so a right-click strikes the shape you have picked. */
     @SubscribeEvent
     static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         ItemStack held = event.getItemStack();
-        if (!(Knapping.isFlint(held) || Knapping.isClay(held)) || event.getEntity().isSecondaryUseActive()) return;
-        if (event.getEntity() instanceof ServerPlayer player) Knapping.tryOpen(player, event.getHand());
+        if (!(Knapping.isFlint(held) || Knapping.isClay(held))) return;
+        if (event.getEntity() instanceof ServerPlayer player) Shaping.use(player, event.getHand());
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);
     }
@@ -73,9 +73,6 @@ public final class StoneAgeEvents {
             drop(event, new ItemStack(ModItems.PLANT_FIBRE.get()));
             if (random.nextFloat() < STRAW_CHANCE) drop(event, new ItemStack(ModItems.STRAW.get()));
             player.getMainHandItem().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
-        } else if (state.is(BlockTags.LEAVES) && Config.LEAVES_DROP_STICKS.getAsBoolean()
-                && !tool.is(Items.SHEARS) && !hasSilkTouch(level, tool)) {
-            if (random.nextFloat() < LEAF_STICK_CHANCE) drop(event, new ItemStack(Items.STICK));
         } else if (state.is(Blocks.GRAVEL) && Config.GRAVEL_FLINT_CHANCE.getAsBoolean() && !hasSilkTouch(level, tool)) {
             boolean gaveFlint = event.getDrops().stream().anyMatch(e -> e.getItem().is(Items.FLINT));
             if (!gaveFlint && random.nextFloat() < EXTRA_FLINT_CHANCE) {

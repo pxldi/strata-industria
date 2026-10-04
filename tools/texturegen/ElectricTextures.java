@@ -2764,8 +2764,7 @@ public final class ElectricTextures {
     static BufferedImage hammerGui() {
         BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
         TextureGen.panel(im, 176, 182);
-        TextureGen.slot(im, 8, 26);
-        TextureGen.slot(im, 8, 46);
+        TextureGen.iconButton(im, 8, 36);
         TextureGen.slot(im, 35, 26);
         TextureGen.slot(im, 35, 46);
         TextureGen.slot(im, 71, 35);

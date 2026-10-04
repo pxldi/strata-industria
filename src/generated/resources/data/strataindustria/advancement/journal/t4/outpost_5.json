@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t4/railway",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "outpost_grown"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.outpost_5.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:outpost_charter"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t4.outpost_5"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

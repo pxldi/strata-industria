@@ -14,11 +14,14 @@ public final class ModSounds {
     /** One strike while knapping flint: sharper and higher than rock. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FLINT = register("knapping.flint");
     /** The finished head comes free of the stone. */
-    /** A known pattern cut again in one go: a rush of flakes. */
-    /** Crumbly stone breaking away beside the cell struck. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_CRUMBLE = register("knapping.crumble");
-    public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_REPEAT = register("knapping.repeat");
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FINISH = register("knapping.finish");
+
+    /** A clean note over each flint blow; the same note rings again when the rhythm is in the groove. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_CHIME = register("shaping.chime");
+    /** A blow on the rebound: heavier, and it counts twice. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_TRUE_BLOW = register("shaping.true_blow");
+    /** The soft tick at the top of the rebound, to strike on. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_GLINT = register("shaping.glint");
 
     /** Pressing a lump of clay into shape. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CLAY_SHAPE = register("clay.shape");
@@ -53,8 +56,19 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_HIT = register("anvil.hit");
     /** The last blow that finishes a piece. */
     public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_DONE = register("anvil.done");
-    /** Several quick blows in a row: a known piece smithed at a steady pace. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_QUICK = register("anvil.quick");
+    /** The note a blow sings in each metal's voice; played over the hammer sound at the pitch of the scale. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_COPPER = register("anvil.voice.copper");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_BRONZE = register("anvil.voice.bronze");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_IRON = register("anvil.voice.iron");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_STEEL = register("anvil.voice.steel");
+    /** A strike on the glint: the heavier layer under the note. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_TRUE_BLOW = register("anvil.true_blow");
+    /** A blow on metal that is too cold: a dead thud. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_COLD = register("anvil.cold");
+    /** The soft tick at the top of the hammer's rebound. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_GLINT = register("anvil.glint");
+    /** A piece set down on or taken off the anvil. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_SET = register("anvil.set");
     /** Raw rock dressed into a stone anvil. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_DRESS = register("anvil.dress");
     /** A prospector's pick tapping the rock. */
@@ -63,7 +77,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_IGNITE = register("forge.ignite");
 
     /** The spindle of a bow drill working against the hearth board. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> FIRESTARTER_DRILL = register("firestarter.drill");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLINT_STRIKE = register("flint.strike");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLINT_CATCH = register("flint.catch");
     /** Tinder catches in the fire pit. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_IGNITE = register("fire_pit.ignite");
     /** The fire pit goes out: a fizz in the rain, a soft fade when the embers cool. */
@@ -84,6 +99,7 @@ public final class ModSounds {
 
     /** Tier 3 spec 9.4: a weld takes, or the button is pressed when it cannot. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD = register("anvil.weld");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_STAMP = register("anvil.stamp");
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_WELD_FAIL = register("anvil.weld_fail");
 
     /** Tier 3 spec 20.6: mechanical power and machines. */

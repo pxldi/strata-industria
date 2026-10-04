@@ -73,6 +73,7 @@ final class ModModelProvider extends ModelProvider {
         GridData.models(blockModels, itemModels);
         FootData.models(blockModels, itemModels);
         RailData.models(blockModels, itemModels);
+        RailwayData.models(blockModels, itemModels);
         LogisticsData.models(blockModels, itemModels);
         tier6(blockModels, itemModels);
         for (Rock rock : Rock.values()) {
@@ -123,7 +124,6 @@ final class ModModelProvider extends ModelProvider {
         firePitLit.select(true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/fire_pit_lit")));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.FIRE_PIT.get()).with(firePitLit));
         itemModels.itemModelOutput.accept(ModItems.FIRE_PIT.get(), ItemModelUtils.plainModel(firePit));
-        itemModels.generateFlatItem(ModItems.FIRESTARTER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
         StructureData.models(blockModels, itemModels);
         clay(blockModels, itemModels);
@@ -152,7 +152,7 @@ final class ModModelProvider extends ModelProvider {
         kinetics(blockModels, itemModels);
         windAndBelts(blockModels, itemModels);
 
-        // Spec 9.1: stone anvils are the raw rock with a dressed face; the bronze anvil turns like a vanilla anvil.
+        // Spec 9.1: stone anvils are the raw rock with a dressed face; the iron anvil turns like a vanilla anvil.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
             Block anvil = entry.getValue().get();
             var model = STONE_ANVIL_TEMPLATE.create(anvil, new TextureMapping()
@@ -160,8 +160,7 @@ final class ModModelProvider extends ModelProvider {
                     .put(TextureSlot.TOP, blockTexture(entry.getKey().id() + "_anvil_top")), blockModels.modelOutput);
             blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(anvil, BlockModelGenerators.plainVariant(model)));
         }
-        metalAnvil(blockModels, itemModels, ModBlocks.BRONZE_ANVIL.get(), ModItems.BRONZE_ANVIL.get(), "bronze_anvil");
-        metalAnvil(blockModels, itemModels, ModBlocks.WROUGHT_IRON_ANVIL.get(), ModItems.WROUGHT_IRON_ANVIL.get(), "wrought_iron_anvil");
+        metalAnvil(blockModels, itemModels, ModBlocks.IRON_ANVIL.get(), ModItems.IRON_ANVIL.get(), "iron_anvil");
         heatable(itemModels, ModItems.TONGS_JAW.get());
         itemModels.generateFlatItem(ModItems.TONGS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
@@ -327,14 +326,7 @@ final class ModModelProvider extends ModelProvider {
         heatable(itemModels, ModItems.WROUGHT_IRON_ROD.get());
         heatable(itemModels, ModItems.WROUGHT_IRON_DOUBLE_INGOT.get());
 
-        // Spec 9.4 and 9.5: flux, and a pattern that shows its notes once a sequence is recorded on it.
         flatItem(itemModels, ModItems.FLUX.get());
-        Item pattern = ModItems.SMITHING_PATTERN.get();
-        var blank = itemModels.createFlatItemModel(pattern, ModelTemplates.FLAT_ITEM);
-        var recorded = itemModels.createFlatItemModel(pattern, "_recorded", ModelTemplates.FLAT_ITEM);
-        itemModels.itemModelOutput.accept(pattern, ItemModelUtils.conditional(
-                ItemModelUtils.hasComponent(ModDataComponents.SMITHING_PATTERN.get()),
-                ItemModelUtils.plainModel(recorded), ItemModelUtils.plainModel(blank)));
     }
 
     /**
@@ -548,10 +540,9 @@ final class ModModelProvider extends ModelProvider {
         flatItem(itemModels, dev.strataindustria.bronze.BronzeRegistry.UNFIRED_BELL_MOLD.get());
         castMold(itemModels, dev.strataindustria.bronze.BronzeRegistry.BELL_MOLD.get());
 
-        // Spec 4.4 and 14.4: zinc calcines, and the steel anvil in the shared anvil model.
+        // Spec 4.4 and 14.4: zinc calcines.
         for (var calcine : Tier4Items.ZINC_CALCINES.values()) flatItem(itemModels, calcine.get());
         flatItem(itemModels, Tier4Items.SMALL_ZINC_CALCINE.get());
-        metalAnvil(blockModels, itemModels, Tier4Blocks.STEEL_ANVIL.get(), Tier4Items.STEEL_ANVIL.get(), "steel_anvil");
 
         // Spec 11.7: iron transmission, in the wooden parts' models.
         for (var block : java.util.List.of(Tier4Blocks.IRON_AXLE, Tier4Blocks.IRON_GEARBOX)) {
