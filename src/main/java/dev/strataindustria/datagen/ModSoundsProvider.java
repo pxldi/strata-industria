@@ -222,8 +222,6 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.9f)));
         add(ModSounds.SOAKING_BARREL_DONE, definition().subtitle(subtitle("soaking_barrel.done"))
                 .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).volume(0.6f).pitch(0.8f)));
-        add(ModSounds.HIDE_SCRAPE, definition().subtitle(subtitle("hide.scrape"))
-                .with(sound("minecraft:entity.sheep.shear", SoundDefinition.SoundType.EVENT).pitch(1.2f)));
         add(ModSounds.SLUICE_WASH, definition().subtitle(subtitle("sluice.wash"))
                 .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).volume(0.6f)));
         add(ModSounds.WASHING_PAN_SWIRL, definition().subtitle(subtitle("washing_pan.swirl"))

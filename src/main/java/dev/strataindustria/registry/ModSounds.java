@@ -118,7 +118,6 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_OPEN = register("soaking_barrel.open");
     public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_FILL = register("soaking_barrel.fill");
     public static final DeferredHolder<SoundEvent, SoundEvent> SOAKING_BARREL_DONE = register("soaking_barrel.done");
-    public static final DeferredHolder<SoundEvent, SoundEvent> HIDE_SCRAPE = register("hide.scrape");
     public static final DeferredHolder<SoundEvent, SoundEvent> WINDMILL_TURN = register("windmill.turn");
     public static final DeferredHolder<SoundEvent, SoundEvent> BELT_ATTACH = register("belt.attach");
     public static final DeferredHolder<SoundEvent, SoundEvent> WASHING_PAN_SWIRL = register("washing_pan.swirl");

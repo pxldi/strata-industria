@@ -809,7 +809,7 @@ public final class ModGameTests {
         helper.succeed();
     }
 
-    // Soaking barrel (tier 3 spec 12.1): water and ash make lye, and lye limes raw hides.
+    // Soaking barrel (tier 3 spec 12.1): water and bark make tannin, and one soak in tannin turns raw hides into leather.
 
     private static void soakingBarrel(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
@@ -818,22 +818,22 @@ public final class ModGameTests {
         level.setBlock(pos, ModBlocks.SOAKING_BARREL.get().defaultBlockState(), Block.UPDATE_ALL);
         var barrel = (dev.strataindustria.tanning.SoakingBarrelBlockEntity) level.getBlockEntity(pos);
         helper.assertTrue(barrel.addWater(1000, false), "a bucket of water fits");
-        barrel.setItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT, new ItemStack(ModItems.ASH.get(), 2));
+        barrel.setItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT, new ItemStack(ModItems.BARK.get(), 4));
         level.setBlock(pos, level.getBlockState(pos).setValue(sealed, true), Block.UPDATE_ALL);
-        for (int tick = 0; tick < 600; tick++) {
+        for (int tick = 0; tick < 2400; tick++) {
             dev.strataindustria.tanning.SoakingBarrelBlockEntity.serverTick(level, pos, level.getBlockState(pos), barrel);
         }
-        helper.assertTrue(barrel.fluid().isSame(dev.strataindustria.registry.ModFluids.LYE.get()), "water and ash should make lye");
-        helper.assertValueEqual(barrel.amount(), 1000, "lye in the tank");
-        helper.assertTrue(barrel.getItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT).isEmpty(), "the ash is used up");
+        helper.assertTrue(barrel.fluid().isSame(dev.strataindustria.registry.ModFluids.TANNIN.get()), "water and bark should make tannin");
+        helper.assertValueEqual(barrel.amount(), 1000, "tannin in the tank");
+        helper.assertTrue(barrel.getItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT).isEmpty(), "the bark is used up");
 
         barrel.setItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.INPUT, new ItemStack(ModItems.RAW_HIDE.get(), 4));
-        for (int tick = 0; tick < 4000; tick++) {
+        for (int tick = 0; tick < 6000; tick++) {
             dev.strataindustria.tanning.SoakingBarrelBlockEntity.serverTick(level, pos, level.getBlockState(pos), barrel);
         }
         ItemStack out = barrel.getItem(dev.strataindustria.tanning.SoakingBarrelBlockEntity.OUTPUT);
-        helper.assertTrue(out.is(ModItems.LIMED_HIDE.get()) && out.getCount() == 4, "four limed hides, got " + out);
-        helper.assertValueEqual(barrel.amount(), 0, "the lye is used up");
+        helper.assertTrue(out.is(Items.LEATHER) && out.getCount() == 8, "eight leather from four hides, got " + out);
+        helper.assertValueEqual(barrel.amount(), 0, "the tannin is used up");
         helper.succeed();
     }
 }

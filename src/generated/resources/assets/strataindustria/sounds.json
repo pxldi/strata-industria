@@ -2744,16 +2744,6 @@
     ],
     "subtitle": "subtitles.strataindustria.heat_pipe.tick"
   },
-  "hide.scrape": {
-    "sounds": [
-      {
-        "type": "event",
-        "name": "entity.sheep.shear",
-        "pitch": 1.2
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.hide.scrape"
-  },
   "item.bucket.empty_crude_oil": {
     "sounds": [
       {

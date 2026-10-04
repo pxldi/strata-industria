@@ -1038,8 +1038,6 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SOAKING_BARREL.get()).with(barrel));
         itemModels.itemModelOutput.accept(ModItems.SOAKING_BARREL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/soaking_barrel_sealed")));
         flatItem(itemModels, ModItems.RAW_HIDE.get());
-        flatItem(itemModels, ModItems.LIMED_HIDE.get());
-        flatItem(itemModels, ModItems.SCRAPED_HIDE.get());
     }
 
     /** Tier 6: crude oil in the world, the oil buckets, bitumen, plastics and synthetic rubber. */
