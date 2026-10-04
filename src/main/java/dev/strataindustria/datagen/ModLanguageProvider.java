@@ -209,7 +209,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "heat", "Item Heat");
         add(config + "burnPlayer", "Hot items burn bare hands");
         add(config + "bloomery", "Bloomery");
-        add(config + "burnTicks", "Bloomery burn time");
+        add(config + "runTicks", "Bloomery run time");
         add(config + "journal", "Field Journal");
         add(config + "giveOnJoin", "Give a journal on first join");
     }
