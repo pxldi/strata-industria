@@ -263,7 +263,7 @@ final class StructureGameTests {
 
     private static void build(ServerLevel level, StructurePiece piece, BoundingBox area) {
         BoundingBox whole = new BoundingBox(area.minX() - 16, area.minY(), area.minZ() - 16, area.maxX() + 16, area.maxY(), area.maxZ() + 16);
-        piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), level.getRandom(), whole,
+        piece.postProcess(level, level.structureManager(), level.getChunkSource().getGenerator(), net.minecraft.util.RandomSource.create(7L), whole,
                 new ChunkPos(area.minX() >> 4, area.minZ() >> 4), new BlockPos(area.minX(), area.minY(), area.minZ()));
     }
 
