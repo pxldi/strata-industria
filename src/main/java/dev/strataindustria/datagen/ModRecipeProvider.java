@@ -520,6 +520,19 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_steam_engine", has(Tier4Items.STEAM_ENGINE.get()))
                 .save(output, key("crusher"));
         crushing();
+        // Spec 11.3: the washer, a treated wood tub with bronze bands.
+        List<Item> bronzePlates = new java.util.ArrayList<>();
+        for (Metal metal : Metal.values()) if (metal.isBronze() && ModItems.PLATES.containsKey(metal)) bronzePlates.add(ModItems.PLATES.get(metal).get());
+        shaped(RecipeCategory.REDSTONE, Tier4Items.WASHER.get())
+                .pattern("TPT")
+                .pattern("TGT")
+                .pattern("TRT")
+                .define('T', Tier4Items.TREATED_PLANKS.get())
+                .define('P', Ingredient.of(bronzePlates.toArray(Item[]::new)))
+                .define('G', ModItems.GEARS.get(Metal.BRASS).get())
+                .define('R', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .unlockedBy("has_crusher", has(Tier4Items.CRUSHER.get()))
+                .save(output, key("washer"));
         // Spec 10.4: a cracked boiler is good for four of its plates.
         shapeless(RecipeCategory.MISC, ModItems.PLATES.get(Metal.BRONZE).get(), 4)
                 .requires(Tier4Items.CRACKED_BRONZE_BOILER.get())
@@ -941,6 +954,9 @@ final class ModRecipeProvider extends RecipeProvider {
         odds.put(OreMineral.HEMATITE, 0.15f);
         byproduct.put(OreMineral.MAGNETITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get());
         odds.put(OreMineral.MAGNETITE, 0.10f);
+        // Tier 4 spec 11.3: galena gives up a little bismuthinite.
+        byproduct.put(OreMineral.GALENA, ModItems.SMALL_ORES.get(OreMineral.BISMUTHINITE).get());
+        odds.put(OreMineral.GALENA, 0.15f);
         for (OreMineral mineral : OreMineral.washableValues()) {
             for (OreGrade grade : OreGrade.values()) {
                 List<WashingRecipe.Chance> chances = byproduct.containsKey(mineral)

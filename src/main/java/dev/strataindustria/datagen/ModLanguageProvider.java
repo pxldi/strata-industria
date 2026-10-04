@@ -392,6 +392,11 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.CRUSHER, "Crusher");
         add("container." + id + ".crusher", "Crusher");
         add(subtitles + "crusher.crush", "Crusher grinds");
+        addBlock(Tier4Blocks.WASHER, "Washer");
+        add("container." + id + ".washer", "Washer");
+        add(subtitles + "washer.wash", "Washer sloshes");
+        add(id + ".machine.no_water", "Needs water: pipe it in");
+        add(id + ".washer.water", "Water: %s / %s mB");
     }
 
     private void ironAge() {

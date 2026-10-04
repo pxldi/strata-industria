@@ -577,7 +577,7 @@ final class ModModelProvider extends ModelProvider {
 
     // Spec 11.2 to 11.4: ore processing machines face the player; the front shows the works, moving while active.
     private static void processing(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
-        for (var machine : java.util.List.of(Tier4Blocks.CRUSHER)) {
+        for (var machine : java.util.List.of(Tier4Blocks.CRUSHER, Tier4Blocks.WASHER)) {
             Block block = machine.get();
             String name = machine.getId().getPath();
             TextureMapping idle = new TextureMapping().put(TextureSlot.FRONT, blockTexture(name + "_front"))

@@ -5,6 +5,7 @@ import dev.strataindustria.power.Kinetic;
 import dev.strataindustria.processing.MachineLayout;
 import dev.strataindustria.processing.ProcessingBlockEntity;
 import dev.strataindustria.processing.ProcessingMenu;
+import dev.strataindustria.processing.WasherBlockEntity;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -15,6 +16,8 @@ import net.minecraft.world.entity.player.Inventory;
 /** An ore processing machine: inputs, an arrow for each, the output grid, the status and the network line. */
 public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
     private static final Identifier ARROW = Identifier.withDefaultNamespace("container/furnace/burn_progress");
+    /** The washer's water gauge inside its well. */
+    public static final int TANK_X = 9, TANK_Y = 19, TANK_W = 10, TANK_H = 50;
     private final Identifier background;
 
     public ProcessingScreen(ProcessingMenu menu, Inventory inventory, Component title) {
@@ -34,6 +37,25 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
                 g.blitSprite(RenderPipelines.GUI_TEXTURED, ARROW, 24, 16, 0, 0, leftPos + MachineLayout.ARROW_X,
                         topPos + layout.inputY(i), w, 16);
             }
+        }
+        if (layout == MachineLayout.WASHER) {
+            int h = Math.round(TANK_H * Math.min(1.0f, menu.extra(0) / (float) WasherBlockEntity.TANK));
+            if (h > 0) {
+                int x = leftPos + TANK_X, bottom = topPos + TANK_Y + TANK_H;
+                g.fill(x, bottom - h, x + TANK_W, bottom, 0xFF3466CC);
+                g.fill(x, bottom - h, x + 2, bottom, 0xFF5A8AEC);
+                g.fill(x, bottom - h, x + TANK_W, bottom - h + 1, 0xFF7AA4F0);
+            }
+        }
+    }
+
+    @Override
+    protected void extractTooltip(GuiGraphicsExtractor g, int mouseX, int mouseY) {
+        super.extractTooltip(g, mouseX, mouseY);
+        int x = mouseX - leftPos, y = mouseY - topPos;
+        if (menu.layout() == MachineLayout.WASHER && x >= TANK_X && x < TANK_X + TANK_W && y >= TANK_Y && y < TANK_Y + TANK_H) {
+            g.setTooltipForNextFrame(Component.translatable(StrataIndustria.MOD_ID + ".washer.water", menu.extra(0), WasherBlockEntity.TANK),
+                    mouseX, mouseY);
         }
     }
 

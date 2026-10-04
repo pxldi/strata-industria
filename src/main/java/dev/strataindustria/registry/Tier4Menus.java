@@ -21,6 +21,10 @@ public final class Tier4Menus {
             ModMenus.MENUS.register("crusher", () -> IMenuTypeExtension.create((id, inventory, buf) ->
                     new dev.strataindustria.processing.ProcessingMenu(dev.strataindustria.processing.MachineLayout.CRUSHER, id, inventory, buf)));
 
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.processing.ProcessingMenu>> WASHER =
+            ModMenus.MENUS.register("washer", () -> IMenuTypeExtension.create((id, inventory, buf) ->
+                    new dev.strataindustria.processing.ProcessingMenu(dev.strataindustria.processing.MachineLayout.WASHER, id, inventory, buf)));
+
     public static void init() {}
 
     private Tier4Menus() {}

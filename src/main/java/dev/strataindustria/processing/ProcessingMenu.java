@@ -56,6 +56,7 @@ public class ProcessingMenu extends AbstractContainerMenu {
     private static MenuType<ProcessingMenu> type(MachineLayout layout) {
         return switch (layout) {
             case CRUSHER -> Tier4Menus.CRUSHER.get();
+            case WASHER -> Tier4Menus.WASHER.get();
         };
     }
 
@@ -76,6 +77,11 @@ public class ProcessingMenu extends AbstractContainerMenu {
         int s = data.get(layout.statusIndex());
         var values = ProcessingBlockEntity.Status.values();
         return s >= 0 && s < values.length ? values[s] : ProcessingBlockEntity.Status.EMPTY;
+    }
+
+    /** Machine-specific value {@code index}, such as the washer's water. */
+    public int extra(int index) {
+        return data.get(layout.statusIndex() + 1 + index);
     }
 
     @Override

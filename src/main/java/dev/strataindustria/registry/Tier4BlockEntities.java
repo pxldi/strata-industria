@@ -44,6 +44,9 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.processing.CrusherBlockEntity>> CRUSHER =
             ModBlockEntities.BLOCK_ENTITIES.register("crusher", () -> new BlockEntityType<>(dev.strataindustria.processing.CrusherBlockEntity::new,
                     Tier4Blocks.CRUSHER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.processing.WasherBlockEntity>> WASHER =
+            ModBlockEntities.BLOCK_ENTITIES.register("washer", () -> new BlockEntityType<>(dev.strataindustria.processing.WasherBlockEntity::new,
+                    Tier4Blocks.WASHER.get()));
 
     public static void init() {}
 

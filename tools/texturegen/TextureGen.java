@@ -6147,6 +6147,206 @@ public final class TextureGen {
         saveRaw("gui/crusher", crusherGui());
     }
 
+    // ---------------------------------------------------------------- tier 4: washer (spec 21.2)
+
+    /** Blend two rgb colours: t is the weight of b. */
+    static int mix(int a, int b, double t) {
+        int r = (int) Math.round(((a >> 16) & 255) * (1 - t) + ((b >> 16) & 255) * t);
+        int g = (int) Math.round(((a >> 8) & 255) * (1 - t) + ((b >> 8) & 255) * t);
+        int bl = (int) Math.round((a & 255) * (1 - t) + (b & 255) * t);
+        return (r << 16) | (g << 8) | bl;
+    }
+
+    /** Vertical treated-wood staves, 4 px wide, lit left edge and dark seam, with seeded grain streaks. */
+    static void washerStaves(BufferedImage im, long seed) {
+        Random r = new Random(seed);
+        for (int s = 0; s < 4; s++) {
+            int x0 = s * 4;
+            for (int y = 0; y < 16; y++) {
+                px(im, x0, y, TREATED_WOOD.get(4));
+                px(im, x0 + 1, y, TREATED_WOOD.get(3));
+                px(im, x0 + 2, y, TREATED_WOOD.get(3));
+                px(im, x0 + 3, y, TREATED_WOOD.get(1));
+            }
+            int gx = x0 + 1 + r.nextInt(2);
+            int gy = r.nextInt(6);
+            for (int k = 0; k < 4 + r.nextInt(3); k++) px(im, gx, (gy + k) % 16, TREATED_WOOD.get(2));
+            int hx = x0 + 1 + (gx - x0 == 1 ? 1 : 0);
+            int hy = 8 + r.nextInt(6);
+            for (int k = 0; k < 3; k++) px(im, hx, (hy + k) % 16, TREATED_WOOD.get(4));
+        }
+    }
+
+    /** A 2-row bronze band across the full width at row y, a shadow row below, rivets on the lit row. */
+    static void washerBand(BufferedImage im, int y, int[] rivets) {
+        for (int x = 0; x < 16; x++) {
+            px(im, x, y, BRONZE.get((x * 5 + y) % 9 == 0 ? 5 : 4));
+            px(im, x, y + 1, BRONZE.get((x * 3 + y) % 7 == 0 ? 2 : 3));
+            px(im, x, y + 2, TREATED_WOOD.get(1));
+            px(im, x, y - 1, TREATED_WOOD.get(1));
+        }
+        for (int x : rivets) {
+            px(im, x, y, BRONZE.spec());
+            px(im, x + 1, y + 1, BRONZE.get(1));
+        }
+    }
+
+    static BufferedImage washerSide() {
+        BufferedImage im = img();
+        washerStaves(im, 4242);
+        washerBand(im, 1, new int[] {1, 6, 11});
+        washerBand(im, 12, new int[] {2, 7, 13});
+        // shaft boss: bronze collar round an iron hub
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                if (d > 4.4 && d <= 5.0) px(im, x, y, BRONZE.get(1));
+                else if (d <= 4.4 && d > 2.8) px(im, x, y, BRONZE.get(x + y < 15 ? 5 : 3));
+                else if (d <= 2.8 && d > 1.6) px(im, x, y, WROUGHT_IRON.get(x + y < 15 ? 2 : 4));
+                else if (d <= 1.6) px(im, x, y, WROUGHT_IRON.get(1));
+            }
+        px(im, 5, 5, BRONZE.spec());
+        px(im, 6, 6, WROUGHT_IRON.get(5));
+        return im;
+    }
+
+    static BufferedImage washerTop() {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                boolean in = x >= 2 && x <= 13 && y >= 2 && y <= 13;
+                if (in) continue;
+                boolean edge = x == 0 || y == 0;
+                boolean lip = x == 1 || y == 1 || x == 14 || y == 14;
+                px(im, x, y, edge ? TREATED_WOOD.get(4) : (x == 15 || y == 15) ? TREATED_WOOD.get(1) : TREATED_WOOD.get(lip ? 3 : 2));
+            }
+        for (int i = 4; i < 15; i += 5) { px(im, i, 15, TREATED_WOOD.get(2)); px(im, 15, i, TREATED_WOOD.get(2)); }
+        for (int y = 2; y <= 13; y++)
+            for (int x = 2; x <= 13; x++) {
+                int c = WATER.get(((x * 3 + y * 5) % 11 == 0) ? 3 : 2);
+                if (y == 2 || x == 2) c = WATER.get(1);
+                px(im, x, y, c);
+            }
+        for (int[] f : new int[][] {{3, 12}, {4, 12}, {3, 11}, {12, 3}, {11, 3}, {12, 12}, {11, 13}, {13, 7}})
+            px(im, f[0], f[1], WATER.get(5));
+        px(im, 5, 4, WATER.get(4)); px(im, 10, 11, WATER.get(4)); px(im, 4, 10, WATER.get(4));
+        // paddle drum: wooden body with bronze hoops
+        for (int x = 4; x <= 11; x++) {
+            boolean hoop = x == 4 || x == 11 || x == 7 || x == 8;
+            px(im, x, 5, hoop ? BRONZE.get(4) : WOOD.get(4));
+            px(im, x, 6, hoop ? BRONZE.get(3) : WOOD.get(3));
+            px(im, x, 9, hoop ? BRONZE.get(3) : WOOD.get(2));
+            px(im, x, 10, hoop ? BRONZE.get(2) : WOOD.get(1));
+        }
+        // axle across the tub, resting in the rim
+        for (int x = 1; x <= 14; x++) {
+            px(im, x, 7, x < 3 || x > 12 ? WROUGHT_IRON.get(5) : BRONZE.get(5));
+            px(im, x, 8, x < 3 || x > 12 ? WROUGHT_IRON.get(2) : BRONZE.get(2));
+        }
+        px(im, 5, 7, BRONZE.spec());
+        return im;
+    }
+
+    /**
+     * One washer front frame: treated wood face, bronze bands, an open window onto a paddle drum with four
+     * blades starting at angle a (degrees). Active adds sloshing water, foam and splash.
+     */
+    static BufferedImage washerFront(double a, int f, boolean active) {
+        BufferedImage im = img();
+        washerStaves(im, 5151);
+        washerBand(im, 0, new int[] {2, 10});
+        washerBand(im, 13, new int[] {3, 12});
+        for (int y = 3; y <= 12; y++)
+            for (int x = 3; x <= 12; x++) {
+                boolean edge = x == 3 || y == 3 || x == 12 || y == 12;
+                if (edge) px(im, x, y, BRONZE.get(x == 3 || y == 3 ? 4 : 2));
+                else px(im, x, y, WATER.get(1));
+            }
+        px(im, 3, 3, BRONZE.spec());
+        for (int x = 4; x <= 11; x++) px(im, x, 4, 0x10141c);
+        double cx = 7.5, cy = 7.5;
+        for (int y = 5; y <= 11; y++)
+            for (int x = 4; x <= 11; x++) {
+                double dx = x - cx, dy = y - cy;
+                double r = Math.hypot(dx, dy);
+                int col = -1;
+                for (int k = 0; k < 4; k++) {
+                    double th = Math.toRadians(a + k * 90);
+                    double along = dx * Math.cos(th) + dy * Math.sin(th);
+                    double perp = -dx * Math.sin(th) + dy * Math.cos(th);
+                    if (along >= 1.0 && along <= 4.6 && Math.abs(perp) <= 1.05) {
+                        boolean tip = along > 3.3;
+                        if (perp < 0) col = tip ? WOOD.get(5) : BRONZE.get(5);
+                        else col = tip ? WOOD.get(3) : BRONZE.get(4);
+                        if (perp > 0.5) col = tip ? WOOD.get(2) : BRONZE.get(2);
+                    }
+                }
+                if (r <= 1.6) col = r <= 0.9 ? WROUGHT_IRON.get(2) : BRONZE.get(x + y < 15 ? 5 : 3);
+                if (col >= 0) px(im, x, y, col);
+            }
+        px(im, 7, 7, WROUGHT_IRON.get(5));
+        double ph = f * Math.PI / 4.0;
+        for (int x = 4; x <= 11; x++) {
+            int surf = active ? 9 + (int) Math.round(Math.sin(ph + x * 0.9)) : 9;
+            surf = Math.max(8, Math.min(10, surf));
+            for (int y = surf; y <= 11; y++) {
+                int under = rgb(im, x, y);
+                boolean top = y == surf;
+                int w = top ? WATER.get(4) : WATER.get(y == surf + 1 ? 3 : 2);
+                px(im, x, y, top ? mix(under, w, 0.7) : mix(under, w, 0.45));
+            }
+            if (active && (x + f) % 3 == 0) px(im, x, surf, WATER.get(5));
+            if (active && (x + f) % 4 == 1 && surf > 8) px(im, x, surf - 1, WATER.get(4));
+        }
+        if (!active) { px(im, 4, 9, WATER.get(5)); px(im, 5, 9, WATER.get(4)); px(im, 10, 9, WATER.get(5)); px(im, 11, 9, WATER.get(4)); }
+        else {
+            int[][] sp = {{5, 6}, {10, 6}, {6, 5}, {9, 5}};
+            for (int k = 0; k < 2; k++) {
+                int[] s = sp[(f + k * 2) % 4];
+                int c = rgb(im, s[0], s[1]);
+                if (c == WATER.get(1) || c == 0x10141c) px(im, s[0], s[1], WATER.get(5));
+            }
+        }
+        for (int x = 4; x <= 11; x++) px(im, x, 12, BRONZE.get(2));
+        return im;
+    }
+
+    static BufferedImage washerFrontActive() {
+        BufferedImage strip = new BufferedImage(16, 128, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 8; f++) strip.getGraphics().drawImage(washerFront(10 + f * 11.25, f, true), 0, f * 16, null);
+        return strip;
+    }
+
+    /** Washer screen, 176x176: tank well with ticks, two input lanes, six outputs. */
+    static BufferedImage washerGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 176);
+        well(im, 8, 18, 12, 52, 0x2a2a2a);
+        for (int y = 25; y <= 61; y += 12) {
+            int len = y == 37 ? 4 : 2;
+            fill(im, 21, y, len, 1, SLOT_DARK);
+            fill(im, 21, y + 1, len, 1, GUI_LIGHT);
+        }
+        for (int y : new int[] {27, 45}) {
+            slot(im, 30, y);
+            arrow(im, 56, y);
+        }
+        for (int x : new int[] {98, 116, 134})
+            for (int y : new int[] {27, 45}) slot(im, x, y);
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 94 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 152);
+        return im;
+    }
+
+    static void washer() throws IOException {
+        save("block/washer_side", washerSide());
+        save("block/washer_top", washerTop());
+        save("block/washer_front", washerFront(22.5, 0, false));
+        saveAnimated("block/washer_front_active", washerFrontActive(), 2);
+        saveRaw("gui/washer", washerGui());
+    }
+
     static void engines() throws IOException {
         save("block/steam_engine_base", engineBase());
         save("block/steam_engine_cylinder", engineCylinder());
@@ -6158,6 +6358,7 @@ public final class TextureGen {
         save("block/mechanical_pump_back", pumpBack());
         save("block/mechanical_pump_top", bronzePlates(8814));
         crusher();
+        washer();
     }
 
     static void steam() throws IOException {

@@ -281,6 +281,11 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.45f).volume(0.55f))
                 .with(sound("minecraft:block.stone.break", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.5f)));
+        // Spec 21.7: a sloshing drum of wet gravel.
+        add(Tier4Sounds.WASHER_WASH, definition().subtitle(subtitle("washer.wash"))
+                .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.5f))
+                .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.45f))
+                .with(sound("minecraft:block.gravel.hit", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
     }
 
     private static String subtitle(String name) {

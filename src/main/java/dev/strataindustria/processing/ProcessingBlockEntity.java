@@ -43,7 +43,7 @@ import org.jspecify.annotations.Nullable;
  */
 public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity implements KineticConsumer, WorldlyContainer {
     public enum Status {
-        EMPTY, WORKING, NOT_TURNING, TOO_SLOW, NO_RECIPE, OUTPUT_FULL;
+        EMPTY, WORKING, NOT_TURNING, TOO_SLOW, NO_RECIPE, OUTPUT_FULL, NO_WATER;
 
         public String key() {
             return StrataIndustria.MOD_ID + ".machine." + name().toLowerCase(Locale.ROOT);
@@ -62,7 +62,8 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
         @Override
         public int get(int index) {
             if (index < layout.inputs()) return Math.round(progress[index] / baseTicks() * 1000);
-            return index == layout.statusIndex() ? status.ordinal() : 0;
+            if (index == layout.statusIndex()) return status.ordinal();
+            return extraData(index - layout.statusIndex() - 1);
         }
 
         @Override
@@ -94,8 +95,21 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
     /** Played every second while the machine works. */
     protected abstract SoundEvent workSound();
 
-    /** The field journal goal for a finished item. */
-    protected abstract String journalGoal();
+    /** The field journal goal for a finished item, or null for none. */
+    protected abstract @Nullable String journalGoal();
+
+    /** Why this machine cannot start on {@code input} right now even though it has a recipe, or null if it can. */
+    protected @Nullable Status blocked(ItemStack input) {
+        return null;
+    }
+
+    /** Called once for each finished item, after its outputs are in. */
+    protected void used() {}
+
+    /** Machine-specific values for the screen, after the progress and status values. */
+    protected int extraData(int index) {
+        return 0;
+    }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ProcessingBlockEntity machine) {
         Status before = machine.status;
@@ -131,6 +145,11 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
                 problem = worse(problem, Status.OUTPUT_FULL);
                 continue;
             }
+            Status blocked = blocked(input);
+            if (blocked != null) {
+                problem = worse(problem, blocked);
+                continue;
+            }
             working = true;
             if (shown.isEmpty()) shown = input;
             progress[i] += rpm / 16.0f;
@@ -138,6 +157,7 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
                 progress[i] = 0;
                 for (ItemStack out : processing.get().roll(level.getRandom())) insert(out);
                 input.shrink(1);
+                used();
                 finished(level, pos);
             }
         }
@@ -161,7 +181,8 @@ public abstract class ProcessingBlockEntity extends BaseContainerBlockEntity imp
 
     protected void finished(ServerLevel level, BlockPos pos) {
         finished++;
-        Journal.awardNear(level, pos, journalGoal());
+        String goal = journalGoal();
+        if (goal != null) Journal.awardNear(level, pos, goal);
     }
 
     /** Items this machine has finished since it was placed. */
