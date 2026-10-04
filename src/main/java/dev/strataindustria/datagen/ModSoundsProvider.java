@@ -30,6 +30,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         listening();
         marks();
         ledger();
+        foot();
         transport();
         bronze();
         // A dull chip off a rock.
@@ -523,6 +524,31 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.copper.hit", event).pitch(1.3f).volume(0.5f)));
         add(dev.strataindustria.ledger.LedgerRegistry.SHORT, definition().subtitle(subtitle("ledger.short"))
                 .with(sound("minecraft:item.book.put", event).pitch(0.8f).volume(0.9f)));
+    }
+
+    /** Tier 2 on foot (outposts and transport spec 14), from vanilla wool, leather, stone and wood samples. */
+    private void foot() {
+        var event = SoundDefinition.SoundType.EVENT;
+        SoundDefinition hang = definition().subtitle(subtitle("rope.hang"));
+        for (int i = 1; i <= 4; i++) hang.with(sound("minecraft:dig/wool" + i).pitch(0.8f).volume(0.7f));
+        add(dev.strataindustria.transport.foot.FootRegistry.ROPE_HANG, hang);
+        add(dev.strataindustria.transport.foot.FootRegistry.PACK_OPEN, definition().subtitle(subtitle("pack.open"))
+                .with(sound("minecraft:item.armor.equip_leather", event).pitch(0.9f).volume(0.7f))
+                .with(sound("minecraft:block.wood.hit", event).pitch(1.4f).volume(0.3f)));
+        SoundDefinition stack = definition().subtitle(subtitle("cairn.stack"));
+        for (int i = 1; i <= 4; i++) stack.with(sound("minecraft:dig/stone" + i).pitch(0.9f).volume(0.9f));
+        for (int i = 1; i <= 2; i++) stack.with(sound("minecraft:dig/gravel" + i).pitch(1.1f).volume(0.5f));
+        add(dev.strataindustria.transport.foot.FootRegistry.CAIRN_STACK, stack);
+        SoundDefinition cut = definition().subtitle(subtitle("blaze.cut"));
+        for (int i = 1; i <= 4; i++) cut.with(sound("minecraft:dig/wood" + i).pitch(1.5f).volume(0.6f));
+        add(dev.strataindustria.transport.foot.FootRegistry.BLAZE_CUT, cut);
+        SoundDefinition roll = definition().subtitle(subtitle("handcart.roll"));
+        for (int i = 1; i <= 4; i++) roll.with(sound("minecraft:step/wood" + i).pitch(0.7f).volume(0.6f));
+        for (int i = 1; i <= 4; i++) roll.with(sound("minecraft:step/gravel" + i).pitch(0.8f).volume(0.4f));
+        add(dev.strataindustria.transport.foot.FootRegistry.HANDCART_ROLL, roll);
+        add(dev.strataindustria.transport.foot.FootRegistry.HANDCART_SHAFTS, definition().subtitle(subtitle("handcart.shafts"))
+                .with(sound("minecraft:block.wood.place", event).pitch(0.8f).volume(0.8f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.2f).volume(0.25f)));
     }
 
     /** Pattern casting, from vanilla wood and sand samples. */

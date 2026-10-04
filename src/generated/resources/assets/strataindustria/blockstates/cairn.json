@@ -1,0 +1,76 @@
+{
+  "variants": {
+    "height=1,rock=basalt": {
+      "model": "strataindustria:block/cairn_basalt_1"
+    },
+    "height=1,rock=gabbro": {
+      "model": "strataindustria:block/cairn_gabbro_1"
+    },
+    "height=1,rock=granite": {
+      "model": "strataindustria:block/cairn_granite_1"
+    },
+    "height=1,rock=limestone": {
+      "model": "strataindustria:block/cairn_limestone_1"
+    },
+    "height=1,rock=marble": {
+      "model": "strataindustria:block/cairn_marble_1"
+    },
+    "height=1,rock=rhyolite": {
+      "model": "strataindustria:block/cairn_rhyolite_1"
+    },
+    "height=1,rock=shale": {
+      "model": "strataindustria:block/cairn_shale_1"
+    },
+    "height=1,rock=slate": {
+      "model": "strataindustria:block/cairn_slate_1"
+    },
+    "height=2,rock=basalt": {
+      "model": "strataindustria:block/cairn_basalt_2"
+    },
+    "height=2,rock=gabbro": {
+      "model": "strataindustria:block/cairn_gabbro_2"
+    },
+    "height=2,rock=granite": {
+      "model": "strataindustria:block/cairn_granite_2"
+    },
+    "height=2,rock=limestone": {
+      "model": "strataindustria:block/cairn_limestone_2"
+    },
+    "height=2,rock=marble": {
+      "model": "strataindustria:block/cairn_marble_2"
+    },
+    "height=2,rock=rhyolite": {
+      "model": "strataindustria:block/cairn_rhyolite_2"
+    },
+    "height=2,rock=shale": {
+      "model": "strataindustria:block/cairn_shale_2"
+    },
+    "height=2,rock=slate": {
+      "model": "strataindustria:block/cairn_slate_2"
+    },
+    "height=3,rock=basalt": {
+      "model": "strataindustria:block/cairn_basalt_3"
+    },
+    "height=3,rock=gabbro": {
+      "model": "strataindustria:block/cairn_gabbro_3"
+    },
+    "height=3,rock=granite": {
+      "model": "strataindustria:block/cairn_granite_3"
+    },
+    "height=3,rock=limestone": {
+      "model": "strataindustria:block/cairn_limestone_3"
+    },
+    "height=3,rock=marble": {
+      "model": "strataindustria:block/cairn_marble_3"
+    },
+    "height=3,rock=rhyolite": {
+      "model": "strataindustria:block/cairn_rhyolite_3"
+    },
+    "height=3,rock=shale": {
+      "model": "strataindustria:block/cairn_shale_3"
+    },
+    "height=3,rock=slate": {
+      "model": "strataindustria:block/cairn_slate_3"
+    }
+  }
+}

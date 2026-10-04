@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/blaze_mark",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/blaze_mark"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/blaze_mark",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/blaze_mark",
+      "y": 270
+    }
+  }
+}

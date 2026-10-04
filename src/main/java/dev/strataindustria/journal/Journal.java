@@ -76,6 +76,10 @@ public final class Journal {
     public static final String STORAGE = "storage";
     public static final String ORE_SCAN = "ore_scan";
     public static final String ELECTRIC_CHAIN = "electric_chain";
+    // Outposts and transport spec 11, tier 2 on foot
+    public static final String PACK_FRAME_WORN = "pack_frame_worn";
+    public static final String HANDCART_HAUL = "handcart_haul";
+    public static final String TRAIL_MARKED = "trail_marked";
     // Outposts and transport (outposts spec 11)
     public static final String CHARTER_LINKED = "charter_linked";
 

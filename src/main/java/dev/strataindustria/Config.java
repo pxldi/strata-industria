@@ -415,6 +415,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue OUTPOSTS_REQUIRE_OWNER_ONLINE = BUILDER
             .comment("Charter areas load only while one of their owners is online. Turn off to keep them loaded always.")
             .define("requireOwnerOnline", true);
+    public static final ModConfigSpec.IntValue TRAIL_STEP = BUILDER
+            .comment("Most blocks between two trail marks (cairns and blazes) for them to count as one trail.")
+            .defineInRange("trailStep", 64, 8, 512);
 
     static {
         BUILDER.pop();

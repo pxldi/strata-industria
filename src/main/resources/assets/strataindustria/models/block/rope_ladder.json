@@ -1,0 +1,246 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "ladder": "strataindustria:block/rope_ladder",
+    "particle": "strataindustria:block/rope_ladder"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        7
+      ],
+      "to": [
+        5,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "west": {
+          "uv": [
+            2,
+            0,
+            4,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "east": {
+          "uv": [
+            2,
+            0,
+            4,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#ladder"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#ladder"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        0,
+        7
+      ],
+      "to": [
+        13,
+        16,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            2,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "west": {
+          "uv": [
+            2,
+            0,
+            4,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "east": {
+          "uv": [
+            2,
+            0,
+            4,
+            16
+          ],
+          "texture": "#ladder"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#ladder"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#ladder"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        2,
+        7
+      ],
+      "to": [
+        11,
+        4,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            14,
+            2
+          ],
+          "texture": "#ladder"
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            14,
+            2
+          ],
+          "texture": "#ladder"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            14,
+            6
+          ],
+          "texture": "#ladder"
+        },
+        "down": {
+          "uv": [
+            8,
+            4,
+            14,
+            6
+          ],
+          "texture": "#ladder"
+        }
+      }
+    },
+    {
+      "from": [
+        5,
+        10,
+        7
+      ],
+      "to": [
+        11,
+        12,
+        9
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            14,
+            2
+          ],
+          "texture": "#ladder"
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            14,
+            2
+          ],
+          "texture": "#ladder"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            14,
+            6
+          ],
+          "texture": "#ladder"
+        },
+        "down": {
+          "uv": [
+            8,
+            4,
+            14,
+            6
+          ],
+          "texture": "#ladder"
+        }
+      }
+    }
+  ]
+}
