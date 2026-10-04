@@ -42,6 +42,7 @@ final class StructureGameTests {
         tests.put("structure_adit_in_forest", StructureGameTests::aditInForest);
         tests.put("structure_adit_miners_end", StructureGameTests::aditMinersEnd);
         tests.put("structure_bunkhouse_cache", StructureGameTests::bunkhouseCache);
+        tests.put("structure_clearing_cache", StructureGameTests::clearingCache);
     }
 
     private static void plansInForest(GameTestHelper helper) {
@@ -87,6 +88,26 @@ final class StructureGameTests {
         }
         helper.assertTrue(beds >= 8, "expected four beds, found " + beds / 2);
         helper.assertTrue(lamps >= 2, "expected lamps");
+        helper.succeed();
+    }
+
+    /** The burners' cache is a crate set into the hut floor under the hay bed; pit A still smoulders. */
+    private static void clearingCache(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        Plan plan = Plans.CLEARING;
+        int minX = origin.getX() + PAD, minZ = origin.getZ() + PAD;
+        BoundingBox area = new BoundingBox(minX - PAD, groundY - 8, minZ - PAD, minX + plan.width() + PAD, groundY + 40, minZ + plan.depth() + PAD);
+        forest(level, area, groundY, minX, minZ, plan.width(), plan.depth());
+        build(level, new PlanPiece(plan, Rotation.NONE, minX, minZ, groundY, OreMineral.MALACHITE, PlanPiece.Wood.SPRUCE, 11L), area);
+        BlockPos cache = new BlockPos(minX + 2, groundY, minZ + 15);
+        helper.assertTrue(level.getBlockState(cache).is(dev.strataindustria.structure.SharedBlocks.CRATE.get()), "cache crate missing");
+        helper.assertTrue(level.getBlockState(cache.above()).is(net.minecraft.world.level.block.Blocks.HAY_BLOCK), "hay bed missing over the cache");
+        helper.assertTrue(level.getBlockEntity(cache) instanceof net.minecraft.world.RandomizableContainer c && c.getLootTable() != null,
+                "cache crate has no loot table");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 6, groundY + 1, minZ + 5))
+                .is(dev.strataindustria.structure.SharedBlocks.SMOULDERING_LOG_PILE.get()), "pit A is not smouldering");
         helper.succeed();
     }
 

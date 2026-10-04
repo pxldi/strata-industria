@@ -288,10 +288,12 @@ final class StructureData {
                     .withPool(pool(0.5f, worn(ModItems.STONE_AXE.get())))
                     .withPool(pool(0.5f, worn(ModItems.STONE_SHOVEL.get())))
                     .withPool(pool(0.6f, item(ModItems.ASH.get(), 2, 8)))
+                    .withPool(pool(0.6f, item(Items.CLAY_BALL, 1, 2)))
                     .withPool(pool(0.5f, ledger("charcoal_burners_clearing", 1))));
             add(CampLoot.CLEARING_CACHE, () -> LootTable.lootTable()
                     .withPool(pool(1, ledger("charcoal_burners_clearing", 2)))
-                    .withPool(pool(0.7f, sherd("charcoal_burners")))
+                    .withPool(pool(1, sherd("charcoal_burners")))
+                    .withPool(pool(1, item(Items.FLINT, 4, 8)))
                     .withPool(pool(0.8f, item(Items.TORCH, 8, 16)))
                     .withPool(pool(0.6f, item(Items.BREAD, 8, 16)))
                     .withPool(pool(0.6f, item(Items.EMERALD, 1, 3)))
@@ -705,7 +707,7 @@ final class StructureData {
         add.accept(place + ".charcoal_burners_clearing", "Charcoal burners' clearing");
         add.accept(place + ".charcoal_burners_clearing.hint", "Someone stacked logs here, buried them under earth and never lit "
                 + "them. A pile sealed on every side burns slowly into charcoal instead of ash. Cover the open side with earth, "
-                + "then light it.");
+                + "then light it. They slept warm. Look where they slept.");
         add.accept(place + ".prospector_camp", "Abandoned prospector's camp");
         add.accept(place + ".prospector_camp.hint", "A prospector laid three stones on a log: the rock at the surface, the rock "
                 + "below it, and the hard rock at the bottom. Every region stacks its own three rocks, and every rock keeps its "

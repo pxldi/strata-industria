@@ -277,6 +277,14 @@ public class PlanPiece extends StructurePiece {
             case 'V' -> Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.SOUTH);
             case 'O' -> Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING, Direction.SOUTH);
             case '%' -> StructureContent.SPECIMEN_SHELF.get().defaultBlockState();
+            case 'D' -> Blocks.PACKED_MUD.defaultBlockState();
+            case '~' -> Blocks.HAY_BLOCK.defaultBlockState();
+            case '@' -> SharedBlocks.SMOULDERING_LOG_PILE.get().defaultBlockState();
+            case '&' -> Blocks.MOSS_CARPET.defaultBlockState();
+            case '*' -> Blocks.DECORATED_POT.defaultBlockState();
+            case '!' -> Blocks.BASALT.defaultBlockState();
+            case '?' -> Blocks.TUFF.defaultBlockState();
+            case '0' -> Blocks.GRASS_BLOCK.defaultBlockState();
             default -> null;
         };
         if (state == null) return;
@@ -309,7 +317,8 @@ public class PlanPiece extends StructurePiece {
                 var table = CampLoot.barrel(planId, mineral);
                 if (table != null) RandomizableContainer.setBlockEntityLootTable(level, random, pos, table);
             }
-            case 'X' -> RandomizableContainer.setBlockEntityLootTable(level, random, pos, CampLoot.key(CampLoot.MINING_CACHE));
+            case 'X' -> RandomizableContainer.setBlockEntityLootTable(level, random, pos,
+                    CampLoot.key(planId.startsWith("charcoal") ? CampLoot.CLEARING_CACHE : CampLoot.MINING_CACHE));
             case 'a' -> ToolRackBlockEntity.stock(level.getLevel(), pos, java.util.List.of(
                     worn(ModItems.STONE_HAMMER.get(), random), worn(ModItems.STONE_AXE.get(), random)));
             case '$' -> {
