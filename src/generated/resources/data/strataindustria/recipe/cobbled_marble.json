@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "R": "strataindustria:loose_marble"
+    "R": "strataindustria:marble_shard"
   },
   "pattern": [
     "RR",

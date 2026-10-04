@@ -236,9 +236,9 @@ public class PlanPiece extends StructurePiece {
             case '$' -> Blocks.SUSPICIOUS_GRAVEL.defaultBlockState();
             case '#', 'm' -> rock.cobbled();
             case 'R' -> rock.raw(pos.getX(), pos.getY(), pos.getZ());
-            case 'r', '1' -> rock.loose(rock.top());
-            case '2' -> rock.loose(rock.middle());
-            case '3' -> rock.loose(rock.bottom());
+            case 'r', '1' -> rock.sample(rock.top());
+            case '2' -> rock.sample(rock.middle());
+            case '3' -> rock.sample(rock.bottom());
             case 'C' -> StructureContent.FIBRE_CANVAS.get().defaultBlockState();
             case '_' -> StructureContent.FIBRE_CANVAS_CARPET.get().defaultBlockState();
             case '7' -> StructureContent.FIBRE_CANVAS_STAIRS.get().defaultBlockState().setValue(StairBlock.FACING, Direction.EAST);
@@ -261,8 +261,6 @@ public class PlanPiece extends StructurePiece {
             case 'k' -> wood.fence();
             case 's' -> wood.slab().setValue(SlabBlock.TYPE, SlabType.TOP);
             case 'H' -> Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.SOUTH);
-            case 'x' -> ModBlocks.LOOSE_STICK.get().defaultBlockState();
-            case 'q' -> ModBlocks.LOOSE_FLINT.get().defaultBlockState();
             case 'n' -> ModBlocks.SMALL_ORES.get(mineral).get().defaultBlockState();
             case 'p' -> wood.planks();
             case 'v' -> wood.stairs().setValue(StairBlock.FACING, Direction.SOUTH);
@@ -437,7 +435,7 @@ public class PlanPiece extends StructurePiece {
         for (int i = 0; i < slots.size() && i < order.size(); i++) {
             int[] slot = slots.get(i);
             BlockPos at = new BlockPos(worldX(slot[0], slot[2]), groundY + slot[1] - Plans.base(plan), worldZ(slot[0], slot[2]));
-            steps.add(new PuzzleLock.Step(at, BuiltInRegistries.BLOCK.getKey(rock.loose(order.get(i)).getBlock()).toString()));
+            steps.add(new PuzzleLock.Step(at, BuiltInRegistries.BLOCK.getKey(rock.sample(order.get(i)).getBlock()).toString()));
         }
         return PuzzleLock.blocks(steps);
     }
@@ -483,8 +481,9 @@ public class PlanPiece extends StructurePiece {
             return ModBlocks.RAW_ROCK.get(rock).get().defaultBlockState();
         }
 
-        BlockState loose(Rock rock) {
-            return ModBlocks.LOOSE_ROCK.get(rock).get().defaultBlockState();
+        /** A hand-sized sample of a rock, as a cobbled block. */
+        BlockState sample(Rock rock) {
+            return ModBlocks.COBBLED_ROCK.get(rock).get().defaultBlockState();
         }
 
         /** Every province's bottom rock is an intrusive igneous rock, which always has an anvil. */

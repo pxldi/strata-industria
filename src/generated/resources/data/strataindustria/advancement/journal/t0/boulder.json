@@ -1,0 +1,34 @@
+{
+  "parent": "strataindustria:journal/root",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#strataindustria:rock_shards"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t0.boulder.hint"
+    },
+    "icon": {
+      "id": "strataindustria:limestone_shard"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t0.boulder"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

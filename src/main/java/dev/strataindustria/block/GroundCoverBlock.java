@@ -21,7 +21,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * Small things lying on the ground: loose rocks, sticks, flint and surface ore nuggets. They sit on a
+ * Small things lying on the ground: surface ore nuggets and the like. They sit on a
  * sturdy block, have no collision, and a right-click with an empty hand picks up their drops.
  */
 public class GroundCoverBlock extends Block {

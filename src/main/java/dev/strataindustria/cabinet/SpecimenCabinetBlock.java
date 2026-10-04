@@ -30,7 +30,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * A glass-fronted cabinet that holds one specimen of every rock and mineral (uniqueness 9.5). Set a loose rock, a
+ * A glass-fronted cabinet that holds one specimen of every rock and mineral (uniqueness 9.5). Set a rock shard, a
  * cut specimen or a raw ore piece on its shelf; an empty hand reads the cabinet back. Filling a shelf sets the
  * player's prospector's pick up for that rock, and its front fills in as the collection grows.
  */

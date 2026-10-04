@@ -134,35 +134,36 @@ final class FootGameTests {
         done(helper, player);
     }
 
-    // Four rocks on a loose rock make a cairn, four more raise it to three; it gives back what went in.
+    // Four shards on the ground make a cairn, four more raise it to three; it gives back what went in.
     private static void cairn(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         ServerPlayer player = player(helper);
-        BlockPos pos = helper.absolutePos(new BlockPos(3, 1, 3));
-        level.setBlock(pos, ModBlocks.LOOSE_ROCK.get(Rock.GRANITE).get().defaultBlockState(), Block.UPDATE_ALL);
-        ItemStack granite = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.GRANITE).get(), 8);
-        ItemStack few = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.GRANITE).get(), 3);
-        helper.assertTrue(!FootEvents.stack(player, few, Rock.GRANITE, level, pos), "three rocks are not enough");
-        helper.assertTrue(FootEvents.stack(player, granite, Rock.GRANITE, level, pos), "four make a cairn");
+        BlockPos ground = helper.absolutePos(new BlockPos(3, 0, 3));
+        BlockPos pos = ground.above();
+        level.setBlock(ground, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        ItemStack granite = new ItemStack(ModItems.ROCK_SHARD.get(Rock.GRANITE).get(), 8);
+        ItemStack few = new ItemStack(ModItems.ROCK_SHARD.get(Rock.GRANITE).get(), 3);
+        helper.assertTrue(!FootEvents.stack(player, few, Rock.GRANITE, level, ground), "three rocks are not enough");
+        helper.assertTrue(FootEvents.stack(player, granite, Rock.GRANITE, level, ground), "four make a cairn");
         BlockState state = level.getBlockState(pos);
         helper.assertTrue(state.is(FootRegistry.CAIRN.get()), "there is a cairn");
         helper.assertValueEqual(state.getValue(CairnBlock.HEIGHT), 1, "one course");
         helper.assertValueEqual(state.getValue(CairnBlock.ROCK), Rock.GRANITE, "of granite");
         helper.assertValueEqual(granite.getCount(), 4, "four rocks used");
-        ItemStack basalt = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.BASALT).get(), 8);
+        ItemStack basalt = new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get(), 8);
         helper.assertTrue(FootEvents.stack(player, basalt, Rock.BASALT, level, pos), "four more raise it");
         helper.assertValueEqual(level.getBlockState(pos).getValue(CairnBlock.HEIGHT), 2, "two courses");
         helper.assertValueEqual(level.getBlockState(pos).getValue(CairnBlock.ROCK), Rock.BASALT, "it takes the newest rock");
         helper.assertTrue(FootEvents.stack(player, basalt, Rock.BASALT, level, pos), "and a third");
         helper.assertTrue(!FootEvents.stack(player, basalt, Rock.BASALT, level, pos), "three is the most");
         helper.assertValueEqual(level.getBlockState(pos).getValue(CairnBlock.HEIGHT), 3, "three courses");
-        // Ground that is not a loose rock is left alone.
-        BlockPos bare = helper.absolutePos(new BlockPos(5, 1, 3));
-        helper.assertTrue(!FootEvents.stack(player, basalt, Rock.BASALT, level, bare), "bare ground takes no cairn");
+        // Open air takes no cairn: there is nothing to stand it on.
+        BlockPos air = helper.absolutePos(new BlockPos(5, 1, 3));
+        helper.assertTrue(!FootEvents.stack(player, basalt, Rock.BASALT, level, air), "air takes no cairn");
         // Breaking it gives the rocks back, four to a course.
         level.destroyBlock(pos, true);
         helper.runAfterDelay(2, () -> {
-            helper.assertValueEqual(items(helper, ModItems.LOOSE_ROCK.get(Rock.BASALT).get()), 12, "twelve basalt rocks back");
+            helper.assertValueEqual(items(helper, ModItems.ROCK_SHARD.get(Rock.BASALT).get()), 12, "twelve basalt rocks back");
             done(helper, player);
         });
     }

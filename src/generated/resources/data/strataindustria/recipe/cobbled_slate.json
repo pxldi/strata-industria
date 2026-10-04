@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "R": "strataindustria:loose_slate"
+    "R": "strataindustria:slate_shard"
   },
   "pattern": [
     "RR",

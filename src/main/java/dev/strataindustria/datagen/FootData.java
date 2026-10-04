@@ -179,7 +179,7 @@ final class FootData {
                                     StatePropertiesPredicate.Builder.properties()
                                             .hasProperty(CairnBlock.ROCK, rock)
                                             .hasProperty(CairnBlock.HEIGHT, height)))
-                            .add(LootItem.lootTableItem(ModItems.LOOSE_ROCK.get(rock).get())
+                            .add(LootItem.lootTableItem(ModItems.ROCK_SHARD.get(rock).get())
                                     .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(CairnBlock.ROCKS_PER_COURSE * height)))));
                 }
             }

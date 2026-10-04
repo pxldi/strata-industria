@@ -231,7 +231,7 @@ final class SharedBlockData {
                 dropSelf(SharedBlocks.MOSSY_COBBLED.get(rock).get());
                 add(SharedBlocks.RUBBLE.get(rock).get(), block -> LootTable.lootTable().withPool(LootPool.lootPool()
                         .setRolls(ContextIntProviders.exactly(1))
-                        .add(LootItem.lootTableItem(ModItems.LOOSE_ROCK.get(rock).get())
+                        .add(LootItem.lootTableItem(ModItems.ROCK_SHARD.get(rock).get())
                                 .when(LootItemRandomChanceCondition.randomChance(0.2f)))));
             }
         }

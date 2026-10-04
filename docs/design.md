@@ -77,8 +77,8 @@ Tiers 0 to 2 are the first playable slice. Tiers 3 and 4 are the second mileston
 **Goal:** survive the first night without wood tools from a crafting table.
 
 - Wood tools are removed. Logs cannot be punched; you need a stone axe.
-- **Knapping**: right-click flint or a loose rock with another rock to open a 5x5 knapping grid. Shape it into axe heads, knife blades, shovel heads, hammer heads, spear heads.
-- **Loose items in the world**: loose rocks, sticks and flint generate on the surface. Rock type matches the stone below, so you learn geology from the first minute.
+- **Knapping**: strike flint or a rock shard in the world to shape it into axe heads, knife blades, shovel heads, hammer heads, spear heads.
+- **Boulders in the world**: weathered boulders of the local rock stand on the surface. Hit one with a bare hand: cracks open, it splits and rock shards hop out. Rock type matches the stone below, so you learn geology from the first minute.
 - **Plant fibre** from tall grass, twisted into string by hand.
 - Tools: stone knife, axe, shovel, hammer, spear. Low durability, quick to make.
 - **Flint strike**: strike flint on a rock over the fire pit to light it. Campfire cooks food and can heat small items.
@@ -94,7 +94,7 @@ Exit condition: having a campfire, stone tools and a stash of clay.
 - **Firing**: stand unfired pottery on the hearth beside a hot fire pit (up to four pieces). It glows and rings when done.
 - **Charcoal pit**: stack logs, cover with dirt, light. Yields charcoal by volume. First "multiblock" in spirit, no GUI.
 - **Forge (basic)**: a small charcoal-fired hearth that heats items to working temperature. Introduces the temperature system and the temperature colour on item tooltips.
-- **Prospecting I**: by hand, look at loose surface rocks and ore nuggets ("surface indicators") that hint at veins below.
+- **Prospecting I**: by hand, look at boulders and ore nuggets ("surface indicators") that hint at veins below.
 
 Exit condition: fired crucible, ingot molds, a forge, and found surface copper.
 

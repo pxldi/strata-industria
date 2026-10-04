@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "R": "strataindustria:loose_gabbro"
+    "R": "strataindustria:gabbro_shard"
   },
   "pattern": [
     "RR",

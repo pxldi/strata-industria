@@ -54,6 +54,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.amethyst_block.hit", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.35f)));
         add(ModSounds.SHAPING_GLINT, definition().subtitle(subtitle("shaping.glint"))
                 .with(sound("minecraft:block.amethyst_block.chime", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.22f)));
+        // Boulders: a heavy knock with a dry crack under it, a deep break, and shards skittering off.
+        add(ModSounds.BOULDER_STRIKE, stone("boulder.strike", 0.8f, 1.0f));
+        add(ModSounds.BOULDER_CRACK, definition().subtitle(subtitle("boulder.crack"))
+                .with(sound("minecraft:block.stone.break", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f))
+                .with(sound("minecraft:block.basalt.break", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.5f)));
+        add(ModSounds.BOULDER_SPLIT, definition().subtitle(subtitle("boulder.split"))
+                .with(sound("minecraft:block.stone.break", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(1.0f))
+                .with(sound("minecraft:block.deepslate_bricks.break", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.9f)));
+        SoundDefinition shards = definition().subtitle(subtitle("boulder.shards"));
+        for (int i = 1; i <= 4; i++) shards.with(sound("minecraft:dig/gravel" + i).pitch(1.5f).volume(0.7f));
+        add(ModSounds.BOULDER_SHARDS, shards);
         // The last flake falls and the head comes free: a deeper knock.
         add(ModSounds.KNAP_FINISH, stone("knapping.finish", 0.75f, 1.0f));
 
@@ -731,6 +742,34 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 3; i++) coal.with(sound("minecraft:dig/gravel" + i).pitch(1.1f).volume(0.7f));
         coal.with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.8f).volume(0.15f));
         add(dev.strataindustria.transport.rail.RailwayRegistry.COAL_LOAD, coal);
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.DRIVE, definition().subtitle(subtitle("ropeway.drive"))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.5f).volume(0.5f))
+                .with(sound("minecraft:block.grindstone.use", event).pitch(0.55f).volume(0.3f))
+                .with(sound("minecraft:block.wooden_trapdoor.open", event).pitch(0.6f).volume(0.35f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.SHEAVE, definition().subtitle(subtitle("ropeway.sheave"))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.5f).volume(0.45f))
+                .with(sound("minecraft:block.chain.step", event).pitch(1.2f).volume(0.6f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.4f).volume(0.35f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.BUCKET_HANG, definition().subtitle(subtitle("ropeway.bucket_hang"))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.1f).volume(0.7f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.2f).volume(0.4f))
+                .with(sound("minecraft:item.bucket.fill", event).pitch(1.6f).volume(0.2f)));
+        SoundDefinition tip = definition().subtitle(subtitle("ropeway.bucket_tip"));
+        for (int i = 1; i <= 4; i++) tip.with(sound("minecraft:dig/gravel" + i).pitch(0.9f).volume(0.8f));
+        tip.with(sound("minecraft:block.chain.hit", event).pitch(0.9f).volume(0.4f));
+        tip.with(sound("minecraft:item.bucket.empty", event).pitch(1.5f).volume(0.2f));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.BUCKET_TIP, tip);
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.ROPE_TIE, definition().subtitle(subtitle("ropeway.rope_tie"))
+                .with(sound("minecraft:item.lead.tied", event).pitch(1.0f).volume(0.9f))
+                .with(sound("minecraft:block.chain.place", event).pitch(0.9f).volume(0.5f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.LINE_STRUNG, definition().subtitle(subtitle("ropeway.line_strung"))
+                .with(sound("minecraft:block.note_block.bell", event).pitch(1.6f).volume(0.6f))
+                .with(sound("minecraft:item.lead.tied", event).pitch(0.8f).volume(0.8f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.7f).volume(0.6f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.LINE_SNAP, definition().subtitle(subtitle("ropeway.snap"))
+                .with(sound("minecraft:item.lead.break", event).pitch(0.8f).volume(1.0f))
+                .with(sound("minecraft:block.tripwire.detach", event).pitch(0.5f).volume(0.8f))
+                .with(sound("minecraft:block.chain.break", event).pitch(0.7f).volume(0.6f)));
         add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
                 .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
                 .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:steel_rod",
+    "strataindustria:steel_rod",
+    "strataindustria:steel_rod",
+    "strataindustria:rope"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:wire_rope"
+  }
+}

@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * The field journal (spec 3.6 and 11): a tree of goal advancements from the first loose rock onwards, which the
+ * The field journal (spec 3.6 and 11): a tree of goal advancements from the first boulder onwards, which the
  * leads notebook ({@link Leads}) reads as its leads. Goals that no vanilla trigger covers fire a named
  * {@link JournalTrigger} event.
  */
@@ -90,6 +90,9 @@ public final class Journal {
     public static final String LOCOMOTIVE_PRESSURE = "locomotive_pressure";
     public static final String DRIVERLESS_TRIPS = "driverless_trips";
     public static final String OUTPOST_GROWN = "outpost_grown";
+    /** Items a ropeway has to deliver before the goal counts. */
+    public static final int ROPEWAY_ITEMS = 64;
+    public static final String ROPEWAY_DELIVERED = "ropeway_delivered";
 
     /** Blocks of overhead span a consumer must be served across for the power line goal. */
     public static final int POWER_LINE_SPAN = 64;
