@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": "minecraft:glass",
+    "P": "strataindustria:brass_plate"
+  },
+  "pattern": [
+    "PGP"
+  ],
+  "result": {
+    "count": 6,
+    "id": "strataindustria:item_pipe"
+  }
+}

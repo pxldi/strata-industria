@@ -449,6 +449,23 @@
     ],
     "subtitle": "subtitles.strataindustria.block.inserter.swing"
   },
+  "block.item_pipe.extract": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.dispenser.launch",
+        "pitch": 1.8,
+        "volume": 0.2
+      },
+      {
+        "type": "event",
+        "name": "block.dispenser.launch",
+        "pitch": 1.65,
+        "volume": 0.18
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.item_pipe.extract"
+  },
   "block.kinetic_motor.run": {
     "sounds": [
       {
@@ -785,6 +802,39 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.steam_turbine.spin_down"
+  },
+  "block.storage_controller.close": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.lever.click",
+        "pitch": 0.9,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.storage_controller.close"
+  },
+  "block.storage_controller.open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.chime",
+        "pitch": 1.2,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.storage_controller.open"
+  },
+  "block.storage_controller.store": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "ui.button.click",
+        "pitch": 1.6,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.storage_controller.store"
   },
   "block.transformer.hum": {
     "sounds": [

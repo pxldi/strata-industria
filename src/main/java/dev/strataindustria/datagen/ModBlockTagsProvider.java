@@ -37,7 +37,10 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(dev.strataindustria.registry.Tier5Blocks.STEAM_TURBINE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.COMBUSTION_GENERATOR.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.TRANSFORMER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ENERGY_ADAPTER.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.LIQUID_FUEL_BURNER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_HEATER.getKey())
-                .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_PUMP.getKey()).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_MOTOR.getKey());
+                .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_PUMP.getKey()).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_MOTOR.getKey())
+                .add(dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE.getKey()).add(dev.strataindustria.logistics.Tier5Logistics.PIPE_EXTRACTOR.getKey())
+                .add(dev.strataindustria.logistics.Tier5Logistics.FAST_PIPE_EXTRACTOR.getKey()).add(dev.strataindustria.logistics.Tier5Logistics.STORAGE_CONTROLLER.getKey())
+                .add(dev.strataindustria.logistics.Tier5Logistics.FLUID_FILTER.getKey());
         // Spec 5.4 and 8.3: treated wood is chopped, never burnt; insulators are pottery.
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.Tier5Blocks.TREATED_LOG.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.UTILITY_POLE.getKey());

@@ -1007,6 +1007,14 @@ final class Tier5GameTests {
         helper.assertValueEqual(chemicalTicks(level, pos, machine, () -> machine.getItem(out).getCount() > 0), 100, "a pipe run takes 100 ticks");
         helper.assertTrue(machine.getItem(out).is(dev.strataindustria.registry.Tier4Items.STEEL_FLUID_PIPE.get()) && machine.getItem(out).getCount() == 4,
                 "a steel plate makes 4 steel pipes, got " + machine.getItem(out));
+        machine.setItem(out, ItemStack.EMPTY);
+        machine.toggleMode();
+        helper.assertValueEqual(machine.mode(), "item_pipe", "then item pipe");
+        machine.setItem(0, new ItemStack(ModItems.PLATES.get(Metal.BRASS).get()));
+        machine.setItem(1, new ItemStack(Items.GLASS));
+        helper.assertValueEqual(chemicalTicks(level, pos, machine, () -> machine.getItem(out).getCount() > 0), 100, "an item pipe run takes 100 ticks");
+        helper.assertTrue(machine.getItem(out).is(dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE_ITEM.get()) && machine.getItem(out).getCount() == 8,
+                "a brass plate and glass make 8 item pipes, got " + machine.getItem(out));
         machine.toggleMode();
         helper.assertValueEqual(machine.mode(), "cable_lv", "and round again");
         helper.succeed();

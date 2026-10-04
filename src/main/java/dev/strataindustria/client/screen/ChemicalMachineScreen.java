@@ -31,8 +31,8 @@ public class ChemicalMachineScreen extends AbstractContainerScreen<ChemicalMachi
             Map.entry("water", 0x3F76E4), Map.entry("sulfuric_acid", 0xD8C85A), Map.entry("sulfur_dioxide", 0xC9C49A),
             Map.entry("oxygen", 0x9EDCE6), Map.entry("hydrogen", 0xC4DAF4), Map.entry("chlorine", 0xB4B45E), Map.entry("brine", 0x6E8C84),
             Map.entry("lye", 0xC8C0A8), Map.entry("latex", 0xEFE6D0), Map.entry("steam", 0xDCE4EA));
-    private static final Identifier[] MODES = {sprite("extruder_cable_lv"), sprite("extruder_cable_mv"), sprite("extruder_pipe")};
-    private static final String[] MODE_KEYS = {"mode_cable_lv", "mode_cable_mv", "mode_pipe"};
+    private static final Identifier[] MODES = {sprite("extruder_cable_lv"), sprite("extruder_cable_mv"), sprite("extruder_pipe"), sprite("extruder_item_pipe")};
+    private static final String[] MODE_KEYS = {"mode_cable_lv", "mode_cable_mv", "mode_pipe", "mode_item_pipe"};
     private final Identifier background;
 
     public ChemicalMachineScreen(ChemicalMachineMenu menu, Inventory inventory, Component title) {

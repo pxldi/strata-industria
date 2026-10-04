@@ -1,0 +1,168 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_core"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_arm",
+        "x": 90
+      },
+      "when": {
+        "down": "off|pipe|port|storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_storage",
+        "x": 90
+      },
+      "when": {
+        "down": "storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_off",
+        "x": 90
+      },
+      "when": {
+        "down": "off"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_arm",
+        "x": 270
+      },
+      "when": {
+        "up": "off|pipe|port|storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_storage",
+        "x": 270
+      },
+      "when": {
+        "up": "storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_off",
+        "x": 270
+      },
+      "when": {
+        "up": "off"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_arm"
+      },
+      "when": {
+        "north": "off|pipe|port|storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_storage"
+      },
+      "when": {
+        "north": "storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_off"
+      },
+      "when": {
+        "north": "off"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_arm",
+        "y": 180
+      },
+      "when": {
+        "south": "off|pipe|port|storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_storage",
+        "y": 180
+      },
+      "when": {
+        "south": "storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_off",
+        "y": 180
+      },
+      "when": {
+        "south": "off"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_arm",
+        "y": 270
+      },
+      "when": {
+        "west": "off|pipe|port|storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_storage",
+        "y": 270
+      },
+      "when": {
+        "west": "storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_off",
+        "y": 270
+      },
+      "when": {
+        "west": "off"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_arm",
+        "y": 90
+      },
+      "when": {
+        "east": "off|pipe|port|storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_storage",
+        "y": 90
+      },
+      "when": {
+        "east": "storage"
+      }
+    },
+    {
+      "apply": {
+        "model": "strataindustria:block/item_pipe_collar_off",
+        "y": 90
+      },
+      "when": {
+        "east": "off"
+      }
+    }
+  ]
+}

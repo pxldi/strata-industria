@@ -21,7 +21,7 @@ import net.minecraft.world.level.storage.ValueOutput;
  * LV cable, MV cable and pipe; only recipes of the current mode run, but any mode's items are accepted.
  */
 public class ExtruderBlockEntity extends ChemicalMachineBlockEntity {
-    public static final String[] MODES = {"cable_lv", "cable_mv", "pipe"};
+    public static final String[] MODES = {"cable_lv", "cable_mv", "pipe", "item_pipe"};
     public static final ElectricStats STATS = new ElectricStats(new ElectricStats.Tiered<>(64, 64), new ElectricStats.Tiered<>(1.0f, 1.0f),
             new ElectricStats.Tiered<>(1, 1), 20);
 
