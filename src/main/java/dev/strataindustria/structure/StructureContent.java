@@ -124,6 +124,8 @@ public final class StructureContent {
             PIECE_TYPES.register("plan", () -> (StructurePieceType.ContextlessType) PlanPiece::new);
     public static final DeferredHolder<StructurePieceType, StructurePieceType> ADIT_PIECE =
             PIECE_TYPES.register("adit", () -> (StructurePieceType.ContextlessType) AditPiece::new);
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> SLUICE_PIECE =
+            PIECE_TYPES.register("sluice", () -> (StructurePieceType.ContextlessType) SluicePiece::new);
 
     private static DeferredHolder<SoundEvent, SoundEvent> sound(String name) {
         return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));

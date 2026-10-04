@@ -24,6 +24,7 @@ import java.util.List;
  *   'K' cracked fire bricks         'Y' cracked fire bricks, half the time
  *   'S' slag heap                   'Z' slag heap, half the time
  *   'b' barrel sunk into the ground, half the time                     'l' log pile of two logs
+ *   'G' placer gravel
  * </pre>
  */
 public record Plan(String id, int width, int depth, List<String[]> layers, Kind kind) {
