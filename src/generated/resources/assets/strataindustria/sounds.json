@@ -2361,31 +2361,6 @@
     ],
     "subtitle": "subtitles.strataindustria.firebox.light"
   },
-  "firestarter.drill": {
-    "sounds": [
-      {
-        "name": "step/wood1",
-        "pitch": 1.6,
-        "volume": 0.5
-      },
-      {
-        "name": "step/wood2",
-        "pitch": 1.6,
-        "volume": 0.5
-      },
-      {
-        "name": "step/wood3",
-        "pitch": 1.6,
-        "volume": 0.5
-      },
-      {
-        "name": "step/wood4",
-        "pitch": 1.6,
-        "volume": 0.5
-      }
-    ],
-    "subtitle": "subtitles.strataindustria.firestarter.drill"
-  },
   "flat_wagon.load": {
     "sounds": [
       {
@@ -2408,6 +2383,51 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.flat_wagon.load"
+  },
+  "flint.catch": {
+    "sounds": [
+      {
+        "name": "fire/ignite",
+        "pitch": 0.8
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 1.3,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.flint.catch"
+  },
+  "flint.strike": {
+    "sounds": [
+      {
+        "name": "step/stone1",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "name": "step/stone2",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "name": "step/stone3",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "name": "step/stone4",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.amethyst_block.hit",
+        "pitch": 1.9,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.flint.strike"
   },
   "fluid_pipe.refuse": {
     "sounds": [

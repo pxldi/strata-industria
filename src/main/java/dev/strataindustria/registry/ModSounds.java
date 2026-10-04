@@ -77,7 +77,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_IGNITE = register("forge.ignite");
 
     /** The spindle of a bow drill working against the hearth board. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> FIRESTARTER_DRILL = register("firestarter.drill");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLINT_STRIKE = register("flint.strike");
+    public static final DeferredHolder<SoundEvent, SoundEvent> FLINT_CATCH = register("flint.catch");
     /** Tinder catches in the fire pit. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRE_PIT_IGNITE = register("fire_pit.ignite");
     /** The fire pit goes out: a fizz in the rain, a soft fade when the embers cool. */

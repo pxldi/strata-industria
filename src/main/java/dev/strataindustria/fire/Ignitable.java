@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 /**
- * A block that a firestarter, torch or flint and steel can light: the fire pit now, later the pit
+ * A block that flint struck on a rock, a torch or flint and steel can light: the fire pit now, later the pit
  * kiln, log pile and forge.
  */
 public interface Ignitable {

@@ -1,7 +1,7 @@
 package dev.strataindustria.bloomery;
 
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.fire.FirestarterItem;
+import dev.strataindustria.fire.FlintStrike;
 import dev.strataindustria.fire.Ignitable;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModItems;
@@ -38,7 +38,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * The bloomery controller (spec 5.1): a fire brick block with a copper door, set in front of the
- * chamber. Right-click with ore or charcoal to charge it, with a torch or firestarter to light it,
+ * chamber. Right-click with ore or charcoal to charge it, with a torch or flint and a rock to light it,
  * with a pickaxe to pull a bloom, or empty-handed for the status screen.
  */
 public class BloomeryBlock extends BaseEntityBlock implements Ignitable {
@@ -86,7 +86,7 @@ public class BloomeryBlock extends BaseEntityBlock implements Ignitable {
             }
             return InteractionResult.SUCCESS;
         }
-        if (stack.getItem() instanceof FirestarterItem) {
+        if (FlintStrike.isStriker(stack)) {
             if (!level.isClientSide() && !canIgnite(level, pos, state) && bloomery.refusal() != null) {
                 player.sendOverlayMessage(bloomery.refusal());
             }

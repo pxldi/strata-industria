@@ -6,7 +6,6 @@ import dev.strataindustria.ceramics.LargeVesselItem;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.ceramics.SmallVesselItem;
 import dev.strataindustria.charcoal.AshItem;
-import dev.strataindustria.fire.FirestarterItem;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -67,8 +66,6 @@ public final class ModItems {
             p -> p.pickaxe(knapped(2.0f), 1.0f, -2.8f));
 
     // Fire (spec 3.5).
-    public static final DeferredItem<FirestarterItem> FIRESTARTER = ITEMS.registerItem("firestarter", FirestarterItem::new,
-            p -> p.durability(10));
     public static final DeferredItem<BlockItem> FIRE_PIT = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_PIT);
 
     // Clay (spec 4.1 to 4.3). Unfired pieces are formed on the grid and fired in a pit kiln.

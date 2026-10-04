@@ -278,11 +278,6 @@ final class ModRecipeProvider extends RecipeProvider {
 
     // Spec 3.5.
     private void fire() {
-        shapeless(RecipeCategory.TOOLS, ModItems.FIRESTARTER.get())
-                .requires(Items.STICK, 2)
-                .requires(ModItems.TWINE.get())
-                .unlockedBy("has_twine", has(ModItems.TWINE.get()))
-                .save(output, key("firestarter"));
         shapeless(RecipeCategory.DECORATIONS, ModItems.FIRE_PIT.get())
                 .requires(Items.STICK, 4)
                 .requires(ModItems.STRAW.get())

@@ -1,7 +1,6 @@
 package dev.strataindustria.client;
 
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.client.hud.FirestarterHud;
 import dev.strataindustria.client.render.PitKilnRenderer;
 import dev.strataindustria.client.render.QuernRenderer;
 import dev.strataindustria.client.render.AnvilRenderer;
@@ -28,9 +27,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterConditionalItemModelPropertyEvent;
-import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -40,7 +37,6 @@ public final class StrataIndustriaClient {
     public StrataIndustriaClient(IEventBus modBus, ModContainer container) {
         container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
         modBus.addListener(StrataIndustriaClient::registerScreens);
-        modBus.addListener(StrataIndustriaClient::registerGuiLayers);
         modBus.addListener(StrataIndustriaClient::registerRenderers);
         modBus.addListener(StrataIndustriaClient::registerTints);
         modBus.addListener(StrataIndustriaClient::registerItemProperties);
@@ -166,7 +162,4 @@ public final class StrataIndustriaClient {
         event.register(StrataIndustria.id("glowing"), HeatGlow.Glowing.MAP_CODEC);
     }
 
-    private static void registerGuiLayers(RegisterGuiLayersEvent event) {
-        event.registerAbove(VanillaGuiLayers.CROSSHAIR, StrataIndustria.id("firestarter"), FirestarterHud::render);
-    }
 }
