@@ -946,8 +946,6 @@ final class Tier4GameTests {
         level.setBlock(smelterPos, Tier4Blocks.SMELTER.get().defaultBlockState(), Block.UPDATE_ALL);
         FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
         var smelter = (dev.strataindustria.metal.SmelterBlockEntity) level.getBlockEntity(smelterPos);
-        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
-        firebox.preheat(1600.0f);
         Item copper = ModItems.ingot(dev.strataindustria.material.Metal.COPPER);
         helper.assertTrue(smelter.canPlaceItem(0, new ItemStack(ModItems.ingot(dev.strataindustria.material.Metal.WROUGHT_IRON))),
                 "the smelter takes iron, like a refractory crucible");
@@ -958,7 +956,9 @@ final class Tier4GameTests {
         helper.assertTrue(smelter.autoPour(), "auto-pour starts on");
 
         smelt(level, fireboxPos, firebox, smelterPos, smelter, 1);
-        helper.assertValueEqual(smelter.status(), dev.strataindustria.metal.CrucibleStatus.NO_HEAT, "status before the heat arrives");
+        helper.assertValueEqual(smelter.status(), dev.strataindustria.metal.CrucibleStatus.NO_HEAT, "status over a cold firebox");
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+        firebox.preheat(1600.0f);
         smelt(level, fireboxPos, firebox, smelterPos, smelter, 20);
         helper.assertValueEqual(firebox.taken(), 30, "a coke firebox gives the smelter its full 30 HU/t");
         helper.assertTrue(smelter.getItem(dev.strataindustria.metal.CrucibleBlockEntity.MOLD_SLOT).is(ModItems.INGOT_MOLD.get()),
