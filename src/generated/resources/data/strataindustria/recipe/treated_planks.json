@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "C": "strataindustria:creosote_bucket",
+    "P": "#minecraft:planks"
+  },
+  "pattern": [
+    "PPP",
+    "PCP",
+    "PPP"
+  ],
+  "result": {
+    "count": 8,
+    "id": "strataindustria:treated_planks"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t4/coke_oven",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:treated_planks"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.creosote.hint"
+    },
+    "icon": {
+      "id": "strataindustria:treated_planks"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.creosote"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

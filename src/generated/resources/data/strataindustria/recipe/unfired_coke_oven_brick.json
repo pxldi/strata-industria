@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:fire_clay_ball",
+    "strataindustria:fire_clay_ball",
+    "minecraft:sand"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:unfired_coke_oven_brick"
+  }
+}
