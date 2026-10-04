@@ -82,9 +82,9 @@ final class TelegraphGameTests {
         return pos;
     }
 
-    /** Forgets what an earlier run left in the index around this test. */
+    /** Forgets what an earlier run left in the index around this test; the radius stays inside the test cell, tests run side by side. */
     private static void fresh(GameTestHelper helper) {
-        TelegraphIndex.get(helper.getLevel()).forget(helper.absolutePos(new BlockPos(6, 2, 6)), 24);
+        TelegraphIndex.get(helper.getLevel()).forget(helper.absolutePos(new BlockPos(4, 2, 4)), 8);
     }
 
     private static FakePlayer owner(ServerLevel level, String name) {
