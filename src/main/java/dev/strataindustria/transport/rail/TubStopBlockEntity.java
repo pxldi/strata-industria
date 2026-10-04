@@ -119,7 +119,7 @@ public class TubStopBlockEntity extends BlockEntity {
             contentHash = hash;
             lastChange = now;
         }
-        if (pulsed || ruleMet(server, consist, now)) release(server, lead);
+        if ((pulsed || ruleMet(server, consist, now)) && lead.canDepart(server)) release(server, lead);
         if (now % 4 == 0) server.updateNeighbourForOutputSignal(worldPosition, getBlockState().getBlock());
     }
 

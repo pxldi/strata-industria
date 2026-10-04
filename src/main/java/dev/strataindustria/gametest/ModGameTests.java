@@ -129,6 +129,7 @@ public final class ModGameTests {
         MultiblockGameTests.register(TESTS);
         FootGameTests.register(TESTS);
         RailGameTests.register(TESTS);
+        PonyGameTests.register(TESTS);
         OutpostGameTests.register(TESTS);
         BronzeGameTests.register(TESTS);
         BellGameTests.register(TESTS);
