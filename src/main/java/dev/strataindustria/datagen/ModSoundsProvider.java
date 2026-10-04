@@ -185,6 +185,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition place = definition().subtitle(subtitle("journal.place"));
         for (int i = 1; i <= 3; i++) place.with(sound("minecraft:item/book/page_turn" + i).pitch(0.9f).volume(0.7f));
         add(StructureContent.JOURNAL_PLACE, place);
+
+        // Ruins: heat-cracked brick crumbling, and slag that crunches like gravel with a glassy clink.
+        add(StructureContent.CRACKED_FIRE_BRICKS_BREAK, definition().subtitle(subtitle("cracked_fire_bricks.break"))
+                .with(sound("minecraft:block.decorated_pot.shatter", SoundDefinition.SoundType.EVENT).pitch(0.8f).weight(2))
+                .with(sound("minecraft:block.deepslate_bricks.break", SoundDefinition.SoundType.EVENT).pitch(0.95f)));
+        add(StructureContent.SLAG_HEAP_BREAK, definition().subtitle(subtitle("slag_heap.break"))
+                .with(sound("minecraft:block.gravel.break", SoundDefinition.SoundType.EVENT).pitch(0.9f).weight(3))
+                .with(sound("minecraft:block.glass.break", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f)));
+        add(StructureContent.SLAG_HEAP_STEP, definition().subtitle("subtitles.block.generic.footsteps")
+                .with(sound("minecraft:block.gravel.step", SoundDefinition.SoundType.EVENT).weight(3))
+                .with(sound("minecraft:block.amethyst_block.step", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.3f)));
     }
 
     private static String subtitle(String name) {

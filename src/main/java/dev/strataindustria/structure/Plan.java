@@ -21,6 +21,9 @@ import java.util.List;
  *   'E' bed head (pointing north)   'e' bed foot                       'k' fence   's' slab, top half
  *   'H' ladder on a north wall      'x' loose stick                    'q' loose flint
  *   'n' a pebble of the camp's ore  'o' upright log (a chopping block)
+ *   'K' cracked fire bricks         'Y' cracked fire bricks, half the time
+ *   'S' slag heap                   'Z' slag heap, half the time
+ *   'b' barrel sunk into the ground, half the time                     'l' log pile of two logs
  * </pre>
  */
 public record Plan(String id, int width, int depth, List<String[]> layers, Kind kind) {

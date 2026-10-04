@@ -25,10 +25,12 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -41,6 +43,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -103,7 +106,8 @@ final class StructureData {
                 CampStructure.Layout.CHARCOAL_BURNERS_CLEARING, new int[] {26, 9, 503118271},
                 CampStructure.Layout.PROSPECTOR_CAMP, new int[] {24, 8, 611407329},
                 CampStructure.Layout.MINING_CAMP, new int[] {34, 12, 718204551},
-                CampStructure.Layout.COLLAPSED_ADIT, new int[] {18, 6, 829366117});
+                CampStructure.Layout.COLLAPSED_ADIT, new int[] {18, 6, 829366117},
+                CampStructure.Layout.RUINED_BLOOMERY, new int[] {36, 12, 934521187});
         spread.forEach((layout, s) -> context.register(set(layout.id()), new StructureSet(structures.getOrThrow(layout.key()),
                 new RandomSpreadStructurePlacement(net.minecraft.core.Vec3i.ZERO, AbstractSpreadingStructurePlacement.FrequencyReductionMethod.DEFAULT,
                         1.0f, s[2], villages, s[0], s[1], RandomSpreadType.LINEAR))));
@@ -150,6 +154,10 @@ final class StructureData {
                     .addTag(BiomeTags.IS_MOUNTAIN).addTag(BiomeTags.IS_HILL).addTag(BiomeTags.IS_BADLANDS).addTag(BiomeTags.IS_TAIGA)
                     .add(Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS, Biomes.WINDSWEPT_FOREST, Biomes.WINDSWEPT_SAVANNA,
                             Biomes.STONY_SHORE);
+
+            tag(biomes(CampStructure.Layout.RUINED_BLOOMERY))
+                    .addTag(BiomeTags.IS_FOREST).addTag(BiomeTags.IS_TAIGA).addTag(BiomeTags.IS_SAVANNA)
+                    .add(Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SNOWY_PLAINS, Biomes.MEADOW, Biomes.SWAMP);
         }
     }
 
@@ -159,6 +167,7 @@ final class StructureData {
     private static final SurveyNotes PROSPECTOR_NOTES = SurveyNotes.looking("cassiterite", "bismuthinite", "tennantite");
     private static final SurveyNotes MINING_NOTES = SurveyNotes.looking("hematite", "magnetite", "fire_clay", "cassiterite");
     private static final SurveyNotes ADIT_NOTES = SurveyNotes.looking("cassiterite", "hematite", "magnetite");
+    private static final SurveyNotes BLOOMERY_NOTES = SurveyNotes.looking("fire_clay", "hematite", "magnetite");
 
     /** One pool with a chance to give {@code min} to {@code max} of an item. */
     private static LootPool.Builder pool(float chance, LootPoolEntry entry) {
@@ -242,6 +251,14 @@ final class StructureData {
                     .withPool(pool(0.6f, item(ModItems.STRAW.get(), 2, 6)))
                     .withPool(pool(0.6f, item(Items.STICK, 2, 6))));
 
+            // Ruined bloomery (H = 2): a taste of iron, too little to work, and where the smiths found theirs.
+            add(CampLoot.BLOOMERY_CACHE, LootTable.lootTable()
+                    .withPool(pool(1, notes(BLOOMERY_NOTES)))
+                    .withPool(pool(0.8f, item(Items.CHARCOAL, 2, 6)))
+                    .withPool(pool(0.6f, item(ModItems.ASH.get(), 1, 4)))
+                    .withPool(pool(0.5f, item(Items.IRON_NUGGET, 1, 3)))
+                    .withPool(pool(0.4f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 2, 6))));
+
             for (OreMineral mineral : OreMineral.values()) {
                 // Abandoned prospector's camp (H = 1).
                 context.accept(CampLoot.key(CampLoot.PROSPECTOR_PACK, mineral), LootTable.lootTable()
@@ -323,6 +340,10 @@ final class StructureData {
             dropSelf(StructureContent.FIBRE_CANVAS.get());
             dropSelf(StructureContent.FIBRE_CANVAS_CARPET.get());
             dropSelf(StructureContent.PIT_PROP.get());
+            // A cracked brick mostly crumbles to nothing; sometimes a piece is worth grinding into grog.
+            add(StructureContent.CRACKED_FIRE_BRICKS.get(), block -> createSilkTouchDispatchTable(block, applyExplosionCondition(block,
+                    LootItem.lootTableItem(ModItems.GROG.get()).when(LootItemRandomChanceCondition.randomChance(0.3f)))));
+            dropOther(StructureContent.SLAG_HEAP.get(), ModItems.BLOOMERY_SLAG.get());
         }
 
         @Override
@@ -339,7 +360,8 @@ final class StructureData {
                 CampStructure.Layout.CHARCOAL_BURNERS_CLEARING, Items.OAK_LOG,
                 CampStructure.Layout.PROSPECTOR_CAMP, ModItems.STONE_PICKAXE.get(),
                 CampStructure.Layout.MINING_CAMP, StructureContent.PIT_PROP_ITEM.get(),
-                CampStructure.Layout.COLLAPSED_ADIT, Items.GRAVEL);
+                CampStructure.Layout.COLLAPSED_ADIT, Items.GRAVEL,
+                CampStructure.Layout.RUINED_BLOOMERY, ModItems.BLOOMERY_SLAG.get());
         for (CampStructure.Layout layout : CampStructure.Layout.values()) {
             String key = "journal." + StrataIndustria.MOD_ID + ".place." + layout.id();
             Advancement.Builder.advancement()
@@ -362,6 +384,21 @@ final class StructureData {
                 BlockModelGenerators.plainVariant(prop)).with(BlockModelGenerators.createRotatedPillar()));
         itemModels.itemModelOutput.accept(StructureContent.PIT_PROP_ITEM.get(), ItemModelUtils.plainModel(prop));
 
+        // Cracked bricks, one in four sooted, picked per position.
+        Block cracked = StructureContent.CRACKED_FIRE_BRICKS.get();
+        var plain = ModelTemplates.CUBE_ALL.create(cracked, TextureMapping.cube(cracked), blockModels.modelOutput);
+        var sooted = ModelTemplates.CUBE_ALL.createWithSuffix(cracked, "_sooted", TextureMapping.cube(TextureMapping.getBlockTexture(cracked,
+                "_sooted")), blockModels.modelOutput);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(cracked, new MultiVariant(WeightedList.<Variant>builder()
+                .add(BlockModelGenerators.plainModel(plain), 3)
+                .add(BlockModelGenerators.plainModel(sooted), 1)
+                .build())));
+        itemModels.itemModelOutput.accept(StructureContent.CRACKED_FIRE_BRICKS_ITEM.get(), ItemModelUtils.plainModel(plain));
+
+        // Lumps of slag on the ground; the model is hand-built in resources.
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(StructureContent.SLAG_HEAP.get(),
+                BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(StrataIndustria.id("block/slag_heap")))));
+
         // A folded sheet with a smudge of the mineral's colour.
         Item notes = StructureContent.SURVEY_NOTES.get();
         var model = ModelTemplates.TWO_LAYERED_ITEM.create(notes, TextureMapping.layered(TextureMapping.getItemTexture(notes),
@@ -375,6 +412,8 @@ final class StructureData {
         add.accept("block." + id + ".fibre_canvas", "Fibre Canvas");
         add.accept("block." + id + ".fibre_canvas_carpet", "Fibre Canvas Carpet");
         add.accept("block." + id + ".pit_prop", "Pit Prop");
+        add.accept("block." + id + ".cracked_fire_bricks", "Cracked Fire Bricks");
+        add.accept("block." + id + ".slag_heap", "Slag Heap");
 
         String notes = "item." + id + ".survey_notes";
         add.accept(notes, "Survey Notes");
@@ -410,6 +449,8 @@ final class StructureData {
         add.accept(subtitles + "survey_notes.open", "Notes unfold");
         add.accept(subtitles + "survey_notes.found", "Deposit found");
         add.accept(subtitles + "journal.place", "Journal page written");
+        add.accept(subtitles + "cracked_fire_bricks.break", "Brick crumbles");
+        add.accept(subtitles + "slag_heap.break", "Slag crunches");
 
         String place = "journal." + id + ".place";
         add.accept(place + ".noted", "Field journal: %s");
@@ -428,6 +469,10 @@ final class StructureData {
         add.accept(place + ".collapsed_adit", "Collapsed adit");
         add.accept(place + ".collapsed_adit.hint", "The mouth of an old mine has fallen in. Mine timbers still hold up the "
                 + "tunnel beyond. Old tunnels were dug toward ore.");
+        add.accept(place + ".ruined_bloomery", "Ruined bloomery");
+        add.accept(place + ".ruined_bloomery.hint", "A chimney of pale bricks, cracked by heat, and heaps of glassy slag. Smiths "
+                + "once made iron here: not by melting it, but by baking ore with charcoal in a tall brick stack. These bricks "
+                + "were made from a special pale clay. The slag still holds a little iron.");
     }
 
     /** The prospector's own words, six per mineral family (structures spec 5.2 and 14). */
