@@ -7,18 +7,24 @@ import java.util.List;
 import java.util.Optional;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.biome.Biome;
 
 /**
  * An ore vein type (worldgen spec 5.3). Datapack registry {@code strataindustria:vein}. Shapes are
  * {@code cluster} (noisy ellipsoid) and {@code layer} (flat lens that follows the strata). A vein
  * places ore of its {@code minerals}, or a plain {@code block} for sediments such as lignite and fire
  * clay. Sediment-pass veins roll in their own attempts so they never crowd out metal ores, and
- * {@code max_depth} keeps them within that many blocks of the surface.
+ * {@code max_depth} keeps them within that many blocks of the surface. An optional {@code biomes} set
+ * limits the vein to those biomes (laterite bauxite in hot climates), judged where it enters a chunk.
  */
 public record VeinType(ClusterShape shape, List<MineralWeight> minerals, Optional<BlockState> block, List<Rock> hosts,
-        List<Rock> preferredHosts, int minY, int maxY, int weight, boolean indicators, Pass pass, int maxDepth) {
+        List<Rock> preferredHosts, int minY, int maxY, int weight, boolean indicators, Pass pass, int maxDepth,
+        Optional<HolderSet<Biome>> biomes) {
     public static final ResourceKey<Registry<VeinType>> REGISTRY = ResourceKey.createRegistryKey(StrataIndustria.id("vein"));
 
     public static final Codec<VeinType> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -32,13 +38,14 @@ public record VeinType(ClusterShape shape, List<MineralWeight> minerals, Optiona
             Codec.intRange(1, 1000).fieldOf("weight").forGetter(VeinType::weight),
             Codec.BOOL.optionalFieldOf("indicators", true).forGetter(VeinType::indicators),
             Pass.CODEC.optionalFieldOf("pass", Pass.METAL).forGetter(VeinType::pass),
-            Codec.intRange(0, 512).optionalFieldOf("max_depth", 0).forGetter(VeinType::maxDepth)
+            Codec.intRange(0, 512).optionalFieldOf("max_depth", 0).forGetter(VeinType::maxDepth),
+            RegistryCodecs.holderSet(Registries.BIOME).optionalFieldOf("biomes").forGetter(VeinType::biomes)
     ).apply(i, VeinType::new));
 
     /** A metal ore vein in the main pass. */
     public VeinType(ClusterShape shape, List<MineralWeight> minerals, List<Rock> hosts, List<Rock> preferredHosts,
             int minY, int maxY, int weight, boolean indicators) {
-        this(shape, minerals, Optional.empty(), hosts, preferredHosts, minY, maxY, weight, indicators, Pass.METAL, 0);
+        this(shape, minerals, Optional.empty(), hosts, preferredHosts, minY, maxY, weight, indicators, Pass.METAL, 0, Optional.empty());
     }
 
     public enum Pass implements StringRepresentable {

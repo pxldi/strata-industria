@@ -203,6 +203,11 @@ public final class ModBlocks {
             .strength(1.0f, 3.0f)
             .requiresCorrectToolForDrops()
             .sound(SoundType.TUFF));
+    /** Bauxite (tier 6 spec 19.4): red-brown laterite in hot biomes, dug with a shovel. */
+    public static final DeferredBlock<Block> BAUXITE_BED = BLOCKS.registerSimpleBlock("bauxite_bed", p -> p
+            .mapColor(MapColor.TERRACOTTA_RED)
+            .strength(0.9f)
+            .sound(SoundType.GRAVEL));
     /** Limonite in wet soil (spec 4.2), with a grade like an ore block. */
     public static final DeferredBlock<OreBlock> BOG_IRON = BLOCKS.registerBlock("bog_iron", p -> new OreBlock(null, OreMineral.LIMONITE, p),
             p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)

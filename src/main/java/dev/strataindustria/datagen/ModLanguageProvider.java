@@ -718,6 +718,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.FIRE_BRICK_WALL, "Fire Brick Wall");
         addItem(ModItems.LIGNITE, "Lignite");
         addBlock(ModBlocks.LIGNITE_SEAM, "Lignite Seam");
+        addBlock(ModBlocks.BAUXITE_BED, "Bauxite Bed");
+        addItem(ModItems.BAUXITE, "Bauxite");
         addBlock(ModBlocks.BOG_IRON, "Bog Iron");
         addBlock(ModBlocks.PLACER_GRAVEL, "Placer Gravel");
         addBlock(ModBlocks.PLACER_SAND, "Placer Sand");
@@ -727,6 +729,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add("item.minecraft.iron_ingot", "Wrought Iron Ingot");
         add("item.minecraft.iron_nugget", "Wrought Iron Nugget");
         add(id + ".ore.lignite_seam", "lignite");
+        add(id + ".ore.bauxite_bed", "bauxite");
         add(id + ".ore.fire_clay", "fire clay");
         add(id + ".prospect.rich", ", rich ore nearby");
         add(id + ".crucible.no_iron", "Iron does not melt this hot");

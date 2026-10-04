@@ -106,13 +106,25 @@ final class GeologyData {
                 List.of(SHALE, LIMESTONE, SLATE), List.of(SHALE), 20, 140, 25);
         sediment(ctx, "fire_clay", VeinType.ClusterShape.layer(10, 16, 2, 4, 0.80f), ModBlocks.FIRE_CLAY.get().defaultBlockState(),
                 List.of(SHALE, SLATE, LIMESTONE, GRANITE), List.of(SHALE), 30, 140, 25);
+        // Tier 6 (tier 6 spec 19.4): bauxite, red-brown laterite in savanna, jungle and badlands.
+        HolderGetter<Biome> biomes = ctx.lookup(Registries.BIOME);
+        HolderSet<Biome> hot = biomes.getOrThrow(TagKey.create(Registries.BIOME, StrataIndustria.id("bauxite_hosts")));
+        laterite(ctx, "bauxite", ModBlocks.BAUXITE_BED.get().defaultBlockState(), hot);
     }
 
     /** A plain-block bed in the sediment pass, never deeper than 40 blocks below the surface. */
     private static void sediment(BootstrapContext<VeinType> ctx, String name, VeinType.ClusterShape shape, BlockState block,
             List<Rock> hosts, List<Rock> preferred, int minY, int maxY, int weight) {
         ctx.register(ResourceKey.create(VeinType.REGISTRY, StrataIndustria.id(name)), new VeinType(shape, List.of(), Optional.of(block),
-                hosts, preferred, minY, maxY, weight, false, VeinType.Pass.SEDIMENT, 40));
+                hosts, preferred, minY, maxY, weight, false, VeinType.Pass.SEDIMENT, 40, Optional.empty()));
+    }
+
+    /** Laterite: a thin surface bed in hot biomes over any top rock (tier 6 spec 19.4). */
+    private static void laterite(BootstrapContext<VeinType> ctx, String name, BlockState block, HolderSet<Biome> hot) {
+        ctx.register(ResourceKey.create(VeinType.REGISTRY, StrataIndustria.id(name)), new VeinType(
+                VeinType.ClusterShape.layer(12, 20, 2, 4, 0.75f), List.of(), Optional.of(block),
+                List.of(LIMESTONE, SHALE, SLATE, GRANITE, BASALT, RHYOLITE, MARBLE, GABBRO), List.of(SHALE), 50, 160, 20, false,
+                VeinType.Pass.SEDIMENT, 10, Optional.of(hot)));
     }
 
     private static VeinType.MineralWeight m(OreMineral mineral, int weight) {

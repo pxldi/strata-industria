@@ -46,6 +46,11 @@ public record VeinFeature() implements Feature {
             int x0 = Math.max(minX, vein.x() - vein.radiusH()), x1 = Math.min(maxX, vein.x() + vein.radiusH());
             int z0 = Math.max(minZ, vein.z() - vein.radiusH()), z1 = Math.min(maxZ, vein.z() + vein.radiusH());
             int y0 = Math.max(minY, vein.y() - vein.verticalReach()), y1 = Math.min(maxY, vein.y() + vein.verticalReach());
+            if (vein.type().biomes().isPresent()) {
+                // The biome where the vein enters this chunk; the centre can lie outside the generation region.
+                BlockPos probe = new BlockPos(Math.max(minX, Math.min(maxX, vein.x())), vein.y(), Math.max(minZ, Math.min(maxZ, vein.z())));
+                if (!vein.type().biomes().get().contains(level.getBiome(probe))) continue;
+            }
             BlockState plain = vein.type().block().orElse(null);
             if (plain == null && !vein.type().placesOre()) continue;
             for (int y = y0; y <= y1; y++) {
