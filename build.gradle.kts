@@ -65,6 +65,18 @@ neoForge {
     }
 }
 
+repositories {
+    // JEI (recipe viewer). Compiled against its API only; the integration lives in compat/jei and
+    // loads only when JEI is installed.
+    exclusiveContent {
+        forRepository { maven("https://maven.blamejared.com/") }
+        filter {
+            includeGroup("mezz.jei")
+            includeGroupAndSubgroups("net.mezzdev")
+        }
+    }
+}
+
 // Optional runtime-only dependencies (e.g. recipe viewers) that we do not want to publish.
 val localRuntime: Configuration by configurations.creating
 configurations.runtimeClasspath {
@@ -72,6 +84,8 @@ configurations.runtimeClasspath {
 }
 
 dependencies {
+    compileOnly("mezz.jei:jei-${prop("minecraft_version")}-common-api:${prop("jei_version")}")
+    compileOnly("mezz.jei:jei-${prop("minecraft_version")}-neoforge-api:${prop("jei_version")}")
 }
 
 // Expands ${...} placeholders in src/main/templates (neoforge.mods.toml).
