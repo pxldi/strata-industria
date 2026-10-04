@@ -61,6 +61,8 @@ public final class Tier4Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> VALVE_OPEN = register("valve.open");
     public static final DeferredHolder<SoundEvent, SoundEvent> VALVE_CLOSE = register("valve.close");
     public static final DeferredHolder<SoundEvent, SoundEvent> FLUID_TANK_FILL = register("fluid_tank.fill");
+    /** Spec 21.7: the blowing engine's cylinder, a deep chuff with a rush of air. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BLOWING_ENGINE_STROKE = register("blowing_engine.stroke");
     /** Spec 21.7: the steam hammer's hiss and heavy ringing blow. */
     public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_HAMMER_STRIKE = register("steam_hammer.strike");
     /** The engine takes steam and its flywheel whirs up. */

@@ -84,6 +84,7 @@ public final class Tier4Items {
     public static final DeferredItem<BlockItem> TAP_HATCH = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.TAP_HATCH);
     public static final DeferredItem<BlockItem> CONVERTER_CONTROLLER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CONVERTER_CONTROLLER);
     public static final DeferredItem<BlockItem> BLOWER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BLOWER);
+    public static final DeferredItem<BlockItem> BLOWING_ENGINE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BLOWING_ENGINE);
     public static final DeferredItem<Item> SLAG = ModItems.ITEMS.registerSimpleItem("slag");
     // Spec 8.2 and 8.4: heat pipes and the heat inlet.
     public static final DeferredItem<BlockItem> COPPER_HEAT_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.COPPER_HEAT_PIPE);

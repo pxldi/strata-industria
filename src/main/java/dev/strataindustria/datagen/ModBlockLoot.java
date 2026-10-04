@@ -121,7 +121,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 Tier4Blocks.TUYERE, Tier4Blocks.CHARGING_HATCH, Tier4Blocks.TAP_HATCH, Tier4Blocks.BLOWER,
                 Tier4Blocks.CONVERTER_CONTROLLER, Tier4Blocks.COPPER_HEAT_PIPE, Tier4Blocks.REFRACTORY_HEAT_DUCT, Tier4Blocks.HEAT_INLET,
                 Tier4Blocks.INSULATED_COPPER_HEAT_PIPE, Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT, Tier4Blocks.KILN,
-                Tier4Blocks.ROASTER, Tier4Blocks.STEAM_HAMMER, Tier4Blocks.VALVE, Tier4Blocks.FLUID_TANK)) {
+                Tier4Blocks.ROASTER, Tier4Blocks.STEAM_HAMMER, Tier4Blocks.VALVE, Tier4Blocks.FLUID_TANK,
+                Tier4Blocks.BLOWING_ENGINE)) {
             dropSelf(block.get());
         }
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);

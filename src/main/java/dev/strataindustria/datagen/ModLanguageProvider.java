@@ -495,6 +495,11 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.CHARGING_HATCH, "Charging Hatch");
         addBlock(Tier4Blocks.TAP_HATCH, "Tap Hatch");
         addBlock(Tier4Blocks.BLOWER, "Blower");
+        addBlock(Tier4Blocks.BLOWING_ENGINE, "Blowing Engine");
+        add(id + ".blowing_engine.full", "Blowing hard, worth two blowers (%s bar)");
+        add(id + ".blowing_engine.half", "Half stroke, worth one blower (%s bar)");
+        add(id + ".blowing_engine.no_steam", "Needs steam at 1 bar or more at the back");
+        add("subtitles." + id + ".blowing_engine.stroke", "Blowing engine chuffs");
         addItem(Tier4Items.SLAG, "Slag");
         addItem(Tier4Items.SLAG_DUST, "Slag Dust");
         add("container." + id + ".blast_furnace", "Blast Furnace");

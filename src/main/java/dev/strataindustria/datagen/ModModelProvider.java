@@ -765,6 +765,29 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.BLOWER.get()).with(blowerState));
         itemModels.itemModelOutput.accept(Tier4Items.BLOWER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/blower_item")));
 
+        // Spec 10.5: the blowing engine's grille faces the tuyere; its cylinder works behind it while it blows.
+        Block blowingEngine = Tier4Blocks.BLOWING_ENGINE.get();
+        TextureMapping blowingIdle = new TextureMapping().put(TextureSlot.NORTH, blockTexture("blowing_engine_front"))
+                .put(TextureSlot.SOUTH, blockTexture("blowing_engine_back")).put(TextureSlot.EAST, blockTexture("blowing_engine_side"))
+                .put(TextureSlot.WEST, blockTexture("blowing_engine_side")).put(TextureSlot.UP, blockTexture("blowing_engine_top"))
+                .put(TextureSlot.DOWN, blockTexture("blowing_engine_top")).put(TextureSlot.PARTICLE, blockTexture("blowing_engine_side"));
+        var blowingOff = BlockModelGenerators.plainVariant(ModelTemplates.CUBE.create(blowingEngine, blowingIdle, blockModels.modelOutput));
+        var blowingOn = BlockModelGenerators.plainVariant(ModelTemplates.CUBE.createWithSuffix(blowingEngine, "_active",
+                blowingIdle.copyAndUpdate(TextureSlot.NORTH, blockTexture("blowing_engine_front_active"))
+                        .copyAndUpdate(TextureSlot.EAST, blockTexture("blowing_engine_side_active"))
+                        .copyAndUpdate(TextureSlot.WEST, blockTexture("blowing_engine_side_active")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> blowingState = PropertyDispatch.initial(
+                dev.strataindustria.ironworks.BlowingEngineBlock.FACING, dev.strataindustria.ironworks.BlowingEngineBlock.ACTIVE);
+        for (boolean on : new boolean[] {false, true}) {
+            var base = on ? blowingOn : blowingOff;
+            blowingState.select(net.minecraft.core.Direction.NORTH, on, base);
+            blowingState.select(net.minecraft.core.Direction.EAST, on, base.with(BlockModelGenerators.Y_ROT_90));
+            blowingState.select(net.minecraft.core.Direction.SOUTH, on, base.with(BlockModelGenerators.Y_ROT_180));
+            blowingState.select(net.minecraft.core.Direction.WEST, on, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(blowingEngine).with(blowingState));
+        itemModels.itemModelOutput.accept(Tier4Items.BLOWING_ENGINE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/blowing_engine")));
+
         flatItem(itemModels, Tier4Items.SLAG.get());
         flatItem(itemModels, Tier4Items.SLAG_DUST.get());
         flatItem(itemModels, Tier4Items.SLAG_WOOL.get());
