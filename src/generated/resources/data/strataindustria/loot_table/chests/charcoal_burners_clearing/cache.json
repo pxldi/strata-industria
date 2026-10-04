@@ -1,0 +1,189 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:ledger": "charcoal_burners_clearing.2"
+            }
+          },
+          "name": "strataindustria:survey_notes"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.7
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "strataindustria:charcoal_burners_pottery_sherd"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.8
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 16,
+              "min": 8
+            }
+          },
+          "name": "minecraft:torch"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.6
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 16,
+              "min": 8
+            }
+          },
+          "name": "minecraft:bread"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.6
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": {
+              "type": "minecraft:uniform",
+              "max": 3,
+              "min": 1
+            }
+          },
+          "name": "minecraft:emerald"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.15
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:name_tag"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:random_chance",
+        "chance": 0.2
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:unbreaking": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:protection": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:feather_falling": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:sharpness": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        },
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_enchantments",
+            "enchantments": {
+              "minecraft:efficiency": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              }
+            }
+          },
+          "name": "minecraft:enchanted_book"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:chests/charcoal_burners_clearing/cache"
+}

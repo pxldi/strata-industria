@@ -9,7 +9,9 @@ package dev.strataindustria.electric.machine;
 public enum ChemicalMachineLayout {
     MIXER("mixer", 2, 3, 1, 1, new int[] {36, 54, 72, 118}, 92),
     ELECTROLYSER("electrolyser", 2, 1, 3, 2, new int[] {36, 100, 118, 136}, 66),
-    ASSEMBLER("assembler", 6, 1, 0, 1, new int[] {36}, 116);
+    ASSEMBLER("assembler", 6, 1, 0, 1, new int[] {36}, 116),
+    /** Two item inputs and one output in a row, no tanks, a mode button (spec 10.9). */
+    EXTRUDER("extruder", 2, 0, 0, 1, new int[0], 86);
 
     public static final int TANK_CAPACITY = 4000;
     public static final int WIDTH = 176, HEIGHT = 176, INVENTORY_Y = 94, STATUS_Y = 74;
@@ -18,10 +20,12 @@ public enum ChemicalMachineLayout {
     public static final int BAR_X = 17, BAR_Y = 18, BAR_W = 8, BAR_H = 52;
     public static final int EJECT_X = 154, EJECT_Y = 56, EJECT_SIZE = 14;
     public static final int MAX_TANKS = 4;
+    /** The mode button of a machine that has one (the extruder), above the eject button. */
+    public static final int MODE_X = 154, MODE_Y = 38;
 
-    /** Container data: status, power percent, buffer percent, auto-eject, progress, the fluid of a full tank, then two values per tank. */
+    /** Container data: status, power percent, buffer percent, auto-eject, progress, the fluid of a full tank, then two values per tank, then the mode. */
     public static final int STATUS = 0, POWER = 1, BUFFER = 2, EJECT = 3, PROGRESS = 4, FULL_FLUID = 5, TANKS = 6,
-            DATA_COUNT = TANKS + 2 * MAX_TANKS;
+            MODE = TANKS + 2 * MAX_TANKS, DATA_COUNT = MODE + 1;
 
     private final String name;
     private final int itemIn, fluidIn, fluidOut, itemOut;
@@ -66,6 +70,11 @@ public enum ChemicalMachineLayout {
         return itemIn;
     }
 
+    /** Whether the screen has a mode button (menu button 1). */
+    public boolean hasMode() {
+        return this == EXTRUDER;
+    }
+
     public int slots() {
         return itemIn + itemOut;
     }
@@ -80,19 +89,23 @@ public enum ChemicalMachineLayout {
 
     /** Item input {@code i} sits under the first tanks; the assembler's six make a grid of three by two. */
     public int inputSlotX(int i) {
+        if (hasMode()) return 44 + i * 18;
         return itemIn > 2 ? 62 + i % 3 * 18 : 36 + i * 18;
     }
 
     public int inputSlotY(int i) {
+        if (hasMode()) return ARROW_Y;
         return itemIn > 2 ? 26 + i / 3 * 18 : SLOT_Y;
     }
 
     /** Item output {@code i} sits under the first output tank; the assembler's is right of the arrow. */
     public int outputSlotX(int i) {
+        if (hasMode()) return 116;
         return itemIn > 2 ? 144 : tankX[fluidIn] + i * 18;
     }
 
     public int outputSlotY() {
+        if (hasMode()) return ARROW_Y;
         return itemIn > 2 ? 36 : SLOT_Y;
     }
 }

@@ -31,7 +31,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(dev.strataindustria.registry.Tier5Blocks.BATTERY_BOX.getKey()).add(dev.strataindustria.registry.Tier5Blocks.LV_MACHINE_HULL.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_FURNACE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.MACERATOR.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.WIREMILL.getKey()).add(dev.strataindustria.registry.Tier5Blocks.BENDER.getKey())
-                .add(dev.strataindustria.registry.Tier5Blocks.LATHE.getKey())
+                .add(dev.strataindustria.registry.Tier5Blocks.LATHE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.POWER_HAMMER.getKey())
+                .add(dev.strataindustria.registry.Tier5Blocks.EXTRUDER.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.MIXER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ASSEMBLER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ELECTROLYSER.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.STEAM_TURBINE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.COMBUSTION_GENERATOR.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.TRANSFORMER.getKey()).add(dev.strataindustria.registry.Tier5Blocks.ENERGY_ADAPTER.getKey())
@@ -185,7 +186,9 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LARGE_VESSEL.getKey()).add(ModBlocks.CRUCIBLE.getKey())
                 .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey()).add(ModBlocks.BRONZE_ANVIL.getKey())
-                .add(ModBlocks.WROUGHT_IRON_ANVIL.getKey());
+                .add(ModBlocks.WROUGHT_IRON_ANVIL.getKey())
+                .add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.getKey())
+                .add(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.getKey());
         for (var anvil : ModBlocks.STONE_ANVILS.values()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(anvil.getKey());
         tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.PIT_KILN.getKey()).add(ModBlocks.CHARCOAL_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());

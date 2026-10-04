@@ -63,6 +63,7 @@ public final class StrataIndustria {
         Tier6Blocks.init();
         Tier6Items.init();
         Tier6Sounds.init();
+        dev.strataindustria.registry.PrologueRegistry.init();
         Tier6Worldgen.init();
         Tier6Particles.PARTICLES.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);
@@ -81,6 +82,7 @@ public final class StrataIndustria {
         ModConditions.CONDITIONS.register(modEventBus);
         Journal.TRIGGERS.register(modEventBus);
         dev.strataindustria.journal.JournalContent.register(modEventBus);
+        dev.strataindustria.smithing.SmithedRecipes.register(modEventBus);
         ModGameTests.INSTANCE_TYPES.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/collapsed_adit_pottery_sherd"
+  }
+}

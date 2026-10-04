@@ -11,7 +11,9 @@ import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.structure.CampLoot;
 import dev.strataindustria.structure.CampStructure;
+import dev.strataindustria.structure.SpecimenShelfBlockEntity;
 import dev.strataindustria.structure.StructureContent;
+import dev.strataindustria.structure.Ledgers;
 import dev.strataindustria.structure.StructureEvents;
 import dev.strataindustria.survey.SurveyNotes;
 import java.util.List;
@@ -48,6 +50,9 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.item.equipment.trim.TrimPattern;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.DecoratedPotPattern;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
@@ -65,6 +70,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.entries.UniformContainerBase;
 import net.minecraft.world.level.storage.loot.functions.SetComponentsFunction;
+import net.minecraft.world.level.storage.loot.functions.SetEnchantmentsFunction;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemDamageFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
@@ -187,25 +194,43 @@ final class StructureData {
     private record LootPoolEntry(UniformContainerBase.Builder<?> builder) {}
 
     private static LootPoolEntry item(ItemLike item, int min, int max) {
+        StructureLoot.record(item, max);
         var entry = LootItem.lootTableItem(item);
         if (min != 1 || max != 1) entry.apply(SetItemCountFunction.setCount(min == max ? ContextIntProviders.exactly(min)
                 : ContextIntProviders.between(min, max)));
         return new LootPoolEntry(entry);
     }
 
-    /** A tool left behind: 10 to 30% of its durability left (structures spec 4.1, L3). */
+    /** A tool left behind with 25 to 80% of its durability (structures v2, L3). */
     private static LootPoolEntry worn(ItemLike item) {
-        return worn(item, 0.1f, 0.3f);
+        return worn(item, 0.25f, 0.8f);
     }
 
     /** A worn tool with its own share of durability left; the firestarter keeps 2 to 4 lights (structures spec 4.1). */
     private static LootPoolEntry worn(ItemLike item, float min, float max) {
+        StructureLoot.tool(item, min, max);
         return new LootPoolEntry(LootItem.lootTableItem(item).apply(SetItemDamageFunction.setDamage(ContextFloatProviders.between(min, max))));
     }
 
     private static LootPoolEntry notes(SurveyNotes notes) {
         return new LootPoolEntry(LootItem.lootTableItem(StructureContent.SURVEY_NOTES.get())
                 .apply(SetComponentsFunction.setComponent(StructureContent.SURVEY.get(), notes)));
+    }
+
+    /** A handwritten page of a place's ledger (structures v2 4.2). */
+    private static LootPoolEntry ledger(String place, int page) {
+        return new LootPoolEntry(LootItem.lootTableItem(StructureContent.SURVEY_NOTES.get())
+                .apply(SetComponentsFunction.setComponent(StructureContent.LEDGER.get(), Ledgers.key(place, page))));
+    }
+
+    /** A cut sample of {@code mineral}: a collectible that unlocks nothing. */
+    private static LootPoolEntry specimen(OreMineral mineral) {
+        return new LootPoolEntry(LootItem.lootTableItem(StructureContent.MINERAL_SPECIMEN.get())
+                .apply(SetComponentsFunction.setComponent(StructureContent.MINERAL.get(), mineral.id())));
+    }
+
+    private static LootPoolEntry sherd(String place) {
+        return new LootPoolEntry(LootItem.lootTableItem(StructureContent.SHERDS.get(place).get()));
     }
 
     /** Minerals of tier 3 and above are never given as items before their tier (structures spec 4.1, L6 and L8). */
@@ -217,6 +242,19 @@ final class StructureData {
         return early(mineral) ? ModItems.SMALL_ORES.get(mineral).get() : Items.FLINT;
     }
 
+    /** Vanilla treasure at vanilla rarity (L13): level I and II books without Mending, Silk Touch or Fortune. */
+    private static LootPool.Builder book(LootTableSubProvider.Context context, float chance) {
+        var enchantments = context.lookup(Registries.ENCHANTMENT);
+        LootPool.Builder pool = LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
+                .when(LootItemRandomChanceCondition.randomChance(chance));
+        for (var key : List.of(Enchantments.UNBREAKING, Enchantments.PROTECTION, Enchantments.FEATHER_FALLING,
+                Enchantments.SHARPNESS, Enchantments.EFFICIENCY)) {
+            pool.add(LootItem.lootTableItem(Items.ENCHANTED_BOOK).setWeight(1).apply(new SetEnchantmentsFunction.Builder()
+                    .withEnchantment(enchantments.getOrThrow(key), ContextIntProviders.between(1, 2))));
+        }
+        return pool;
+    }
+
     static final class ChestLoot implements LootTableSubProvider {
         private final LootTableSubProvider.Context context;
 
@@ -224,100 +262,163 @@ final class StructureData {
             this.context = context;
         }
 
-        private void add(String path, LootTable.Builder table) {
-            context.accept(CampLoot.key(path), table);
+        /** Builds a table under the audit; {@code build} must create every pool it hands out. */
+        private void add(String path, java.util.function.Supplier<LootTable.Builder> build) {
+            add(CampLoot.key(path), path, build);
+        }
+
+        private void add(ResourceKey<LootTable> key, String path, java.util.function.Supplier<LootTable.Builder> build) {
+            StructureLoot.begin(path);
+            LootTable.Builder table = build.get();
+            StructureLoot.end();
+            context.accept(key, table);
         }
 
         @Override
         public void run() {
-            // Charcoal burners' clearing (H = 0).
-            add(CampLoot.CLEARING_HUT, LootTable.lootTable()
-                    .withPool(pool(1, item(Items.STICK, 4, 10)))
-                    .withPool(pool(0.9f, item(ModItems.STRAW.get(), 3, 8)))
-                    .withPool(pool(0.7f, item(ModItems.TWINE.get(), 1, 4)))
-                    .withPool(pool(0.6f, item(Items.APPLE, 1, 3)))
-                    .withPool(pool(0.4f, item(Items.BREAD, 1, 2)))
+            // Charcoal burners' clearing (H = 0): the hut barrel, and the cache a hidden spot holds.
+            add(CampLoot.CLEARING_HUT, () -> LootTable.lootTable()
+                    .withPool(pool(1, item(Items.STICK, 8, 24)))
+                    .withPool(pool(0.9f, item(ModItems.STRAW.get(), 8, 20)))
+                    .withPool(pool(0.7f, item(ModItems.TWINE.get(), 2, 6)))
+                    .withPool(pool(0.6f, item(Items.APPLE, 4, 12)))
+                    .withPool(pool(0.5f, item(Items.BREAD, 4, 12)))
+                    .withPool(pool(0.5f, item(Items.SPRUCE_LOG, 16, 32)))
                     .withPool(pool(0.8f, worn(ModItems.FIRESTARTER.get(), 0.2f, 0.4f)))
                     .withPool(pool(0.5f, worn(ModItems.STONE_AXE.get())))
                     .withPool(pool(0.5f, worn(ModItems.STONE_SHOVEL.get())))
-                    .withPool(pool(0.6f, item(ModItems.ASH.get(), 1, 4))));
+                    .withPool(pool(0.6f, item(ModItems.ASH.get(), 2, 8)))
+                    .withPool(pool(0.5f, ledger("charcoal_burners_clearing", 1))));
+            add(CampLoot.CLEARING_CACHE, () -> LootTable.lootTable()
+                    .withPool(pool(1, ledger("charcoal_burners_clearing", 2)))
+                    .withPool(pool(0.7f, sherd("charcoal_burners")))
+                    .withPool(pool(0.8f, item(Items.TORCH, 8, 16)))
+                    .withPool(pool(0.6f, item(Items.BREAD, 8, 16)))
+                    .withPool(pool(0.6f, item(Items.EMERALD, 1, 3)))
+                    .withPool(pool(0.15f, item(Items.NAME_TAG, 1, 1)))
+                    .withPool(book(context, 0.2f)));
 
             // Mining camp tents and smithy (H = 2).
-            add(CampLoot.MINING_TENT, LootTable.lootTable()
+            add(CampLoot.MINING_TENT, () -> LootTable.lootTable()
                     .withPool(LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
                             .when(LootItemRandomChanceCondition.randomChance(0.8f))
-                            .add(item(Items.BREAD, 1, 4).builder())
-                            .add(item(Items.BAKED_POTATO, 1, 4).builder())
-                            .add(item(Items.COOKED_MUTTON, 1, 4).builder()))
-                    .withPool(pool(0.7f, item(Items.TORCH, 3, 8)))
-                    .withPool(pool(0.6f, item(ModItems.TWINE.get(), 1, 3)))
-                    .withPool(pool(0.6f, item(ModItems.FIBRE_CLOTH.get(), 1, 3)))
-                    .withPool(pool(0.4f, item(Items.FLINT, 1, 3)))
-                    .withPool(pool(0.3f, item(Items.PAPER, 1, 2))));
-            add(CampLoot.MINING_SMITHY, LootTable.lootTable()
-                    .withPool(pool(1, item(Items.CHARCOAL, 4, 10)))
-                    .withPool(pool(0.8f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 2, 4)))
-                    .withPool(pool(0.6f, item(ModItems.NUGGETS.get(Metal.TIN).get(), 1, 3)))
+                            .add(item(Items.BREAD, 8, 24).builder())
+                            .add(item(Items.BAKED_POTATO, 8, 24).builder())
+                            .add(item(Items.COOKED_MUTTON, 6, 16).builder()))
+                    .withPool(pool(0.7f, item(Items.TORCH, 16, 32)))
+                    .withPool(pool(0.6f, item(ModItems.TWINE.get(), 2, 6)))
+                    .withPool(pool(0.6f, item(ModItems.FIBRE_CLOTH.get(), 2, 6)))
+                    .withPool(pool(0.4f, item(Items.FLINT, 2, 6)))
+                    .withPool(pool(0.3f, item(Items.PAPER, 1, 4))));
+            add(CampLoot.MINING_SMITHY, () -> LootTable.lootTable()
+                    .withPool(pool(1, item(Items.CHARCOAL, 16, 32)))
+                    .withPool(pool(0.8f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 4, 10)))
+                    .withPool(pool(0.6f, item(ModItems.NUGGETS.get(Metal.TIN).get(), 2, 5)))
                     .withPool(pool(0.5f, item(ModItems.INGOT_MOLD.get(), 1, 1)))
                     .withPool(pool(0.2f, item(ModItems.MOLDS.get(MoldType.PICKAXE_HEAD).get(), 1, 1)))
                     .withPool(pool(0.5f, worn(ModItems.STONE_HAMMER.get())))
-                    .withPool(pool(0.6f, item(ModItems.STRAW.get(), 2, 6)))
-                    .withPool(pool(0.6f, item(Items.STICK, 2, 6))));
+                    .withPool(pool(0.6f, item(ModItems.STRAW.get(), 4, 12)))
+                    .withPool(pool(0.6f, item(Items.STICK, 4, 12))));
+            // The foreman's cache: the camp's best find.
+            add(CampLoot.MINING_CACHE, () -> LootTable.lootTable()
+                    .withPool(pool(1, ledger("mining_camp", 2)))
+                    .withPool(pool(1, item(ModItems.INGOTS.get(Metal.COPPER).get(), 2, 3)))
+                    .withPool(pool(0.7f, item(ModItems.INGOTS.get(Metal.TIN).get(), 1, 1)))
+                    .withPool(pool(0.5f, item(Items.IRON_NUGGET, 1, 3)))
+                    .withPool(pool(0.5f, new LootPoolEntry(LootItem.lootTableItem(StructureContent.PICK_AND_HAMMER_BANNER_PATTERN.get()))))
+                    .withPool(pool(0.35f, new LootPoolEntry(LootItem.lootTableItem(StructureContent.MINER_TRIM_TEMPLATE.get()))))
+                    .withPool(pool(0.6f, sherd("mining_camp")))
+                    .withPool(pool(0.5f, specimen(OreMineral.CASSITERITE)))
+                    .withPool(pool(0.6f, item(Items.EMERALD, 2, 5)))
+                    .withPool(book(context, 0.25f)));
 
             // Ruined bloomery (H = 2): a taste of iron, too little to work, and where the smiths found theirs.
-            add(CampLoot.BLOOMERY_CACHE, LootTable.lootTable()
+            add(CampLoot.BLOOMERY_CACHE, () -> LootTable.lootTable()
                     .withPool(pool(1, notes(BLOOMERY_NOTES)))
-                    .withPool(pool(0.8f, item(Items.CHARCOAL, 2, 6)))
-                    .withPool(pool(0.6f, item(ModItems.ASH.get(), 1, 4)))
+                    .withPool(pool(1, ledger("ruined_bloomery", 2)))
+                    .withPool(pool(0.8f, item(Items.CHARCOAL, 8, 16)))
+                    .withPool(pool(0.6f, item(ModItems.ASH.get(), 2, 8)))
                     .withPool(pool(0.5f, item(Items.IRON_NUGGET, 1, 3)))
-                    .withPool(pool(0.4f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 2, 6))));
+                    .withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 4, 10)))
+                    .withPool(pool(0.35f, new LootPoolEntry(LootItem.lootTableItem(StructureContent.SMITH_TRIM_TEMPLATE.get()))))
+                    .withPool(pool(0.6f, sherd("ruined_bloomery")))
+                    .withPool(pool(0.5f, specimen(OreMineral.HEMATITE)))
+                    .withPool(pool(0.5f, item(Items.EMERALD, 1, 3)))
+                    .withPool(book(context, 0.2f)));
 
             // Placer workings (H = 2): a few grains of gold, never the washed ore itself.
-            add(CampLoot.PLACER_CACHE, LootTable.lootTable()
-                    .withPool(pool(0.7f, item(Items.GOLD_NUGGET, 1, 3)))
+            add(CampLoot.PLACER_CACHE, () -> LootTable.lootTable()
+                    .withPool(pool(0.7f, item(Items.GOLD_NUGGET, 2, 6)))
                     .withPool(pool(0.5f, notes(PLACER_NOTES)))
+                    .withPool(pool(1, ledger("placer_workings", 2)))
                     .withPool(LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
                             .when(LootItemRandomChanceCondition.randomChance(0.7f))
-                            .add(item(Items.BREAD, 1, 3).builder())
-                            .add(item(Items.COOKED_SALMON, 1, 3).builder()))
-                    .withPool(pool(0.5f, item(Items.BOWL, 1, 1)))
-                    .withPool(pool(0.5f, item(ModItems.TWINE.get(), 1, 4))));
+                            .add(item(Items.BREAD, 8, 16).builder())
+                            .add(item(Items.COOKED_SALMON, 6, 12).builder()))
+                    .withPool(pool(0.5f, item(Items.BOWL, 1, 3)))
+                    .withPool(pool(0.5f, item(ModItems.TWINE.get(), 2, 8)))
+                    .withPool(pool(0.6f, sherd("placer_workings")))
+                    .withPool(pool(0.5f, specimen(OreMineral.NATIVE_GOLD)))
+                    .withPool(pool(0.4f, item(Items.EMERALD, 1, 3)))
+                    .withPool(book(context, 0.2f)));
 
             for (OreMineral mineral : OreMineral.values()) {
-                // Abandoned prospector's camp (H = 1).
-                context.accept(CampLoot.key(CampLoot.PROSPECTOR_PACK, mineral), LootTable.lootTable()
+                // Abandoned prospector's camp (H = 1): the pack and the cache.
+                add(CampLoot.key(CampLoot.PROSPECTOR_PACK, mineral), CampLoot.PROSPECTOR_PACK + "/" + mineral.id(), () -> LootTable.lootTable()
                         .withPool(pool(1, notes(PROSPECTOR_NOTES)))
-                        .withPool(pool(1, item(small(mineral), 2, 4)))
-                        .withPool(pool(0.6f, item(Items.CLAY_BALL, 3, 8)))
+                        .withPool(pool(1, item(small(mineral), 6, 12)))
+                        .withPool(pool(0.6f, item(Items.CLAY_BALL, 8, 24)))
                         .withPool(pool(0.6f, worn(ModItems.STONE_PICKAXE.get())))
                         .withPool(pool(0.4f, worn(ModItems.STONE_KNIFE.get())))
                         .withPool(pool(0.25f, item(ModItems.UNFIRED_CRUCIBLE.get(), 1, 1)))
-                        .withPool(pool(0.7f, item(ModItems.TWINE.get(), 2, 6)))
-                        .withPool(pool(0.7f, item(ModItems.PLANT_FIBRE.get(), 2, 6)))
-                        .withPool(pool(0.6f, item(Items.BREAD, 1, 3)))
-                        .withPool(pool(0.6f, item(Items.COOKED_COD, 1, 3)))
-                        .withPool(pool(0.5f, item(Items.TORCH, 2, 5))));
+                        .withPool(pool(0.7f, item(ModItems.TWINE.get(), 4, 10)))
+                        .withPool(pool(0.7f, item(ModItems.PLANT_FIBRE.get(), 4, 10)))
+                        .withPool(pool(0.6f, item(Items.BREAD, 8, 24)))
+                        .withPool(pool(0.6f, item(Items.COOKED_COD, 6, 16)))
+                        .withPool(pool(0.5f, item(Items.TORCH, 8, 24)))
+                        .withPool(pool(0.5f, ledger("prospector_camp", 1))));
+                add(CampLoot.key(CampLoot.PROSPECTOR_CACHE, mineral), CampLoot.PROSPECTOR_CACHE + "/" + mineral.id(), () -> {
+                    LootTable.Builder cache = LootTable.lootTable()
+                            .withPool(pool(1, ledger("prospector_camp", 2)))
+                            .withPool(pool(0.8f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 5, 12)))
+                            .withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.TIN).get(), 2, 6)))
+                            .withPool(pool(0.15f, item(ModItems.NUGGETS.get(Metal.BRONZE).get(), 1, 3)))
+                            .withPool(pool(0.6f, sherd("prospector")))
+                            .withPool(pool(0.6f, specimen(mineral)))
+                            .withPool(pool(0.5f, item(Items.EMERALD, 1, 3)))
+                            .withPool(book(context, 0.2f));
+                    if (early(mineral)) cache.withPool(pool(0.8f, item(ModItems.orePiece(mineral, OreGrade.POOR), 6, 12)));
+                    return cache;
+                });
 
                 // Mining camp ore cart (H = 2): the ore the crew sorted, and notes on the iron they could not cut.
-                LootTable.Builder cart = LootTable.lootTable().withPool(pool(1, notes(MINING_NOTES)));
-                if (early(mineral)) {
-                    cart.withPool(pool(1, item(ModItems.orePiece(mineral, OreGrade.POOR), 2, 5)))
-                            .withPool(pool(0.7f, item(ModItems.orePiece(mineral, OreGrade.NORMAL), 1, 3)))
-                            .withPool(pool(0.3f, item(ModItems.crushedOre(mineral, OreGrade.NORMAL), 1, 2)));
-                }
-                if (mineral != OreMineral.CASSITERITE) {
-                    cart.withPool(pool(0.3f, item(ModItems.orePiece(OreMineral.CASSITERITE, OreGrade.NORMAL), 1, 2)));
-                }
-                context.accept(CampLoot.key(CampLoot.MINING_ORE_CART, mineral), cart);
+                add(CampLoot.key(CampLoot.MINING_ORE_CART, mineral), CampLoot.MINING_ORE_CART + "/" + mineral.id(), () -> {
+                    LootTable.Builder cart = LootTable.lootTable().withPool(pool(1, notes(MINING_NOTES)));
+                    if (early(mineral)) {
+                        cart.withPool(pool(1, item(ModItems.orePiece(mineral, OreGrade.POOR), 6, 12)))
+                                .withPool(pool(0.7f, item(ModItems.orePiece(mineral, OreGrade.NORMAL), 3, 6)))
+                                .withPool(pool(0.3f, item(ModItems.crushedOre(mineral, OreGrade.NORMAL), 2, 4)));
+                    }
+                    if (mineral != OreMineral.CASSITERITE) {
+                        cart.withPool(pool(0.3f, item(ModItems.orePiece(OreMineral.CASSITERITE, OreGrade.NORMAL), 1, 2)));
+                    }
+                    return cart.withPool(pool(0.4f, ledger("mining_camp", 1)));
+                });
 
                 // Collapsed adit cache (H = 2).
-                LootTable.Builder cache = LootTable.lootTable().withPool(pool(0.8f, item(Items.TORCH, 2, 6)));
-                if (early(mineral)) cache.withPool(pool(0.7f, item(ModItems.orePiece(mineral, OreGrade.POOR), 2, 5)));
-                cache.withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 1, 4)))
-                        .withPool(pool(0.3f, worn(ModItems.STONE_PICKAXE.get())))
-                        .withPool(pool(0.25f, notes(ADIT_NOTES)))
-                        .withPool(pool(0.5f, item(Items.BREAD, 1, 2)));
-                context.accept(CampLoot.key(CampLoot.ADIT_CACHE, mineral), cache);
+                add(CampLoot.key(CampLoot.ADIT_CACHE, mineral), CampLoot.ADIT_CACHE + "/" + mineral.id(), () -> {
+                    LootTable.Builder cache = LootTable.lootTable().withPool(pool(0.8f, item(Items.TORCH, 8, 24)));
+                    if (early(mineral)) cache.withPool(pool(0.7f, item(ModItems.orePiece(mineral, OreGrade.POOR), 6, 12)));
+                    return cache.withPool(pool(0.5f, item(ModItems.NUGGETS.get(Metal.COPPER).get(), 4, 10)))
+                            .withPool(pool(0.4f, worn(ModItems.STONE_PICKAXE.get())))
+                            .withPool(pool(0.25f, notes(ADIT_NOTES)))
+                            .withPool(pool(1, ledger("collapsed_adit", 2)))
+                            .withPool(pool(0.6f, sherd("collapsed_adit")))
+                            .withPool(pool(0.5f, specimen(mineral)))
+                            .withPool(pool(0.5f, item(Items.BREAD, 8, 16)))
+                            .withPool(pool(0.5f, item(Items.EMERALD, 1, 3)))
+                            .withPool(book(context, 0.2f));
+                });
             }
         }
     }
@@ -332,11 +433,23 @@ final class StructureData {
         private static LootTable.Builder weighted(Object... entries) {
             LootPool.Builder pool = LootPool.lootPool().setRolls(ContextIntProviders.exactly(1));
             for (int i = 0; i < entries.length; i += 2) {
-                UniformContainerBase.Builder<?> entry = entries[i] instanceof LootPoolEntry e ? e.builder()
-                        : LootItem.lootTableItem((ItemLike) entries[i]);
+                UniformContainerBase.Builder<?> entry;
+                if (entries[i] instanceof LootPoolEntry e) {
+                    entry = e.builder();
+                } else {
+                    StructureLoot.record((ItemLike) entries[i], 1);
+                    entry = LootItem.lootTableItem((ItemLike) entries[i]);
+                }
                 pool.add(entry.setWeight((Integer) entries[i + 1]));
             }
             return LootTable.lootTable().withPool(pool);
+        }
+
+        private void add(ResourceKey<LootTable> key, String path, java.util.function.Supplier<LootTable.Builder> build) {
+            StructureLoot.begin(path);
+            LootTable.Builder table = build.get();
+            StructureLoot.end();
+            context.accept(key, table);
         }
 
         @Override
@@ -345,11 +458,13 @@ final class StructureData {
                 Item small = small(mineral);
                 Item poor = early(mineral) ? ModItems.orePiece(mineral, OreGrade.POOR) : Items.FLINT;
                 Item copper = ModItems.NUGGETS.get(Metal.COPPER).get();
-                context.accept(CampLoot.key(CampLoot.DIG_PROSPECTOR, mineral), weighted(small, 50, Items.FLINT, 30, Items.STICK, 20));
-                context.accept(CampLoot.key(CampLoot.DIG_SPOIL, mineral), weighted(poor, 30, small, 20, Items.FLINT, 15, copper, 15,
-                        Items.BONE, 10, Items.MINER_POTTERY_SHERD, 5, notes(MINING_NOTES), 5));
-                context.accept(CampLoot.key(CampLoot.DIG_ADIT, mineral), weighted(Items.FLINT, 30, small, 30, Items.BONE, 20,
-                        Items.MINER_POTTERY_SHERD, 5, copper, 15));
+                add(CampLoot.key(CampLoot.DIG_PROSPECTOR, mineral), CampLoot.DIG_PROSPECTOR + "/" + mineral.id(),
+                        () -> weighted(small, 50, Items.FLINT, 30, Items.STICK, 20, sherd("prospector"), 4));
+                add(CampLoot.key(CampLoot.DIG_SPOIL, mineral), CampLoot.DIG_SPOIL + "/" + mineral.id(),
+                        () -> weighted(poor, 30, small, 20, Items.FLINT, 15, copper, 15, Items.BONE, 10, sherd("mining_camp"), 5,
+                                ledger("mining_camp", 1), 3, notes(MINING_NOTES), 5));
+                add(CampLoot.key(CampLoot.DIG_ADIT, mineral), CampLoot.DIG_ADIT + "/" + mineral.id(),
+                        () -> weighted(Items.FLINT, 30, small, 30, Items.BONE, 20, sherd("collapsed_adit"), 5, copper, 15));
             }
         }
     }
@@ -364,6 +479,7 @@ final class StructureData {
             dropSelf(StructureContent.FIBRE_CANVAS.get());
             dropSelf(StructureContent.FIBRE_CANVAS_CARPET.get());
             dropSelf(StructureContent.PIT_PROP.get());
+            dropSelf(StructureContent.SPECIMEN_SHELF.get());
             // A cracked brick mostly crumbles to nothing; sometimes a piece is worth grinding into grog.
             add(StructureContent.CRACKED_FIRE_BRICKS.get(), block -> createSilkTouchDispatchTable(block, applyExplosionCondition(block,
                     LootItem.lootTableItem(ModItems.GROG.get()).when(LootItemRandomChanceCondition.randomChance(0.3f)))));
@@ -396,6 +512,14 @@ final class StructureData {
                     .addCriterion("visited", JournalTrigger.TriggerInstance.of(StructureEvents.PLACE + layout.id()))
                     .save(output, Journal.goal(StructureEvents.PLACE + layout.id()).toString());
         }
+        // A shelf of four different mineral specimens is a page too: a collection, no progression.
+        String collection = "journal." + StrataIndustria.MOD_ID + ".place.specimens";
+        Advancement.Builder.advancement()
+                .parent(root)
+                .display(StructureContent.MINERAL_SPECIMEN.get(), Component.translatable(collection),
+                        Component.translatable(collection + ".hint"), AdvancementType.TASK, false, false, true)
+                .addCriterion("collected", JournalTrigger.TriggerInstance.of(SpecimenShelfBlockEntity.COLLECTION))
+                .save(output, Journal.goal(SpecimenShelfBlockEntity.COLLECTION).toString());
     }
 
     // ---------------------------------------------------------------- assets
@@ -429,6 +553,72 @@ final class StructureData {
                 TextureMapping.getItemTexture(notes, "_overlay")), itemModels.modelOutput);
         itemModels.itemModelOutput.accept(notes, ItemModelUtils.tintedModel(model, ItemModelUtils.constantTint(-1),
                 new SurveyClient.MineralTint()));
+
+        // Collectibles (structures v2 4.1). A specimen is a grey chip with a facet layer tinted per mineral.
+        Item specimen = StructureContent.MINERAL_SPECIMEN.get();
+        var specimenModel = ModelTemplates.TWO_LAYERED_ITEM.create(specimen, TextureMapping.layered(
+                TextureMapping.getItemTexture(specimen), TextureMapping.getItemTexture(specimen, "_overlay")), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(specimen, ItemModelUtils.tintedModel(specimenModel, ItemModelUtils.constantTint(-1),
+                new SurveyClient.SpecimenTint()));
+        StructureContent.SHERDS.values().forEach(sherd -> itemModels.generateFlatItem(sherd.get(), ModelTemplates.FLAT_ITEM));
+        itemModels.generateFlatItem(StructureContent.MINER_TRIM_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(StructureContent.SMITH_TRIM_TEMPLATE.get(), ModelTemplates.FLAT_ITEM);
+        itemModels.generateFlatItem(StructureContent.PICK_AND_HAMMER_BANNER_PATTERN.get(), ModelTemplates.FLAT_ITEM);
+
+        // A wall shelf: the model is hand-built in resources and turned to face the player.
+        var shelf = StrataIndustria.id("block/specimen_shelf");
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(StructureContent.SPECIMEN_SHELF.get(),
+                BlockModelGenerators.plainVariant(shelf)).with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
+        itemModels.itemModelOutput.accept(StructureContent.SPECIMEN_SHELF_ITEM.get(), ItemModelUtils.plainModel(shelf));
+    }
+
+    // ---------------------------------------------------------------- collectible registries
+
+    static void potPatterns(BootstrapContext<DecoratedPotPattern> context) {
+        for (String place : StructureContent.SHERD_PLACES) {
+            context.register(StructureContent.potPattern(place), new DecoratedPotPattern(StrataIndustria.id(place + "_pottery_pattern")));
+        }
+    }
+
+    static void trimPatterns(BootstrapContext<TrimPattern> context) {
+        for (var key : List.of(StructureContent.MINER_TRIM, StructureContent.SMITH_TRIM)) {
+            context.register(key, new TrimPattern(key.identifier(), Component.translatable("trim_pattern." + StrataIndustria.MOD_ID + "."
+                    + key.identifier().getPath()), false));
+        }
+    }
+
+    static void bannerPatterns(BootstrapContext<BannerPattern> context) {
+        context.register(StructureContent.PICK_AND_HAMMER, new BannerPattern(StrataIndustria.id("pick_and_hammer"),
+                "block." + StrataIndustria.MOD_ID + ".banner.pick_and_hammer"));
+    }
+
+    /** The banner pattern the pattern item grants. */
+    static final class BannerPatternTagProvider extends net.minecraft.data.tags.TagsProvider<BannerPattern> {
+        BannerPatternTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+            super(output, Registries.BANNER_PATTERN, lookupProvider, StrataIndustria.MOD_ID);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider registries) {
+            tag(StructureContent.PICK_AND_HAMMER_TAG).add(StructureContent.PICK_AND_HAMMER);
+        }
+    }
+
+    /** Duplicating the two armour trim templates, and the trims themselves (vanilla smithing rules). */
+    static final class CollectibleRecipes extends net.minecraft.data.recipes.RecipeProvider {
+        CollectibleRecipes(BootstrapContext<net.minecraft.world.item.crafting.Recipe<?>> recipes, BootstrapContext<Advancement> advancements) {
+            super(recipes, advancements);
+        }
+
+        @Override
+        protected void buildRecipes() {
+            copySmithingTemplate(StructureContent.MINER_TRIM_TEMPLATE.get(), Items.COBBLESTONE);
+            copySmithingTemplate(StructureContent.SMITH_TRIM_TEMPLATE.get(), ModItems.BLOOMERY_SLAG.get());
+            trimSmithing(StructureContent.MINER_TRIM_TEMPLATE.get(), StructureContent.MINER_TRIM,
+                    ResourceKey.create(Registries.RECIPE, StrataIndustria.id("miner_armor_trim_smithing_template_smithing_trim")));
+            trimSmithing(StructureContent.SMITH_TRIM_TEMPLATE.get(), StructureContent.SMITH_TRIM,
+                    ResourceKey.create(Registries.RECIPE, StrataIndustria.id("smith_armor_trim_smithing_template_smithing_trim")));
+        }
     }
 
     static void lang(BiConsumer<String, String> add) {
@@ -441,33 +631,59 @@ final class StructureData {
 
         String notes = "item." + id + ".survey_notes";
         add.accept(notes, "Survey Notes");
-        add.accept(notes + ".on", "Notes on %s");
-        add.accept(notes + ".found", "Deposit found");
+        add.accept(notes + ".ledger", "Ledger Page");
+        add.accept(notes + ".found", "Found");
         add.accept(notes + ".found_message", "Survey notes: deposit found");
-        add.accept(notes + ".blank", "Nothing worth keeping is written here.");
-        add.accept(notes + ".unread", "Folded notes. Carry them a moment to read them.");
+        add.accept(notes + ".blank", "Blank. The ink has run.");
+        add.accept(notes + ".unread", "Not read yet. Hold them a moment.");
         add.accept(notes + ".bearing", "%s, %s");
-        add.accept(notes + ".distance", "about %s blocks");
-        add.accept(notes + ".distance.here", "right around here");
-        String[][] compass = {{"north", "North"}, {"north_east", "North-east"}, {"east", "East"}, {"south_east", "South-east"},
-                {"south", "South"}, {"south_west", "South-west"}, {"west", "West"}, {"north_west", "North-west"}};
+        add.accept(notes + ".distance", "~%s");
+        add.accept(notes + ".distance.here", "here");
+        String[][] compass = {{"north", "N"}, {"north_east", "NE"}, {"east", "E"}, {"south_east", "SE"},
+                {"south", "S"}, {"south_west", "SW"}, {"west", "W"}, {"north_west", "NW"}};
         for (String[] dir : compass) add.accept(notes + ".dir." + dir[0], dir[1]);
-        add.accept(notes + ".depth.surface", "At the surface");
-        add.accept(notes + ".depth.just_under", "Just under the surface");
-        add.accept(notes + ".depth.little_down", "A little way down");
-        add.accept(notes + ".depth.deep", "Deep");
-        add.accept(notes + ".depth.very_deep", "Very deep");
-        add.accept(notes + ".host", "In %s");
-        add.accept(notes + ".size.small", "A small deposit");
-        add.accept(notes + ".size.medium", "A fair deposit");
-        add.accept(notes + ".size.large", "A large deposit");
-        add.accept(notes + ".tool.copper", "Needs a copper pick");
-        add.accept(notes + ".tool.bronze", "Needs a bronze pick");
-        add.accept(notes + ".tool.wrought_iron", "Needs an iron pick");
+        add.accept(notes + ".depth.surface", "at surface");
+        add.accept(notes + ".depth.just_under", "shallow");
+        add.accept(notes + ".depth.little_down", "medium depth");
+        add.accept(notes + ".depth.deep", "deep");
+        add.accept(notes + ".depth.very_deep", "very deep");
+        add.accept(notes + ".where", "In %s, %s");
         for (OreMineral mineral : OreMineral.values()) {
             String[] hands = hands(mineral);
             for (int i = 0; i < hands.length; i++) add.accept(notes + ".hand." + mineral.id() + "." + i, hands[i]);
         }
+        for (var page : Ledgers.PAGES.entrySet()) {
+            String[] texts = ledgerTexts(page.getKey());
+            for (int i = 0; i < texts.length; i++) add.accept("item." + id + ".ledger." + Ledgers.key(page.getKey(), i + 1), texts[i]);
+        }
+
+        // Collectibles (structures v2 4.1).
+        add.accept("block." + id + ".specimen_shelf", "Specimen Shelf");
+        String specimen = "item." + id + ".mineral_specimen";
+        add.accept(specimen, "Mineral Specimen");
+        add.accept(specimen + ".of", "%s Specimen");
+        add.accept(specimen + ".forms_in", "Forms in %s");
+        add.accept(specimen + ".depth", "Between y %s and y %s");
+        String[] sherdNames = {"Charcoal Burners'", "Prospector's", "Mining Camp", "Collapsed Adit", "Ruined Bloomery", "Placer Workings"};
+        for (int i = 0; i < sherdNames.length; i++) {
+            add.accept("item." + id + "." + StructureContent.SHERD_PLACES.get(i) + "_pottery_sherd", sherdNames[i] + " Pottery Sherd");
+        }
+        add.accept("item." + id + ".miner_armor_trim_smithing_template", "Smithing Template");
+        add.accept("item." + id + ".smith_armor_trim_smithing_template", "Smithing Template");
+        add.accept("trim_pattern." + id + ".miner", "Miner Armor Trim");
+        add.accept("trim_pattern." + id + ".smith", "Smith Armor Trim");
+        add.accept("item." + id + ".pick_and_hammer_banner_pattern", "Banner Pattern");
+        add.accept("item." + id + ".pick_and_hammer_banner_pattern.desc", "Pick and Hammer");
+        String[] colours = {"white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
+                "purple", "blue", "brown", "green", "red", "black"};
+        for (String colour : colours) {
+            String name = java.util.Arrays.stream(colour.split("_")).map(w -> Character.toUpperCase(w.charAt(0)) + w.substring(1))
+                    .collect(java.util.stream.Collectors.joining(" "));
+            add.accept("block." + id + ".banner.pick_and_hammer." + colour, name + " Pick and Hammer");
+        }
+        add.accept("journal." + id + ".place.specimens", "Specimen collection");
+        add.accept("journal." + id + ".place.specimens.hint", "Four different minerals on one specimen shelf. Cut samples turn up "
+                + "in old camps, adits and caches.");
 
         String subtitles = "subtitles." + id + ".";
         add.accept(subtitles + "pit_prop.creak", "Timber creaks");
@@ -504,79 +720,54 @@ final class StructureData {
                 + "gravel.");
     }
 
-    /** The prospector's own words, six per mineral family (structures spec 5.2 and 14). */
+    /** The prospector's remark, six per mineral. A few words each: the note says the rest (structures v2 2a). */
     private static String[] hands(OreMineral mineral) {
         return switch (mineral) {
-            case NATIVE_COPPER -> new String[] {
-                    "Bright copper in the rock, bent and twisted like roots. Soft enough to hammer cold.",
-                    "Green stain on the stones and a lump of red metal in the gravel. Copper, sure as rain.",
-                    "Picked a nugget out with a knife. The vein is plain to see once the turf is off.",
-                    "Copper you can beat flat on a rock. Worth the walk.",
-                    "Found metal where the rock is cracked. It shines when you scratch it.",
-                    "Copper close to the grass. Stone picks will do."};
-            case MALACHITE -> new String[] {
-                    "Green rock, banded like a cut onion. It melts down to copper.",
-                    "Bright green crust on the stones. Where it shows, the copper is near.",
-                    "Green stone that leaves green on the fingers. A good sign.",
-                    "Malachite under the soil. Easy digging with stone.",
-                    "Green and soft. Crush it, heat it, and copper runs out.",
-                    "The green ore again. Whole slope is stained with it."};
-            case TENNANTITE -> new String[] {
-                    "Grey ore, dull as lead. It smokes with a garlic stink in the fire. Copper in it all the same.",
-                    "Dark grey grains in the rock. Gives copper, and something that hardens it.",
-                    "Steel-grey ore. Keep upwind when it roasts.",
-                    "Grey copper ore. Makes a harder metal than the green kind.",
-                    "Found the grey ore. The old smiths liked it for blades.",
-                    "Dull grey and heavy. Copper, with a bite to it."};
-            case CASSITERITE -> new String[] {
-                    "Heavy black grains in the granite. Our copper picks barely scratch it.",
-                    "Black tin stone. Heavier than it looks. This is what makes bronze.",
-                    "Dark glassy crystals, very heavy. Tin. Bring a copper pick at least.",
-                    "Tin ore, black as soot. Mix its metal with copper and you have bronze.",
-                    "Heavy dark pebbles in the stream bed led us up to this.",
-                    "The black stone is tin. Stone picks just skid off it."};
-            case BISMUTHINITE -> new String[] {
-                    "Grey needles in the rock, shining like lead. Bismuth. Melts very easy.",
-                    "Soft grey ore with a rainbow sheen. Good for a bronze of its own.",
-                    "Bright grey streaks. Melts in a small fire.",
-                    "Bismuth ore. Mix it with copper when there is no tin to be had.",
-                    "Silver-grey crystals in fans. Easy to dig.",
-                    "Grey ore that melts low. Worth a look."};
-            case HEMATITE -> new String[] {
-                    "Red earth in the shale. Too hard for our picks; it wants a better tool.",
-                    "Blood-red ore, heavy. Iron, they say, if the fire is hot enough.",
-                    "Red streak on the stone. Bronze barely marks it.",
-                    "Iron ore, red as rust. Needs a hotter fire than ours.",
-                    "Heavy red rock. The old tales say iron hides in it.",
-                    "Red ore everywhere here. We could not cut it."};
-            case MAGNETITE -> new String[] {
-                    "Black ore that pulls at a needle. Iron, and hard to cut.",
-                    "Heavy black stone, it drags a knife blade toward it. Iron.",
-                    "Black iron ore. Our picks bounce off.",
-                    "The black stone that grabs at metal. Iron, deep in it.",
-                    "Very heavy, very black. Wants a better pick than bronze.",
-                    "Lodestone ore. Iron for whoever can dig it."};
-            case LIMONITE -> new String[] {
-                    "Rusty lumps in the bog. Iron, the soft kind.",
-                    "Brown iron ore in the wet ground. Dig it with a shovel.",
-                    "Yellow-brown crust in the marsh. It smelts to iron.",
-                    "Bog ore. Poor stuff, but it is iron.",
-                    "Rust-coloured lumps under the reeds.",
-                    "The bog is full of iron ore. Cut peat and you find it."};
-            case NATIVE_GOLD -> new String[] {
-                    "Yellow flecks in the quartz. Gold. Soft and no use for tools.",
-                    "Gold in the white rock. Pretty, but it will not hold an edge.",
-                    "A gleam of gold in the vein. Too soft for anything but show.",
-                    "Gold. Heavy and yellow. The river sand is full of it below here.",
-                    "Found gold, little threads of it in the quartz.",
-                    "Gold ore. Worth something to someone."};
-            default -> new String[] {
-                    "Ore in the rock here. Worth a closer look.",
-                    "Strange stone. Marked it down to come back to.",
-                    "Heavy rock with a shine to it.",
-                    "Ore showing where the hill is cut.",
-                    "Something worth digging, if the tools allow.",
-                    "Noted this one for later."};
+            case NATIVE_COPPER -> new String[] {"Soft metal, bends.", "Red metal in the gravel.", "Green stain on the rock.",
+                    "Beat it flat cold.", "Metal in the cracks.", "Near the grass. Stone picks do."};
+            case MALACHITE -> new String[] {"Green, banded.", "Green crust on the stones.", "Green rubs off on the fingers.",
+                    "Under the soil. Stone picks do.", "Crushes soft. Melts to copper.", "Whole slope stained green."};
+            case TENNANTITE -> new String[] {"Grey. Stinks when heated.", "Dark grey grains.", "Steel-grey. Roast it upwind.",
+                    "Harder metal than the green ore.", "Grey, heavy.", "Dull grey, copper inside."};
+            case CASSITERITE -> new String[] {"Black, heavy grains.", "Black. Heavier than it looks.", "Dark glassy crystals. Copper pick.",
+                    "Tin. Stone picks skid off.", "Heavy dark pebbles in the stream.", "Black stone. Needs a better pick."};
+            case BISMUTHINITE -> new String[] {"Grey needles. Melts easy.", "Grey, rainbow sheen.", "Silver-grey fans of crystal.",
+                    "Soft grey ore.", "Bright streaks, melts low.", "Grey. Easy to dig."};
+            case HEMATITE -> new String[] {"Red, heavy. Too hard for our picks.", "Blood-red ore.", "Red streak. Bronze barely marks it.",
+                    "Rust-red rock, heavy.", "Red all over. Needs a harder pick.", "Red ore. Iron."};
+            case MAGNETITE -> new String[] {"Black. Pulls a needle.", "Heavy black, drags a knife blade.", "Black ore. Picks bounce off.",
+                    "Black, very heavy.", "Lodestone. Iron.", "Black ore, magnetic."};
+            case LIMONITE -> new String[] {"Rusty lumps in the bog.", "Brown ore in wet ground. Use a shovel.", "Yellow-brown crust in the marsh.",
+                    "Bog ore. Poor, but iron.", "Rust-coloured lumps under the reeds.", "Cut peat, find iron."};
+            case NATIVE_GOLD -> new String[] {"Yellow flecks in quartz.", "Gold in white rock. Too soft for tools.", "Gold threads in the vein.",
+                    "Yellow, heavy.", "Gold in the river sand below.", "Little gold. Worth something."};
+            default -> new String[] {"Ore in the rock.", "Marked for later.", "Heavy rock, some shine.", "Showing where the hill is cut.",
+                    "Worth a closer look.", "Noted."};
+        };
+    }
+
+    /** What the people of each place wrote down (structures v2 2a and 4.2): plain, short, practical. */
+    private static String[] ledgerTexts(String place) {
+        return switch (place) {
+            case "charcoal_burners_clearing" -> new String[] {
+                    "Third burn this month. Sealed it with turf this time and it came out black all the way through. Last one was half ash.",
+                    "Out of straw. Walked to the next clearing for more, two days there and back. Leaving the axe here, the handle is split anyway."};
+            case "prospector_camp" -> new String[] {
+                    "Three stones on the log: top rock, middle rock, bottom rock. Every hill here stacks them the same way. Look at the stones before you dig.",
+                    "Tin stone half a day out. Needs a copper pick and mine is stone. Marked the spot, will come back."};
+            case "mining_camp" -> new String[] {
+                    "Lower level flooded again. Pumps can't keep up. Moving the crew to the east face.",
+                    "Poor ore at the edges. Nothing in the middle but hard grey stone we can't cut. Foreman says leave it. Pay day Friday."};
+            case "collapsed_adit" -> new String[] {
+                    "Roof came down Tuesday. Nobody hurt. The props at the far end still hold, we think. Not going back in.",
+                    "Followed the vein from the portal and it dips. Props every three steps. Bring plenty of timber."};
+            case "ruined_bloomery" -> new String[] {
+                    "Fire bricks crack after a few burns. The pale clay holds longest. Slag is mostly iron still, don't throw it out.",
+                    "Bloom came out small again. Too little charcoal, too much hurry. Don't open it before the glow is gone."};
+            case "placer_workings" -> new String[] {
+                    "River gravel, three pans a day. Gold is heavy and sits at the bottom. Tip slow and the light stuff goes over the edge.",
+                    "Water rose and took half the trough. Will rebuild when it drops."};
+            default -> new String[0];
         };
     }
 }

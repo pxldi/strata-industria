@@ -21,6 +21,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
     public void registerSounds() {
         tier5();
         tier6();
+        prologue();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -90,6 +91,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.5f)));
         add(ModSounds.SMITH_DONE, definition().subtitle(subtitle("anvil.done"))
                 .with(sound("minecraft:random/anvil_land").pitch(1.4f).volume(0.5f)));
+        add(ModSounds.SMITH_QUICK, definition().subtitle(subtitle("anvil.quick"))
+                .with(sound("minecraft:random/anvil_use").pitch(1.5f).volume(0.6f))
+                .with(sound("minecraft:random/anvil_use").pitch(1.7f).volume(0.6f))
+                .with(sound("minecraft:random/anvil_use").pitch(1.4f).volume(0.6f)));
         SoundDefinition dress = definition().subtitle(subtitle("anvil.dress"));
         for (int i = 1; i <= 4; i++) dress.with(sound("minecraft:dig/stone" + i).pitch(0.7f));
         add(ModSounds.ANVIL_DRESS, dress);
@@ -408,6 +413,21 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         return "subtitles." + StrataIndustria.MOD_ID + "." + name;
     }
 
+    /** The brick kiln and the casting table, from vanilla fire, stone and pottery samples. */
+    private void prologue() {
+        SoundDefinition work = definition().subtitle(subtitle("brick_kiln.work"));
+        for (int i = 1; i <= 3; i++) work.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.95f).volume(0.5f));
+        add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_WORK, work);
+        add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_DONE, definition().subtitle(subtitle("brick_kiln.done"))
+                .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.7f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        add(dev.strataindustria.registry.PrologueRegistry.TABLE_SET, stone("casting_table.set", 0.7f, 0.7f));
+        SoundDefinition knock = definition().subtitle(subtitle("casting_table.knock"));
+        for (int i = 1; i <= 4; i++) knock.with(sound("minecraft:dig/stone" + i).pitch(1.25f).volume(0.9f));
+        for (int i = 1; i <= 2; i++) knock.with(sound("minecraft:dig/stone" + i).pitch(1.5f).volume(0.6f));
+        add(dev.strataindustria.registry.PrologueRegistry.TABLE_KNOCK, knock);
+    }
+
     private static SoundDefinition stone(String subtitle, float pitch, float volume) {
         SoundDefinition definition = definition().subtitle("subtitles." + StrataIndustria.MOD_ID + "." + subtitle);
         for (int i = 1; i <= 4; i++) {
@@ -482,6 +502,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.dispenser.dispense", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.2f))
                 .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.12f))
                 .with(sound("minecraft:block.comparator.click", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.3f)));
+        add(Tier5Sounds.EXTRUDER_PRESS, definition().subtitle(subtitle("block.extruder.press"))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.6f))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.55f))
+                .with(sound("minecraft:block.slime_block.step", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f)));
+        add(Tier5Sounds.POWER_HAMMER_STRIKE, definition().subtitle(subtitle("block.power_hammer.strike"))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.35f))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.3f))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.2f)));
+        add(Tier5Sounds.POWER_HAMMER_INDUCTION, definition().subtitle(subtitle("block.power_hammer.induction"))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.2f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.18f)));
         add(Tier5Sounds.ELECTROLYSER_BUBBLE, definition().subtitle(subtitle("block.electrolyser.bubble"))
                 .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(1.0f).volume(0.5f))
                 .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.45f))

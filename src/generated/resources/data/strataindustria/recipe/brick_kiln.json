@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "minecraft:brick"
+  },
+  "pattern": [
+    "BBB",
+    "B B",
+    "BBB"
+  ],
+  "result": {
+    "id": "strataindustria:brick_kiln"
+  }
+}

@@ -27,6 +27,8 @@ public final class Journal {
     public static final String CLAY_FORMING = "clay_forming";
     public static final String FIRE_PIT_LIT = "fire_pit_lit";
     public static final String PIT_KILN_FIRED = "pit_kiln_fired";
+    public static final String BRICK_KILN_FIRED = "brick_kiln_fired";
+    public static final String CASTING_TABLE_POURED = "casting_table_poured";
     public static final String CRUCIBLE_MOLTEN = "crucible_molten";
     public static final String STONE_ANVIL = "stone_anvil";
     public static final String PROSPECT = "prospect";
@@ -34,6 +36,7 @@ public final class Journal {
     public static final String BLOOMERY_BUILT = "bloomery_built";
     public static final String BLOOM_REFINED = "bloom_refined";
     public static final String PATTERN_RECORDED = "pattern_recorded";
+    public static final String QUICK_SMITH = "quick_smith";
     public static final String ROTATION = "rotation";
     public static final String WATER_POWER = "water_power";
     public static final String MILLSTONE = "millstone";

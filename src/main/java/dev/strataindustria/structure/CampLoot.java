@@ -24,7 +24,11 @@ public final class CampLoot {
     }
 
     public static final String CLEARING_HUT = "chests/charcoal_burners_clearing/hut";
+    /** The hidden cache of each place holds its best table (structures v2, L12); the rebuilds place it. */
+    public static final String CLEARING_CACHE = "chests/charcoal_burners_clearing/cache";
     public static final String PROSPECTOR_PACK = "chests/prospector_camp/pack";
+    public static final String PROSPECTOR_CACHE = "chests/prospector_camp/cache";
+    public static final String MINING_CACHE = "chests/mining_camp/cache";
     public static final String MINING_TENT = "chests/mining_camp/tent";
     public static final String MINING_SMITHY = "chests/mining_camp/smithy";
     public static final String MINING_ORE_CART = "chests/mining_camp/ore_cart";

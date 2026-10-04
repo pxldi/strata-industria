@@ -91,6 +91,10 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder melt = goal(crucible, "t2/melt", ModItems.INGOT_MOLD.get(),
                 JournalTrigger.TriggerInstance.of(Journal.CRUCIBLE_MOLTEN));
         AdvancementHolder copperIngot = goal(melt, "t2/copper_ingot", Items.COPPER_INGOT, has(Items.COPPER_INGOT));
+        goal(kiln, "t2/brick_kiln", dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get(),
+                JournalTrigger.TriggerInstance.of(Journal.BRICK_KILN_FIRED));
+        goal(copperIngot, "t2/casting_table", dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_ITEM.get(),
+                JournalTrigger.TriggerInstance.of(Journal.CASTING_TABLE_POURED));
         AdvancementHolder copperPick = goal(copperIngot, "t2/copper_pickaxe", Items.COPPER_PICKAXE, has(Items.COPPER_PICKAXE));
         List<ItemLike> alloyOres = new ArrayList<>();
         List<ItemLike> crushed = new ArrayList<>();
@@ -113,6 +117,8 @@ final class ModAdvancements extends AdvancementSubProvider {
         ModItems.PLATES.values().forEach(plate -> plates.add(plate.get()));
         AdvancementHolder smith = goal(stoneAnvil, "t2/smith", ModItems.PLATES.get(Metal.BRONZE).get(), anyOf(plates));
 
+        goal(smith, "t2/quick_smith", ModItems.tool(Metal.BRONZE, MoldType.HAMMER_HEAD),
+                JournalTrigger.TriggerInstance.of(Journal.QUICK_SMITH));
         goal(smith, "t2/bronze_tools", ModItems.tool(Metal.BRONZE, MoldType.PICKAXE_HEAD), AdvancementType.GOAL,
                 InventoryChangeTrigger.TriggerInstance.hasItems(bronzeTools()));
         goal(smith, "t2/bronze_armour", ModItems.ARMOUR.get(Metal.BRONZE).get(ModItems.armourTypes()[1]).get(), AdvancementType.GOAL,

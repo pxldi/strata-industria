@@ -34,6 +34,8 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
     private static final int BUTTON_U = 176, BUTTON_V = 0, ICON_U = 176, ICON_V = 18, ANY_HIT_U = 240, ANY_HIT_V = 18;
     /** Weld button faces (normal, hovered, disabled), below the hit icons. */
     private static final int WELD_U = 176, WELD_V = 52;
+    /** Quick-smith button faces (normal, hovered, disabled), below the weld button. */
+    private static final int QUICK_U = 176, QUICK_V = 72;
 
     public AnvilScreen(AnvilMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title, 176, 252);
@@ -51,6 +53,15 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
     private boolean overWeld(double mouseX, double mouseY) {
         double x = mouseX - leftPos - AnvilMenu.WELD_BUTTON_X, y = mouseY - topPos - AnvilMenu.WELD_Y + 1;
         return x >= 0 && x < 18 && y >= 0 && y < 18;
+    }
+
+    private boolean overQuick(double mouseX, double mouseY) {
+        double x = mouseX - leftPos - AnvilMenu.QUICK_BUTTON_X, y = mouseY - topPos - AnvilMenu.WELD_Y + 1;
+        return x >= 0 && x < 18 && y >= 0 && y < 18;
+    }
+
+    private boolean quickReady() {
+        return menu.status() == AnvilBlockEntity.Status.READY && menu.quickKnown();
     }
 
     private int hoveredPlan(double mouseX, double mouseY) {
@@ -72,6 +83,14 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
             if (overWeld(event.x(), event.y())) {
                 if (menu.weldStatus() == AnvilBlockEntity.WeldStatus.READY) {
                     minecraft.gameMode.handleInventoryButtonClick(menu.containerId, AnvilMenu.WELD_BUTTON);
+                } else if (minecraft.player != null) {
+                    minecraft.player.playSound(dev.strataindustria.registry.ModSounds.ANVIL_WELD_FAIL.get(), 0.6f, 1.0f);
+                }
+                return true;
+            }
+            if (overQuick(event.x(), event.y())) {
+                if (quickReady()) {
+                    minecraft.gameMode.handleInventoryButtonClick(menu.containerId, AnvilMenu.QUICK_BUTTON);
                 } else if (minecraft.player != null) {
                     minecraft.player.playSound(dev.strataindustria.registry.ModSounds.ANVIL_WELD_FAIL.get(), 0.6f, 1.0f);
                 }
@@ -137,6 +156,10 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
         boolean weldReady = menu.weldStatus() == AnvilBlockEntity.WeldStatus.READY;
         int weldU = WELD_U + (!weldReady ? 36 : overWeld(mouseX, mouseY) ? 18 : 0);
         g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos + AnvilMenu.WELD_BUTTON_X, topPos + AnvilMenu.WELD_Y - 1, weldU, WELD_V,
+                18, 18, 256, 256);
+
+        int quickU = QUICK_U + (!quickReady() ? 36 : overQuick(mouseX, mouseY) ? 18 : 0);
+        g.blit(RenderPipelines.GUI_TEXTURED, BACKGROUND, leftPos + AnvilMenu.QUICK_BUTTON_X, topPos + AnvilMenu.WELD_Y - 1, quickU, QUICK_V,
                 18, 18, 256, 256);
 
         for (int i = 0; i < 3; i++) {
@@ -222,6 +245,13 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
             Component tip = weld == AnvilBlockEntity.WeldStatus.READY || weld == AnvilBlockEntity.WeldStatus.NONE
                     ? Component.translatable(StrataIndustria.MOD_ID + ".anvil.weld")
                     : Component.translatable(weld.key(), menu.weldingTemperature());
+            g.setTooltipForNextFrame(tip, mouseX, mouseY);
+            return;
+        }
+        if (overQuick(mouseX, mouseY)) {
+            Component tip = menu.selectedPlan() >= 0 && !menu.quickKnown()
+                    ? Component.translatable(StrataIndustria.MOD_ID + ".anvil.quick.unknown")
+                    : Component.translatable(StrataIndustria.MOD_ID + ".anvil.quick.tip");
             g.setTooltipForNextFrame(tip, mouseX, mouseY);
             return;
         }

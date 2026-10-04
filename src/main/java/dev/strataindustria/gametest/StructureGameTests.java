@@ -1,6 +1,7 @@
 package dev.strataindustria.gametest;
 
 import dev.strataindustria.geology.OreMineral;
+import dev.strataindustria.structure.AditPiece;
 import dev.strataindustria.structure.Plan;
 import dev.strataindustria.structure.PlanPiece;
 import dev.strataindustria.structure.Plans;
@@ -38,6 +39,7 @@ final class StructureGameTests {
     static void register(Map<String, Consumer<GameTestHelper>> tests) {
         tests.put("structure_plans_in_forest", StructureGameTests::plansInForest);
         tests.put("structure_sluice_in_forest", StructureGameTests::sluiceInForest);
+        tests.put("structure_adit_in_forest", StructureGameTests::aditInForest);
     }
 
     private static void plansInForest(GameTestHelper helper) {
@@ -70,6 +72,22 @@ final class StructureGameTests {
         forest(level, area, groundY, head.getX() - 3, head.getZ() - 3, 6, 12);
         build(level, new SluicePiece(head, Direction.SOUTH), area);
         audit(level, area, "sluice", problems);
+        helper.assertTrue(problems.isEmpty(), "unclean generation: " + problems.stream().limit(6).toList());
+        helper.succeed();
+    }
+
+    /** The mouth of an adit comes up under the trees: the tunnel clears whole trees and leaves nothing hanging. */
+    private static void aditInForest(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        List<String> problems = new ArrayList<>();
+        BlockPos portal = new BlockPos(origin.getX() + 4 * PAD, groundY, origin.getZ() + 4 * PAD);
+        BoundingBox area = new BoundingBox(portal.getX() - PAD, groundY - 12, portal.getZ() - PAD, portal.getX() + PAD, groundY + 40,
+                portal.getZ() + PAD + 12);
+        forest(level, area, groundY, portal.getX() - 3, portal.getZ() - 3, 6, 16);
+        build(level, AditPiece.straight(portal, Direction.SOUTH, 12), area);
+        audit(level, area, "adit", problems);
         helper.assertTrue(problems.isEmpty(), "unclean generation: " + problems.stream().limit(6).toList());
         helper.succeed();
     }

@@ -1,0 +1,12 @@
+{
+  "parent": "strataindustria:block/power_hammer",
+  "textures": {
+    "base": "strataindustria:block/steam_hammer_base",
+    "base_top": "strataindustria:block/steam_hammer_base_top",
+    "coil": "strataindustria:block/power_hammer_coil",
+    "frame": "strataindustria:block/power_hammer_frame_lv",
+    "motor": "strataindustria:block/power_hammer_motor",
+    "motor_front": "strataindustria:block/power_hammer_motor_front_lv_active",
+    "status": "strataindustria:block/overlay/status_wait"
+  }
+}

@@ -2538,6 +2538,376 @@ public final class ElectricTextures {
         save("block/electric_pump_motor_side", pumpMotorSide());
     }
 
+    // ---------------------------------------------------------------- power hammer and extruder
+
+    /** Riveted steel frame column: flanged edges with rivets, recessed web with a weld seam, tier accent across the foot. */
+    static BufferedImage hammerFrame(boolean mv) {
+        BufferedImage im = TextureGen.img();
+        fill(im, 0, 0, 15, 15, c(STEEL, 3));
+        Random rnd = new Random(mv ? 1302 : 1301);
+        // web: vertical brushed streaks
+        for (int i = 0; i < 7; i++) {
+            int len = 2 + rnd.nextInt(3), x = 4 + rnd.nextInt(8), y = 1 + rnd.nextInt(11);
+            for (int k = 0; k < len; k++) px(im, x, y + k, c(STEEL, i % 3 == 0 ? 2 : 4));
+        }
+        // flanges: lit left edge, shaded right edge, inner shadows where the web sits back
+        for (int y = 0; y < 16; y++) {
+            px(im, 0, y, c(STEEL, 5));
+            px(im, 1, y, c(STEEL, 4));
+            px(im, 2, y, c(STEEL, 2));
+            px(im, 3, y, c(STEEL, 2));
+            px(im, 12, y, c(STEEL, 4));
+            px(im, 13, y, c(STEEL, 4));
+            px(im, 14, y, c(STEEL, 3));
+            px(im, 15, y, c(STEEL, 1));
+        }
+        for (int x = 0; x < 16; x++) { px(im, x, 0, c(STEEL, x < 15 ? 5 : 3)); px(im, x, 15, c(STEEL, 1)); }
+        // weld seam across the web
+        for (int x = 4; x <= 11; x++) {
+            px(im, x, 7, c(STEEL, 1));
+            px(im, x, 8, c(STEEL, x % 2 == 0 ? 5 : 4));
+        }
+        // rivets down both flanges
+        for (int y : new int[]{2, 7, 12}) {
+            px(im, 1, y, c(STEEL, 5)); px(im, 2, y + 1, c(STEEL, 1));
+            px(im, 13, y, c(STEEL, 5)); px(im, 14, y + 1, c(STEEL, 1));
+        }
+        // tier accent across the foot, as on the casings
+        if (mv) {
+            for (int x = 0; x < 16; x++) {
+                px(im, x, 13, c(COPPER, 4));
+                px(im, x, 14, c(ALUMINIUM, 5));
+                px(im, x, 15, c(COPPER, 3));
+            }
+        } else {
+            for (int x = 0; x < 16; x++) px(im, x, 14, c(COPPER, 3));
+        }
+        return im;
+    }
+
+    /** Motor housing side, top and back: bevelled steel plate, cooling fin banks above and below a vent grille. */
+    static BufferedImage hammerMotor() {
+        BufferedImage im = casing(STEEL, 3, 1311);
+        fill(im, 3, 3, 12, 12, c(STEEL, 3));
+        for (int y : new int[]{3, 10}) {
+            for (int k = 0; k < 3; k++)
+                for (int x = 3; x <= 12; x++) px(im, x, y + k, c(STEEL, k == 0 ? 5 : k == 1 ? 3 : 1));
+        }
+        // vent grille: dark slats with a lit lower lip
+        for (int y : new int[]{6, 8}) {
+            for (int x = 3; x <= 12; x++) {
+                px(im, x, y, c(STEEL, 1));
+                px(im, x, y + 1, c(STEEL, 4));
+            }
+        }
+        // fins end in rounded caps
+        for (int y : new int[]{3, 10}) {
+            px(im, 3, y, c(STEEL, 3)); px(im, 12, y, c(STEEL, 3));
+            px(im, 3, y + 2, c(STEEL, 2)); px(im, 12, y + 2, c(STEEL, 2));
+        }
+        return im;
+    }
+
+    static final String[] TIER_LV = {"#...", "#...", "#...", "#...", "####"};
+
+    /** Motor housing front: dark winding window with three copper poles, lamp socket and an engraved tier badge. */
+    static BufferedImage hammerMotorFront(boolean mv, int frame, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 1322 : 1321);
+        // winding window (lip x 1..10, y 1..6), interior 2..9 x 2..5
+        chemLip(im, 1, 1, 10, 5, mv);
+        fill(im, 2, 2, 9, 4, c(STEEL, 1));
+        for (int pole = 0; pole < 3; pole++) {
+            int x0 = 2 + pole * 3;
+            for (int y = 2; y <= 4; y++) {
+                for (int dx = 0; dx < 2; dx++) {
+                    boolean wrap = ((y + (active ? frame : 0) + pole) % 2) == 0;
+                    int col;
+                    if (active) col = wrap ? c(COPPER, 5) : c(COPPER, 4);
+                    else col = wrap ? c(COPPER, 3) : c(COPPER, 2);
+                    if (dx == 1) col = active ? (wrap ? c(COPPER, 4) : c(COPPER, 3)) : (wrap ? c(COPPER, 2) : c(COPPER, 1));
+                    px(im, x0 + dx, y, col);
+                }
+            }
+            if (active) px(im, x0, 2 + (frame + pole) % 3, HEAT[4]);
+        }
+        if (active) {
+            // warm bleed into the gaps between the poles
+            for (int x : new int[]{4, 7}) for (int y = 2; y <= 4; y++) px(im, x, y, y % 2 == frame % 2 ? HEAT[1] : HEAT[0]);
+        }
+        // engraved tier badge under the window
+        String[] l = {"#...", "#...", "#...", "#...", "####"};
+        String[] v = {"#...#", "#...#", ".#.#.", ".#.#.", "..#.."};
+        String[] m = {"#...#", "##.##", "#.#.#", "#...#", "#...#"};
+        String[] a = mv ? m : l;
+        int w = a[0].length() + 1 + v[0].length();
+        String[] both = new String[5];
+        for (int j = 0; j < 5; j++) both[j] = a[j] + "." + v[j];
+        engrave(im, mv, 1 + (14 - w) / 2, 7, both);
+        rivets(im, r, base, new int[][]{{12, 5}});
+        lampOff(im, mv);
+        return im;
+    }
+
+    /** Copper induction coil winding: horizontal wraps with a lit crest, a dark gap and a crossing mark per wrap. */
+    static BufferedImage hammerCoil() {
+        BufferedImage im = TextureGen.img();
+        for (int y = 0; y < 16; y++) {
+            int k = y % 4, wrap = y / 4;
+            for (int x = 0; x < 16; x++) {
+                int step = k == 0 ? 5 : k == 1 ? 4 : k == 2 ? 3 : 1;
+                // the wire is thicker toward the middle of each run: shade by a gentle sine
+                if (k == 2 && (x + wrap * 5) % 8 < 2) step = 2;
+                if (k == 1 && (x + wrap * 5) % 8 == 0) step = 5;
+                px(im, x, y, c(COPPER, step));
+            }
+            px(im, (wrap * 5 + 3) % 16, y - k + 1 >= 0 ? y - k + 1 : y, c(COPPER, 2));
+        }
+        // insulating tie straps at the two ends of the run
+        for (int y = 0; y < 16; y++) {
+            px(im, 0, y, c(RUBBER, y % 4 == 0 ? 5 : 3));
+            px(im, 15, y, c(RUBBER, y % 4 == 0 ? 4 : 2));
+        }
+        return im;
+    }
+
+    /** Ram head atlas, laid out like block/steam_hammer_ram: cap, rod, side strip, ram body, face strip. */
+    static BufferedImage hammerRam() {
+        BufferedImage im = TextureGen.img();
+        // end cap (0..4 x 0..5)
+        block(im, 0, 0, 4, 5, 3);
+        px(im, 2, 2, c(STEEL, 1)); px(im, 2, 3, c(STEEL, 4));
+        // polished rod (6..12 x 0..5): lit left, shaded right, copper collar
+        for (int y = 0; y <= 5; y++)
+            for (int x = 6; x <= 12; x++) px(im, x, y, c(STEEL, x <= 7 ? 5 : x <= 9 ? 4 : x <= 11 ? 3 : 2));
+        for (int x = 6; x <= 12; x++) {
+            px(im, x, 1, c(COPPER, x <= 8 ? 5 : x <= 10 ? 4 : 2));
+            px(im, x, 2, c(COPPER, x <= 8 ? 4 : x <= 10 ? 3 : 1));
+        }
+        // side strip (13..15 x 0..5)
+        for (int y = 0; y <= 5; y++) { px(im, 13, y, c(STEEL, 4)); px(im, 14, y, c(STEEL, 2)); px(im, 15, y, c(STEEL, 1)); }
+        // ram body (0..12 x 6..12): bevelled plate, copper band, rivets
+        block(im, 0, 6, 12, 12, 3);
+        for (int x = 1; x <= 11; x++) { px(im, x, 9, c(COPPER, 4)); px(im, x, 10, c(COPPER, 2)); }
+        for (int[] p : new int[][]{{2, 7}, {10, 7}, {2, 11}, {10, 11}}) px(im, p[0], p[1], c(STEEL, 5));
+        for (int y = 6; y <= 12; y++) { px(im, 13, y, c(STEEL, 3)); px(im, 14, y, c(STEEL, 2)); px(im, 15, y, c(STEEL, 1)); }
+        // striking face strip (rows 13..15)
+        for (int x = 0; x < 16; x++) {
+            px(im, x, 13, c(STEEL, 1));
+            px(im, x, 14, c(STEEL, x % 5 == 2 ? 5 : 4));
+            px(im, x, 15, c(STEEL, x % 5 == 2 ? 3 : 2));
+        }
+        return im;
+    }
+
+    // ---- extruder
+
+    /** Extruder: ram cylinder left, billet chamber, heavy die block right with a bore; the ram pushes the billet through. */
+    static BufferedImage extruderFront(int frame, boolean active) {
+        boolean mv = true;
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = 4;
+        BufferedImage im = frontBase(mv, 1331);
+        // vent slits and a rivet above the port
+        for (int y : new int[]{2, 4})
+            for (int x = 3; x <= 8; x++) {
+                px(im, x, y, c(STEEL, 1));
+                if (y == 2) px(im, x, y + 1, c(r, base + 1));
+            }
+        rivets(im, r, base, new int[][]{{1, 2}});
+        lip(im, mv);
+        fill(im, 2, 6, 13, 11, c(STEEL, 1));
+        int head = active ? 5 + frame : 5;
+        // hydraulic cylinder with its rod
+        block(im, 2, 6, 3, 11, 4);
+        px(im, 2, 8, c(STEEL, 2)); px(im, 3, 8, c(STEEL, 2));
+        for (int x = 4; x <= head; x++) { px(im, x, 8, c(STEEL, 5)); px(im, x, 9, c(STEEL, 3)); }
+        // ram head
+        for (int y = 7; y <= 10; y++) { px(im, head + 1, y, c(STEEL, y == 7 ? 5 : 4)); px(im, head + 2, y, c(STEEL, y == 10 ? 1 : 2)); }
+        // billet (warm copper) between the head and the die
+        for (int x = head + 3; x <= 8; x++) for (int y = 7; y <= 10; y++)
+            px(im, x, y, c(COPPER, y == 7 ? 5 : y == 10 ? 2 : (active ? 4 : 3)));
+        // heavy die block with a narrow bore through the middle
+        block(im, 9, 6, 13, 11, 3);
+        for (int x = 9; x <= 13; x++) { px(im, x, 8, c(STEEL, 1)); px(im, x, 9, c(STEEL, 1)); }
+        px(im, 9, 7, c(STEEL, 1)); px(im, 9, 10, c(STEEL, 1));
+        if (active) {
+            px(im, 9, 8, HEAT[3]); px(im, 9, 9, HEAT[2]);
+            int len = frame == 0 ? 2 : 4;
+            for (int x = 13 - len + 1; x <= 13; x++) { px(im, x, 8, c(COPPER, x == 13 ? 5 : 4)); px(im, x, 9, c(COPPER, 2)); }
+        }
+        // bolts on the die block corners
+        px(im, 10, 6, c(STEEL, 5)); px(im, 12, 11, c(STEEL, 1));
+        lampOff(im, mv);
+        return im;
+    }
+
+    static BufferedImage hammerGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        TextureGen.panel(im, 176, 182);
+        TextureGen.slot(im, 8, 26);
+        TextureGen.slot(im, 8, 46);
+        TextureGen.slot(im, 35, 26);
+        TextureGen.slot(im, 35, 46);
+        TextureGen.slot(im, 71, 35);
+        TextureGen.well(im, 120, 30, 26, 26, TextureGen.SLOT_FILL);
+        // progress arrow: empty outline in the sheet, filled version at u=176, v=0
+        for (int j = 0; j < ARROW_EMPTY.length; j++)
+            for (int i = 0; i < ARROW_EMPTY[j].length(); i++) {
+                char ch = ARROW_EMPTY[j].charAt(i);
+                if (ch == 'o') im.setRGB(93 + i, 35 + j, 0xff555555);
+                else if (ch == 'f') im.setRGB(93 + i, 35 + j, 0xff000000 | TextureGen.SLOT_FILL);
+                char fc = ARROW_FULL[j].charAt(i);
+                if (fc == 'h') im.setRGB(176 + i, j, 0xffffffff);
+                else if (fc == 'b') im.setRGB(176 + i, j, 0xffdfe4ea);
+                else if (fc == 's') im.setRGB(176 + i, j, 0xffadb4be);
+            }
+        // power bar well: 10x46 frame, 8x44 inside at (154, 18)
+        TextureGen.well(im, 153, 17, 10, 46, 0x2b2b30);
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) TextureGen.slot(im, 8 + col * 18, 100 + row * 18);
+        for (int col = 0; col < 9; col++) TextureGen.slot(im, 8 + col * 18, 158);
+        return im;
+    }
+
+    static final String[] ARROW_EMPTY = {
+            "..............o.......",
+            "..............oo......",
+            "..............ofo.....",
+            "..............offo....",
+            "ooooooooooooooffffo...",
+            "offffffffffffffffffo..",
+            "offfffffffffffffffffo.",
+            "offffffffffffffffffffo",
+            "offfffffffffffffffffff",
+            "offffffffffffffffffff.",
+            "offfffffffffffffffff..",
+            "offffffffffffffffff...",
+            "..............offf....",
+            "..............off.....",
+            "..............of......",
+            "..............o.......",
+    };
+    static final String[] ARROW_FULL = {
+            "..............h.......",
+            "..............hh......",
+            "..............hbh.....",
+            "..............hbbh....",
+            "hhhhhhhhhhhhhhbbbbh...",
+            "hbbbbbbbbbbbbbbbbbbh..",
+            "hbbbbbbbbbbbbbbbbbbbh.",
+            "hbbbbbbbbbbbbbbbbbbbbh",
+            "hbbbbbbbbbbbbbbbbbbbbs",
+            "hbbbbbbbbbbbbbbbbbbbs.",
+            "hbbbbbbbbbbbbbbbbbbs..",
+            "hsssssssssssssbbbbs...",
+            "..............hbbs....",
+            "..............hbs.....",
+            "..............hs......",
+            "..............h.......",
+    };
+
+    static BufferedImage extruderGui() {
+        BufferedImage im = machineGui(new int[]{}, 0);
+        TextureGen.slot(im, 44, 36);
+        TextureGen.slot(im, 62, 36);
+        TextureGen.arrow(im, 86, 36);
+        TextureGen.slot(im, 116, 36);
+        return im;
+    }
+
+    /** Mode button: the lathe button's bevelled 14x14 face with a coloured glyph map ('#' dark, letters in {@code pal}). */
+    static BufferedImage modeButton(String[] g, Map<Character, Integer> pal) {
+        BufferedImage im = new BufferedImage(14, 14, BufferedImage.TYPE_INT_ARGB);
+        fill(im, 0, 0, 13, 13, TextureGen.GUI_FACE);
+        for (int i = 0; i < 14; i++) {
+            TextureGen.px(im, i, 0, TextureGen.GUI_LIGHT);
+            TextureGen.px(im, 0, i, TextureGen.GUI_LIGHT);
+            TextureGen.px(im, i, 13, TextureGen.GUI_SHADOW);
+            TextureGen.px(im, 13, i, TextureGen.GUI_SHADOW);
+        }
+        TextureGen.px(im, 13, 0, TextureGen.GUI_FACE);
+        TextureGen.px(im, 0, 13, TextureGen.GUI_FACE);
+        int x0 = (14 - g[0].length()) / 2, y0 = (14 - g.length) / 2;
+        for (int j = 0; j < g.length; j++)
+            for (int i = 0; i < g[j].length(); i++) {
+                char ch = g[j].charAt(i);
+                if (ch == '.') continue;
+                TextureGen.px(im, x0 + i, y0 + j, ch == '#' ? TextureGen.SLOT_DARK : pal.get(ch));
+            }
+        return im;
+    }
+
+    static final String[] CABLE_LV = {
+            "..####..",
+            ".#ssss#.",
+            "#ssccss#",
+            "#sccccs#",
+            "#sccccs#",
+            "#ssccss#",
+            ".#ssss#.",
+            "..####..",
+    };
+    static final String[] CABLE_MV = {
+            "...####...",
+            ".##tttt##.",
+            ".#tiiiit#.",
+            "#tiicciit#",
+            "#ticcccit#",
+            "#ticcccit#",
+            "#tiicciit#",
+            ".#tiiiit#.",
+            ".##tttt##.",
+            "...####...",
+    };
+    static final String[] PIPE = {
+            "........####",
+            "........#ff#",
+            "#########ff#",
+            "#hhhhhhh#ff#",
+            "#mmmmmmm#ff#",
+            "#mmmmmmm#ff#",
+            "#ddddddd#ff#",
+            "#########ff#",
+            "........#ff#",
+            "........####",
+    };
+
+    static void hammerAndExtruder() throws IOException {
+        for (boolean mv : new boolean[]{false, true}) {
+            String t = mv ? "mv" : "lv";
+            save("block/power_hammer_frame_" + t, hammerFrame(mv));
+            save("block/power_hammer_motor_front_" + t, hammerMotorFront(mv, 0, false));
+            TextureGen.saveAnimated("block/power_hammer_motor_front_" + t + "_active", strip2(f -> hammerMotorFront(mv, f, true)), 2);
+        }
+        save("block/power_hammer_motor", hammerMotor());
+        save("block/power_hammer_coil", hammerCoil());
+        save("block/power_hammer_ram", hammerRam());
+        TextureGen.saveRaw("gui/power_hammer", hammerGui());
+
+        save("block/extruder_front_mv", extruderFront(0, false));
+        TextureGen.saveAnimated("block/extruder_front_mv_active", strip2(f -> extruderFront(f, true)), 2);
+        TextureGen.saveRaw("gui/extruder", extruderGui());
+
+        String sp = "gui/sprites/container/electric_machine/";
+        TextureGen.saveRaw(sp + "extruder_cable_lv", modeButton(CABLE_LV, Map.of('s', 0x3c3836, 'c', 0xcf7a3e)));
+        TextureGen.saveRaw(sp + "extruder_cable_mv", modeButton(CABLE_MV,
+                Map.of('t', 0x4a5a70, 'i', 0x8a98aa, 'c', 0xcf7a3e)));
+        TextureGen.saveRaw(sp + "extruder_pipe", modeButton(PIPE, Map.of('h', 0xffffff, 'm', 0x8b8b8b, 'd', 0x555555, 'f', 0x7a7a7a)));
+
+        OUTS.put("preview/power_hammer_motor_lv", hammerMotorFront(false, 1, true));
+        OUTS.put("preview/power_hammer_motor_mv", hammerMotorFront(true, 1, true));
+        OUTS.put("preview/extruder_mv", extruderFront(1, true));
+        OUTS.put("preview/power_hammer_coil", hammerCoil());
+    }
+
+    static BufferedImage strip2(java.util.function.IntFunction<BufferedImage> frames) {
+        BufferedImage strip = new BufferedImage(16, 32, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 2; f++) strip.getGraphics().drawImage(frames.apply(f), 0, f * 16, null);
+        return strip;
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -2553,6 +2923,7 @@ public final class ElectricTextures {
         generators();
         heatAndMotion();
         chemistry();
+        hammerAndExtruder();
         overheadLines();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");

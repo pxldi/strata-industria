@@ -1,7 +1,6 @@
 package dev.strataindustria.survey;
 
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.geology.OreMineral;
 import net.minecraft.network.chat.Component;
 
 /** The words on a sheet of survey notes (structures spec 5.2). Shared by the tooltip and the screen. */
@@ -25,7 +24,7 @@ public final class SurveyText {
         return Component.translatable(PREFIX + "dir." + COMPASS[compassIndex(dx, dz)]);
     }
 
-    /** "About 250 blocks", rounded to 50 so the notes stay a sketch, not a map. */
+    /** "~250", rounded to 50 so the notes stay a sketch, not a map. */
     public static Component distance(double dx, double dz) {
         double d = Math.sqrt(dx * dx + dz * dz);
         if (d < 32) return Component.translatable(PREFIX + "distance.here");
@@ -33,7 +32,7 @@ public final class SurveyText {
         return Component.translatable(PREFIX + "distance", rounded);
     }
 
-    /** Where to look and how far: "North-east, about 250 blocks". */
+    /** Where to look and how far: "NE, ~250". */
     public static Component bearing(double dx, double dz) {
         return Component.translatable(PREFIX + "bearing", direction(dx, dz), distance(dx, dz));
     }
@@ -43,29 +42,14 @@ public final class SurveyText {
         return Component.translatable(PREFIX + "depth." + key);
     }
 
-    public static Component host(String rock) {
-        return Component.translatable(PREFIX + "host", Component.translatable(StrataIndustria.MOD_ID + ".knapped_from.material." + rock));
-    }
-
-    public static Component size(int size) {
-        return Component.translatable(PREFIX + "size." + switch (size) {
-            case 0 -> "small";
-            case 1 -> "medium";
-            default -> "large";
-        });
+    /** "In granite, shallow": the host rock and how far down, on one line. */
+    public static Component where(String rock, int depth) {
+        return Component.translatable(PREFIX + "where",
+                Component.translatable(StrataIndustria.MOD_ID + ".knapped_from.material." + rock), depth(depth));
     }
 
     /** The writer's own line about this mineral; one of {@link Surveyor#HANDS}. */
     public static Component hand(String mineral, int hand) {
         return Component.translatable(PREFIX + "hand." + mineral + "." + Math.floorMod(hand, Surveyor.HANDS));
-    }
-
-    /** "Needs a copper pick" for ores that stone will not cut; null when a stone pick does. */
-    public static Component toolHint(String mineral) {
-        OreMineral m = Surveyor.mineral(mineral);
-        if (m != null && m.needsWroughtIronTool()) return Component.translatable(PREFIX + "tool.wrought_iron");
-        if (m != null && m.needsBronzeTool()) return Component.translatable(PREFIX + "tool.bronze");
-        if (m != null && m.needsCopperTool()) return Component.translatable(PREFIX + "tool.copper");
-        return null;
     }
 }

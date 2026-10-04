@@ -96,6 +96,21 @@ public class AditPiece extends StructurePiece {
         tag.putString("Dig", digPlan);
     }
 
+    /** A straight propped tunnel from a portal at the surface, sinking one block in three. For tests. */
+    public static AditPiece straight(BlockPos portal, Direction heading, int length) {
+        int[] flat = new int[length * STRIDE];
+        for (int i = 0; i < length; i++) {
+            int at = i * STRIDE;
+            flat[at] = portal.getX() + heading.getStepX() * i;
+            flat[at + 1] = portal.getY() - i / 3;
+            flat[at + 2] = portal.getZ() + heading.getStepZ() * i;
+            flat[at + 3] = heading.get3DDataValue();
+            flat[at + 4] = PROPS;
+        }
+        return new AditPiece(flat, OreMineral.MALACHITE, PlanPiece.Wood.OAK, portal.getY(), 7L, false, heading.getClockWise(),
+                "adit/mining");
+    }
+
     private static BoundingBox box(int[] steps) {
         BoundingBox box = null;
         for (int i = 0; i < steps.length; i += STRIDE) {

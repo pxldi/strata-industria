@@ -110,6 +110,7 @@ public final class ModGameTests {
         TESTS.put("charcoal_pit_exposed", ModGameTests::charcoalPitExposed);
         TESTS.put("crucible_casting", ModGameTests::crucibleCasting);
         TESTS.put("anvil_smithing", ModGameTests::anvilSmithing);
+        TESTS.put("anvil_quick_smith", ModGameTests::anvilQuickSmith);
         TESTS.put("kinetic_network", ModGameTests::kineticNetwork);
         TESTS.put("core_sample", ModGameTests::coreSample);
         TESTS.put("sluice_washing", ModGameTests::sluiceWashing);
@@ -119,8 +120,10 @@ public final class ModGameTests {
         Tier4GameTests.register(TESTS);
         Tier5GameTests.register(TESTS);
         Tier6GameTests.register(TESTS);
+        PrologueGameTests.register(TESTS);
         JournalGameTests.register(TESTS);
         StructureGameTests.register(TESTS);
+        CollectibleGameTests.register(TESTS);
     }
 
     private ModGameTests() {}
@@ -537,6 +540,54 @@ public final class ModGameTests {
         helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "the anvil should hold a copper plate, got " + out);
         Quality quality = out.get(ModDataComponents.QUALITY.get());
         helper.assertTrue(quality != null && quality.craft() == 10, "a perfect smith should give +10 craft quality, got " + quality);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.INPUT).isEmpty(), "the ingot should be used up");
+        helper.succeed();
+    }
+
+    // Quick smith: a plan finished by hand once can be finished again at normal quality; a stranger cannot.
+
+    private static void anvilQuickSmith(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(pos, ModBlocks.STONE_ANVILS.get(Rock.BASALT).get().defaultBlockState(), Block.UPDATE_ALL);
+        AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
+        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
+        smith.getInventory().setItem(0, new ItemStack(ModItems.STONE_HAMMER.get()));
+        FakePlayer stranger = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "stranger"));
+        stranger.getInventory().setItem(0, new ItemStack(ModItems.STONE_HAMMER.get()));
+
+        ItemStack ingot = new ItemStack(Items.COPPER_INGOT);
+        Heat.set(ingot, 1000.0f, level.getGameTime());
+        anvil.setItem(AnvilBlockEntity.INPUT, ingot);
+        RecipeHolder<AnvilRecipe> plate = level.recipeAccess().recipeMap()
+                .getRecipesFor(ModRecipes.ANVIL.get(), new SingleRecipeInput(ingot), level)
+                .filter(r -> r.value().result().create().is(ModItems.PLATES.get(Metal.COPPER).get()))
+                .findFirst().orElseThrow(() -> helper.assertionException("no copper plate recipe"));
+        helper.assertTrue(anvil.select(plate.id()), "the anvil should offer a copper plate");
+        helper.assertTrue(!anvil.knowsPlan(smith), "nothing smithed yet");
+
+        // Before the first hand craft, Quick does nothing.
+        anvil.quick(smith);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "quick smith should wait for a hand craft");
+
+        for (HitType hit : solve(Smithing.target(level, plate.id(), plate.value()), plate.value().rules())) anvil.hit(smith, hit);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).is(ModItems.PLATES.get(Metal.COPPER).get()), "the hand craft should finish");
+        anvil.setItem(AnvilBlockEntity.OUTPUT, ItemStack.EMPTY);
+
+        ItemStack second = new ItemStack(Items.COPPER_INGOT);
+        Heat.set(second, 1000.0f, level.getGameTime());
+        anvil.setItem(AnvilBlockEntity.INPUT, second);
+        helper.assertTrue(anvil.select(plate.id()), "the anvil should offer a copper plate again");
+        helper.assertTrue(anvil.knowsPlan(smith), "the smith should know the plan now");
+        helper.assertTrue(!anvil.knowsPlan(stranger), "another player has not smithed it");
+
+        anvil.quick(stranger);
+        helper.assertTrue(anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(), "a stranger cannot quick smith it");
+        anvil.quick(smith);
+        ItemStack out = anvil.getItem(AnvilBlockEntity.OUTPUT);
+        helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "quick smith should give a copper plate, got " + out);
+        Quality quality = out.get(ModDataComponents.QUALITY.get());
+        helper.assertTrue(quality != null && quality.craft() == Smithing.QUICK_CRAFT, "quick smith should give normal craft quality, got " + quality);
         helper.assertTrue(anvil.getItem(AnvilBlockEntity.INPUT).isEmpty(), "the ingot should be used up");
         helper.succeed();
     }

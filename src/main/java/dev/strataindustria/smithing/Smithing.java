@@ -15,6 +15,8 @@ public final class Smithing {
     public static final int MAX_POSITION = 150;
     public static final int MIN_TARGET = 40;
     public static final int MAX_TARGET = 110;
+    /** Craft quality of a quick-smithed piece: a steady run with a few spare blows, not the best and not the worst. */
+    public static final int QUICK_CRAFT = 2;
 
     private static final Map<String, Integer> MIN_HITS = new ConcurrentHashMap<>();
 

@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.Fluid;
  * power bar, the status line and the auto-eject toggle (button 0).
  */
 public class ChemicalMachineMenu extends AbstractContainerMenu {
-    public static final int BUTTON_EJECT = 0;
+    public static final int BUTTON_EJECT = 0, BUTTON_MODE = 1;
 
     private final ChemicalMachineLayout layout;
     private final ElectricTier tier;
@@ -73,6 +73,7 @@ public class ChemicalMachineMenu extends AbstractContainerMenu {
             case MIXER -> Tier5Menus.MIXER.get();
             case ELECTROLYSER -> Tier5Menus.ELECTROLYSER.get();
             case ASSEMBLER -> Tier5Menus.ASSEMBLER.get();
+            case EXTRUDER -> Tier5Menus.EXTRUDER.get();
         };
     }
 
@@ -106,6 +107,11 @@ public class ChemicalMachineMenu extends AbstractContainerMenu {
         return Math.min(1.0f, data.get(ChemicalMachineLayout.BUFFER) / 100.0f);
     }
 
+    /** The mode button's setting (the extruder's cable LV, cable MV, pipe). */
+    public int mode() {
+        return data.get(ChemicalMachineLayout.MODE);
+    }
+
     public boolean autoEject() {
         return data.get(ChemicalMachineLayout.EJECT) != 0;
     }
@@ -127,6 +133,10 @@ public class ChemicalMachineMenu extends AbstractContainerMenu {
     public boolean clickMenuButton(Player player, int id) {
         if (id == BUTTON_EJECT && container instanceof ChemicalMachineBlockEntity machine) {
             machine.toggleAutoEject();
+            return true;
+        }
+        if (id == BUTTON_MODE && layout.hasMode() && container instanceof ChemicalMachineBlockEntity machine) {
+            machine.toggleMode();
             return true;
         }
         return false;

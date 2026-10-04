@@ -51,6 +51,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         chemistry();
         storage();
         assembling();
+        hammerAndExtruder();
         overheadLines();
         heatAndMotion();
     }
@@ -486,6 +487,43 @@ final class Tier5RecipeProvider extends RecipeProvider {
         output.accept(key("clay_forming/unfired_insulator"), new dev.strataindustria.knapping.KnappingRecipe(Ingredient.of(Items.CLAY_BALL),
                 dev.strataindustria.knapping.Knapping.CLAY_OPENING_COST, pattern, true, new ItemStackTemplate(Tier5Items.UNFIRED_INSULATOR.get(), 2)), null);
         assemble("acsr_conductor", 200, Tier5Items.ACSR_CONDUCTOR.get(), 4, null, Tier5Items.ALUMINIUM_WIRE.get(), 6, Tier5Items.STEEL_WIRE.get(), 1);
+    }
+
+    // Spec 10.8 and 10.9: the power hammer, the extruder and the extruder's recipes. H hull, C circuit, M motor.
+    private void hammerAndExtruder() {
+        shapeless(RecipeCategory.REDSTONE, Tier5Items.POWER_HAMMER.get())
+                .requires(Tier4Items.STEAM_HAMMER.get())
+                .requires(Tier5Items.LV_MACHINE_HULL.get())
+                .requires(Tier5Items.ELECTRIC_MOTOR.get())
+                .requires(Tier5Items.BASIC_CIRCUIT.get())
+                .unlockedBy("has_steam_hammer", has(Tier4Items.STEAM_HAMMER.get()))
+                .save(output, key("power_hammer"));
+        shaped(RecipeCategory.REDSTONE, Tier5Items.EXTRUDER.get())
+                .pattern(" D ")
+                .pattern("CHM")
+                .pattern(" K ")
+                .define('D', Tier5Items.DRAW_PLATE.get())
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('H', Tier5Items.LV_MACHINE_HULL.get())
+                .define('M', Tier5Items.ELECTRIC_MOTOR.get())
+                .define('K', Tier5Items.MV_UPGRADE_KIT.get())
+                .unlockedBy("has_mv_upgrade_kit", has(Tier5Items.MV_UPGRADE_KIT.get()))
+                .save(output, key("extruder"));
+
+        Item wire = Tier5Items.COPPER_WIRE.get(), rubber = Tier5Items.RUBBER.get();
+        extrude("cable_lv", "lv_cable", Tier5Items.LV_CABLE.get(), 3, 100, Ingredient.of(wire), 2, Ingredient.of(rubber), 1);
+        extrude("cable_mv", "mv_cable", Tier5Items.MV_CABLE.get(), 3, 100, Ingredient.of(wire), 2, Ingredient.of(rubber), 2);
+        extrude("pipe", "copper_fluid_pipe", Tier4Items.COPPER_FLUID_PIPE.get(), 4, 100, Ingredient.of(ModItems.PLATES.get(Metal.COPPER).get()), 1);
+        extrude("pipe", "bronze_fluid_pipe", Tier4Items.BRONZE_FLUID_PIPE.get(), 4, 100, tag(dev.strataindustria.registry.ModTags.Items.ANY_BRONZE_PLATES), 1);
+        extrude("pipe", "steel_fluid_pipe", Tier4Items.STEEL_FLUID_PIPE.get(), 4, 100, Ingredient.of(ModItems.PLATES.get(Metal.STEEL).get()), 1);
+    }
+
+    /** An extruder recipe: {@code inputs} alternate ingredient and count. */
+    private void extrude(String mode, String name, Item result, int count, int ticks, Object... inputs) {
+        List<ChemicalIo.ItemInput> items = new java.util.ArrayList<>();
+        for (int i = 0; i < inputs.length; i += 2) items.add(new ChemicalIo.ItemInput((Ingredient) inputs[i], (Integer) inputs[i + 1]));
+        output.accept(key("extruding/" + mode + "/" + name), new dev.strataindustria.processing.ExtrudingRecipe(mode, new ChemicalIo(items, List.of(),
+                List.of(new ItemStackTemplate(result, count)), List.of(), ticks, ElectricTier.LV, 0)), null);
     }
 
     /** An assembler recipe: {@code inputs} alternate item and count. */

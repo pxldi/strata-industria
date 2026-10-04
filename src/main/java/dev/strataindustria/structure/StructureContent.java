@@ -4,7 +4,21 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.block.GroundCoverBlock;
 import dev.strataindustria.survey.SurveyNotes;
 import dev.strataindustria.survey.SurveyNotesItem;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.SmithingTemplateItem;
+import net.minecraft.world.level.block.entity.BannerPattern;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.DecoratedPotPattern;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -33,6 +47,8 @@ public final class StructureContent {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(StrataIndustria.MOD_ID);
     public static final DeferredRegister.DataComponents COMPONENTS =
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, StrataIndustria.MOD_ID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, StrataIndustria.MOD_ID);
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, StrataIndustria.MOD_ID);
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES =
             DeferredRegister.create(Registries.STRUCTURE_TYPE, StrataIndustria.MOD_ID);
@@ -90,6 +106,69 @@ public final class StructureContent {
     public static final DeferredItem<SurveyNotesItem> SURVEY_NOTES = ITEMS.registerItem("survey_notes", SurveyNotesItem::new,
             p -> p.stacksTo(1));
 
+    /** A sheet written by someone who worked there instead of a prospector's notes: the text key, such as {@code mining_camp.1}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> LEDGER =
+            COMPONENTS.registerComponentType("ledger", b -> b
+                    .persistent(Codec.STRING)
+                    .networkSynchronized(ByteBufCodecs.STRING_UTF8));
+
+    // ---------------------------------------------------------------- collectibles (structures v2 section 4.1)
+
+    /** The mineral id of a {@link MineralSpecimenItem}. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MINERAL =
+            COMPONENTS.registerComponentType("mineral", b -> b
+                    .persistent(Codec.STRING)
+                    .networkSynchronized(ByteBufCodecs.STRING_UTF8));
+    public static final DeferredItem<MineralSpecimenItem> MINERAL_SPECIMEN = ITEMS.registerItem("mineral_specimen",
+            MineralSpecimenItem::new, p -> p.stacksTo(16));
+
+    public static final DeferredBlock<SpecimenShelfBlock> SPECIMEN_SHELF = BLOCKS.registerBlock("specimen_shelf",
+            SpecimenShelfBlock::new,
+            p -> p.mapColor(MapColor.WOOD)
+                    .strength(1.0f)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .ignitedByLava());
+    public static final DeferredItem<BlockItem> SPECIMEN_SHELF_ITEM = ITEMS.registerSimpleBlockItem(SPECIMEN_SHELF);
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SpecimenShelfBlockEntity>> SPECIMEN_SHELF_ENTITY =
+            BLOCK_ENTITIES.register("specimen_shelf", () -> new BlockEntityType<>(SpecimenShelfBlockEntity::new, SPECIMEN_SHELF.get()));
+
+    /** One sherd per place; a decorated pot of them records where its owner has been. The ids are also the pot pattern ids. */
+    public static final List<String> SHERD_PLACES = List.of("charcoal_burners", "prospector", "mining_camp", "collapsed_adit",
+            "ruined_bloomery", "placer_workings");
+    public static final Map<String, DeferredItem<Item>> SHERDS = new LinkedHashMap<>();
+    /** Armour trims "miner" and "smith": the templates, and the trim pattern each applies. */
+    public static final DeferredItem<SmithingTemplateItem> MINER_TRIM_TEMPLATE = ITEMS.registerItem("miner_armor_trim_smithing_template",
+            SmithingTemplateItem::createArmorTrimTemplate, p -> p.rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<SmithingTemplateItem> SMITH_TRIM_TEMPLATE = ITEMS.registerItem("smith_armor_trim_smithing_template",
+            SmithingTemplateItem::createArmorTrimTemplate, p -> p.rarity(Rarity.UNCOMMON));
+    public static final ResourceKey<net.minecraft.world.item.equipment.trim.TrimPattern> MINER_TRIM = trim("miner");
+    public static final ResourceKey<net.minecraft.world.item.equipment.trim.TrimPattern> SMITH_TRIM = trim("smith");
+
+    /** Banner pattern: crossed pick and hammer. The tag lists the patterns the item grants. */
+    public static final TagKey<BannerPattern> PICK_AND_HAMMER_TAG =
+            TagKey.create(Registries.BANNER_PATTERN, StrataIndustria.id("pattern_item/pick_and_hammer"));
+    public static final ResourceKey<BannerPattern> PICK_AND_HAMMER =
+            ResourceKey.create(Registries.BANNER_PATTERN, StrataIndustria.id("pick_and_hammer"));
+    public static final DeferredItem<Item> PICK_AND_HAMMER_BANNER_PATTERN = ITEMS.registerItem("pick_and_hammer_banner_pattern",
+            Item::new, p -> p.stacksTo(1).rarity(Rarity.UNCOMMON)
+                    .delayedComponent(DataComponents.PROVIDES_BANNER_PATTERNS, context -> context.getOrThrow(PICK_AND_HAMMER_TAG)));
+
+    static {
+        for (String place : SHERD_PLACES) {
+            SHERDS.put(place, ITEMS.registerItem(place + "_pottery_sherd", Item::new,
+                    p -> p.rarity(Rarity.UNCOMMON).potPattern(potPattern(place))));
+        }
+    }
+
+    public static ResourceKey<DecoratedPotPattern> potPattern(String place) {
+        return ResourceKey.create(Registries.DECORATED_POT_PATTERN, StrataIndustria.id(place + "_pottery_pattern"));
+    }
+
+    private static ResourceKey<net.minecraft.world.item.equipment.trim.TrimPattern> trim(String id) {
+        return ResourceKey.create(Registries.TRIM_PATTERN, StrataIndustria.id(id));
+    }
+
     // ---------------------------------------------------------------- sounds
 
     /** A timber groaning under the weight of a mine roof. */
@@ -135,6 +214,7 @@ public final class StructureContent {
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         COMPONENTS.register(modBus);
+        BLOCK_ENTITIES.register(modBus);
         SOUNDS.register(modBus);
         STRUCTURE_TYPES.register(modBus);
         PIECE_TYPES.register(modBus);

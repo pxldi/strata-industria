@@ -173,7 +173,7 @@ public class KilnBlockEntity extends BaseContainerBlockEntity implements Worldly
     }
 
     /** Merges {@code stack} into {@code slots}, filling matching stacks first, and returns what is left. */
-    private static ItemStack merge(NonNullList<ItemStack> slots, ItemStack stack) {
+    static ItemStack merge(NonNullList<ItemStack> slots, ItemStack stack) {
         for (int pass = 0; pass < 2 && !stack.isEmpty(); pass++) {
             for (int i = 0; i < slots.size() && !stack.isEmpty(); i++) {
                 ItemStack there = slots.get(i);
