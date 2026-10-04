@@ -33,5 +33,7 @@ public final class JeiTypes {
     public static final IRecipeType<Processes.Bloomery> BLOOMERY = IRecipeType.create(StrataIndustria.id("bloomery"), Processes.Bloomery.class);
     public static final IRecipeType<Processes.Coking> COKING = IRecipeType.create(StrataIndustria.id("coking"), Processes.Coking.class);
 
+    public static final IRecipeType<Processes.FireboxFuel> FIREBOX_FUEL = IRecipeType.create(StrataIndustria.id("firebox_fuel"), Processes.FireboxFuel.class);
+
     private JeiTypes() {}
 }

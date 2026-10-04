@@ -59,7 +59,8 @@ public final class StrataJeiPlugin implements IModPlugin {
                 new WashingCategory(gui),
                 new BarrelCategory(gui),
                 new RoastingCategory(gui),
-                new CokingCategory(gui));
+                new CokingCategory(gui),
+                new FireboxFuelCategory(gui));
     }
 
     @Override
@@ -82,6 +83,7 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addRecipes(JeiTypes.CASTING, Processes.casting());
         registration.addRecipes(JeiTypes.BLOOMERY, Processes.bloomery());
         registration.addRecipes(JeiTypes.COKING, Processes.coking());
+        registration.addRecipes(JeiTypes.FIREBOX_FUEL, Processes.fireboxFuel());
     }
 
     @Override
@@ -102,6 +104,7 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addCraftingStation(JeiTypes.BARREL, ModItems.SOAKING_BARREL.get());
         registration.addCraftingStation(JeiTypes.ROASTING, ModItems.FORGE.get());
         registration.addCraftingStation(JeiTypes.COKING, Tier4Items.COKE_OVEN_DOOR.get());
+        registration.addCraftingStation(JeiTypes.FIREBOX_FUEL, Tier4Items.FIREBOX.get());
         // The fire pit cooks vanilla campfire recipes.
         registration.addCraftingStation(RecipeTypes.CAMPFIRE_COOKING, ModItems.FIRE_PIT.get());
     }

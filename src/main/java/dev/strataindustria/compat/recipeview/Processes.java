@@ -14,6 +14,7 @@ import dev.strataindustria.metal.MetalContent;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import dev.strataindustria.registry.Tier4Fluids;
+import dev.strataindustria.steam.FireboxBlockEntity;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -51,6 +52,21 @@ public final class Processes {
 
     /** One coke oven bake. */
     public record Coking(List<ItemStack> input, ItemStack result, Fluid creosote, int creosoteAmount, int ticks) {}
+
+    /** Items that burn in a steam firebox, grouped by the fuel row they share (tier 4 spec 8.1). */
+    public record FireboxFuel(List<ItemStack> fuel, int burnTicks, int maxTemperature, int heat) {}
+
+    public static List<FireboxFuel> fireboxFuel() {
+        java.util.Map<FireboxBlockEntity.Fuel, List<ItemStack>> byFuel = new java.util.LinkedHashMap<>();
+        BuiltInRegistries.ITEM.stream().sorted(Comparator.comparing(Processes::id)).map(ItemStack::new).forEach(stack -> {
+            FireboxBlockEntity.Fuel fuel = FireboxBlockEntity.fuelFor(stack);
+            if (fuel != null) byFuel.computeIfAbsent(fuel, f -> new ArrayList<>()).add(stack);
+        });
+        return byFuel.entrySet().stream()
+                .sorted(Comparator.comparingInt(e -> e.getKey().maxTemperature()))
+                .map(e -> new FireboxFuel(e.getValue(), e.getKey().burnTicks(), e.getKey().maxTemperature(), e.getKey().heat()))
+                .toList();
+    }
 
     public static List<Firing> kilnFiring() {
         int ticks = safe(Config.KILN_BURN_TICKS::getAsInt, 6000);

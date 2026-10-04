@@ -847,11 +847,13 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "category.barrel", "Soaking Barrel");
         add(k + "category.roasting", "Roasting");
         add(k + "category.coking", "Coke Oven");
+        add(k + "category.firebox_fuel", "Firebox Fuel");
         add(k + "heat.work", "Work at %s heat");
         add(k + "heat.weld", "Weld at %s heat");
         add(k + "heat.melt", "Melts at %s heat");
         add(k + "heat.roast", "Roast at %s heat");
         add(k + "heat.bloom", "Fire to %s heat");
+        add(k + "heat.fuel", "Up to %s heat");
         add(k + "heat.tooltip", "Heat it until it glows this colour");
         add(k + "time.seconds", "%s s");
         add(k + "time.minutes", "%s min");
@@ -868,5 +870,6 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "crucible.refractory", "Refractory crucible only");
         add(k + "casting.units", "%s units");
         add(k + "bloomery.per_level", "Per chimney level");
+        add(k + "firebox.heat", "%s HU per tick");
     }
 }
