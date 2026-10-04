@@ -5,6 +5,9 @@ import dev.strataindustria.client.rail.MineTubModel;
 import dev.strataindustria.client.rail.InclineWinchRenderer;
 import dev.strataindustria.client.rail.MineTubRenderer;
 import dev.strataindustria.client.rail.PonyRenderer;
+import dev.strataindustria.client.rail.WagonModel;
+import dev.strataindustria.client.rail.WagonRenderer;
+import dev.strataindustria.transport.rail.RailwayRegistry;
 import dev.strataindustria.client.screen.TubStopScreen;
 import dev.strataindustria.transport.rail.RailRegistry;
 import dev.strataindustria.transport.rail.StopData;
@@ -26,12 +29,21 @@ public final class RailClient {
     @SubscribeEvent
     static void layers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(MineTubModel.LAYER, MineTubModel::createBodyLayer);
+        event.registerLayerDefinition(WagonModel.ORE_LAYER, WagonModel::createOreLayer);
+        event.registerLayerDefinition(WagonModel.TANK_LAYER, WagonModel::createTankLayer);
+        event.registerLayerDefinition(WagonModel.FLAT_LAYER, WagonModel::createFlatLayer);
     }
 
     @SubscribeEvent
     static void renderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(RailRegistry.MINE_TUB_ENTITY.get(), MineTubRenderer::new);
         event.registerEntityRenderer(RailRegistry.PONY_ENTITY.get(), PonyRenderer::new);
+        event.registerEntityRenderer(RailwayRegistry.ORE_WAGON_ENTITY.get(),
+                context -> WagonRenderer.of(context, WagonModel.ORE_LAYER, "ore_wagon", 0.47f));
+        event.registerEntityRenderer(RailwayRegistry.TANK_WAGON_ENTITY.get(),
+                context -> WagonRenderer.of(context, WagonModel.TANK_LAYER, "tank_wagon", 0.41f));
+        event.registerEntityRenderer(RailwayRegistry.FLAT_WAGON_ENTITY.get(),
+                context -> WagonRenderer.of(context, WagonModel.FLAT_LAYER, "flat_wagon", 0.41f));
         event.registerBlockEntityRenderer(RailRegistry.INCLINE_WINCH_ENTITY.get(), InclineWinchRenderer::new);
     }
 }

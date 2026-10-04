@@ -105,6 +105,7 @@ final class ModRecipeProvider extends RecipeProvider {
         new SharedBlockData.Recipes(recipeContext, advancementContext).buildRecipes();
         new FootData.Recipes(recipeContext, advancementContext).buildRecipes();
         new RailData.Recipes(recipeContext, advancementContext).buildRecipes();
+        new RailwayData.Recipes(recipeContext, advancementContext).buildRecipes();
         vanillaOverrides();
     }
 

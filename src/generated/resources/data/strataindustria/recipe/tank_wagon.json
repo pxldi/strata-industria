@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "strataindustria:steel_rod",
+    "E": "strataindustria:steel_plate",
+    "T": "strataindustria:fluid_tank"
+  },
+  "pattern": [
+    "E E",
+    "ETE",
+    " D "
+  ],
+  "result": {
+    "id": "strataindustria:tank_wagon"
+  }
+}

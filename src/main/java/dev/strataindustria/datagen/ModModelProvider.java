@@ -73,6 +73,7 @@ final class ModModelProvider extends ModelProvider {
         GridData.models(blockModels, itemModels);
         FootData.models(blockModels, itemModels);
         RailData.models(blockModels, itemModels);
+        RailwayData.models(blockModels, itemModels);
         LogisticsData.models(blockModels, itemModels);
         tier6(blockModels, itemModels);
         for (Rock rock : Rock.values()) {

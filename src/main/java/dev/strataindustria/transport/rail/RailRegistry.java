@@ -73,7 +73,7 @@ public final class RailRegistry {
             p -> new MinecartItem(MINE_TUB_ENTITY.get(), p), p -> p.stacksTo(1));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TubStopBlockEntity>> TUB_STOP_ENTITY =
-            ModBlockEntities.BLOCK_ENTITIES.register("tub_stop", () -> new BlockEntityType<>(TubStopBlockEntity::new, TUB_STOP.get()));
+            ModBlockEntities.BLOCK_ENTITIES.register("tub_stop", () -> new BlockEntityType<>(TubStopBlockEntity::new, TUB_STOP.get(), RailwayRegistry.STATION_TRACK.get()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HayRackBlockEntity>> HAY_RACK_ENTITY =
             ModBlockEntities.BLOCK_ENTITIES.register("hay_rack", () -> new BlockEntityType<>(HayRackBlockEntity::new, HAY_RACK.get()));

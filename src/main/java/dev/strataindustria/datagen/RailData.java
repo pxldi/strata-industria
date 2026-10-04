@@ -93,7 +93,7 @@ final class RailData {
     }
 
     /** A model drawn facing north, turned to face {@code facing}. */
-    private static MultiVariant turn(MultiVariant north, Direction facing) {
+    static MultiVariant turn(MultiVariant north, Direction facing) {
         return switch (facing) {
             case EAST -> north.with(BlockModelGenerators.Y_ROT_90);
             case SOUTH -> north.with(BlockModelGenerators.Y_ROT_180);
@@ -102,7 +102,7 @@ final class RailData {
         };
     }
 
-    private static void straight(BlockModelGenerators blockModels, Block block, Item item, String texture, boolean powered) {
+    static void straight(BlockModelGenerators blockModels, Block block, Item item, String texture, boolean powered) {
         TextureMapping mapping = TextureMapping.rail(block);
         MultiVariant flat = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_FLAT.create(block, mapping, blockModels.modelOutput));
         MultiVariant risingNE = BlockModelGenerators.plainVariant(ModelTemplates.RAIL_RAISED_NE.create(block, mapping, blockModels.modelOutput));
@@ -133,7 +133,7 @@ final class RailData {
     }
 
     /** A flat item model that shows the block's own texture, as the vanilla rails do. */
-    private static void flatItem(BlockModelGenerators blockModels, Item item, String blockTexture) {
+    static void flatItem(BlockModelGenerators blockModels, Item item, String blockTexture) {
         Identifier model = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(item),
                 TextureMapping.layer0(new Material(StrataIndustria.id("block/" + blockTexture))), blockModels.modelOutput);
         blockModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(model));
