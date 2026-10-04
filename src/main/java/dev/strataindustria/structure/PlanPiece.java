@@ -6,6 +6,7 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.StrataSampler;
 import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.smithing.AnvilBlock;
 import dev.strataindustria.survey.Surveyor;
 import java.util.ArrayList;
@@ -31,10 +32,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.FurnaceBlock;
+import net.minecraft.world.level.block.LayeredCauldronBlock;
+import net.minecraft.world.level.block.LecternBlock;
+import net.minecraft.world.level.block.RailBlock;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.entity.BrushableBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.RailShape;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -247,6 +255,28 @@ public class PlanPiece extends StructurePiece {
             case 'x' -> ModBlocks.LOOSE_STICK.get().defaultBlockState();
             case 'q' -> ModBlocks.LOOSE_FLINT.get().defaultBlockState();
             case 'n' -> ModBlocks.SMALL_ORES.get(mineral).get().defaultBlockState();
+            case 'p' -> wood.planks();
+            case 'v' -> wood.stairs().setValue(StairBlock.FACING, Direction.SOUTH);
+            case '^' -> wood.stairs().setValue(StairBlock.FACING, Direction.NORTH);
+            case 'z' -> wood.stripped().setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y);
+            case 'w' -> Blocks.GLASS_PANE.defaultBlockState();
+            case 'u', 'j', 'X' -> SharedBlocks.CRATE.get().defaultBlockState();
+            case 'T' -> wood.trapdoor();
+            case 't' -> wood.trapdoor().setValue(TrapDoorBlock.OPEN, true).setValue(TrapDoorBlock.FACING, Direction.WEST);
+            case 'i' -> SharedBlocks.MINERS_LAMP.get().defaultBlockState().setValue(MinersLampBlock.MODE, MinersLampBlock.Mode.GUTTERING);
+            case 'I' -> SharedBlocks.MINERS_LAMP.get().defaultBlockState().setValue(MinersLampBlock.HANGING, true)
+                    .setValue(MinersLampBlock.MODE, MinersLampBlock.Mode.GUTTERING);
+            case 'a' -> SharedBlocks.TOOL_RACK.get().defaultBlockState().setValue(ToolRackBlock.FACING, Direction.SOUTH);
+            case 'Q' -> SharedBlocks.WINDLASS.get().defaultBlockState();
+            case 'N' -> SharedBlocks.ORE_CART.get().defaultBlockState();
+            case 'J' -> Blocks.RAIL.defaultBlockState().setValue(RailBlock.SHAPE, RailShape.EAST_WEST);
+            case 'U' -> SharedBlocks.RUBBLE.get(rock.top()).get().defaultBlockState();
+            case 'M' -> SharedBlocks.MOSSY_COBBLED.get(rock.top()).get().defaultBlockState();
+            case 'h' -> chain();
+            case 'y' -> Blocks.WATER_CAULDRON.defaultBlockState().setValue(LayeredCauldronBlock.LEVEL, 3);
+            case 'V' -> Blocks.LECTERN.defaultBlockState().setValue(LecternBlock.FACING, Direction.SOUTH);
+            case 'O' -> Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING, Direction.SOUTH);
+            case '%' -> StructureContent.SPECIMEN_SHELF.get().defaultBlockState();
             default -> null;
         };
         if (state == null) return;
@@ -258,6 +288,14 @@ public class PlanPiece extends StructurePiece {
         }
     }
 
+    private static BlockState chain() {
+        for (String id : new String[] {"iron_chain", "chain"}) {
+            Block block = BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace(id));
+            if (block != Blocks.AIR) return block.defaultBlockState();
+        }
+        return null;
+    }
+
     private static BlockState bed(BedPart part) {
         BlockState bed = BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace("brown_bed")).defaultBlockState();
         if (!(bed.getBlock() instanceof BedBlock)) return null;
@@ -267,10 +305,13 @@ public class PlanPiece extends StructurePiece {
     /** Loot, logs and fuel for the blocks that hold things. */
     private void fill(WorldGenLevel level, RandomSource random, BlockPos pos, char c) {
         switch (c) {
-            case 'B', 'b' -> {
+            case 'B', 'b', 'u', 'N' -> {
                 var table = CampLoot.barrel(planId, mineral);
                 if (table != null) RandomizableContainer.setBlockEntityLootTable(level, random, pos, table);
             }
+            case 'X' -> RandomizableContainer.setBlockEntityLootTable(level, random, pos, CampLoot.key(CampLoot.MINING_CACHE));
+            case 'a' -> ToolRackBlockEntity.stock(level.getLevel(), pos, java.util.List.of(
+                    worn(ModItems.STONE_HAMMER.get(), random), worn(ModItems.STONE_AXE.get(), random)));
             case '$' -> {
                 if (level.getBlockEntity(pos) instanceof BrushableBlockEntity dig) {
                     dig.setLootTable(CampLoot.dig(planId, mineral), Weathering.hash(pos, seed));
@@ -295,6 +336,13 @@ public class PlanPiece extends StructurePiece {
             default -> {
             }
         }
+    }
+
+    /** A tool somebody used for years: a good share of its durability gone. */
+    private static ItemStack worn(Item item, RandomSource random) {
+        ItemStack stack = new ItemStack(item);
+        if (stack.isDamageableItem()) stack.setDamageValue((int) (stack.getMaxDamage() * (0.4 + random.nextFloat() * 0.4)));
+        return stack;
     }
 
     /** The rock of the province a structure stands in (structures spec 3.5). */
@@ -330,19 +378,37 @@ public class PlanPiece extends StructurePiece {
 
     /** The timber a camp was built from, chosen by its biome. */
     public enum Wood {
-        OAK(Blocks.OAK_LOG, Blocks.STRIPPED_OAK_LOG, Blocks.OAK_FENCE, Blocks.OAK_SLAB, Items.OAK_LOG),
-        SPRUCE(Blocks.SPRUCE_LOG, Blocks.STRIPPED_SPRUCE_LOG, Blocks.SPRUCE_FENCE, Blocks.SPRUCE_SLAB, Items.SPRUCE_LOG),
-        DARK_OAK(Blocks.DARK_OAK_LOG, Blocks.STRIPPED_DARK_OAK_LOG, Blocks.DARK_OAK_FENCE, Blocks.DARK_OAK_SLAB, Items.DARK_OAK_LOG);
+        OAK(Blocks.OAK_LOG, Blocks.STRIPPED_OAK_LOG, Blocks.OAK_FENCE, Blocks.OAK_SLAB, Items.OAK_LOG, Blocks.OAK_PLANKS,
+                Blocks.OAK_STAIRS, Blocks.OAK_TRAPDOOR),
+        SPRUCE(Blocks.SPRUCE_LOG, Blocks.STRIPPED_SPRUCE_LOG, Blocks.SPRUCE_FENCE, Blocks.SPRUCE_SLAB, Items.SPRUCE_LOG,
+                Blocks.SPRUCE_PLANKS, Blocks.SPRUCE_STAIRS, Blocks.SPRUCE_TRAPDOOR),
+        DARK_OAK(Blocks.DARK_OAK_LOG, Blocks.STRIPPED_DARK_OAK_LOG, Blocks.DARK_OAK_FENCE, Blocks.DARK_OAK_SLAB, Items.DARK_OAK_LOG,
+                Blocks.DARK_OAK_PLANKS, Blocks.DARK_OAK_STAIRS, Blocks.DARK_OAK_TRAPDOOR);
 
-        private final Block log, stripped, fence, slab;
+        private final Block log, stripped, fence, slab, planks, stairs, trapdoor;
         private final Item logItem;
 
-        Wood(Block log, Block stripped, Block fence, Block slab, Item logItem) {
+        Wood(Block log, Block stripped, Block fence, Block slab, Item logItem, Block planks, Block stairs, Block trapdoor) {
             this.log = log;
             this.stripped = stripped;
             this.fence = fence;
             this.slab = slab;
             this.logItem = logItem;
+            this.planks = planks;
+            this.stairs = stairs;
+            this.trapdoor = trapdoor;
+        }
+
+        BlockState planks() {
+            return planks.defaultBlockState();
+        }
+
+        BlockState stairs() {
+            return stairs.defaultBlockState();
+        }
+
+        BlockState trapdoor() {
+            return trapdoor.defaultBlockState();
         }
 
         BlockState log() {

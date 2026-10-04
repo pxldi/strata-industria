@@ -44,9 +44,9 @@ public final class CampLoot {
         return switch (plan) {
             case "charcoal_burners_clearing" -> key(CLEARING_HUT);
             case "prospector_camp" -> key(PROSPECTOR_PACK, mineral);
-            case "mining_camp/tent_small", "mining_camp/tent_large" -> key(MINING_TENT);
+            case "mining_camp/tent_small", "mining_camp/tent_large", "mining_camp/bunkhouse" -> key(MINING_TENT);
             case "mining_camp/forge_shed" -> key(MINING_SMITHY);
-            case "mining_camp/ore_sorting" -> key(MINING_ORE_CART, mineral);
+            case "mining_camp/ore_sorting", "mining_camp/tramway" -> key(MINING_ORE_CART, mineral);
             case "adit/cache" -> key(ADIT_CACHE, mineral);
             case "ruined_bloomery/stump" -> key(BLOOMERY_CACHE);
             case "placer_workings/bank" -> key(PLACER_CACHE);

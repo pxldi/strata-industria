@@ -204,10 +204,8 @@ public class CampStructure extends Structure {
         camp.levelled(Plans.YARD, Rotation.NONE, 0, 0, yardGround);
         boolean shed = camp.levelled(Plans.FORGE_SHED, Rotation.COUNTERCLOCKWISE_90, -11, 3, 5);
         boolean sorting = camp.levelled(Plans.ORE_SORTING, Rotation.NONE, 18, 3, 5);
-        boolean large = random.nextInt(3) == 0;
-        Plan tent = large ? Plans.TENT_LARGE : Plans.TENT_SMALL;
-        int tentX = large ? 3 : 4;
-        boolean north = camp.levelled(tent, Rotation.NONE, tentX, -5 - tent.depth(), 5);
+        // The bunkhouse with the foreman's office stands north of the yard, its door toward the fire.
+        boolean north = camp.levelled(Plans.BUNKHOUSE, Rotation.NONE, 1, -5 - Plans.BUNKHOUSE.depth(), 5);
         boolean south = random.nextBoolean() && camp.levelled(Plans.TENT_SMALL, Rotation.CLOCKWISE_180, 4, 18, 5);
 
         // Find a hillside for an adit; on flat ground, sink a shaft instead.
@@ -242,7 +240,9 @@ public class CampStructure extends Structure {
 
         // Then the pieces that follow the ground.
         camp.terrain(Plans.path(5), Rotation.CLOCKWISE_90, 13, 5);
-        camp.terrain(Plans.path(5), Rotation.CLOCKWISE_90, 25, 5);
+        // The rail from the adit across the yard edge to the sorting floor, and the older wooden track beside it.
+        camp.terrain(Plans.RAIL, Rotation.NONE, 25, 6);
+        camp.terrain(Plans.TRAMWAY, Rotation.NONE, 14, 10);
         if (shed) camp.terrain(Plans.path(5), Rotation.CLOCKWISE_90, -5, 5);
         if (north) camp.terrain(Plans.path(5), Rotation.NONE, 5, -5);
         if (south) camp.terrain(Plans.path(5), Rotation.NONE, 5, 13);

@@ -293,13 +293,13 @@ public final class Plans {
             },
             new String[] {
                     "PCCCCCP",
-                    "#F#A B#",
+                    "#F#Ay u#",
                     "#     #",
                     "P     P",
             },
             new String[] {
                     "PCCCCCP",
-                    "Cc    C",
+                    "Cc  a C",
                     "C     C",
                     "P     P",
             },
@@ -331,8 +331,8 @@ public final class Plans {
                     "",
                     "",
                     "  ksk  ",
-                    "     B ",
-                    "  gg   ",
+                    "     N ",
+                    "  gg U ",
             },
             new String[] {
                     "",
@@ -385,7 +385,11 @@ public final class Plans {
                     " ===== ",
             }));
 
-    /** A windlass over a shaft, for camps on flat ground; the shaft goes down below the middle. */
+    /**
+     * The headframe over a shaft, for camps on flat ground: four stripped posts nine high with fence braces,
+     * a pulley wheel of trapdoors on an axle, a windlass at its foot and a chain down the shaft. The shaft
+     * goes down below the middle.
+     */
     public static final Plan SHAFT_HEAD = add(Plan.of("mining_camp/shaft_head", Kind.LEVELLED,
             new String[] {
                     " ### ",
@@ -396,18 +400,151 @@ public final class Plans {
             },
             new String[] {
                     "",
-                    "k   k",
-                    "P   P",
-                    "k   k",
+                    "z   z",
+                    "Q  h ",
+                    "z   z",
             },
             new String[] {
-                    "", "", "P   P",
+                    "",
+                    "z   z",
+                    "   h ",
+                    "z   z",
             },
             new String[] {
-                    "", "", "P   P",
+                    "",
+                    "zkkkz",
+                    "k  h ",
+                    "zkkkz",
             },
             new String[] {
-                    "", "", "=====",
+                    "",
+                    "z   z",
+                    "   h ",
+                    "z   z",
+            },
+            new String[] {
+                    "",
+                    "z   z",
+                    "   h ",
+                    "z   z",
+            },
+            new String[] {
+                    "",
+                    "zkkkz",
+                    "k  h ",
+                    "zkkkz",
+            },
+            new String[] {
+                    "",
+                    "z   z",
+                    "   h ",
+                    "z   z",
+            },
+            new String[] {
+                    "",
+                    "z t z",
+                    "=====",
+                    "z t z",
+            },
+            new String[] {
+                    "",
+                    "|   |",
+                    "| t |",
+                    "|   |",
+            }));
+
+    /** The cabin and, built onto its east end, the foreman's office whose door is walled up with crates. */
+    public static final Plan BUNKHOUSE = add(Plan.of("mining_camp/bunkhouse", Kind.LEVELLED,
+            new String[] {
+                    "#########",
+                    "#ppppppp#####",
+                    "#ppppppp#ppp#",
+                    "#ppppppp#pXp#",
+                    "#ppppppp#ppp#",
+                    "#ppppppp#####",
+                    "####p####",
+            },
+            new String[] {
+                    "zpppppppz",
+                    "pEE...EEzpppz",
+                    "pee...eep.V%p",
+                    "pu.sss..j.T.p",
+                    "pu......p...p",
+                    "pO......zpppz",
+                    "zppp.pppz",
+            },
+            new String[] {
+                    "zppwppwpz",
+                    "p       zpppz",
+                    "w       p   p",
+                    "p   i   j   w",
+                    "w       p   p",
+                    "p#      zpppz",
+                    "zpwp pwpz",
+            },
+            new String[] {
+                    "zpppppppz",
+                    "p       zpppz",
+                    "p       p   p",
+                    "p       p I p",
+                    "p       p   p",
+                    "p#      zpppz",
+                    "zpppppppz",
+            },
+            new String[] {
+                    "vvvvvvvvv",
+                    "p       ppppp",
+                    "p       ppppp",
+                    "p       ppppp",
+                    "p       ppppp",
+                    "p#      ppppp",
+                    "^^^^^^^^^",
+            },
+            new String[] {
+                    "",
+                    "vvvvvvvvv",
+                    "p       p",
+                    "p       p",
+                    "p       p",
+                    "^#^^^^^^^",
+            },
+            new String[] {
+                    "",
+                    "",
+                    "vvvvvvvvv",
+                    "p       p",
+                    "^^^^^^^^^",
+                    " #",
+            },
+            new String[] {
+                    "",
+                    "",
+                    "",
+                    "ppppppppp",
+                    "",
+                    " #",
+            }));
+
+    /** The rail from the adit across the sorting floor: vanilla rail, some of it gone, rubble on the rest. */
+    public static final Plan RAIL = add(Plan.of("mining_camp/rail", Kind.TERRAIN,
+            new String[] {
+                    ",,,,,",
+            },
+            new String[] {
+                    "JJJUJ",
+            }));
+
+    /** Wooden track of an older working: sleepers and plank rails, rotted gaps, a tub left at the end. */
+    public static final Plan TRAMWAY = add(Plan.of("mining_camp/tramway", Kind.TERRAIN,
+            new String[] {
+                    ",,,,,,,,,,,,,,",
+                    ",,,,,,,,,,,,,,",
+                    ",,,,,,,,,,,,,,",
+            },
+            new String[] {
+                    "sss|sss|sss|ss",
+                    "   |   |   |  N",
+                    "sss|sss|sss|ss",
             }));
 
     // ---------------------------------------------------------------- 6.4 collapsed adit
