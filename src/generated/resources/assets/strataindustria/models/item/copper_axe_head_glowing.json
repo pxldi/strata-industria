@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/copper_axe_head",
+    "layer1": "strataindustria:item/glow/copper_axe_head"
+  }
+}
