@@ -117,7 +117,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
             int u = data.get(CrucibleBlockEntity.DATA_UNITS + metal.ordinal());
             if (u > 0) units.put(metal, u);
         }
-        return new Melt(units, 0);
+        return new Melt(units);
     }
 
     @Override

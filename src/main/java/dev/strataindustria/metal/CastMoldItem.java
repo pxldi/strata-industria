@@ -137,16 +137,16 @@ public class CastMoldItem extends Item {
         ItemStack cast;
         if (item.bell) {
             cast = new ItemStack(dev.strataindustria.bronze.BronzeRegistry.BELL_ITEM.get());
-            Quality quality = new Quality(contents.quality(), Quality.CAST);
+            Quality quality = new Quality(Quality.CAST);
             cast.set(ModDataComponents.QUALITY.get(), quality);
-            cast.set(dev.strataindustria.bronze.BronzeRegistry.BELL_TONE.get(), dev.strataindustria.bronze.BellTone.of(contents, quality));
+            cast.set(dev.strataindustria.bronze.BronzeRegistry.BELL_TONE.get(), dev.strataindustria.bronze.BellTone.of(contents));
             Heat.set(cast, heat, now);
             return cast;
         }
         if (item.gear) cast = ModItems.GEARS.containsKey(metal) ? new ItemStack(ModItems.GEARS.get(metal).get()) : new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
         else cast = item.type == null ? new ItemStack(ModItems.ingot(metal)) : new ItemStack(ModItems.head(metal, item.type));
         if (cast.is(ModItems.ingot(Metal.SLAG_METAL))) cast.set(ModDataComponents.SLAG.get(), contents);
-        if (item.type != null) cast.set(ModDataComponents.QUALITY.get(), new Quality(contents.quality(), Quality.CAST));
+        if (item.type != null) cast.set(ModDataComponents.QUALITY.get(), new Quality(Quality.CAST));
         Heat.set(cast, heat, now);
         return cast;
     }

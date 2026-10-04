@@ -41,13 +41,13 @@ public final class MetalContent {
             for (OreMineral mineral : OreMineral.withPieces()) {
                 // Tier 4 spec 4.4: a sulfide never melts as ore; it is roasted to calcine first.
                 if (mineral.isSulfide()) continue;
-                map.put(ModItems.SMALL_ORES.get(mineral).get(), ore(mineral, OreMineral.SMALL_ORE_UNITS, OreGrade.NORMAL));
+                map.put(ModItems.SMALL_ORES.get(mineral).get(), ore(mineral, OreMineral.SMALL_ORE_UNITS));
                 for (OreGrade grade : OreGrade.values()) {
                     int crushed = mineral.crushedUnits(grade);
-                    map.put(ModItems.orePiece(mineral, grade), ore(mineral, crushed * OreMineral.RAW_MELT_EFFICIENCY, grade));
-                    map.put(ModItems.crushedOre(mineral, grade), ore(mineral, crushed, grade));
+                    map.put(ModItems.orePiece(mineral, grade), ore(mineral, crushed * OreMineral.RAW_MELT_EFFICIENCY));
+                    map.put(ModItems.crushedOre(mineral, grade), ore(mineral, crushed));
                     // Tier 3 spec 11.2: washing is worth a tenth more.
-                    if (mineral.washable()) map.put(ModItems.washedOre(mineral, grade), ore(mineral, (float) Math.floor(crushed * OreMineral.WASHED_BONUS), grade));
+                    if (mineral.washable()) map.put(ModItems.washedOre(mineral, grade), ore(mineral, (float) Math.floor(crushed * OreMineral.WASHED_BONUS)));
                 }
             }
             for (Metal metal : Metal.values()) {
@@ -63,41 +63,39 @@ public final class MetalContent {
                 if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) map.put(ModItems.PROSPECTOR_HEADS.get(metal).get(), Alloy.parts(metal, INGOT_UNITS));
             }
             // Tier 3 spec 4.1: rods are half an ingot, a double ingot two.
-            map.put(ModItems.WROUGHT_IRON_ROD.get(), Melt.of(Metal.WROUGHT_IRON, ROD_UNITS, 0));
-            map.put(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), Melt.of(Metal.WROUGHT_IRON, 2 * INGOT_UNITS, 0));
+            map.put(ModItems.WROUGHT_IRON_ROD.get(), Melt.of(Metal.WROUGHT_IRON, ROD_UNITS));
+            map.put(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), Melt.of(Metal.WROUGHT_IRON, 2 * INGOT_UNITS));
             map.put(ModItems.STEEL_DOUBLE_INGOT.get(), Alloy.parts(Metal.STEEL, 2 * INGOT_UNITS));
             // Tier 4 spec 4.2: charcoal and coke dust carry carbon into an iron melt.
-            map.put(dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS, 0));
-            map.put(dev.strataindustria.registry.Tier4Items.COKE_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS, 0));
+            map.put(dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS));
+            map.put(dev.strataindustria.registry.Tier4Items.COKE_DUST.get(), Melt.of(Metal.CARBON, CARBON_DUST_UNITS));
             // Tier 4 spec 4.4: roasted sphalerite carries its full crushed value of zinc.
             for (OreGrade grade : OreGrade.values()) {
                 int units = OreMineral.SPHALERITE.crushedUnits(grade);
-                map.put(dev.strataindustria.registry.Tier4Items.zincCalcine(grade), new Melt(Map.of(Metal.ZINC, units), units * grade.quality()));
+                map.put(dev.strataindustria.registry.Tier4Items.zincCalcine(grade), new Melt(Map.of(Metal.ZINC, units)));
             }
             map.put(dev.strataindustria.registry.Tier4Items.SMALL_ZINC_CALCINE.get(),
-                    new Melt(Map.of(Metal.ZINC, OreMineral.SMALL_ORE_UNITS), 0));
+                    new Melt(Map.of(Metal.ZINC, OreMineral.SMALL_ORE_UNITS)));
             dev.strataindustria.registry.Tier5Items.metalContent(map);
             // Tier 3 spec 5.4: bloomery slag still holds some iron.
-            map.put(ModItems.BLOOMERY_SLAG.get(), Melt.of(Metal.WROUGHT_IRON, BLOOMERY_SLAG_UNITS, 0));
+            map.put(ModItems.BLOOMERY_SLAG.get(), Melt.of(Metal.WROUGHT_IRON, BLOOMERY_SLAG_UNITS));
             // Spec 4.2: vanilla raw ores from loot count as raw normal ore.
-            map.put(Items.RAW_IRON, Melt.of(Metal.WROUGHT_IRON, RAW_VANILLA_UNITS, 0));
-            map.put(Items.RAW_COPPER, Melt.of(Metal.COPPER, RAW_VANILLA_UNITS, 0));
-            map.put(Items.RAW_GOLD, Melt.of(Metal.GOLD, RAW_VANILLA_UNITS, 0));
+            map.put(Items.RAW_IRON, Melt.of(Metal.WROUGHT_IRON, RAW_VANILLA_UNITS));
+            map.put(Items.RAW_COPPER, Melt.of(Metal.COPPER, RAW_VANILLA_UNITS));
+            map.put(Items.RAW_GOLD, Melt.of(Metal.GOLD, RAW_VANILLA_UNITS));
             fixed = map;
         }
         return fixed;
     }
 
     /** Each metal of the ore gets its share of the units, rounded down per metal. */
-    private static Melt ore(OreMineral mineral, float units, OreGrade grade) {
+    private static Melt ore(OreMineral mineral, float units) {
         Map<Metal, Integer> out = new EnumMap<>(Metal.class);
-        int total = 0;
         for (var e : mineral.composition().entrySet()) {
             int u = (int) Math.floor(units * e.getValue());
             if (u > 0) out.put(e.getKey(), u);
-            total += u;
         }
-        return new Melt(out, total * grade.quality());
+        return new Melt(out);
     }
 
     /** The metal in one of this item, if any. */
@@ -107,12 +105,7 @@ public final class MetalContent {
         if (bloom != null) return Optional.of(bloom);
         Melt slag = stack.get(ModDataComponents.SLAG.get());
         if (slag != null) return Optional.of(slag.scaled(SLAG_RETURN));
-        Melt melt = fixed().get(stack.getItem());
-        if (melt == null) return Optional.empty();
-        // Cast and smithed items keep only their material part when remelted (spec 6.4).
-        Quality quality = stack.get(ModDataComponents.QUALITY.get());
-        if (quality != null) melt = new Melt(melt.units(), melt.total() * quality.material());
-        return Optional.of(melt);
+        return Optional.ofNullable(fixed().get(stack.getItem()));
     }
 
     /** Roasted zinc ore, which needs carbon in the melt before it will give up its zinc (tier 4 spec 4.2). */

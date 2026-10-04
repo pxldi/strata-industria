@@ -83,13 +83,15 @@ public final class ModItems {
             p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> FORGE = ITEMS.registerSimpleBlockItem(ModBlocks.FORGE);
     // Smithing (spec 9).
-    public static final DeferredItem<BlockItem> BRONZE_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.BRONZE_ANVIL);
-    public static final DeferredItem<BlockItem> WROUGHT_IRON_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.WROUGHT_IRON_ANVIL);
+    public static final DeferredItem<BlockItem> IRON_ANVIL = ITEMS.registerSimpleBlockItem(ModBlocks.IRON_ANVIL);
     /** Tier 3 spec 9.4: welding flux, ground from sand or carbonate rock. */
     public static final DeferredItem<Item> FLUX = ITEMS.registerSimpleItem("flux");
     static {
         // Smithing patterns are gone (hammer machines have a shape button); old ones in a world turn into paper.
         ITEMS.addAlias(StrataIndustria.id("smithing_pattern"), net.minecraft.resources.Identifier.withDefaultNamespace("paper"));
+        for (String old : new String[] {"bronze_anvil", "wrought_iron_anvil", "steel_anvil"}) {
+            ITEMS.addAlias(StrataIndustria.id(old), StrataIndustria.id("iron_anvil"));
+        }
     }
     public static final DeferredItem<Item> TONGS_JAW = ITEMS.registerSimpleItem("tongs_jaw", p -> p.stacksTo(16));
     public static final DeferredItem<Item> TONGS = ITEMS.registerSimpleItem("tongs", p -> p.durability(250));
@@ -155,7 +157,7 @@ public final class ModItems {
     // Wrought iron forms beyond the vanilla ingot and nugget (spec 4.1).
     public static final DeferredItem<Item> WROUGHT_IRON_ROD = ITEMS.registerSimpleItem("wrought_iron_rod");
     public static final DeferredItem<Item> WROUGHT_IRON_DOUBLE_INGOT = ITEMS.registerSimpleItem("wrought_iron_double_ingot", p -> p.stacksTo(16));
-    /** Tier 4 spec 14.1: welded from two steel ingots; the steel sword blade and the steel anvil. */
+    /** Tier 4 spec 14.1: welded from two steel ingots; the steel sword blade. */
     public static final DeferredItem<Item> STEEL_DOUBLE_INGOT = ITEMS.registerSimpleItem("steel_double_ingot", p -> p.stacksTo(16));
     // Metals (spec 6 to 8). Copper's ingot, nugget, armour and five of its tools are vanilla items.
     public static final Map<Metal, Supplier<Item>> INGOTS = new EnumMap<>(Metal.class);

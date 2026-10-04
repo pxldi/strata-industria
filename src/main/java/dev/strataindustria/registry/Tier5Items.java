@@ -107,16 +107,16 @@ public final class Tier5Items {
 
     /** Metal content of the new forms (spec 4.1): rods are half an ingot, wire a quarter, plates a whole one. */
     public static void metalContent(Map<Item, Melt> map) {
-        map.put(COPPER_ROD.get(), Melt.of(Metal.COPPER, 50, 0));
-        map.put(COPPER_WIRE.get(), Melt.of(Metal.COPPER, 25, 0));
-        map.put(LEAD_PLATE.get(), Melt.of(Metal.LEAD, 100, 0));
+        map.put(COPPER_ROD.get(), Melt.of(Metal.COPPER, 50));
+        map.put(COPPER_WIRE.get(), Melt.of(Metal.COPPER, 25));
+        map.put(LEAD_PLATE.get(), Melt.of(Metal.LEAD, 100));
         map.put(RED_ALLOY_ROD.get(), Alloy.parts(Metal.RED_ALLOY, 50));
         map.put(RED_ALLOY_WIRE.get(), Alloy.parts(Metal.RED_ALLOY, 25));
-        map.put(ALUMINIUM_WIRE.get(), Melt.of(Metal.ALUMINIUM, 25, 0));
-        map.put(STEEL_WIRE.get(), Melt.of(Metal.STEEL, 25, 0));
+        map.put(ALUMINIUM_WIRE.get(), Melt.of(Metal.ALUMINIUM, 25));
+        map.put(STEEL_WIRE.get(), Melt.of(Metal.STEEL, 25));
         // Spec 4.2: redstone counts only inside a melt, and dissolves only into molten copper.
-        map.put(Items.REDSTONE, Melt.of(Metal.REDSTONE, 25, 0));
-        map.put(Items.REDSTONE_BLOCK, Melt.of(Metal.REDSTONE, 225, 0));
+        map.put(Items.REDSTONE, Melt.of(Metal.REDSTONE, 25));
+        map.put(Items.REDSTONE_BLOCK, Melt.of(Metal.REDSTONE, 225));
     }
 
     /** Loads the class so its items join the register before it fires. */

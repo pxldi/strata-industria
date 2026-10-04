@@ -60,15 +60,6 @@ public final class Tier4Blocks {
     public static final DeferredBlock<FenceBlock> TREATED_FENCE = ModBlocks.BLOCKS.registerBlock("treated_fence", FenceBlock::new,
             p -> treated(p).forceSolidOn());
 
-    /** Tier 4 spec 14.4: the steel anvil, anvil tier 5 and the tier 4 exit item. */
-    public static final DeferredBlock<AnvilBlock> STEEL_ANVIL = ModBlocks.BLOCKS.registerBlock("steel_anvil", p -> new AnvilBlock(5, false, p),
-            p -> p.mapColor(MapColor.METAL)
-                    .strength(5.0f, 1200.0f)
-                    .sound(SoundType.ANVIL)
-                    .requiresCorrectToolForDrops()
-                    .noOcclusion()
-                    .pushReaction(PushReaction.IMMOVEABLE));
-
     // Spec 11.7: iron transmission, good to 256 RPM.
     public static final DeferredBlock<IronTransmission.Axle> IRON_AXLE = ModBlocks.BLOCKS.registerBlock("iron_axle", IronTransmission.Axle::new,
             p -> iron(p).noOcclusion());

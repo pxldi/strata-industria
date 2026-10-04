@@ -19,7 +19,7 @@ import net.minecraft.world.item.ItemStack;
  */
 public class AnvilCategory extends StrataCategory<Processes.AnvilWork> {
     public AnvilCategory(IGuiHelper gui) {
-        super(JeiTypes.ANVIL, "anvil", gui.createDrawableItemLike(ModItems.BRONZE_ANVIL.get()), 162, 44);
+        super(JeiTypes.ANVIL, "anvil", gui.createDrawableItemLike(ModItems.IRON_ANVIL.get()), 162, 44);
     }
 
     @Override
