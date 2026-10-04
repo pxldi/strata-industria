@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_copper_plate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:copper_plate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:tree_tap"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_copper_plate"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:tree_tap"
+    ]
+  }
+}

@@ -523,6 +523,167 @@ public final class ElectricTextures {
         };
     }
 
+    // ---------------------------------------------------------------- rubber (tree tap, latex)
+
+    static final TextureGen.Ramp LATEX = TextureGen.ramp(0, 0x6e6656, 0x8e8670, 0xb0a88c, 0xcec6a8, 0xe6e0c4);
+
+    static void rubber() throws IOException {
+        save("block/tree_tap", treeTapAtlas());
+        save("block/tree_tap_latex", latexSurface());
+        save("item/tree_tap", treeTapItem());
+        save("item/latex_bucket", TextureGen.map(IRON, LATEX, TextureGen.CREOSOTE_BUCKET));
+        TextureGen.saveAnimated("block/latex_still", latexFluid(false, 7711), 3);
+        TextureGen.saveAnimated("block/latex_flow", latexFluid(true, 7711), 2);
+        latexGuiStrip();
+    }
+
+    /** UV atlas of the tree tap model: copper spout, iron hanger, wooden bowl. */
+    static BufferedImage treeTapAtlas() {
+        TextureGen.Ramp cu = COPPER, wd = TextureGen.WOOD;
+        BufferedImage im = TextureGen.img();
+        Random rnd = new Random(8801);
+        // copper block x 0..15, y 0..7: light top-left, dark bottom-right, hammer dents in 2 px clusters
+        for (int y = 0; y < 8; y++)
+            for (int x = 0; x < 16; x++) {
+                int s = 3;
+                if (y == 0 || x == 0) s = 4;
+                if (y == 7 || x == 7 || x == 15) s = 2;
+                TextureGen.px(im, x, y, c(cu, s));
+            }
+        for (int i = 0; i < 9; i++) {
+            int x = 2 + rnd.nextInt(12), y = 1 + rnd.nextInt(6);
+            TextureGen.px(im, x, y, c(cu, 2));
+            TextureGen.px(im, x + 1, y, c(cu, 2));
+            TextureGen.px(im, x, y + 1, c(cu, 4));
+        }
+        // spout mouth 2x2 at 0,0: hollow, dark with a faint lit lower-right
+        TextureGen.px(im, 0, 0, c(cu, 1)); TextureGen.px(im, 1, 0, c(cu, 1));
+        TextureGen.px(im, 0, 1, c(cu, 1)); TextureGen.px(im, 1, 1, c(cu, 2));
+        // spout sides/top continuation x 2..4, y 0..4
+        for (int y = 0; y < 5; y++) for (int x = 2; x < 5; x++) TextureGen.px(im, x, y, c(cu, y == 0 || y == 2 && x < 3 ? 4 : 3));
+        for (int x = 2; x < 5; x++) TextureGen.px(im, x, 4, c(cu, 2));
+        // drip lip x 0..1, y 2..4: lit rolled edge, shadow underneath
+        for (int x = 0; x < 2; x++) {
+            TextureGen.px(im, x, 2, c(cu, 5)); TextureGen.px(im, x, 3, c(cu, 3)); TextureGen.px(im, x, 4, c(cu, 2));
+        }
+        // dark hanger strap x 8..10, y 0..3 (overwrites the copper there)
+        for (int y = 0; y < 4; y++)
+            for (int x = 8; x < 11; x++) TextureGen.px(im, x, y, c(IRON, y == 0 ? 3 : x == 8 ? 3 : 2));
+        TextureGen.px(im, 9, 1, c(IRON, 1)); TextureGen.px(im, 9, 3, c(IRON, 1));
+        TextureGen.px(im, 10, 0, c(IRON, 2));
+        // wood x 0..15, y 8..15
+        for (int y = 8; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int s = y == 8 ? 5 : y <= 11 ? 3 : 2;
+                if (y == 15) s = 1 + (x % 3 == 0 ? 1 : 0);
+                if (y == 9 && s == 3) s = 4;
+                TextureGen.px(im, x, y, c(wd, s));
+            }
+        // inner floor y 10..15 x 1..7: darker inner wood
+        for (int y = 10; y < 16; y++) for (int x = 1; x < 8; x++) TextureGen.px(im, x, y, c(wd, y == 10 ? 3 : y == 15 ? 1 : 2));
+        // grain streaks, horizontal runs
+        for (int i = 0; i < 14; i++) {
+            int x = rnd.nextInt(12), y = 9 + rnd.nextInt(6), len = 2 + rnd.nextInt(3);
+            for (int k = 0; k < len; k++) {
+                int px = x + k, cur = TextureGen.rgb(im, px, y);
+                if (y == 15 || y == 8) continue;
+                for (int s = 2; s <= 4; s++) if (c(wd, s) == cur) { TextureGen.px(im, px, y, c(wd, s - 1)); break; }
+            }
+        }
+        // side walls x 8..12, y 8..15: lit left edge, shaded right edge
+        for (int y = 9; y < 16; y++) {
+            TextureGen.px(im, 8, y, c(wd, y < 12 ? 4 : 3));
+            TextureGen.px(im, 12, y, c(wd, y < 12 ? 2 : 1));
+        }
+        return im;
+    }
+
+    /** Latex in the bowl seen from above: matte, a soft lighter centre, very low contrast. */
+    static BufferedImage latexSurface() {
+        BufferedImage im = TextureGen.img();
+        double tau = 2 * Math.PI;
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x + 0.5 - 8, dy = y + 0.5 - 8, d = Math.sqrt(dx * dx + dy * dy);
+                double fold = 0.5 + 0.5 * Math.sin(tau * (x + 2 * y) / 16.0 + 1.1 * Math.sin(tau * y / 16.0));
+                double v = 1.0 - d / 9.0 + 0.22 * fold;
+                int s = v > 0.88 ? 5 : v > 0.42 ? 4 : 3;
+                TextureGen.px(im, x, y, c(LATEX, s));
+            }
+        return im;
+    }
+
+    /** Inventory icon: copper spout angled out of a bark sliver, wooden bowl below with latex. */
+    static BufferedImage treeTapItem() {
+        String[] rows = {
+                "................",
+                ".cdd............",
+                ".bcd............",
+                ".bcd4555........",
+                ".bbc33444.......",
+                ".bcc..2334......",
+                ".bcc...3321.....",
+                ".bcc......m.....",
+                ".bbcp.....n.....",
+                ".bbcp.jlmnnmlih.",
+                ".bbcppihhhhhhgg.",
+                ".bb....ihhhggf..",
+                "........hhhggf..",
+                "........gfffe...",
+                "................",
+                "................",
+        };
+        BufferedImage im = TextureGen.img();
+        for (int y = 0; y < rows.length; y++)
+            for (int x = 0; x < rows[y].length() && x < 16; x++) {
+                char ch = rows[y].charAt(x);
+                int col;
+                if (ch >= '1' && ch <= '5') col = COPPER.get(ch - '0');
+                else if (ch >= 'a' && ch <= 'e') col = TextureGen.BARK.get(ch - 'a' + 1);
+                else if (ch >= 'f' && ch <= 'j') col = TextureGen.WOOD.get(ch - 'f' + 1);
+                else if (ch >= 'k' && ch <= 'o') col = LATEX.get(ch - 'k' + 1);
+                else if (ch == 'p') col = IRON.get(2);
+                else continue;
+                TextureGen.px(im, x, y, col);
+            }
+        return TextureGen.outline(im);
+    }
+
+    /** Opaque milky cream latex fluid: slow thick folds, low contrast. Same frame layout as the lye strips. */
+    static BufferedImage latexFluid(boolean flow, long seed) {
+        int frames = flow ? 16 : 32;
+        BufferedImage im = new BufferedImage(16, 16 * frames, BufferedImage.TYPE_INT_ARGB);
+        Random r = new Random(seed);
+        double p1 = r.nextDouble(), p2 = r.nextDouble(), tau = 2 * Math.PI;
+        for (int f = 0; f < frames; f++) {
+            double t = (double) f / frames;
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    double u = x / 16.0, w = y / 16.0, v;
+                    if (flow) {
+                        double wf = w - t;
+                        v = 0.5 + 0.24 * Math.sin(tau * (u + p1) + 1.1 * Math.sin(tau * (wf + p2))) + 0.14 * Math.sin(tau * (2 * u + wf));
+                    } else {
+                        v = 0.5 + 0.24 * Math.sin(tau * (u + w + p1) + 0.9 * Math.sin(tau * (w - t)))
+                                + 0.12 * Math.sin(tau * (u - w + t + p2));
+                    }
+                    int step = v < 0.3 ? 3 : v < 0.7 ? 4 : 5;
+                    if (v < 0.1) step = 2;
+                    im.setRGB(x, f * 16 + y, 0xFF000000 | LATEX.get(step));
+                }
+        }
+        return im;
+    }
+
+    /** Latex fill strip of the soaking barrel GUI (u 240, v 0, 16x52), same shading as the other strips. */
+    static void latexGuiStrip() throws IOException {
+        File f = TextureGen.OUT.resolve("gui/soaking_barrel.png").toFile();
+        BufferedImage im = ImageIO.read(f);
+        int[] c = {LATEX.get(2), LATEX.get(3), LATEX.get(4), LATEX.get(5), LATEX.get(5)};
+        TextureGen.fillStrip(im, 240, c, 0xff);
+        ImageIO.write(im, "png", f);
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -531,6 +692,7 @@ public final class ElectricTextures {
         cables();
         dynamo();
         items();
+        rubber();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");
     }

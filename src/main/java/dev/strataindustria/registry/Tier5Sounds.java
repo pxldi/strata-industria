@@ -15,6 +15,11 @@ public final class Tier5Sounds {
     /** A faint high hum while a battery box charges. */
     public static final DeferredHolder<SoundEvent, SoundEvent> BATTERY_BOX_CHARGE = register("battery_box.charge");
 
+    /** A tap hammered into a log: a wooden knock with a metal tick. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> TREE_TAP_PLACE = register("block.tree_tap.place");
+    /** A thick, soft drip into the tap's bowl. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> TREE_TAP_DRIP = register("block.tree_tap.drip");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

@@ -7,6 +7,7 @@ import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.power.StatusLight;
 import dev.strataindustria.registry.Tier5Blocks;
+import dev.strataindustria.rubber.TreeTapBlock;
 import dev.strataindustria.registry.Tier5Items;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -29,9 +30,10 @@ final class Tier5Models {
 
     static void register(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         for (var item : java.util.List.of(Tier5Items.MAGNET, Tier5Items.COPPER_ROD, Tier5Items.COPPER_WIRE, Tier5Items.LEAD_PLATE,
-                Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER)) {
+                Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER, Tier5Items.LATEX_BUCKET, Tier5Items.TREE_TAP)) {
             itemModels.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
         }
+        treeTap(blockModels);
         cables(blockModels, itemModels);
         dynamo(blockModels, itemModels);
         batteryBox(blockModels, itemModels);
@@ -42,6 +44,19 @@ final class Tier5Models {
         Identifier hullModel = ModelTemplates.CUBE_BOTTOM_TOP.create(Tier5Blocks.LV_MACHINE_HULL.get(), hull, blockModels.modelOutput);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.LV_MACHINE_HULL.get(), BlockModelGenerators.plainVariant(hullModel)));
         plainItem(itemModels, Tier5Items.LV_MACHINE_HULL.get(), hullModel);
+    }
+
+    // Spec 5.1 and 23.2: a hand-built spout and bowl facing north (log to the south), one model per cup level.
+    private static void treeTap(BlockModelGenerators blockModels) {
+        PropertyDispatch.C2<MultiVariant, Direction, Integer> dispatch = PropertyDispatch.initial(TreeTapBlock.FACING, TreeTapBlock.FILL);
+        for (int fill = 0; fill <= 3; fill++) {
+            MultiVariant model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/tree_tap" + (fill == 0 ? "" : "_" + fill)));
+            dispatch.select(Direction.NORTH, fill, model);
+            dispatch.select(Direction.EAST, fill, model.with(BlockModelGenerators.Y_ROT_90));
+            dispatch.select(Direction.SOUTH, fill, model.with(BlockModelGenerators.Y_ROT_180));
+            dispatch.select(Direction.WEST, fill, model.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.TREE_TAP.get()).with(dispatch));
     }
 
     // Spec 8.1: hand-built core and arm models (core, arm pointing north) joined on each connected face.

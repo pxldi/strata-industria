@@ -26,6 +26,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider registries) {
         // Tier 5: casings need a pickaxe; cables come off by hand.
+        tag(dev.strataindustria.rubber.Tappable.TAG).add(net.minecraft.world.level.block.Blocks.JUNGLE_LOG.builtInRegistryHolder().key());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_DYNAMO.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.BATTERY_BOX.getKey()).add(dev.strataindustria.registry.Tier5Blocks.LV_MACHINE_HULL.getKey());
         for (RockCategory category : RockCategory.values()) {

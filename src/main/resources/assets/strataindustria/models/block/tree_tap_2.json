@@ -1,0 +1,542 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "strataindustria:block/tree_tap",
+    "tap": "strataindustria:block/tree_tap",
+    "latex": "strataindustria:block/tree_tap_latex"
+  },
+  "elements": [
+    {
+      "name": "spout",
+      "from": [
+        7,
+        10,
+        11
+      ],
+      "to": [
+        9,
+        12,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            2,
+            2
+          ],
+          "texture": "#tap"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5,
+            2
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5,
+            2
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2,
+            5
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            2,
+            5
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "lip",
+      "from": [
+        7,
+        9,
+        11
+      ],
+      "to": [
+        9,
+        10,
+        12.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            2,
+            2,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "south": {
+          "uv": [
+            0,
+            2,
+            2,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "east": {
+          "uv": [
+            0,
+            2,
+            1.5,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            0,
+            2,
+            1.5,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            0,
+            2,
+            2,
+            3.5
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            0,
+            3,
+            2,
+            4.5
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "hanger",
+      "from": [
+        7.5,
+        7,
+        12.5
+      ],
+      "to": [
+        8.5,
+        10,
+        13.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            9,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            9,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "east": {
+          "uv": [
+            9,
+            0,
+            10,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            9,
+            0,
+            10,
+            3
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            8,
+            0,
+            9,
+            1
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            8,
+            0,
+            9,
+            1
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "bowl_bottom",
+      "from": [
+        5,
+        2,
+        7
+      ],
+      "to": [
+        11,
+        3,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            15,
+            7,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "south": {
+          "uv": [
+            1,
+            15,
+            7,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "east": {
+          "uv": [
+            2,
+            15,
+            7,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            2,
+            15,
+            7,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            1,
+            10,
+            7,
+            15
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            1,
+            10,
+            7,
+            15
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "bowl_north",
+      "from": [
+        4,
+        3,
+        6
+      ],
+      "to": [
+        12,
+        7,
+        7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            8,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "south": {
+          "uv": [
+            0,
+            12,
+            8,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            1,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            1,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            0,
+            8,
+            8,
+            9
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            8,
+            9
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "bowl_south",
+      "from": [
+        4,
+        3,
+        12
+      ],
+      "to": [
+        12,
+        7,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            12,
+            8,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            8,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            1,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            1,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            0,
+            8,
+            8,
+            9
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            8,
+            9
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "bowl_west",
+      "from": [
+        4,
+        3,
+        7
+      ],
+      "to": [
+        5,
+        7,
+        12
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            8,
+            12,
+            13,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            8,
+            8,
+            13,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            9,
+            13
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            9,
+            13
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "bowl_east",
+      "from": [
+        11,
+        3,
+        7
+      ],
+      "to": [
+        12,
+        7,
+        12
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            8,
+            8,
+            13,
+            12
+          ],
+          "texture": "#tap"
+        },
+        "west": {
+          "uv": [
+            8,
+            12,
+            13,
+            16
+          ],
+          "texture": "#tap"
+        },
+        "up": {
+          "uv": [
+            8,
+            8,
+            9,
+            13
+          ],
+          "texture": "#tap"
+        },
+        "down": {
+          "uv": [
+            8,
+            8,
+            9,
+            13
+          ],
+          "texture": "#tap"
+        }
+      }
+    },
+    {
+      "name": "latex",
+      "from": [
+        5,
+        3,
+        7
+      ],
+      "to": [
+        11,
+        5,
+        12
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            5,
+            7,
+            11,
+            12
+          ],
+          "texture": "#latex"
+        }
+      }
+    }
+  ]
+}

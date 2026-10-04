@@ -16,6 +16,12 @@ import dev.strataindustria.power.KineticNetworks;
 import dev.strataindustria.power.KineticState;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.Tier5Blocks;
+import dev.strataindustria.registry.Tier5Fluids;
+import dev.strataindustria.registry.Tier5Items;
+import dev.strataindustria.rubber.TreeTapBlock;
+import dev.strataindustria.rubber.TreeTapBlockEntity;
+import dev.strataindustria.tanning.SoakingBarrelBlock;
+import dev.strataindustria.tanning.SoakingBarrelBlockEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +31,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.util.FakePlayer;
 
 /** Tier 5 (electric) tests, run by {@link ModGameTests}. */
@@ -36,6 +46,9 @@ final class Tier5GameTests {
         tests.put("tier5_network_maths", Tier5GameTests::networkMaths);
         tests.put("tier5_dynamo_charges_battery", Tier5GameTests::dynamoChargesBattery);
         tests.put("tier5_overvoltage", Tier5GameTests::overvoltage);
+        tests.put("tier5_tree_taps", Tier5GameTests::treeTaps);
+        tests.put("tier5_no_living_tree", Tier5GameTests::noLivingTree);
+        tests.put("tier5_latex_to_rubber", Tier5GameTests::latexToRubber);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -157,5 +170,107 @@ final class Tier5GameTests {
         network.tick();
         helper.assertValueEqual(network.report(lvPos).status(), ElectricStatus.IDLE, "the LV battery box is back");
         helper.succeed();
+    }
+
+    // Spec 5.1 and 24: a jungle tree with five taps: four fill 1000 mB each in 10 000 ticks and the fifth says the
+    // tree is tapped out and stays dry; a full cup gives a latex bucket.
+    private static void treeTaps(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos trunk = helper.absolutePos(new BlockPos(4, 1, 4));
+        jungleTree(level, trunk, 3, true);
+        List<BlockPos> taps = List.of(trunk.north(), trunk.east(), trunk.south(), trunk.west(), trunk.above().north());
+        List<Direction> facings = List.of(Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.NORTH);
+        List<TreeTapBlockEntity> entities = new ArrayList<>();
+        for (int i = 0; i < taps.size(); i++) {
+            level.setBlock(taps.get(i), Tier5Blocks.TREE_TAP.get().defaultBlockState().setValue(TreeTapBlock.FACING, facings.get(i)), Block.UPDATE_ALL);
+            entities.add((TreeTapBlockEntity) level.getBlockEntity(taps.get(i)));
+        }
+        for (int tick = 0; tick < 10_000; tick++) {
+            for (int i = 0; i < taps.size(); i++) tickTap(level, taps.get(i), entities.get(i));
+        }
+        int working = 0, tappedOut = 0, total = 0;
+        for (TreeTapBlockEntity tap : entities) {
+            if (tap.status() == TreeTapBlockEntity.Status.WORKING) {
+                working++;
+                helper.assertValueEqual(tap.amount(), TreeTapBlockEntity.CUP, "a drawing tap fills its cup in 10 000 ticks");
+            } else if (tap.status() == TreeTapBlockEntity.Status.TAPPED_OUT) {
+                tappedOut++;
+                helper.assertValueEqual(tap.amount(), 0, "a tap on a tapped-out tree stays dry");
+            }
+            total += tap.amount();
+        }
+        helper.assertValueEqual(working, 4, "taps drawing from one tree");
+        helper.assertValueEqual(tappedOut, 1, "taps told the tree is tapped out");
+        helper.assertValueEqual(total, 4000, "latex from one tree in 10 000 ticks");
+        TreeTapBlockEntity full = entities.stream().filter(TreeTapBlockEntity::full).findFirst().orElseThrow();
+        helper.assertValueEqual(level.getBlockState(full.getBlockPos()).getValue(TreeTapBlock.FILL), 3, "a full cup shows full");
+        ItemStack bucket = full.takeBucket();
+        helper.assertTrue(bucket.is(Tier5Items.LATEX_BUCKET.get()), "a full cup gives a latex bucket, got " + bucket);
+        helper.assertValueEqual(full.amount(), 0, "the cup is empty after the bucket");
+        helper.succeed();
+    }
+
+    // Spec 5.1: a tap on a trunk with no leaves, or on a stump two logs high, says "No living tree" and drips nothing.
+    private static void noLivingTree(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos bare = helper.absolutePos(new BlockPos(2, 1, 2));
+        BlockPos stump = helper.absolutePos(new BlockPos(6, 1, 6));
+        jungleTree(level, bare, 3, false);
+        jungleTree(level, stump, 2, true);
+        for (BlockPos trunk : List.of(bare, stump)) {
+            BlockPos tapPos = trunk.north();
+            level.setBlock(tapPos, Tier5Blocks.TREE_TAP.get().defaultBlockState().setValue(TreeTapBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+            TreeTapBlockEntity tap = (TreeTapBlockEntity) level.getBlockEntity(tapPos);
+            for (int tick = 0; tick < 200; tick++) tickTap(level, tapPos, tap);
+            helper.assertValueEqual(tap.status(), TreeTapBlockEntity.Status.NO_TREE, "status of a tap at " + trunk);
+            helper.assertValueEqual(tap.amount(), 0, "latex from a tap that is not on a living tree");
+            helper.assertValueEqual(tap.statusLine().getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t ? t.getKey() : "",
+                    TreeTapBlockEntity.Status.NO_TREE.key(), "the tap says why");
+        }
+        helper.succeed();
+    }
+
+    // Spec 5.1 to 5.3: a full tap drains into the open barrel below it; sealed, 1000 mB of latex sets into 4 raw rubber.
+    private static void latexToRubber(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos trunk = helper.absolutePos(new BlockPos(4, 1, 4));
+        jungleTree(level, trunk, 4, true);
+        BlockPos tapPos = trunk.above().east();
+        BlockPos barrelPos = tapPos.below();
+        level.setBlock(tapPos, Tier5Blocks.TREE_TAP.get().defaultBlockState().setValue(TreeTapBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(barrelPos, ModBlocks.SOAKING_BARREL.get().defaultBlockState(), Block.UPDATE_ALL);
+        TreeTapBlockEntity tap = (TreeTapBlockEntity) level.getBlockEntity(tapPos);
+        SoakingBarrelBlockEntity barrel = (SoakingBarrelBlockEntity) level.getBlockEntity(barrelPos);
+        tap.setAmount(TreeTapBlockEntity.CUP);
+        for (int tick = 0; tick < 100; tick++) tickTap(level, tapPos, tap);
+        helper.assertTrue(barrel.fluid().isSame(Tier5Fluids.LATEX.get()), "the barrel below catches latex");
+        helper.assertTrue(barrel.amount() >= 1000, "the cup drains into the barrel, got " + barrel.amount());
+        helper.assertTrue(tap.amount() < 20, "the cup is nearly empty, got " + tap.amount());
+
+        int latex = barrel.amount();
+        level.setBlock(barrelPos, level.getBlockState(barrelPos).setValue(SoakingBarrelBlock.SEALED, true), Block.UPDATE_ALL);
+        barrel.lidChanged();
+        for (int tick = 0; tick < 1300; tick++) {
+            SoakingBarrelBlockEntity.serverTick(level, barrelPos, level.getBlockState(barrelPos), barrel);
+        }
+        ItemStack out = barrel.getItem(SoakingBarrelBlockEntity.OUTPUT);
+        int batches = latex / 1000;
+        helper.assertTrue(out.is(Tier5Items.RAW_RUBBER.get()) && out.getCount() == 4 * batches, "4 raw rubber per bucket of latex, got " + out);
+        helper.assertValueEqual(barrel.amount(), latex - 1000 * batches, "latex left after setting");
+        helper.succeed();
+    }
+
+    /** A jungle trunk {@code height} logs high, with a ring of leaves round the top when {@code leaves}. */
+    private static void jungleTree(ServerLevel level, BlockPos base, int height, boolean leaves) {
+        for (int y = 0; y < height; y++) level.setBlock(base.above(y), Blocks.JUNGLE_LOG.defaultBlockState(), Block.UPDATE_ALL);
+        if (!leaves) return;
+        BlockPos top = base.above(height);
+        BlockState leaf = Blocks.JUNGLE_LEAVES.defaultBlockState().setValue(LeavesBlock.PERSISTENT, true);
+        for (Direction d : Direction.Plane.HORIZONTAL) level.setBlock(top.relative(d), leaf, Block.UPDATE_ALL);
+        level.setBlock(top, leaf, Block.UPDATE_ALL);
+    }
+
+    private static void tickTap(ServerLevel level, BlockPos pos, TreeTapBlockEntity tap) {
+        TreeTapBlockEntity.serverTick(level, pos, level.getBlockState(pos), tap);
     }
 }
