@@ -46,7 +46,7 @@ public final class StoneAgeEvents {
     @SubscribeEvent
     static void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
         ItemStack held = event.getItemStack();
-        if (!Knapping.isFlint(held) || event.getEntity().isSecondaryUseActive()) return;
+        if (!(Knapping.isFlint(held) || Knapping.isClay(held)) || event.getEntity().isSecondaryUseActive()) return;
         if (event.getEntity() instanceof ServerPlayer player) Knapping.tryOpen(player, event.getHand());
         event.setCancellationResult(InteractionResult.SUCCESS);
         event.setCanceled(true);

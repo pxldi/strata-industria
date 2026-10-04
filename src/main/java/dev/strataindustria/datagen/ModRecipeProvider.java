@@ -1,11 +1,13 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.crafting.ConfigCondition;
 import dev.strataindustria.crafting.KnappedToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.knapping.GridPattern;
+import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
@@ -54,6 +56,7 @@ final class ModRecipeProvider extends RecipeProvider {
         }
 
         knapping();
+        clayForming();
         fibre();
         stoneTools();
         fire();
@@ -70,6 +73,34 @@ final class ModRecipeProvider extends RecipeProvider {
         knap(ModItems.STONE_HAMMER_HEAD.get(), "#####", "#####", "..#..", ".....", ".....");
         knap(ModItems.STONE_SPEAR_HEAD.get(), "..#..", ".###.", ".###.", "..#..", "..#..");
         knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
+    }
+
+    // Spec 4.1: the same grid, worked in five clay balls.
+    private void clayForming() {
+        form(ModItems.UNFIRED_SMALL_VESSEL.get(), 1, ".....", ".###.", "#####", "#####", ".###.");
+        form(ModItems.UNFIRED_LARGE_VESSEL.get(), 1, ".###.", "#####", "#####", "#####", ".###.");
+        form(ModItems.UNFIRED_CRUCIBLE.get(), 1, "##.##", "#...#", "#...#", "#...#", "#####");
+        form(ModItems.UNFIRED_INGOT_MOLD.get(), 1, ".....", "#####", "#...#", "#####", ".....");
+        form(ModItems.UNFIRED_BRICK.get(), 4, "##.##", "##.##", ".....", "##.##", "##.##");
+        form(mold(MoldType.PICKAXE_HEAD), 1, "#...#", ".###.", "#####", "#####", "#####");
+        form(mold(MoldType.AXE_HEAD), 1, "#.###", "....#", ".....", "....#", "#.###");
+        form(mold(MoldType.SHOVEL_HEAD), 1, "#...#", "#...#", "#...#", "#...#", "##.##");
+        form(mold(MoldType.HOE_HEAD), 1, ".....", "..###", "#####", "#####", "#####");
+        form(mold(MoldType.KNIFE_BLADE), 1, ".####", "..###", "#..##", "##..#", "###..");
+        form(mold(MoldType.HAMMER_HEAD), 1, ".....", ".....", "##.##", "#####", "#####");
+        form(mold(MoldType.SAW_BLADE), 1, "#####", "#####", ".....", ".....", "#####");
+        form(mold(MoldType.SWORD_BLADE), 1, "###..", "##..#", "#..##", "..###", ".####");
+    }
+
+    private static Item mold(MoldType type) {
+        return ModItems.UNFIRED_MOLDS.get(type).get();
+    }
+
+    private void form(Item result, int count, String... rows) {
+        int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
+        var recipe = new KnappingRecipe(Ingredient.of(Items.CLAY_BALL), Knapping.CLAY_OPENING_COST, pattern, true,
+                new ItemStackTemplate(result, count));
+        output.accept(key("clay_forming/" + name(result)), recipe, null);
     }
 
     private void knap(Item result, String... rows) {

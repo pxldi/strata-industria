@@ -32,7 +32,6 @@ public class GroundCoverItem extends BlockItem {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
         if (player.isSecondaryUseActive() || !Knapping.isKnappable(held)) return super.use(level, player, hand);
-        if (held.getCount() < Knapping.openingCost(held)) return InteractionResult.FAIL;
         if (player instanceof ServerPlayer serverPlayer) Knapping.tryOpen(serverPlayer, hand);
         return InteractionResult.SUCCESS;
     }

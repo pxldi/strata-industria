@@ -80,6 +80,19 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- kiln
+    static {
+        BUILDER.comment("Pit kiln firing.").push("kiln");
+    }
+
+    public static final ModConfigSpec.IntValue KILN_BURN_TICKS = BUILDER
+            .comment("Ticks a lit pit kiln burns before its pieces are fired.")
+            .defineInRange("burnTicks", 6000, 20, 72000);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

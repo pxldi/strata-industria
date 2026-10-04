@@ -1,6 +1,9 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.ceramics.LargeVesselItem;
+import dev.strataindustria.ceramics.MoldType;
+import dev.strataindustria.ceramics.SmallVesselItem;
 import dev.strataindustria.fire.FirestarterItem;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
@@ -53,6 +56,21 @@ public final class ModItems {
             p -> p.durability(10));
     public static final DeferredItem<BlockItem> FIRE_PIT = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_PIT);
 
+    // Clay (spec 4.1 to 4.3). Unfired pieces are formed on the grid and fired in a pit kiln.
+    public static final DeferredItem<Item> UNFIRED_SMALL_VESSEL = ITEMS.registerSimpleItem("unfired_small_vessel", p -> p.stacksTo(1));
+    public static final DeferredItem<Item> UNFIRED_LARGE_VESSEL = ITEMS.registerSimpleItem("unfired_large_vessel", p -> p.stacksTo(1));
+    public static final DeferredItem<Item> UNFIRED_CRUCIBLE = ITEMS.registerSimpleItem("unfired_crucible", p -> p.stacksTo(1));
+    public static final DeferredItem<Item> UNFIRED_INGOT_MOLD = ITEMS.registerSimpleItem("unfired_ingot_mold", p -> p.stacksTo(16));
+    public static final DeferredItem<Item> UNFIRED_BRICK = ITEMS.registerSimpleItem("unfired_brick");
+    public static final DeferredItem<SmallVesselItem> SMALL_VESSEL = ITEMS.registerItem("small_vessel", SmallVesselItem::new,
+            p -> p.stacksTo(1));
+    public static final DeferredItem<LargeVesselItem> LARGE_VESSEL = ITEMS.registerItem("large_vessel",
+            p -> new LargeVesselItem(ModBlocks.LARGE_VESSEL.get(), p), p -> p.stacksTo(1).useBlockDescriptionPrefix());
+    public static final DeferredItem<BlockItem> CRUCIBLE = ITEMS.registerSimpleBlockItem(ModBlocks.CRUCIBLE, p -> p.stacksTo(1));
+    public static final DeferredItem<Item> INGOT_MOLD = ITEMS.registerSimpleItem("ingot_mold", p -> p.stacksTo(16));
+    public static final Map<MoldType, DeferredItem<Item>> UNFIRED_MOLDS = new EnumMap<>(MoldType.class);
+    public static final Map<MoldType, DeferredItem<Item>> MOLDS = new EnumMap<>(MoldType.class);
+
     public static final Map<Rock, DeferredItem<BlockItem>> RAW_ROCK = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredItem<BlockItem>> COBBLED_ROCK = new EnumMap<>(Rock.class);
     /** The loose rock: picked up from the ground, knapped into tool heads. */
@@ -63,6 +81,10 @@ public final class ModItems {
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> CRUSHED_ORES = new EnumMap<>(OreMineral.class);
 
     static {
+        for (MoldType type : MoldType.values()) {
+            UNFIRED_MOLDS.put(type, ITEMS.registerSimpleItem("unfired_" + type.id() + "_mold", p -> p.stacksTo(16)));
+            MOLDS.put(type, ITEMS.registerSimpleItem(type.id() + "_mold", p -> p.stacksTo(16)));
+        }
         for (Rock rock : Rock.values()) {
             RAW_ROCK.put(rock, ITEMS.registerSimpleBlockItem(ModBlocks.RAW_ROCK.get(rock)));
             COBBLED_ROCK.put(rock, ITEMS.registerSimpleBlockItem(ModBlocks.COBBLED_ROCK.get(rock)));
