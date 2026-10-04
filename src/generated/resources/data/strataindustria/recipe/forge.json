@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "minecraft:brick",
+    "C": "minecraft:charcoal"
+  },
+  "pattern": [
+    "B B",
+    "BCB",
+    "BBB"
+  ],
+  "result": {
+    "id": "strataindustria:forge"
+  }
+}

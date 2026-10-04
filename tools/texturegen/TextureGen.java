@@ -923,12 +923,17 @@ public final class TextureGen {
     }
 
     static BufferedImage emberBed(long seed) {
+        return emberBed(seed, 0.0);
+    }
+
+    /** {@code glow} raises the whole bed towards the glowing steps, for a hearth under a bellows draught. */
+    static BufferedImage emberBed(long seed, double glow) {
         double[][] n = fractal(seed);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 double centre = 1.0 - Math.hypot(x - 7.5, y - 7.5) / 10.6;
-                double v = n[y][x] * 0.6 + centre * 0.6;
+                double v = n[y][x] * 0.6 + centre * 0.6 + glow;
                 int c;
                 if (v > 0.98) c = EMBER_GLOW[3];
                 else if (v > 0.88) c = EMBER_GLOW[2];
@@ -1322,6 +1327,63 @@ public final class TextureGen {
             "................",
     };
 
+    // ---------------------------------------------------------------- forge (spec 4.5)
+
+    /** Fired bricks in courses of four, mortar in ramp step 1, each brick lit along its top edge. */
+    static BufferedImage forgeBricks(long seed) {
+        BufferedImage im = img();
+        Random r = new Random(seed);
+        for (int y = 0; y < 16; y++) {
+            int course = y / 4, row = y % 4;
+            for (int x = 0; x < 16; x++) {
+                int joint = (x + (course % 2 == 1 ? 4 : 0)) % 8;
+                int c;
+                if (row == 3 || joint == 7) c = CERAMIC.get(1);
+                else if (row == 0) c = CERAMIC.get(4);
+                else if (joint == 6 || row == 2) c = CERAMIC.get(r.nextInt(5) == 0 ? 2 : 3);
+                else c = CERAMIC.get(r.nextInt(6) == 0 ? 4 : 3);
+                px(im, x, y, c);
+            }
+        }
+        return im;
+    }
+
+    /** Unlit hearth: cold charcoal lumps. */
+    static BufferedImage forgeCoals() {
+        double[][] n = fractal(6060);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, CHARCOAL.get(n[y][x] > 0.6 ? 3 : n[y][x] < 0.3 ? 1 : 2));
+        Random r = new Random(6060);
+        for (int k = 0; k < 10; k++) speck(im, r, r.nextInt(16), r.nextInt(16), CHARCOAL.get(5), CHARCOAL.get(1), 2);
+        return im;
+    }
+
+    /** Forge screen, 176x170: four heating slots, the fuel slot under the flames, a tall heat gauge. */
+    static BufferedImage forgeGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 170);
+        for (int i = 0; i < 4; i++) {
+            slot(im, 44 + i * 18, 18);
+            // Heat strip under each slot.
+            well(im, 44 + i * 18 - 1, 35, 18, 4, 0x2a2a2a);
+        }
+        slot(im, 80, 58);
+        for (int y = 0; y < FLAME_SILHOUETTE.length; y++)
+            for (int x = 0; x < 14; x++)
+                if (FLAME_SILHOUETTE[y].charAt(x) == '#') im.setRGB(81 + x, 40 + y, 0xff000000 | SLOT_FILL);
+        // Gauge: 0 to 1500 degrees over 58 px, a notch every 250.
+        well(im, 150, 16, 12, 60, 0x2a2a2a);
+        for (int t = 250; t < 1500; t += 250) {
+            int y = 17 + 58 - Math.round(t / 1500f * 58);
+            fill(im, 147, y, 3, 1, t % 500 == 0 ? GUI_SHADOW : SLOT_FILL);
+        }
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 88 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 146);
+        return im;
+    }
+
     // ---------------------------------------------------------------- GUI
 
     static final int GUI_FACE = 0xc6c6c6, GUI_LIGHT = 0xffffff, GUI_SHADOW = 0x555555, GUI_EDGE = 0x000000;
@@ -1553,6 +1615,13 @@ public final class TextureGen {
         save("block/log_pile_top", logPileTop());
         save("block/charcoal_pile", charcoalPile());
         save("item/ash", art(ASH, ASH_HEAP));
+
+        // Forge (spec 4.5).
+        save("block/forge_side", forgeBricks(7070));
+        save("block/forge_top", forgeBricks(7171));
+        save("block/forge_coals", forgeCoals());
+        save("block/forge_embers", emberBed(919, 0.12));
+        saveRaw("gui/forge", forgeGui());
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");
