@@ -30,7 +30,9 @@ final class Tier5Models {
 
     static void register(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
         for (var item : java.util.List.of(Tier5Items.MAGNET, Tier5Items.COPPER_ROD, Tier5Items.COPPER_WIRE, Tier5Items.LEAD_PLATE,
-                Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER, Tier5Items.LATEX_BUCKET, Tier5Items.TREE_TAP)) {
+                Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER, Tier5Items.LATEX_BUCKET, Tier5Items.TREE_TAP,
+                Tier5Items.RED_ALLOY_ROD, Tier5Items.RED_ALLOY_WIRE, Tier5Items.DRAW_PLATE, Tier5Items.CIRCUIT_BOARD, Tier5Items.BASIC_CIRCUIT,
+                Tier5Items.ELECTRIC_MOTOR)) {
             itemModels.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
         }
         treeTap(blockModels);

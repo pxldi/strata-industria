@@ -20,6 +20,13 @@ final class Tier5Language {
         lang.accept(item + "compounded_rubber", "Compounded Rubber");
         lang.accept(item + "rubber", "Rubber");
         lang.accept(item + "latex_bucket", "Latex Bucket");
+        lang.accept(item + "red_alloy_rod", "Red Alloy Rod");
+        lang.accept(item + "red_alloy_wire", "Red Alloy Wire");
+        lang.accept(item + "draw_plate", "Draw Plate");
+        lang.accept(item + "circuit_board", "Circuit Board");
+        lang.accept(item + "basic_circuit", "Basic Circuit");
+        lang.accept(item + "electric_motor", "Electric Motor");
+        lang.accept(dev.strataindustria.metal.CrucibleStatus.REDSTONE_WAITING.key(), "Redstone needs molten copper");
         lang.accept("fluid_type." + id + ".latex", "Latex");
         lang.accept(block + "tree_tap", "Tree Tap");
         lang.accept(block + "lv_cable", "LV Cable");

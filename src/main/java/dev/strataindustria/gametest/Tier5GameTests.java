@@ -14,7 +14,18 @@ import dev.strataindustria.power.HandCrankBlock;
 import dev.strataindustria.power.HandCrankBlockEntity;
 import dev.strataindustria.power.KineticNetworks;
 import dev.strataindustria.power.KineticState;
+import dev.strataindustria.forge.ForgeBlock;
+import dev.strataindustria.forge.ForgeBlockEntity;
+import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.machine.BellowsBlockEntity;
+import dev.strataindustria.material.Metal;
+import dev.strataindustria.metal.Alloy;
+import dev.strataindustria.metal.CrucibleBlockEntity;
+import dev.strataindustria.metal.CrucibleStatus;
+import dev.strataindustria.metal.Melt;
+import dev.strataindustria.metal.MetalContent;
 import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier5Blocks;
 import dev.strataindustria.registry.Tier5Fluids;
 import dev.strataindustria.registry.Tier5Items;
@@ -31,7 +42,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -49,6 +62,7 @@ final class Tier5GameTests {
         tests.put("tier5_tree_taps", Tier5GameTests::treeTaps);
         tests.put("tier5_no_living_tree", Tier5GameTests::noLivingTree);
         tests.put("tier5_latex_to_rubber", Tier5GameTests::latexToRubber);
+        tests.put("tier5_red_alloy", Tier5GameTests::redAlloy);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -258,6 +272,63 @@ final class Tier5GameTests {
         helper.assertTrue(out.is(Tier5Items.RAW_RUBBER.get()) && out.getCount() == 4 * batches, "4 raw rubber per bucket of latex, got " + out);
         helper.assertValueEqual(barrel.amount(), latex - 1000 * batches, "latex left after setting");
         helper.succeed();
+    }
+
+    // Spec 4.2 and 4.3: redstone waits for molten copper ("Redstone needs molten copper"); 2 copper ingots and
+    // 8 redstone make 400 units of red alloy; a red alloy ingot remelts as red alloy.
+    private static void redAlloy(GameTestHelper helper) {
+        Melt batch = meltOf(Items.COPPER_INGOT, 2).plus(meltOf(Items.REDSTONE, 8));
+        helper.assertValueEqual(batch.total(), 400, "units in 2 copper ingots and 8 redstone");
+        helper.assertValueEqual(Alloy.resultOf(batch).orElse(null), Metal.RED_ALLOY, "2 copper + 8 redstone");
+        helper.assertValueEqual(Alloy.resultOf(meltOf(ModItems.ingot(Metal.RED_ALLOY), 2)).orElse(null), Metal.RED_ALLOY, "red alloy remelt");
+        helper.assertTrue(Alloy.resultOf(meltOf(Items.COPPER_INGOT, 4).plus(meltOf(Items.REDSTONE, 4))).isEmpty(),
+                "80% copper is outside the red alloy range");
+        helper.assertTrue(Alloy.resultOf(meltOf(Items.REDSTONE, 4)).isEmpty(), "redstone alone is no metal");
+
+        ServerLevel level = helper.getLevel();
+        BlockPos forgePos = helper.absolutePos(new BlockPos(4, 1, 4));
+        BlockPos cruciblePos = forgePos.above();
+        BlockPos bellowsPos = forgePos.west();
+        level.setBlock(forgePos, ModBlocks.FORGE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(cruciblePos, ModBlocks.CRUCIBLE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(bellowsPos, ModBlocks.BELLOWS.get().defaultBlockState().setValue(BellowsBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        ForgeBlockEntity forge = (ForgeBlockEntity) level.getBlockEntity(forgePos);
+        CrucibleBlockEntity crucible = (CrucibleBlockEntity) level.getBlockEntity(cruciblePos);
+        BellowsBlockEntity bellows = (BellowsBlockEntity) level.getBlockEntity(bellowsPos);
+        forge.setItem(ForgeBlockEntity.FUEL_SLOT, new ItemStack(Items.CHARCOAL, 32));
+        BlockState forgeState = level.getBlockState(forgePos);
+        helper.assertTrue(((ForgeBlock) forgeState.getBlock()).ignite(level, forgePos, forgeState), "the forge should light");
+        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
+
+        crucible.setItem(0, new ItemStack(Items.REDSTONE, 8));
+        for (int tick = 0; tick < 400; tick++) heatCrucible(level, smith, bellowsPos, bellows, forgePos, forge, cruciblePos, crucible);
+        helper.assertValueEqual(crucible.getItem(0).getCount(), 8, "redstone stays in its slot without copper");
+        helper.assertValueEqual(crucible.status(), CrucibleStatus.REDSTONE_WAITING, "crucible status with only redstone");
+
+        crucible.setItem(1, new ItemStack(Items.COPPER_INGOT, 2));
+        for (int tick = 0; tick < 20000; tick++) {
+            heatCrucible(level, smith, bellowsPos, bellows, forgePos, forge, cruciblePos, crucible);
+            if (crucible.getItem(0).isEmpty() && crucible.getItem(1).isEmpty() && crucible.isMolten()) break;
+        }
+        helper.assertTrue(crucible.getItem(0).isEmpty(), "the redstone dissolves into the molten copper");
+        helper.assertValueEqual(crucible.melt().total(), 400, "units of copper and redstone");
+        helper.assertValueEqual(crucible.result().orElse(null), Metal.RED_ALLOY, "melt result");
+        helper.succeed();
+    }
+
+    private static void heatCrucible(ServerLevel level, FakePlayer smith, BlockPos bellowsPos, BellowsBlockEntity bellows, BlockPos forgePos,
+            ForgeBlockEntity forge, BlockPos cruciblePos, CrucibleBlockEntity crucible) {
+        bellows.pump(smith);
+        BellowsBlockEntity.serverTick(level, bellowsPos, level.getBlockState(bellowsPos), bellows);
+        ForgeBlockEntity.serverTick(level, forgePos, level.getBlockState(forgePos), forge);
+        CrucibleBlockEntity.serverTick(level, cruciblePos, level.getBlockState(cruciblePos), crucible);
+    }
+
+    private static Melt meltOf(Item item, int count) {
+        Melt one = MetalContent.of(new ItemStack(item)).orElseThrow();
+        Melt total = Melt.EMPTY;
+        for (int i = 0; i < count; i++) total = total.plus(one);
+        return total;
     }
 
     /** A jungle trunk {@code height} logs high, with a ring of leaves round the top when {@code leaves}. */

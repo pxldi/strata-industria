@@ -4,7 +4,9 @@ package dev.strataindustria.metal;
 public enum CrucibleStatus {
     COLD, HEATING, MELTING, MOLTEN, SOLID, NO_FORGE,
     // Tier 4 spec 3 and 4.2.
-    AT_LIMIT, CARBON_WAITING, CARBON_BURNED, CALCINE_SHORT;
+    AT_LIMIT, CARBON_WAITING, CARBON_BURNED, CALCINE_SHORT,
+    // Tier 5 spec 4.2.
+    REDSTONE_WAITING;
 
     public String key() {
         return "strataindustria.crucible.status." + name().toLowerCase(java.util.Locale.ROOT);

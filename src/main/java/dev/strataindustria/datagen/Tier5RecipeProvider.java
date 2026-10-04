@@ -38,6 +38,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
     protected void buildRecipes() {
         metals();
         rubber();
+        components();
         electric();
     }
 
@@ -51,6 +52,13 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
         anvil("lead_plate", ModItems.ingot(Metal.LEAD), Tier5Items.LEAD_PLATE.get(), 1, 60,
                 rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+        Item redAlloy = ModItems.ingot(Metal.RED_ALLOY);
+        anvil("red_alloy_rod", redAlloy, Tier5Items.RED_ALLOY_ROD.get(), 2, 70,
+                rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
+        anvil("red_alloy_wire", redAlloy, Tier5Items.RED_ALLOY_WIRE.get(), 3, 90,
+                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+        anvil("draw_plate", ModItems.PLATES.get(Metal.STEEL).get(), Tier5Items.DRAW_PLATE.get(), 1, 80,
+                rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.PUNCH, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.NOT_LAST));
 
         Item magnetite = ModItems.orePiece(OreMineral.MAGNETITE, OreGrade.RICH);
         shapeless(RecipeCategory.MISC, Tier5Items.MAGNET.get())
@@ -85,6 +93,37 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .save(output, key("compounded_rubber"));
         output.accept(key("roasting/rubber"), new RoastingRecipe(Ingredient.of(Tier5Items.COMPOUNDED_RUBBER.get()),
                 new ItemStackTemplate(Tier5Items.RUBBER.get()), 140, 200, Optional.empty()), null);
+    }
+
+    // Spec 4.5, 9.2 and 9.3: circuit boards soaked in creosote, basic circuits and motors.
+    private void components() {
+        Item creosote = Tier4Items.CREOSOTE_BUCKET.get();
+        shapeless(RecipeCategory.MISC, Tier5Items.CIRCUIT_BOARD.get(), 3)
+                .requires(Items.PAPER, 3)
+                .requires(creosote)
+                .unlockedBy("has_creosote_bucket", has(creosote))
+                .save(output, key("circuit_board"));
+        Item board = Tier5Items.CIRCUIT_BOARD.get();
+        shaped(RecipeCategory.REDSTONE, Tier5Items.BASIC_CIRCUIT.get())
+                .pattern(" D ")
+                .pattern("XBX")
+                .pattern(" D ")
+                .define('D', Tier5Items.RED_ALLOY_WIRE.get())
+                .define('X', Items.REDSTONE)
+                .define('B', board)
+                .unlockedBy("has_circuit_board", has(board))
+                .save(output, key("basic_circuit"));
+        Item magnet = Tier5Items.MAGNET.get();
+        shaped(RecipeCategory.REDSTONE, Tier5Items.ELECTRIC_MOTOR.get())
+                .pattern("PWP")
+                .pattern("WRW")
+                .pattern("PXP")
+                .define('P', ModItems.PLATES.get(Metal.STEEL).get())
+                .define('W', Tier5Items.COPPER_WIRE.get())
+                .define('R', ModItems.RODS.get(Metal.STEEL).get())
+                .define('X', magnet)
+                .unlockedBy("has_magnet", has(magnet))
+                .save(output, key("electric_motor"));
     }
 
     // Spec 7.1, 8.1 and 9.5: cables, the dynamo and the machine hull.

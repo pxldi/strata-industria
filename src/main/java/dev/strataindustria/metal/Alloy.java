@@ -17,7 +17,9 @@ public enum Alloy {
     STEEL(Metal.STEEL, Metal.WROUGHT_IRON, 0.98f, 0.995f, Metal.CARBON, 0.005f, 0.02f, 0.01f),
     PIG_IRON(Metal.PIG_IRON, Metal.WROUGHT_IRON, 0.94f, 0.97f, Metal.CARBON, 0.03f, 0.06f, 0.04f),
     BRASS(Metal.BRASS, Metal.COPPER, 0.60f, 0.70f, Metal.ZINC, 0.30f, 0.40f),
-    SOLDER(Metal.SOLDER, Metal.TIN, 0.50f, 0.70f, Metal.LEAD, 0.30f, 0.50f);
+    SOLDER(Metal.SOLDER, Metal.TIN, 0.50f, 0.70f, Metal.LEAD, 0.30f, 0.50f),
+    // Tier 5 spec 4.3: 2 copper ingots and 8 redstone make 4 red alloy ingots.
+    RED_ALLOY(Metal.RED_ALLOY, Metal.COPPER, 0.40f, 0.60f, Metal.REDSTONE, 0.40f, 0.60f);
 
     private final Metal result;
     private final Metal base;

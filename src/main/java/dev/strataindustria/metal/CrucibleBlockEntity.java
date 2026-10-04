@@ -77,6 +77,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private Melt poured = Melt.EMPTY;
     private boolean forgeTooHot;
     private boolean carbonWaiting;
+    private boolean redstoneWaiting;
     private boolean calcineShort;
     private int burnedOff;
 
@@ -143,6 +144,11 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     }
 
     /** The melt's result when molten: one metal, an alloy, or empty for an unknown mix. */
+    /** The screen's status line, for game tests. */
+    public CrucibleStatus status() {
+        return status;
+    }
+
     public Optional<Metal> result() {
         return Alloy.resultOf(melt);
     }
@@ -202,6 +208,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         boolean changed = false;
         int melting = 0, sum = 0;
         carbonWaiting = false;
+        redstoneWaiting = false;
         calcineShort = false;
         boolean calcine = hasCalcine();
         // Carbon already promised to calcine pieces that are reducing this tick.
@@ -223,6 +230,14 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
                     continue;
                 }
                 point = iron ? mixMeltingPoint(melt) : MetalContent.CALCINE_REDUCTION;
+            } else if (isRedstone(content.get())) {
+                // Tier 5 spec 4.2: redstone dissolves only into molten copper.
+                if (!melt.units().containsKey(Metal.COPPER) || !isMolten()) {
+                    progress[i] = 0;
+                    redstoneWaiting = true;
+                    continue;
+                }
+                point = mixMeltingPoint(melt);
             } else if (MetalContent.isCalcine(stack)) {
                 // Each piece takes a tenth of its zinc in carbon from the melt before it can melt.
                 point = MetalContent.CALCINE_REDUCTION;
@@ -277,6 +292,10 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         return new Melt(left, total == 0 ? 0 : Math.round(melt.qualityUnits() * (float) (total - taken) / total));
     }
 
+    private static boolean isRedstone(Melt content) {
+        return content.units().size() == 1 && content.units().containsKey(Metal.REDSTONE);
+    }
+
     private static boolean isCarbon(Melt content) {
         return content.units().size() == 1 && content.units().containsKey(Metal.CARBON);
     }
@@ -299,11 +318,13 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         if (burnedOff > 0 && isMolten()) return CrucibleStatus.CARBON_BURNED;
         boolean atLimit = forgeTooHot && temperature >= maxTemperature() - 5;
         if (!melt.isEmpty()) {
+            if (redstoneWaiting) return CrucibleStatus.REDSTONE_WAITING;
             if (isMolten()) return CrucibleStatus.MOLTEN;
             if (carbonWaiting && !melt.units().containsKey(Metal.WROUGHT_IRON)) return CrucibleStatus.CARBON_WAITING;
             return atLimit ? CrucibleStatus.AT_LIMIT : CrucibleStatus.SOLID;
         }
         if (carbonWaiting) return CrucibleStatus.CARBON_WAITING;
+        if (redstoneWaiting) return CrucibleStatus.REDSTONE_WAITING;
         if (!forgeBelow) return CrucibleStatus.NO_FORGE;
         if (atLimit) return CrucibleStatus.AT_LIMIT;
         return temperature > Heat.AMBIENT + 10 ? CrucibleStatus.HEATING : CrucibleStatus.COLD;
