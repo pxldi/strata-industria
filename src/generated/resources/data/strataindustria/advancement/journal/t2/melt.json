@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:ingot_mold"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t2.melt"
     }

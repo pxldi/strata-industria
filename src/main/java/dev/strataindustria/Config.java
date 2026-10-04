@@ -299,6 +299,12 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue JOURNAL_GIVE_ON_JOIN = BUILDER
             .comment("Give each player a field journal the first time they join.")
             .define("giveOnJoin", true);
+    public static final ModConfigSpec.IntValue JOURNAL_HINT_MINUTES = BUILDER
+            .comment("Minutes of play an open lead waits before the journal remembers its hint. -1 never; studying still does.")
+            .defineInRange("hintMinutes", 10, -1, 600);
+    public static final ModConfigSpec.BooleanValue JOURNAL_CHECKLIST = BUILDER
+            .comment("Show the Checklist tab in the journal: every goal of the tree as a list, for players who want the overview.")
+            .define("checklist", false);
 
     static {
         BUILDER.pop();

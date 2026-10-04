@@ -20,6 +20,7 @@
     "icon": {
       "id": "minecraft:coal"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.coal"
     }

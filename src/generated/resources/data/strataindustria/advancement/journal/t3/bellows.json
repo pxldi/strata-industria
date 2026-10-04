@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:bellows"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.bellows"
     }

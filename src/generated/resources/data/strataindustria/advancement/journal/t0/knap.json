@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:stone_axe_head"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t0.knap"
     }

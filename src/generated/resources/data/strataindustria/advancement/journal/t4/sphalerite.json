@@ -25,6 +25,7 @@
     "icon": {
       "id": "strataindustria:sphalerite"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.sphalerite"
     }

@@ -1067,6 +1067,17 @@
     ],
     "subtitle": "subtitles.strataindustria.survey_notes.open"
   },
+  "journal.cross_off": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.brush.brushing.generic",
+        "pitch": 2.0,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.cross_off"
+  },
   "journal.open": {
     "sounds": [
       {
@@ -1083,6 +1094,75 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.journal.open"
+  },
+  "journal.page": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 1.05,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.page"
+  },
+  "journal.pin": {
+    "sounds": [
+      {
+        "name": "dig/wood1",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "name": "dig/wood2",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "name": "dig/wood3",
+        "pitch": 1.9,
+        "volume": 0.35
+      },
+      {
+        "name": "dig/wood4",
+        "pitch": 1.9,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.pin"
+  },
+  "journal.remember": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 0.75,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.remember"
+  },
+  "journal.study": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.brush.brushing.generic",
+        "pitch": 1.3,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.study"
+  },
+  "journal.write": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.brush.brushing.generic",
+        "pitch": 1.9,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.write"
   },
   "kinetic.overstress": {
     "sounds": [

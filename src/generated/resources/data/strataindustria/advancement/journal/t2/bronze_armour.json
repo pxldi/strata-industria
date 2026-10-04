@@ -17,6 +17,7 @@
     "icon": {
       "id": "strataindustria:bronze_chestplate"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t2.bronze_armour"
     }

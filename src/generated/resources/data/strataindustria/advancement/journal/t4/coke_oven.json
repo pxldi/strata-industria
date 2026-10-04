@@ -16,6 +16,7 @@
     "icon": {
       "id": "strataindustria:coke_oven_door"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.coke_oven"
     }

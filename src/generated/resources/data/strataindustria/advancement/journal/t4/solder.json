@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:solder_ingot"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.solder"
     }

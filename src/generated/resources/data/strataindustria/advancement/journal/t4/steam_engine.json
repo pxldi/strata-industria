@@ -17,6 +17,7 @@
     "icon": {
       "id": "strataindustria:steam_engine"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.steam_engine"
     }

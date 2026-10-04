@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:fire_clay_ball"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t3.fire_clay"
     }

@@ -29,6 +29,7 @@
     "icon": {
       "id": "strataindustria:bronze_plate"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t2.smith"
     }

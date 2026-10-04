@@ -20,6 +20,7 @@
     "icon": {
       "id": "strataindustria:coke"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.coke"
     }

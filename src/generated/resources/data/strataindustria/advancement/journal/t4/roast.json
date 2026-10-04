@@ -25,6 +25,7 @@
     "icon": {
       "id": "strataindustria:zinc_calcine"
     },
+    "show_toast": false,
     "title": {
       "translate": "journal.strataindustria.t4.roast"
     }

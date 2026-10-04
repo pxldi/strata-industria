@@ -38,7 +38,8 @@ import net.minecraft.world.level.block.Block;
 
 /**
  * The field journal tab (spec 11): one goal per step from the first loose rock to the bronze anvil, laid out
- * as a tree that branches where the work can happen in any order. Titles and hints are in the lang file.
+ * as a tree that branches where the work can happen in any order. Titles and hints are in the lang file. Goals show
+ * no vanilla toast: the leads notebook announces them in its own words (journal leads spec).
  */
 final class ModAdvancements extends AdvancementSubProvider {
     private final HolderGetter<Item> items;
@@ -177,7 +178,7 @@ final class ModAdvancements extends AdvancementSubProvider {
         // Spec 15, goals 62 and 63: lay any fluid pipe, then raise a boiler to 1 bar.
         AdvancementHolder pipe = Advancement.Builder.advancement()
                 .parent(solder)
-                .display(Tier4Items.COPPER_FLUID_PIPE.get(), title("t4.pipe"), hint("t4.pipe"), AdvancementType.TASK, true, false, false)
+                .display(Tier4Items.COPPER_FLUID_PIPE.get(), title("t4.pipe"), hint("t4.pipe"), AdvancementType.TASK, false, false, false)
                 .addCriterion("copper", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.COPPER_FLUID_PIPE.get()))
                 .addCriterion("bronze", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.BRONZE_FLUID_PIPE.get()))
                 .addCriterion("steel", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.STEEL_FLUID_PIPE.get()))
@@ -229,7 +230,7 @@ final class ModAdvancements extends AdvancementSubProvider {
         String key = path.replace('/', '.');
         return Advancement.Builder.advancement()
                 .parent(parent)
-                .display(icon.asItem(), title(key), hint(key), type, true, false, false)
+                .display(icon.asItem(), title(key), hint(key), type, false, false, false)
                 .addCriterion("done", criterion)
                 .save(output, Journal.goal(path).toString());
     }
