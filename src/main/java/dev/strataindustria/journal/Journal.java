@@ -51,6 +51,7 @@ public final class Journal {
     public static final String BLAST_FURNACE = "blast_furnace";
     public static final String CONVERTER = "converter";
     public static final String HEAT_NETWORK = "heat_network";
+    public static final String AUTOMATED_CHAIN = "automated_chain";
 
     /** Block events count for players this close: whoever lit the kiln is standing near it. */
     static final double NEARBY = 16;

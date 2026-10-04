@@ -345,6 +345,18 @@ public final class Config {
         BUILDER.pop();
     }
 
+    static {
+        BUILDER.comment("Belts, chutes and inserters.").push("automation");
+    }
+
+    public static final ModConfigSpec.IntValue AUTOMATION_CHAIN_OPERATIONS = BUILDER
+            .comment("Items a machine must finish in a row, with nobody opening it, to count towards the automated chain goal.")
+            .defineInRange("chainOperations", 64, 1, 4096);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}
