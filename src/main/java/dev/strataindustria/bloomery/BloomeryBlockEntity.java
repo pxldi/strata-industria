@@ -93,7 +93,6 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
     private boolean tooCool;
     private int fullBlooms;
     private int partialUnits;
-    private int bloomQuality;
     private int slag;
     private BloomeryStructure.Result structure = new BloomeryStructure.Result(0, BloomeryStructure.Problem.NEEDS_BRICK, BlockPos.ZERO);
     private boolean announced;
@@ -342,13 +341,12 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
             if (stack.isEmpty() || isFuel(stack)) continue;
             Melt melt = MetalContent.of(stack.copyWithCount(1)).orElse(Melt.EMPTY);
             int units = melt.units().getOrDefault(Metal.WROUGHT_IRON, 0);
-            iron = iron.plus(Melt.of(Metal.WROUGHT_IRON, units * stack.getCount(), melt.quality()));
+            iron = iron.plus(Melt.of(Metal.WROUGHT_IRON, units * stack.getCount()));
         }
         int total = (int) Math.floor(iron.total() * yield);
         fullBlooms = total / BLOOM_UNITS;
         int rest = total % BLOOM_UNITS;
         partialUnits = rest >= MIN_PARTIAL_UNITS ? rest : 0;
-        bloomQuality = iron.quality();
         slag = (ore + 3) / 4;
         for (int i = 0; i < charge.size(); i++) charge.set(i, ItemStack.EMPTY);
         progress = 0;
@@ -369,7 +367,7 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
             partialUnits = 0;
         }
         ItemStack bloom = new ItemStack(ModItems.RAW_BLOOM.get());
-        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, units, bloomQuality));
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, units));
         Heat.set(bloom, Math.max(temperature, minTemperature()), level.getGameTime());
         if (!hasBlooms() && slag > 0) {
             Block.popResource(level, worldPosition.relative(facing()), new ItemStack(ModItems.BLOOMERY_SLAG.get(), slag));
@@ -471,7 +469,6 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
         tooCool = input.getIntOr("too_cool", 0) != 0;
         fullBlooms = input.getIntOr("full_blooms", 0);
         partialUnits = input.getIntOr("partial_units", 0);
-        bloomQuality = input.getIntOr("bloom_quality", 0);
         slag = input.getIntOr("slag", 0);
         announced = input.getIntOr("announced", 0) != 0;
     }
@@ -485,7 +482,6 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
         output.putInt("too_cool", tooCool ? 1 : 0);
         output.putInt("full_blooms", fullBlooms);
         output.putInt("partial_units", partialUnits);
-        output.putInt("bloom_quality", bloomQuality);
         output.putInt("slag", slag);
         output.putInt("announced", announced ? 1 : 0);
     }

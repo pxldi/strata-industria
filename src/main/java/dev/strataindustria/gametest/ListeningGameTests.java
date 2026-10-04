@@ -32,9 +32,9 @@ final class ListeningGameTests {
         helper.assertTrue(TapTest.forGrade(OreGrade.RICH) == ListeningSounds.TAP_RING.get(), "rich ore rings");
         helper.assertTrue(TapTest.forGrade(OreGrade.NORMAL) == ListeningSounds.TAP_KNOCK.get(), "normal ore knocks");
         helper.assertTrue(TapTest.forGrade(OreGrade.POOR) == ListeningSounds.TAP_THUD.get(), "poor ore thuds");
-        helper.assertTrue(TapTest.forQuality(new Quality(-10, -4)) == ListeningSounds.TAP_THUD.get(), "a crude casting thuds");
-        helper.assertTrue(TapTest.forQuality(new Quality(0, -2)) == ListeningSounds.TAP_KNOCK.get(), "a standard casting knocks");
-        helper.assertTrue(TapTest.forQuality(new Quality(12, 0)) == ListeningSounds.TAP_RING.get(), "a masterwork casting rings");
+        helper.assertTrue(TapTest.forQuality(new Quality(Quality.CAST)) == ListeningSounds.TAP_THUD.get(), "a casting thuds");
+        helper.assertTrue(TapTest.forQuality(new Quality(0)) == ListeningSounds.TAP_KNOCK.get(), "a plain strike knocks");
+        helper.assertTrue(TapTest.forQuality(new Quality(4)) == ListeningSounds.TAP_RING.get(), "a bright strike rings");
         helper.succeed();
     }
 

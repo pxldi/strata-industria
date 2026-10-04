@@ -20,7 +20,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 /** The client side of tier 2 on foot: the handcart's model, the pack key, and the no-sprint, no-jump rules. */
 @EventBusSubscriber(modid = StrataIndustria.MOD_ID, value = Dist.CLIENT)
 public final class FootClient {
-    private static final KeyMapping.Category CATEGORY = new KeyMapping.Category(StrataIndustria.id("transport"));
+    public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(StrataIndustria.id("transport"));
     private static final KeyMapping PACK_KEY = new KeyMapping("key." + StrataIndustria.MOD_ID + ".pack",
             InputConstants.Type.KEYBOARD, InputConstants.KEY_B, CATEGORY);
 

@@ -86,6 +86,10 @@ public final class Journal {
     public static final String TUB_ARRIVED = "tub_arrived";
     public static final String PONY_HARNESSED = "pony_harnessed";
     public static final String WINCH_HAULED = "winch_hauled";
+    // Tier 4 railway
+    public static final String LOCOMOTIVE_PRESSURE = "locomotive_pressure";
+    public static final String DRIVERLESS_TRIPS = "driverless_trips";
+    public static final String OUTPOST_GROWN = "outpost_grown";
 
     /** Blocks of overhead span a consumer must be served across for the power line goal. */
     public static final int POWER_LINE_SPAN = 64;

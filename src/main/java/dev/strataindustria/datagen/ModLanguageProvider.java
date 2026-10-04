@@ -41,6 +41,7 @@ final class ModLanguageProvider extends LanguageProvider {
         RailwayData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
+        FellingData.lang(this::add);
         recipeViewer();
 
         addItem(ModItems.PLANT_FIBRE, "Plant Fibre");
@@ -77,9 +78,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.FIRE_PIT, "Fire Pit");
         add("container." + StrataIndustria.MOD_ID + ".fire_pit", "Fire Pit");
         for (HeatBand band : HeatBand.values()) {
-            if (band == HeatBand.NONE) continue;
-            String name = band.id().replace('_', ' ');
-            add(StrataIndustria.MOD_ID + ".heat." + band.id(), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
+            String name = band.word();
+            add(StrataIndustria.MOD_ID + ".heat." + (band == HeatBand.NONE ? "cold" : band.id()), name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1));
         }
         add(StrataIndustria.MOD_ID + ".flint_strike.need_rock", "Hold a rock in your other hand to strike the flint on");
         add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s for this shape");
@@ -174,6 +174,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "crucible.pour", "Molten metal pours");
         add(subtitles + "mold.knock", "Cast knocked out");
         add(subtitles + "mold.break", "Mold cracks");
+        add(subtitles + "branch.shake", "Branch creaks");
+        add(subtitles + "branch.snap", "Branch snaps");
+        add(subtitles + "branch.bare", "Dry leaves rustle");
+        add("message." + StrataIndustria.MOD_ID + ".branch.bare", "This branch is bare. Try another.");
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
@@ -239,7 +243,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "removeCampfire", "Remove campfire recipe");
         add(config + "gateFurnace", "Gate the furnace");
         add(config + "replaceCopperGear", "Replace copper gear recipes");
-        add(config + "leavesDropSticks", "Leaves drop sticks");
+        add(config + "branchSnapping", "Snap branches off trees");
         add(config + "gravelFlintChance", "More flint from gravel");
         add(config + "kiln", "Firing");
         add(config + "burnTicks", "Burn time (ticks)");
@@ -325,7 +329,7 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(Tier4Items.GEAR_MOLD, "Gear Mold");
         add("container." + id + ".refractory_crucible", "Refractory Crucible");
         String status = id + ".crucible.status.";
-        add(status + "at_limit", "Crucible at its limit (%s °C)");
+        add(status + "at_limit", "Crucible at its limit (%s)");
         add(status + "carbon_waiting", "Carbon needs molten iron or calcine");
         add(status + "calcine_short", "Calcine needs more carbon");
         add(status + "carbon_burned", "Excess carbon burned off");
@@ -335,13 +339,12 @@ final class ModLanguageProvider extends LanguageProvider {
         String config = id + ".configuration.";
         add(config + "clayMaxTemperature", "Clay crucible limit (°C)");
         add(config + "refractoryMoldBreak", "Refractory mold break chance");
-        // Spec 4.4, 5.3 and 14.4: zinc calcine, its gas, and the steel anvil.
+        // Spec 4.4 and 5.3: zinc calcine and its gas.
         addItem(Tier4Items.ZINC_CALCINES.get(dev.strataindustria.geology.OreGrade.POOR), "Poor Zinc Calcine");
         addItem(Tier4Items.ZINC_CALCINES.get(dev.strataindustria.geology.OreGrade.NORMAL), "Zinc Calcine");
         addItem(Tier4Items.ZINC_CALCINES.get(dev.strataindustria.geology.OreGrade.RICH), "Rich Zinc Calcine");
         addItem(Tier4Items.SMALL_ZINC_CALCINE, "Small Zinc Calcine");
         add("fluid_type." + id + ".sulfur_dioxide", "Sulfur Dioxide");
-        addBlock(Tier4Blocks.STEEL_ANVIL, "Steel Anvil");
         addBlock(Tier4Blocks.IRON_AXLE, "Iron Axle");
         addBlock(Tier4Blocks.IRON_GEARBOX, "Iron Gearbox");
         addBlock(Tier4Blocks.IRON_STEP_UP_GEARBOX, "Iron Step-up Gearbox");
@@ -416,7 +419,7 @@ final class ModLanguageProvider extends LanguageProvider {
         String smelter = id + ".smelter.";
         add(smelter + "auto_on", "Auto-pour: On");
         add(smelter + "auto_off", "Auto-pour: Off");
-        add(smelter + "cooling", "%s °C");
+        add(smelter + "cooling", "%s");
         add(smelter + "slot.mold", "Mold being filled");
         add(smelter + "slot.stock", "Spare empty molds (up to 16)");
         add(smelter + "slot.cooling", "Filled mold cooling");
@@ -431,8 +434,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(firebox + "status.idle", "Burning, %s HU/t wasted");
         add(firebox + "status.heating", "Heating: %s / %s HU/t");
         add(firebox + "status.cooling", "Out of fuel, cooling");
-        add(firebox + "temperature", "%s °C");
-        add(firebox + "blower", "Blower: +%s °C, 1.5× heat");
+        add(firebox + "temperature", "%s");
+        add(firebox + "blower", "Blower: hotter, 1.5× heat");
         // Spec 8.3: the line a multiblock shows about the heat coming in through its inlets.
         String heatLine = id + ".heat_line.";
         add(heatLine + "hot_blast", "Hot blast");
@@ -442,15 +445,15 @@ final class ModLanguageProvider extends LanguageProvider {
         add(heatLine + "smelter", "Heat");
         add(heatLine + "steam_hammer", "Heat");
         add(heatLine + "none", "%s: no heat");
-        add(heatLine + "cold", "%s: %3$s of %2$s °C");
-        add(heatLine + "limited", "%s: pipes cap %s °C");
-        add(heatLine + "fine", "%s: %s °C, %s HU/t");
-        add(heatLine + "limited_by", "Limited by %s (%s °C)");
-        add(heatLine + "needs", "Needs %s °C");
+        add(heatLine + "cold", "%s: %3$s, needs %2$s");
+        add(heatLine + "limited", "%s: pipes cap it at %s");
+        add(heatLine + "fine", "%s: %s, %s HU/t");
+        add(heatLine + "limited_by", "Limited by %s (%s)");
+        add(heatLine + "needs", "Needs %s");
         add(heatLine + "pipes", "the pipes");
         String boiler = id + ".boiler.";
         add(boiler + "status.no_heat", "No heat");
-        add(boiler + "status.too_cool", "Fire too cool: %2$s °C");
+        add(boiler + "status.too_cool", "Fire too cool: %2$s, needs %1$s");
         add(boiler + "status.no_water", "No water");
         add(boiler + "status.heating", "Heating water (%s%%)");
         add(boiler + "status.running", "Making steam");
@@ -460,7 +463,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(boiler + "status.dry_firing", "Dry firing! %s%%");
         add(boiler + "pressure", "%s bar");
         add(boiler + "heat", "%s HU/t");
-        add(boiler + "fire", "%s °C");
+        add(boiler + "fire", "%s");
         add(boiler + "water", "Water %s / %s mB");
         add(boiler + "steam", "Steam %s / %s mB");
         add(boiler + "integrity", "Integrity %s%%");
@@ -511,7 +514,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(steamHammer + "status.output_full", "Output full");
         add(steamHammer + "status.no_steam", "Needs steam at 1 bar or more");
         add(steamHammer + "status.too_cold", "Workpiece too cold");
-        add(steamHammer + "status.heating", "Heating the piece: %s of %s °C");
+        add(steamHammer + "status.heating", "Heating the piece: %s, needs %s");
         add(steamHammer + "status.working", "Working (%s / %s hits)");
         add(steamHammer + "steam.none", "Steam: none");
         add(steamHammer + "steam.slow", "Steam: %s bar, half speed");
@@ -556,6 +559,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".outposts.outline_none", "This charter loads nothing right now.");
         add(id + ".outposts.kind.tramway", "tramway");
         add(id + ".outposts.kind.railway", "railway");
+        add(id + ".outposts.kind.railway_mixed", "railway (wooden sections)");
         add(id + ".outposts.kind.ropeway", "ropeway");
         add(id + ".outposts.kind.tram", "tram line");
         add(id + ".outposts.kind.power", "power line");
@@ -744,8 +748,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(bloomery + "status.empty", "Empty");
         add(bloomery + "status.charged", "Charged, ready to light");
         add(bloomery + "status.needs_charcoal", "Needs %s more charcoal");
-        add(bloomery + "status.heating", "Heating (%s °C)");
-        add(bloomery + "status.too_cool", "Too cool: needs 1200 °C");
+        add(bloomery + "status.heating", "Heating (%s)");
+        add(bloomery + "status.too_cool", "Too cool: needs yellow heat");
         add(bloomery + "status.burning", "Burning (%s%%)");
         add(bloomery + "status.ready", "Bloom ready: use a pickaxe");
         add(bloomery + "problem.brick", "Needs fire bricks");
@@ -753,7 +757,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(bloomery + "at", "at %s, %s, %s");
         add(bloomery + "hint", "Bricks around and under the chamber.");
         add(bloomery + "charge", "Ore %s/%s, charcoal %s/%s");
-        add(bloomery + "draught", "Flue %s, bellows %s: %s °C");
+        add(bloomery + "draught", "Flue %s, bellows %s: %s");
         add(bloomery + "yield", "Yield %s%%, %s blooms");
         add(bloomery + "no_yield", "Too cool for a bloom");
         add(bloomery + "not_iron", "Only iron-bearing items go in a bloomery");
@@ -807,9 +811,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.quern", "Ground Fine");
         add(journal + "t2.quern.hint", "Knap a quernstone from four loose rocks and stack two under a stick for a quern. Put ore in and keep turning it; crushed ore melts down to more metal.");
         add(journal + "t2.bronze", "Bronze Age");
-        add(journal + "t2.bronze.hint", "Melt copper with tin, bismuth or arsenic in the right shares and cast a bronze ingot.");
+        add(journal + "t2.bronze.hint", "Melt 3 parts copper with 1 part tin, or copper with bismuth or arsenic, and cast a bronze ingot.");
         add(journal + "t2.stone_anvil", "Dressed Stone");
-        add(journal + "t2.stone_anvil.hint", "Sneak and strike the top of raw igneous rock with a hammer to dress it into an anvil.");
+        add(journal + "t2.stone_anvil.hint", "Sneak and strike the top of raw igneous rock with a hammer to dress it into an anvil for copper and bronze.");
         add(journal + "t2.smith", "Hammer Work");
         add(journal + "t2.smith.hint", "Heat an ingot in the forge and lay it on an anvil. Sneak and use a hammer to pick a shape, then strike.");
         add(journal + "t2.bronze_tools", "Full Kit");
@@ -818,8 +822,6 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.bronze_armour.hint", "Wear a full set of bronze armour.");
         add(journal + "t2.prospectors_pick", "Listening to the Rock");
         add(journal + "t2.prospectors_pick.hint", "Strike rock with a prospector's pick to learn what ore lies nearby.");
-        add(journal + "t2.bronze_anvil", "Bronze Anvil");
-        add(journal + "t2.bronze_anvil.hint", "Build a bronze anvil, the last tool of the bronze age.");
         add(journal + "t3.fire_clay", "Fire Clay");
         add(journal + "t3.fire_clay.hint", "Bronze cannot melt iron. You will need a bloomery, and it is built of fire bricks. "
                 + "Dig fire clay from the pale beds near the surface in shale and slate.");
@@ -833,7 +835,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.bloom", "Iron Bloom");
         add(journal + "t3.bloom.hint", "Charge the bloomery with iron ore and charcoal, light it, and wait for the bloom.");
         add(journal + "t3.refine", "Wrought Iron");
-        add(journal + "t3.refine.hint", "Hammer a hot bloom on a bronze anvil to squeeze out the slag.");
+        add(journal + "t3.refine.hint", "Hammer a hot bloom on a stone anvil to squeeze out the slag.");
         add(journal + "t3.iron_pickaxe", "Iron Pickaxe");
         add(journal + "t3.iron_pickaxe.hint", "Smith a wrought iron pickaxe head and fit it to a handle.");
         add(journal + "t3.bucket", "Bucket");
@@ -859,7 +861,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.charter", "Found an Outpost");
         add(journal + "t3.charter.hint", "A charter post holds an outpost once a line runs to it. Lay track to it and send a tub through.");
         add(journal + "t3.weld", "Forge Weld");
-        add(journal + "t3.weld.hint", "Heat two iron ingots, lay both on the anvil and strike them together into a double ingot. No flux needed.");
+        add(journal + "t3.weld.hint", "Heat two iron ingots, lay both on the iron anvil and strike them together into a double ingot. No flux needed.");
         add(journal + "t2.brick_kiln", "Brick Kiln");
         add(journal + "t2.brick_kiln.hint", "Build a brick kiln out of bricks, set it on a lit forge, and fire clay pieces in it.");
         add(journal + "t2.pattern_casting", "Pattern Casting");
@@ -872,8 +874,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.hide.hint", "Animals give raw hides now. Leather has to be tanned.");
         add(journal + "t3.leather", "Tanned Leather");
         add(journal + "t3.leather.hint", "Soak hides in lye, scrape them with a knife, then soak them in tannin in a sealed barrel.");
-        add(journal + "t3.iron_anvil", "Wrought Iron Anvil");
-        add(journal + "t3.iron_anvil.hint", "Build a wrought iron anvil from double ingots. It can work steel later on.");
+        add(journal + "t3.iron_anvil", "Iron Anvil");
+        add(journal + "t3.iron_anvil.hint", "Build an iron anvil from seven iron ingots. Stone anvils cannot work iron or steel.");
         add(journal + "t4.coal", "Black Rock");
         add(journal + "t4.coal.hint", "Coal lies in deep shale and arkose seams. Bronze will not cut it.");
         add(journal + "t4.coke_oven", "Coke Oven");
@@ -901,7 +903,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.boiler", "Raising Steam");
         add(journal + "t4.boiler.hint", "Set a bronze boiler on a burning firebox, fill it with water and wait for the needle to rise.");
         add(journal + "t4.heat_network", "Heat on the Move");
-        add(journal + "t4.heat_network.hint", "Lay four or more heat pipes from a burning firebox to a boiler or a heat inlet. Copper pipe holds the heat down to 1000 °C.");
+        add(journal + "t4.heat_network.hint", "Lay four or more heat pipes from a burning firebox to a boiler or a heat inlet. Copper pipe only carries a cherry-red heat.");
         add(journal + "t4.steam_engine", "Steam Power");
         add(journal + "t4.steam_hammer", "Hammer with Steam");
         add(journal + "t4.steam_hammer.hint", "Pick a shape on a steam hammer, give it steam at the back and heat from below, and let it smith steel.");
@@ -914,12 +916,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.converter.hint", "Blow air through pig iron in a converter, with a coke to preheat it. Watch the flame: when it drops, the steel is done.");
         add(journal + "t4.automated_chain", "Automate a Chain");
         add(journal + "t4.automated_chain.hint", "Let a machine finish 64 items in a row with everything arriving and leaving by belt, chute, inserter or hopper, and nobody opening it.");
-        add(journal + "t4.steel_anvil", "Steel Anvil");
-        add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
         add(journal + "t5.latex", "Tap a Rubber Tree");
         add(journal + "t5.latex.hint", "Jungle trees bleed latex. Plant one at home if the jungle is far; dandelions will do in a pinch.");
         add(journal + "t5.rubber", "Vulcanise Rubber");
-        add(journal + "t5.rubber.hint", "Set latex in a sealed barrel, then roast the raw rubber at 140 °C.");
+        add(journal + "t5.rubber.hint", "Set latex in a sealed barrel, then roast the raw rubber at a low heat.");
         add(journal + "t5.cinnabar", "Mine Cinnabar");
         add(journal + "t5.cinnabar.hint", "Cinnabar is red as rust and hides in basalt and shale. Only steel will cut it.");
         add(journal + "t5.red_alloy", "Red Alloy");
@@ -978,7 +978,6 @@ final class ModLanguageProvider extends LanguageProvider {
     private void smithing() {
         String id = StrataIndustria.MOD_ID;
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) addBlock(entry.getValue(), title(entry.getKey().id()) + " Anvil");
-        addBlock(ModBlocks.BRONZE_ANVIL, "Bronze Anvil");
         addItem(ModItems.TONGS_JAW, "Tongs Jaw");
         addItem(ModItems.TONGS, "Tongs");
         add("item." + id + ".tongs.tooltip", "In the off hand: hold hot metal without burns");
@@ -992,7 +991,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(status + "hint", "Sneak + use with a hammer to pick, use to strike.");
         add(status + "too_cold", "Too cold. Back to the forge.");
         add(status + "no_hammer", "You need a hammer");
-        add(status + "too_weak", "This anvil cannot work that metal");
+        add(status + "too_weak", "Needs an iron anvil for that metal");
         add(status + "output_full", "Take the finished piece first");
         add(status + "not_enough", "Needs %s of that metal");
         add(status + "no_plan", "Nothing to make from that");
@@ -1067,7 +1066,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(machine + "no_blade", "Needs a saw blade");
         addBlock(ModBlocks.SAW_MILL, "Saw Mill");
         addBlock(ModBlocks.TRIP_HAMMER, "Trip Hammer");
-        addItem(ModItems.BARK, "Bark");
+        addItem(ModItems.BARK, "Bark Strip");
         add("container." + id + ".saw_mill", "Saw Mill");
         add("container." + id + ".trip_hammer", "Trip Hammer");
         add("container." + id + ".core_sampler", "Core Sampler");
@@ -1119,7 +1118,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(hammer + "anvil_busy", "Something else is on the anvil");
 
         // Spec 9.4 and 9.5: welding, flux and patterns.
-        addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");
+        addBlock(ModBlocks.IRON_ANVIL, "Iron Anvil");
         addItem(ModItems.FLUX, "Flux");
         add(id + ".machine.shape", "Shape: %s");
         add(id + ".machine.shape.none", "none");
@@ -1171,6 +1170,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".crucible.pour", "Pour");
         // The alloy name (%1$s) is left out to fit the line; the status line names it once it forms.
         add(id + ".crucible.hint", "Needs %2$s-%3$s%% %4$s, has %5$s%%");
+        add(id + ".crucible.hint_parts", "%1$s %2$s: add %3$s %4$s");
         String problem = id + ".crucible.problem.";
         add(problem + "no_mold", "Put an empty mold in the mold slot");
         add(problem + "pouring", "Already pouring");
@@ -1212,7 +1212,7 @@ final class ModLanguageProvider extends LanguageProvider {
         }
         for (OreMineral mineral : OreMineral.values()) add(id + ".ore." + mineral.id(), mineral.id().replace('_', ' '));
         add(id + ".metal.slag_note", "Remelts to most of the metal that went in");
-        for (String grade : new String[] {"crude", "rough", "standard", "fine", "masterwork"}) {
+        for (String grade : new String[] {"rough", "standard", "fine"}) {
             add(id + ".quality." + grade, title(grade) + " quality");
         }
     }
@@ -1272,6 +1272,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "firing.fuel", "Beside a fire of 450 \u00b0C or more");
         add(k + "charcoal_pit.cover", "Covered on every side");
         add(k + "alloying.share", "%s %s\u2013%s%%");
+        add(k + "alloying.parts", "%s %s to %s %s");
+        add(k + "alloying.parts_any", "Ingots, nuggets or ore, any multiple");
         add(k + "crucible.refractory", "Refractory crucible only");
         add(k + "casting.units", "%s units");
         add(k + "bloomery.per_level", "Per chimney level");

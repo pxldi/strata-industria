@@ -92,6 +92,7 @@ public final class ModGameTests {
 
     static {
         ShapingGameTests.register(TESTS);
+        FellingGameTests.register(TESTS);
         FlintStrikeGameTests.register(TESTS);
         FirePitFiringGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
@@ -133,9 +134,11 @@ public final class ModGameTests {
         RailGameTests.register(TESTS);
         PonyGameTests.register(TESTS);
         RailwayGameTests.register(TESTS);
+        LocomotiveGameTests.register(TESTS);
         OutpostGameTests.register(TESTS);
         BronzeGameTests.register(TESTS);
         BellGameTests.register(TESTS);
+        TwoAnvilGameTests.register(TESTS);
         CabinetGameTests.register(TESTS);
         JournalGameTests.register(TESTS);
         FloraGameTests.register(TESTS);
@@ -143,6 +146,7 @@ public final class ModGameTests {
         PreviewExport.register(TESTS);
         CollectibleGameTests.register(TESTS);
         SharedBlockGameTests.register(TESTS);
+        BranchGameTests.register(TESTS);
     }
 
     private ModGameTests() {}
@@ -192,19 +196,25 @@ public final class ModGameTests {
     // Alloys (spec 7.2 and 7.4): the three example batches, a near miss, and slag at 90%.
 
     private static void alloyRules(GameTestHelper helper) {
-        Melt bronze = melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 9)
-                .plus(melt(ModItems.crushedOre(OreMineral.CASSITERITE, OreGrade.NORMAL), 1));
-        helper.assertValueEqual(bronze.total(), 350, "bronze batch units");
-        helper.assertValueEqual(Alloy.resultOf(bronze).orElse(null), Metal.BRONZE, "9 copper + 1 cassiterite");
+        Melt bronze = melt(Items.COPPER_INGOT, 3).plus(melt(ModItems.ingot(Metal.TIN), 1));
+        helper.assertValueEqual(bronze.total(), 400, "bronze batch units");
+        helper.assertValueEqual(Alloy.resultOf(bronze).orElse(null), Metal.BRONZE, "3 copper + 1 tin");
+        helper.assertValueEqual(Alloy.resultOf(melt(Items.COPPER_INGOT, 6).plus(melt(ModItems.ingot(Metal.TIN), 2))).orElse(null),
+                Metal.BRONZE, "any multiple works");
+        Melt nuggets = melt(ModItems.NUGGETS.get(Metal.COPPER).get(), 9).plus(melt(ModItems.NUGGETS.get(Metal.TIN).get(), 3));
+        helper.assertValueEqual(Alloy.resultOf(nuggets).orElse(null), Metal.BRONZE, "3 copper + 1 tin as nuggets");
+        helper.assertTrue(Alloy.resultOf(melt(Items.COPPER_INGOT, 2).plus(melt(ModItems.ingot(Metal.TIN), 1))).isEmpty(), "2 copper + 1 tin is no alloy");
+        Alloy.Missing missing = Alloy.BRONZE.missing(melt(Items.COPPER_INGOT, 3)).orElseThrow();
+        helper.assertValueEqual(missing.metal(), Metal.TIN, "bronze wants tin");
+        helper.assertValueEqual(missing.units(), 100, "one tin ingot");
 
-        Melt arsenical = melt(ModItems.crushedOre(OreMineral.TENNANTITE, OreGrade.NORMAL), 5)
-                .plus(melt(ModItems.crushedOre(OreMineral.NATIVE_COPPER, OreGrade.NORMAL), 4));
-        helper.assertValueEqual(Alloy.resultOf(arsenical).orElse(null), Metal.ARSENICAL_BRONZE, "5 tennantite + 4 copper");
+        Melt arsenical = new Melt(Map.of(Metal.COPPER, 700, Metal.ARSENIC, 100));
+        helper.assertValueEqual(Alloy.resultOf(arsenical).orElse(null), Metal.ARSENICAL_BRONZE, "7 copper + 1 arsenic");
 
-        Melt bismuth = melt(Items.COPPER_INGOT, 3).plus(melt(ModItems.crushedOre(OreMineral.BISMUTHINITE, OreGrade.RICH), 1));
-        helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "3 copper ingots + 1 rich bismuthinite");
+        Melt bismuth = new Melt(Map.of(Metal.COPPER, 500, Metal.BISMUTH, 100));
+        helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "5 copper + 1 bismuth");
 
-        Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13), 0);
+        Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13));
         helper.assertTrue(Alloy.resultOf(off).isEmpty(), "87% copper and 13% tin should be no known alloy");
 
         ItemStack slag = new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
@@ -558,7 +568,7 @@ public final class ModGameTests {
     private static void anvilWeld(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         float heat = Metal.WROUGHT_IRON.weldingTemperature() + 80.0f;
@@ -582,7 +592,7 @@ public final class ModGameTests {
     private static void anvilWeldCold(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         anvil.setItem(AnvilBlockEntity.INPUT, hotIngot(level, Items.IRON_INGOT, 200.0f));
@@ -599,12 +609,12 @@ public final class ModGameTests {
     private static void anvilBloomWeld(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         for (int slot = 1; slot <= 2; slot++) {
             ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1300.0f);
-            bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, 40, 0));
+            bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, 40));
             smith.getInventory().setItem(slot, bloom);
             helper.assertTrue(anvil.place(smith, bloom), "bloom " + slot + " goes on the anvil");
         }
@@ -622,11 +632,11 @@ public final class ModGameTests {
     private static void anvilBloomRefine(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(new BlockPos(4, 1, 4));
-        level.setBlock(pos, ModBlocks.WROUGHT_IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(pos, ModBlocks.IRON_ANVIL.get().defaultBlockState(), Block.UPDATE_ALL);
         AnvilBlockEntity anvil = (AnvilBlockEntity) level.getBlockEntity(pos);
         FakePlayer smith = smithWithHammer(level);
         ItemStack bloom = hotIngot(level, ModItems.RAW_BLOOM.get(), 1200.0f);
-        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, dev.strataindustria.bloomery.BloomeryBlockEntity.BLOOM_UNITS, 0));
+        bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, dev.strataindustria.bloomery.BloomeryBlockEntity.BLOOM_UNITS));
         anvil.setItem(AnvilBlockEntity.INPUT, bloom);
         helper.assertValueEqual(anvil.status(smith), AnvilBlockEntity.Status.READY, "a hot bloom is ready to work");
         for (int i = 0; i < 12 && anvil.getItem(AnvilBlockEntity.OUTPUT).isEmpty(); i++) strike(anvil, smith, 100 + i * STEP);

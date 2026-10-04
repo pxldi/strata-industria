@@ -243,7 +243,21 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
             Journal.awardNear(level, pos, Journal.CRUCIBLE_MOLTEN);
             if (crucible.melt.units().containsKey(Metal.WROUGHT_IRON)) Journal.awardNear(level, pos, Journal.MOLTEN_IRON);
         }
+        crucible.alloyChime(level, pos);
         if (changed) setChanged(level, pos, state);
+    }
+
+    /** The alloy last announced, so the chime sounds once per mix and again if the mix changes into another alloy. */
+    private Metal chimed;
+
+    /** A bright note and a burst of sparks the moment a molten mix settles into a known alloy. */
+    private void alloyChime(Level level, BlockPos pos) {
+        Metal now = melt.units().size() >= 2 && isMolten() ? result().orElse(null) : null;
+        if (now == chimed) return;
+        chimed = now;
+        if (now == null || !(level instanceof net.minecraft.server.level.ServerLevel server)) return;
+        server.playSound(null, pos, net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 0.9f, 1.2f + level.getRandom().nextFloat() * 0.2f);
+        server.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 0.9, pos.getZ() + 0.5, 12, 0.2, 0.1, 0.2, 0.05);
     }
 
     private boolean meltInputs(Level level, BlockPos pos) {
@@ -330,8 +344,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         int taken = Math.min(carbon, amount);
         if (carbon - taken > 0) left.put(Metal.CARBON, carbon - taken);
         else left.remove(Metal.CARBON);
-        int total = melt.total();
-        return new Melt(left, total == 0 ? 0 : Math.round(melt.qualityUnits() * (float) (total - taken) / total));
+        return new Melt(left);
     }
 
     private static boolean isRedstone(Melt content) {
@@ -494,7 +507,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
             int d = u - after.units().getOrDefault(metal, 0);
             if (d > 0) out.put(metal, d);
         });
-        return new Melt(out, before.qualityUnits() - after.qualityUnits());
+        return new Melt(out);
     }
 
     public ContainerData data() {

@@ -7,7 +7,6 @@ import dev.strataindustria.bronze.BronzeRegistry;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.CastMoldItem;
 import dev.strataindustria.metal.Melt;
-import dev.strataindustria.metal.Quality;
 import dev.strataindustria.registry.ModDataComponents;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -28,20 +27,17 @@ final class BellGameTests {
     }
 
     private static Melt alloy(int copper, int tin) {
-        return new Melt(Map.of(Metal.COPPER, copper, Metal.TIN, tin), 0);
+        return new Melt(Map.of(Metal.COPPER, copper, Metal.TIN, tin));
     }
 
-    // More tin rings higher, plain copper stays low, a crude casting is cracked.
+    // More tin rings higher, plain copper stays low.
     private static void toneFollowsAlloy(GameTestHelper helper) {
-        Quality standard = new Quality(0, -4);
-        float copper = BellTone.of(Melt.of(Metal.COPPER, 200, 0), standard).pitch();
-        float lean = BellTone.of(alloy(184, 16), standard).pitch();
-        float rich = BellTone.of(alloy(176, 24), standard).pitch();
+        float copper = BellTone.of(Melt.of(Metal.COPPER, 200)).pitch();
+        float lean = BellTone.of(alloy(184, 16)).pitch();
+        float rich = BellTone.of(alloy(176, 24)).pitch();
         helper.assertValueEqual(copper, BellTone.LOWEST, "a copper bell is the lowest");
         helper.assertTrue(lean > copper && rich > lean, "tin raises the pitch: " + copper + ", " + lean + ", " + rich);
         helper.assertTrue(rich <= BellTone.HIGHEST, "the pitch stays in range");
-        helper.assertTrue(!BellTone.of(alloy(180, 20), standard).cracked(), "an ordinary casting is whole");
-        helper.assertTrue(BellTone.of(alloy(180, 20), new Quality(-10, -4)).cracked(), "a crude casting is cracked");
         helper.assertTrue(CastMoldItem.ringsAsBell(Metal.BRONZE) && CastMoldItem.ringsAsBell(Metal.BRASS), "bronze and brass make bells");
         helper.assertTrue(!CastMoldItem.ringsAsBell(Metal.WROUGHT_IRON), "iron does not");
         helper.succeed();

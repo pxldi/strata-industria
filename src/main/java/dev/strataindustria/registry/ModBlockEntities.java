@@ -39,9 +39,7 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("anvil", () -> {
                 java.util.List<net.minecraft.world.level.block.Block> anvils = new java.util.ArrayList<>();
                 ModBlocks.STONE_ANVILS.values().forEach(b -> anvils.add(b.get()));
-                anvils.add(ModBlocks.BRONZE_ANVIL.get());
-                anvils.add(ModBlocks.WROUGHT_IRON_ANVIL.get());
-                anvils.add(Tier4Blocks.STEEL_ANVIL.get());
+                anvils.add(ModBlocks.IRON_ANVIL.get());
                 return new BlockEntityType<>(AnvilBlockEntity::new, anvils.toArray(new net.minecraft.world.level.block.Block[0]));
             });
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =

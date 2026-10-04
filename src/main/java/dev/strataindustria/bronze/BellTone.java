@@ -4,7 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.Melt;
-import dev.strataindustria.metal.Quality;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -12,33 +11,29 @@ import net.minecraft.util.Mth;
 
 /**
  * How a cast bell sounds (uniqueness 4.2). The pitch comes from what the melt held: more tin rings higher,
- * arsenic, bismuth and zinc do less for it, plain copper stays dull and low. A crude casting (poor ore in the melt) is
- * cracked, and the crack makes it ring with a beat.
+ * arsenic, bismuth and zinc do less for it, plain copper stays dull and low.
  */
-public record BellTone(float pitch, boolean cracked) {
+public record BellTone(float pitch) {
     public static final float LOWEST = 0.6f;
     public static final float HIGHEST = 1.5f;
     /** Pitch of a bell with no record of its casting. */
-    public static final BellTone DEFAULT = new BellTone(1.0f, false);
+    public static final BellTone DEFAULT = new BellTone(1.0f);
 
     public static final Codec<BellTone> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Codec.FLOAT.fieldOf("pitch").forGetter(BellTone::pitch),
-            Codec.BOOL.optionalFieldOf("cracked", false).forGetter(BellTone::cracked)
+            Codec.FLOAT.fieldOf("pitch").forGetter(BellTone::pitch)
     ).apply(i, BellTone::new));
 
     public static final StreamCodec<ByteBuf, BellTone> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.FLOAT, BellTone::pitch,
-            ByteBufCodecs.BOOL, BellTone::cracked,
             BellTone::new);
 
-    /** The tone of a bell cast from {@code melt} with the given casting quality. */
-    public static BellTone of(Melt melt, Quality quality) {
+    /** The tone of a bell cast from {@code melt}. */
+    public static BellTone of(Melt melt) {
         float share = 0;
         int total = Math.max(1, melt.total());
         for (var entry : melt.units().entrySet()) share += weight(entry.getKey()) * entry.getValue() / total;
-        float pitch = Mth.clamp(LOWEST + 5.0f * share, LOWEST, HIGHEST);
-        boolean cracked = quality != null && quality.grade().equals("crude");
-        return new BellTone(Math.round(pitch * 100) / 100f, cracked);
+        float pitch = Mth.clamp(LOWEST + 3.0f * share, LOWEST, HIGHEST);
+        return new BellTone(Math.round(pitch * 100) / 100f);
     }
 
     /** How much of each metal's share goes into the bell's pitch. */

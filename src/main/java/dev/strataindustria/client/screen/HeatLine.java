@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.HeatPipeBlock;
 import dev.strataindustria.registry.Tier4Blocks;
@@ -25,15 +26,15 @@ final class HeatLine {
     static Component line(String what, int need, int temperature, int heat, int limit) {
         Component name = Component.translatable(KEY + what);
         if (temperature <= 0) return Component.translatable(KEY + "none", name);
-        if (temperature < need && limit > 0) return Component.translatable(KEY + "limited", name, limit);
-        if (temperature < need) return Component.translatable(KEY + "cold", name, need, temperature);
-        return Component.translatable(KEY + "fine", name, temperature, heat);
+        if (temperature < need && limit > 0) return Component.translatable(KEY + "limited", name, HeatWords.of(limit));
+        if (temperature < need) return Component.translatable(KEY + "cold", name, HeatWords.of(need), HeatWords.of(temperature));
+        return Component.translatable(KEY + "fine", name, HeatWords.of(temperature), heat);
     }
 
     /** Under the line: which pipe holds the temperature down, when one does. */
     static Component tooltip(int need, int temperature, int limit) {
-        if (temperature > 0 && temperature < need && limit > 0) return Component.translatable(KEY + "limited_by", pipe(limit), limit);
-        return Component.translatable(KEY + "needs", need);
+        if (temperature > 0 && temperature < need && limit > 0) return Component.translatable(KEY + "limited_by", pipe(limit), HeatWords.of(limit));
+        return Component.translatable(KEY + "needs", HeatWords.of(need));
     }
 
     static int colour(int need, int temperature) {

@@ -46,7 +46,7 @@ public final class Processes {
     /** Logs burnt under cover in a charcoal pit; per-log output is a config value, so it is shown per stack. */
     public record CharcoalPit(List<ItemStack> logs, ItemStack charcoal, ItemStack ash, int ticks) {}
 
-    /** Two metals melted together in a crucible within share ranges (in percent). */
+    /** Two metals melted together in a crucible, in whole parts (or, for the iron alloys, within share ranges in percent). */
     public record Alloying(Alloy alloy, List<ItemStack> base, List<ItemStack> added, ItemStack result,
                            float baseMin, float baseMax, float addedMin, float addedMax, int meltingPoint, boolean refractory) {}
 
@@ -100,7 +100,7 @@ public final class Processes {
             if (alloy.result() == alloy.base()) continue;
             int melt = alloy.result().meltingPoint();
             float addedMin = alloy.addedMin(), addedMax = alloy.addedMax();
-            out.add(new Alloying(alloy, metalItems(alloy.base()), metalItems(alloy.added()), new ItemStack(ModItems.ingot(alloy.result())),
+            out.add(new Alloying(alloy, metalItems(alloy.base(), alloy.baseParts()), metalItems(alloy.added(), alloy.addedParts()), new ItemStack(ModItems.ingot(alloy.result()), alloy.byParts() ? alloy.baseParts() + alloy.addedParts() : 1),
                     100 * (1 - addedMax), 100 * (1 - addedMin), 100 * addedMin, 100 * addedMax, melt, melt > clayMax));
         }
         return out;
@@ -162,8 +162,14 @@ public final class Processes {
 
     /** The ingot of a metal, or for a metal that never stands alone (arsenic, carbon) whatever carries it. */
     public static List<ItemStack> metalItems(Metal metal) {
-        if (metal.hasIngot() && ModItems.INGOTS.containsKey(metal)) return List.of(new ItemStack(ModItems.ingot(metal)));
-        return MetalContent.itemsHolding(metal).stream().sorted(Comparator.comparing(Processes::id)).map(ItemStack::new).toList();
+        return metalItems(metal, 1);
+    }
+
+    /** As above, with a number of ingots when the metal has one. */
+    public static List<ItemStack> metalItems(Metal metal, int ingots) {
+        if (metal.hasIngot() && ModItems.INGOTS.containsKey(metal)) return List.of(new ItemStack(ModItems.ingot(metal), Math.max(1, ingots)));
+        int count = metal == Metal.REDSTONE ? Math.max(1, ingots) * (MetalContent.INGOT_UNITS / 25) : 1;
+        return MetalContent.itemsHolding(metal).stream().sorted(Comparator.comparing(Processes::id)).map(i -> new ItemStack(i, count)).toList();
     }
 
     private static List<ItemStack> tagged(List<Item> items, int count) {

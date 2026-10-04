@@ -56,12 +56,29 @@ public class MineTubRenderer extends AbstractMinecartRenderer<MineTubEntity, Min
         state.gauge = entity instanceof TankWagonEntity wagon ? wagon.gauge() : 0;
     }
 
+    /**
+     * Whether a model with a front must be turned about to face the way the vehicle heads, given the yaw the pose
+     * is about to be rotated by. The model's +x end is its front: after the pose's flip it points along (-cos yaw, sin yaw).
+     */
+    protected boolean reversed(MineTubRenderState state, float poseYaw) {
+        if (!state.directional) return false;
+        double yaw = Math.toRadians(poseYaw), head = Math.toRadians(state.headingYaw);
+        double frontX = -Math.cos(yaw), frontZ = Math.sin(yaw);
+        double headX = -Math.sin(head), headZ = Math.cos(head);
+        return frontX * headX + frontZ * headZ < 0;
+    }
+
     @Override
     public void submit(MineTubRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState camera) {
         poseStack.pushPose();
         if (state.isNewRender) {
-            poseStack.rotateDegrees(Axis.YP, state.yRot);
-            poseStack.rotateDegrees(Axis.ZP, -state.xRot);
+            float yaw = state.yRot, pitch = state.xRot;
+            if (reversed(state, yaw)) {
+                yaw += 180.0f;
+                pitch = -pitch;
+            }
+            poseStack.rotateDegrees(Axis.YP, yaw);
+            poseStack.rotateDegrees(Axis.ZP, -pitch);
             poseStack.translate(0.0f, 0.375f, 0.0f);
         } else {
             double entityX = state.x, entityY = state.y, entityZ = state.z;
@@ -77,8 +94,13 @@ public class MineTubRenderer extends AbstractMinecartRenderer<MineTubEntity, Min
                     xRot = (float) (Math.atan(direction.y) * 73.0);
                 }
             }
+            float yaw = 180.0f - rotation;
+            if (reversed(state, yaw)) {
+                yaw += 180.0f;
+                xRot = -xRot;
+            }
             poseStack.translate(0.0f, 0.375f, 0.0f);
-            poseStack.rotateDegrees(Axis.YP, 180.0f - rotation);
+            poseStack.rotateDegrees(Axis.YP, yaw);
             poseStack.rotateDegrees(Axis.ZP, -xRot);
         }
         float hurt = state.hurtTime;

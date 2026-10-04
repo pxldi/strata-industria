@@ -99,7 +99,7 @@ final class Tier4GameTests {
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
     private static void alloyRules(GameTestHelper helper) {
-        Melt carbon = new Melt(Map.of(Metal.CARBON, 5), 0);
+        Melt carbon = new Melt(Map.of(Metal.CARBON, 5));
         Melt steel = melt(Items.IRON_INGOT, 5).plus(carbon);
         helper.assertValueEqual(Alloy.resultOf(steel).orElse(null), Metal.STEEL, "5 iron ingots + 5 carbon");
 
@@ -110,13 +110,13 @@ final class Tier4GameTests {
         helper.assertValueEqual(Alloy.resultOf(melt(ModItems.ingot(Metal.STEEL), 3)).orElse(null), Metal.STEEL, "steel remelt");
         helper.assertValueEqual(Alloy.resultOf(melt(Items.IRON_INGOT, 4)).orElse(null), Metal.WROUGHT_IRON, "iron remelt");
 
-        Melt gap = new Melt(Map.of(Metal.WROUGHT_IRON, 974, Metal.CARBON, 26), 0);
+        Melt gap = new Melt(Map.of(Metal.WROUGHT_IRON, 974, Metal.CARBON, 26));
         helper.assertTrue(Alloy.resultOf(gap).isEmpty(), "iron with 2.6% carbon should be no known alloy");
 
         Melt brass = melt(Items.COPPER_INGOT, 2).plus(melt(ModItems.ingot(Metal.ZINC), 1));
         helper.assertValueEqual(Alloy.resultOf(brass).orElse(null), Metal.BRASS, "2 copper + 1 zinc");
         Melt solder = melt(ModItems.NUGGETS.get(Metal.TIN).get(), 6).plus(melt(ModItems.NUGGETS.get(Metal.LEAD).get(), 4));
-        helper.assertValueEqual(Alloy.resultOf(solder).orElse(null), Metal.SOLDER, "6 tin + 4 lead nuggets");
+        helper.assertValueEqual(Alloy.resultOf(solder).orElse(null), Metal.SOLDER, "3 tin : 2 lead as nuggets");
 
         // Spec 4.4: galena melts like the tier 2 ores; sphalerite has to be roasted first.
         helper.assertValueEqual(Alloy.resultOf(melt(ModItems.crushedOre(OreMineral.GALENA, OreGrade.NORMAL), 2)).orElse(null),

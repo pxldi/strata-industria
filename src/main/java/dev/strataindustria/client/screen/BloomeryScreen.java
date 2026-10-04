@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.bloomery.BloomeryBlockEntity;
 import dev.strataindustria.bloomery.BloomeryBlockEntity.Status;
@@ -85,7 +86,7 @@ public class BloomeryScreen extends AbstractContainerScreen<BloomeryMenu> {
                 BloomeryBlockEntity.CHARCOAL_PER_LEVEL * levels), TEXT_X, y, 0xFF404040, false);
         y += LINE;
         g.text(font, Component.translatable(KEY + "draught", chimney, menu.get(BloomeryBlockEntity.DATA_BELLOWS),
-                menu.get(BloomeryBlockEntity.DATA_TARGET)), TEXT_X, y, 0xFF404040, false);
+                HeatWords.of(menu.get(BloomeryBlockEntity.DATA_TARGET))), TEXT_X, y, 0xFF404040, false);
         y += LINE;
         int yield = menu.get(BloomeryBlockEntity.DATA_YIELD);
         Component expect = yield <= 0
@@ -101,7 +102,7 @@ public class BloomeryScreen extends AbstractContainerScreen<BloomeryMenu> {
                 yield Component.translatable(status.key(), Math.max(0, (ore + 1) / 2 - charcoal));
             }
             case BURNING -> Component.translatable(status.key(), menu.get(BloomeryBlockEntity.DATA_PROGRESS) / 10);
-            case HEATING -> Component.translatable(status.key(), menu.get(BloomeryBlockEntity.DATA_TEMPERATURE));
+            case HEATING -> Component.translatable(status.key(), HeatWords.of(menu.get(BloomeryBlockEntity.DATA_TEMPERATURE)));
             default -> Component.translatable(status.key());
         };
     }

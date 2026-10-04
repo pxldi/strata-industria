@@ -130,7 +130,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         // Tier 4 spec 5.
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(Tier4Blocks.COKE_OVEN_BRICKS.getKey()).add(Tier4Blocks.COKE_OVEN_DOOR.getKey())
                 .add(Tier4Blocks.COKE_BLOCK.getKey()).add(Tier4Blocks.REFRACTORY_CRUCIBLE.getKey())
-                .add(Tier4Blocks.STEEL_ANVIL.getKey()).add(Tier4Blocks.IRON_AXLE.getKey()).add(Tier4Blocks.IRON_GEARBOX.getKey())
+                .add(Tier4Blocks.IRON_AXLE.getKey()).add(Tier4Blocks.IRON_GEARBOX.getKey())
                 .add(Tier4Blocks.IRON_STEP_UP_GEARBOX.getKey()).add(Tier4Blocks.FIREBOX.getKey()).add(Tier4Blocks.BRONZE_BOILER.getKey())
                 .add(Tier4Blocks.CRACKED_BRONZE_BOILER.getKey()).add(Tier4Blocks.COPPER_FLUID_PIPE.getKey())
                 .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey())
@@ -202,8 +202,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(ModTags.Blocks.MINEABLE_WITH_HAMMER);
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.FIRE_PIT.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.CRUCIBLE.getKey())
-                .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey()).add(ModBlocks.BRONZE_ANVIL.getKey())
-                .add(ModBlocks.WROUGHT_IRON_ANVIL.getKey())
+                .add(ModBlocks.FORGE.getKey()).add(ModBlocks.QUERN.getKey())
+                .add(ModBlocks.IRON_ANVIL.getKey())
                 .add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.getKey())
                 .add(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.getKey());
         for (var anvil : ModBlocks.STONE_ANVILS.values()) tag(BlockTags.MINEABLE_WITH_PICKAXE).add(anvil.getKey());
@@ -228,7 +228,10 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             tag(dev.strataindustria.transport.rail.RailRegistry.TRACK).add(rail.getKey());
             tag(BlockTags.MINEABLE_WITH_PICKAXE).add(rail.getKey());
         }
-        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.rail.RailwayRegistry.WAGON_FLUID_PORT.getKey());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.rail.RailwayRegistry.WAGON_FLUID_PORT.getKey())
+                .add(dev.strataindustria.transport.rail.RailwayRegistry.WATER_TOWER_SPOUT.getKey());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.rail.RailwayRegistry.WATER_TOWER_BASE.getKey())
+                .add(dev.strataindustria.transport.rail.RailwayRegistry.COAL_STAGE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.transport.rail.RailRegistry.HAY_RACK.getKey())
                 .add(dev.strataindustria.transport.rail.RailRegistry.INCLINE_WINCH.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.TransportBlocks.OUTPOST_CHARTER.getKey());

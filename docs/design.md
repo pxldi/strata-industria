@@ -104,7 +104,7 @@ Exit condition: fired crucible, ingot molds, a forge, and found surface copper.
 
 - **Ore mining** with stone pickaxe is slow; native copper and malachite are minable by stone tools, tin (cassiterite) needs copper tools.
 - **Smelting** in a crucible over the forge. You put ore pieces in by "units" (not whole ingots), watch the melt percentage and composition in the crucible GUI.
-- **Alloying** happens by ratio in the crucible: bronze is 88 to 92% copper, 8 to 12% tin. Wrong ratio gives the wrong alloy or a failed melt. Arsenical bronze and bismuth bronze exist as regional alternatives so geology matters.
+- **Alloying** happens by ratio in the crucible: bronze is 3 parts copper to 1 part tin, in ingots, nuggets or ore, any multiple. Wrong ratio gives the wrong alloy or a failed melt. Arsenical bronze and bismuth bronze exist as regional alternatives so geology matters.
 - **Casting**: pour molten metal into ceramic molds for ingots or tool heads. Fired molds last; a break chance can be set in the config.
 - **Anvil smithing**: a stone anvil first, then a copper/bronze anvil. Smithing is a short, rule-based minigame: each recipe has a target and you choose hits (light, medium, hard, draw, upset, bend, punch, shrink). Matching the last three hits to the rule finishes it. Precision raises the item's quality. It is quick for experienced players and a learning moment for new ones.
 - **Bronze tools and armour**: a real step up.
