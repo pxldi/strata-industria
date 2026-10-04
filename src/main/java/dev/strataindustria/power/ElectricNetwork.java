@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -23,15 +22,16 @@ public final class ElectricNetwork {
         static final Report NONE = new Report(ElectricStatus.NO_SOURCE, 0, 0, 0, 0);
     }
 
-    private record Member<T>(BlockPos pos, T node) {}
+    private record Member<T extends ElectricNode>(PortKey pos, T node) {}
 
+    private final Set<PortKey> keys;
     private final Set<BlockPos> members;
     private final List<Member<ElectricSource>> generators = new ArrayList<>();
     private final List<Member<ElectricConsumer>> consumers = new ArrayList<>();
     private final List<Member<ElectricStorage>> storages = new ArrayList<>();
     /** Loss on the path from the nearest source, for each consumer, and from the nearest generator, for each storage block. */
-    private final Map<BlockPos, Double> losses = new HashMap<>();
-    private final Map<BlockPos, Report> reports = new HashMap<>();
+    private final Map<PortKey, Double> losses = new HashMap<>();
+    private final Map<PortKey, Report> reports = new HashMap<>();
     private final @Nullable ElectricTier tier;
     private final @Nullable ElectricTier weakestCable;
     private final @Nullable BlockPos overvoltageCable;
@@ -40,20 +40,25 @@ public final class ElectricNetwork {
     private double supply, demand, delivered, stored, storageCapacity;
     private boolean capped, wasOvervoltage;
 
-    ElectricNetwork(Map<BlockPos, ElectricNode> nodes, Map<BlockPos, List<BlockPos>> edges, boolean tooLarge) {
-        this.members = Collections.unmodifiableSet(nodes.keySet());
+    ElectricNetwork(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, boolean tooLarge) {
+        this.keys = Collections.unmodifiableSet(nodes.keySet());
+        Set<BlockPos> positions = new java.util.LinkedHashSet<>();
+        for (PortKey key : nodes.keySet()) positions.add(key.pos());
+        this.members = Collections.unmodifiableSet(positions);
         this.tooLarge = tooLarge;
         ElectricTier top = null, weakest = null;
         for (var entry : nodes.entrySet()) {
-            BlockPos pos = entry.getKey();
-            switch (entry.getValue()) {
-                case ElectricStorage storage -> storages.add(new Member<>(pos, storage));
-                case ElectricSource source -> generators.add(new Member<>(pos, source));
-                case ElectricConsumer consumer -> consumers.add(new Member<>(pos, consumer));
-                case ElectricConductor cable -> {
-                    if (weakest == null || cable.cableTier().ordinal() < weakest.ordinal()) weakest = cable.cableTier();
-                }
-                default -> {}
+            PortKey pos = entry.getKey();
+            ElectricNode node = entry.getValue();
+            if (node instanceof ElectricStorage storage) {
+                storages.add(new Member<>(pos, storage));
+            } else {
+                // An energy adapter is a source and a consumer at once.
+                if (node instanceof ElectricSource source) generators.add(new Member<>(pos, source));
+                if (node instanceof ElectricConsumer consumer) consumers.add(new Member<>(pos, consumer));
+            }
+            if (node instanceof ElectricConductor cable && (weakest == null || cable.cableTier().ordinal() < weakest.ordinal())) {
+                weakest = cable.cableTier();
             }
             if (entry.getValue() instanceof ElectricSource source && (top == null || source.tier().ordinal() > top.ordinal())) {
                 top = source.tier();
@@ -61,7 +66,7 @@ public final class ElectricNetwork {
         }
         this.tier = top;
         this.weakestCable = weakest;
-        BlockPos fault = null;
+        PortKey fault = null;
         if (top != null) {
             for (var entry : nodes.entrySet()) {
                 if (entry.getValue() instanceof ElectricConductor cable && cable.cableTier().ordinal() < top.ordinal()) {
@@ -70,30 +75,30 @@ public final class ElectricNetwork {
                 }
             }
         }
-        this.overvoltageCable = fault;
+        this.overvoltageCable = fault == null ? null : fault.pos();
 
-        List<BlockPos> allSources = new ArrayList<>();
+        List<PortKey> allSources = new ArrayList<>();
         generators.forEach(m -> allSources.add(m.pos()));
         storages.forEach(m -> allSources.add(m.pos()));
-        Map<BlockPos, Double> fromAny = pathLosses(nodes, edges, allSources);
+        Map<PortKey, Double> fromAny = pathLosses(nodes, edges, allSources);
         for (var m : consumers) losses.put(m.pos(), fromAny.getOrDefault(m.pos(), 1.0));
-        Map<BlockPos, Double> fromGenerators = pathLosses(nodes, edges, generators.stream().map(Member::pos).toList());
+        Map<PortKey, Double> fromGenerators = pathLosses(nodes, edges, generators.stream().map(Member::pos).toList());
         for (var m : storages) losses.put(m.pos(), fromGenerators.getOrDefault(m.pos(), 1.0));
     }
 
     /** Sum of loss rates along the cheapest path from any of {@code starts} to every block (one Dijkstra, spec 6.6). */
-    private static Map<BlockPos, Double> pathLosses(Map<BlockPos, ElectricNode> nodes, Map<BlockPos, List<BlockPos>> edges, List<BlockPos> starts) {
-        Map<BlockPos, Double> best = new HashMap<>();
-        record Step(BlockPos pos, double loss) {}
+    private static Map<PortKey, Double> pathLosses(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, List<PortKey> starts) {
+        Map<PortKey, Double> best = new HashMap<>();
+        record Step(PortKey pos, double loss) {}
         PriorityQueue<Step> queue = new PriorityQueue<>((a, b) -> Double.compare(a.loss(), b.loss()));
-        for (BlockPos start : starts) {
+        for (PortKey start : starts) {
             best.put(start, 0.0);
             queue.add(new Step(start, 0.0));
         }
         while (!queue.isEmpty()) {
             Step step = queue.poll();
             if (step.loss() > best.getOrDefault(step.pos(), Double.MAX_VALUE)) continue;
-            for (BlockPos next : edges.getOrDefault(step.pos(), List.of())) {
+            for (PortKey next : edges.getOrDefault(step.pos(), List.of())) {
                 double cost = nodes.get(next) instanceof ElectricConductor cable ? cable.cableTier().cableLoss() : 0.0;
                 double loss = step.loss() + cost;
                 if (loss < best.getOrDefault(next, Double.MAX_VALUE)) {
@@ -138,7 +143,7 @@ public final class ElectricNetwork {
                 reports.put(m.pos(), new Report(ElectricStatus.OVERVOLTAGE, 0, 0, 0, 0));
                 continue;
             }
-            double out = Math.max(0, Math.min(m.node().maxOutput(), m.node().tier().maxPower()));
+            double out = Math.max(0, Math.min(m.node().maxOutput(), m.node().powerLimit()));
             generation += out;
             liveGenerators.add(m);
         }
@@ -160,7 +165,7 @@ public final class ElectricNetwork {
             if (!alive(m)) continue;
             ElectricConsumer consumer = m.node();
             double loss = losses.getOrDefault(m.pos(), 1.0);
-            double request = Math.max(0, Math.min(consumer.request(), consumer.tier().maxPower()));
+            double request = Math.max(0, Math.min(consumer.request(), consumer.powerLimit()));
             if (below(consumer)) {
                 reports.put(m.pos(), new Report(ElectricStatus.OVERVOLTAGE, request, 0, loss, 0));
             } else if (loss >= maxLoss) {
@@ -178,13 +183,13 @@ public final class ElectricNetwork {
 
         // Generators and discharging storage each give in proportion to what they offered.
         for (var m : liveGenerators) {
-            double out = Math.min(m.node().maxOutput(), m.node().tier().maxPower());
+            double out = Math.min(m.node().maxOutput(), m.node().powerLimit());
             double taken = generation <= 0 ? 0 : result.generated() * out / generation;
             m.node().extract(taken);
             reports.put(m.pos(), new Report(taken > 0 ? ElectricStatus.RUNNING : ElectricStatus.IDLE, 0, taken, 0, 1));
         }
         for (var m : served) {
-            double request = Math.max(0, Math.min(m.node().request(), m.node().tier().maxPower()));
+            double request = Math.max(0, Math.min(m.node().request(), m.node().powerLimit()));
             double loss = losses.getOrDefault(m.pos(), 0.0);
             double given = request * result.fraction();
             m.node().receive(given);
@@ -197,7 +202,7 @@ public final class ElectricNetwork {
 
     /** Storage discharges in proportion to what each offered and charges evenly among blocks with room (spec 6.1). */
     private void share(List<Member<ElectricStorage>> live, ElectricShare.Result result, double storageOut, double maxLoss) {
-        Map<BlockPos, Double> charge = new HashMap<>();
+        Map<PortKey, Double> charge = new HashMap<>();
         if (result.charged() > 0) {
             List<Member<ElectricStorage>> open = new ArrayList<>();
             for (var m : live) {
@@ -231,8 +236,8 @@ public final class ElectricNetwork {
         return tier != null && device.tier().ordinal() < tier.ordinal();
     }
 
-    private static boolean alive(Member<?> m) {
-        return !(m.node() instanceof BlockEntity be) || !be.isRemoved();
+    private static boolean alive(Member<? extends ElectricNode> m) {
+        return !m.node().removed();
     }
 
     public Set<BlockPos> members() {
@@ -240,7 +245,16 @@ public final class ElectricNetwork {
     }
 
     public Report report(BlockPos pos) {
-        return reports.getOrDefault(pos, Report.NONE);
+        return report(new PortKey(pos, 0));
+    }
+
+    public Report report(PortKey key) {
+        return reports.getOrDefault(key, Report.NONE);
+    }
+
+    /** Every port of this network, for the level's lookup. */
+    Set<PortKey> keys() {
+        return keys;
     }
 
     public @Nullable ElectricTier tier() {
@@ -296,6 +310,10 @@ public final class ElectricNetwork {
 
     /** Path loss of a consumer or storage block, as worked out when the network was built. */
     public double loss(BlockPos pos) {
-        return losses.getOrDefault(pos, 0.0);
+        return loss(new PortKey(pos, 0));
+    }
+
+    public double loss(PortKey key) {
+        return losses.getOrDefault(key, 0.0);
     }
 }

@@ -496,5 +496,11 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier5Sounds.BATTERY_BOX_CHARGE, definition().subtitle(subtitle("battery_box.charge"))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.15f))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.12f)));
+        add(Tier5Sounds.TRANSFORMER_HUM, definition().subtitle(subtitle("block.transformer.hum"))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.18f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(0.52f).volume(0.15f)));
+        add(Tier5Sounds.TRANSFORMER_SWITCH, definition().subtitle(subtitle("block.transformer.switch"))
+                .with(sound("minecraft:block.lever.click", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.9f))
+                .with(sound("minecraft:block.iron_trapdoor.close", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f)));
     }
 }

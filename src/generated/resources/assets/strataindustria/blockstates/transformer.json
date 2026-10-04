@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "active=false,facing=east,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down",
+      "y": 90
+    },
+    "active=false,facing=east,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up",
+      "y": 90
+    },
+    "active=false,facing=north,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down"
+    },
+    "active=false,facing=north,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up"
+    },
+    "active=false,facing=south,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down",
+      "y": 180
+    },
+    "active=false,facing=south,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up",
+      "y": 180
+    },
+    "active=false,facing=west,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down",
+      "y": 270
+    },
+    "active=false,facing=west,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up",
+      "y": 270
+    },
+    "active=true,facing=east,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down",
+      "y": 90
+    },
+    "active=true,facing=east,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up",
+      "y": 90
+    },
+    "active=true,facing=north,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down"
+    },
+    "active=true,facing=north,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up"
+    },
+    "active=true,facing=south,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down",
+      "y": 180
+    },
+    "active=true,facing=south,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up",
+      "y": 180
+    },
+    "active=true,facing=west,step_up=false": {
+      "model": "strataindustria:block/transformer_step_down",
+      "y": 270
+    },
+    "active=true,facing=west,step_up=true": {
+      "model": "strataindustria:block/transformer_step_up",
+      "y": 270
+    }
+  }
+}

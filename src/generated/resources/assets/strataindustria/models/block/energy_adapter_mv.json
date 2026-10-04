@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "strataindustria:block/casing/mv_side",
+    "front": "strataindustria:block/energy_adapter_front_mv",
+    "side": "strataindustria:block/casing/mv_side",
+    "top": "strataindustria:block/casing/mv_side"
+  }
+}

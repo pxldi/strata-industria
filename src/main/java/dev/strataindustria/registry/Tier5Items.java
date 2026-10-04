@@ -74,6 +74,9 @@ public final class Tier5Items {
     public static final DeferredItem<MachineBlockItem> STEAM_TURBINE = machineItem("steam_turbine", Tier5Blocks.STEAM_TURBINE);
     public static final DeferredItem<MachineBlockItem> COMBUSTION_GENERATOR = machineItem("combustion_generator", Tier5Blocks.COMBUSTION_GENERATOR);
 
+    public static final DeferredItem<net.minecraft.world.item.BlockItem> TRANSFORMER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.TRANSFORMER);
+    public static final DeferredItem<MachineBlockItem> ENERGY_ADAPTER = machineItem("energy_adapter", Tier5Blocks.ENERGY_ADAPTER);
+
     /** A machine's block item: it places at the tier its {@code machine_tier} component names (spec 9.5). */
     private static <B extends net.minecraft.world.level.block.Block> DeferredItem<MachineBlockItem> machineItem(String name,
             net.neoforged.neoforge.registries.DeferredBlock<B> block) {

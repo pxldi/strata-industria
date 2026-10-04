@@ -132,6 +132,87 @@ public final class ElectricTextures {
         return m;
     }
 
+    // ---------------------------------------------------------------- transformer and energy adapter
+
+    /** MV front: aluminium plate with five cooling fins; the MV double stripe ring comes from {@link #mvSide()}. */
+    static BufferedImage transformerFront() {
+        BufferedImage im = frontBase(true, 2301);
+        for (int y = 2; y <= 10; y += 2) {
+            for (int x = 2; x <= 13; x++) {
+                pxs(im, x, y, c(ALUMINIUM, 2));
+                pxs(im, x, y + 1, c(ALUMINIUM, 5));
+            }
+            pxs(im, 2, y, c(ALUMINIUM, 1));
+            pxs(im, 13, y + 1, c(ALUMINIUM, 4));
+        }
+        return im;
+    }
+
+    /** Steel side with a recessed copper coil window (3..12, 3..10), vertical windings. */
+    static BufferedImage transformerSide() {
+        BufferedImage im = casing(STEEL, 3, 2302);
+        stripe(im, 14, 3);
+        fill(im, 3, 3, 12, 10, c(STEEL, 1));
+        for (int x = 4; x <= 11; x++) {
+            int col = (x % 2 == 0) ? 4 : 2;
+            for (int y = 4; y <= 9; y++) pxs(im, x, y, c(COPPER, col));
+            pxs(im, x, 4, c(COPPER, col + 1));
+            pxs(im, x, 9, c(COPPER, 1));
+        }
+        for (int y = 3; y <= 10; y++) { pxs(im, 3, y, c(STEEL, 1)); pxs(im, 12, y, c(STEEL, 4)); }
+        for (int x = 3; x <= 12; x++) pxs(im, x, 10, c(STEEL, 4));
+        pxs(im, 12, 3, c(STEEL, 3));
+        pxs(im, 3, 10, c(STEEL, 3));
+        return im;
+    }
+
+    /** Aluminium top with an amber arrow; texture top edge is the MV front. Down = step down (MV in, back out). */
+    static BufferedImage transformerTop(boolean down) {
+        BufferedImage im = casing(ALUMINIUM, 4, 62);
+        for (int pass = 0; pass < 2; pass++) {
+            int o = pass == 0 ? 1 : 0;
+            int col = pass == 0 ? c(ALUMINIUM, 2) : WAIT[3];
+            for (int y = 3; y <= 8; y++) fill(im, 7 + o, ty(y, down) + o, 8 + o, ty(y, down) + o, col);
+            fill(im, 4 + o, ty(9, down) + o, 11 + o, ty(9, down) + o, col);
+            fill(im, 5 + o, ty(10, down) + o, 10 + o, ty(10, down) + o, col);
+            fill(im, 6 + o, ty(11, down) + o, 9 + o, ty(11, down) + o, col);
+            fill(im, 7 + o, ty(12, down) + o, 8 + o, ty(12, down) + o, col);
+        }
+        return im;
+    }
+
+    static int ty(int y, boolean down) { return down ? y : 15 - y; }
+
+    /** Neutral square socket in the brass ramp: beveled frame, dark opening, four contact pins. */
+    static BufferedImage adapterFront(boolean mv) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 2312 : 2311);
+        rivets(im, r, base, new int[][]{{2, 2}});
+        lampOff(im, mv);
+        int x0 = 4, y0 = 4, x1 = 11, y1 = 11;
+        fill(im, x0, y0, x1, y1, c(BRASS, 3));
+        for (int i = x0; i <= x1; i++) { pxs(im, i, y0, c(BRASS, 5)); pxs(im, i, y1, c(BRASS, 1)); }
+        for (int j = y0; j <= y1; j++) { pxs(im, x0, j, c(BRASS, 5)); pxs(im, x1, j, c(BRASS, 1)); }
+        pxs(im, x1, y0, c(BRASS, 3));
+        pxs(im, x0, y1, c(BRASS, 3));
+        fill(im, 6, 6, 9, 9, c(STEEL, 1));
+        for (int i = 6; i <= 9; i++) pxs(im, i, 9, c(BRASS, 2));
+        for (int[] p : new int[][]{{6, 7}, {9, 7}}) pxs(im, p[0], p[1], c(BRASS, 4));
+        pxs(im, 7, 7, c(STEEL, 2));
+        pxs(im, 8, 7, c(STEEL, 2));
+        return im;
+    }
+
+    static void transformerAndAdapter() throws IOException {
+        save("block/transformer_front", transformerFront());
+        save("block/transformer_side", transformerSide());
+        save("block/transformer_top_step_down", transformerTop(true));
+        save("block/transformer_top_step_up", transformerTop(false));
+        save("block/energy_adapter_front_lv", adapterFront(false));
+        save("block/energy_adapter_front_mv", adapterFront(true));
+    }
+
     // ---------------------------------------------------------------- battery boxes
 
     static BufferedImage battery(TextureGen.Ramp r, int base, int lit) {
@@ -1859,6 +1940,7 @@ public final class ElectricTextures {
         rubber();
         redAlloy();
         machines();
+        transformerAndAdapter();
         generators();
         chemistry();
         preview();

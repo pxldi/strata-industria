@@ -317,6 +317,23 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .requires(Tier5Items.ELECTRIC_MOTOR.get())
                 .unlockedBy("has_aluminium_plate", has(ModItems.PLATES.get(Metal.ALUMINIUM).get()))
                 .save(output, key("mv_upgrade_kit"));
+        // Spec 8.2 and 8.5: the transformer and the energy adapter.
+        shaped(RecipeCategory.REDSTONE, Tier5Items.TRANSFORMER.get())
+                .pattern(" Q ")
+                .pattern("WHW")
+                .pattern(" L ")
+                .define('Q', Tier5Items.MV_CABLE.get())
+                .define('W', Tier5Items.COPPER_WIRE.get())
+                .define('H', Tier5Items.LV_MACHINE_HULL.get())
+                .define('L', Tier5Items.LV_CABLE.get())
+                .unlockedBy("has_mv_cable", has(Tier5Items.MV_CABLE.get()))
+                .save(output, key("transformer"));
+        shapeless(RecipeCategory.REDSTONE, Tier5Items.ENERGY_ADAPTER.get())
+                .requires(Tier5Items.LV_MACHINE_HULL.get())
+                .requires(Tier5Items.BASIC_CIRCUIT.get())
+                .requires(Tier5Items.LV_CABLE.get(), 2)
+                .unlockedBy("has_lv_machine_hull", has(Tier5Items.LV_MACHINE_HULL.get()))
+                .save(output, key("energy_adapter"));
     }
 
     // Spec 11.1 to 11.4: the mixer and electrolyser, the acid and the aluminium chain. H hull, C basic circuit.

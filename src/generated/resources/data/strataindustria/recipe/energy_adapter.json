@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:lv_machine_hull",
+    "strataindustria:basic_circuit",
+    "strataindustria:lv_cable",
+    "strataindustria:lv_cable"
+  ],
+  "result": {
+    "id": "strataindustria:energy_adapter"
+  }
+}

@@ -328,6 +328,15 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue ELECTRIC_DYNAMO_JOULES_PER_RPM = BUILDER
             .comment("J/t a kinetic dynamo makes per RPM of its shaft.")
             .defineInRange("dynamoJoulesPerRpm", 0.25, 0.01, 4.0);
+    public static final ModConfigSpec.DoubleValue ELECTRIC_TRANSFORMER_LOSS = BUILDER
+            .comment("Fraction of the power a transformer loses on its way through.")
+            .defineInRange("transformerLoss", 0.02, 0.0, 0.5);
+    public static final ModConfigSpec.IntValue ELECTRIC_FE_RATIO = BUILDER
+            .comment("FE for each J at the energy adapter.")
+            .defineInRange("feRatio", 4, 1, 1000);
+    public static final ModConfigSpec.IntValue ELECTRIC_FE_INPUT_MAX = BUILDER
+            .comment("Most J/t an energy adapter accepts as FE from outside. 0 forbids FE input.")
+            .defineInRange("feInputMax", 32, 0, 512);
 
     static {
         BUILDER.pop();

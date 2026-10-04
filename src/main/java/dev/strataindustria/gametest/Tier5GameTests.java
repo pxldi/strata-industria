@@ -100,6 +100,8 @@ final class Tier5GameTests {
         tests.put("tier5_aluminium_chain", Tier5GameTests::aluminiumChain);
         tests.put("tier5_assembler", Tier5GameTests::assembler);
         tests.put("tier5_mv_upgrade", Tier5GameTests::mvUpgrade);
+        tests.put("tier5_transformer", Tier5GameTests::transformer);
+        tests.put("tier5_energy_adapter", Tier5GameTests::energyAdapter);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -406,7 +408,8 @@ final class Tier5GameTests {
         return done;
     }
 
-    // Spec 10.3 and 24: an ore piece gives a second crushed piece 25% of the time over 1000 trials (within 3%).
+    // Spec 10.3 and 24: an ore piece gives a second crushed piece 25% of the time: the chance itself is checked exactly, and
+    // 1000 trials with a fixed seed land within 3% (seeded, so the test never flakes).
     private static void maceratorSecondPiece(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         Item galena = BuiltInRegistries.ITEM.getValue(StrataIndustria.id("galena"));
@@ -414,10 +417,14 @@ final class Tier5GameTests {
         var recipe = CrushingRecipe.recipeFor(level, new ItemStack(galena));
         helper.assertTrue(recipe.isPresent(), "galena has a crushing recipe");
         Processing processing = MaceratorBlockEntity.maceration(recipe.get().value());
+        double chance = processing.chances().stream().filter(c -> ItemStack.isSameItemSameComponents(c.item().create(), new ItemStack(crushed)))
+                .mapToDouble(dev.strataindustria.washing.WashingRecipe.Chance::chance).max().orElse(0);
+        helper.assertTrue(Math.abs(chance - 0.25) < 1e-9, "the second piece chance is 25%, got " + chance);
+        net.minecraft.util.RandomSource random = net.minecraft.util.RandomSource.create(20261004L);
         int seconds = 0;
         for (int trial = 0; trial < 1000; trial++) {
             int pieces = 0;
-            for (ItemStack out : processing.roll(level.getRandom())) if (out.is(crushed)) pieces += out.getCount();
+            for (ItemStack out : processing.roll(random)) if (out.is(crushed)) pieces += out.getCount();
             helper.assertTrue(pieces == 1 || pieces == 2, "one or two crushed pieces, got " + pieces);
             if (pieces == 2) seconds++;
         }
@@ -613,6 +620,97 @@ final class Tier5GameTests {
         helper.assertValueEqual(level.getBlockState(floor.above()).getValue(ElectricMachineBlock.TIER), ElectricTier.MV, "it places back as MV");
 
         level.getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
+    // Spec 8.2 and 24: an MV box feeds the transformer's front, the LV box behind it is charged from the other
+    // network, the transformer loses 2%, and step-up mode runs the other way.
+    private static void transformer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        net.minecraft.server.level.ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        player.setGameMode(net.minecraft.world.level.GameType.SURVIVAL);
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 1));
+        BlockPos mvPos = pos.west(), lvPos = pos.east();
+        level.setBlock(pos, Tier5Blocks.TRANSFORMER.get().defaultBlockState().setValue(dev.strataindustria.electric.TransformerBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(mvPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState().setValue(BatteryBoxBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
+        level.setBlock(lvPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        BatteryBoxBlockEntity mvBox = (BatteryBoxBlockEntity) level.getBlockEntity(mvPos), lvBox = (BatteryBoxBlockEntity) level.getBlockEntity(lvPos);
+        dev.strataindustria.electric.TransformerBlockEntity transformer = (dev.strataindustria.electric.TransformerBlockEntity) level.getBlockEntity(pos);
+        mvBox.setStored(50_000);
+
+        ElectricNetworks.rebuildNow(level, mvPos);
+        ElectricNetworks.rebuildNow(level, lvPos);
+        ElectricNetwork mvNet = ElectricNetworks.networkAt(level, mvPos), lvNet = ElectricNetworks.networkAt(level, lvPos);
+        helper.assertTrue(mvNet != lvNet, "the two sides are two networks");
+        helper.assertTrue(mvNet.members().contains(pos) && lvNet.members().contains(pos), "the transformer is in both");
+        helper.assertTrue(ElectricNetworks.networkAt(level, pos, 1) == mvNet && ElectricNetworks.networkAt(level, pos, 0) == lvNet, "front is the MV side");
+        mvNet.tick();
+        helper.assertTrue(Math.abs(transformer.buffer() - 128) < 1e-6, "the MV side fills the buffer with 128 J, got " + transformer.buffer());
+        lvNet.tick();
+        helper.assertTrue(Math.abs(lvBox.stored() - 32) < 1e-6, "the LV box takes its 32 J/t, got " + lvBox.stored());
+        helper.assertTrue(Math.abs(transformer.buffer() - (128 - 32 / 0.98)) < 1e-6, "2% is lost on the way, buffer " + transformer.buffer());
+        helper.assertValueEqual(lvNet.tier(), ElectricTier.LV, "the LV side is an LV network");
+        helper.assertValueEqual(mvNet.tier(), ElectricTier.MV, "the MV side is an MV network");
+
+        // Step up by clicking the block: the LV box now feeds the MV box.
+        lvBox.setStored(50_000);
+        mvBox.setStored(0);
+        net.minecraft.world.phys.BlockHitResult hit = new net.minecraft.world.phys.BlockHitResult(net.minecraft.world.phys.Vec3.atCenterOf(pos), Direction.UP, pos, false);
+        player.setShiftKeyDown(false);
+        level.getBlockState(pos).useWithoutItem(level, player, hit);
+        helper.assertTrue(level.getBlockState(pos).getValue(dev.strataindustria.electric.TransformerBlock.STEP_UP), "a click steps up");
+        ElectricNetworks.rebuildNow(level, mvPos);
+        ElectricNetworks.rebuildNow(level, lvPos);
+        mvNet = ElectricNetworks.networkAt(level, mvPos);
+        lvNet = ElectricNetworks.networkAt(level, lvPos);
+        lvNet.tick();
+        mvNet.tick();
+        // The level's own network tick may add a second round before this test's callback ends.
+        double rounds = mvBox.stored() / (32 * 0.98);
+        helper.assertTrue(Math.abs(rounds - Math.round(rounds)) < 1e-6 && Math.round(rounds) >= 1, "step up gives the MV box 98% of 32 J/t per tick, got " + mvBox.stored());
+        helper.assertTrue(lvBox.stored() < 50_000, "and the LV box paid for it");
+
+        level.getServer().getPlayerList().remove(player);
+        helper.succeed();
+    }
+
+    // Spec 8.5 and 24: 32 J/t out is 128 FE/t; FE comes in only through the front, up to 32 J/t.
+    private static void energyAdapter(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 1));
+        BlockPos otherPos = pos.east(), boxPos = pos.north();
+        level.setBlock(pos, Tier5Blocks.ENERGY_ADAPTER.get().defaultBlockState()
+                .setValue(dev.strataindustria.electric.EnergyAdapterBlock.FACING, Direction.EAST), Block.UPDATE_ALL);
+        level.setBlock(otherPos, Tier5Blocks.ENERGY_ADAPTER.get().defaultBlockState()
+                .setValue(dev.strataindustria.electric.EnergyAdapterBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        dev.strataindustria.electric.EnergyAdapterBlockEntity adapter = (dev.strataindustria.electric.EnergyAdapterBlockEntity) level.getBlockEntity(pos);
+        dev.strataindustria.electric.EnergyAdapterBlockEntity other = (dev.strataindustria.electric.EnergyAdapterBlockEntity) level.getBlockEntity(otherPos);
+        ((BatteryBoxBlockEntity) level.getBlockEntity(boxPos)).setStored(10_000);
+
+        helper.assertTrue(level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK, pos, Direction.EAST) != null, "FE on the front");
+        helper.assertTrue(level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK, pos, Direction.WEST) == null, "no FE on the back");
+        helper.assertTrue(level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK, pos, Direction.UP) == null, "no FE on the side");
+
+        // Out: the box feeds the adapter, which fills the other adapter's FE buffer.
+        dev.strataindustria.electric.EnergyAdapterBlockEntity.serverTick(level, pos, level.getBlockState(pos), adapter);
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, boxPos);
+        helper.assertTrue(network.members().contains(pos) && !network.members().contains(otherPos), "the front face does not join the network");
+        network.tick();
+        helper.assertValueEqual(other.feHandler().getAmountAsLong(), 128L, "32 J/t gives 128 FE/t");
+
+        // In: FE pushed into the front is taken up to 32 J/t (128 FE).
+        try (net.neoforged.neoforge.transfer.transaction.Transaction transaction = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            int taken = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.Energy.BLOCK, otherPos, Direction.WEST).insert(1000, transaction);
+            helper.assertValueEqual(taken, 0, "a full buffer takes nothing more");
+        }
+        dev.strataindustria.electric.EnergyAdapterBlockEntity.serverTick(level, otherPos, level.getBlockState(otherPos), other);
+        helper.assertTrue(Math.abs(other.maxOutput() - 32) < 1e-6, "128 FE is a 32 J/t source, got " + other.maxOutput());
+        try (net.neoforged.neoforge.transfer.transaction.Transaction transaction = net.neoforged.neoforge.transfer.transaction.Transaction.openRoot()) {
+            int taken = adapter.feHandler().insert(1000, transaction);
+            transaction.commit();
+            helper.assertValueEqual(taken, 128, "FE input is capped at 32 J/t");
+        }
         helper.succeed();
     }
 
