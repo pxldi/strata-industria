@@ -246,6 +246,13 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.KILN_DONE, definition().subtitle(subtitle("kiln.done"))
                 .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
+        // Spec 21: the smelter's pour is thicker than a crucible's, and its pot bubbles while molten.
+        add(Tier4Sounds.SMELTER_POUR, definition().subtitle(subtitle("smelter.pour"))
+                .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.85f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.3f)));
+        add(Tier4Sounds.SMELTER_BUBBLE, definition().subtitle(subtitle("smelter.bubble"))
+                .with(sound("minecraft:block.lava.ambient", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.7f))
+                .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
         add(Tier4Sounds.HEAT_PIPE_TICK, definition().subtitle(subtitle("heat_pipe.tick"))
                 .with(sound("minecraft:block.copper.step", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.35f))
                 .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.25f)));

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "strataindustria:refractory_crucible",
+    "F": "strataindustria:fire_bricks",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "FCF",
+    "F F",
+    "FPF"
+  ],
+  "result": {
+    "id": "strataindustria:smelter"
+  }
+}

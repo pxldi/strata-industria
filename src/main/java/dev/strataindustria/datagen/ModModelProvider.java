@@ -621,6 +621,25 @@ final class ModModelProvider extends ModelProvider {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(roaster).with(roasterState));
         itemModels.itemModelOutput.accept(Tier4Items.ROASTER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/roaster")));
+        // Spec 8.7: the smelter's spout faces the player; its front shows the molten surface while it works.
+        Block smelter = Tier4Blocks.SMELTER.get();
+        TextureMapping smelterCold = new TextureMapping().put(TextureSlot.FRONT, blockTexture("smelter_front"))
+                .put(TextureSlot.SIDE, blockTexture("smelter_side")).put(TextureSlot.TOP, blockTexture("smelter_top"));
+        var smelterIdle = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(smelter, smelterCold, blockModels.modelOutput));
+        var smelterLit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(smelter, "_active",
+                smelterCold.copyAndUpdate(TextureSlot.FRONT, blockTexture("smelter_front_active"))
+                        .copyAndUpdate(TextureSlot.TOP, blockTexture("smelter_top_active")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> smelterState = PropertyDispatch.initial(
+                dev.strataindustria.metal.SmelterBlock.FACING, dev.strataindustria.metal.SmelterBlock.LIT);
+        for (boolean on : new boolean[] {false, true}) {
+            var base = on ? smelterLit : smelterIdle;
+            smelterState.select(net.minecraft.core.Direction.NORTH, on, base);
+            smelterState.select(net.minecraft.core.Direction.EAST, on, base.with(BlockModelGenerators.Y_ROT_90));
+            smelterState.select(net.minecraft.core.Direction.SOUTH, on, base.with(BlockModelGenerators.Y_ROT_180));
+            smelterState.select(net.minecraft.core.Direction.WEST, on, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(smelter).with(smelterState));
+        itemModels.itemModelOutput.accept(Tier4Items.SMELTER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/smelter")));
         MultiPartGenerator gauge = MultiPartGenerator.multiPart(Tier4Blocks.PRESSURE_GAUGE.get());
         for (int reading = 0; reading <= 4; reading++) {
             gauge.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.PressureGaugeBlock.READING, reading),
