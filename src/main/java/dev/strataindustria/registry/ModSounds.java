@@ -49,6 +49,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_HIT = register("anvil.hit");
     /** The last blow that finishes a piece. */
     public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_DONE = register("anvil.done");
+    /** Several quick blows in a row: a known piece smithed at a steady pace. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_QUICK = register("anvil.quick");
     /** Raw rock dressed into a stone anvil. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_DRESS = register("anvil.dress");
     /** A prospector's pick tapping the rock. */

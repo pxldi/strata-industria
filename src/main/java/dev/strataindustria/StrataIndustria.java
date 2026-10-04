@@ -81,6 +81,7 @@ public final class StrataIndustria {
         ModConditions.CONDITIONS.register(modEventBus);
         Journal.TRIGGERS.register(modEventBus);
         dev.strataindustria.journal.JournalContent.register(modEventBus);
+        dev.strataindustria.smithing.SmithedRecipes.register(modEventBus);
         ModGameTests.INSTANCE_TYPES.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
