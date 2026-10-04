@@ -3,17 +3,18 @@ package dev.strataindustria.datagen;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.ceramics.PitKilnBlock;
+import dev.strataindustria.client.HeatGlow;
 import dev.strataindustria.fire.FirePitBlock;
 import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
-import dev.strataindustria.quern.QuernBlock;
-import dev.strataindustria.smithing.AnvilBlock;
-import dev.strataindustria.registry.ModBlocks;
-import dev.strataindustria.registry.ModItems;
-import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.material.Metal;
+import dev.strataindustria.quern.QuernBlock;
+import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.ModDataComponents;
+import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.smithing.AnvilBlock;
 import java.util.Optional;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -29,7 +30,10 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.data.BlockFamily;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -67,7 +71,7 @@ final class ModModelProvider extends ModelProvider {
                     BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(looseModel))));
             flatItem(itemModels, ModItems.LOOSE_ROCK.get(rock).get());
 
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 oreBlock(blockModels, rock, mineral);
             }
         }
@@ -116,6 +120,7 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(ModItems.FORGE.get(), ItemModelUtils.plainModel(forge));
 
         metals(itemModels);
+        ironAge(blockModels, itemModels);
 
         // Spec 9.1: stone anvils are the raw rock with a dressed face; the bronze anvil turns like a vanilla anvil.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
@@ -133,7 +138,7 @@ final class ModModelProvider extends ModelProvider {
         anvilFacing.select(net.minecraft.core.Direction.EAST, bronzeAnvil.with(BlockModelGenerators.Y_ROT_270));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.BRONZE_ANVIL.get()).with(anvilFacing));
         itemModels.itemModelOutput.accept(ModItems.BRONZE_ANVIL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bronze_anvil")));
-        flatItem(itemModels, ModItems.TONGS_JAW.get());
+        heatable(itemModels, ModItems.TONGS_JAW.get());
         itemModels.generateFlatItem(ModItems.TONGS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
         // Spec 10.1: the runner stone and its handle turn a quarter at a time as the quern is worked.
@@ -214,25 +219,57 @@ final class ModModelProvider extends ModelProvider {
         for (Metal metal : Metal.values()) {
             if (!metal.hasIngot() || metal.isVanilla() && !metal.isToolMetal()) continue;
             if (!metal.isVanilla()) {
-                flatItem(itemModels, ModItems.ingot(metal));
-                if (metal.hasNugget()) flatItem(itemModels, ModItems.NUGGETS.get(metal).get());
+                heatable(itemModels, ModItems.ingot(metal));
+                if (metal.hasNugget()) heatable(itemModels, ModItems.NUGGETS.get(metal).get());
             }
             if (!metal.isToolMetal()) continue;
-            flatItem(itemModels, ModItems.PLATES.get(metal).get());
+            heatable(itemModels, ModItems.PLATES.get(metal).get());
             if (!metal.isVanilla()) {
                 for (var piece : ModItems.ARMOUR.get(metal).values()) flatItem(itemModels, piece.get());
             }
             if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) {
-                flatItem(itemModels, ModItems.PROSPECTOR_HEADS.get(metal).get());
+                heatable(itemModels, ModItems.PROSPECTOR_HEADS.get(metal).get());
                 itemModels.generateFlatItem(ModItems.PROSPECTORS_PICKS.get(metal).get(), ModelTemplates.FLAT_HANDHELD_ITEM);
             }
-            for (MoldType type : MoldType.values()) {
-                flatItem(itemModels, ModItems.head(metal, type));
+            for (MoldType type : metal.toolTypes()) {
+                heatable(itemModels, ModItems.head(metal, type));
                 if (ModItems.TOOLS.get(metal).get(type) instanceof net.neoforged.neoforge.registries.DeferredItem<?> tool) {
                     itemModels.generateFlatItem(tool.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
                 }
             }
         }
+    }
+
+    // Tier 3 spec 3 and 4: fire clay and fire bricks, the single-block deposits, and wrought iron forms.
+    private static void ironAge(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        blockModels.createTrivialCube(ModBlocks.FIRE_CLAY.get());
+        BlockFamily fireBricks = new BlockFamily.Builder(ModBlocks.FIRE_BRICKS.get())
+                .slab(ModBlocks.FIRE_BRICK_SLAB.get())
+                .stairs(ModBlocks.FIRE_BRICK_STAIRS.get())
+                .wall(ModBlocks.FIRE_BRICK_WALL.get())
+                .getFamily();
+        blockModels.family(ModBlocks.FIRE_BRICKS.get()).generateFor(fireBricks);
+        blockModels.createTrivialCube(ModBlocks.LIGNITE_SEAM.get());
+        blockModels.createTrivialCube(ModBlocks.PLACER_GRAVEL.get());
+        blockModels.createTrivialCube(ModBlocks.PLACER_SAND.get());
+
+        Block bog = ModBlocks.BOG_IRON.get();
+        PropertyDispatch.C1<MultiVariant, OreGrade> bogGrades = PropertyDispatch.initial(OreGrade.PROPERTY);
+        for (OreGrade grade : OreGrade.values()) {
+            TextureMapping texture = TextureMapping.singleSlot(TextureSlot.ALL, blockTexture("bog_iron_" + grade.getSerializedName()));
+            var model = grade == OreGrade.NORMAL
+                    ? ModelTemplates.CUBE_ALL.create(bog, texture, blockModels.modelOutput)
+                    : ModelTemplates.CUBE_ALL.createWithSuffix(bog, "_" + grade.getSerializedName(), texture, blockModels.modelOutput);
+            bogGrades.select(grade, BlockModelGenerators.plainVariant(model));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(bog).with(bogGrades));
+
+        for (var item : java.util.List.of(ModItems.FIRE_CLAY_BALL, ModItems.GROG, ModItems.UNFIRED_FIRE_BRICK, ModItems.FIRE_BRICK,
+                ModItems.LIGNITE)) {
+            flatItem(itemModels, item.get());
+        }
+        heatable(itemModels, ModItems.WROUGHT_IRON_ROD.get());
+        heatable(itemModels, ModItems.WROUGHT_IRON_DOUBLE_INGOT.get());
     }
 
     private static void oreBlock(BlockModelGenerators blockModels, Rock rock, OreMineral mineral) {
@@ -255,6 +292,21 @@ final class ModModelProvider extends ModelProvider {
         var model = GROUND_FLAT_TEMPLATE.create(block, TextureMapping.singleSlot(TextureSlot.TEXTURE, blockTexture(texture)), blockModels.modelOutput);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block,
                 BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(model))));
+    }
+
+    /**
+     * Metal that can be heated: a flat item, plus a glow layer (a pale copy of the texture under
+     * {@code item/glow/}) tinted by temperature once it is hot enough to glow.
+     */
+    private static void heatable(ItemModelGenerators itemModels, Item item) {
+        var cold = itemModels.createFlatItemModel(item, ModelTemplates.FLAT_ITEM);
+        Identifier name = BuiltInRegistries.ITEM.getKey(item);
+        var glowing = ModelTemplates.TWO_LAYERED_ITEM.create(ModelLocationUtils.getModelLocation(item, "_glowing"),
+                TextureMapping.layered(TextureMapping.getItemTexture(item),
+                        new Material(name.withPrefix("item/glow/"))), itemModels.modelOutput);
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.conditional(HeatGlow.Glowing.INSTANCE,
+                ItemModelUtils.tintedModel(glowing, ItemModelUtils.constantTint(-1), HeatGlow.Tint.INSTANCE),
+                ItemModelUtils.plainModel(cold)));
     }
 
     private static void flatItem(ItemModelGenerators itemModels, Item item) {

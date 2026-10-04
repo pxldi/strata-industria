@@ -16,6 +16,12 @@ public final class VeinCells {
     public static final int CELL_SIZE = 64;
     public static final int MAX_RADIUS = 24;
     private static final int CACHE_LIMIT = 2048;
+    /** Steepest slope of a layer lens, in blocks per block. */
+    static final double LAYER_TILT = 0.15;
+    /** Sediment pass (worldgen spec 5.3): its own attempts, biased shallow, with a larger empty entry. */
+    private static final int SEDIMENT_ATTEMPTS = 2;
+    private static final double SEDIMENT_SHALLOW_BIAS = 0.7;
+    private static final int SEDIMENT_EMPTY_WEIGHT = 60;
 
     public record Settings(int attempts, double shallowBias, int emptyWeight, double sizeMultiplier, boolean spawnGuarantee) {
         public static final Settings DEFAULT = new Settings(3, 0.5, 40, 1.0, true);
@@ -29,7 +35,13 @@ public final class VeinCells {
 
         /** Rough number of ore blocks, used for the indicator count. */
         public double estimatedOreBlocks() {
+            if (type.shape().isLayer()) return Math.PI * radiusH * radiusH * 2 * radiusV * type.shape().density() * 0.7;
             return 4.0 / 3.0 * Math.PI * radiusH * radiusH * radiusV * type.shape().density() * 0.7;
+        }
+
+        /** How far above and below the centre the vein can reach; layers tilt, so they reach further. */
+        public int verticalReach() {
+            return type.shape().isLayer() ? radiusV + (int) Math.ceil(LAYER_TILT * radiusH) + 2 : radiusV;
         }
     }
 
@@ -78,19 +90,13 @@ public final class VeinCells {
     private List<Vein> compute(int cellX, int cellZ) {
         List<Vein> veins = new ArrayList<>();
         for (int attempt = 0; attempt < settings.attempts(); attempt++) {
-            long h = Noise.hash(seed, cellX, cellZ, 1000 + attempt);
-            int x = cellX * CELL_SIZE + (int) (Noise.unit(Noise.hash(h, 1)) * CELL_SIZE);
-            int z = cellZ * CELL_SIZE + (int) (Noise.unit(Noise.hash(h, 2)) * CELL_SIZE);
-            int top = surface.applyAsInt(x, z);
-            int y;
-            if (Noise.unit(Noise.hash(h, 3)) < settings.shallowBias()) {
-                y = top - 40 + (int) (Noise.unit(Noise.hash(h, 4)) * 35);
-            } else {
-                int max = top - 6;
-                y = -56 + (int) (Noise.unit(Noise.hash(h, 4)) * Math.max(1, max + 56 + 1));
-            }
-            Rock rock = sampler.rockAt(x, y, z, top);
-            Vein vein = pick(rock, x, y, z, top, h, false);
+            Vein vein = attempt(Noise.hash(seed, cellX, cellZ, 1000 + attempt), cellX, cellZ,
+                    VeinType.Pass.METAL, settings.shallowBias(), settings.emptyWeight());
+            if (vein != null) veins.add(vein);
+        }
+        for (int attempt = 0; attempt < SEDIMENT_ATTEMPTS; attempt++) {
+            Vein vein = attempt(Noise.hash(seed, cellX, cellZ, 2000 + attempt), cellX, cellZ,
+                    VeinType.Pass.SEDIMENT, SEDIMENT_SHALLOW_BIAS, SEDIMENT_EMPTY_WEIGHT);
             if (vein != null) veins.add(vein);
         }
         if (settings.spawnGuarantee() && cellX == 0 && cellZ == 0) {
@@ -100,11 +106,28 @@ public final class VeinCells {
         return List.copyOf(veins);
     }
 
-    private Vein pick(Rock rock, int x, int y, int z, int top, long h, boolean copperOnly) {
+    private Vein attempt(long h, int cellX, int cellZ, VeinType.Pass pass, double shallowBias, int emptyWeight) {
+        int x = cellX * CELL_SIZE + (int) (Noise.unit(Noise.hash(h, 1)) * CELL_SIZE);
+        int z = cellZ * CELL_SIZE + (int) (Noise.unit(Noise.hash(h, 2)) * CELL_SIZE);
+        int top = surface.applyAsInt(x, z);
+        int y;
+        if (Noise.unit(Noise.hash(h, 3)) < shallowBias) {
+            y = top - 40 + (int) (Noise.unit(Noise.hash(h, 4)) * 35);
+        } else {
+            int max = top - 6;
+            y = -56 + (int) (Noise.unit(Noise.hash(h, 4)) * Math.max(1, max + 56 + 1));
+        }
+        Rock rock = sampler.rockAt(x, y, z, top);
+        return pick(rock, x, y, z, top, h, false, pass, emptyWeight);
+    }
+
+    private Vein pick(Rock rock, int x, int y, int z, int top, long h, boolean copperOnly, VeinType.Pass pass, int emptyWeight) {
         List<VeinType> candidates = new ArrayList<>();
-        int total = copperOnly ? 0 : settings.emptyWeight();
+        int total = copperOnly ? 0 : emptyWeight;
         for (VeinType type : types) {
+            if (type.pass() != pass) continue;
             if (!type.hosts().contains(rock) || y < type.minY() || y > type.maxY()) continue;
+            if (type.maxDepth() > 0 && y < top - type.maxDepth()) continue;
             if (copperOnly && !(type.isStoneTier() && type.minerals().getFirst().mineral().primaryMetal() == Metal.COPPER)) continue;
             candidates.add(type);
             total += type.weight();
@@ -115,7 +138,8 @@ public final class VeinCells {
             roll -= type.weight();
             if (roll < 0) {
                 int rh = scale(type.shape().radiusHorizontal().sample(Noise.unit(Noise.hash(h, 6))));
-                int rv = scale(type.shape().radiusVertical().sample(Noise.unit(Noise.hash(h, 7))));
+                int sampledV = type.shape().radiusVertical().sample(Noise.unit(Noise.hash(h, 7)));
+                int rv = type.shape().isLayer() ? Math.max(1, sampledV) : scale(sampledV);
                 return new Vein(type, x, y, z, rh, rv, Noise.hash(h, 8), top);
             }
         }
@@ -134,7 +158,7 @@ public final class VeinCells {
         int top = surface.applyAsInt(x, z);
         for (int depth = 8; depth <= 40; depth += 8) {
             int y = top - depth;
-            Vein vein = pick(sampler.rockAt(x, y, z, top), x, y, z, top, Noise.hash(h, depth), true);
+            Vein vein = pick(sampler.rockAt(x, y, z, top), x, y, z, top, Noise.hash(h, depth), true, VeinType.Pass.METAL, 0);
             if (vein != null) {
                 int lift = Math.max(0, depth - vein.radiusV() - 4);
                 return new Vein(vein.type(), x, y + lift, z, vein.radiusH(), vein.radiusV(), vein.seed(), top);
@@ -150,11 +174,30 @@ public final class VeinCells {
      * Values above 1 are outside the vein.
      */
     public static double distance(Vein vein, int x, int y, int z) {
+        if (vein.type().shape().isLayer()) return layerDistance(vein, x, y, z);
         double dx = (x - vein.x()) / (double) vein.radiusH();
         double dy = (y - vein.y()) / (double) vein.radiusV();
         double dz = (z - vein.z()) / (double) vein.radiusH();
         double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
         return d * (0.8 + 0.4 * Noise.value3(vein.seed(), x, y, z, 1 / 5.0));
+    }
+
+    /**
+     * A layer is a lens: round in plan, flat in section, tilted by a per-vein slope and rippled by
+     * noise so it reads as a bed in the strata rather than a blob.
+     */
+    private static double layerDistance(Vein vein, int x, int y, int z) {
+        double slopeX = (Noise.unit(Noise.hash(vein.seed(), 11)) * 2 - 1) * LAYER_TILT;
+        double slopeZ = (Noise.unit(Noise.hash(vein.seed(), 12)) * 2 - 1) * LAYER_TILT;
+        double ripple = (Noise.value3(vein.seed() + 3, x, 0, z, 1 / 9.0) - 0.5) * 2;
+        double mid = vein.y() + (x - vein.x()) * slopeX + (z - vein.z()) * slopeZ + ripple;
+        double dx = (x - vein.x()) / (double) vein.radiusH();
+        double dz = (z - vein.z()) / (double) vein.radiusH();
+        double horizontal = Math.sqrt(dx * dx + dz * dz) * (0.85 + 0.3 * Noise.value3(vein.seed(), x, 0, z, 1 / 6.0));
+        // The lens thins towards its rim.
+        double half = (vein.radiusV() + 0.5) * Math.max(0.35, 1 - horizontal * horizontal * 0.6);
+        double vertical = Math.abs(y - mid) / half;
+        return Math.max(horizontal, vertical);
     }
 
     /** Whether the block at a position inside the vein becomes ore. */

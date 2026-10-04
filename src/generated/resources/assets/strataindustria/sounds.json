@@ -209,6 +209,21 @@
     ],
     "subtitle": "subtitles.strataindustria.heat.quench"
   },
+  "heat.sear": {
+    "sounds": [
+      {
+        "name": "random/fizz",
+        "pitch": 1.8,
+        "volume": 0.4
+      },
+      {
+        "name": "liquid/lavapop",
+        "pitch": 1.5,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.heat.sear"
+  },
   "journal.open": {
     "sounds": [
       {

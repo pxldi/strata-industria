@@ -2,6 +2,7 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.crafting.KnappedToolRecipe;
+import dev.strataindustria.crafting.MetalArmourRecipe;
 import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
 import dev.strataindustria.knapping.KnappingRecipe;
@@ -31,6 +32,9 @@ public final class ModRecipes {
     /** Shapeless metal tool assembly that carries the head's quality over and scales durability. */
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MetalToolRecipe>> METAL_TOOL =
             SERIALIZERS.register("metal_tool", () -> MetalToolRecipe.SERIALIZER);
+    /** Shaped armour from plates that averages the plates' quality and scales durability. */
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<MetalArmourRecipe>> METAL_ARMOUR =
+            SERIALIZERS.register("metal_armour", () -> MetalArmourRecipe.SERIALIZER);
 
     /** Grinding in a quern (spec 10.1), hand or mechanical. */
     public static final DeferredHolder<RecipeType<?>, RecipeType<QuernRecipe>> QUERN =

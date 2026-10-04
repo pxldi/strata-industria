@@ -1,0 +1,16 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "strataindustria:config",
+      "key": "vanilla.removeFurnaceCharcoal",
+      "value": false
+    }
+  ],
+  "type": "minecraft:smelting",
+  "cookingtime": 200,
+  "experience": 0.15,
+  "ingredient": "#minecraft:logs_that_burn",
+  "result": {
+    "id": "minecraft:charcoal"
+  }
+}

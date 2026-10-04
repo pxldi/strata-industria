@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_fire_brick": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:fire_brick"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:fire_bricks"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_fire_brick"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:fire_bricks"
+    ]
+  }
+}

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 /**
  * What an item gives when melted (spec 6.2, 7.1): ore pieces at 80% of their crushed value, crushed
@@ -22,6 +23,9 @@ public final class MetalContent {
     public static final int INGOT_UNITS = 100;
     public static final int NUGGET_UNITS = 10;
     public static final float SLAG_RETURN = 0.9f;
+    public static final int ROD_UNITS = 50;
+    /** A vanilla raw iron, copper or gold from loot: as much as a raw normal hematite. */
+    public static final int RAW_VANILLA_UNITS = 28;
 
     private static Map<Item, Melt> fixed;
 
@@ -44,9 +48,17 @@ public final class MetalContent {
                 if (ModItems.NUGGETS.containsKey(metal)) map.put(ModItems.NUGGETS.get(metal).get(), Alloy.parts(metal, NUGGET_UNITS));
                 if (ModItems.PLATES.containsKey(metal)) map.put(ModItems.PLATES.get(metal).get(), Alloy.parts(metal, INGOT_UNITS));
                 if (ModItems.HEADS.containsKey(metal)) {
-                    for (MoldType type : MoldType.values()) map.put(ModItems.head(metal, type), Alloy.parts(metal, type.units()));
+                    for (MoldType type : metal.toolTypes()) map.put(ModItems.head(metal, type), Alloy.parts(metal, type.units()));
                 }
+                if (ModItems.PROSPECTOR_HEADS.containsKey(metal)) map.put(ModItems.PROSPECTOR_HEADS.get(metal).get(), Alloy.parts(metal, INGOT_UNITS));
             }
+            // Tier 3 spec 4.1: rods are half an ingot, a double ingot two.
+            map.put(ModItems.WROUGHT_IRON_ROD.get(), Melt.of(Metal.WROUGHT_IRON, ROD_UNITS, 0));
+            map.put(ModItems.WROUGHT_IRON_DOUBLE_INGOT.get(), Melt.of(Metal.WROUGHT_IRON, 2 * INGOT_UNITS, 0));
+            // Spec 4.2: vanilla raw ores from loot count as raw normal ore.
+            map.put(Items.RAW_IRON, Melt.of(Metal.WROUGHT_IRON, RAW_VANILLA_UNITS, 0));
+            map.put(Items.RAW_COPPER, Melt.of(Metal.COPPER, RAW_VANILLA_UNITS, 0));
+            map.put(Items.RAW_GOLD, Melt.of(Metal.GOLD, RAW_VANILLA_UNITS, 0));
             fixed = map;
         }
         return fixed;

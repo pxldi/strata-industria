@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:wrought_iron_hammer_head",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "strataindustria:wrought_iron_hammer"
+  }
+}

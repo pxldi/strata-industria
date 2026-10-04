@@ -16,6 +16,8 @@ public final class Heat {
     public static final float QUENCH_RATE = 0.200f;
     /** Forge heating slots, per second. */
     public static final float FORGE_RATE = 0.040f;
+    /** Holding anything this hot bare-handed burns (spec 5.4). */
+    public static final float BURN_FROM = 480.0f;
     /** Below this the component is dropped, so cooled stacks stack with cold ones again. */
     static final float FORGET_BELOW = AMBIENT + 5.0f;
 

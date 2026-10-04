@@ -42,6 +42,8 @@ public final class ModArmorMaterials {
             case BRONZE -> BRONZE;
             case ARSENICAL_BRONZE -> ARSENICAL_BRONZE;
             case BISMUTH_BRONZE -> BISMUTH_BRONZE;
+            case WROUGHT_IRON -> ArmorMaterials.IRON;
+            case GOLD -> ArmorMaterials.GOLD;
             default -> throw new IllegalArgumentException(metal + " makes no armour");
         };
     }

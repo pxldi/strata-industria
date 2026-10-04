@@ -18,13 +18,18 @@ public record ConfigCondition(String key, boolean value) implements ICondition {
             Codec.BOOL.optionalFieldOf("value", true).forGetter(ConfigCondition::value)
     ).apply(i, ConfigCondition::new));
 
-    static final Map<String, ModConfigSpec.BooleanValue> SWITCHES = Map.of(
-            "vanilla.removeWoodTools", Config.REMOVE_WOOD_TOOLS,
-            "vanilla.removeStoneTools", Config.REMOVE_STONE_TOOLS,
-            "vanilla.planksNeedTools", Config.PLANKS_NEED_TOOLS,
-            "vanilla.removeCampfire", Config.REMOVE_CAMPFIRE,
-            "vanilla.gateFurnace", Config.GATE_FURNACE,
-            "vanilla.replaceCopperGear", Config.REPLACE_COPPER_GEAR);
+    static final Map<String, ModConfigSpec.BooleanValue> SWITCHES = Map.ofEntries(
+            Map.entry("vanilla.removeWoodTools", Config.REMOVE_WOOD_TOOLS),
+            Map.entry("vanilla.removeStoneTools", Config.REMOVE_STONE_TOOLS),
+            Map.entry("vanilla.planksNeedTools", Config.PLANKS_NEED_TOOLS),
+            Map.entry("vanilla.removeCampfire", Config.REMOVE_CAMPFIRE),
+            Map.entry("vanilla.gateFurnace", Config.GATE_FURNACE),
+            Map.entry("vanilla.replaceCopperGear", Config.REPLACE_COPPER_GEAR),
+            Map.entry("vanilla.removeFurnaceCharcoal", Config.REMOVE_FURNACE_CHARCOAL),
+            Map.entry("vanilla.removeOreSmelting", Config.REMOVE_ORE_SMELTING),
+            Map.entry("vanilla.removeBlastFurnace", Config.REMOVE_BLAST_FURNACE),
+            Map.entry("vanilla.replaceIronGear", Config.REPLACE_IRON_GEAR),
+            Map.entry("vanilla.replaceGoldGear", Config.REPLACE_GOLD_GEAR));
 
     @Override
     public boolean test(IContext context) {

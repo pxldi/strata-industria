@@ -1,0 +1,16 @@
+{
+  "type": "strataindustria:knapping",
+  "consume": 5,
+  "ingredient": "strataindustria:fire_clay_ball",
+  "pattern": [
+    "##.##",
+    "##.##",
+    ".....",
+    "##.##",
+    "##.##"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:unfired_fire_brick"
+  }
+}

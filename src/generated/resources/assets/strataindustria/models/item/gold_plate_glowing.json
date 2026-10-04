@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/gold_plate",
+    "layer1": "strataindustria:item/glow/gold_plate"
+  }
+}

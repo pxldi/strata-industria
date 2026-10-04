@@ -36,9 +36,7 @@ public class FirestarterItem extends Item {
         if (player == null) return InteractionResult.PASS;
         BlockPos pos = context.getClickedPos();
         BlockState state = context.getLevel().getBlockState(pos);
-        if (!(state.getBlock() instanceof Ignitable target) || !target.canIgnite(context.getLevel(), pos, state)) {
-            return InteractionResult.PASS;
-        }
+        if (!Ignitable.mayIgnite(context.getLevel(), pos, state)) return InteractionResult.PASS;
         player.startUsingItem(context.getHand());
         return InteractionResult.CONSUME;
     }
@@ -67,13 +65,15 @@ public class FirestarterItem extends Item {
         BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE);
         BlockPos pos = hit.getBlockPos();
         BlockState state = level.getBlockState(pos);
+        int used = USE_DURATION - remaining;
+        // The client cannot tell an unfuelled pit from a fuelled one; if the server has not lit it by now, it never will.
+        boolean overdue = level.isClientSide() && used > LIGHT_TICKS + 10;
         if (hit.getType() != HitResult.Type.BLOCK || !(state.getBlock() instanceof Ignitable target)
-                || !target.canIgnite(level, pos, state)) {
+                || !Ignitable.mayIgnite(level, pos, state) || overdue) {
             user.releaseUsingItem();
             return;
         }
 
-        int used = USE_DURATION - remaining;
         Vec3 at = hit.getLocation();
         if (level.isClientSide()) {
             // More smoke the closer the ember is to catching.

@@ -113,6 +113,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "pit_kiln.log", "Log stacked");
         add(subtitles + "pit_kiln.fired", "Kiln burns out");
         add(subtitles + "heat.quench", "Hot metal hisses");
+        add(subtitles + "heat.sear", "Skin sears");
         add(subtitles + "forge.ignite", "Forge catches");
         add(subtitles + "crucible.melt", "Metal melts");
         add(subtitles + "quern.grind", "Quern grinds");
@@ -139,7 +140,7 @@ final class ModLanguageProvider extends LanguageProvider {
             addBlock(ModBlocks.RAW_ROCK.get(rock), "Raw " + name);
             addBlock(ModBlocks.COBBLED_ROCK.get(rock), "Cobbled " + name);
             addBlock(ModBlocks.LOOSE_ROCK.get(rock), "Loose " + name);
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 addBlock(ModBlocks.ORES.get(rock).get(mineral), name + " " + title(mineral.id()) + " Ore");
             }
         }
@@ -152,6 +153,7 @@ final class ModLanguageProvider extends LanguageProvider {
                 addItem(ModItems.CRUSHED_ORES.get(mineral).get(grade), "Crushed " + graded);
             }
         }
+        ironAge();
         addBlock(ModBlocks.LOOSE_STICK, "Loose Stick");
         addBlock(ModBlocks.LOOSE_FLINT, "Loose Flint");
 
@@ -190,8 +192,45 @@ final class ModLanguageProvider extends LanguageProvider {
         add(config + "toolMoldBreak", "Tool mold break chance");
         add(config + "smithing", "Smithing");
         add(config + "randomTargets", "Random targets per world");
+        add(config + "removeFurnaceCharcoal", "Remove furnace charcoal");
+        add(config + "removeOreSmelting", "Remove ore smelting");
+        add(config + "removeBlastFurnace", "Remove blast furnace recipe");
+        add(config + "replaceIronGear", "Replace iron gear recipes");
+        add(config + "replaceGoldGear", "Replace gold gear recipes");
+        add(config + "golemDropsNuggets", "Iron golems drop nuggets");
+        add(config + "hitCooling", "Cooling per hit on iron");
+        add(config + "heat", "Item Heat");
+        add(config + "burnPlayer", "Hot items burn bare hands");
         add(config + "journal", "Field Journal");
         add(config + "giveOnJoin", "Give a journal on first join");
+    }
+
+    /** Tier 3 spec 3 and 4: fire clay, the new deposits, and the wrought iron name for vanilla iron. */
+    private void ironAge() {
+        String id = StrataIndustria.MOD_ID;
+        addItem(ModItems.FIRE_CLAY_BALL, "Fire Clay Ball");
+        addItem(ModItems.GROG, "Grog");
+        addItem(ModItems.UNFIRED_FIRE_BRICK, "Unfired Fire Brick");
+        addItem(ModItems.FIRE_BRICK, "Fire Brick");
+        addBlock(ModBlocks.FIRE_CLAY, "Fire Clay");
+        addBlock(ModBlocks.FIRE_BRICKS, "Fire Bricks");
+        addBlock(ModBlocks.FIRE_BRICK_SLAB, "Fire Brick Slab");
+        addBlock(ModBlocks.FIRE_BRICK_STAIRS, "Fire Brick Stairs");
+        addBlock(ModBlocks.FIRE_BRICK_WALL, "Fire Brick Wall");
+        addItem(ModItems.LIGNITE, "Lignite");
+        addBlock(ModBlocks.LIGNITE_SEAM, "Lignite Seam");
+        addBlock(ModBlocks.BOG_IRON, "Bog Iron");
+        addBlock(ModBlocks.PLACER_GRAVEL, "Placer Gravel");
+        addBlock(ModBlocks.PLACER_SAND, "Placer Sand");
+        addItem(ModItems.WROUGHT_IRON_ROD, "Wrought Iron Rod");
+        addItem(ModItems.WROUGHT_IRON_DOUBLE_INGOT, "Wrought Iron Double Ingot");
+        // Spec 2: the vanilla iron ingot and nugget are wrought iron.
+        add("item.minecraft.iron_ingot", "Wrought Iron Ingot");
+        add("item.minecraft.iron_nugget", "Wrought Iron Nugget");
+        add(id + ".ore.lignite_seam", "lignite");
+        add(id + ".ore.fire_clay", "fire clay");
+        add(id + ".prospect.rich", ", rich ore nearby");
+        add(id + ".crucible.no_iron", "Iron does not melt this hot");
     }
 
     /** Spec 11: the field journal's goals and hints. */
@@ -203,17 +242,17 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.loose_rock", "A Rock to Start With");
         add(journal + "t0.loose_rock.hint", "Pick up a loose rock lying on the ground.");
         add(journal + "t0.knap", "First Edge");
-        add(journal + "t0.knap.hint", "Knap a tool head: use loose rocks or flint and strike away the waste.");
+        add(journal + "t0.knap.hint", "Hold two loose rocks or one flint, use it, and strike away the waste until a tool head is left.");
         add(journal + "t0.stone_axe", "Stone Axe");
-        add(journal + "t0.stone_axe.hint", "Haft a knapped axe head onto a stick.");
+        add(journal + "t0.stone_axe.hint", "Bind a knapped axe head to a stick with twine.");
         add(journal + "t0.log", "Timber");
         add(journal + "t0.log.hint", "Fell a tree with your axe. Bare hands will not do.");
         add(journal + "t0.crafting_table", "A Proper Workbench");
         add(journal + "t0.crafting_table.hint", "Build a crafting table.");
         add(journal + "t0.twine", "Twisted Fibre");
-        add(journal + "t0.twine.hint", "Cut grass with a knife for plant fibre, then twist it into twine.");
+        add(journal + "t0.twine.hint", "Cut grass with a knapped knife blade for plant fibre, then twist two fibres into twine.");
         add(journal + "t0.fire", "Firelight");
-        add(journal + "t0.fire.hint", "Build a fire pit and light it with a firestarter.");
+        add(journal + "t0.fire.hint", "Build a fire pit from sticks and straw, put fuel in, and hold a firestarter on it.");
         add(journal + "t0.clay", "Riverbank Clay");
         add(journal + "t0.clay.hint", "Gather five clay balls. Look along riverbanks and in swamps.");
         add(journal + "t1.clay_forming", "Shaped by Hand");
@@ -221,7 +260,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t1.pit_kiln", "Fired Pottery");
         add(journal + "t1.pit_kiln.hint", "Fire clay pieces in a pit kiln under straw and logs, and let it burn out.");
         add(journal + "t1.charcoal", "Charcoal Burner");
-        add(journal + "t1.charcoal.hint", "Stack logs into a pile, light it, then cover every face with soil or stone.");
+        add(journal + "t1.charcoal.hint", "Sneak and place logs into a pile, light it, cover every face with soil or stone, then dig out the charcoal.");
         add(journal + "t1.forge", "The Forge");
         add(journal + "t1.forge.hint", "Build a forge. It burns charcoal far hotter than a fire pit.");
         add(journal + "t1.nugget", "Signs in the Soil");
@@ -229,7 +268,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t1.crucible", "Vessel and Mold");
         add(journal + "t1.crucible.hint", "Fire a crucible and an ingot mold in the pit kiln.");
         add(journal + "t2.melt", "Molten");
-        add(journal + "t2.melt.hint", "Set a crucible on a lit forge and melt ore in it.");
+        add(journal + "t2.melt.hint", "Set a crucible on top of a lit forge and melt ore in it.");
         add(journal + "t2.copper_ingot", "First Metal");
         add(journal + "t2.copper_ingot.hint", "Pour molten copper into an ingot mold and knock the ingot out once it cools.");
         add(journal + "t2.copper_pickaxe", "Copper Pick");
@@ -263,6 +302,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.BRONZE_ANVIL, "Bronze Anvil");
         addItem(ModItems.TONGS_JAW, "Tongs Jaw");
         addItem(ModItems.TONGS, "Tongs");
+        add("item." + id + ".tongs.tooltip", "In the off hand: hold hot metal without burns");
+        add("heat." + id + ".too_hot", "Too hot to hold bare-handed. Tongs in your off hand would help.");
+        add("death.attack." + id + ".hot_item", "%1$s held on to hot metal for too long");
+        add("death.attack." + id + ".hot_item.player", "%1$s held on to hot metal for too long while fighting %2$s");
         add("container." + id + ".anvil", "Anvil");
         String status = id + ".anvil.status.";
         add(status + "empty", "Put a heated workpiece in");
@@ -314,7 +357,7 @@ final class ModLanguageProvider extends LanguageProvider {
                 addItem(ModItems.PROSPECTOR_HEADS.get(metal), name + " Prospector's Pick Head");
                 addItem(ModItems.PROSPECTORS_PICKS.get(metal), name + " Prospector's Pick");
             }
-            for (MoldType type : MoldType.values()) {
+            for (MoldType type : metal.toolTypes()) {
                 addItem(ModItems.HEADS.get(metal).get(type), name + " " + title(type.id()));
                 var tool = ModItems.TOOLS.get(metal).get(type);
                 if (tool instanceof net.neoforged.neoforge.registries.DeferredItem<?> item) {

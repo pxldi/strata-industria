@@ -56,11 +56,14 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             looseRocks.add(ModBlocks.LOOSE_ROCK.get(rock).getKey());
             cobbled.add(ModBlocks.COBBLED_ROCK.get(rock).getKey());
             pickaxe.add(ModBlocks.COBBLED_ROCK.get(rock).getKey());
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 var ore = ModBlocks.ORES.get(rock).get(mineral).getKey();
                 ores.add(ore);
                 pickaxe.add(ore);
-                if (mineral == OreMineral.CASSITERITE) needsCopper.add(ore);
+                if (mineral.needsBronzeTool()) tag(ModTags.Blocks.NEEDS_BRONZE_TOOL).add(ore);
+                else if (mineral.needsCopperTool()) needsCopper.add(ore);
+                if (mineral.isIron()) tag(Tags.Blocks.ORES_IRON).add(ore);
+                if (mineral == OreMineral.NATIVE_GOLD) tag(Tags.Blocks.ORES_GOLD).add(ore);
             }
         }
 
@@ -69,9 +72,28 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
             smallOres.add(ModBlocks.SMALL_ORES.get(mineral).getKey());
         }
 
-        // Mining tiers: stone < copper < bronze < wrought iron. Vanilla iron and above still apply.
-        tag(ModTags.Blocks.NEEDS_BRONZE_TOOL);
+        // Tier 3 spec 3, 4.2 and 4.3: fire clay, fire bricks, bog iron, lignite and river placers.
+        ores.add(ModBlocks.BOG_IRON.getKey());
+        tag(Tags.Blocks.ORES_IRON).add(ModBlocks.BOG_IRON.getKey());
+        tag(ModTags.Blocks.NEEDS_BRONZE_TOOL).add(ModBlocks.BOG_IRON.getKey());
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.BOG_IRON.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
+                .add(ModBlocks.PLACER_GRAVEL.getKey()).add(ModBlocks.PLACER_SAND.getKey());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_BRICKS.getKey())
+                .add(ModBlocks.FIRE_BRICK_SLAB.getKey()).add(ModBlocks.FIRE_BRICK_STAIRS.getKey()).add(ModBlocks.FIRE_BRICK_WALL.getKey());
+        tag(BlockTags.SLABS).add(ModBlocks.FIRE_BRICK_SLAB.getKey());
+        tag(BlockTags.STAIRS).add(ModBlocks.FIRE_BRICK_STAIRS.getKey());
+        tag(BlockTags.WALLS).add(ModBlocks.FIRE_BRICK_WALL.getKey());
+        tag(ModTags.Blocks.REFRACTORY).add(ModBlocks.FIRE_BRICKS.getKey());
+        tag(ModTags.Blocks.PROSPECTABLE).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
+                .add(ModBlocks.BOG_IRON.getKey());
+
+        // Mining tiers: stone < copper < bronze < wrought iron < steel. Vanilla diamond and above still apply.
         tag(ModTags.Blocks.NEEDS_WROUGHT_IRON_TOOL);
+        tag(ModTags.Blocks.NEEDS_STEEL_TOOL);
+        tag(ModTags.Blocks.INCORRECT_FOR_WROUGHT_IRON_TOOL)
+                .addTag(ModTags.Blocks.NEEDS_STEEL_TOOL)
+                .addTag(BlockTags.NEEDS_DIAMOND_TOOL);
+        tag(BlockTags.INCORRECT_FOR_IRON_TOOL).addTag(ModTags.Blocks.NEEDS_STEEL_TOOL);
         tag(ModTags.Blocks.INCORRECT_FOR_BRONZE_TOOL)
                 .addTag(ModTags.Blocks.NEEDS_WROUGHT_IRON_TOOL)
                 .addTag(BlockTags.NEEDS_DIAMOND_TOOL);

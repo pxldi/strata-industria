@@ -35,7 +35,11 @@ public final class Knapping {
     }
 
     public static boolean isClay(ItemStack stack) {
-        return stack.is(Items.CLAY_BALL);
+        return stack.is(Items.CLAY_BALL) || isFireClay(stack);
+    }
+
+    public static boolean isFireClay(ItemStack stack) {
+        return stack.is(ModItems.FIRE_CLAY_BALL.get());
     }
 
     /** Anything that opens the grid: loose rocks, flint or clay. */
@@ -55,6 +59,7 @@ public final class Knapping {
 
     /** Texture that fills the grid: the rock's own block texture, or the flint nodule texture. */
     public static Identifier gridTexture(ItemStack stack) {
+        if (isFireClay(stack)) return StrataIndustria.id("textures/block/fire_clay.png");
         if (isClay(stack)) return StrataIndustria.id("textures/gui/knapping/clay.png");
         return rockOf(stack)
                 .map(rock -> StrataIndustria.id("textures/block/" + rock.id() + ".png"))
@@ -72,6 +77,10 @@ public final class Knapping {
 
     /** Chips that fly off a strike: grey stone, dark flint, or brown clay crumbs. */
     public static int chipColour(ItemStack stack, float shade) {
+        if (isFireClay(stack)) {
+            int r = Math.round(0xc8 * shade), g = Math.round(0xb8 * shade), b = Math.round(0x9a * shade);
+            return 0xFF000000 | r << 16 | g << 8 | b;
+        }
         if (isClay(stack)) {
             int r = Math.round(0x8e * shade), g = Math.round(0x7a * shade), b = Math.round(0x74 * shade);
             return 0xFF000000 | r << 16 | g << 8 | b;

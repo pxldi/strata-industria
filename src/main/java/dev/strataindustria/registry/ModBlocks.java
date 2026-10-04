@@ -17,7 +17,12 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import java.util.EnumMap;
 import java.util.Map;
+import net.minecraft.util.ColorRGBA;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ColoredFallingBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -104,11 +109,11 @@ public final class ModBlocks {
                     .noLootTable()
                     .lightLevel(state -> state.getValue(LogPileBlock.LIT) ? 8 : 0)
                     .pushReaction(PushReaction.IMMOVEABLE));
+    // Drops its charcoal to any tool: losing a whole burn to a bare-handed dig is no lesson. A shovel is just faster.
     public static final DeferredBlock<CharcoalPileBlock> CHARCOAL_PILE = BLOCKS.registerBlock("charcoal_pile", CharcoalPileBlock::new,
             p -> p.mapColor(MapColor.COLOR_BLACK)
                     .strength(0.8f)
-                    .sound(SoundType.GRAVEL)
-                    .requiresCorrectToolForDrops());
+                    .sound(SoundType.GRAVEL));
 
     /** Brick forge (spec 4.5). Light 13 while the coals glow. */
     public static final DeferredBlock<ForgeBlock> FORGE = BLOCKS.registerBlock("forge", ForgeBlock::new,
@@ -117,6 +122,42 @@ public final class ModBlocks {
                     .sound(SoundType.STONE)
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> state.getValue(ForgeBlock.HOT) ? 13 : state.getValue(ForgeBlock.LIT) ? 7 : 0));
+
+    // Tier 3 spec 3: fire clay and fire bricks. Fire bricks ring a little higher than stone bricks.
+    private static final SoundType FIRE_BRICK_SOUND = new SoundType(1.0f, 1.1f, SoundType.DEEPSLATE_BRICKS.getBreakSound(),
+            SoundType.DEEPSLATE_BRICKS.getStepSound(), SoundType.DEEPSLATE_BRICKS.getPlaceSound(),
+            SoundType.DEEPSLATE_BRICKS.getHitSound(), SoundType.DEEPSLATE_BRICKS.getFallSound());
+    public static final DeferredBlock<Block> FIRE_CLAY = BLOCKS.registerSimpleBlock("fire_clay", p -> p
+            .mapColor(MapColor.SAND)
+            .strength(0.8f)
+            .sound(SoundType.MUD));
+    public static final DeferredBlock<Block> FIRE_BRICKS = BLOCKS.registerSimpleBlock("fire_bricks", ModBlocks::fireBrick);
+    public static final DeferredBlock<SlabBlock> FIRE_BRICK_SLAB = BLOCKS.registerBlock("fire_brick_slab", SlabBlock::new,
+            ModBlocks::fireBrick);
+    public static final DeferredBlock<StairBlock> FIRE_BRICK_STAIRS = BLOCKS.registerBlock("fire_brick_stairs",
+            p -> new StairBlock(FIRE_BRICKS.get().defaultBlockState(), p), ModBlocks::fireBrick);
+    public static final DeferredBlock<WallBlock> FIRE_BRICK_WALL = BLOCKS.registerBlock("fire_brick_wall", WallBlock::new,
+            p -> fireBrick(p).forceSolidOn());
+
+    // Tier 3 spec 4.3: deposits that are a single block, whatever the rock around them.
+    public static final DeferredBlock<Block> LIGNITE_SEAM = BLOCKS.registerSimpleBlock("lignite_seam", p -> p
+            .mapColor(MapColor.TERRACOTTA_BROWN)
+            .instrument(NoteBlockInstrument.BASEDRUM)
+            .strength(1.0f, 3.0f)
+            .requiresCorrectToolForDrops()
+            .sound(SoundType.TUFF));
+    /** Limonite in wet soil (spec 4.2), with a grade like an ore block. */
+    public static final DeferredBlock<OreBlock> BOG_IRON = BLOCKS.registerBlock("bog_iron", p -> new OreBlock(null, OreMineral.LIMONITE, p),
+            p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
+                    .strength(0.9f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.MUD));
+    public static final DeferredBlock<ColoredFallingBlock> PLACER_GRAVEL = BLOCKS.registerBlock("placer_gravel",
+            p -> new ColoredFallingBlock(new ColorRGBA(0xFF807C7B), p),
+            p -> p.mapColor(MapColor.STONE).instrument(NoteBlockInstrument.SNARE).strength(0.6f).sound(SoundType.GRAVEL));
+    public static final DeferredBlock<ColoredFallingBlock> PLACER_SAND = BLOCKS.registerBlock("placer_sand",
+            p -> new ColoredFallingBlock(new ColorRGBA(0xFFDBD3A0), p),
+            p -> p.mapColor(MapColor.SAND).instrument(NoteBlockInstrument.SNARE).strength(0.5f).sound(SoundType.SAND));
 
     static {
         for (Rock rock : Rock.values()) {
@@ -146,7 +187,7 @@ public final class ModBlocks {
                     p -> groundCover(p).mapColor(rock.mapColor()).sound(SoundType.STONE)));
 
             Map<OreMineral, DeferredBlock<OreBlock>> ores = new EnumMap<>(OreMineral.class);
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 ores.put(mineral, BLOCKS.registerBlock(rock.id() + "_" + mineral.id() + "_ore",
                         p -> new OreBlock(rock, mineral, p),
                         p -> p.mapColor(rock.mapColor())
@@ -162,6 +203,14 @@ public final class ModBlocks {
                     p -> new GroundCoverBlock(Block.box(3, 0, 3, 13, 3, 13), p),
                     p -> groundCover(p).sound(SoundType.GRAVEL)));
         }
+    }
+
+    private static Block.Properties fireBrick(Block.Properties p) {
+        return p.mapColor(MapColor.SAND)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .strength(2.5f, 8.0f)
+                .requiresCorrectToolForDrops()
+                .sound(FIRE_BRICK_SOUND);
     }
 
     private static Block.Properties groundCover(Block.Properties p) {

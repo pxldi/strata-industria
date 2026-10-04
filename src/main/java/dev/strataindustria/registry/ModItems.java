@@ -93,6 +93,25 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> QUERN = ITEMS.registerSimpleBlockItem(ModBlocks.QUERN);
     // Charcoal (spec 4.4).
     public static final DeferredItem<AshItem> ASH = ITEMS.registerItem("ash", AshItem::new);
+    // Tier 3: fire clay and fire bricks (tier 3 spec 3).
+    public static final DeferredItem<Item> FIRE_CLAY_BALL = ITEMS.registerSimpleItem("fire_clay_ball");
+    public static final DeferredItem<Item> GROG = ITEMS.registerSimpleItem("grog");
+    public static final DeferredItem<Item> UNFIRED_FIRE_BRICK = ITEMS.registerSimpleItem("unfired_fire_brick");
+    public static final DeferredItem<Item> FIRE_BRICK = ITEMS.registerSimpleItem("fire_brick");
+    public static final DeferredItem<BlockItem> FIRE_CLAY = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_CLAY);
+    public static final DeferredItem<BlockItem> FIRE_BRICKS = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_BRICKS);
+    public static final DeferredItem<BlockItem> FIRE_BRICK_SLAB = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_BRICK_SLAB);
+    public static final DeferredItem<BlockItem> FIRE_BRICK_STAIRS = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_BRICK_STAIRS);
+    public static final DeferredItem<BlockItem> FIRE_BRICK_WALL = ITEMS.registerSimpleBlockItem(ModBlocks.FIRE_BRICK_WALL);
+    // Tier 3 deposits (spec 4.3).
+    public static final DeferredItem<Item> LIGNITE = ITEMS.registerSimpleItem("lignite");
+    public static final DeferredItem<BlockItem> LIGNITE_SEAM = ITEMS.registerSimpleBlockItem(ModBlocks.LIGNITE_SEAM);
+    public static final DeferredItem<BlockItem> BOG_IRON = ITEMS.registerSimpleBlockItem(ModBlocks.BOG_IRON);
+    public static final DeferredItem<BlockItem> PLACER_GRAVEL = ITEMS.registerSimpleBlockItem(ModBlocks.PLACER_GRAVEL);
+    public static final DeferredItem<BlockItem> PLACER_SAND = ITEMS.registerSimpleBlockItem(ModBlocks.PLACER_SAND);
+    // Wrought iron forms beyond the vanilla ingot and nugget (spec 4.1).
+    public static final DeferredItem<Item> WROUGHT_IRON_ROD = ITEMS.registerSimpleItem("wrought_iron_rod");
+    public static final DeferredItem<Item> WROUGHT_IRON_DOUBLE_INGOT = ITEMS.registerSimpleItem("wrought_iron_double_ingot", p -> p.stacksTo(16));
     // Metals (spec 6 to 8). Copper's ingot, nugget, armour and five of its tools are vanilla items.
     public static final Map<Metal, Supplier<Item>> INGOTS = new EnumMap<>(Metal.class);
     public static final Map<Metal, Supplier<Item>> NUGGETS = new EnumMap<>(Metal.class);
@@ -122,8 +141,9 @@ public final class ModItems {
         for (Metal metal : Metal.values()) {
             if (!metal.hasIngot()) continue;
             if (metal.isVanilla()) {
-                INGOTS.put(metal, () -> Items.COPPER_INGOT);
-                NUGGETS.put(metal, () -> Items.COPPER_NUGGET);
+                Item ingot = vanillaIngot(metal), nugget = vanillaNugget(metal);
+                INGOTS.put(metal, () -> ingot);
+                NUGGETS.put(metal, () -> nugget);
             } else {
                 INGOTS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_ingot"));
                 if (metal.hasNugget()) NUGGETS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_nugget"));
@@ -132,9 +152,9 @@ public final class ModItems {
             PLATES.put(metal, ITEMS.registerSimpleItem(metal.id() + "_plate"));
             Map<MoldType, DeferredItem<Item>> heads = new EnumMap<>(MoldType.class);
             Map<MoldType, Supplier<Item>> tools = new EnumMap<>(MoldType.class);
-            for (MoldType type : MoldType.values()) {
+            for (MoldType type : metal.toolTypes()) {
                 heads.put(type, ITEMS.registerSimpleItem(metal.id() + "_" + type.id(), p -> p.stacksTo(16)));
-                Item vanilla = metal.isVanilla() ? vanillaCopperTool(type) : null;
+                Item vanilla = metal.isVanilla() ? vanillaTool(metal, type) : null;
                 if (vanilla != null) tools.put(type, () -> vanilla);
                 else tools.put(type, ITEMS.registerSimpleItem(metal.id() + "_" + type.tool(), p -> metalTool(p, metal, type)));
             }
@@ -142,7 +162,7 @@ public final class ModItems {
             Map<ArmorType, Supplier<Item>> armour = new EnumMap<>(ArmorType.class);
             for (ArmorType type : ARMOUR_TYPES) {
                 if (metal.isVanilla()) {
-                    Item vanilla = vanillaCopperArmour(type);
+                    Item vanilla = vanillaArmour(metal, type);
                     armour.put(type, () -> vanilla);
                 } else {
                     armour.put(type, ITEMS.registerSimpleItem(metal.id() + "_" + type.getName(),
@@ -150,13 +170,15 @@ public final class ModItems {
                 }
             }
             ARMOUR.put(metal, armour);
-            if (metal.isBronze()) {
+            if (metal.hasProspectorsPick()) {
                 PROSPECTOR_HEADS.put(metal, ITEMS.registerSimpleItem(metal.id() + "_prospectors_pick_head", p -> p.stacksTo(16)));
                 ToolMaterial material = ModToolMaterials.of(metal);
                 // Mines like a pickaxe, but slowly: it is for listening to the rock, not breaking it.
                 ToolMaterial slow = new ToolMaterial(material.incorrectBlocksForDrops(), material.durability(), 3.0f,
                         material.attackDamageBonus(), material.enchantmentValue(), material.repairItems());
-                PROSPECTORS_PICKS.put(metal, ITEMS.registerItem(metal.id() + "_prospectors_pick", ProspectorsPickItem::new,
+                // Tier 3 spec 10.3: the wrought iron pick listens further.
+                int radius = metal == Metal.WROUGHT_IRON ? ProspectorsPickItem.WROUGHT_IRON_RADIUS : ProspectorsPickItem.RADIUS;
+                PROSPECTORS_PICKS.put(metal, ITEMS.registerItem(metal.id() + "_prospectors_pick", p -> new ProspectorsPickItem(radius, p),
                         p -> p.pickaxe(slow, 1.0f, -2.8f)));
             }
             TOOLS.put(metal, tools);
@@ -171,7 +193,7 @@ public final class ModItems {
             LOOSE_ROCK.put(rock, ITEMS.registerItem("loose_" + rock.id(),
                     p -> new GroundCoverItem(ModBlocks.LOOSE_ROCK.get(rock).get(), p), p -> p.useBlockDescriptionPrefix()));
             Map<OreMineral, DeferredItem<BlockItem>> ores = new EnumMap<>(OreMineral.class);
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.inRockValues()) {
                 ores.put(mineral, ITEMS.registerSimpleBlockItem(ModBlocks.ORES.get(rock).get(mineral)));
             }
             ORE_BLOCKS.put(rock, ores);
@@ -194,23 +216,73 @@ public final class ModItems {
         return ARMOUR_TYPES.clone();
     }
 
-    private static Item vanillaCopperArmour(ArmorType type) {
-        return switch (type) {
-            case HELMET -> Items.COPPER_HELMET;
-            case CHESTPLATE -> Items.COPPER_CHESTPLATE;
-            case LEGGINGS -> Items.COPPER_LEGGINGS;
-            default -> Items.COPPER_BOOTS;
+    private static Item vanillaIngot(Metal metal) {
+        return switch (metal) {
+            case WROUGHT_IRON -> Items.IRON_INGOT;
+            case GOLD -> Items.GOLD_INGOT;
+            default -> Items.COPPER_INGOT;
         };
     }
 
-    private static Item vanillaCopperTool(MoldType type) {
-        return switch (type) {
-            case PICKAXE_HEAD -> Items.COPPER_PICKAXE;
-            case AXE_HEAD -> Items.COPPER_AXE;
-            case SHOVEL_HEAD -> Items.COPPER_SHOVEL;
-            case HOE_HEAD -> Items.COPPER_HOE;
-            case SWORD_BLADE -> Items.COPPER_SWORD;
-            default -> null;
+    private static Item vanillaNugget(Metal metal) {
+        return switch (metal) {
+            case WROUGHT_IRON -> Items.IRON_NUGGET;
+            case GOLD -> Items.GOLD_NUGGET;
+            default -> Items.COPPER_NUGGET;
+        };
+    }
+
+    private static Item vanillaArmour(Metal metal, ArmorType type) {
+        return switch (metal) {
+            case WROUGHT_IRON -> switch (type) {
+                case HELMET -> Items.IRON_HELMET;
+                case CHESTPLATE -> Items.IRON_CHESTPLATE;
+                case LEGGINGS -> Items.IRON_LEGGINGS;
+                default -> Items.IRON_BOOTS;
+            };
+            case GOLD -> switch (type) {
+                case HELMET -> Items.GOLDEN_HELMET;
+                case CHESTPLATE -> Items.GOLDEN_CHESTPLATE;
+                case LEGGINGS -> Items.GOLDEN_LEGGINGS;
+                default -> Items.GOLDEN_BOOTS;
+            };
+            default -> switch (type) {
+                case HELMET -> Items.COPPER_HELMET;
+                case CHESTPLATE -> Items.COPPER_CHESTPLATE;
+                case LEGGINGS -> Items.COPPER_LEGGINGS;
+                default -> Items.COPPER_BOOTS;
+            };
+        };
+    }
+
+    /** The vanilla tool a head of this metal goes on, or null when the mod adds its own (knife, hammer, saw). */
+    public static Item vanillaTool(Metal metal, MoldType type) {
+        if (!metal.isVanilla()) return null;
+        return switch (metal) {
+            case WROUGHT_IRON -> switch (type) {
+                case PICKAXE_HEAD -> Items.IRON_PICKAXE;
+                case AXE_HEAD -> Items.IRON_AXE;
+                case SHOVEL_HEAD -> Items.IRON_SHOVEL;
+                case HOE_HEAD -> Items.IRON_HOE;
+                case SWORD_BLADE -> Items.IRON_SWORD;
+                default -> null;
+            };
+            case GOLD -> switch (type) {
+                case PICKAXE_HEAD -> Items.GOLDEN_PICKAXE;
+                case AXE_HEAD -> Items.GOLDEN_AXE;
+                case SHOVEL_HEAD -> Items.GOLDEN_SHOVEL;
+                case HOE_HEAD -> Items.GOLDEN_HOE;
+                case SWORD_BLADE -> Items.GOLDEN_SWORD;
+                default -> null;
+            };
+            default -> switch (type) {
+                case PICKAXE_HEAD -> Items.COPPER_PICKAXE;
+                case AXE_HEAD -> Items.COPPER_AXE;
+                case SHOVEL_HEAD -> Items.COPPER_SHOVEL;
+                case HOE_HEAD -> Items.COPPER_HOE;
+                case SWORD_BLADE -> Items.COPPER_SWORD;
+                default -> null;
+            };
         };
     }
 

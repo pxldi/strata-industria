@@ -1,0 +1,18 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 55,
+  "ingredient": "minecraft:iron_ingot",
+  "result": {
+    "id": "strataindustria:wrought_iron_saw_blade"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "hit",
+      "where": "second_last"
+    }
+  ]
+}

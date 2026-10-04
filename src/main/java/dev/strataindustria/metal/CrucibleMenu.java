@@ -40,7 +40,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
             addSlot(new Slot(container, i, GRID_X + (i % 3) * 18, GRID_Y + (i / 3) * 18) {
                 @Override
                 public boolean mayPlace(ItemStack stack) {
-                    return MetalContent.hasMetal(stack);
+                    return CrucibleBlockEntity.accepts(stack);
                 }
 
                 @Override
@@ -118,7 +118,7 @@ public class CrucibleMenu extends AbstractContainerMenu {
             if (!moveItemStackTo(stack, CONTAINER_SLOTS, slots.size(), true)) return ItemStack.EMPTY;
         } else if (stack.getItem() instanceof CastMoldItem) {
             if (!moveItemStackTo(stack, CrucibleBlockEntity.MOLD_SLOT, CrucibleBlockEntity.MOLD_SLOT + 1, false)) return ItemStack.EMPTY;
-        } else if (!MetalContent.hasMetal(stack) || !moveItemStackTo(stack, 0, CrucibleBlockEntity.INPUT_SLOTS, false)) {
+        } else if (!CrucibleBlockEntity.accepts(stack) || !moveItemStackTo(stack, 0, CrucibleBlockEntity.INPUT_SLOTS, false)) {
             return ItemStack.EMPTY;
         }
         if (stack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
