@@ -93,6 +93,10 @@ public final class Journal {
     /** Items a ropeway has to deliver before the goal counts. */
     public static final int ROPEWAY_ITEMS = 64;
     public static final String ROPEWAY_DELIVERED = "ropeway_delivered";
+    public static final String TELEGRAPH_CALL = "telegraph_call";
+    /** Charters a dispatch board has to show before the goal counts. */
+    public static final int DISPATCH_LINES = 2;
+    public static final String DISPATCH_BOARD_LINES = "dispatch_board_lines";
 
     /** Blocks of overhead span a consumer must be served across for the power line goal. */
     public static final int POWER_LINE_SPAN = 64;

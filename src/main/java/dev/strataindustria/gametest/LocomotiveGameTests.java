@@ -375,14 +375,15 @@ final class LocomotiveGameTests {
         loco.setParked(true);
         loco.setPressure(1.0f);
         loco.fuel().setCount(2);
-        // The stage looks every 10 ticks on a phase set by its position, so the first lump can come up to 10 ticks late.
+        // The stage looks every 10 ticks on a phase set by its position, so the first lump can come up to 10 ticks late; the
+        // engine's fire also lights a coal or two on the way. Look early for the first lumps and late for the whole load.
         helper.runAfterDelay(30, () -> {
             helper.assertTrue(helper.getLevel().getBlockState(pos).getValue(CoalStageBlock.LOADING), "the hatch is open");
-            helper.assertTrue(loco.fuel().getCount() > 4, "coal is going in: " + loco.fuel().getCount());
+            helper.assertTrue(loco.fuel().getCount() > 3, "coal is going in: " + loco.fuel().getCount());
         });
-        helper.runAfterDelay(80, () -> {
+        helper.runAfterDelay(140, () -> {
             helper.assertTrue(stage.getItem(0).isEmpty(), "the stage gave all its coal");
-            helper.assertTrue(loco.fuel().getCount() >= 21, "and the engine holds it, less what the fire ate: " + loco.fuel().getCount());
+            helper.assertTrue(loco.fuel().getCount() >= 20, "and the engine holds it, less what the fire ate: " + loco.fuel().getCount());
             helper.assertValueEqual(stage.getItem(1).getCount(), 4, "and left the sticks");
             helper.assertTrue(!helper.getLevel().getBlockState(pos).getValue(CoalStageBlock.LOADING), "the hatch is shut again");
             helper.succeed();

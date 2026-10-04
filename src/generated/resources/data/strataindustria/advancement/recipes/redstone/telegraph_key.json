@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pole_insulator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:pole_insulator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:telegraph_key"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pole_insulator"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:telegraph_key"
+    ]
+  }
+}

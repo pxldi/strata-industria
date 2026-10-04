@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/telegraph",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "dispatch_board_lines"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.dispatch.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:dispatch_board"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.dispatch"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

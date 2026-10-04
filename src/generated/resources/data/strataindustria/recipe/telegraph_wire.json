@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:steel_wire",
+    "strataindustria:steel_wire",
+    "strataindustria:ceramic_insulator"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:telegraph_wire"
+  }
+}

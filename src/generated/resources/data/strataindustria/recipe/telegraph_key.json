@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:copper_wire",
+    "P": "#minecraft:planks",
+    "W": "strataindustria:wrought_iron_plate",
+    "b": "strataindustria:brass_plate"
+  },
+  "pattern": [
+    " b ",
+    "CWC",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:telegraph_key"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:copper_wire",
+    "X": "strataindustria:treated_planks",
+    "b": "strataindustria:brass_plate",
+    "c": "strataindustria:basic_circuit"
+  },
+  "pattern": [
+    "XbX",
+    "CcC",
+    "XXX"
+  ],
+  "result": {
+    "id": "strataindustria:dispatch_board"
+  }
+}

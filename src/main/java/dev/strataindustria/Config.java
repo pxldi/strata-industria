@@ -498,6 +498,9 @@ public final class Config {
     public static final ModConfigSpec.IntValue TRANSPORT_ROPEWAY_MAX_LENGTH = BUILDER
             .comment("Longest ropeway, in blocks of line from the drive station to the return.")
             .defineInRange("ropewayMaxLength", 1024, 16, 4096);
+    public static final ModConfigSpec.IntValue TRANSPORT_TELEGRAPH_SPAN = BUILDER
+            .comment("Longest span of telegraph wire between two pole insulators, in blocks.")
+            .defineInRange("telegraphSpan", 32, 4, 40);
 
     static {
         BUILDER.pop();

@@ -86,6 +86,7 @@ public final class StrataIndustria {
         dev.strataindustria.transport.rail.RailwayRegistry.init();
         dev.strataindustria.transport.rail.RailwayRegistry.register(modEventBus);
         dev.strataindustria.transport.ropeway.RopewayRegistry.init();
+        dev.strataindustria.transport.telegraph.TelegraphRegistry.init();
         dev.strataindustria.bronze.BronzeRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.init();
         dev.strataindustria.cabinet.CabinetRegistry.register(modEventBus);
