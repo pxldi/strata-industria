@@ -9,7 +9,7 @@
             "type": "minecraft:random_chance",
             "chance": 0.2
           },
-          "name": "strataindustria:loose_rhyolite"
+          "name": "strataindustria:rhyolite_shard"
         }
       ],
       "rolls": 1

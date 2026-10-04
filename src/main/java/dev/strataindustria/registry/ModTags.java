@@ -11,7 +11,8 @@ public final class ModTags {
     public static final class Blocks {
         public static final TagKey<Block> ROCKS = tag("rocks");
         public static final TagKey<Block> IGNEOUS_ROCKS = tag("rocks/igneous");
-        public static final TagKey<Block> LOOSE_ROCKS = tag("loose_rocks");
+        /** Boulders lying on the ground, one block per rock. */
+        public static final TagKey<Block> BOULDERS = tag("boulders");
         public static final TagKey<Block> SMALL_ORES = tag("small_ores");
         public static final TagKey<Block> NEEDS_COPPER_TOOL = tag("needs_copper_tool");
         public static final TagKey<Block> NEEDS_BRONZE_TOOL = tag("needs_bronze_tool");
@@ -53,9 +54,10 @@ public final class ModTags {
     public static final class Items {
         public static final TagKey<Item> ROCKS = tag("rocks");
         public static final TagKey<Item> IGNEOUS_ROCKS = tag("rocks/igneous");
-        public static final TagKey<Item> LOOSE_ROCKS = tag("loose_rocks");
+        /** The shards a boulder splits into; shaped by hand into tool heads. */
+        public static final TagKey<Item> ROCK_SHARDS = tag("rock_shards");
         public static final TagKey<Item> SMALL_ORES = tag("small_ores");
-        /** Anything that opens the knapping grid: loose rocks and flint. */
+        /** Anything shaped by hand with the strike verb: rock shards and flint. */
         public static final TagKey<Item> KNAPPABLE = tag("knappable");
         /** Unfired clay pieces that can be set out in a pit kiln. */
         public static final TagKey<Item> PIT_KILN_FIREABLE = tag("pit_kiln/fireable");

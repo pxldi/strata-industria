@@ -16,6 +16,15 @@ public final class ModSounds {
     /** The finished head comes free of the stone. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KNAP_FINISH = register("knapping.finish");
 
+    /** A blow on a boulder: stone on stone, pitched by the rock's grain and climbing with each blow. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BOULDER_STRIKE = register("boulder.strike");
+    /** The crack that opens under a blow. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BOULDER_CRACK = register("boulder.crack");
+    /** The boulder gives way. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BOULDER_SPLIT = register("boulder.split");
+    /** Shards bouncing away over the ground. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> BOULDER_SHARDS = register("boulder.shards");
+
     /** A clean note over each flint blow; the same note rings again when the rhythm is in the groove. */
     public static final DeferredHolder<SoundEvent, SoundEvent> SHAPING_CHIME = register("shaping.chime");
     /** A blow on the rebound: heavier, and it counts twice. */

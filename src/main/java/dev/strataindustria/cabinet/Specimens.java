@@ -27,7 +27,7 @@ public final class Specimens {
     public static @Nullable String idOf(ItemStack stack) {
         if (stack.isEmpty()) return null;
         for (Rock rock : Rock.values()) {
-            if (stack.is(ModItems.LOOSE_ROCK.get(rock).get())) return "rock:" + rock.id();
+            if (stack.is(ModItems.ROCK_SHARD.get(rock).get())) return "rock:" + rock.id();
         }
         if (stack.is(StructureContent.MINERAL_SPECIMEN.get())) {
             String mineral = MineralSpecimenItem.mineral(stack);

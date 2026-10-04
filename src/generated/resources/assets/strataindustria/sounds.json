@@ -1657,6 +1657,85 @@
     ],
     "subtitle": "subtitles.strataindustria.boiler.vent"
   },
+  "boulder.crack": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 1.3,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.basalt.break",
+        "pitch": 1.5,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.crack"
+  },
+  "boulder.shards": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 1.5,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 1.5,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 1.5,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel4",
+        "pitch": 1.5,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.shards"
+  },
+  "boulder.split": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.deepslate_bricks.break",
+        "pitch": 0.7,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.split"
+  },
+  "boulder.strike": {
+    "sounds": [
+      {
+        "name": "dig/stone1",
+        "pitch": 0.8
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 0.8
+      },
+      {
+        "name": "dig/stone3",
+        "pitch": 0.8
+      },
+      {
+        "name": "dig/stone4",
+        "pitch": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boulder.strike"
+  },
   "brick_kiln.done": {
     "sounds": [
       {

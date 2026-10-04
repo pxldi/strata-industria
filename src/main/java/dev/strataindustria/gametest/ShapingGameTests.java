@@ -70,7 +70,7 @@ final class ShapingGameTests {
     private static void shapes(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         ItemStack flint = new ItemStack(Items.FLINT);
-        ItemStack rock = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.GRANITE).get());
+        ItemStack rock = new ItemStack(ModItems.ROCK_SHARD.get(Rock.GRANITE).get());
         Set<Item> stone = Set.of(ModItems.STONE_AXE_HEAD.get(), ModItems.STONE_KNIFE_BLADE.get(), ModItems.STONE_SHOVEL_HEAD.get(),
                 ModItems.STONE_HOE_HEAD.get(), ModItems.STONE_HAMMER_HEAD.get(), ModItems.STONE_SPEAR_HEAD.get(), ModItems.STONE_PICKAXE_HEAD.get());
         helper.assertTrue(results(level, flint).containsAll(stone), "flint should offer every stone head");
@@ -139,10 +139,10 @@ final class ShapingGameTests {
 
     // Too little material gives a line and no progress; rock costs two, a quernstone four.
     private static void cost(GameTestHelper helper) {
-        FakePlayer player = player(helper, new ItemStack(ModItems.LOOSE_ROCK.get(Rock.BASALT).get(), 1));
+        FakePlayer player = player(helper, new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get(), 1));
         Shaping.strike(player, HAND, 0);
         helper.assertValueEqual(Shaping.blows(player), 0, "one rock is not enough");
-        player.setItemInHand(HAND, new ItemStack(ModItems.LOOSE_ROCK.get(Rock.BASALT).get(), 5));
+        player.setItemInHand(HAND, new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get(), 5));
         long t = 100;
         for (int i = 0; i < 4; i++, t += GAP) Shaping.strike(player, HAND, t);
         helper.assertValueEqual(dropped(helper, player, ModItems.STONE_AXE_HEAD.get()).size(), 1, "an axe head from rock");
@@ -152,7 +152,7 @@ final class ShapingGameTests {
         while (!Shaping.current(player, player.getMainHandItem()).map(h -> h.value().result().item().value().equals(ModItems.QUERNSTONE.get())).orElse(false) && guard++ < 30) {
             Shaping.cycle(player, HAND, 1);
         }
-        player.setItemInHand(HAND, new ItemStack(ModItems.LOOSE_ROCK.get(Rock.BASALT).get(), 4));
+        player.setItemInHand(HAND, new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get(), 4));
         for (int i = 0; i < 6; i++, t += GAP) Shaping.strike(player, HAND, t);
         helper.assertValueEqual(dropped(helper, player, ModItems.QUERNSTONE.get()).size(), 1, "a quernstone");
         helper.assertValueEqual(player.getMainHandItem().getCount(), 0, "a quernstone costs four rocks");

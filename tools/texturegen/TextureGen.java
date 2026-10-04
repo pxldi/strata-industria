@@ -654,14 +654,6 @@ public final class TextureGen {
             "43332222221",
             ".222211111.",
     };
-    static final String[] LOOSE_ROCK = {
-            "....4455..",
-            "..4444443.",
-            ".444433332",
-            "4443333322",
-            "3333332221",
-            ".22222211.",
-    };
     static final String[] FLINT_SHARD = {
             ".......45",
             "......453",
@@ -937,46 +929,6 @@ public final class TextureGen {
     }
 
     // ---------------------------------------------------------------- ground cover
-
-    /** Two crossed sticks seen from above, for the flat loose stick model. */
-    static final String[] LOOSE_STICKS = {
-            "................",
-            "..45............",
-            "..443...........",
-            "...343......5...",
-            "....342....443..",
-            ".....342..443...",
-            "......3424432...",
-            ".......34432....",
-            ".......4432.....",
-            "......443232....",
-            ".....4432.322...",
-            "....4432...322..",
-            "...4432.....32..",
-            "...332.......2..",
-            "....2...........",
-            "................",
-    };
-
-    /** A few knapped flint flakes on the ground. */
-    static final String[] LOOSE_FLINTS = {
-            "................",
-            "................",
-            "................",
-            "........5.......",
-            ".......453......",
-            "......4442......",
-            ".....44432......",
-            "....44332...4...",
-            "....3322...453..",
-            ".....2....44432.",
-            "..........33322.",
-            "...45.......2...",
-            "..4443..........",
-            ".44332..........",
-            "..222...........",
-            "................",
-    };
 
     /** A small book: woven straw covers, a twine-stitched spine and a twine tie, page edges at the side. */
     static final String[] FIELD_JOURNAL = {
@@ -8096,7 +8048,6 @@ public final class TextureGen {
         for (Rock rock : ROCKS) {
             save("block/" + rock.name(), rock(rock));
             save("block/cobbled_" + rock.name(), cobbled(rock));
-            save("item/loose_" + rock.name(), map(rock.ramp(), LOOSE_ROCK));
         }
         for (Mineral m : MINERALS) {
             for (String grade : List.of("poor", "normal", "rich"))
@@ -8112,10 +8063,6 @@ public final class TextureGen {
             save("block/small_" + n, pebbles(m));
         }
         save("item/flint_shard", map(V2.FLINT_V2, FLINT_SHARD));
-        itemsV2 = false;
-        save("block/loose_stick", art(WOOD, LOOSE_STICKS));
-        save("block/loose_flint", art(FLINT, LOOSE_FLINTS));
-        itemsV2 = true;
 
         // Stone age (tier 0-2 spec 3).
         save("item/straw", art(V2.STRAW_V2, STRAW_SHEAF));

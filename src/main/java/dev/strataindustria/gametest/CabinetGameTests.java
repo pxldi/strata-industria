@@ -39,7 +39,7 @@ final class CabinetGameTests {
 
     // Loose rocks, cut specimens and raw ore pieces count; nothing else does.
     private static void specimens(GameTestHelper helper) {
-        helper.assertValueEqual(Specimens.idOf(new ItemStack(ModItems.LOOSE_ROCK.get(Rock.BASALT).get())), "rock:basalt", "a loose rock");
+        helper.assertValueEqual(Specimens.idOf(new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get())), "rock:basalt", "a loose rock");
         helper.assertValueEqual(Specimens.idOf(MineralSpecimenItem.of(OreMineral.CASSITERITE)), "mineral:cassiterite", "a cut specimen");
         helper.assertValueEqual(Specimens.idOf(new ItemStack(ModItems.ORE_PIECES.get(OreMineral.CASSITERITE).get(OreGrade.POOR).get())),
                 "mineral:cassiterite", "a raw ore piece");
@@ -58,7 +58,7 @@ final class CabinetGameTests {
         SpecimenCabinetBlockEntity cabinet = (SpecimenCabinetBlockEntity) level.getBlockEntity(pos);
         BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(pos), Direction.NORTH, pos, false);
 
-        ItemStack limestone = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.LIMESTONE).get(), 2);
+        ItemStack limestone = new ItemStack(ModItems.ROCK_SHARD.get(Rock.LIMESTONE).get(), 2);
         collector.setItemInHand(InteractionHand.MAIN_HAND, limestone);
         BlockState state = level.getBlockState(pos);
         state.useItemOn(limestone, level, collector, InteractionHand.MAIN_HAND, hit);
@@ -69,7 +69,7 @@ final class CabinetGameTests {
         helper.assertTrue(!Shelves.has(collector, "sedimentary"), "one rock does not fill the shelf");
         helper.assertTrue(!Shelves.knowsRock(collector, ModBlocks.RAW_ROCK.get(Rock.LIMESTONE).get().defaultBlockState()), "the pick does not know limestone yet");
 
-        ItemStack shale = new ItemStack(ModItems.LOOSE_ROCK.get(Rock.SHALE).get());
+        ItemStack shale = new ItemStack(ModItems.ROCK_SHARD.get(Rock.SHALE).get());
         level.getBlockState(pos).useItemOn(shale, level, collector, InteractionHand.MAIN_HAND, hit);
         helper.assertTrue(Shelves.has(collector, "sedimentary"), "both sedimentary rocks fill the shelf");
         helper.assertTrue(Shelves.knowsRock(collector, ModBlocks.RAW_ROCK.get(Rock.SHALE).get().defaultBlockState()), "the pick knows shale");

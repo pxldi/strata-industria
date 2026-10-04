@@ -1,6 +1,6 @@
 {
   "type": "strataindustria:quern",
-  "ingredient": "strataindustria:loose_limestone",
+  "ingredient": "strataindustria:limestone_shard",
   "result": {
     "count": 4,
     "id": "strataindustria:flux"

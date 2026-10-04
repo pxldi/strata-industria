@@ -13,13 +13,13 @@ import java.util.List;
  *   '.' air                         ',' trampled ground (coarse dirt)   'd' dirt
  *   'g' gravel                      '$' suspicious gravel (the plan's archaeology loot)
  *   '#' cobbled local rock          'm' cobbled local rock, mossy      'R' raw local rock
- *   'r' / '1' loose top rock        '2' loose middle rock              '3' loose bottom rock
+ *   'r' / '1' top rock sample       '2' middle rock sample             '3' bottom rock sample
  *   'C' fibre canvas                '_' fibre canvas carpet
  *   'P' pit prop, upright           '=' stripped log along x           '|' stripped log along z
  *   'L' log pile                    'f' fire pit                       'F' forge   'c' crucible
  *   'A' stone anvil of the bottom rock                                 'B' barrel (the plan's loot)
  *   'E' bed head (pointing north)   'e' bed foot                       'k' fence   's' slab, top half
- *   'H' ladder on a north wall      'x' loose stick                    'q' loose flint
+ *   'H' ladder on a north wall
  *   'n' a pebble of the camp's ore  'o' upright log (a chopping block)
  *   'K' cracked fire bricks         'Y' cracked fire bricks, half the time
  *   'S' slag heap                   'Z' slag heap, half the time

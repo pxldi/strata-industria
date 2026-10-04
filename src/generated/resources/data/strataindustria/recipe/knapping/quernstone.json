@@ -2,7 +2,7 @@
   "type": "strataindustria:knapping",
   "blows": 6,
   "consume": 4,
-  "ingredient": "#strataindustria:loose_rocks",
+  "ingredient": "#strataindustria:rock_shards",
   "pattern": [
     ".###.",
     "#####",

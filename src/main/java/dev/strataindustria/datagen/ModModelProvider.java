@@ -1,7 +1,9 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.block.BoulderBlock;
 import dev.strataindustria.bloomery.BloomeryBlock;
+import dev.strataindustria.knapping.Boulders;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.client.HeatGlow;
@@ -49,10 +51,8 @@ final class ModModelProvider extends ModelProvider {
     static final TextureSlot ORE = TextureSlot.create("ore");
 
     static final ModelTemplate ORE_TEMPLATE = template("template_ore", ROCK, ORE);
-    static final ModelTemplate LOOSE_ROCK_TEMPLATE = template("template_loose_rock", ROCK);
     static final ModelTemplate SMALL_ORE_TEMPLATE = template("template_small_ore", ORE);
     static final ModelTemplate STONE_ANVIL_TEMPLATE = template("template_stone_anvil", TextureSlot.SIDE, TextureSlot.TOP);
-    static final ModelTemplate GROUND_FLAT_TEMPLATE = template("template_ground_flat", TextureSlot.TEXTURE);
 
     ModModelProvider(PackOutput output) {
         super(output, StrataIndustria.MOD_ID);
@@ -80,11 +80,8 @@ final class ModModelProvider extends ModelProvider {
             blockModels.createTrivialCube(ModBlocks.RAW_ROCK.get(rock).get());
             blockModels.createTrivialCube(ModBlocks.COBBLED_ROCK.get(rock).get());
 
-            Block loose = ModBlocks.LOOSE_ROCK.get(rock).get();
-            var looseModel = LOOSE_ROCK_TEMPLATE.create(loose, TextureMapping.singleSlot(ROCK, blockTexture(rock.id())), blockModels.modelOutput);
-            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(loose,
-                    BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(looseModel))));
-            flatItem(itemModels, ModItems.LOOSE_ROCK.get(rock).get());
+            boulder(blockModels, rock);
+            flatItem(itemModels, ModItems.ROCK_SHARD.get(rock).get());
 
             for (OreMineral mineral : OreMineral.inRockValues()) {
                 oreBlock(blockModels, rock, mineral);
@@ -104,9 +101,6 @@ final class ModModelProvider extends ModelProvider {
                 if (mineral.washable()) flatItem(itemModels, ModItems.washedOre(mineral, grade));
             }
         }
-
-        groundFlat(blockModels, ModBlocks.LOOSE_STICK.get(), "loose_stick");
-        groundFlat(blockModels, ModBlocks.LOOSE_FLINT.get(), "loose_flint");
 
         // Indicator plants: cross models, and the flat item uses the block texture.
         for (var plant : dev.strataindustria.flora.FloraBlocks.PLANTS.values()) {
@@ -459,10 +453,25 @@ final class ModModelProvider extends ModelProvider {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
     }
 
-    private static void groundFlat(BlockModelGenerators blockModels, Block block, String texture) {
-        var model = GROUND_FLAT_TEMPLATE.create(block, TextureMapping.singleSlot(TextureSlot.TEXTURE, blockTexture(texture)), blockModels.modelOutput);
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block,
-                BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(model))));
+    /** A boulder: one model per size, crack stage and nodules, each turned four ways. */
+    private static void boulder(BlockModelGenerators blockModels, Rock rock) {
+        Block block = ModBlocks.BOULDER.get(rock).get();
+        PropertyDispatch.C4<MultiVariant, Integer, Integer, Boolean, net.minecraft.core.Direction> dispatch = PropertyDispatch.initial(
+                BoulderBlock.SIZE, BoulderBlock.CRACKS, BoulderBlock.FLINTY, BoulderBlock.FACING);
+        TextureMapping textures = TextureMapping.singleSlot(ROCK, blockTexture(rock.id()));
+        for (int size = 1; size <= 3; size++) {
+            for (int cracks = 0; cracks <= Boulders.MAX_CRACKS; cracks++) {
+                for (boolean flinty : new boolean[] {false, true}) {
+                    String suffix = "_" + size + "_" + cracks + "_" + (flinty ? 1 : 0);
+                    MultiVariant model = BlockModelGenerators.plainVariant(
+                            template("template_boulder" + suffix, ROCK).createWithSuffix(block, suffix, textures, blockModels.modelOutput));
+                    for (net.minecraft.core.Direction facing : net.minecraft.core.Direction.Plane.HORIZONTAL) {
+                        dispatch.select(size, cracks, flinty, facing, turned(model, facing));
+                    }
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
     }
 
     // Tier 4 spec 4.6 and 21.4: materials.

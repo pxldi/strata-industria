@@ -1,6 +1,0 @@
-{
-  "parent": "strataindustria:block/template_ground_flat",
-  "textures": {
-    "texture": "strataindustria:block/loose_flint"
-  }
-}

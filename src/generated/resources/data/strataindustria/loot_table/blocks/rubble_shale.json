@@ -9,7 +9,7 @@
             "type": "minecraft:random_chance",
             "chance": 0.2
           },
-          "name": "strataindustria:loose_shale"
+          "name": "strataindustria:shale_shard"
         }
       ],
       "rolls": 1

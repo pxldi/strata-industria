@@ -11,6 +11,7 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.item.GroundCoverItem;
+import dev.strataindustria.item.RockShardItem;
 import dev.strataindustria.item.ProspectorsPickItem;
 import dev.strataindustria.journal.FieldJournalItem;
 import dev.strataindustria.material.Metal;
@@ -181,8 +182,8 @@ public final class ModItems {
 
     public static final Map<Rock, DeferredItem<BlockItem>> RAW_ROCK = new EnumMap<>(Rock.class);
     public static final Map<Rock, DeferredItem<BlockItem>> COBBLED_ROCK = new EnumMap<>(Rock.class);
-    /** The loose rock: picked up from the ground, knapped into tool heads. */
-    public static final Map<Rock, DeferredItem<GroundCoverItem>> LOOSE_ROCK = new EnumMap<>(Rock.class);
+    /** The rock shard: what a boulder splits into, shaped by hand into tool heads. */
+    public static final Map<Rock, DeferredItem<RockShardItem>> ROCK_SHARD = new EnumMap<>(Rock.class);
     public static final Map<Rock, Map<OreMineral, DeferredItem<BlockItem>>> ORE_BLOCKS = new EnumMap<>(Rock.class);
     public static final Map<OreMineral, DeferredItem<GroundCoverItem>> SMALL_ORES = new EnumMap<>(OreMineral.class);
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> ORE_PIECES = new EnumMap<>(OreMineral.class);
@@ -245,8 +246,8 @@ public final class ModItems {
         for (Rock rock : Rock.values()) {
             RAW_ROCK.put(rock, ITEMS.registerSimpleBlockItem(ModBlocks.RAW_ROCK.get(rock)));
             COBBLED_ROCK.put(rock, ITEMS.registerSimpleBlockItem(ModBlocks.COBBLED_ROCK.get(rock)));
-            LOOSE_ROCK.put(rock, ITEMS.registerItem("loose_" + rock.id(),
-                    p -> new GroundCoverItem(ModBlocks.LOOSE_ROCK.get(rock).get(), p), p -> p.useBlockDescriptionPrefix()));
+            ROCK_SHARD.put(rock, ITEMS.registerItem(rock.id() + "_shard", RockShardItem::new));
+            ITEMS.addAlias(StrataIndustria.id("loose_" + rock.id()), StrataIndustria.id(rock.id() + "_shard"));
             Map<OreMineral, DeferredItem<BlockItem>> ores = new EnumMap<>(OreMineral.class);
             for (OreMineral mineral : OreMineral.inRockValues()) {
                 ores.put(mineral, ITEMS.registerSimpleBlockItem(ModBlocks.ORES.get(rock).get(mineral)));
@@ -378,7 +379,7 @@ public final class ModItems {
 
     /** Knapped stone: stone mining tier, 80 base durability, repaired with loose rocks. */
     private static ToolMaterial knapped(float speed) {
-        return new ToolMaterial(ModTags.Blocks.INCORRECT_FOR_STONE_TOOL, KNAPPED_DURABILITY, speed, 0.0f, 5, ModTags.Items.LOOSE_ROCKS);
+        return new ToolMaterial(ModTags.Blocks.INCORRECT_FOR_STONE_TOOL, KNAPPED_DURABILITY, speed, 0.0f, 5, ModTags.Items.ROCK_SHARDS);
     }
 
     public static Item orePiece(OreMineral mineral, OreGrade grade) {

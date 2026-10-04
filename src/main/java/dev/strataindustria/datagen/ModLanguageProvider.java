@@ -87,6 +87,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(StrataIndustria.MOD_ID + ".shaping.progress", "%s  %s/%s");
         add(StrataIndustria.MOD_ID + ".shaping.done", "%s");
         add(StrataIndustria.MOD_ID + ".shaping.nothing", "Nothing to make from %s");
+        add(StrataIndustria.MOD_ID + ".boulder.hint", "Hit it with your hand or a shard. Hold use to keep striking.");
         add(StrataIndustria.MOD_ID + ".shaping.hint", "Sneak + use (or scroll) picks the shape. Use strikes, hold to keep striking.");
         addItem(ModItems.UNFIRED_SMALL_VESSEL, "Unfired Small Vessel");
         addItem(ModItems.UNFIRED_LARGE_VESSEL, "Unfired Large Vessel");
@@ -189,6 +190,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "crucible.pour", "Molten metal pours");
         add(subtitles + "mold.knock", "Cast knocked out");
         add(subtitles + "mold.break", "Mold cracks");
+        add(subtitles + "boulder.strike", "Boulder knocked");
+        add(subtitles + "boulder.crack", "Boulder cracks");
+        add(subtitles + "boulder.split", "Boulder splits");
+        add(subtitles + "boulder.shards", "Shards clatter");
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
@@ -208,7 +213,8 @@ final class ModLanguageProvider extends LanguageProvider {
             String name = title(rock.id());
             addBlock(ModBlocks.RAW_ROCK.get(rock), "Raw " + name);
             addBlock(ModBlocks.COBBLED_ROCK.get(rock), "Cobbled " + name);
-            addBlock(ModBlocks.LOOSE_ROCK.get(rock), "Loose " + name);
+            addBlock(ModBlocks.BOULDER.get(rock), name + " Boulder");
+            addItem(ModItems.ROCK_SHARD.get(rock), name + " Shard");
             for (OreMineral mineral : OreMineral.inRockValues()) {
                 addBlock(ModBlocks.ORES.get(rock).get(mineral), name + " " + title(mineral.id()) + " Ore");
             }
@@ -226,8 +232,6 @@ final class ModLanguageProvider extends LanguageProvider {
         }
         ironAge();
         tier4();
-        addBlock(ModBlocks.LOOSE_STICK, "Loose Stick");
-        addBlock(ModBlocks.LOOSE_FLINT, "Loose Flint");
 
         String config = StrataIndustria.MOD_ID + ".configuration.";
         add(config + "title", "Strata Industria Configs");
@@ -780,10 +784,10 @@ final class ModLanguageProvider extends LanguageProvider {
         String journal = "journal." + StrataIndustria.MOD_ID + ".";
         add(journal + "root", "Field Journal");
         add(journal + "root.hint", "Every goal of the field journal at a glance. Switch this tab on in the config to open it from the journal.");
-        add(journal + "t0.loose_rock", "A Rock to Start With");
-        add(journal + "t0.loose_rock.hint", "Pick up a loose rock lying on the ground.");
+        add(journal + "t0.boulder", "Boulder");
+        add(journal + "t0.boulder.hint", "Hit a boulder with your bare hand until it splits, then pick up a shard.");
         add(journal + "t0.knap", "First Edge");
-        add(journal + "t0.knap.hint", "Hold two loose rocks or one flint and use it to strike. Sneak and use picks which head. A few blows and it breaks free.");
+        add(journal + "t0.knap.hint", "Hold two rock shards or one flint and use it to strike. Sneak and use picks which head. A few blows and it breaks free.");
         add(journal + "t0.stone_axe", "Stone Axe");
         add(journal + "t0.stone_axe.hint", "Bind a knapped axe head to a stick with twine.");
         add(journal + "t0.log", "Timber");
@@ -817,7 +821,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.alloy_metal", "Tin, Bismuth or Arsenic");
         add(journal + "t2.alloy_metal.hint", "Mine cassiterite, bismuthinite or tennantite ore.");
         add(journal + "t2.quern", "Ground Fine");
-        add(journal + "t2.quern.hint", "Knap a quernstone from four loose rocks and stack two under a stick for a quern. Put ore in and keep turning it; crushed ore melts down to more metal.");
+        add(journal + "t2.quern.hint", "Knap a quernstone from four rock shards and stack two under a stick for a quern. Put ore in and keep turning it; crushed ore melts down to more metal.");
         add(journal + "t2.bronze", "Bronze Age");
         add(journal + "t2.bronze.hint", "Melt copper with tin, bismuth or arsenic in the right shares and cast a bronze ingot.");
         add(journal + "t2.stone_anvil", "Dressed Stone");

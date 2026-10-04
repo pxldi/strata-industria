@@ -857,7 +857,6 @@ public final class Plans {
         g[1][10][9] = '#';
         g[1][6][8] = 'v';
         g[1][6][9] = 'T';
-        g[1][5][8] = 'x';
 
         // The roasting pad: four by four, rust-coloured, with slag lying about.
         for (int x = 1; x <= 4; x++) for (int z = 11; z <= 14; z++) g[0][z][x] = (x + z) % 3 == 0 ? '<' : '>';

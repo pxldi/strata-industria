@@ -27,7 +27,7 @@ public final class Knapping {
 
     public static Optional<Rock> rockOf(ItemStack stack) {
         for (Rock rock : Rock.values()) {
-            if (stack.is(ModItems.LOOSE_ROCK.get(rock).get())) return Optional.of(rock);
+            if (stack.is(ModItems.ROCK_SHARD.get(rock).get())) return Optional.of(rock);
         }
         return Optional.empty();
     }

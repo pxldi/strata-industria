@@ -17,7 +17,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_limestone"
+          "name": "strataindustria:limestone_shard"
         }
       ],
       "rolls": 1
@@ -38,7 +38,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_limestone"
+          "name": "strataindustria:limestone_shard"
         }
       ],
       "rolls": 1
@@ -59,7 +59,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_limestone"
+          "name": "strataindustria:limestone_shard"
         }
       ],
       "rolls": 1
@@ -80,7 +80,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_shale"
+          "name": "strataindustria:shale_shard"
         }
       ],
       "rolls": 1
@@ -101,7 +101,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_shale"
+          "name": "strataindustria:shale_shard"
         }
       ],
       "rolls": 1
@@ -122,7 +122,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_shale"
+          "name": "strataindustria:shale_shard"
         }
       ],
       "rolls": 1
@@ -143,7 +143,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_slate"
+          "name": "strataindustria:slate_shard"
         }
       ],
       "rolls": 1
@@ -164,7 +164,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_slate"
+          "name": "strataindustria:slate_shard"
         }
       ],
       "rolls": 1
@@ -185,7 +185,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_slate"
+          "name": "strataindustria:slate_shard"
         }
       ],
       "rolls": 1
@@ -206,7 +206,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_marble"
+          "name": "strataindustria:marble_shard"
         }
       ],
       "rolls": 1
@@ -227,7 +227,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_marble"
+          "name": "strataindustria:marble_shard"
         }
       ],
       "rolls": 1
@@ -248,7 +248,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_marble"
+          "name": "strataindustria:marble_shard"
         }
       ],
       "rolls": 1
@@ -269,7 +269,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_granite"
+          "name": "strataindustria:granite_shard"
         }
       ],
       "rolls": 1
@@ -290,7 +290,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_granite"
+          "name": "strataindustria:granite_shard"
         }
       ],
       "rolls": 1
@@ -311,7 +311,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_granite"
+          "name": "strataindustria:granite_shard"
         }
       ],
       "rolls": 1
@@ -332,7 +332,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_gabbro"
+          "name": "strataindustria:gabbro_shard"
         }
       ],
       "rolls": 1
@@ -353,7 +353,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_gabbro"
+          "name": "strataindustria:gabbro_shard"
         }
       ],
       "rolls": 1
@@ -374,7 +374,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_gabbro"
+          "name": "strataindustria:gabbro_shard"
         }
       ],
       "rolls": 1
@@ -395,7 +395,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_basalt"
+          "name": "strataindustria:basalt_shard"
         }
       ],
       "rolls": 1
@@ -416,7 +416,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_basalt"
+          "name": "strataindustria:basalt_shard"
         }
       ],
       "rolls": 1
@@ -437,7 +437,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_basalt"
+          "name": "strataindustria:basalt_shard"
         }
       ],
       "rolls": 1
@@ -458,7 +458,7 @@
             "type": "minecraft:set_count",
             "count": 4
           },
-          "name": "strataindustria:loose_rhyolite"
+          "name": "strataindustria:rhyolite_shard"
         }
       ],
       "rolls": 1
@@ -479,7 +479,7 @@
             "type": "minecraft:set_count",
             "count": 8
           },
-          "name": "strataindustria:loose_rhyolite"
+          "name": "strataindustria:rhyolite_shard"
         }
       ],
       "rolls": 1
@@ -500,7 +500,7 @@
             "type": "minecraft:set_count",
             "count": 12
           },
-          "name": "strataindustria:loose_rhyolite"
+          "name": "strataindustria:rhyolite_shard"
         }
       ],
       "rolls": 1

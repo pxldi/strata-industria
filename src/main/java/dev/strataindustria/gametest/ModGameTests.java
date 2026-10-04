@@ -94,6 +94,7 @@ public final class ModGameTests {
 
     static {
         ShapingGameTests.register(TESTS);
+        BoulderGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
         TESTS.put("smithing_shapes", ModGameTests::smithingShapes);
         TESTS.put("item_heat", ModGameTests::itemHeat);
