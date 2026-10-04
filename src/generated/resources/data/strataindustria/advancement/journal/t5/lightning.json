@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/battery",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "lightning_bank"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.lightning.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:leyden_jar"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.lightning"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

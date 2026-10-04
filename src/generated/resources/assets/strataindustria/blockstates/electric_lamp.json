@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "level=0": {
+      "model": "strataindustria:block/electric_lamp_off"
+    },
+    "level=1": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=10": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=11": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=12": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=13": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=14": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=15": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=2": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=3": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=4": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=5": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=6": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=7": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=8": {
+      "model": "strataindustria:block/electric_lamp_on"
+    },
+    "level=9": {
+      "model": "strataindustria:block/electric_lamp_on"
+    }
+  }
+}

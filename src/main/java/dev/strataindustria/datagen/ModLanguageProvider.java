@@ -35,6 +35,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(ModCreativeTabs.MAIN_TAB_TITLE, "Strata Industria");
         StructureData.lang(this::add);
         Tier5Language.add(this::add);
+        GridData.lang(this::add);
         FootData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
@@ -964,6 +965,10 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t5.item_pipe.hint", "Run item pipes from an extractor or an inserter to a chest. Items go to the nearest chest that takes them.");
         add(journal + "t5.storage", "Storage Controller");
         add(journal + "t5.storage.hint", "Connect a powered storage controller to four chests set to storage mode.");
+        add(journal + "t5.stethoscope", "Listen to a Machine");
+        add(journal + "t5.stethoscope.hint", "Right-click a running machine, cable or gearbox with a stethoscope.");
+        add(journal + "t5.lightning", "Catch Lightning");
+        add(journal + "t5.lightning.hint", "Stand a mast of three or more lightning rods on a Leyden jar bank and wait for a thunderstorm.");
         add(journal + "t5.ore_scanner", "Scan for Ore");
         add(journal + "t5.ore_scanner.hint", "Charge an ore scanner at a battery box, then hold right-click to scan around you.");
         add(journal + "t5.electric_chain", "Automate an Electric Chain");

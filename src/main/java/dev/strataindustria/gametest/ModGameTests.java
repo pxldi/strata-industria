@@ -123,6 +123,7 @@ public final class ModGameTests {
         Tier6GameTests.register(TESTS);
         PrologueGameTests.register(TESTS);
         ListeningGameTests.register(TESTS);
+        GridGameTests.register(TESTS);
         MarkGameTests.register(TESTS);
         LedgerGameTests.register(TESTS);
         MultiblockGameTests.register(TESTS);

@@ -6,6 +6,7 @@ import dev.strataindustria.electric.PoleInsulatorBlockEntity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -38,6 +39,8 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
 
     private final ItemModelResolver itemModelResolver;
     private final Supplier<ItemStack> segment = RotorRenderer.rotorStack("acsr_segment");
+    /** The same piece glowing a dull orange, drawn when the line is at its limit (uniqueness 7.1). */
+    private final Supplier<ItemStack> hotSegment = RotorRenderer.rotorStack("acsr_segment_hot");
 
     public PoleInsulatorRenderer(BlockEntityRendererProvider.Context context) {
         this.itemModelResolver = context.itemModelResolver();
@@ -65,13 +68,20 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
             state.ends.add(PoleInsulatorBlockEntity.tip(other, otherState).subtract(from));
         }
         state.start = from.subtract(pos.getX(), pos.getY(), pos.getZ());
+        state.strain = insulator.strain();
         state.piece.clear();
-        if (!state.ends.isEmpty()) itemModelResolver.updateForTopItem(state.piece, segment.get(), ItemDisplayContext.NONE, level, null, 0);
+        if (!state.ends.isEmpty()) {
+            ItemStack stack = state.strain >= 3 ? hotSegment.get() : segment.get();
+            itemModelResolver.updateForTopItem(state.piece, stack, ItemDisplayContext.NONE, level, null, 0);
+        }
     }
 
     @Override
     public void submit(State state, PoseStack pose, SubmitNodeCollector collector, CameraRenderState camera) {
         if (state.ends.isEmpty() || state.piece.isEmpty()) return;
+        // A loaded line hangs lower; at its limit it also glows, which shows at night.
+        double sag = SAG * (1.0 + 0.5 * state.strain);
+        int light = state.strain >= 3 ? LightCoordsUtil.FULL_BRIGHT : state.lightCoords;
         for (Vec3 span : state.ends) {
             double length = span.length();
             if (length < 1.0e-3) continue;
@@ -79,7 +89,7 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
             Vec3 previous = state.start;
             for (int i = 1; i <= pieces; i++) {
                 double t = i / (double) pieces;
-                Vec3 next = state.start.add(span.x * t, span.y * t - 4 * SAG * length * t * (1 - t), span.z * t);
+                Vec3 next = state.start.add(span.x * t, span.y * t - 4 * sag * length * t * (1 - t), span.z * t);
                 Vec3 along = next.subtract(previous);
                 double piece = along.length();
                 if (piece > 1.0e-4) {
@@ -90,7 +100,7 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
                     pose.translate(mid.x, mid.y, mid.z);
                     pose.mulPose(new Matrix4f().rotation(facing));
                     pose.scale(1.0f, 1.0f, (float) piece);
-                    state.piece.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+                    state.piece.submit(pose, collector, light, OverlayTexture.NO_OVERLAY, 0);
                     pose.popPose();
                 }
                 previous = next;
@@ -107,6 +117,7 @@ public class PoleInsulatorRenderer implements BlockEntityRenderer<PoleInsulatorB
         final ItemStackRenderState piece = new ItemStackRenderState();
         final List<Vec3> ends = new ArrayList<>();
         BlockPos origin = BlockPos.ZERO;
+        int strain;
         Vec3 start = Vec3.ZERO;
     }
 }

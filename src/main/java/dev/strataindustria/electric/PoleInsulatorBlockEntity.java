@@ -4,6 +4,7 @@ import dev.strataindustria.power.ElectricConductor;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricTier;
+import dev.strataindustria.power.LoadListener;
 import dev.strataindustria.registry.Tier5BlockEntities;
 import dev.strataindustria.registry.Tier5Items;
 import dev.strataindustria.registry.Tier5Sounds;
@@ -26,12 +27,14 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 /** An insulator's overhead spans (spec 8.4): up to four, each listed at both of its ends. */
-public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricConductor {
+public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricConductor, LoadListener {
     public static final int MAX_SPANS = 4;
     /** How far the wire clamp sits from the middle of the block, along the way the insulator points. */
     private static final double TIP = 0.22;
 
     private final List<BlockPos> spans = new ArrayList<>();
+    /** How hard the line is working, 0 to 3 (uniqueness 7.1): the spans sag more at 2 and glow at 3. */
+    private int strain;
 
     public PoleInsulatorBlockEntity(BlockPos pos, BlockState state) {
         super(Tier5BlockEntities.POLE_INSULATOR.get(), pos, state);
@@ -50,6 +53,23 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
 
     public int spanCount() {
         return spans.size();
+    }
+
+    public int strain() {
+        return strain;
+    }
+
+    @Override
+    public void gridLoad(int level) {
+        if (level == strain) return;
+        strain = level;
+        setChanged();
+        if (this.level != null) this.level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_CLIENTS);
+    }
+
+    @Override
+    public boolean hums() {
+        return true;
     }
 
     /** Lists a span at this end only; {@link OverheadLine#connect} does both ends. */
@@ -126,12 +146,14 @@ public class PoleInsulatorBlockEntity extends BlockEntity implements ElectricCon
         super.loadAdditional(in);
         spans.clear();
         in.read("spans", BlockPos.CODEC.listOf()).ifPresent(spans::addAll);
+        strain = in.getIntOr("strain", 0);
     }
 
     @Override
     protected void saveAdditional(ValueOutput out) {
         super.saveAdditional(out);
         out.store("spans", BlockPos.CODEC.listOf(), List.copyOf(spans));
+        out.putInt("strain", strain);
     }
 
     @Override

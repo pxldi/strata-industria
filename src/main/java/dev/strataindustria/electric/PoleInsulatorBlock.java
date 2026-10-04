@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -102,6 +103,17 @@ public class PoleInsulatorBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
         return ElectricNetworks.report(level, pos, player) ? InteractionResult.SUCCESS : InteractionResult.PASS;
+    }
+
+    /** A line at its limit throws the odd faint spark off the clamp (uniqueness 7.1). */
+    @Override
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (random.nextInt(24) != 0 || !(level.getBlockEntity(pos) instanceof PoleInsulatorBlockEntity insulator) || insulator.strain() < 3
+                || insulator.spanCount() == 0) {
+            return;
+        }
+        Vec3 tip = PoleInsulatorBlockEntity.tip(pos, state);
+        level.addParticle(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, tip.x, tip.y, tip.z, 0.0, 0.0, 0.0);
     }
 
     @Override
