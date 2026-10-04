@@ -1,5 +1,9 @@
 {
   "values": [
-    "strataindustria:stone_knife"
+    "strataindustria:stone_knife",
+    "strataindustria:copper_knife",
+    "strataindustria:bronze_knife",
+    "strataindustria:arsenical_bronze_knife",
+    "strataindustria:bismuth_bronze_knife"
   ]
 }

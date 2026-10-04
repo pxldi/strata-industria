@@ -1,6 +1,15 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "strataindustria:item/hoe_head_mold"
+    "type": "minecraft:condition",
+    "component": "strataindustria:cast_contents",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/hoe_head_mold"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "strataindustria:item/hoe_head_mold_filled"
+    },
+    "property": "minecraft:has_component"
   }
 }

@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:copper_sword_blade",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "minecraft:copper_sword"
+  }
+}

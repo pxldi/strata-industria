@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:tool_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "#minecraft:warped_stems",
+    "#strataindustria:tools/saws"
+  ],
+  "result": {
+    "count": 4,
+    "id": "minecraft:warped_planks"
+  },
+  "tool": "#strataindustria:tools/saws"
+}

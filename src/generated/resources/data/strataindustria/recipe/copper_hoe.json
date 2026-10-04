@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:copper_hoe_head",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "minecraft:copper_hoe"
+  }
+}

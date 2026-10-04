@@ -1,0 +1,11 @@
+{
+  "type": "strataindustria:metal_tool",
+  "category": "equipment",
+  "ingredients": [
+    "strataindustria:arsenical_bronze_knife_blade",
+    "minecraft:stick"
+  ],
+  "result": {
+    "id": "strataindustria:arsenical_bronze_knife"
+  }
+}

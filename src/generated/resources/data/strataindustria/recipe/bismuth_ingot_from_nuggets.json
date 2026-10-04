@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget",
+    "strataindustria:bismuth_nugget"
+  ],
+  "result": {
+    "id": "strataindustria:bismuth_ingot"
+  }
+}
