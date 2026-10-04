@@ -238,6 +238,12 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         for (int i = 1; i <= 3; i++) burn.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.85f).volume(0.8f));
         burn.with(sound("minecraft:fire/fire").pitch(0.7f).volume(0.4f));
         add(Tier4Sounds.FIREBOX_BURN, burn);
+        SoundDefinition kilnWork = definition().subtitle(subtitle("kiln.work"));
+        for (int i = 1; i <= 3; i++) kilnWork.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.7f).volume(0.6f));
+        add(Tier4Sounds.KILN_WORK, kilnWork);
+        add(Tier4Sounds.KILN_DONE, definition().subtitle(subtitle("kiln.done"))
+                .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
         add(Tier4Sounds.HEAT_PIPE_TICK, definition().subtitle(subtitle("heat_pipe.tick"))
                 .with(sound("minecraft:block.copper.step", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.35f))
                 .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(1.7f).volume(0.25f)));

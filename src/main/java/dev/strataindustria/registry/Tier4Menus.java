@@ -14,6 +14,8 @@ public final class Tier4Menus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<FireboxMenu>> FIREBOX =
             ModMenus.MENUS.register("firebox", () -> IMenuTypeExtension.create(FireboxMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.ceramics.KilnMenu>> KILN =
+            ModMenus.MENUS.register("kiln", () -> IMenuTypeExtension.create(dev.strataindustria.ceramics.KilnMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<BoilerMenu>> BRONZE_BOILER =
             ModMenus.MENUS.register("bronze_boiler", () -> IMenuTypeExtension.create(BoilerMenu::new));
 

@@ -78,6 +78,7 @@ final class Tier4GameTests {
         tests.put("tier4_heat_pipes", Tier4GameTests::heatPipes);
         tests.put("tier4_hot_blast", Tier4GameTests::hotBlast);
         tests.put("tier4_converter_preheat", Tier4GameTests::converterPreheat);
+        tests.put("tier4_kiln", Tier4GameTests::kiln);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -845,6 +846,58 @@ final class Tier4GameTests {
                 "a duct carries 1595 °C, and the blow starts without coke");
         helper.assertValueEqual(converter.blowing(), 8, "pig iron in the blow");
         helper.succeed();
+    }
+
+    // Spec 8.6 and 8.2: a kiln on a coke firebox fires everything loaded in 600 ticks at 20 HU/t, slag dust
+    // into slag wool four to one; slag wool round a pipe halves its temperature drop.
+    private static void kiln(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos fireboxPos = helper.absolutePos(new BlockPos(2, 1, 2)), kilnPos = fireboxPos.above();
+        level.setBlock(fireboxPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(kilnPos, Tier4Blocks.KILN.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(fireboxPos);
+        var kiln = (dev.strataindustria.ceramics.KilnBlockEntity) level.getBlockEntity(kilnPos);
+        firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 4));
+        firebox.preheat(1600.0f);
+        helper.assertTrue(!kiln.canPlaceItem(0, new ItemStack(Items.COBBLESTONE)), "the kiln takes only what it fires");
+        kiln.setItem(0, new ItemStack(ModItems.UNFIRED_FIRE_BRICK.get(), 8));
+        kiln.setItem(1, new ItemStack(Tier4Items.SLAG_DUST.get(), 9));
+
+        fire(level, fireboxPos, firebox, kilnPos, kiln, 1);
+        helper.assertValueEqual(kiln.status(), dev.strataindustria.ceramics.KilnBlockEntity.Status.NEEDS_HEAT, "status before the heat arrives");
+        fire(level, fireboxPos, firebox, kilnPos, kiln, 599);
+        helper.assertValueEqual(kiln.status(), dev.strataindustria.ceramics.KilnBlockEntity.Status.FIRING, "status while firing");
+        helper.assertValueEqual(firebox.taken(), dev.strataindustria.ceramics.KilnBlockEntity.HEAT, "HU/t the kiln draws");
+        helper.assertTrue(kiln.getItem(dev.strataindustria.ceramics.KilnBlockEntity.INPUTS).isEmpty(), "nothing fired before 600 ticks");
+        fire(level, fireboxPos, firebox, kilnPos, kiln, 1);
+        int out = dev.strataindustria.ceramics.KilnBlockEntity.INPUTS;
+        helper.assertTrue(kiln.getItem(out).is(ModItems.FIRE_BRICK.get()) && kiln.getItem(out).getCount() == 8, "8 fire bricks");
+        helper.assertTrue(kiln.getItem(out + 1).is(Tier4Items.SLAG_WOOL.get()) && kiln.getItem(out + 1).getCount() == 2, "2 slag wool");
+        helper.assertValueEqual(kiln.getItem(1).getCount(), 1, "slag dust short of four waits");
+
+        // An insulated pipe loses 5 °C a block instead of 10.
+        BlockPos hotPos = helper.absolutePos(new BlockPos(0, 1, 6));
+        level.setBlock(hotPos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        for (int x = 1; x <= 4; x++) {
+            level.setBlock(helper.absolutePos(new BlockPos(x, 1, 6)), Tier4Blocks.INSULATED_COPPER_HEAT_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        }
+        BlockPos boilerPos = helper.absolutePos(new BlockPos(5, 1, 6));
+        level.setBlock(boilerPos, Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        FireboxBlockEntity hot = (FireboxBlockEntity) level.getBlockEntity(hotPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        hot.setItem(0, new ItemStack(Tier4Items.COKE.get(), 4));
+        hot.preheat(1600.0f);
+        steam(level, hotPos, hot, boilerPos, boiler, 1);
+        helper.assertValueEqual(Math.round(boiler.heatTemperature()), 980, "1000 °C less 4 insulated pipes at 5 °C");
+        helper.succeed();
+    }
+
+    private static void fire(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos kilnPos,
+            dev.strataindustria.ceramics.KilnBlockEntity kiln, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            FireboxBlockEntity.serverTick(level, fireboxPos, level.getBlockState(fireboxPos), firebox);
+            dev.strataindustria.ceramics.KilnBlockEntity.serverTick(level, kilnPos, level.getBlockState(kilnPos), kiln);
+        }
     }
 
     private static void preheat(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos controllerPos,

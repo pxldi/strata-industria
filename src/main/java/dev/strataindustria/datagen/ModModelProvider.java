@@ -554,11 +554,14 @@ final class ModModelProvider extends ModelProvider {
             itemModels.itemModelOutput.accept(pipe.get().asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
         }
         // Spec 8.2: heat pipes, with glowing variants of the hand-built core and arm while they carry heat.
-        for (var pipe : java.util.List.of(Tier4Blocks.COPPER_HEAT_PIPE, Tier4Blocks.REFRACTORY_HEAT_DUCT)) {
+        for (var pipe : java.util.List.of(Tier4Blocks.COPPER_HEAT_PIPE, Tier4Blocks.REFRACTORY_HEAT_DUCT,
+                Tier4Blocks.INSULATED_COPPER_HEAT_PIPE, Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT)) {
             String name = pipe.getId().getPath();
+            boolean insulated = name.startsWith("insulated_");
             MultiPartGenerator parts = MultiPartGenerator.multiPart(pipe.get());
             for (boolean glowing : new boolean[] {false, true}) {
-                String suffix = glowing ? "_hot" : "";
+                // The wrap keeps the glow in: insulated pipes look the same hot or cold.
+                String suffix = glowing && !insulated ? "_hot" : "";
                 parts.with(BlockModelGenerators.condition().term(dev.strataindustria.heat.HeatPipeBlock.HOT, glowing),
                         BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_core" + suffix)));
                 var arm = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_arm" + suffix));
@@ -579,6 +582,25 @@ final class ModModelProvider extends ModelProvider {
             itemModels.itemModelOutput.accept(pipe.get().asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
         }
         blockModels.createTrivialCube(Tier4Blocks.HEAT_INLET.get());
+
+        // Spec 8.6: the kiln faces the player; its door glows while it fires.
+        Block kiln = Tier4Blocks.KILN.get();
+        TextureMapping kilnCold = new TextureMapping().put(TextureSlot.FRONT, blockTexture("kiln_front"))
+                .put(TextureSlot.SIDE, blockTexture("kiln_side")).put(TextureSlot.TOP, blockTexture("kiln_top"));
+        var kilnIdle = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(kiln, kilnCold, blockModels.modelOutput));
+        var kilnLit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(kiln, "_active",
+                kilnCold.copyAndUpdate(TextureSlot.FRONT, blockTexture("kiln_front_active")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> kilnState = PropertyDispatch.initial(
+                dev.strataindustria.ceramics.KilnBlock.FACING, dev.strataindustria.ceramics.KilnBlock.LIT);
+        for (boolean on : new boolean[] {false, true}) {
+            var base = on ? kilnLit : kilnIdle;
+            kilnState.select(net.minecraft.core.Direction.NORTH, on, base);
+            kilnState.select(net.minecraft.core.Direction.EAST, on, base.with(BlockModelGenerators.Y_ROT_90));
+            kilnState.select(net.minecraft.core.Direction.SOUTH, on, base.with(BlockModelGenerators.Y_ROT_180));
+            kilnState.select(net.minecraft.core.Direction.WEST, on, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(kiln).with(kilnState));
+        itemModels.itemModelOutput.accept(Tier4Items.KILN.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/kiln")));
         MultiPartGenerator gauge = MultiPartGenerator.multiPart(Tier4Blocks.PRESSURE_GAUGE.get());
         for (int reading = 0; reading <= 4; reading++) {
             gauge.with(BlockModelGenerators.condition().term(dev.strataindustria.fluid.PressureGaugeBlock.READING, reading),
@@ -671,6 +693,7 @@ final class ModModelProvider extends ModelProvider {
 
         flatItem(itemModels, Tier4Items.SLAG.get());
         flatItem(itemModels, Tier4Items.SLAG_DUST.get());
+        flatItem(itemModels, Tier4Items.SLAG_WOOL.get());
     }
 
     private static <A extends Comparable<A>> void facing(PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, A> dispatch,

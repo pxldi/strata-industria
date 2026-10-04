@@ -28,6 +28,10 @@ public final class Tier4Sounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> FIREBOX_BURN = register("firebox.burn");
     /** Metal ticking as a heat pipe network heats up or cools. */
     public static final DeferredHolder<SoundEvent, SoundEvent> HEAT_PIPE_TICK = register("heat_pipe.tick");
+    /** The soft hollow roar of a firing kiln. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KILN_WORK = register("kiln.work");
+    /** A batch comes out of the kiln fired: ceramic clinks as it cools. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> KILN_DONE = register("kiln.done");
     /** A pipe refuses fluid too hot for it. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FLUID_PIPE_REFUSE = register("fluid_pipe.refuse");
     /** Water warming in a boiler: a rising hiss and creaking metal. */

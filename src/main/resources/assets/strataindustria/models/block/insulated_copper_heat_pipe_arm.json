@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/heat_pipe_arm",
+  "textures": {
+    "pipe": "strataindustria:block/insulated_copper_heat_pipe"
+  }
+}
