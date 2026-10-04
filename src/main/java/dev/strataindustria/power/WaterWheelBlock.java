@@ -20,17 +20,22 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * The water wheel (spec 7.2): the hub sits on an axle line with the wheel standing in the 3x3 plane
  * around it. Flowing water in the rim cells turns it. The hub is the only real block; the renderer
- * draws the whole wheel.
+ * draws the whole wheel, and the hub's collision shape reaches over the rim cells so nothing walks
+ * through the wheel. (The spec's invisible rim blocks would stop the water flowing through the rim.)
  */
 public class WaterWheelBlock extends BaseEntityBlock implements KineticBlock {
     public static final EnumProperty<Direction.Axis> AXIS = BlockStateProperties.HORIZONTAL_AXIS;
     private static final VoxelShape X = Block.box(0, 2, 2, 16, 14, 14);
     private static final VoxelShape Z = Block.box(2, 2, 0, 14, 14, 16);
+    /** The wheel across the 3x3 plane, a paddle's thickness deep, plus the hub. */
+    private static final VoxelShape WHEEL_X = Shapes.or(X, Shapes.box(5 / 16.0, -1, -1, 11 / 16.0, 2, 2));
+    private static final VoxelShape WHEEL_Z = Shapes.or(Z, Shapes.box(-1, -1, 5 / 16.0, 2, 2, 11 / 16.0));
 
     public WaterWheelBlock(Properties properties) {
         super(properties);
@@ -60,6 +65,11 @@ public class WaterWheelBlock extends BaseEntityBlock implements KineticBlock {
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return state.getValue(AXIS) == Direction.Axis.X ? X : Z;
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(AXIS) == Direction.Axis.X ? WHEEL_X : WHEEL_Z;
     }
 
     @Override
