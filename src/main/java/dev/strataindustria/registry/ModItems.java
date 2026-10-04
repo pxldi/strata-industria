@@ -108,6 +108,10 @@ public final class ModItems {
     /** Tier 3 spec 8.5: a drilled core; use it to read the ground below the sampler. */
     public static final DeferredItem<dev.strataindustria.prospecting.CoreSampleItem> CORE_SAMPLE = ITEMS.registerItem("core_sample",
             dev.strataindustria.prospecting.CoreSampleItem::new, p -> p.stacksTo(1));
+    // Tier 3 spec 11: washing.
+    public static final DeferredItem<dev.strataindustria.washing.WashingPanItem> WASHING_PAN = ITEMS.registerItem("washing_pan",
+            dev.strataindustria.washing.WashingPanItem::new, p -> p.durability(128));
+    public static final DeferredItem<BlockItem> SLUICE = ITEMS.registerSimpleBlockItem(ModBlocks.SLUICE);
     /** Tier 3 spec 12.4: from the saw mill; tannin later in tier 3, and a weak fuel meanwhile. */
     public static final DeferredItem<Item> BARK = ITEMS.registerSimpleItem("bark");
     // Quern (spec 10.1).
@@ -162,6 +166,8 @@ public final class ModItems {
     public static final Map<OreMineral, DeferredItem<GroundCoverItem>> SMALL_ORES = new EnumMap<>(OreMineral.class);
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> ORE_PIECES = new EnumMap<>(OreMineral.class);
     public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> CRUSHED_ORES = new EnumMap<>(OreMineral.class);
+    /** Tier 3 spec 11.2: crushed ore washed clean, worth a tenth more. */
+    public static final Map<OreMineral, Map<OreGrade, DeferredItem<Item>>> WASHED_ORES = new EnumMap<>(OreMineral.class);
 
     static {
         for (Metal metal : Metal.values()) {
@@ -233,6 +239,11 @@ public final class ModItems {
                 pieces.put(grade, ITEMS.registerSimpleItem(grade.prefix() + mineral.id()));
                 crushed.put(grade, ITEMS.registerSimpleItem("crushed_" + grade.prefix() + mineral.id()));
             }
+            Map<OreGrade, DeferredItem<Item>> washed = new EnumMap<>(OreGrade.class);
+            for (OreGrade grade : OreGrade.values()) {
+                washed.put(grade, ITEMS.registerSimpleItem("washed_" + grade.prefix() + mineral.id()));
+            }
+            WASHED_ORES.put(mineral, washed);
             ORE_PIECES.put(mineral, pieces);
             CRUSHED_ORES.put(mineral, crushed);
         }
@@ -350,6 +361,10 @@ public final class ModItems {
 
     public static Item crushedOre(OreMineral mineral, OreGrade grade) {
         return CRUSHED_ORES.get(mineral).get(grade).get();
+    }
+
+    public static Item washedOre(OreMineral mineral, OreGrade grade) {
+        return WASHED_ORES.get(mineral).get(grade).get();
     }
 
     private ModItems() {}

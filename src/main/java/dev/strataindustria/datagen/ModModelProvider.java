@@ -89,6 +89,7 @@ final class ModModelProvider extends ModelProvider {
             for (OreGrade grade : OreGrade.values()) {
                 flatItem(itemModels, ModItems.orePiece(mineral, grade));
                 flatItem(itemModels, ModItems.crushedOre(mineral, grade));
+                flatItem(itemModels, ModItems.washedOre(mineral, grade));
             }
         }
 
@@ -366,6 +367,27 @@ final class ModModelProvider extends ModelProvider {
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/core_sampler"))));
         itemModels.itemModelOutput.accept(ModItems.CORE_SAMPLER.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/core_sampler")));
         flatItem(itemModels, ModItems.CORE_SAMPLE.get());
+
+        // Tier 3 spec 11: the sluice faces north in its models; the pan shows its load.
+        var dry = BlockModelGenerators.plainVariant(StrataIndustria.id("block/sluice"));
+        var wet = BlockModelGenerators.plainVariant(StrataIndustria.id("block/sluice_wet"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> sluice =
+                PropertyDispatch.initial(dev.strataindustria.washing.SluiceBlock.FACING, dev.strataindustria.washing.SluiceBlock.WET);
+        for (boolean flowing : new boolean[] {false, true}) {
+            var base = flowing ? wet : dry;
+            sluice.select(net.minecraft.core.Direction.NORTH, flowing, base);
+            sluice.select(net.minecraft.core.Direction.EAST, flowing, base.with(BlockModelGenerators.Y_ROT_90));
+            sluice.select(net.minecraft.core.Direction.SOUTH, flowing, base.with(BlockModelGenerators.Y_ROT_180));
+            sluice.select(net.minecraft.core.Direction.WEST, flowing, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SLUICE.get()).with(sluice));
+        itemModels.itemModelOutput.accept(ModItems.SLUICE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/sluice")));
+        Item washingPan = ModItems.WASHING_PAN.get();
+        var emptyPan = itemModels.createFlatItemModel(washingPan, ModelTemplates.FLAT_ITEM);
+        var loadedPan = itemModels.createFlatItemModel(washingPan, "_loaded", ModelTemplates.FLAT_ITEM);
+        itemModels.itemModelOutput.accept(washingPan, ItemModelUtils.conditional(
+                ItemModelUtils.hasComponent(ModDataComponents.PAN_CONTENTS.get()),
+                ItemModelUtils.plainModel(loadedPan), ItemModelUtils.plainModel(emptyPan)));
     }
 
     /** Metal anvils turn like a vanilla anvil; the model JSON is hand-written on the vanilla anvil template. */

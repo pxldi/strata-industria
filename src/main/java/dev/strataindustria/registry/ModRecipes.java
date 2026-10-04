@@ -62,5 +62,11 @@ public final class ModRecipes {
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SawingRecipe>> SAWING_SERIALIZER =
             SERIALIZERS.register("sawing", () -> SawingRecipe.SERIALIZER);
 
+    /** Washing in a pan or a sluice (tier 3 spec 11). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<dev.strataindustria.washing.WashingRecipe>> WASHING =
+            TYPES.register("washing", () -> RecipeType.simple(StrataIndustria.id("washing")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<dev.strataindustria.washing.WashingRecipe>> WASHING_SERIALIZER =
+            SERIALIZERS.register("washing", () -> dev.strataindustria.washing.WashingRecipe.SERIALIZER);
+
     private ModRecipes() {}
 }

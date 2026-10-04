@@ -143,6 +143,13 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
         add(ModSounds.CORE_SAMPLER_DONE, definition().subtitle(subtitle("core_sampler.done"))
                 .with(sound("minecraft:block.note_block.bell", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
+        add(ModSounds.SLUICE_WASH, definition().subtitle(subtitle("sluice.wash"))
+                .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).volume(0.6f)));
+        add(ModSounds.WASHING_PAN_SWIRL, definition().subtitle(subtitle("washing_pan.swirl"))
+                .with(sound("minecraft:item.bucket.fill", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.5f))
+                .with(sound("minecraft:block.gravel.step", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.4f)));
+        add(ModSounds.WASHING_PAN_FIND, definition().subtitle(subtitle("washing_pan.find"))
+                .with(sound("minecraft:entity.experience_orb.pickup", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.4f)));
         add(ModSounds.CORE_SAMPLE_OPEN, definition().subtitle(subtitle("core_sample.open"))
                 .with(sound("minecraft:item.book.page_turn", SoundDefinition.SoundType.EVENT).pitch(0.8f)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))

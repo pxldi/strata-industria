@@ -85,7 +85,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.WOODEN_AXLE.getKey()).add(ModBlocks.WOODEN_GEARBOX.getKey())
                 .add(ModBlocks.HAND_CRANK.getKey()).add(ModBlocks.WATER_WHEEL.getKey()).add(ModBlocks.BELLOWS.getKey())
                 .add(ModBlocks.SAW_MILL.getKey()).add(ModBlocks.TRIP_HAMMER.getKey())
-                .add(ModBlocks.CORE_SAMPLER.getKey());
+                .add(ModBlocks.CORE_SAMPLER.getKey()).add(ModBlocks.SLUICE.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MILLSTONE.getKey());
         tag(BlockTags.SLABS).add(ModBlocks.FIRE_BRICK_SLAB.getKey());
         tag(BlockTags.STAIRS).add(ModBlocks.FIRE_BRICK_STAIRS.getKey());

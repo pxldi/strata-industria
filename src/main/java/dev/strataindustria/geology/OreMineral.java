@@ -20,6 +20,8 @@ public enum OreMineral implements StringRepresentable {
 
     /** Raw (uncrushed) ore melts at this share of the crushed value. */
     public static final float RAW_MELT_EFFICIENCY = 0.8f;
+    /** Washed ore melts to this share of the crushed value (tier 3 spec 11.2). */
+    public static final float WASHED_BONUS = 1.1f;
     /** Units of a surface nugget. */
     public static final int SMALL_ORE_UNITS = 10;
 
