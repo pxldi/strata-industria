@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.metal.CrucibleStatus;
@@ -83,7 +84,7 @@ public class SmelterScreen extends AbstractContainerScreen<SmelterMenu> {
         CrucibleScreen.drawMeltText(g, font, melt, menu.capacity(), CrucibleScreen.TEXT_X, CrucibleScreen.TEXT_Y);
         int cooling = menu.coolingTemperature();
         if (cooling > 0) {
-            Component t = Component.translatable(KEY + "cooling", cooling);
+            Component t = Component.translatable(KEY + "cooling", HeatWords.of(cooling));
             g.text(font, t, COOLING_TEXT_X, SmelterMenu.ROW_Y + 4, 0xFF000000 | darker(HeatBand.of(cooling).colour()), false);
         }
         g.text(font, CrucibleScreen.statusLine(menu.status(), melt, menu.meltingPercent(), menu.maxTemperature()), 8, STATUS_Y, HeatLine.FINE, false);
