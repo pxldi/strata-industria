@@ -698,6 +698,14 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('R', Tier4Items.BRONZE_FLUID_PIPE.get())
                 .unlockedBy("has_bronze_fluid_pipe", has(Tier4Items.BRONZE_FLUID_PIPE.get()))
                 .save(output, key("mechanical_pump"));
+        shaped(RecipeCategory.REDSTONE, dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get())
+                .pattern(" R ")
+                .pattern("PRP")
+                .pattern("PPP")
+                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
+                .define('R', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .unlockedBy("has_bronze_fluid_pipe", has(Tier4Items.BRONZE_FLUID_PIPE.get()))
+                .save(output, key("steam_whistle"));
         shaped(RecipeCategory.REDSTONE, Tier4Items.STEAM_ENGINE.get())
                 .pattern("BGB")
                 .pattern("PRP")

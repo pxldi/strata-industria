@@ -9,6 +9,7 @@ import dev.strataindustria.power.KineticNetworks;
 import dev.strataindustria.power.KineticSource;
 import dev.strataindustria.registry.Tier4BlockEntities;
 import dev.strataindustria.registry.Tier4Fluids;
+import dev.strataindustria.listening.ListeningSounds;
 import dev.strataindustria.registry.Tier4Sounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,6 +39,8 @@ public class SteamEngineBlockEntity extends KineticBlockEntity implements Kineti
     public static final int BUFFER = 40;
     /** Ticks without steam before the pressure it last saw counts as gone. */
     private static final int STEAM_TIMEOUT = 5;
+    /** Ticks between knocks while the engine is short of steam. */
+    private static final int KNOCK_INTERVAL = 10;
 
     private int steam;
     private float pressure;
@@ -85,6 +88,10 @@ public class SteamEngineBlockEntity extends KineticBlockEntity implements Kineti
         else target = 0;
         int use = target >= FULL_SPEED ? FULL_USE : target > 0 ? 7 + (age & 1) : 0;
         // Without steam for this stroke the engine stops; the buffer covers the gap between pushes.
+        // A stroke it cannot fill makes it knock: the boiler is not keeping up.
+        if (target > 0 && steam < use && speed > 0 && age % KNOCK_INTERVAL == 0) {
+            level.playSound(null, pos, ListeningSounds.STEAM_KNOCK.get(), SoundSource.BLOCKS, 0.8f, 0.9f + level.getRandom().nextFloat() * 0.2f);
+        }
         if (target > 0 && steam < use) target = steam >= 7 ? HALF_SPEED : 0;
         use = target >= FULL_SPEED ? FULL_USE : target > 0 ? Math.min(steam, 7 + (age & 1)) : 0;
         steam -= use;

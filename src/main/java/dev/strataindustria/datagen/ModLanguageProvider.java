@@ -512,6 +512,16 @@ final class ModLanguageProvider extends LanguageProvider {
         add(steamHammer + "slot.result", "Finished pieces");
         add(subtitles + "steam_hammer.strike", "Steam hammer strikes");
         String engine = id + ".steam_engine.";
+        addBlock(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE, "Steam Whistle");
+        add(subtitles + "tap.ring", "Ore rings clean");
+        add(subtitles + "tap.knock", "Hammer knocks");
+        add(subtitles + "tap.thud", "Hammer thuds dully");
+        add(subtitles + "belt.squeal", "Belt squeals");
+        add(subtitles + "gear.tick", "Gears tick");
+        add(subtitles + "water_wheel.groan", "Water wheel groans");
+        add(subtitles + "steam_engine.knock", "Steam engine knocks");
+        add(subtitles + "boiler.hiss", "Boiler hisses");
+        add(subtitles + "steam_whistle.blow", "Steam whistle blows");
         add(engine + "no_steam", "No steam");
         add(engine + "low_pressure", "Steam pressure under 1 bar");
         add(engine + "running", "%s RPM on %s bar");

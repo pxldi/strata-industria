@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "P": "#strataindustria:plates/any_bronze",
+    "R": "strataindustria:bronze_fluid_pipe"
+  },
+  "pattern": [
+    " R ",
+    "PRP",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:steam_whistle"
+  }
+}

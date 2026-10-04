@@ -121,6 +121,23 @@
     ],
     "subtitle": "subtitles.strataindustria.belt.attach"
   },
+  "belt.squeal": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.open",
+        "pitch": 1.8,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.ladder.step",
+        "pitch": 1.9,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.belt.squeal"
+  },
   "blast_furnace.roar": {
     "sounds": [
       {
@@ -1330,6 +1347,23 @@
     ],
     "subtitle": "subtitles.strataindustria.boiler.heat"
   },
+  "boiler.hiss": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 0.55,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.lava.extinguish",
+        "pitch": 0.5,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.boiler.hiss"
+  },
   "boiler.low_water": {
     "sounds": [
       {
@@ -1985,6 +2019,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.forge.ignite"
+  },
+  "gear.tick": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.comparator.click",
+        "pitch": 1.4,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_button.click_on",
+        "pitch": 1.7,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.gear.tick"
   },
   "hand_crank.turn": {
     "sounds": [
@@ -3017,6 +3068,23 @@
     ],
     "subtitle": "subtitles.strataindustria.steam_engine.chuff"
   },
+  "steam_engine.knock": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.netherite_block.hit",
+        "pitch": 0.6,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 0.6,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steam_engine.knock"
+  },
   "steam_engine.start": {
     "sounds": [
       {
@@ -3061,6 +3129,72 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.steam_hammer.strike"
+  },
+  "steam_whistle.blow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.flute",
+        "pitch": 1.9
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.7,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.steam_whistle.blow"
+  },
+  "tap.knock": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.hit",
+        "pitch": 1.3,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "block.copper.hit",
+        "pitch": 0.9,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tap.knock"
+  },
+  "tap.ring": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.copper.hit",
+        "pitch": 1.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tap.ring"
+  },
+  "tap.thud": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.stone.hit",
+        "pitch": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.gravel.hit",
+        "pitch": 0.6,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.tap.thud"
   },
   "ui.journal.place": {
     "sounds": [
@@ -3165,6 +3299,23 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.washing_pan.swirl"
+  },
+  "water_wheel.groan": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.scaffolding.place",
+        "pitch": 0.5,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_door.open",
+        "pitch": 0.55,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.water_wheel.groan"
   },
   "water_wheel.turn": {
     "sounds": [

@@ -2,6 +2,7 @@ package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.journal.JournalContent;
+import dev.strataindustria.listening.ListeningSounds;
 import dev.strataindustria.registry.ModSounds;
 import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.logistics.Tier5Logistics;
@@ -26,6 +27,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         shared();
         prologue();
         patterns();
+        listening();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -415,6 +417,38 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
 
     private static String subtitle(String name) {
         return "subtitles." + StrataIndustria.MOD_ID + "." + name;
+    }
+
+    /** The listening kit (uniqueness 2.1), from vanilla metal, stone, wood and note block samples. */
+    private void listening() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(ListeningSounds.TAP_RING, definition().subtitle(subtitle("tap.ring"))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.3f).volume(0.7f))
+                .with(sound("minecraft:block.copper.hit", event).pitch(1.5f).volume(0.6f)));
+        add(ListeningSounds.TAP_KNOCK, definition().subtitle(subtitle("tap.knock"))
+                .with(sound("minecraft:block.stone.hit", event).pitch(1.3f).volume(0.9f))
+                .with(sound("minecraft:block.copper.hit", event).pitch(0.9f).volume(0.4f)));
+        add(ListeningSounds.TAP_THUD, definition().subtitle(subtitle("tap.thud"))
+                .with(sound("minecraft:block.stone.hit", event).pitch(0.55f).volume(1.0f))
+                .with(sound("minecraft:block.gravel.hit", event).pitch(0.6f).volume(0.7f)));
+        add(ListeningSounds.BELT_SQUEAL, definition().subtitle(subtitle("belt.squeal"))
+                .with(sound("minecraft:block.wooden_trapdoor.open", event).pitch(1.8f).volume(0.6f))
+                .with(sound("minecraft:block.ladder.step", event).pitch(1.9f).volume(0.5f)));
+        add(ListeningSounds.GEAR_TICK, definition().subtitle(subtitle("gear.tick"))
+                .with(sound("minecraft:block.comparator.click", event).pitch(1.4f).volume(0.8f))
+                .with(sound("minecraft:block.wooden_button.click_on", event).pitch(1.7f).volume(0.5f)));
+        add(ListeningSounds.WATER_WHEEL_GROAN, definition().subtitle(subtitle("water_wheel.groan"))
+                .with(sound("minecraft:block.scaffolding.place", event).pitch(0.5f).volume(0.8f))
+                .with(sound("minecraft:block.wooden_door.open", event).pitch(0.55f).volume(0.6f)));
+        add(ListeningSounds.STEAM_KNOCK, definition().subtitle(subtitle("steam_engine.knock"))
+                .with(sound("minecraft:block.netherite_block.hit", event).pitch(0.6f).volume(0.9f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(0.6f).volume(0.7f)));
+        add(ListeningSounds.BOILER_HISS, definition().subtitle(subtitle("boiler.hiss"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(0.55f).volume(0.5f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(0.5f).volume(0.35f)));
+        add(ListeningSounds.STEAM_WHISTLE, definition().subtitle(subtitle("steam_whistle.blow"))
+                .with(sound("minecraft:block.note_block.flute", event).pitch(1.9f).volume(1.0f))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.7f).volume(0.4f)));
     }
 
     /** Pattern casting, from vanilla wood and sand samples. */
