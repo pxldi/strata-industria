@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
@@ -33,7 +34,6 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.data.tags.BiomeTagsProvider;
@@ -57,7 +57,7 @@ import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
-import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
+import net.minecraft.world.level.levelgen.structure.placement.AbstractSpreadingStructurePlacement;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
@@ -98,7 +98,7 @@ final class StructureData {
         HolderGetter<Structure> structures = context.lookup(Registries.STRUCTURE);
         HolderGetter<StructureSet> sets = context.lookup(Registries.STRUCTURE_SET);
         HolderGetter<Biome> biomes = context.lookup(Registries.BIOME);
-        var villages = Optional.of(new StructurePlacement.ExclusionZone(sets.getOrThrow(BuiltinStructureSets.VILLAGES), 5));
+        var villages = Optional.of(new AbstractSpreadingStructurePlacement.ExclusionZone(sets.getOrThrow(BuiltinStructureSets.VILLAGES), 5));
         // Spacing and separation from structures spec section 7.
         Map<CampStructure.Layout, int[]> spread = Map.of(
                 CampStructure.Layout.CHARCOAL_BURNERS_CLEARING, new int[] {26, 9, 503118271},
@@ -106,7 +106,7 @@ final class StructureData {
                 CampStructure.Layout.MINING_CAMP, new int[] {34, 12, 718204551},
                 CampStructure.Layout.COLLAPSED_ADIT, new int[] {18, 6, 829366117});
         spread.forEach((layout, s) -> context.register(set(layout.id()), new StructureSet(structures.getOrThrow(layout.key()),
-                new RandomSpreadStructurePlacement(net.minecraft.core.Vec3i.ZERO, StructurePlacement.FrequencyReductionMethod.DEFAULT,
+                new RandomSpreadStructurePlacement(net.minecraft.core.Vec3i.ZERO, AbstractSpreadingStructurePlacement.FrequencyReductionMethod.DEFAULT,
                         1.0f, s[2], villages, s[0], s[1], RandomSpreadType.LINEAR))));
 
         // Near-origin guarantee (structures spec 3.3): one ring of three tries around the world origin.
@@ -335,28 +335,20 @@ final class StructureData {
     // ---------------------------------------------------------------- journal
 
     /** "Places" pages: hidden until visited, with no toast; {@link StructureEvents} plays a page turn instead. */
-    static final class Places extends AdvancementSubProvider {
-        Places(BootstrapContext<Advancement> output) {
-            super(output);
-        }
-
-        @Override
-        public void generate() {
-            var root = AdvancementSubProvider.createPlaceholder(Journal.ROOT.toString());
-            Map<CampStructure.Layout, ItemLike> icons = Map.of(
-                    CampStructure.Layout.CHARCOAL_BURNERS_CLEARING, ModBlocks.LOG_PILE.get(),
-                    CampStructure.Layout.PROSPECTOR_CAMP, ModItems.STONE_PICKAXE.get(),
-                    CampStructure.Layout.MINING_CAMP, StructureContent.PIT_PROP_ITEM.get(),
-                    CampStructure.Layout.COLLAPSED_ADIT, Items.GRAVEL);
-            for (CampStructure.Layout layout : CampStructure.Layout.values()) {
-                String key = "journal." + StrataIndustria.MOD_ID + ".place." + layout.id();
-                Advancement.Builder.advancement()
-                        .parent(root)
-                        .display(icons.get(layout).asItem(), Component.translatable(key), Component.translatable(key + ".hint"),
-                                AdvancementType.TASK, false, false, true)
-                        .addCriterion("visited", JournalTrigger.TriggerInstance.of(StructureEvents.PLACE + layout.id()))
-                        .save(output, Journal.goal(StructureEvents.PLACE + layout.id()).toString());
-            }
+    static void places(BootstrapContext<Advancement> output, AdvancementHolder root) {
+        Map<CampStructure.Layout, ItemLike> icons = Map.of(
+                CampStructure.Layout.CHARCOAL_BURNERS_CLEARING, ModBlocks.LOG_PILE.get(),
+                CampStructure.Layout.PROSPECTOR_CAMP, ModItems.STONE_PICKAXE.get(),
+                CampStructure.Layout.MINING_CAMP, StructureContent.PIT_PROP_ITEM.get(),
+                CampStructure.Layout.COLLAPSED_ADIT, Items.GRAVEL);
+        for (CampStructure.Layout layout : CampStructure.Layout.values()) {
+            String key = "journal." + StrataIndustria.MOD_ID + ".place." + layout.id();
+            Advancement.Builder.advancement()
+                    .parent(root)
+                    .display(icons.get(layout).asItem(), Component.translatable(key), Component.translatable(key + ".hint"),
+                            AdvancementType.TASK, false, false, true)
+                    .addCriterion("visited", JournalTrigger.TriggerInstance.of(StructureEvents.PLACE + layout.id()))
+                    .save(output, Journal.goal(StructureEvents.PLACE + layout.id()).toString());
         }
     }
 

@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -52,8 +51,7 @@ public final class StructureContent {
                     .strength(1.5f)
                     .sound(SoundType.WOOD)
                     .noOcclusion()
-                    .ignitedByLava()
-                    .pushReaction(PushReaction.NORMAL));
+                    .ignitedByLava());
 
     public static final DeferredItem<BlockItem> FIBRE_CANVAS_ITEM = ITEMS.registerSimpleBlockItem(FIBRE_CANVAS);
     public static final DeferredItem<BlockItem> FIBRE_CANVAS_CARPET_ITEM = ITEMS.registerSimpleBlockItem(FIBRE_CANVAS_CARPET);

@@ -106,7 +106,7 @@ public class SurveyNotesScreen extends Screen {
             y = wrapped(g, line, left + TEXT_X, y, TEXT_WIDTH, INK) + 2;
         }
 
-        // The writer's own words, under a rule.
+        // The writer's own words, below the compass.
         int handY = Math.max(y + 4, top + ROSE_Y + ROSE_SIZE + 8);
         wrapped(g, SurveyText.hand(entry.mineral(), entry.hand()).copy().withStyle(ChatFormatting.ITALIC), left + 14, handY,
                 WIDTH - 28, FADED_INK);

@@ -19,14 +19,14 @@ final class Terrain {
 
     /** Solid natural ground: not air, water, plants, logs or leaves. */
     static boolean isGround(BlockState state) {
-        return !state.isAir() && state.getFluidState().isEmpty() && state.blocksMotion()
+        return !state.isAir() && state.getFluidState().isEmpty() && state.isSolid()
                 && !state.is(BlockTags.LEAVES) && !state.is(BlockTags.LOGS);
     }
 
     /** Trees, plants and snow that a builder would clear away. */
     static boolean isGrowth(BlockState state) {
         if (state.isAir() || !state.getFluidState().isEmpty()) return false;
-        return state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || !state.blocksMotion() || state.is(Blocks.SNOW);
+        return state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS) || !state.isSolid() || state.is(Blocks.SNOW);
     }
 
     /** Height of the top solid ground block of a column, searched around {@code near}. */

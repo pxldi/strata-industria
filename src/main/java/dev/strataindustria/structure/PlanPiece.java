@@ -8,9 +8,13 @@ import dev.strataindustria.geology.StrataSampler;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.smithing.AnvilBlock;
 import dev.strataindustria.survey.Surveyor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.RandomizableContainer;
@@ -142,6 +146,8 @@ public class PlanPiece extends StructurePiece {
                 (boundingBox.minZ() + boundingBox.maxZ()) / 2, groundY);
         if (plan.kind() == Plan.Kind.LEVELLED) level(level, chunkBB);
         int base = Plans.base(plan);
+        // Fences are joined to their neighbours once the chunk's blocks are in.
+        List<BlockPos> fences = new ArrayList<>();
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         for (int pz = 0; pz < plan.depth(); pz++) {
             for (int px = 0; px < plan.width(); px++) {
@@ -153,12 +159,15 @@ public class PlanPiece extends StructurePiece {
                     if (c == ' ') continue;
                     pos.set(x, ground + layer - base, z);
                     if (!chunkBB.isInside(pos)) continue;
-                    place(level, random, pos, c, rock);
+                    place(level, random, pos, c, rock, fences);
                 }
                 if (plan.kind() == Plan.Kind.EMBEDDED && plan.at(px, base, pz) != ' ') {
                     Terrain.foundation(level, pos.set(x, ground - 1, z), chunkBB, Blocks.DIRT.defaultBlockState());
                 }
             }
+        }
+        for (BlockPos fence : fences) {
+            level.setBlock(fence, Block.updateFromNeighbourShapes(level.getBlockState(fence), level, fence), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -178,7 +187,7 @@ public class PlanPiece extends StructurePiece {
         }
     }
 
-    private void place(WorldGenLevel level, RandomSource random, BlockPos pos, char c, LocalRock rock) {
+    private void place(WorldGenLevel level, RandomSource random, BlockPos pos, char c, LocalRock rock, List<BlockPos> fences) {
         if (Weathering.removes(plan, c, pos, seed)) return;
         BlockState state = switch (c) {
             case '.' -> level.getFluidState(pos).isSource() ? null : Blocks.AIR.defaultBlockState();
@@ -215,7 +224,7 @@ public class PlanPiece extends StructurePiece {
         };
         if (state == null) return;
         level.setBlock(pos, state.rotate(rotation), Block.UPDATE_CLIENTS);
-        if (c == 'k' || c == 'H') level.getChunk(pos).markPosForPostprocessing(pos);
+        if (c == 'k') fences.add(pos.immutable());
         fill(level, random, pos, c);
         if (c == 'm' && Weathering.chance(pos.above(), seed, 0.5) && level.getBlockState(pos.above()).isAir()) {
             level.setBlock(pos.above(), Blocks.MOSS_CARPET.defaultBlockState(), Block.UPDATE_CLIENTS);
@@ -223,7 +232,9 @@ public class PlanPiece extends StructurePiece {
     }
 
     private static BlockState bed(BedPart part) {
-        return Blocks.BROWN_BED.defaultBlockState().setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, part);
+        BlockState bed = BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace("brown_bed")).defaultBlockState();
+        if (!(bed.getBlock() instanceof BedBlock)) return null;
+        return bed.setValue(BedBlock.FACING, Direction.NORTH).setValue(BedBlock.PART, part);
     }
 
     /** Loot, logs and fuel for the blocks that hold things. */

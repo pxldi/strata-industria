@@ -26,7 +26,7 @@ public final class StructureEvents {
         if (!(player.level() instanceof ServerLevel level)) return;
         var structures = level.structureManager();
         for (CampStructure.Layout layout : CampStructure.Layout.values()) {
-            if (structures.getStructureWithPieceAt(player.blockPosition(), layout.key()).isValid()) {
+            if (structures.getStructureWithPieceAt(player.blockPosition(), holder -> holder.is(layout.key())).isValid()) {
                 Journal.award(player, PLACE + layout.id());
             }
         }
@@ -38,11 +38,10 @@ public final class StructureEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         var id = event.getAdvancement().id();
         if (!id.getNamespace().equals(StrataIndustria.MOD_ID) || !id.getPath().startsWith("journal/" + PLACE)) return;
-        var display = event.getAdvancement().value().display();
-        if (display.isEmpty()) return;
         player.connection.send(new ClientboundSoundPacket(StructureContent.JOURNAL_PLACE, SoundSource.PLAYERS,
                 player.getX(), player.getY(), player.getZ(), 0.8f, 1.0f, player.getRandom().nextLong()));
         player.sendOverlayMessage(Component.translatable("journal." + StrataIndustria.MOD_ID + ".place.noted",
-                display.get().getTitle()));
+                Component.translatable("journal." + StrataIndustria.MOD_ID + "." + id.getPath().substring("journal/".length())
+                        .replace('/', '.'))));
     }
 }

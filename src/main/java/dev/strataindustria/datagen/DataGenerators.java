@@ -51,7 +51,7 @@ public final class DataGenerators {
         event.createProvider(StructureData.BiomeTagProvider::new);
         event.createReloadableRegistryObjects(
                 new RegistrySetBuilder()
-                        .add(Registries.ADVANCEMENT, new AdvancementProvider(List.of(ModAdvancements::new, StructureData.Places::new)))
+                        .add(Registries.ADVANCEMENT, new AdvancementProvider(List.of(ModAdvancements::new)))
                         .add(RecipeProvider.asBootstrap(ModRecipeProvider::new))
                         .add(Registries.LOOT_TABLE, new LootTableProvider(
                                 Set.of(),
