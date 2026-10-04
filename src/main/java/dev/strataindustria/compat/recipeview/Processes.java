@@ -121,6 +121,7 @@ public final class Processes {
     }
 
     private static Item castResult(CastMoldItem mold, Metal metal) {
+        if (mold.isBell()) return CastMoldItem.ringsAsBell(metal) ? dev.strataindustria.bronze.BronzeRegistry.BELL_ITEM.get() : null;
         if (mold.isGear()) return ModItems.GEARS.containsKey(metal) ? ModItems.GEARS.get(metal).get() : null;
         MoldType type = mold.type();
         if (type == null) return ModItems.ingot(metal);

@@ -461,6 +461,8 @@ final class ModRecipeProvider extends RecipeProvider {
         formFireClay(Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.get(), ".....", "#####", "#...#", "#####", ".....");
         formFireClay(Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.get(), "#.#.#", ".....", "#...#", ".....", "#.#.#");
         form(Tier4Items.UNFIRED_GEAR_MOLD.get(), 1, "#.#.#", ".....", "#...#", ".....", "#.#.#");
+        // Uniqueness 4.2: a bell mold, formed like a bell.
+        form(dev.strataindustria.bronze.BronzeRegistry.UNFIRED_BELL_MOLD.get(), 1, "..#..", ".###.", ".###.", "#####", "#####");
 
         // Spec 5.3: crushed sphalerite roasts to zinc calcine at 800 °C, giving off sulfur dioxide.
         for (OreGrade grade : OreGrade.values()) {
@@ -720,6 +722,14 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('I', ModItems.ingot(Metal.BRONZE))
                 .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
                 .save(output, key("builders_crate"));
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.cabinet.CabinetRegistry.SPECIMEN_CABINET_ITEM.get())
+                .pattern("PGP")
+                .pattern("PGP")
+                .pattern("PPP")
+                .define('P', net.minecraft.tags.ItemTags.PLANKS)
+                .define('G', Items.GLASS_PANE)
+                .unlockedBy("has_glass_pane", has(Items.GLASS_PANE))
+                .save(output, key("specimen_cabinet"));
         shaped(RecipeCategory.DECORATIONS, dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD_ITEM.get())
                 .pattern("III")
                 .pattern("I I")

@@ -51,7 +51,7 @@ public final class MakerMarks {
 
     /** Stamps a casting knocked out of a mold: heads and gears carry the mark, plain ingots do not. */
     public static void stampCasting(ItemStack mold, ItemStack cast, Player player) {
-        if (!(mold.getItem() instanceof CastMoldItem item) || (item.type() == null && !item.isGear())) return;
+        if (!(mold.getItem() instanceof CastMoldItem item) || (item.type() == null && !item.isGear() && !item.isBell())) return;
         if (cast.has(ModDataComponents.SLAG.get())) return;
         stamp(cast, player);
     }

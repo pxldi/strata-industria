@@ -118,6 +118,7 @@ final class ModItemTagsProvider extends ItemTagsProvider {
                 .add(Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.getKey()).add(Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.getKey())
                 .add(Tier4Items.UNFIRED_GEAR_MOLD.getKey()).add(dev.strataindustria.registry.Tier5Items.UNFIRED_INSULATOR.getKey());
         for (MoldType type : MoldType.values()) fireable.add(ModItems.UNFIRED_MOLDS.get(type).getKey());
+        fireable.add(dev.strataindustria.bronze.BronzeRegistry.UNFIRED_BELL_MOLD.getKey());
 
         // Our tools join the vanilla tool tags, which also makes them enchantable like vanilla tools.
         tag(ItemTags.AXES).add(ModItems.STONE_AXE.getKey());

@@ -32,6 +32,7 @@ public class CastMoldItem extends Item {
     private final boolean gear;
     private final boolean refractory;
     private final boolean sand;
+    private final boolean bell;
 
     public CastMoldItem(@Nullable MoldType type, Properties properties) {
         this(type, false, false, properties);
@@ -44,7 +45,17 @@ public class CastMoldItem extends Item {
 
     /** A sand mold is pressed from a pattern, takes any metal and cracks apart after one casting. */
     public CastMoldItem(@Nullable MoldType type, boolean gear, boolean refractory, boolean sand, Properties properties) {
+        this(type, gear, refractory, sand, false, properties);
+    }
+
+    /** The bell mold (uniqueness 4.2): casts a {@link dev.strataindustria.bronze.BellBlock} item from any bronze, brass or copper. */
+    public static CastMoldItem bell(Properties properties) {
+        return new CastMoldItem(null, false, false, false, true, properties);
+    }
+
+    private CastMoldItem(@Nullable MoldType type, boolean gear, boolean refractory, boolean sand, boolean bell, Properties properties) {
         super(properties);
+        this.bell = bell;
         this.sand = sand;
         this.type = type;
         this.gear = gear;
@@ -60,6 +71,15 @@ public class CastMoldItem extends Item {
         return gear;
     }
 
+    public boolean isBell() {
+        return bell;
+    }
+
+    /** Whether a bell can be cast from this metal: the bronzes, brass and plain copper. */
+    public static boolean ringsAsBell(Metal metal) {
+        return metal.isBronze() || metal == Metal.BRASS || metal == Metal.COPPER;
+    }
+
     public boolean isRefractory() {
         return refractory;
     }
@@ -70,6 +90,7 @@ public class CastMoldItem extends Item {
     }
 
     public int units() {
+        if (bell) return dev.strataindustria.bronze.BronzeRegistry.BELL_UNITS;
         return type == null ? MetalContent.INGOT_UNITS : type.units();
     }
 
@@ -114,6 +135,14 @@ public class CastMoldItem extends Item {
         Melt contents = mold.getOrDefault(ModDataComponents.CAST_CONTENTS.get(), Melt.EMPTY);
         Metal metal = castMetal(contents);
         ItemStack cast;
+        if (item.bell) {
+            cast = new ItemStack(dev.strataindustria.bronze.BronzeRegistry.BELL_ITEM.get());
+            Quality quality = new Quality(contents.quality(), Quality.CAST);
+            cast.set(ModDataComponents.QUALITY.get(), quality);
+            cast.set(dev.strataindustria.bronze.BronzeRegistry.BELL_TONE.get(), dev.strataindustria.bronze.BellTone.of(contents, quality));
+            Heat.set(cast, heat, now);
+            return cast;
+        }
         if (item.gear) cast = ModItems.GEARS.containsKey(metal) ? new ItemStack(ModItems.GEARS.get(metal).get()) : new ItemStack(ModItems.ingot(Metal.SLAG_METAL));
         else cast = item.type == null ? new ItemStack(ModItems.ingot(metal)) : new ItemStack(ModItems.head(metal, item.type));
         if (cast.is(ModItems.ingot(Metal.SLAG_METAL))) cast.set(ModDataComponents.SLAG.get(), contents);
@@ -127,7 +156,7 @@ public class CastMoldItem extends Item {
         CastMoldItem item = (CastMoldItem) mold.getItem();
         if (item.sand) return true;
         double breakChance = item.refractory ? Config.REFRACTORY_MOLD_BREAK.getAsDouble()
-                : item.type == null && !item.gear ? Config.INGOT_MOLD_BREAK.getAsDouble() : Config.TOOL_MOLD_BREAK.getAsDouble();
+                : item.type == null && !item.gear && !item.bell ? Config.INGOT_MOLD_BREAK.getAsDouble() : Config.TOOL_MOLD_BREAK.getAsDouble();
         return random.nextDouble() < breakChance;
     }
 
