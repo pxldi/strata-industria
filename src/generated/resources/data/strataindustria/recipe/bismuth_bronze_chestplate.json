@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "strataindustria:metal_armour",
   "category": "equipment",
   "key": {
     "C": "strataindustria:fibre_cloth",

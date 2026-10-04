@@ -1993,6 +1993,47 @@ public final class TextureGen {
         return im;
     }
 
+    // ---------------------------------------------------------------- heat glow
+
+    /** Metal items that go in the forge: ingots, nuggets, plates, cast heads and blades, the tongs jaw. */
+    static final java.util.regex.Pattern HEATABLE =
+            java.util.regex.Pattern.compile("(?!stone_|unfired_).*(_ingot|_nugget|(?<!chest)_plate|_head|_blade|_rod)|tongs_jaw");
+
+    /**
+     * A pale copy of each heatable item: its shading kept as light greys so the heat tint reads as glowing
+     * metal with the same detail, and the outline a little darker to hold the shape.
+     */
+    static void glowLayers() throws IOException {
+        File[] items = OUT.resolve("item").toFile().listFiles((dir, name) -> name.endsWith(".png"));
+        if (items == null) return;
+        for (File file : items) {
+            String name = file.getName().substring(0, file.getName().length() - 4);
+            if (!HEATABLE.matcher(name).matches()) continue;
+            BufferedImage src = ImageIO.read(file);
+            BufferedImage glow = img();
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int argb = src.getRGB(x, y);
+                    int a = argb >>> 24;
+                    if (a == 0) continue;
+                    double l = (0.299 * (argb >> 16 & 0xFF) + 0.587 * (argb >> 8 & 0xFF) + 0.114 * (argb & 0xFF)) / 255.0;
+                    boolean edge = isEdge(src, x, y);
+                    int v = (int) Math.round(255 * (edge ? 0.45 + 0.35 * l : 0.62 + 0.38 * l));
+                    glow.setRGB(x, y, a << 24 | v << 16 | v << 8 | v);
+                }
+            saveRaw("item/glow/" + name, glow);
+        }
+    }
+
+    static boolean isEdge(BufferedImage im, int x, int y) {
+        int[][] around = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        for (int[] d : around) {
+            int nx = x + d[0], ny = y + d[1];
+            if (nx < 0 || ny < 0 || nx > 15 || ny > 15 || im.getRGB(nx, ny) >>> 24 == 0) return true;
+        }
+        return false;
+    }
+
     // ---------------------------------------------------------------- output
 
     static void save(String path, BufferedImage im) throws IOException {
@@ -2171,6 +2212,9 @@ public final class TextureGen {
         save("block/quern_top", quernFace(5252, false));
         save("block/quern_runner", quernFace(5353, true));
         save("item/quernstone", art(GRANITE, QUERNSTONE_ITEM));
+
+        // Glow layers for hot metal: written last, from the finished item textures.
+        glowLayers();
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");

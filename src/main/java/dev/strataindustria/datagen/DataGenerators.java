@@ -3,6 +3,7 @@ package dev.strataindustria.datagen;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.geology.Province;
 import dev.strataindustria.geology.VeinType;
+import dev.strataindustria.registry.ModDamageTypes;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.core.RegistrySetBuilder;
@@ -33,7 +34,8 @@ public final class DataGenerators {
                         .add(VeinType.REGISTRY, GeologyData::veins)
                         .add(Registries.FEATURE, GeologyData::features)
                         .add(Registries.PLACED_FEATURE, GeologyData::placedFeatures)
-                        .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GeologyData::biomeModifiers),
+                        .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, GeologyData::biomeModifiers)
+                        .add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap),
                 Set.of(StrataIndustria.MOD_ID));
 
         // Assets
