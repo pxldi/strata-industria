@@ -14,7 +14,7 @@ public final class JournalClient {
         ClientPacketListener connection = minecraft.getConnection();
         if (connection == null) return;
         ClientAdvancements advancements = connection.getAdvancements();
-        minecraft.setScreen(new AdvancementsScreen(advancements));
+        minecraft.gui.setScreen(new AdvancementsScreen(advancements));
         AdvancementHolder root = advancements.get(Journal.ROOT);
         if (root != null) advancements.setSelectedTab(root, true);
     }
