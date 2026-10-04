@@ -131,7 +131,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey())
                 .add(Tier4Blocks.VALVE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(Tier4Blocks.WASHER.getKey()).add(Tier4Blocks.TREATED_PLANKS.getKey()).add(Tier4Blocks.TREATED_SLAB.getKey())
-                .add(Tier4Blocks.TREATED_STAIRS.getKey()).add(Tier4Blocks.TREATED_FENCE.getKey());
+                .add(Tier4Blocks.TREATED_STAIRS.getKey()).add(Tier4Blocks.TREATED_FENCE.getKey()).add(Tier4Blocks.CONVEYOR_BELT.getKey());
         tag(BlockTags.WOODEN_SLABS).add(Tier4Blocks.TREATED_SLAB.getKey());
         tag(BlockTags.WOODEN_STAIRS).add(Tier4Blocks.TREATED_STAIRS.getKey());
         tag(BlockTags.WOODEN_FENCES).add(Tier4Blocks.TREATED_FENCE.getKey());

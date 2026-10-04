@@ -41,6 +41,7 @@ import dev.strataindustria.steam.MechanicalPumpBlock;
 import dev.strataindustria.steam.MechanicalPumpBlockEntity;
 import dev.strataindustria.steam.SteamEngineBlock;
 import dev.strataindustria.steam.SteamEngineBlockEntity;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -89,6 +90,9 @@ final class Tier4GameTests {
         tests.put("tier4_filter", Tier4GameTests::filter);
         tests.put("tier4_inserter", Tier4GameTests::inserter);
         tests.put("tier4_inserter_filter", Tier4GameTests::inserterFilter);
+        tests.put("tier4_conveyor_line", Tier4GameTests::conveyorLine);
+        tests.put("tier4_conveyor_slopes", Tier4GameTests::conveyorSlopes);
+        tests.put("tier4_conveyor_queue", Tier4GameTests::conveyorQueue);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -1205,6 +1209,130 @@ final class Tier4GameTests {
         helper.assertTrue(!level.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, new net.minecraft.world.phys.AABB(targetPos).inflate(1.0),
                 e -> e.getItem().is(Items.COAL)).isEmpty(), "with nothing in front the coal drops on the ground");
         helper.succeed();
+    }
+
+    // Conveyor belt (spec 13.1): an axle into one belt of a line turns all three; an item put on the first
+    // belt rides to the end at 1 block per 8 ticks (32 RPM) and drops into the chest the line faces, and a
+    // dropped item entity is picked up.
+    private static void conveyorLine(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(3, 1, 4));
+        level.setBlock(base, Tier4Blocks.IRON_GEARBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        List<BlockPos> belts = List.of(base.east(), base.east().north(), base.east().north(2));
+        for (BlockPos pos : belts) {
+            level.setBlock(pos, Tier4Blocks.CONVEYOR_BELT.get().defaultBlockState()
+                    .setValue(dev.strataindustria.automation.ConveyorBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        }
+        BlockPos chestPos = base.east().north(3);
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        drive(level, base.west(), Direction.EAST, belts.get(0));
+        var last = (dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(belts.get(2));
+        helper.assertTrue(last.kinetic().rpm() >= 32, "the axle's drive reaches the far belt of the line");
+        var first = (dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(belts.get(0));
+        var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(chestPos);
+
+        helper.assertTrue(first.accept(new ItemStack(Items.IRON_NUGGET, 5)), "an item goes on the back of the belt");
+        helper.assertValueEqual(first.item(0).getCount(), 1, "a belt carries single items");
+        beltTicks(level, belts, 10);
+        helper.assertTrue(chest.isEmpty(), "ten ticks is not yet a belt and a half");
+        beltTicks(level, belts, 20);
+        helper.assertTrue(chest.getItem(0).is(Items.IRON_NUGGET) && chest.getItem(0).getCount() == 1, "it drops into the chest at the end");
+        helper.assertTrue(!first.hasCargo() && !last.hasCargo(), "and nothing is left riding");
+
+        var dropped = new net.minecraft.world.entity.item.ItemEntity(level, belts.get(1).getX() + 0.5, belts.get(1).getY() + 0.4,
+                belts.get(1).getZ() + 0.5, new ItemStack(Items.COAL, 2));
+        dropped.setNoPickUpDelay();
+        level.addFreshEntity(dropped);
+        ((dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(belts.get(1))).carry(dropped);
+        helper.assertValueEqual(dropped.getItem().getCount(), 1, "a dropped item is picked up one at a time");
+        beltTicks(level, belts, 20);
+        helper.assertTrue(chest.getItem(1).is(Items.COAL), "the picked up item rides to the chest too");
+
+        level.setBlock(base, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        KineticNetworks.rebuildNow(level, belts.get(0));
+        helper.assertTrue(first.kinetic().rpm() == 0, "without the axle the belts stand still");
+        helper.succeed();
+    }
+
+    // Slopes (spec 13.1): flat, rising, flat, falling, flat belts join into one line one block up and back
+    // down, share one drive, and carry an item the whole way.
+    private static void conveyorSlopes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(3, 1, 6));
+        level.setBlock(base, Tier4Blocks.IRON_GEARBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        var slopes = dev.strataindustria.automation.ConveyorBlock.Slope.values();
+        BlockPos[] at = {base.east(), base.east().north(), base.east().north(2).above(), base.east().north(3), base.east().north(4)};
+        var shape = new dev.strataindustria.automation.ConveyorBlock.Slope[] {slopes[0], slopes[1], slopes[0], slopes[2], slopes[0]};
+        // Flat, rising, flat a block up, then falling (its high end is under the flat belt's end) and flat again at the start height.
+        for (int i = 0; i < at.length; i++) {
+            level.setBlock(at[i], Tier4Blocks.CONVEYOR_BELT.get().defaultBlockState()
+                    .setValue(dev.strataindustria.automation.ConveyorBlock.FACING, Direction.NORTH)
+                    .setValue(dev.strataindustria.automation.ConveyorBlock.SLOPE, shape[i]), Block.UPDATE_ALL);
+        }
+        BlockPos chestPos = at[4].north();
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        for (int i = 0; i + 1 < at.length; i++) {
+            helper.assertValueEqual(dev.strataindustria.automation.ConveyorBlock.next(level, at[i], level.getBlockState(at[i])), at[i + 1], "belt " + i + " hands on to belt " + (i + 1));
+        }
+        helper.assertValueEqual(dev.strataindustria.automation.ConveyorBlock.lineLength(level, at[2], level.getBlockState(at[2])), 5, "the five belts are one line");
+        drive(level, base.west(), Direction.EAST, at[0]);
+        for (BlockPos pos : at) {
+            var belt = (dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(pos);
+            helper.assertTrue(belt.kinetic().rpm() >= 32, "every belt of the line turns, including the one at " + pos.toShortString());
+        }
+        var first = (dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(at[0]);
+        var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(chestPos);
+        helper.assertTrue(first.accept(new ItemStack(Items.COPPER_INGOT)), "an item goes on the first belt");
+        beltTicks(level, List.of(at), 60);
+        helper.assertTrue(chest.getItem(0).is(Items.COPPER_INGOT), "it rode up the ramp and down again into the chest");
+        helper.succeed();
+    }
+
+    // Queueing (spec 13.1): hoppers' insertion fills a belt at a quarter block apart; a blocked end stops the
+    // line with the items queued in order and none lost, and the line runs again once the end opens.
+    private static void conveyorQueue(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(3, 1, 4));
+        level.setBlock(base, Tier4Blocks.IRON_GEARBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos beltPos = base.east(), stopPos = beltPos.north();
+        level.setBlock(beltPos, Tier4Blocks.CONVEYOR_BELT.get().defaultBlockState()
+                .setValue(dev.strataindustria.automation.ConveyorBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(stopPos, Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        drive(level, base.west(), Direction.EAST, beltPos);
+        var belt = (dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(beltPos);
+        int put = 0;
+        for (int i = 0; i < 60; i++) {
+            ItemStack left = net.minecraft.world.level.block.entity.HopperBlockEntity.addItem(null, belt, new ItemStack(Items.STICK), Direction.UP);
+            if (left.isEmpty()) put++;
+            beltTicks(level, List.of(beltPos), 1);
+        }
+        helper.assertValueEqual(put, 4, "a stopped end leaves room for four items on a belt");
+        float[] at = belt.positions(0.0f);
+        float min = 1.0f, max = 0.0f;
+        for (int i = 0; i < 4; i++) {
+            helper.assertTrue(!belt.item(i).isEmpty(), "every slot is taken");
+            min = Math.min(min, at[i]);
+            max = Math.max(max, at[i]);
+        }
+        helper.assertTrue(max == 1.0f && Math.abs(min - 0.25f) < 0.001f, "they queue from the end back, a quarter apart");
+
+        level.setBlock(stopPos, Blocks.HOPPER.defaultBlockState(), Block.UPDATE_ALL);
+        var hopper = (net.minecraft.world.level.block.entity.HopperBlockEntity) level.getBlockEntity(stopPos);
+        beltTicks(level, List.of(beltPos), 30);
+        int total = 0;
+        for (int i = 0; i < hopper.getContainerSize(); i++) total += hopper.getItem(i).getCount();
+        helper.assertTrue(total >= 1, "with the end open the line runs on into the hopper");
+        helper.assertTrue(!belt.canPlaceItem(0, new ItemStack(Items.STICK)) || belt.entryFree(), "and the back clears again");
+        helper.succeed();
+    }
+
+    private static void beltTicks(ServerLevel level, List<BlockPos> belts, int ticks) {
+        for (int t = 0; t < ticks; t++) {
+            for (BlockPos pos : belts) {
+                dev.strataindustria.automation.ConveyorBlockEntity.tick(level, pos, level.getBlockState(pos),
+                        (dev.strataindustria.automation.ConveyorBlockEntity) level.getBlockEntity(pos));
+            }
+        }
     }
 
     private static void inserterTicks(ServerLevel level, BlockPos pos, int ticks) {

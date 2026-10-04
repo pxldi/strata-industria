@@ -231,6 +231,29 @@
     ],
     "subtitle": "subtitles.strataindustria.block.combustion_generator.run"
   },
+  "block.conveyor.run": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wool.step",
+        "pitch": 0.6,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.wool.step",
+        "pitch": 0.7,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.wool.step",
+        "pitch": 0.55,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.conveyor.run"
+  },
   "block.cracked_fire_bricks.break": {
     "sounds": [
       {

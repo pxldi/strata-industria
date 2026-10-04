@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": "strataindustria:brass_gear",
+    "L": "minecraft:leather",
+    "T": "strataindustria:treated_planks"
+  },
+  "pattern": [
+    "LLL",
+    "TGT"
+  ],
+  "result": {
+    "count": 6,
+    "id": "strataindustria:conveyor_belt"
+  }
+}

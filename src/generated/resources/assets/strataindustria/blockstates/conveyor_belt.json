@@ -1,0 +1,49 @@
+{
+  "variants": {
+    "facing=east,slope=down": {
+      "model": "strataindustria:block/conveyor_down",
+      "y": 90
+    },
+    "facing=east,slope=flat": {
+      "model": "strataindustria:block/conveyor_flat",
+      "y": 90
+    },
+    "facing=east,slope=up": {
+      "model": "strataindustria:block/conveyor_up",
+      "y": 90
+    },
+    "facing=north,slope=down": {
+      "model": "strataindustria:block/conveyor_down"
+    },
+    "facing=north,slope=flat": {
+      "model": "strataindustria:block/conveyor_flat"
+    },
+    "facing=north,slope=up": {
+      "model": "strataindustria:block/conveyor_up"
+    },
+    "facing=south,slope=down": {
+      "model": "strataindustria:block/conveyor_down",
+      "y": 180
+    },
+    "facing=south,slope=flat": {
+      "model": "strataindustria:block/conveyor_flat",
+      "y": 180
+    },
+    "facing=south,slope=up": {
+      "model": "strataindustria:block/conveyor_up",
+      "y": 180
+    },
+    "facing=west,slope=down": {
+      "model": "strataindustria:block/conveyor_down",
+      "y": 270
+    },
+    "facing=west,slope=flat": {
+      "model": "strataindustria:block/conveyor_flat",
+      "y": 270
+    },
+    "facing=west,slope=up": {
+      "model": "strataindustria:block/conveyor_up",
+      "y": 270
+    }
+  }
+}

@@ -3,8 +3,8 @@ import java.io.IOException;
 import java.util.Random;
 
 /**
- * Tier 4 automation textures (spec 13, 21): the inserter's base, gear, arm and claw, and the paper tag
- * that marks a filter. Reuses the helpers and ramps of {@link TextureGen}; it does not call its {@code main}.
+ * Tier 4 automation textures (spec 13, 21): the inserter's base, gear, arm and claw, the paper tag
+ * that marks a filter, and the conveyor belt's frame and its four leather top frames. Reuses the helpers and ramps of {@link TextureGen}; it does not call its {@code main}.
  *
  * <p>Run from the repository root:
  * <pre>
@@ -159,6 +159,120 @@ public final class AutomationTextures {
         return im;
     }
 
+
+    static int leather(int step) { return TextureGen.LEATHER.get(step); }
+
+    /**
+     * One frame of the belt's leather top. The ribs run across the belt, 4 px apart, and frame {@code f} has
+     * them shifted {@code f} px towards the front, so the renderer's four frames make the belt run. Only
+     * columns 2 to 13 show on the model; the stitched seams sit at its edges.
+     */
+    static BufferedImage beltTop(int f) {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(13200);
+        for (int y = 0; y < 16; y++) {
+            int k = Math.floorMod(y + f, 4);
+            for (int x = 0; x < 16; x++) {
+                int step = switch (k) {
+                    case 0 -> 4;   // the lit ridge of the rib
+                    case 1 -> 3;
+                    case 2 -> 2;
+                    default -> 1;  // the dark crease between ribs
+                };
+                // Wear and sheen that stay with the leather as it moves, so they come from the pattern row, not the screen row.
+                long seed = 977L * x + 131L * Math.floorDiv(y + f, 4) + 13L * k;
+                int wear = (int) Math.floorMod(seed * 2654435761L >>> 7, 11L);
+                if (k == 0 && wear == 0) step = 5;
+                if (k == 2 && wear == 1) step = 3;
+                if (k == 1 && wear == 2) step = 2;
+                px(im, x, y, leather(step));
+            }
+            // Stitched seams along both edges: a thread every other row.
+            boolean stitch = k == 0 || k == 2;
+            px(im, 2, y, stitch ? paper(4) : leather(1));
+            px(im, 13, y, stitch ? paper(3) : leather(1));
+            px(im, 3, y, leather(2));
+            px(im, 12, y, leather(1));
+        }
+        return im;
+    }
+
+    /** The leather's thin side, where it wraps over the bed. */
+    static BufferedImage beltEdge() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(13210);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, leather(r.nextInt(5) == 0 ? 3 : 2));
+        for (int x = 0; x < 16; x += 4) px(im, x, 12, leather(4));
+        return im;
+    }
+
+    /** Treated planks seen from above on the rails: grain runs along the belt. */
+    static BufferedImage beltRail() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(13220);
+        for (int x = 0; x < 16; x++) {
+            int base = 3 + (x % 5 == 1 ? -1 : 0) + (x % 7 == 3 ? 1 : 0);
+            for (int y = 0; y < 16; y++) {
+                int step = base;
+                if (r.nextInt(6) == 0) step += r.nextBoolean() ? 1 : -1;
+                px(im, x, y, wood(Math.max(1, Math.min(5, step))));
+            }
+        }
+        for (int y = 0; y < 16; y++) { px(im, 0, y, wood(4)); px(im, 1, y, wood(4)); }
+        return im;
+    }
+
+    /** The rail's outer face, rows 11 to 15 of the sheet: a plank edge with two brass nails. */
+    static BufferedImage beltSide() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(13230);
+        for (int y = 0; y < 16; y++) {
+            int base = y == 11 ? 4 : y == 15 ? 1 : y == 14 ? 2 : 3;
+            for (int x = 0; x < 16; x++) {
+                int step = base;
+                if (y > 11 && y < 14 && r.nextInt(5) == 0) step += r.nextBoolean() ? 1 : -1;
+                if (y > 11 && y < 14 && x % 8 == 3 && r.nextBoolean()) step -= 1;
+                px(im, x, y, wood(Math.max(1, Math.min(5, step))));
+            }
+        }
+        for (int x : new int[] {2, 13}) { px(im, x, 13, brass(5)); px(im, x + 1, 13, brass(2)); }
+        // The plank seam running down the grain.
+        for (int x = 0; x < 16; x++) px(im, x, 12, wood(2));
+        return im;
+    }
+
+    /** The bed and underside: dark treated boards with cross braces. */
+    static BufferedImage beltBed() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(13240);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = 2 + (r.nextInt(5) == 0 ? 1 : 0) - (r.nextInt(7) == 0 ? 1 : 0);
+                if (y % 8 == 0) step = 1;
+                if (y % 8 == 7) step = 3;
+                px(im, x, y, wood(Math.max(1, Math.min(5, step))));
+            }
+        return im;
+    }
+
+    /** The brass hub plate on each rail where an axle drives the belt, drawn in the middle 8 px. */
+    static BufferedImage beltHub() {
+        BufferedImage im = TextureGen.img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                int step = 3;
+                if (x < 4 || x > 11 || y < 4 || y > 11) step = 2;
+                else if (d < 1.8) step = 1;
+                else if (d < 3.0) step = 5;
+                else if (x == 4 || y == 4) step = 4;
+                else if (x == 11 || y == 11) step = 2;
+                px(im, x, y, brass(step));
+            }
+        return im;
+    }
+
     public static void main(String[] args) throws IOException {
         TextureGen.save("block/inserter_base_side", baseSide());
         TextureGen.save("block/inserter_base_top", baseTop());
@@ -168,6 +282,12 @@ public final class AutomationTextures {
         TextureGen.save("block/inserter_arm", arm());
         TextureGen.save("block/inserter_claw", claw());
         TextureGen.save("block/inserter_tag", tag());
+        for (int f = 0; f < 4; f++) TextureGen.save("block/conveyor_belt_top_" + f, beltTop(f));
+        TextureGen.save("block/conveyor_belt_edge", beltEdge());
+        TextureGen.save("block/conveyor_belt_rail", beltRail());
+        TextureGen.save("block/conveyor_belt_side", beltSide());
+        TextureGen.save("block/conveyor_belt_bed", beltBed());
+        TextureGen.save("block/conveyor_belt_hub", beltHub());
         System.out.println("automation textures written");
     }
 }
