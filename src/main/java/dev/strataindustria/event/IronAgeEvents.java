@@ -36,6 +36,18 @@ public final class IronAgeEvents {
                 net.minecraft.sounds.SoundSource.PLAYERS, 0.8f, 0.9f + player.getRandom().nextFloat() * 0.2f);
     }
 
+    /** Spec 2: stripping a log with an axe peels off one piece of bark, for tannin. */
+    @SubscribeEvent
+    static void barkFromStripping(net.neoforged.neoforge.event.level.BlockEvent.BlockToolModificationEvent event) {
+        if (event.isSimulated() || event.getItemAbility() != net.neoforged.neoforge.common.ItemAbilities.AXE_STRIP) return;
+        if (!Config.STRIPPING_DROPS_BARK.getAsBoolean() || event.getFinalState() == null) return;
+        if (!event.getState().is(net.minecraft.tags.BlockTags.LOGS)) return;
+        if (!(event.getLevel() instanceof net.minecraft.server.level.ServerLevel level)) return;
+        var context = event.getContext();
+        net.minecraft.core.Direction face = context != null ? context.getClickedFace() : net.minecraft.core.Direction.UP;
+        net.minecraft.world.level.block.Block.popResourceFromFace(level, event.getPos(), face, new ItemStack(ModItems.BARK.get()));
+    }
+
     /** Spec 2: iron golems drop 2 to 4 nuggets, so iron farms do not skip the bloomery. */
     @SubscribeEvent
     static void onLivingDrops(LivingDropsEvent event) {
