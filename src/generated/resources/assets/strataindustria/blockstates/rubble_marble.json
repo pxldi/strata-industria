@@ -1,0 +1,55 @@
+{
+  "variants": {
+    "layers=1": [
+      {
+        "model": "strataindustria:block/rubble_marble_1"
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_1",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_1",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_1",
+        "y": 270
+      }
+    ],
+    "layers=2": [
+      {
+        "model": "strataindustria:block/rubble_marble_2"
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_2",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_2",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_2",
+        "y": 270
+      }
+    ],
+    "layers=3": [
+      {
+        "model": "strataindustria:block/rubble_marble_3"
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_3",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_3",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/rubble_marble_3",
+        "y": 270
+      }
+    ]
+  }
+}

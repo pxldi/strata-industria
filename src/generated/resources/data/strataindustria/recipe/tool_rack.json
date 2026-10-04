@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": "#minecraft:planks",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "SSS",
+    "P P"
+  ],
+  "result": {
+    "id": "strataindustria:tool_rack"
+  }
+}

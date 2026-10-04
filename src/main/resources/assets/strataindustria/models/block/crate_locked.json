@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "strataindustria:block/crate_top_locked",
+    "bottom": "strataindustria:block/crate_top_locked",
+    "side": "strataindustria:block/crate_side_locked",
+    "particle": "strataindustria:block/crate_side_locked"
+  }
+}

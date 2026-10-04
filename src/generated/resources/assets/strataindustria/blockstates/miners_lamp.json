@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "hanging=false,mode=guttering": {
+      "model": "strataindustria:block/miners_lamp_standing_guttering"
+    },
+    "hanging=false,mode=lit": {
+      "model": "strataindustria:block/miners_lamp_standing_lit"
+    },
+    "hanging=false,mode=off": {
+      "model": "strataindustria:block/miners_lamp_standing_off"
+    },
+    "hanging=true,mode=guttering": {
+      "model": "strataindustria:block/miners_lamp_hanging_guttering"
+    },
+    "hanging=true,mode=lit": {
+      "model": "strataindustria:block/miners_lamp_hanging_lit"
+    },
+    "hanging=true,mode=off": {
+      "model": "strataindustria:block/miners_lamp_hanging_off"
+    }
+  }
+}

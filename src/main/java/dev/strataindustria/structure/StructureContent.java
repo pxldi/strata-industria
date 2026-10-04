@@ -211,6 +211,7 @@ public final class StructureContent {
     }
 
     public static void register(IEventBus modBus) {
+        SharedBlocks.init();
         BLOCKS.register(modBus);
         ITEMS.register(modBus);
         COMPONENTS.register(modBus);

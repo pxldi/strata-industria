@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "P": "#minecraft:planks",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "P P",
+    "PSP"
+  ],
+  "result": {
+    "id": "strataindustria:sluice_box"
+  }
+}

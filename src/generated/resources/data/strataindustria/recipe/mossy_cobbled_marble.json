@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "strataindustria:cobbled_marble",
+    "minecraft:vine"
+  ],
+  "result": {
+    "id": "strataindustria:mossy_cobbled_marble"
+  }
+}

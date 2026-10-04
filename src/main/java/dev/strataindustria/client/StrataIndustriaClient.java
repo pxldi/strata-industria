@@ -94,6 +94,10 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_BE.get(), dev.strataindustria.client.render.CastingTableRenderer::new);
         event.registerBlockEntityRenderer(dev.strataindustria.structure.StructureContent.SPECIMEN_SHELF_ENTITY.get(),
                 dev.strataindustria.client.render.SpecimenShelfRenderer::new);
+        event.registerBlockEntityRenderer(dev.strataindustria.structure.SharedBlocks.TOOL_RACK_ENTITY.get(),
+                dev.strataindustria.client.render.ToolRackRenderer::new);
+        event.registerBlockEntityRenderer(dev.strataindustria.structure.SharedBlocks.WINDLASS_ENTITY.get(),
+                dev.strataindustria.client.render.WindlassRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANVIL.get(), AnvilRenderer::new);
         // Tier 3 spec 7: rotors spin at their network's speed.

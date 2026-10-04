@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    "strataindustria:cobbled_basalt",
+    "minecraft:vine"
+  ],
+  "result": {
+    "id": "strataindustria:mossy_cobbled_basalt"
+  }
+}

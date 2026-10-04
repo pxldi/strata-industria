@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/miners_lamp_standing_base",
+  "textures": {
+    "lamp": "strataindustria:block/miners_lamp_guttering"
+  }
+}

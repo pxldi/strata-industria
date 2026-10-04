@@ -25,6 +25,12 @@
     "strataindustria:belt_diverter",
     "strataindustria:fire_pit",
     "strataindustria:log_pile",
-    "strataindustria:pit_prop"
+    "strataindustria:pit_prop",
+    "strataindustria:crate",
+    "strataindustria:ore_cart",
+    "strataindustria:tool_rack",
+    "strataindustria:windlass",
+    "strataindustria:sluice_box",
+    "strataindustria:smouldering_log_pile"
   ]
 }

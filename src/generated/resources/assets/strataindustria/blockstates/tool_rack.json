@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/tool_rack",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/tool_rack"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/tool_rack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/tool_rack",
+      "y": 270
+    }
+  }
+}

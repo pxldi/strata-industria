@@ -488,7 +488,9 @@ final class StructureData {
 
         @Override
         protected Iterable<Block> getKnownBlocks() {
-            return StructureContent.BLOCKS.getEntries().stream().map(DeferredHolder::value).map(Block.class::cast)::iterator;
+            var shared = new java.util.HashSet<>(SharedBlockData.blocks());
+            return StructureContent.BLOCKS.getEntries().stream().map(DeferredHolder::value).map(Block.class::cast)
+                    .filter(block -> !shared.contains(block))::iterator;
         }
     }
 
@@ -570,6 +572,7 @@ final class StructureData {
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(StructureContent.SPECIMEN_SHELF.get(),
                 BlockModelGenerators.plainVariant(shelf)).with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
         itemModels.itemModelOutput.accept(StructureContent.SPECIMEN_SHELF_ITEM.get(), ItemModelUtils.plainModel(shelf));
+        SharedBlockData.models(blockModels, itemModels);
     }
 
     // ---------------------------------------------------------------- collectible registries
@@ -623,6 +626,7 @@ final class StructureData {
 
     static void lang(BiConsumer<String, String> add) {
         String id = StrataIndustria.MOD_ID;
+        SharedBlockData.lang(add);
         add.accept("block." + id + ".fibre_canvas", "Fibre Canvas");
         add.accept("block." + id + ".fibre_canvas_carpet", "Fibre Canvas Carpet");
         add.accept("block." + id + ".pit_prop", "Pit Prop");

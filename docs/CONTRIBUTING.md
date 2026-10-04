@@ -59,6 +59,7 @@ src/generated/resources/ generated assets and data (do not edit by hand)
   Check a new texture with `python3 art/tools/check_textures.py <rock|ore|item|machine|bricks> file.png`
   (composite ore overlays on their host rock first).
 - Structure blocks have their own generator, `tools/texturegen/StructureTextures.java`.
+- Shared structure blocks (crates, miner's lamp, ore cart, tool rack, cracked and mossy rocks, log pile, windlass, sluice box) come from `tools/texturegen/SharedBlockTextures.java` (`java tools/texturegen/SharedBlockTextures.java`, run after `TextureGen`; its javadoc documents the lamp atlas layout).
 - Tier 5 (electric) textures come from `tools/texturegen/ElectricTextures.java`, which reuses
   `TextureGen`'s helpers; its javadoc has the run command. It also adds the latex strip to
   `gui/soaking_barrel.png`, so run it after `TextureGen`.

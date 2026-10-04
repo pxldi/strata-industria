@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "strataindustria:block/smouldering_log_pile_top",
+    "side": "strataindustria:block/smouldering_log_pile_side"
+  }
+}
