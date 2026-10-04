@@ -935,6 +935,21 @@
     ],
     "subtitle": "subtitles.strataindustria.fluid_pipe.refuse"
   },
+  "fluid_tank.fill": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.empty",
+        "pitch": 0.8
+      },
+      {
+        "type": "event",
+        "name": "item.bucket.empty",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fluid_tank.fill"
+  },
   "forge.ignite": {
     "sounds": [
       {
@@ -1912,6 +1927,39 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.journal.place"
+  },
+  "valve.close": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.close",
+        "pitch": 0.9,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.valve.close"
+  },
+  "valve.open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.2,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.iron_trapdoor.open",
+        "pitch": 1.1,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.valve.open"
   },
   "washer.wash": {
     "sounds": [

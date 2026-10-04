@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": "minecraft:glass",
+    "P": "strataindustria:copper_plate"
+  },
+  "pattern": [
+    "PGP",
+    "G G",
+    "PGP"
+  ],
+  "result": {
+    "id": "strataindustria:fluid_tank"
+  }
+}
