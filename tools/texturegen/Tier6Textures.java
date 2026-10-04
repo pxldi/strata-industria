@@ -27,14 +27,14 @@ public final class Tier6Textures {
     }
 
     static final Ramp CRUDE = new Ramp(0x6e6478, 0x0c0a0c, 0x161214, 0x221c1e, 0x302828, 0x403638);
-    static final Ramp BITUMEN = new Ramp(0, 0x141416, 0x1e1e22, 0x2a2a2e, 0x38383c, 0x48484c);
+    static final Ramp BITUMEN = new Ramp(0, 0x1a1a1e, 0x2c2c34, 0x444450, 0x626270, 0x8c8c9c);
     static final Ramp NAPHTHA = new Ramp(0, 0x6e6440, 0x8e8456, 0xb0a670, 0xccc48c, 0xe4dcaa);
     static final Ramp DIESEL = new Ramp(0, 0x4e3010, 0x6e4618, 0x925e22, 0xb47a30, 0xd09a48);
     static final Ramp HEAVY = new Ramp(0, 0x0e0e0a, 0x1a1a12, 0x28281c, 0x383626, 0x4a4632);
     static final Ramp POLY = new Ramp(0, 0x7e8486, 0xa0a6a6, 0xc2c6c4, 0xdcdeda, 0xe8e8e4);
     static final Ramp PVC = new Ramp(0, 0x6e6a5e, 0x8e897a, 0xada896, 0xc8c4b2, 0xe0dccc);
     // No rubber ramp exists in TextureGen yet; dark warm grey-brown, low contrast.
-    static final Ramp RUBBER = new Ramp(0, 0x1e1a18, 0x2c2724, 0x3c3531, 0x4e4540, 0x625852);
+    static final Ramp RUBBER = new Ramp(0, 0x241e1c, 0x3a322e, 0x544942, 0x74665c, 0x9a8a7c);
     // TextureGen.WROUGHT_IRON
     static final Ramp IRON = new Ramp(0xdcd8cf, 0x2a2b30, 0x45464c, 0x6a6a6c, 0x8e8c88, 0xb4b0a8);
 
@@ -94,23 +94,8 @@ public final class Tier6Textures {
         return (r << 16) | (g << 8) | b;
     }
 
-    static BufferedImage outline(BufferedImage im) {
-        BufferedImage out = img(16, 16);
-        out.getGraphics().drawImage(im, 0, 0, null);
-        int[][] dirs = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}};
-        for (int y = 0; y < 16; y++)
-            for (int x = 0; x < 16; x++) {
-                if (opaque(im, x, y)) continue;
-                for (int i = 0; i < 4; i++) {
-                    int nx = x + dirs[i][0], ny = y + dirs[i][1];
-                    if (opaque(im, nx, ny)) {
-                        px(out, x, y, outlineOf(rgb(im, nx, ny), i < 2));
-                        break;
-                    }
-                }
-            }
-        return out;
-    }
+    /** Near-black item outline shared with TextureGen (style guide v2). */
+    static BufferedImage outline(BufferedImage im) { return TextureGen.V2.outline(im); }
 
     static BufferedImage save(String path, BufferedImage im) throws IOException {
         File f = OUT.resolve(path + ".png").toFile();
@@ -161,7 +146,7 @@ public final class Tier6Textures {
     static BufferedImage bucket(Ramp fluid, boolean sheen) {
         String[] rows = BUCKET.clone();
         if (sheen) rows[4] = "..45ccdSccbc54..";
-        return map(IRON, fluid, rows);
+        return TextureGen.V2.limitColours(map(IRON, fluid, rows), 12);
     }
 
     // ---------------------------------------------------------------- bitumen

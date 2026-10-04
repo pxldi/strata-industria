@@ -18,8 +18,9 @@ public final class StructureTextures {
     static final Path OUT = Path.of("src/main/resources/assets/strataindustria/textures");
 
     // Ramps, dark to light (style guide 3).
-    static final int[] CANVAS = {0x3e3a2a, 0x5e583e, 0x827a58, 0xa69e78, 0xc4bc98};
-    static final int[] WOOD = {0x3a2618, 0x5a3c24, 0x7a5634, 0x9c7448, 0xbc9462};
+    static final int[] CANVAS = {0x403c30, 0x625c4a, 0x867e66, 0xaaa286, 0xcac4a8};
+    // TextureGen.V2.WOOD_V2 pulled 40% towards grey: seasoned, weathered timber.
+    static final int[] WOOD = {0x231a11, 0x423623, 0x5e4f32, 0x7c6841, 0x9a8356};
     static final int[] PAPER = {0x4e4838, 0x76705a, 0xa29a80, 0xc8c0a2, 0xe2dabe};
     static final int[] INK = {0x1e1c1a, 0x2e2a26, 0x46403a, 0x5e5646, 0x7a705e};
     static final int[] MALACHITE = {0x163828, 0x1e4a36, 0x2e6b4a, 0x4a9466, 0x78bf8a};
@@ -27,7 +28,7 @@ public final class StructureTextures {
     // Shared with TextureGen, so the ruin matches the fire bricks and slag the player makes later.
     static final int[] FIRE_BRICK = {0x6a5434, 0x8c7044, 0xae9058, 0xc8ac72, 0xe0c890};
     static final int[] CHARCOAL = {0x141416, 0x232327, 0x34343a, 0x4a4a52, 0x626270};
-    static final int[] SLAG = {0x2a2420, 0x3e3632, 0x544a44, 0x6e625a, 0x887c72};
+    static final int[] SLAG = {0x38302c, 0x58504a, 0x7a6e66, 0x988c82, 0xb4a89c};
     static final int[] HEMATITE = {0x2a1416, 0x4a2020, 0x6e3226, 0x8e4a34, 0xae6a4c};
 
     public static void main(String[] args) throws IOException {
@@ -121,12 +122,34 @@ public final class StructureTextures {
                 im.setRGB(x, y, 0xFF000000 | CANVAS[step]);
             }
         }
+        // Fine per-pixel grain on top of the weave, as vanilla cloth has.
+        double[][] g = TextureGen.V2.grain(8801);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = indexOf(CANVAS, rgb(im, x, y));
+                if (g[y][x] > 0.9) step++;
+                else if (g[y][x] < 0.1) step--;
+                im.setRGB(x, y, 0xFF000000 | CANVAS[Math.max(0, Math.min(4, step))]);
+            }
         // Stains: soft clusters one step darker, so the repeat does not show.
         int[][] stains = {{2, 9}, {3, 9}, {2, 10}, {12, 3}, {13, 3}, {9, 13}, {10, 14}};
         for (int[] st : stains) {
             int step = indexOf(CANVAS, rgb(im, st[0], st[1]));
             im.setRGB(st[0], st[1], 0xFF000000 | CANVAS[Math.max(1, step - 1)]);
         }
+        return im;
+    }
+
+    /** Per-pixel wood grain: about 10% of pixels a step lighter, 10% a step darker, within the wood ramp. */
+    static BufferedImage jitter(BufferedImage im, long seed) {
+        double[][] g = TextureGen.V2.grain(seed);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = indexOf(WOOD, rgb(im, x, y));
+                if (g[y][x] > 0.9) step++;
+                else if (g[y][x] < 0.1) step--;
+                px(im, x, y, WOOD[Math.max(0, Math.min(4, step))]);
+            }
         return im;
     }
 
@@ -206,11 +229,12 @@ public final class StructureTextures {
      */
     static BufferedImage slagHeap() {
         BufferedImage im = img(16, 16);
-        Random r = new Random(4242);
+        double[][] g = TextureGen.V2.grain(4242);
         for (int y = 0; y < 16; y++) {
             for (int x = 0; x < 16; x++) {
                 int step = y >= 11 ? 1 : 2;
-                if (r.nextInt(5) == 0) step += r.nextBoolean() ? 1 : -1;
+                if (g[y][x] > 0.82) step++;
+                else if (g[y][x] < 0.18) step--;
                 px(im, x, y, SLAG[Math.max(0, step)]);
             }
         }
@@ -275,7 +299,7 @@ public final class StructureTextures {
         px(im, 8, 8, WOOD[3]);
         // A shrinkage crack near the dark side.
         for (int y = 4; y < 9; y++) px(im, 11, y, WOOD[0]);
-        return im;
+        return jitter(im, 7701);
     }
 
     /** The sawn end: growth rings around the pith, a radial check, and the weathered rim. */
@@ -301,7 +325,7 @@ public final class StructureTextures {
         px(im, 5, 4, WOOD[4]);
         px(im, 4, 6, WOOD[4]);
         px(im, 7, 3, WOOD[4]);
-        return im;
+        return jitter(im, 7702);
     }
 
     // ---------------------------------------------------------------- survey notes

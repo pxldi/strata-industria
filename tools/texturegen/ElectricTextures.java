@@ -19,10 +19,18 @@ import javax.imageio.ImageIO;
  */
 public final class ElectricTextures {
     static final TextureGen.Ramp ALUMINIUM = TextureGen.ramp(0xf2f6f8, 0x3a4048, 0x5c646e, 0x8a929c, 0xb4bcc4, 0xd8dee4);
-    static final TextureGen.Ramp RUBBER = TextureGen.ramp(0, 0x141212, 0x211d1c, 0x302a28, 0x423a36, 0x564c46);
+    static final TextureGen.Ramp RUBBER = TextureGen.ramp(0, 0x1a1816, 0x2c2826, 0x433b37, 0x5e534c, 0x7c6e64);
     static final TextureGen.Ramp RAW_RUBBER = TextureGen.ramp(0, 0x3e2a14, 0x5c4020, 0x7c5a2e, 0x9c7840, 0xba9858);
     static final TextureGen.Ramp STEEL = TextureGen.STEEL;
     static final TextureGen.Ramp COPPER = TextureGen.COPPER;
+    /** Copper pulled 35% towards its own grey: the windings of the larger machines stay inside the machine saturation band. */
+    static final TextureGen.Ramp COPPER_M = TextureGen.ramp(TextureGen.COPPER.spec(), muted(TextureGen.COPPER.get(1)), muted(TextureGen.COPPER.get(2)),
+            muted(TextureGen.COPPER.get(3)), muted(TextureGen.COPPER.get(4)), muted(TextureGen.COPPER.get(5)));
+
+    static int muted(int c) {
+        int r = (c >> 16) & 255, g = (c >> 8) & 255, b = c & 255, l = (int) (0.3 * r + 0.59 * g + 0.11 * b);
+        return ((r + (l - r) * 35 / 100) << 16) | ((g + (l - g) * 35 / 100) << 8) | (b + (l - b) * 35 / 100);
+    }
     static final TextureGen.Ramp LEAD = TextureGen.LEAD;
     static final TextureGen.Ramp IRON = TextureGen.WROUGHT_IRON;
     static final TextureGen.Ramp BRASS = TextureGen.BRASS;
@@ -43,6 +51,16 @@ public final class ElectricTextures {
 
     static int c(TextureGen.Ramp r, int step) { return r.get(Math.max(1, Math.min(5, step))); }
 
+    /** Ramp colour at a half step, blended between the neighbouring steps. */
+    static int mix(TextureGen.Ramp r, double step) {
+        double s = Math.max(1, Math.min(5, step));
+        int lo = (int) Math.floor(s), hi = Math.min(5, lo + 1);
+        if (s == lo) return r.get(lo);
+        int a = r.get(lo), b = r.get(hi);
+        int rr = (((a >> 16) & 255) + ((b >> 16) & 255)) / 2, gg = (((a >> 8) & 255) + ((b >> 8) & 255)) / 2, bb = ((a & 255) + (b & 255)) / 2;
+        return (rr << 16) | (gg << 8) | bb;
+    }
+
     static void fill(BufferedImage im, int x0, int y0, int x1, int y1, int col) {
         for (int y = y0; y <= y1; y++) for (int x = x0; x <= x1; x++) TextureGen.px(im, x, y, col);
     }
@@ -58,8 +76,9 @@ public final class ElectricTextures {
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
                 double v = g[y][x];
-                int step = v > 0.93 ? base + 2 : v > 0.74 ? base + 1 : v < 0.07 ? base - 2 : v < 0.26 ? base - 1 : base;
-                TextureGen.px(im, x, y, c(r, step));
+                double d = v > 0.93 ? 2 : v > 0.86 ? 1.5 : v > 0.74 ? 1 : v > 0.6 ? 0.5
+                        : v < 0.07 ? -2 : v < 0.14 ? -1.5 : v < 0.26 ? -1 : v < 0.4 ? -0.5 : 0;
+                TextureGen.px(im, x, y, mix(r, base + d));
             }
         for (int i = 0; i < 16; i++) {
             TextureGen.px(im, i, 0, c(r, base + 1));
@@ -154,9 +173,9 @@ public final class ElectricTextures {
         fill(im, 3, 3, 12, 10, c(STEEL, 1));
         for (int x = 4; x <= 11; x++) {
             int col = (x % 2 == 0) ? 4 : 2;
-            for (int y = 4; y <= 9; y++) pxs(im, x, y, c(COPPER, col));
-            pxs(im, x, 4, c(COPPER, col + 1));
-            pxs(im, x, 9, c(COPPER, 1));
+            for (int y = 4; y <= 9; y++) pxs(im, x, y, c(COPPER_M, col));
+            pxs(im, x, 4, c(COPPER_M, col + 1));
+            pxs(im, x, 9, c(COPPER_M, 1));
         }
         for (int y = 3; y <= 10; y++) { pxs(im, 3, y, c(STEEL, 1)); pxs(im, 12, y, c(STEEL, 4)); }
         for (int x = 3; x <= 12; x++) pxs(im, x, 10, c(STEEL, 4));
@@ -612,7 +631,7 @@ public final class ElectricTextures {
         save("block/tree_tap", treeTapAtlas());
         save("block/tree_tap_latex", latexSurface());
         save("item/tree_tap", treeTapItem());
-        save("item/latex_bucket", TextureGen.map(IRON, LATEX, TextureGen.CREOSOTE_BUCKET));
+        save("item/latex_bucket", TextureGen.V2.limitColours(TextureGen.map(IRON, LATEX, TextureGen.CREOSOTE_BUCKET), 12));
         TextureGen.saveAnimated("block/latex_still", latexFluid(false, 7711), 3);
         TextureGen.saveAnimated("block/latex_flow", latexFluid(true, 7711), 2);
         latexGuiStrip();
@@ -1134,9 +1153,9 @@ public final class ElectricTextures {
         int base = mv ? 4 : 3;
         BufferedImage im = frontBase(mv, mv ? 731 : 730);
         // copper tag with a rivet at each end
-        fill(im, 3, 2, 8, 3, c(COPPER, 3));
-        for (int x = 3; x <= 8; x++) { pxs(im, x, 2, c(COPPER, 4)); pxs(im, x, 3, c(COPPER, 2)); }
-        pxs(im, 3, 2, c(COPPER, 5));
+        fill(im, 3, 2, 8, 3, c(COPPER_M, 3));
+        for (int x = 3; x <= 8; x++) { pxs(im, x, 2, c(COPPER_M, 4)); pxs(im, x, 3, c(COPPER_M, 2)); }
+        pxs(im, 3, 2, c(COPPER_M, 5));
         lip(im, mv);
         fill(im, 2, 6, 13, 11, c(STEEL, 1));
         // draw plate on the right with a small round die
@@ -1157,22 +1176,22 @@ public final class ElectricTextures {
                 if (d > 2.5) col = c(STEEL, lit ? 5 : 2);
                 else if (d > 1.15) {
                     int sec = Math.floorMod((int) Math.floor((Math.atan2(oy, ox) + ph) / (Math.PI / 3)), 2);
-                    col = c(COPPER, sec == 0 ? (lit ? 5 : 4) : (lit ? 3 : 2));
+                    col = c(COPPER_M, sec == 0 ? (lit ? 5 : 4) : (lit ? 3 : 2));
                 } else col = c(STEEL, ox < 0 && oy < 0 ? 5 : (ox > 0 && oy > 0 ? 2 : 3));
                 pxs(im, x, y, col);
             }
         // wire from the spool through the die and out to the right edge
-        pxs(im, 8, 8, c(COPPER, 4));
-        pxs(im, 9, 8, c(COPPER, 4));
-        pxs(im, 10, 8, c(COPPER, 3));
-        pxs(im, 11, 8, c(COPPER, 4));
-        pxs(im, 12, 8, c(COPPER, 4));
-        pxs(im, 13, 8, c(COPPER, 3));
-        pxs(im, 9, 9, c(COPPER, 2));
+        pxs(im, 8, 8, c(COPPER_M, 4));
+        pxs(im, 9, 8, c(COPPER_M, 4));
+        pxs(im, 10, 8, c(COPPER_M, 3));
+        pxs(im, 11, 8, c(COPPER_M, 4));
+        pxs(im, 12, 8, c(COPPER_M, 4));
+        pxs(im, 13, 8, c(COPPER_M, 3));
+        pxs(im, 9, 9, c(COPPER_M, 2));
         if (active) {
             int[] hx = {8, 10, 12, 13};
-            pxs(im, hx[frame], 8, c(COPPER, 5));
-            pxs(im, 13 - (hx[frame] - 8) * 0 - (frame == 3 ? 5 : 0), 8, c(COPPER, 5));
+            pxs(im, hx[frame], 8, c(COPPER_M, 5));
+            pxs(im, 13 - (hx[frame] - 8) * 0 - (frame == 3 ? 5 : 0), 8, c(COPPER_M, 5));
         }
         lampOff(im, mv);
         return im;
@@ -1650,7 +1669,7 @@ public final class ElectricTextures {
         save("item/steel_wire", TextureGen.map(STEEL, WIRE));
         save("item/alumina", TextureGen.map(ALUMINA, ALUMINA_HEAP));
         save("item/alum", TextureGen.map(ALUM, ALUM_LUMPS));
-        save("item/sulfuric_acid_bucket", TextureGen.map(IRON, ACID, TextureGen.CREOSOTE_BUCKET));
+        save("item/sulfuric_acid_bucket", TextureGen.V2.limitColours(TextureGen.map(IRON, ACID, TextureGen.CREOSOTE_BUCKET), 12));
 
         fluidAnimated("block/fluid/sulfuric_acid_still", acidFluid(false), 4);
         fluidAnimated("block/fluid/sulfuric_acid_flow", acidFluid(true), 4);
