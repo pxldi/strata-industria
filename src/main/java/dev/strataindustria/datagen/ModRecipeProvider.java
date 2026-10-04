@@ -6,11 +6,14 @@ import dev.strataindustria.crafting.ConfigCondition;
 import dev.strataindustria.crafting.KnappedToolRecipe;
 import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
+import dev.strataindustria.geology.OreGrade;
+import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
 import dev.strataindustria.material.Metal;
+import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import java.util.List;
@@ -65,6 +68,7 @@ final class ModRecipeProvider extends RecipeProvider {
         fire();
         planks();
         metals();
+        quern();
         vanillaOverrides();
     }
 
@@ -77,6 +81,10 @@ final class ModRecipeProvider extends RecipeProvider {
         knap(ModItems.STONE_HAMMER_HEAD.get(), "#####", "#####", "..#..", ".....", ".....");
         knap(ModItems.STONE_SPEAR_HEAD.get(), "..#..", ".###.", ".###.", "..#..", "..#..");
         knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
+        // Spec 10.1: a round stone with a hole, worth four loose rocks.
+        int quernstone = GridPattern.parse(List.of(".###.", "#####", "##.##", "#####", ".###.")).getOrThrow();
+        output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.LOOSE_ROCKS), 4, quernstone, false,
+                new ItemStackTemplate(ModItems.QUERNSTONE.get())), null);
     }
 
     // Spec 4.1: the same grid, worked in five clay balls.
@@ -202,6 +210,58 @@ final class ModRecipeProvider extends RecipeProvider {
                 List.of(tag(logs), tool),
                 tool);
         save(key(name(planks) + suffix), recipe, RecipeCategory.BUILDING_BLOCKS, "has_logs", has(logs));
+    }
+
+    // Spec 10.1: the quern, and what it grinds.
+    private void quern() {
+        shaped(RecipeCategory.DECORATIONS, ModItems.QUERN.get())
+                .pattern("S")
+                .pattern("Q")
+                .pattern("Q")
+                .define('S', Items.STICK)
+                .define('Q', ModItems.QUERNSTONE.get())
+                .unlockedBy("has_quernstone", has(ModItems.QUERNSTONE.get()))
+                .save(output, key("quern"));
+        for (OreMineral mineral : OreMineral.values()) {
+            for (OreGrade grade : OreGrade.values()) {
+                Item crushed = ModItems.crushedOre(mineral, grade);
+                grind(name(crushed), Ingredient.of(ModItems.orePiece(mineral, grade)), crushed, 1);
+            }
+        }
+        grind("bone_meal", Ingredient.of(Items.BONE), Items.BONE_MEAL, 4);
+        // Every vanilla flower that crafts into a dye gives two of it.
+        flower(Items.DANDELION, Items.YELLOW_DYE);
+        flower(Items.POPPY, Items.RED_DYE);
+        flower(Items.BLUE_ORCHID, Items.LIGHT_BLUE_DYE);
+        flower(Items.ALLIUM, Items.MAGENTA_DYE);
+        flower(Items.AZURE_BLUET, Items.LIGHT_GRAY_DYE);
+        flower(Items.RED_TULIP, Items.RED_DYE);
+        flower(Items.ORANGE_TULIP, Items.ORANGE_DYE);
+        flower(Items.WHITE_TULIP, Items.LIGHT_GRAY_DYE);
+        flower(Items.PINK_TULIP, Items.PINK_DYE);
+        flower(Items.OXEYE_DAISY, Items.LIGHT_GRAY_DYE);
+        flower(Items.CORNFLOWER, Items.BLUE_DYE);
+        flower(Items.LILY_OF_THE_VALLEY, Items.WHITE_DYE);
+        flower(Items.WITHER_ROSE, Items.BLACK_DYE);
+        flower(Items.SUNFLOWER, Items.YELLOW_DYE);
+        flower(Items.LILAC, Items.MAGENTA_DYE);
+        flower(Items.ROSE_BUSH, Items.RED_DYE);
+        flower(Items.PEONY, Items.PINK_DYE);
+        flower(Items.TORCHFLOWER, Items.ORANGE_DYE);
+        flower(Items.PITCHER_PLANT, Items.CYAN_DYE);
+        flower(Items.PINK_PETALS, Items.PINK_DYE);
+        flower(Items.CLOSED_EYEBLOSSOM, Items.GRAY_DYE);
+        flower(Items.OPEN_EYEBLOSSOM, Items.ORANGE_DYE);
+        flower(Items.WILDFLOWERS, Items.YELLOW_DYE);
+        flower(Items.CACTUS_FLOWER, Items.PINK_DYE);
+    }
+
+    private void flower(Item flower, Item dye) {
+        grind(name(dye) + "_from_" + name(flower), Ingredient.of(flower), dye, 2);
+    }
+
+    private void grind(String path, Ingredient input, Item result, int count) {
+        output.accept(key("quern/" + path), new QuernRecipe(input, new ItemStackTemplate(result, count), QuernRecipe.DEFAULT_TICKS), null);
     }
 
     // Spec 6.1 and 8.1: nuggets, and metal tools from a cast head and a stick.

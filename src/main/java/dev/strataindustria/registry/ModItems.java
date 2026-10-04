@@ -77,6 +77,9 @@ public final class ModItems {
     public static final DeferredItem<CastMoldItem> INGOT_MOLD = ITEMS.registerItem("ingot_mold", p -> new CastMoldItem(null, p),
             p -> p.stacksTo(16));
     public static final DeferredItem<BlockItem> FORGE = ITEMS.registerSimpleBlockItem(ModBlocks.FORGE);
+    // Quern (spec 10.1).
+    public static final DeferredItem<Item> QUERNSTONE = ITEMS.registerSimpleItem("quernstone", p -> p.stacksTo(16));
+    public static final DeferredItem<BlockItem> QUERN = ITEMS.registerSimpleBlockItem(ModBlocks.QUERN);
     // Charcoal (spec 4.4).
     public static final DeferredItem<AshItem> ASH = ITEMS.registerItem("ash", AshItem::new);
     // Metals (spec 6 to 8). Copper's ingot, nugget, armour and five of its tools are vanilla items.

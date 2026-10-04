@@ -1,0 +1,149 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "strataindustria:block/quern_side",
+    "side": "strataindustria:block/quern_side",
+    "top": "strataindustria:block/quern_top",
+    "runner": "strataindustria:block/quern_runner",
+    "handle": "minecraft:block/stripped_oak_log",
+    "handle_end": "minecraft:block/stripped_oak_log_top"
+  },
+  "elements": [
+    {
+      "from": [
+        2,
+        5,
+        2
+      ],
+      "to": [
+        14,
+        9,
+        14
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side",
+          "uv": [
+            2,
+            7,
+            14,
+            11
+          ]
+        },
+        "south": {
+          "texture": "#side",
+          "uv": [
+            2,
+            7,
+            14,
+            11
+          ]
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            2,
+            7,
+            14,
+            11
+          ]
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            2,
+            7,
+            14,
+            11
+          ]
+        },
+        "up": {
+          "texture": "#runner",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#top",
+          "uv": [
+            2,
+            2,
+            14,
+            14
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        9,
+        3
+      ],
+      "to": [
+        5,
+        15,
+        5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#handle",
+          "uv": [
+            11,
+            1,
+            13,
+            7
+          ]
+        },
+        "south": {
+          "texture": "#handle",
+          "uv": [
+            3,
+            1,
+            5,
+            7
+          ]
+        },
+        "west": {
+          "texture": "#handle",
+          "uv": [
+            3,
+            1,
+            5,
+            7
+          ]
+        },
+        "east": {
+          "texture": "#handle",
+          "uv": [
+            11,
+            1,
+            13,
+            7
+          ]
+        },
+        "up": {
+          "texture": "#handle_end",
+          "uv": [
+            3,
+            3,
+            5,
+            5
+          ]
+        },
+        "down": {
+          "texture": "#handle_end",
+          "uv": [
+            3,
+            3,
+            5,
+            5
+          ]
+        }
+      }
+    }
+  ]
+}

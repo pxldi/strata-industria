@@ -1235,6 +1235,64 @@ public final class TextureGen {
         return im;
     }
 
+    /** Quern stone side: dressed granite with horizontal tooling marks and a worn top edge. */
+    static BufferedImage quernSide() {
+        double[][] n = fractal(5151);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.62 ? 4 : n[y][x] < 0.38 ? 2 : 3;
+                // Chisel marks run round the stone.
+                if ((y == 2 || y == 8 || y == 13) && (x * 7 + y) % 5 != 0) step = Math.max(2, step - 1);
+                if (y == 0 || y == 7 || y == 11) step = 4;
+                if (y == 6 || y == 10 || y == 15) step = 2;
+                px(im, x, y, GRANITE.get(step));
+            }
+        return im;
+    }
+
+    /** Quern stone face: the grinding surface dressed with radial furrows, lighter where it is worn. */
+    static BufferedImage quernFace(long seed, boolean hole) {
+        double[][] n = fractal(seed);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double dx = x - 7.5, dy = y - 7.5;
+                double r = Math.sqrt(dx * dx + dy * dy);
+                double a = Math.atan2(dy, dx);
+                int step = n[y][x] > 0.6 ? 4 : 3;
+                // Eight furrows, each a little skewed like real millstone dressing.
+                double sector = (a + r * 0.12) / (Math.PI / 4);
+                if (Math.abs(sector - Math.round(sector)) < 0.12 && r > 2.5) step = 2;
+                if (r > 6.8) step = Math.min(step, 3);
+                if (r < 4.2 && !hole) step = Math.max(step, 4);
+                if (hole && r < 1.9) step = 1;
+                else if (hole && r < 2.9) step = 2;
+                px(im, x, y, GRANITE.get(step));
+            }
+        return im;
+    }
+
+    /** A plain quernstone item: a round slab with its centre hole, seen at an angle. */
+    static final String[] QUERNSTONE_ITEM = {
+            "................",
+            "................",
+            "................",
+            "................",
+            ".....444445.....",
+            "...4455555554...",
+            "..445554455543..",
+            "..445542245543..",
+            "..344554455433..",
+            "..33444444443...",
+            "..2333333333322.",
+            "...22333333322..",
+            ".....2222222....",
+            "................",
+            "................",
+            "................",
+    };
+
     /** Crucible wall: refractory clay, sooty towards the base where it sits in the coals. */
     static BufferedImage crucibleSide() {
         double[][] n = fractal(8282);
@@ -1715,6 +1773,12 @@ public final class TextureGen {
         }
         save("item/slag_metal_ingot", map(SLAG, INGOT));
         saveRaw("gui/crucible", crucibleGui());
+
+        // Quern (spec 10.1).
+        save("block/quern_side", quernSide());
+        save("block/quern_top", quernFace(5252, false));
+        save("block/quern_runner", quernFace(5353, true));
+        save("item/quernstone", art(GRANITE, QUERNSTONE_ITEM));
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");

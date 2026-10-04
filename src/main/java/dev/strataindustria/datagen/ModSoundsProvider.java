@@ -64,6 +64,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition crack = definition().subtitle(subtitle("mold.break"));
         for (int i = 1; i <= 3; i++) crack.with(sound("minecraft:random/glass" + i).pitch(0.6f).volume(0.7f));
         add(ModSounds.MOLD_BREAK, crack);
+        // Quern: gravelly stone-on-stone for the grind, a soft scrape for loading and a crunch when done.
+        SoundDefinition grind = definition().subtitle(subtitle("quern.grind"));
+        for (int i = 1; i <= 4; i++) grind.with(sound("minecraft:step/gravel" + i).pitch(0.6f).volume(0.7f));
+        for (int i = 1; i <= 4; i++) grind.with(sound("minecraft:dig/stone" + i).pitch(0.5f).volume(0.35f));
+        add(ModSounds.QUERN_GRIND, grind);
+        SoundDefinition load = definition().subtitle(subtitle("quern.load"));
+        for (int i = 1; i <= 4; i++) load.with(sound("minecraft:step/gravel" + i).pitch(1.3f).volume(0.5f));
+        add(ModSounds.QUERN_LOAD, load);
+        SoundDefinition done = definition().subtitle(subtitle("quern.done"));
+        for (int i = 1; i <= 4; i++) done.with(sound("minecraft:dig/gravel" + i).pitch(1.2f).volume(0.6f));
+        add(ModSounds.QUERN_DONE, done);
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

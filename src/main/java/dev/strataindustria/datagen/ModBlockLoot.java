@@ -73,6 +73,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
         crucible();
         charcoalPile();
         dropSelf(ModBlocks.FORGE.get());
+        dropSelf(ModBlocks.QUERN.get());
     }
 
     /** The crucible keeps its pieces, its melt and its heat when picked up, like a shulker box. */

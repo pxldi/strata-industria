@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.block.GroundCoverBlock;
 import dev.strataindustria.block.OreBlock;
@@ -70,6 +71,16 @@ public final class ModBlocks {
             p -> p.mapColor(MapColor.TERRACOTTA_ORANGE)
                     .strength(1.0f)
                     .sound(SoundType.DECORATED_POT)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.POPPED));
+
+    /** Hand quern (spec 10.1). */
+    public static final DeferredBlock<QuernBlock> QUERN = BLOCKS.registerBlock("quern",
+            QuernBlock::new,
+            p -> p.mapColor(MapColor.STONE)
+                    .strength(1.5f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
                     .noOcclusion()
                     .pushReaction(PushReaction.POPPED));
 

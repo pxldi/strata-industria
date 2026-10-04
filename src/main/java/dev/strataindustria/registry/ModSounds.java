@@ -37,6 +37,12 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> MOLD_KNOCK = register("mold.knock");
     /** A mold cracks apart. */
     public static final DeferredHolder<SoundEvent, SoundEvent> MOLD_BREAK = register("mold.break");
+    /** Stone grinding on stone as the quern turns. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUERN_GRIND = register("quern.grind");
+    /** Something set on the quern stone. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUERN_LOAD = register("quern.load");
+    /** A ground item spills off the quern. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUERN_DONE = register("quern.done");
     /** Charcoal catching in the forge. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_IGNITE = register("forge.ignite");
 

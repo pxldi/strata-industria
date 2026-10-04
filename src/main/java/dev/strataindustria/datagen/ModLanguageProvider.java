@@ -91,6 +91,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.CHARCOAL_PILE, "Charcoal Pile");
         addItem(ModItems.ASH, "Ash");
         addBlock(ModBlocks.FORGE, "Forge");
+        addBlock(ModBlocks.QUERN, "Quern");
+        addItem(ModItems.QUERNSTONE, "Quernstone");
         add("container." + StrataIndustria.MOD_ID + ".forge", "Forge");
         metals();
         String kiln = StrataIndustria.MOD_ID + ".pit_kiln.";
@@ -110,6 +112,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "heat.quench", "Hot metal hisses");
         add(subtitles + "forge.ignite", "Forge catches");
         add(subtitles + "crucible.melt", "Metal melts");
+        add(subtitles + "quern.grind", "Quern grinds");
+        add(subtitles + "quern.load", "Quern loaded");
+        add(subtitles + "quern.done", "Quern spills ground");
         add(subtitles + "crucible.pour", "Molten metal pours");
         add(subtitles + "mold.knock", "Cast knocked out");
         add(subtitles + "mold.break", "Mold cracks");

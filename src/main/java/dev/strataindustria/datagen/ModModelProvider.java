@@ -8,6 +8,7 @@ import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
+import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModDataComponents;
@@ -113,6 +114,18 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(ModItems.FORGE.get(), ItemModelUtils.plainModel(forge));
 
         metals(itemModels);
+
+        // Spec 10.1: the runner stone and its handle turn a quarter at a time as the quern is worked.
+        MultiPartGenerator quern = MultiPartGenerator.multiPart(ModBlocks.QUERN.get())
+                .with(BlockModelGenerators.plainVariant(StrataIndustria.id("block/quern_base")));
+        var runner = BlockModelGenerators.plainVariant(StrataIndustria.id("block/quern_runner"));
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 0), runner);
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 1), runner.with(BlockModelGenerators.Y_ROT_90));
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 2), runner.with(BlockModelGenerators.Y_ROT_180));
+        quern.with(BlockModelGenerators.condition().term(QuernBlock.TURN, 3), runner.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(quern);
+        itemModels.itemModelOutput.accept(ModItems.QUERN.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/quern")));
+        flatItem(itemModels, ModItems.QUERNSTONE.get());
         flatItem(itemModels, ModItems.PLANT_FIBRE.get());
         flatItem(itemModels, ModItems.STRAW.get());
         flatItem(itemModels, ModItems.TWINE.get());

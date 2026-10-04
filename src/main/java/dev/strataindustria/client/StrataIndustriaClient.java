@@ -3,6 +3,7 @@ package dev.strataindustria.client;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.client.hud.FirestarterHud;
 import dev.strataindustria.client.render.PitKilnRenderer;
+import dev.strataindustria.client.render.QuernRenderer;
 import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
@@ -40,6 +41,7 @@ public final class StrataIndustriaClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
     }
 
     private static void registerGuiLayers(RegisterGuiLayersEvent event) {
