@@ -29,6 +29,8 @@ public final class ModSounds {
 
     /** Hot metal hissing in water. */
     public static final DeferredHolder<SoundEvent, SoundEvent> QUENCH = register("heat.quench");
+    /** Bare skin on hot metal. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SEAR = register("heat.sear");
     /** A piece slumps into the melt. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CRUCIBLE_MELT = register("crucible.melt");
     /** Molten metal runs into a mold. */

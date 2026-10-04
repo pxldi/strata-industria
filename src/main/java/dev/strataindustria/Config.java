@@ -93,6 +93,19 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- heat
+    static {
+        BUILDER.comment("Item heat.").push("heat");
+    }
+
+    public static final ModConfigSpec.BooleanValue HEAT_BURN_PLAYER = BUILDER
+            .comment("Holding an item at 480 °C or hotter without tongs in the off hand burns the player.")
+            .define("burnPlayer", true);
+
+    static {
+        BUILDER.pop();
+    }
+
     // ---------------------------------------------------------------- charcoal
     static {
         BUILDER.comment("Charcoal pits.").push("charcoal");
