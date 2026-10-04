@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:camp",
+  "biomes": "#strataindustria:has_structure/collapsed_adit",
+  "layout": "collapsed_adit",
+  "spawn_overrides": {},
+  "step": "top_layer_modification"
+}

@@ -1,0 +1,18 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "exclusion_zone": {
+      "chunk_count": 5,
+      "other_set": "minecraft:villages"
+    },
+    "salt": 718204551,
+    "separation": 12,
+    "spacing": 34
+  },
+  "structures": [
+    {
+      "structure": "strataindustria:mining_camp",
+      "weight": 1
+    }
+  ]
+}

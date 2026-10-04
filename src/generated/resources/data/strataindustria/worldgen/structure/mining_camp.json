@@ -1,0 +1,7 @@
+{
+  "type": "strataindustria:camp",
+  "biomes": "#strataindustria:has_structure/mining_camp",
+  "layout": "mining_camp",
+  "spawn_overrides": {},
+  "step": "top_layer_modification"
+}
