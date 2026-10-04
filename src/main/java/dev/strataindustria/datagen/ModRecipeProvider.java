@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.crafting.ConfigCondition;
 import dev.strataindustria.crafting.KnappedToolRecipe;
+import dev.strataindustria.crafting.MetalArmourRecipe;
 import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
 import dev.strataindustria.geology.OreGrade;
@@ -19,6 +20,7 @@ import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.triggers.Criterion;
 import net.minecraft.core.registries.Registries;
@@ -39,6 +41,7 @@ import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
 
 final class ModRecipeProvider extends RecipeProvider {
@@ -284,10 +287,11 @@ final class ModRecipeProvider extends RecipeProvider {
         var types = ModItems.armourTypes();
         for (int i = 0; i < types.length; i++) {
             Item piece = pieces.get(types[i]).get();
-            var builder = shaped(RecipeCategory.COMBAT, piece).define('P', plate).define('C', cloth);
-            for (String row : shapes[i]) builder.pattern(row);
+            var pattern = ShapedRecipePattern.of(Map.of('P', Ingredient.of(plate), 'C', Ingredient.of(cloth)), shapes[i]);
+            var recipe = new MetalArmourRecipe(new Recipe.CommonInfo(true),
+                    new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.EQUIPMENT, ""), pattern, new ItemStackTemplate(piece));
             String path = metal.isVanilla() ? metal.id() + "_" + types[i].getName() + "_from_plates" : name(piece);
-            builder.unlockedBy("has_plate", has(plate)).save(output, key(path));
+            save(key(path), recipe, RecipeCategory.COMBAT, "has_plate", has(plate));
         }
     }
 
