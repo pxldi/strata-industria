@@ -89,6 +89,12 @@ public record Melt(Map<Metal, Integer> units, int qualityUnits) {
             int scaled = (int) Math.floor(u * factor);
             if (scaled > 0) out.put(metal, scaled);
         });
+        // Flooring each metal on its own loses units; the largest share takes up what the whole should give.
+        int shortfall = Math.round(total() * factor) - out.values().stream().mapToInt(Integer::intValue).sum();
+        if (shortfall > 0) {
+            units.entrySet().stream().max(Map.Entry.comparingByValue())
+                    .ifPresent(largest -> out.merge(largest.getKey(), shortfall, Integer::sum));
+        }
         return new Melt(out, Math.round(qualityUnits * factor));
     }
 
