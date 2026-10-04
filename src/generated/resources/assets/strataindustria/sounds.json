@@ -2217,6 +2217,72 @@
     ],
     "subtitle": "subtitles.strataindustria.electric.spark"
   },
+  "felling.crash": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.break",
+        "pitch": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.gravel.break",
+        "pitch": 0.5,
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "entity.generic.explode",
+        "pitch": 0.5,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.break",
+        "pitch": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.felling.crash"
+  },
+  "felling.creak": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wooden_door.open",
+        "pitch": 0.5,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.wooden_trapdoor.open",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.azalea_leaves.break",
+        "pitch": 0.8,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.felling.creak"
+  },
+  "felling.notch": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.wood.break",
+        "pitch": 1.5,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.felling.notch"
+  },
   "filter.configure": {
     "sounds": [
       {
