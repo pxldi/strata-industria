@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/kinetic_dynamo",
+  "textures": {
+    "front": "strataindustria:block/kinetic_dynamo_front_run"
+  }
+}

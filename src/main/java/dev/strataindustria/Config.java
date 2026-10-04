@@ -304,6 +304,25 @@ public final class Config {
         BUILDER.pop();
     }
 
+    // ---------------------------------------------------------------- electric (tier 5 spec 20)
+    static {
+        BUILDER.comment("Electric networks.").push("electric");
+    }
+
+    public static final ModConfigSpec.IntValue ELECTRIC_MAX_NETWORK = BUILDER
+            .comment("Most blocks one electric network may have.")
+            .defineInRange("maxNetworkSize", 2048, 16, 65536);
+    public static final ModConfigSpec.DoubleValue ELECTRIC_MAX_PATH_LOSS = BUILDER
+            .comment("A consumer whose path from the nearest source loses this fraction of the power or more is not served.")
+            .defineInRange("maxPathLoss", 0.5, 0.01, 0.99);
+    public static final ModConfigSpec.DoubleValue ELECTRIC_DYNAMO_JOULES_PER_RPM = BUILDER
+            .comment("J/t a kinetic dynamo makes per RPM of its shaft.")
+            .defineInRange("dynamoJoulesPerRpm", 0.25, 0.01, 4.0);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}
