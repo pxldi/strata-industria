@@ -7,7 +7,8 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 
 /**
- * Tier 5 electric textures: LV/MV casings, battery boxes, cables, kinetic dynamo, copper/lead/rubber items.
+ * Tier 5 electric textures: LV/MV casings, battery boxes, cables, kinetic dynamo, copper/lead/rubber items,
+ * electric furnace and macerator fronts, status overlays and electric machine GUIs and sprites.
  * Reuses the helpers of {@link TextureGen}; it does not call its {@code main}.
  *
  * <p>Run from the repository root:
@@ -823,6 +824,306 @@ public final class ElectricTextures {
         save("item/electric_motor", grid(motorRows(), STEEL, COPPER));
     }
 
+    // ---------------------------------------------------------------- machines (fronts, GUIs, sprites)
+
+    static final TextureGen.Ramp BRICK = TextureGen.FIRE_BRICK;
+    static final int[] HEAT = TextureGen.HEAT_BAND;
+    static final int[][] LAMP_PX = {{12, 2}, {13, 2}, {12, 3}, {13, 3}};
+
+    static TextureGen.Ramp tierRamp(boolean mv) { return mv ? ALUMINIUM : STEEL; }
+
+    /** Tier casing plate with the identity area (1..14, 1..12) cleared, ready for a machine front. */
+    static BufferedImage frontBase(boolean mv, long seed) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = mv ? mvSide() : casing(STEEL, 3, 51);
+        if (!mv) stripe(im, 14, 3);
+        fill(im, 1, 1, 14, mv ? 12 : 13, c(r, base));
+        Random rnd = new Random(seed);
+        for (int i = 0; i < 2; i++) {
+            int len = 3 + rnd.nextInt(2), x = 1 + rnd.nextInt(6), y = 2 + 2 * i;
+            for (int k = 0; k < len; k++) TextureGen.px(im, x + k, y, c(r, base + 1));
+        }
+        return im;
+    }
+
+    /** Recessed port lip (1..14, 5..12) in the tier ramp: dark top-left, lit bottom-right. */
+    static void lip(BufferedImage im, boolean mv) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        for (int x = 1; x <= 14; x++) {
+            TextureGen.px(im, x, 5, c(r, base - 1));
+            TextureGen.px(im, x, 12, c(r, base + 2));
+        }
+        for (int y = 5; y <= 12; y++) {
+            TextureGen.px(im, 1, y, c(r, base - 1));
+            TextureGen.px(im, 14, y, c(r, base + 2));
+        }
+        TextureGen.px(im, 14, 5, c(r, base));
+        TextureGen.px(im, 1, 12, c(r, base));
+    }
+
+    /** Status lamp socket at 11..14, 1..4 with the OFF lamp (steel step 1) at 12..13, 2..3. */
+    static void lampOff(BufferedImage im, boolean mv) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        for (int i = 11; i <= 14; i++) {
+            TextureGen.px(im, i, 1, c(r, base - 1));
+            TextureGen.px(im, i, 4, c(r, base + 1));
+        }
+        for (int j = 1; j <= 4; j++) {
+            TextureGen.px(im, 11, j, c(r, base - 1));
+            TextureGen.px(im, 14, j, c(r, base + 1));
+        }
+        TextureGen.px(im, 14, 1, c(r, base));
+        TextureGen.px(im, 11, 4, c(r, base));
+        for (int[] p : LAMP_PX) TextureGen.px(im, p[0], p[1], c(STEEL, 1));
+    }
+
+    static BufferedImage lampOverlay(int[] ramp) {
+        BufferedImage im = TextureGen.img();
+        TextureGen.px(im, 12, 2, ramp[3]);
+        TextureGen.px(im, 13, 2, ramp[2]);
+        TextureGen.px(im, 12, 3, ramp[2]);
+        TextureGen.px(im, 13, 3, ramp[1]);
+        return im;
+    }
+
+    /** Firebrick chamber 2..13, 6..11: two courses, mortar rows at 8 and 11; hot = even heat band glow. */
+    static void brickChamber(BufferedImage im, boolean hot) {
+        int[][] joints = {{5, 10}, {4, 9}};
+        int[] top = {6, 9};
+        for (int course = 0; course < 2; course++) {
+            int y0 = top[course];
+            for (int x = 2; x <= 13; x++) {
+                boolean joint = x == joints[course][0] || x == joints[course][1];
+                boolean first = x == 2 || x == joints[course][0] + 1 || x == joints[course][1] + 1;
+                int mortar = hot ? HEAT[2] : c(BRICK, 1);
+                if (joint) {
+                    TextureGen.px(im, x, y0, mortar);
+                    TextureGen.px(im, x, y0 + 1, mortar);
+                } else {
+                    TextureGen.px(im, x, y0, hot ? (first ? HEAT[4] : HEAT[3]) : c(BRICK, first ? 4 : 3));
+                    TextureGen.px(im, x, y0 + 1, hot ? HEAT[3] : c(BRICK, first ? 3 : 2));
+                }
+                TextureGen.px(im, x, y0 + 2, hot ? HEAT[2] : c(BRICK, 1));
+            }
+        }
+        // glass reflection on the port, top-left
+        TextureGen.px(im, 3, 6, c(STEEL, 5));
+        TextureGen.px(im, 4, 6, c(STEEL, 5));
+        TextureGen.px(im, 2, 7, c(STEEL, 5));
+    }
+
+    static BufferedImage furnaceFront(boolean mv, boolean active) {
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        BufferedImage im = frontBase(mv, mv ? 711 : 710);
+        // two vent slits above the port, lit lower lip
+        for (int y : new int[]{2, 4})
+            for (int x = 4; x <= 9; x++) {
+                TextureGen.px(im, x, y, c(STEEL, 1));
+                if (y == 2) TextureGen.px(im, x, y + 1, c(r, base + 1));
+            }
+        for (int x = 4; x <= 9; x++) TextureGen.px(im, x, 4, c(STEEL, 1));
+        rivets(im, r, base, new int[][]{{2, 2}});
+        lip(im, mv);
+        brickChamber(im, active);
+        lampOff(im, mv);
+        return im;
+    }
+
+    /** One grinding wheel: bright teeth, dark grooves, flat face, raised hub boss. */
+    static void wheel(BufferedImage im, double cx, double cy, double phase) {
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double ox = x + 0.5 - cx, oy = y + 0.5 - cy, d2 = ox * ox + oy * oy;
+                if (d2 > 8.0) continue;
+                boolean lit = ox + oy < 0;
+                double d = Math.sqrt(d2);
+                int col;
+                if (d <= 0.8) {
+                    col = c(STEEL, ox < 0 ? (oy < 0 ? 5 : 2) : (oy < 0 ? 2 : 1));
+                } else if (d <= 1.9) {
+                    col = c(STEEL, 3);
+                } else {
+                    int sector = Math.floorMod((int) Math.floor((Math.atan2(oy, ox) + phase) / (Math.PI / 4)), 2);
+                    col = c(STEEL, sector == 0 ? (lit ? 5 : 4) : (lit ? 3 : 2));
+                }
+                TextureGen.px(im, x, y, col);
+            }
+    }
+
+    static final int[][][] GRIT_FLOOR = {{{7, 10}, {9, 11}}, {{8, 10}, {7, 11}}, {{8, 11}, {8, 10}}, {{6, 11}, {7, 11}}};
+
+    static BufferedImage maceratorFront(boolean mv, int frame, boolean active) {
+        BufferedImage im = frontBase(mv, mv ? 721 : 720);
+        lip(im, mv);
+        fill(im, 2, 6, 13, 11, c(STEEL, 1));
+        double ph = active ? frame * Math.PI / 8 : 0;
+        wheel(im, 5, 9, ph);
+        wheel(im, 11, 9, -ph + Math.PI / 4);
+        // intake hopper over the nip between the wheels (columns 7 and 8)
+        for (int x = 5; x <= 10; x++) TextureGen.px(im, x, 1, c(STEEL, x == 5 ? 5 : (x == 10 ? 2 : 4)));
+        TextureGen.px(im, 5, 2, c(STEEL, 4));
+        TextureGen.px(im, 10, 2, c(STEEL, 2));
+        for (int x = 6; x <= 9; x++) TextureGen.px(im, x, 2, c(STEEL, 1));
+        TextureGen.px(im, 6, 3, c(STEEL, 4));
+        TextureGen.px(im, 9, 3, c(STEEL, 2));
+        for (int x = 7; x <= 8; x++)
+            for (int y = 3; y <= 5; y++) TextureGen.px(im, x, y, c(STEEL, 1));
+        if (active) {
+            TextureGen.px(im, 7, 2 + frame, c(TextureGen.LIMESTONE, 5));
+            TextureGen.px(im, 8, 2 + (frame + 2) % 4, c(TextureGen.LIMESTONE, 4));
+            TextureGen.px(im, GRIT_FLOOR[frame][0][0], GRIT_FLOOR[frame][0][1], c(TextureGen.LIMESTONE, 5));
+            TextureGen.px(im, GRIT_FLOOR[frame][1][0], GRIT_FLOOR[frame][1][1], c(TextureGen.GRANITE, 4));
+        }
+        lampOff(im, mv);
+        return im;
+    }
+
+    static BufferedImage maceratorStrip(boolean mv) {
+        BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(maceratorFront(mv, f, true), 0, f * 16, null);
+        return strip;
+    }
+
+    // ---- GUI
+
+    static void lane(BufferedImage im, int y, int outputs) {
+        TextureGen.slot(im, 44, y);
+        TextureGen.arrow(im, 68, y);
+        for (int i = 0; i < outputs; i++) TextureGen.slot(im, 98 + 18 * i, y);
+    }
+
+    /** 176x176 electric machine screen: one or two lanes, power bar well, player inventory at y 94. */
+    static BufferedImage machineGui(int[] laneY, int outputs) {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        TextureGen.panel(im, 176, 176);
+        TextureGen.well(im, 16, 17, 10, 54, 0x2b2b30);
+        for (int y : laneY) lane(im, y, outputs);
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) TextureGen.slot(im, 8 + col * 18, 94 + row * 18);
+        for (int col = 0; col < 9; col++) TextureGen.slot(im, 8 + col * 18, 152);
+        return im;
+    }
+
+    // ---- sprites
+
+    static int desat(int col) { return TextureGen.mix(col, 0x808080, 0.28); }
+
+    static BufferedImage powerBar(int[] ramp) {
+        BufferedImage im = new BufferedImage(8, 52, BufferedImage.TYPE_INT_ARGB);
+        for (int y = 0; y < 52; y++)
+            for (int x = 0; x < 8; x++) {
+                int col = x == 0 ? desat(ramp[3]) : desat(ramp[2]);
+                if (x > 0 && y % 13 == 12) col = desat(ramp[1]);
+                TextureGen.px(im, x, y, col);
+            }
+        return im;
+    }
+
+    static final int[][] EJECT_BOX = {
+            {3, 3}, {4, 3}, {5, 3}, {6, 3}, {7, 3}, {3, 4}, {3, 5}, {3, 6}, {3, 7}, {3, 8}, {3, 9},
+            {3, 10}, {4, 10}, {5, 10}, {6, 10}, {7, 10}};
+    static final int[][] EJECT_ARROW = {
+            {5, 6}, {6, 6}, {7, 6}, {8, 6}, {5, 7}, {6, 7}, {7, 7}, {8, 7},
+            {9, 4}, {9, 5}, {9, 6}, {9, 7}, {9, 8}, {9, 9}, {10, 5}, {10, 6}, {10, 7}, {10, 8}, {11, 6}, {11, 7}};
+
+    static BufferedImage ejectButton(boolean on) {
+        BufferedImage im = new BufferedImage(14, 14, BufferedImage.TYPE_INT_ARGB);
+        int face = on ? 0xaeaeae : TextureGen.GUI_FACE;
+        int tl = on ? TextureGen.SLOT_DARK : TextureGen.GUI_LIGHT;
+        int br = on ? TextureGen.GUI_LIGHT : TextureGen.GUI_SHADOW;
+        fill(im, 0, 0, 13, 13, face);
+        for (int i = 0; i < 14; i++) {
+            TextureGen.px(im, i, 0, tl);
+            TextureGen.px(im, 0, i, tl);
+            TextureGen.px(im, i, 13, br);
+            TextureGen.px(im, 13, i, br);
+        }
+        TextureGen.px(im, 13, 0, face);
+        TextureGen.px(im, 0, 13, face);
+        int o = on ? 1 : 0;
+        for (int[] p : EJECT_BOX) TextureGen.px(im, p[0] + o - (on ? 0 : 0), p[1] + o, TextureGen.SLOT_DARK);
+        for (int[] p : EJECT_ARROW) TextureGen.px(im, p[0] + o, p[1] + o, on ? RUN[1] : TextureGen.SLOT_DARK);
+        if (on) for (int[] p : new int[][]{{9, 4}, {9, 5}, {10, 5}, {5, 6}, {6, 6}, {7, 6}, {8, 6}})
+            TextureGen.px(im, p[0] + 1, p[1] + 1, RUN[2]);
+        return im;
+    }
+
+    static BufferedImage ejectHighlight() {
+        BufferedImage im = new BufferedImage(14, 14, BufferedImage.TYPE_INT_ARGB);
+        for (int i = 0; i < 14; i++) {
+            TextureGen.px(im, i, 0, 0xf4f4f0);
+            TextureGen.px(im, i, 13, 0xf4f4f0);
+            TextureGen.px(im, 0, i, 0xf4f4f0);
+            TextureGen.px(im, 13, i, 0xf4f4f0);
+        }
+        return im;
+    }
+
+    static final Map<Character, String[]> LETTERS = Map.of(
+            'L', new String[]{"#...", "#...", "#...", "#...", "####"},
+            'V', new String[]{"#...#", "#...#", ".#.#.", ".#.#.", "..#.."},
+            'M', new String[]{"#...#", "##.##", "#.#.#", "#...#", "#...#"});
+
+    static BufferedImage tierBadge(boolean mv) {
+        BufferedImage im = new BufferedImage(15, 9, BufferedImage.TYPE_INT_ARGB);
+        TextureGen.Ramp r = tierRamp(mv);
+        int base = mv ? 4 : 3;
+        fill(im, 0, 0, 14, 8, c(r, base));
+        for (int x = 0; x < 15; x++) {
+            TextureGen.px(im, x, 0, c(r, base + 1));
+            TextureGen.px(im, x, 8, c(r, base - 1));
+        }
+        for (int y = 0; y < 9; y++) {
+            TextureGen.px(im, 0, y, c(r, base + 1));
+            TextureGen.px(im, 14, y, c(r, base - 1));
+        }
+        TextureGen.px(im, 14, 0, c(r, base));
+        TextureGen.px(im, 0, 8, c(r, base));
+        for (int[] p : new int[][]{{0, 0}, {14, 0}, {0, 8}, {14, 8}}) im.setRGB(p[0], p[1], 0);
+        String word = mv ? "MV" : "LV";
+        int w = (mv ? 5 : 4) + 1 + 5, x0 = 1 + (13 - w) / 2, y0 = 2;
+        for (char ch : word.toCharArray()) {
+            String[] g = LETTERS.get(ch);
+            for (int j = 0; j < g.length; j++)
+                for (int i = 0; i < g[j].length(); i++)
+                    if (g[j].charAt(i) == '#') TextureGen.px(im, x0 + i, y0 + j, c(STEEL, 1));
+            x0 += g[0].length() + 1;
+        }
+        return im;
+    }
+
+    static void machines() throws IOException {
+        for (boolean mv : new boolean[]{false, true}) {
+            String t = mv ? "mv" : "lv";
+            save("block/electric_furnace_front_" + t, furnaceFront(mv, false));
+            save("block/electric_furnace_front_" + t + "_active", furnaceFront(mv, true));
+            save("block/macerator_front_" + t, maceratorFront(mv, 0, false));
+            TextureGen.saveAnimated("block/macerator_front_" + t + "_active", maceratorStrip(mv), 2);
+            TextureGen.saveRaw("gui/sprites/container/electric_machine/tier_" + t, tierBadge(mv));
+        }
+        save("block/overlay/status_run", lampOverlay(RUN));
+        save("block/overlay/status_wait", lampOverlay(WAIT));
+        save("block/overlay/status_error", lampOverlay(ERROR));
+
+        int[] one = {35}, two = {24, 46};
+        TextureGen.saveRaw("gui/electric_furnace", machineGui(one, 1));
+        TextureGen.saveRaw("gui/electric_furnace_mv", machineGui(two, 1));
+        TextureGen.saveRaw("gui/macerator", machineGui(one, 3));
+        TextureGen.saveRaw("gui/macerator_mv", machineGui(two, 3));
+
+        String sp = "gui/sprites/container/electric_machine/";
+        TextureGen.saveRaw(sp + "power_bar_run", powerBar(RUN));
+        TextureGen.saveRaw(sp + "power_bar_low", powerBar(WAIT));
+        TextureGen.saveRaw(sp + "power_bar_stopped", powerBar(ERROR));
+        TextureGen.saveRaw(sp + "eject_off", ejectButton(false));
+        TextureGen.saveRaw(sp + "eject_on", ejectButton(true));
+        TextureGen.saveRaw(sp + "eject_highlighted", ejectHighlight());
+    }
+
     // ---------------------------------------------------------------- main
 
     public static void main(String[] args) throws IOException {
@@ -833,6 +1134,7 @@ public final class ElectricTextures {
         items();
         rubber();
         redAlloy();
+        machines();
         preview();
         System.out.println("wrote " + OUTS.size() + " textures");
     }

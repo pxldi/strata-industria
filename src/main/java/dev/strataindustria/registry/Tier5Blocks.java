@@ -3,6 +3,9 @@ package dev.strataindustria.registry;
 import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
+import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
+import dev.strataindustria.electric.machine.ElectricMachineBlock;
+import dev.strataindustria.electric.machine.MaceratorBlockEntity;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.rubber.TreeTapBlock;
 import net.minecraft.sounds.SoundEvents;
@@ -52,6 +55,14 @@ public final class Tier5Blocks {
 
     /** Spec 9.5: the shell every electric machine is built around; also a decorative block. */
     public static final DeferredBlock<Block> LV_MACHINE_HULL = ModBlocks.BLOCKS.registerSimpleBlock("lv_machine_hull", Tier5Blocks::machine);
+
+    // Spec 10.2 and 10.3: the first electric machines.
+    public static final DeferredBlock<ElectricMachineBlock<ElectricFurnaceBlockEntity>> ELECTRIC_FURNACE = ModBlocks.BLOCKS.registerBlock(
+            "electric_furnace", p -> new ElectricMachineBlock<>(Tier5BlockEntities.ELECTRIC_FURNACE, ElectricFurnaceBlockEntity::new, p),
+            Tier5Blocks::machine);
+    public static final DeferredBlock<ElectricMachineBlock<MaceratorBlockEntity>> MACERATOR = ModBlocks.BLOCKS.registerBlock(
+            "macerator", p -> new ElectricMachineBlock<>(Tier5BlockEntities.MACERATOR, MaceratorBlockEntity::new, p),
+            Tier5Blocks::machine);
 
     private static Block.Properties cable(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BLACK)

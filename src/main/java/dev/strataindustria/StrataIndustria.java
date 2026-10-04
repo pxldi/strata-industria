@@ -51,6 +51,7 @@ public final class StrataIndustria {
         dev.strataindustria.registry.Tier5Blocks.init();
         dev.strataindustria.registry.Tier5Items.init();
         dev.strataindustria.registry.Tier5BlockEntities.init();
+        dev.strataindustria.registry.Tier5Menus.init();
         dev.strataindustria.registry.Tier5Sounds.init();
         dev.strataindustria.registry.Tier5DataComponents.init();
         dev.strataindustria.registry.Tier5Fluids.init();
