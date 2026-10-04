@@ -1,5 +1,10 @@
 {
   "values": [
+    "strataindustria:wooden_axle",
+    "strataindustria:wooden_gearbox",
+    "strataindustria:hand_crank",
+    "strataindustria:water_wheel",
+    "strataindustria:bellows",
     "strataindustria:fire_pit",
     "strataindustria:log_pile"
   ]

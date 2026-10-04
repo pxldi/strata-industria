@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "P": "#minecraft:planks",
+    "R": "strataindustria:wrought_iron_rod",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "PSP",
+    "SRS",
+    "PSP"
+  ],
+  "result": {
+    "id": "strataindustria:water_wheel"
+  }
+}

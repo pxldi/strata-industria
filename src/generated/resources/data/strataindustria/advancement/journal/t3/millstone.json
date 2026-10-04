@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t3/water_power",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "millstone"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.millstone.hint"
+    },
+    "icon": {
+      "id": "strataindustria:millstone"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.millstone"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

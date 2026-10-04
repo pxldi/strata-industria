@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:water_wheel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wrought_iron_rod": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:wrought_iron_rod"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wrought_iron_rod"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:water_wheel"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t3/water_power",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "bellows"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.bellows.hint"
+    },
+    "icon": {
+      "id": "strataindustria:bellows"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.bellows"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
