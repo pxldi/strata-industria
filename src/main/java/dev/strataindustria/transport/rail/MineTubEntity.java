@@ -62,7 +62,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
     /** What a steel rail keeps of a vehicle's speed each tick: a little under the vanilla rails. */
     private static final double STEEL_DRAG = 0.992;
     /** Fastest a follower is drawn after its lead: a little over the steel track limit. */
-    private static final double FOLLOW_CAP = 0.55;
+    private static final double FOLLOW_CAP = 0.65;
     /** How far a coupling reaches. */
     public static final double COUPLE_REACH = 3.0;
     /** Past this a follower has lost its lead and the coupling lets go. */
@@ -189,6 +189,8 @@ public class MineTubEntity extends AbstractMinecartContainer {
     @Override
     protected double getMaxSpeed(ServerLevel level) {
         RailGrade grade = grade();
+        // Wagons behind a tram keep up with it.
+        if (grade == RailGrade.STEEL && head() instanceof ElectricTramEntity) return ElectricTramEntity.TOP_SPEED;
         return grade == null ? super.getMaxSpeed(level) : grade.cap();
     }
 
@@ -654,6 +656,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
 
     /** Vehicles that may follow {@code lead}: a locomotive pulls more than a pony. */
     private static int maxConsist(MineTubEntity lead) {
+        if (lead instanceof ElectricTramEntity) return Config.TRANSPORT_MAX_CONSIST_T5.getAsInt();
         return lead instanceof SteamLocomotiveEntity ? Config.TRANSPORT_MAX_CONSIST_T4.getAsInt() : Config.TRANSPORT_MAX_CONSIST_T3.getAsInt();
     }
 
@@ -667,7 +670,7 @@ public class MineTubEntity extends AbstractMinecartContainer {
             case NONE -> Component.translatable(StrataIndustria.MOD_ID + ".tub.none");
             case FOLLOWING -> Component.translatable(StrataIndustria.MOD_ID + ".tub.following");
             case TOO_LONG -> Component.translatable(StrataIndustria.MOD_ID + ".tub.too_long", maxConsist(findFront() == null ? this : findFront().head()));
-            case LEADS -> Component.translatable(StrataIndustria.MOD_ID + (this instanceof PonyEntity ? ".pony.leads" : ".locomotive.leads"));
+            case LEADS -> Component.translatable(StrataIndustria.MOD_ID + (this instanceof PonyEntity ? ".pony.leads" : this instanceof ElectricTramEntity ? ".tram.leads" : ".locomotive.leads"));
         });
     }
 

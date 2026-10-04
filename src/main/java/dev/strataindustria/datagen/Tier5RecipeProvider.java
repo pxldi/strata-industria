@@ -510,6 +510,8 @@ final class Tier5RecipeProvider extends RecipeProvider {
         output.accept(key("clay_forming/unfired_insulator"), new dev.strataindustria.knapping.KnappingRecipe(Ingredient.of(Items.CLAY_BALL),
                 dev.strataindustria.knapping.Knapping.CLAY_OPENING_COST, 3, pattern, new ItemStackTemplate(Tier5Items.UNFIRED_INSULATOR.get(), 2)), null);
         assemble("acsr_conductor", 200, Tier5Items.ACSR_CONDUCTOR.get(), 4, null, Tier5Items.ALUMINIUM_WIRE.get(), 6, Tier5Items.STEEL_WIRE.get(), 1);
+        // Outposts spec 9.2: trolley wire, assembler only.
+        assemble("trolley_wire", 200, dev.strataindustria.transport.rail.TramRegistry.TROLLEY_WIRE.get(), 8, null, Tier5Items.COPPER_WIRE.get(), 4, Tier5Items.STEEL_WIRE.get(), 1);
     }
 
     // Spec 10.8 and 10.9: the power hammer, the extruder and the extruder's recipes. H hull, C circuit, M motor.

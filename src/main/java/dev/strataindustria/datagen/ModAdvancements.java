@@ -279,6 +279,8 @@ final class ModAdvancements extends AdvancementSubProvider {
                 AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.TELEGRAPH_CALL));
         goal(telegraph, "t5/dispatch", dev.strataindustria.transport.telegraph.TelegraphRegistry.BOARD_ITEM.get(),
                 AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.DISPATCH_BOARD_LINES));
+        goal(powerLine, "t5/tram", dev.strataindustria.transport.rail.TramRegistry.ELECTRIC_TRAM.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.TRAM_DISTANCE));
         AdvancementHolder pipe = goal(machine, "t5/item_pipe", Tier5Logistics.ITEM_PIPE_ITEM.get(), JournalTrigger.TriggerInstance.of(Journal.ITEM_PIPE));
         AdvancementHolder storage = goal(pipe, "t5/storage", Tier5Logistics.STORAGE_CONTROLLER_ITEM.get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.STORAGE));

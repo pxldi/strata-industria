@@ -13,4 +13,6 @@ public class MineTubRenderState extends MinecartRenderState {
     public boolean directional;
     /** How far the coupling rods have turned, in radians. */
     public float wheelPhase;
+    /** The tram's trolley pole lean and bell swing, in radians. */
+    public float poleAngle, bellSwing;
 }

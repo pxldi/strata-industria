@@ -61,7 +61,9 @@ public final class TramwayRoutes {
                     List<BlockPos> route = trace.route();
                     route.add(stop.immutable());
                     // A locomotive proves a railway; the T4 area needs the whole route in steel track (outposts spec 7.1).
-                    LinkKind kind = !(lead instanceof SteamLocomotiveEntity) ? LinkKind.TRAMWAY
+                    // A tram runs a T5 tram line, a locomotive a railway; either needs steel track the whole way (outposts spec 7.1 and 9.5).
+                    LinkKind kind = lead instanceof ElectricTramEntity ? RailGrade.steelRoute(level, route) ? LinkKind.TRAM : LinkKind.RAILWAY_MIXED
+                            : !(lead instanceof SteamLocomotiveEntity) ? LinkKind.TRAMWAY
                             : RailGrade.steelRoute(level, route) ? LinkKind.RAILWAY : LinkKind.RAILWAY_MIXED;
                     RouteIndex.Proof proof = index.prove(level, from.id(), to.id(), kind, route);
                     if (proof.refusal() != null) {

@@ -856,6 +856,32 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.chain.place", event).pitch(0.9f).volume(0.5f))
                 .with(sound("minecraft:entity.item.pickup", event).pitch(0.8f).volume(0.4f))
                 .with(sound("minecraft:block.barrel.close", event).pitch(1.2f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.TramRegistry.MOTOR, definition().subtitle(subtitle("tram.motor"))
+                .with(sound("minecraft:block.beacon.ambient", event).pitch(1.6f).volume(0.3f))
+                .with(sound("minecraft:block.beacon.ambient", event).pitch(1.9f).volume(0.22f))
+                .with(sound("minecraft:block.piston.contract", event).pitch(2.0f).volume(0.08f)));
+        add(dev.strataindustria.transport.rail.TramRegistry.SPARK, definition().subtitle(subtitle("tram.spark"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.9f).volume(0.5f))
+                .with(sound("minecraft:block.amethyst_block.hit", event).pitch(2.0f).volume(0.4f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(2.0f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.TramRegistry.BELL, definition().subtitle(subtitle("tram.bell"))
+                .with(sound("minecraft:block.bell.use", event).pitch(1.7f).volume(0.8f))
+                .with(sound("minecraft:block.note_block.bell", event).pitch(1.0f).volume(0.5f))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.2f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.TramRegistry.CONTACT, definition().subtitle(subtitle("tram.contact"))
+                .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.8f).volume(0.6f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.4f).volume(0.5f))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(2.0f).volume(0.25f)));
+        add(dev.strataindustria.transport.rail.TramRegistry.LOSE_WIRE, definition().subtitle(subtitle("tram.lose_wire"))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.8f).volume(0.6f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.4f).volume(0.5f)));
+        add(dev.strataindustria.transport.rail.TramRegistry.WIRE_STRUNG, definition().subtitle(subtitle("trolley_wire.strung"))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.4f).volume(0.6f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.8f).volume(0.4f))
+                .with(sound("minecraft:block.amethyst_block.hit", event).pitch(1.5f).volume(0.35f)));
+        add(dev.strataindustria.transport.rail.TramRegistry.WIRE_CUT, definition().subtitle(subtitle("trolley_wire.cut"))
+                .with(sound("minecraft:block.chain.break", event).pitch(1.2f).volume(0.6f))
+                .with(sound("minecraft:block.tripwire.detach", event).pitch(1.2f).volume(0.7f)));
         telegraphSounds(event);
         add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
                 .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "D": "strataindustria:steel_rod",
+    "E": "strataindustria:steel_plate",
+    "G": "minecraft:glass_pane",
+    "M": "strataindustria:electric_motor",
+    "c": "strataindustria:basic_circuit",
+    "h": "strataindustria:lv_machine_hull"
+  },
+  "pattern": [
+    "EGE",
+    "MhM",
+    "DcD"
+  ],
+  "result": {
+    "id": "strataindustria:electric_tram"
+  }
+}
