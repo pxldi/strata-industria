@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": "strataindustria:refractory_casing",
+    "G": "strataindustria:pressure_gauge",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "PGP",
+    "PCP",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:converter_controller"
+  }
+}

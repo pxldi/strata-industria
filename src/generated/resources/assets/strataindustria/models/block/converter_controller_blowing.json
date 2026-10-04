@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "strataindustria:block/converter_controller_front_blowing",
+    "side": "strataindustria:block/refractory_casing",
+    "top": "strataindustria:block/refractory_casing"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t4/blast_furnace",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "converter"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.converter.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:converter_controller"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.converter"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
