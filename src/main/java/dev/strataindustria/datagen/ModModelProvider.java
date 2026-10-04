@@ -103,6 +103,15 @@ final class ModModelProvider extends ModelProvider {
         groundFlat(blockModels, ModBlocks.LOOSE_STICK.get(), "loose_stick");
         groundFlat(blockModels, ModBlocks.LOOSE_FLINT.get(), "loose_flint");
 
+        // Indicator plants: cross models, and the flat item uses the block texture.
+        for (var plant : dev.strataindustria.flora.FloraBlocks.PLANTS.values()) {
+            Block block = plant.get();
+            var model = ModelTemplates.CROSS.create(block, TextureMapping.cross(block), blockModels.modelOutput);
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block, BlockModelGenerators.plainVariant(model)));
+            var item = ModelTemplates.FLAT_ITEM.create(block.asItem(), TextureMapping.layer0(block), blockModels.modelOutput);
+            itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(item));
+        }
+
         // Fire pit: hand-built models in resources (stone ring, sticks, campfire flames when lit).
         var firePit = StrataIndustria.id("block/fire_pit");
         PropertyDispatch.C1<MultiVariant, Boolean> firePitLit = PropertyDispatch.initial(FirePitBlock.LIT);

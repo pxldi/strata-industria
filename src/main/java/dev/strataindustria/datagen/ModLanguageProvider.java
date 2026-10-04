@@ -516,6 +516,11 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "steam_hammer.strike", "Steam hammer strikes");
         String engine = id + ".steam_engine.";
         addBlock(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE, "Steam Whistle");
+        addBlock(dev.strataindustria.flora.FloraBlocks.PLANTS.get(dev.strataindustria.flora.IndicatorPlant.COPPER_FLOWER), "Copper Flower");
+        addBlock(dev.strataindustria.flora.FloraBlocks.PLANTS.get(dev.strataindustria.flora.IndicatorPlant.HORSETAIL), "Horsetail");
+        addBlock(dev.strataindustria.flora.FloraBlocks.PLANTS.get(dev.strataindustria.flora.IndicatorPlant.STUNTED_BIRCH), "Stunted Birch");
+        addBlock(dev.strataindustria.flora.FloraBlocks.PLANTS.get(dev.strataindustria.flora.IndicatorPlant.PINK_THRIFT), "Pink Thrift");
+        addBlock(dev.strataindustria.flora.FloraBlocks.PLANTS.get(dev.strataindustria.flora.IndicatorPlant.LOCOWEED), "Locoweed");
         add(subtitles + "tap.ring", "Ore rings clean");
         add(subtitles + "tap.knock", "Hammer knocks");
         add(subtitles + "tap.thud", "Hammer thuds dully");

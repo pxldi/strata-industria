@@ -61,6 +61,7 @@ public record PlacerFeature() implements Feature {
                 }
             }
         }
+        if (placed) dev.strataindustria.flora.IndicatorPlants.horsetailBank(level, random, minX, minZ, x, z, radius);
         return placed;
     }
 
