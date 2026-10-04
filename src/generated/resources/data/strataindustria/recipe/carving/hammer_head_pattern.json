@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:knapping",
+  "ingredient": "strataindustria:pattern_blank",
+  "pattern": [
+    ".....",
+    ".....",
+    "##.##",
+    "#####",
+    "#####"
+  ],
+  "result": {
+    "id": "strataindustria:hammer_head_pattern"
+  }
+}

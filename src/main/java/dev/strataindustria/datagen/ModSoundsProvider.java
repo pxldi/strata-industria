@@ -23,6 +23,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         tier5();
         tier6();
         prologue();
+        patterns();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -412,6 +413,20 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
 
     private static String subtitle(String name) {
         return "subtitles." + StrataIndustria.MOD_ID + "." + name;
+    }
+
+    /** Pattern casting, from vanilla wood and sand samples. */
+    private void patterns() {
+        SoundDefinition carve = definition().subtitle(subtitle("pattern.carve"));
+        for (int i = 1; i <= 4; i++) carve.with(sound("minecraft:dig/wood" + i).pitch(1.6f).volume(0.45f));
+        add(dev.strataindustria.registry.PatternRegistry.PATTERN_CARVE, carve);
+        SoundDefinition finish = definition().subtitle(subtitle("pattern.finish"));
+        for (int i = 1; i <= 4; i++) finish.with(sound("minecraft:dig/wood" + i).pitch(1.0f).volume(0.7f));
+        add(dev.strataindustria.registry.PatternRegistry.PATTERN_FINISH, finish);
+        SoundDefinition press = definition().subtitle(subtitle("pattern.press"));
+        for (int i = 1; i <= 4; i++) press.with(sound("minecraft:dig/sand" + i).pitch(0.8f).volume(0.8f));
+        for (int i = 1; i <= 2; i++) press.with(sound("minecraft:dig/wood" + i).pitch(0.7f).volume(0.5f));
+        add(dev.strataindustria.registry.PatternRegistry.PATTERN_PRESS, press);
     }
 
     /** The brick kiln and the casting table, from vanilla fire, stone and pottery samples. */

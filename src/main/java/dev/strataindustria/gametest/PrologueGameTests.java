@@ -10,18 +10,27 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.heat.Heat;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.metal.CastingTableBlockEntity;
+import dev.strataindustria.knapping.KnappingInput;
+import dev.strataindustria.knapping.KnappingRecipe;
+import dev.strataindustria.metal.CastMoldItem;
 import dev.strataindustria.metal.CrucibleBlockEntity;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
+import dev.strataindustria.registry.ModRecipes;
+import dev.strataindustria.registry.PatternRegistry;
 import dev.strataindustria.registry.PrologueRegistry;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,6 +43,7 @@ final class PrologueGameTests {
     static void register(Map<String, Consumer<GameTestHelper>> tests) {
         tests.put("brick_kiln", PrologueGameTests::brickKiln);
         tests.put("casting_table", PrologueGameTests::castingTable);
+        tests.put("pattern_casting", PrologueGameTests::patternCasting);
     }
 
     private static ForgeBlockEntity lightForge(GameTestHelper helper, BlockPos forgePos) {
@@ -134,6 +144,54 @@ final class PrologueGameTests {
         for (ItemStack held : smith.getInventory().getNonEquipmentItems()) if (held.is(ModItems.ingot(Metal.COPPER))) ingots += held.getCount();
         helper.assertValueEqual(ingots, 2, "copper ingots in the player's hands");
         helper.assertTrue(!table.molds().get(0).has(ModDataComponents.CAST_CONTENTS.get()), "the molds are free again");
+        helper.succeed();
+    }
+
+    // Pattern casting: every shape can be carved from a blank, a pattern presses a sand flask into a mold and
+    // is kept, and a sand mold sits on the table, takes steel and cracks after one casting.
+
+    private static void patternCasting(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        ItemStack blank = new ItemStack(PatternRegistry.PATTERN_BLANK.get());
+        int carved = 0;
+        for (RecipeHolder<KnappingRecipe> holder : level.recipeAccess().recipeMap().byType(ModRecipes.KNAPPING.get())) {
+            KnappingRecipe recipe = holder.value();
+            if (!recipe.ingredient().test(blank)) continue;
+            List<RecipeHolder<KnappingRecipe>> found = level.recipeAccess().recipeMap()
+                    .getRecipesFor(ModRecipes.KNAPPING.get(), new KnappingInput(blank, recipe.pattern()), level).toList();
+            helper.assertValueEqual(found.size(), 1, "recipes for " + holder.id());
+            helper.assertTrue(recipe.assemble(new KnappingInput(blank, recipe.pattern())).getItem() instanceof dev.strataindustria.casting.PatternItem,
+                    "a carving gives a pattern");
+            carved++;
+        }
+        helper.assertValueEqual(carved, PatternRegistry.SHAPES.size(), "carvable shapes");
+
+        FakePlayer smith = new FakePlayer(level, new GameProfile(UUID.randomUUID(), "smith"));
+        ItemStack pattern = new ItemStack(PatternRegistry.PATTERNS.get("pickaxe_head").get());
+        smith.setItemInHand(InteractionHand.MAIN_HAND, pattern);
+        helper.assertValueEqual(pattern.getItem().use(level, smith, InteractionHand.MAIN_HAND), InteractionResult.FAIL, "pressing with no flask");
+        smith.getInventory().add(new ItemStack(PatternRegistry.SAND_FLASK.get(), 2));
+        helper.assertValueEqual(pattern.getItem().use(level, smith, InteractionHand.MAIN_HAND), InteractionResult.SUCCESS, "pressing with a flask");
+        int flasks = 0, molds = 0;
+        for (ItemStack held : smith.getInventory().getNonEquipmentItems()) {
+            if (held.is(PatternRegistry.SAND_FLASK.get())) flasks += held.getCount();
+            if (held.is(PatternRegistry.SAND_MOLDS.get("pickaxe_head").get())) molds += held.getCount();
+        }
+        helper.assertValueEqual(flasks, 1, "flasks left");
+        helper.assertValueEqual(molds, 1, "sand molds made");
+        helper.assertTrue(smith.getItemInHand(InteractionHand.MAIN_HAND).is(pattern.getItem()), "the pattern is kept");
+
+        CastMoldItem sand = PatternRegistry.SAND_MOLDS.get("pickaxe_head").get();
+        helper.assertTrue(sand.takes(Metal.STEEL.meltingPoint()), "sand takes steel");
+        helper.assertValueEqual(sand.type(), dev.strataindustria.ceramics.MoldType.PICKAXE_HEAD, "the mold casts a pickaxe head");
+        helper.assertTrue(CastMoldItem.breaks(new ItemStack(sand), level.getRandom()), "a sand mold cracks after one casting");
+        helper.assertTrue(!CastMoldItem.breaks(new ItemStack(ModItems.INGOT_MOLD.get()), level.getRandom()), "a fired mold survives");
+        BlockPos tablePos = helper.absolutePos(new BlockPos(4, 1, 4));
+        level.setBlock(tablePos, PrologueRegistry.CASTING_TABLE.get().defaultBlockState(), Block.UPDATE_ALL);
+        CastingTableBlockEntity table = (CastingTableBlockEntity) level.getBlockEntity(tablePos);
+        helper.assertTrue(CastingTableBlockEntity.accepts(new ItemStack(sand)), "the table takes sand molds");
+        helper.assertTrue(table.place(new ItemStack(sand)), "laid on the table");
+        helper.assertTrue(table.hasEmptyMold(), "an unfilled sand mold is ready to pour into");
         helper.succeed();
     }
 }

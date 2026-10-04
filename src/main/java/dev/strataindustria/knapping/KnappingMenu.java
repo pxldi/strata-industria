@@ -131,7 +131,7 @@ public class KnappingMenu extends AbstractContainerMenu {
             if (extra > 0) taker.getItemInHand(hand).shrink(extra);
         }
         finished.set(1);
-        if (taker instanceof ServerPlayer player) Journal.award(player, Knapping.isClay(material) ? Journal.CLAY_FORMING : Journal.KNAP);
+        if (taker instanceof ServerPlayer player && !Knapping.isWood(material)) Journal.award(player, Knapping.isClay(material) ? Journal.CLAY_FORMING : Journal.KNAP);
         taker.level().playSound(null, taker.getX(), taker.getY(), taker.getZ(), Knapping.finishSound(material),
                 SoundSource.PLAYERS, 0.8f, 1.0f);
         broadcastChanges();

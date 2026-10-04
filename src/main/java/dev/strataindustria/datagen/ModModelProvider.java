@@ -214,6 +214,10 @@ final class ModModelProvider extends ModelProvider {
             castMold(itemModels, ModItems.MOLDS.get(type).get());
         }
         castMold(itemModels, ModItems.INGOT_MOLD.get());
+        flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.PATTERN_BLANK.get());
+        flatItem(itemModels, dev.strataindustria.registry.PatternRegistry.SAND_FLASK.get());
+        for (var pattern : dev.strataindustria.registry.PatternRegistry.PATTERNS.values()) flatItem(itemModels, pattern.get());
+        for (var mold : dev.strataindustria.registry.PatternRegistry.SAND_MOLDS.values()) castMold(itemModels, mold.get());
     }
 
     /** A fired mold shows the cast metal in its cavity once it has been poured. */

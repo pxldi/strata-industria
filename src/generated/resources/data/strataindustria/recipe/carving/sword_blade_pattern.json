@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:knapping",
+  "ingredient": "strataindustria:pattern_blank",
+  "pattern": [
+    "###..",
+    "##..#",
+    "#..##",
+    "..###",
+    ".####"
+  ],
+  "result": {
+    "id": "strataindustria:sword_blade_pattern"
+  }
+}
