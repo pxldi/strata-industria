@@ -29,6 +29,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         // Tier 5: casings need a pickaxe; cables come off by hand.
         tag(dev.strataindustria.rubber.Tappable.TAG).add(net.minecraft.world.level.block.Blocks.JUNGLE_LOG.builtInRegistryHolder().key());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.registry.Tier5Blocks.KINETIC_DYNAMO.getKey())
+                .add(dev.strataindustria.registry.Tier6Blocks.OIL_STILL.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.BATTERY_BOX.getKey()).add(dev.strataindustria.registry.Tier5Blocks.LV_MACHINE_HULL.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.ELECTRIC_FURNACE.getKey()).add(dev.strataindustria.registry.Tier5Blocks.MACERATOR.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.WIREMILL.getKey()).add(dev.strataindustria.registry.Tier5Blocks.BENDER.getKey())
@@ -108,7 +109,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         ores.add(ModBlocks.BOG_IRON.getKey());
         tag(Tags.Blocks.ORES_IRON).add(ModBlocks.BOG_IRON.getKey());
         tag(ModTags.Blocks.NEEDS_BRONZE_TOOL).add(ModBlocks.BOG_IRON.getKey());
-        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.BOG_IRON.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
+        tag(BlockTags.MINEABLE_WITH_SHOVEL).add(ModBlocks.BOG_IRON.getKey()).add(ModBlocks.BAUXITE_BED.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
                 .add(ModBlocks.PLACER_GRAVEL.getKey()).add(ModBlocks.PLACER_SAND.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_BRICKS.getKey())
                 .add(ModBlocks.BLOOMERY.getKey())
@@ -158,7 +159,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.WOODEN_SLABS).add(Tier4Blocks.TREATED_SLAB.getKey());
         tag(BlockTags.WOODEN_STAIRS).add(Tier4Blocks.TREATED_STAIRS.getKey());
         tag(BlockTags.WOODEN_FENCES).add(Tier4Blocks.TREATED_FENCE.getKey());
-        tag(ModTags.Blocks.PROSPECTABLE).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
+        tag(ModTags.Blocks.PROSPECTABLE).add(ModBlocks.BAUXITE_BED.getKey()).add(ModBlocks.LIGNITE_SEAM.getKey()).add(ModBlocks.FIRE_CLAY.getKey())
                 .add(ModBlocks.BOG_IRON.getKey());
 
         // Mining tiers: stone < copper < bronze < wrought iron < steel. Vanilla diamond and above still apply.

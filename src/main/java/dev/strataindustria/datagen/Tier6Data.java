@@ -52,6 +52,7 @@ final class Tier6Data {
         add.accept(Tier6Items.NAPHTHA_BUCKET.get().getDescriptionId(), "Naphtha Bucket");
         add.accept(Tier6Items.DIESEL_BUCKET.get().getDescriptionId(), "Diesel Bucket");
         add.accept(Tier6Items.HEAVY_OIL_BUCKET.get().getDescriptionId(), "Heavy Oil Bucket");
+        add.accept(Tier6Blocks.OIL_STILL.get().getDescriptionId(), "Oil Still");
         add.accept(Tier6Items.BITUMEN.get().getDescriptionId(), "Bitumen");
         add.accept(Tier6Items.POLYETHYLENE_PELLET.get().getDescriptionId(), "Polyethylene Pellet");
         add.accept(Tier6Items.POLYETHYLENE_SHEET.get().getDescriptionId(), "Polyethylene Sheet");
@@ -69,7 +70,28 @@ final class Tier6Data {
         add.accept("fluid_type." + id + ".vinyl_chloride", "Vinyl Chloride");
         add.accept("fluid_type." + id + ".hydrogen_chloride", "Hydrogen Chloride");
 
+        add.accept("container." + id + ".oil_still", "Oil Still");
+        String still = id + ".oil_still.";
+        add.accept(still + "status.empty", "Pour in crude oil");
+        add.accept(still + "status.no_recipe", "That does not distil");
+        add.accept(still + "status.tank_full", "Product tank full");
+        add.accept(still + "status.needs_heat", "Needs heat");
+        add.accept(still + "status.distilling", "Distilling");
+        add.accept(still + "crude", "Crude %s / %s mB");
+        add.accept(still + "product", "%s %s / %s mB");
+        add.accept(still + "empty_tank", "Empty");
+        add.accept(still + "take", "Click with an empty bucket in your pack to fill it");
+        add.accept(still + "port.1", "naphtha only");
+        add.accept(still + "port.2", "diesel only");
+        add.accept(still + "port.3", "heavy oil only");
+        add.accept(id + ".heat_line.oil_still", "Heat");
+        String jei = dev.strataindustria.compat.recipeview.RecipeText.KEY;
+        add.accept(jei + "category.oil_still", "Oil Still");
+        add.accept(jei + "oil_still.vented", "Vents %s mB of gas");
+
         String subtitles = "subtitles." + id + ".";
+        add.accept(subtitles + "block.oil_still.boil", "Oil still bubbles");
+        add.accept(subtitles + "block.oil_still.vent", "Oil still vents gas");
         add.accept(subtitles + "item.bucket.fill_crude_oil", "Bucket fills with crude oil");
         add.accept(subtitles + "item.bucket.empty_crude_oil", "Bucket empties crude oil");
         add.accept(subtitles + "block.crude_oil.bubble", "Crude oil bubbles");

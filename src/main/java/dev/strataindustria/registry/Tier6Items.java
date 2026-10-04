@@ -1,6 +1,7 @@
 package dev.strataindustria.registry;
 
 import java.util.List;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -24,6 +25,9 @@ public final class Tier6Items {
     public static final DeferredItem<Item> PVC_PELLET = ModItems.ITEMS.registerSimpleItem("pvc_pellet");
     public static final DeferredItem<Item> PVC_SHEET = ModItems.ITEMS.registerSimpleItem("pvc_sheet");
     public static final DeferredItem<Item> SYNTHETIC_RUBBER = ModItems.ITEMS.registerSimpleItem("synthetic_rubber");
+
+    /** Spec 5.5: the oil still. */
+    public static final DeferredItem<BlockItem> OIL_STILL = ModItems.ITEMS.registerSimpleBlockItem(Tier6Blocks.OIL_STILL);
 
     /** Plain items with a flat item model and a texture of the same name. */
     public static List<DeferredItem<? extends Item>> flatItems() {

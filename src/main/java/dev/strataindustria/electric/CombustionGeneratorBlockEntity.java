@@ -88,7 +88,7 @@ public class CombustionGeneratorBlockEntity extends BlockEntity implements Elect
 
     @Override
     public int fill(Direction side, Fluid fluid, int amount, float pressure, boolean simulate) {
-        if (LiquidFuel.of(fluid) == null || this.amount > 0 && !this.fluid.isSame(fluid)) return 0;
+        if (!LiquidFuel.generates(fluid) || this.amount > 0 && !this.fluid.isSame(fluid)) return 0;
         int take = Math.max(0, Math.min(amount, CAPACITY - this.amount));
         if (!simulate && take > 0) {
             this.fluid = fluid;

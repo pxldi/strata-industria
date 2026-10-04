@@ -13,6 +13,11 @@ public final class Tier6Sounds {
     /** A slow bubble breaking on a seep pool. */
     public static final DeferredHolder<SoundEvent, SoundEvent> CRUDE_OIL_BUBBLE = register("block.crude_oil.bubble");
 
+    /** Thick bubbling in the copper pot while a batch distils. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> OIL_STILL_BOIL = register("block.oil_still.boil");
+    /** The gas that is not kept leaving the gooseneck. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> OIL_STILL_VENT = register("block.oil_still.vent");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

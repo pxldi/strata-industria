@@ -5,6 +5,8 @@ import dev.strataindustria.electric.machine.ChemicalMachineBlock;
 import dev.strataindustria.electric.machine.ChemicalMachineBlockEntity;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.logistics.ItemPipeBlock;
+import dev.strataindustria.oil.OilStillBlock;
+import dev.strataindustria.oil.OilStillBlockEntity;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.registry.Tier5Blocks;
@@ -44,6 +46,11 @@ public class WrenchItem extends Item {
             return InteractionResult.SUCCESS;
         }
         if (state.getBlock() instanceof ItemPipeBlock pipe) return pipe.wrench(level, pos, state, player, hit);
+        if (state.getBlock() instanceof OilStillBlock && level.getBlockEntity(pos) instanceof OilStillBlockEntity still) {
+            // Spec 5.5: the front turns the still, every other face is a port to set.
+            if (hit.getDirection() != state.getValue(OilStillBlock.FACING)) return setStillPort(level, pos, player, still, hit.getDirection());
+            return turnClockwise(level, pos, state);
+        }
         if (state.getBlock() instanceof ChemicalMachineBlock<?> && level.getBlockEntity(pos) instanceof ChemicalMachineBlockEntity machine
                 && machine.layout().fluidOutputs() > 1) {
             // Spec 11.2: on a machine with several products, the front panel turns it and every other face is a port to set.
@@ -65,6 +72,19 @@ public class WrenchItem extends Item {
         Component what = mode == 0 ? Component.translatable(StrataIndustria.MOD_ID + ".port.auto")
                 : mode > machine.layout().fluidOutputs() ? Component.translatable(StrataIndustria.MOD_ID + ".port.none")
                 : Component.translatable(StrataIndustria.MOD_ID + ".port.product", mode);
+        String name = face.getName();
+        player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".port.face", Character.toUpperCase(name.charAt(0)) + name.substring(1), what));
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Cycles the output setting of one face of an oil still: auto, naphtha, diesel, heavy oil, none. */
+    private static InteractionResult setStillPort(Level level, BlockPos pos, Player player, OilStillBlockEntity still, Direction face) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        int mode = still.cycleFace(face);
+        level.playSound(null, pos, Tier5Sounds.WRENCH_TURN.get(), SoundSource.BLOCKS, 0.8f, 1.2f);
+        Component what = mode == 0 ? Component.translatable(StrataIndustria.MOD_ID + ".port.auto")
+                : mode > OilStillBlockEntity.PRODUCTS ? Component.translatable(StrataIndustria.MOD_ID + ".port.none")
+                : Component.translatable(StrataIndustria.MOD_ID + ".oil_still.port." + mode);
         String name = face.getName();
         player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".port.face", Character.toUpperCase(name.charAt(0)) + name.substring(1), what));
         return InteractionResult.SUCCESS;

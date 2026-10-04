@@ -828,6 +828,46 @@
     ],
     "subtitle": "subtitles.strataindustria.block.mixer.stir"
   },
+  "block.oil_still.boil": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "pitch": 0.7,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "pitch": 0.6,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.lava.pop",
+        "pitch": 0.5,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.oil_still.boil"
+  },
+  "block.oil_still.vent": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.2,
+        "volume": 0.4
+      },
+      {
+        "type": "event",
+        "name": "entity.llama.spit",
+        "pitch": 0.6,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.oil_still.vent"
+  },
   "block.ore_cart.rattle": {
     "sounds": [
       {

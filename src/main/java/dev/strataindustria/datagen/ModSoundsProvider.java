@@ -26,6 +26,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         tier5();
         grid();
         tier6();
+        oilStill();
         shared();
         prologue();
         patterns();
@@ -413,6 +414,17 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.bubble_column.bubble_pop", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
                 .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f))
                 .with(sound("minecraft:block.honey_block.slide", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.3f)));
+    }
+
+    /** Tier 6 spec 24.6: the still's thick bubbling in a copper pot and the gas that is let go. */
+    private void oilStill() {
+        add(Tier6Sounds.OIL_STILL_BOIL, definition().subtitle(subtitle("block.oil_still.boil"))
+                .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.7f))
+                .with(sound("minecraft:block.bubble_column.upwards_ambient", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.6f))
+                .with(sound("minecraft:block.lava.pop", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.3f)));
+        add(Tier6Sounds.OIL_STILL_VENT, definition().subtitle(subtitle("block.oil_still.vent"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.4f))
+                .with(sound("minecraft:entity.llama.spit", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f)));
     }
 
     /** The leads notebook: a pencil on paper, pages, and a tack into cork, all short and quiet. */

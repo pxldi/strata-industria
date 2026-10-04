@@ -617,6 +617,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".ledger.short", "Out of blocks. %s more %s needed.");
         add(id + ".ledger.done", "Stamped. %s blocks placed.");
         add(id + ".ledger.done_in_the_way", "Stamped %s blocks. %s spots had other blocks in them.");
+        add(id + ".multiblock.incomplete", "Structure incomplete: %s at %s");
+        add(id + ".multiblock.empty_space", "empty space");
         add(id + ".ledger.tooltip.enter", "Use on a finished multiblock to enter it.");
         add(id + ".ledger.tooltip.stamp", "Use on an unfinished one to place it from crates nearby.");
         add(subtitles + "ledger.entry", "Ledger written");
@@ -719,6 +721,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.FIRE_BRICK_WALL, "Fire Brick Wall");
         addItem(ModItems.LIGNITE, "Lignite");
         addBlock(ModBlocks.LIGNITE_SEAM, "Lignite Seam");
+        addBlock(ModBlocks.BAUXITE_BED, "Bauxite Bed");
+        addItem(ModItems.BAUXITE, "Bauxite");
         addBlock(ModBlocks.BOG_IRON, "Bog Iron");
         addBlock(ModBlocks.PLACER_GRAVEL, "Placer Gravel");
         addBlock(ModBlocks.PLACER_SAND, "Placer Sand");
@@ -728,6 +732,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add("item.minecraft.iron_ingot", "Wrought Iron Ingot");
         add("item.minecraft.iron_nugget", "Wrought Iron Nugget");
         add(id + ".ore.lignite_seam", "lignite");
+        add(id + ".ore.bauxite_bed", "bauxite");
         add(id + ".ore.fire_clay", "fire clay");
         add(id + ".prospect.rich", ", rich ore nearby");
         add(id + ".crucible.no_iron", "Iron does not melt this hot");

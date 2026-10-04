@@ -1,0 +1,35 @@
+{
+  "biomes": "#strataindustria:bauxite_hosts",
+  "block": "strataindustria:bauxite_bed",
+  "hosts": [
+    "strataindustria:limestone",
+    "strataindustria:shale",
+    "strataindustria:slate",
+    "strataindustria:granite",
+    "strataindustria:basalt",
+    "strataindustria:rhyolite",
+    "strataindustria:marble",
+    "strataindustria:gabbro"
+  ],
+  "indicators": false,
+  "max_depth": 10,
+  "max_y": 160,
+  "min_y": 50,
+  "pass": "sediment",
+  "preferred_hosts": [
+    "strataindustria:shale"
+  ],
+  "shape": {
+    "type": "strataindustria:layer",
+    "density": 0.75,
+    "radius_horizontal": {
+      "max": 20,
+      "min": 12
+    },
+    "radius_vertical": {
+      "max": 2,
+      "min": 1
+    }
+  },
+  "weight": 20
+}

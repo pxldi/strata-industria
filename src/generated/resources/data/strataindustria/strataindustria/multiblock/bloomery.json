@@ -1,0 +1,63 @@
+{
+  "controller": "strataindustria:bloomery",
+  "layers": [
+    {
+      "rows": [
+        "...",
+        ".B.",
+        "..."
+      ]
+    },
+    {
+      "rows": [
+        ".@.",
+        "B_B",
+        ".B."
+      ]
+    },
+    {
+      "max": 3,
+      "rows": [
+        ".B.",
+        "B_B",
+        ".B."
+      ]
+    },
+    {
+      "rows": [
+        "...",
+        ".D.",
+        "..."
+      ]
+    }
+  ],
+  "symbols": {
+    "B": {
+      "accepts": [
+        {
+          "tag": "strataindustria:refractory"
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:fire_bricks"
+      },
+      "problem": "needs_brick"
+    },
+    "D": {
+      "accepts": [
+        {
+          "special": "no_draught"
+        }
+      ],
+      "problem": "needs_air"
+    },
+    "_": {
+      "accepts": [
+        {
+          "special": "open"
+        }
+      ],
+      "problem": "needs_air"
+    }
+  }
+}

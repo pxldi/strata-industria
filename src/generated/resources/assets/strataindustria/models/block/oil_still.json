@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "strataindustria:block/fire_bricks",
+    "east": "strataindustria:block/oil_still_side",
+    "north": "strataindustria:block/oil_still_front",
+    "particle": "strataindustria:block/oil_still_side",
+    "south": "strataindustria:block/oil_still_side",
+    "up": "strataindustria:block/oil_still_top",
+    "west": "strataindustria:block/oil_still_side"
+  }
+}
