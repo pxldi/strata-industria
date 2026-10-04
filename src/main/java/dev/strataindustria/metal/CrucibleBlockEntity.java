@@ -70,9 +70,10 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private float temperature = Heat.AMBIENT;
     private CrucibleStatus status = CrucibleStatus.COLD;
     private int meltingPercent;
-    /** Units still to pour, and what has been poured so far. */
+    /** Units still to pour, the share of the melt set aside for this pour, and what has flowed so far. */
     private int pourLeft;
     private int pourTotal;
+    private Melt pourSlice = Melt.EMPTY;
     private Melt poured = Melt.EMPTY;
     private boolean forgeTooHot;
     private boolean carbonWaiting;
@@ -86,7 +87,11 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
             if (index == DATA_MELTING) return meltingPercent;
             if (index == DATA_POUR) return pourTotal == 0 ? 0 : Math.round(100 * (1 - pourLeft / (float) pourTotal));
             if (index < DATA_UNITS) return Math.round(progress[index - DATA_SLOT_PROGRESS]);
-            if (index < DATA_CAPACITY) return melt.units().getOrDefault(Metal.values()[index - DATA_UNITS], 0);
+            if (index < DATA_CAPACITY) {
+                // What is still in the pot, counting the share that has not yet flowed into the mold.
+                Metal metal = Metal.values()[index - DATA_UNITS];
+                return melt.units().getOrDefault(metal, 0) + pourSlice.units().getOrDefault(metal, 0);
+            }
             if (index == DATA_CAPACITY) return capacityOf();
             if (index == DATA_MAX_TEMPERATURE) return maxTemperature();
             if (index == DATA_REFRACTORY) return refractory() ? 1 : 0;
@@ -291,6 +296,10 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         if (pourProblem().isPresent()) return false;
         CastMoldItem cast = (CastMoldItem) items.get(MOLD_SLOT).getItem();
         pourLeft = pourTotal = cast.units();
+        // The mold's share is set aside whole, so it keeps the melt's make-up (1% carbon stays 1%).
+        Melt after = melt.minus(pourTotal);
+        pourSlice = subtract(melt, after);
+        melt = after;
         poured = Melt.EMPTY;
         if (level != null) {
             level.playSound(null, worldPosition, ModSounds.CRUCIBLE_POUR.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
@@ -302,17 +311,19 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private boolean pour(Level level, BlockPos pos) {
         if (pourLeft <= 0) return false;
         ItemStack mold = items.get(MOLD_SLOT);
-        if (!(mold.getItem() instanceof CastMoldItem) || !isMolten()) {
+        Melt all = melt.plus(pourSlice);
+        if (!(mold.getItem() instanceof CastMoldItem) || temperature < mixMeltingPoint(all)) {
             // The mold was taken away or the metal froze mid-pour: what flowed so far goes back.
-            melt = melt.plus(poured);
+            melt = all.plus(poured);
+            pourSlice = Melt.EMPTY;
             poured = Melt.EMPTY;
             pourLeft = pourTotal = 0;
             return true;
         }
         int step = Math.min(POUR_PER_TICK, pourLeft);
-        Melt before = melt;
-        melt = melt.minus(step);
-        poured = poured.plus(subtract(before, melt));
+        Melt before = pourSlice;
+        pourSlice = pourLeft - step <= 0 ? Melt.EMPTY : pourSlice.minus(step);
+        poured = poured.plus(subtract(before, pourSlice));
         pourLeft -= step;
         if (pourLeft == 0) {
             mold.set(ModDataComponents.CAST_CONTENTS.get(), poured);
@@ -397,7 +408,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     @Override
     protected void collectImplicitComponents(DataComponentMap.Builder components) {
         super.collectImplicitComponents(components);
-        Melt all = melt.plus(poured);
+        Melt all = melt.plus(pourSlice).plus(poured);
         if (!all.isEmpty()) components.set(ModDataComponents.CRUCIBLE_MELT.get(), all);
         if (temperature > Heat.AMBIENT + 5 && level != null) {
             components.set(ModDataComponents.TEMPERATURE.get(), new Temperature(temperature, level.getGameTime()));
@@ -419,6 +430,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         ContainerHelper.loadAllItems(input, items);
         melt = input.read("melt", Melt.CODEC).orElse(Melt.EMPTY);
         poured = input.read("poured", Melt.CODEC).orElse(Melt.EMPTY);
+        pourSlice = input.read("pour_slice", Melt.CODEC).orElse(Melt.EMPTY);
         temperature = input.getFloatOr("temperature", Heat.AMBIENT);
         pourLeft = input.getIntOr("pour_left", 0);
         pourTotal = input.getIntOr("pour_total", 0);
@@ -430,6 +442,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         ContainerHelper.saveAllItems(output, items);
         output.store("melt", Melt.CODEC, melt);
         output.store("poured", Melt.CODEC, poured);
+        output.store("pour_slice", Melt.CODEC, pourSlice);
         output.putFloat("temperature", temperature);
         output.putInt("pour_left", pourLeft);
         output.putInt("pour_total", pourTotal);
