@@ -2017,6 +2017,8 @@
   "strataindustria.mold.broke": "The mold cracked apart",
   "strataindustria.mold.contents": "Holds %s (%s units)",
   "strataindustria.mold.still_molten": "The metal is still molten. Let it cool first",
+  "strataindustria.multiblock.empty_space": "empty space",
+  "strataindustria.multiblock.incomplete": "Structure incomplete: %s at %s",
   "strataindustria.ore.bismuthinite": "bismuthinite",
   "strataindustria.ore.bituminous_coal": "bituminous coal",
   "strataindustria.ore.cassiterite": "cassiterite",

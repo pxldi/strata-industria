@@ -1,0 +1,173 @@
+{
+  "controller": "strataindustria:boiler_controller",
+  "layers": [
+    {
+      "rows": [
+        "FFF",
+        "FFF",
+        "FFF"
+      ]
+    },
+    {
+      "rows": [
+        "S@S",
+        "SSS",
+        "SSS"
+      ]
+    },
+    {
+      "rows": [
+        "SSS",
+        "sSS",
+        "SwS"
+      ]
+    },
+    {
+      "max": 2,
+      "min": 0,
+      "rows": [
+        "SSS",
+        "SSS",
+        "SSS"
+      ],
+      "strict": true
+    }
+  ],
+  "requirements": [
+    {
+      "problem": "needs_water_port",
+      "role": "water_port"
+    },
+    {
+      "problem": "needs_steam_port",
+      "role": "steam_port"
+    }
+  ],
+  "symbols": {
+    "F": {
+      "accepts": [
+        {
+          "block": "strataindustria:firebox"
+        },
+        {
+          "block": "strataindustria:heat_inlet",
+          "roles": [
+            "inlet"
+          ]
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:firebox"
+      },
+      "problem": "needs_fire"
+    },
+    "S": {
+      "accepts": [
+        {
+          "block": "strataindustria:steel_boiler_shell",
+          "roles": [
+            "part"
+          ]
+        },
+        {
+          "block": "strataindustria:boiler_fluid_port",
+          "roles": [
+            "part",
+            "steam_port"
+          ],
+          "state": {
+            "mode": "steam"
+          }
+        },
+        {
+          "block": "strataindustria:boiler_fluid_port",
+          "roles": [
+            "part",
+            "water_port"
+          ],
+          "state": {
+            "mode": "water"
+          }
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:steel_boiler_shell"
+      },
+      "problem": "needs_shell"
+    },
+    "s": {
+      "accepts": [
+        {
+          "block": "strataindustria:steel_boiler_shell",
+          "roles": [
+            "part"
+          ]
+        },
+        {
+          "block": "strataindustria:boiler_fluid_port",
+          "roles": [
+            "part",
+            "steam_port"
+          ],
+          "state": {
+            "mode": "steam"
+          }
+        },
+        {
+          "block": "strataindustria:boiler_fluid_port",
+          "roles": [
+            "part",
+            "water_port"
+          ],
+          "state": {
+            "mode": "water"
+          }
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:boiler_fluid_port",
+        "state": {
+          "mode": "steam"
+        }
+      },
+      "problem": "needs_shell"
+    },
+    "w": {
+      "accepts": [
+        {
+          "block": "strataindustria:steel_boiler_shell",
+          "roles": [
+            "part"
+          ]
+        },
+        {
+          "block": "strataindustria:boiler_fluid_port",
+          "roles": [
+            "part",
+            "steam_port"
+          ],
+          "state": {
+            "mode": "steam"
+          }
+        },
+        {
+          "block": "strataindustria:boiler_fluid_port",
+          "roles": [
+            "part",
+            "water_port"
+          ],
+          "state": {
+            "mode": "water"
+          }
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:boiler_fluid_port",
+        "state": {
+          "mode": "water"
+        }
+      },
+      "problem": "needs_shell"
+    }
+  }
+}

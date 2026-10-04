@@ -1,0 +1,47 @@
+{
+  "controller": "strataindustria:coke_oven_door",
+  "layers": [
+    {
+      "rows": [
+        "bbb",
+        "bbb",
+        "bbb"
+      ]
+    },
+    {
+      "rows": [
+        "b@b",
+        "b_b",
+        "bbb"
+      ]
+    },
+    {
+      "rows": [
+        "bbb",
+        "bbb",
+        "bbb"
+      ]
+    }
+  ],
+  "symbols": {
+    "_": {
+      "accepts": [
+        {
+          "special": "open"
+        }
+      ],
+      "problem": "needs_air"
+    },
+    "b": {
+      "accepts": [
+        {
+          "block": "strataindustria:coke_oven_bricks"
+        }
+      ],
+      "preview": {
+        "block": "strataindustria:coke_oven_bricks"
+      },
+      "problem": "needs_brick"
+    }
+  }
+}
