@@ -1,6 +1,7 @@
 package dev.strataindustria.datagen;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -59,6 +60,14 @@ final class ModItemTagsProvider extends ItemTagsProvider {
 
         tag(ModTags.Items.KNAPPABLE).addTag(ModTags.Items.LOOSE_ROCKS).add(key(Items.FLINT));
         tag(Tags.Items.STRINGS).add(ModItems.TWINE.getKey());
+
+        var large = tag(ModTags.Items.PIT_KILN_LARGE);
+        for (var item : java.util.List.of(ModItems.UNFIRED_SMALL_VESSEL, ModItems.UNFIRED_LARGE_VESSEL, ModItems.UNFIRED_CRUCIBLE)) {
+            large.add(item.getKey());
+        }
+        var fireable = tag(ModTags.Items.PIT_KILN_FIREABLE).addTag(ModTags.Items.PIT_KILN_LARGE)
+                .add(ModItems.UNFIRED_INGOT_MOLD.getKey()).add(ModItems.UNFIRED_BRICK.getKey());
+        for (MoldType type : MoldType.values()) fireable.add(ModItems.UNFIRED_MOLDS.get(type).getKey());
 
         // Our tools join the vanilla tool tags, which also makes them enchantable like vanilla tools.
         tag(ItemTags.AXES).add(ModItems.STONE_AXE.getKey());

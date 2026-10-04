@@ -18,6 +18,8 @@ import net.minecraft.world.item.Items;
 public final class Knapping {
     public static final int ROCK_OPENING_COST = 2;
     public static final int FLINT_OPENING_COST = 1;
+    /** Clay forming (spec 4.1) uses the same grid; it takes 5 clay balls. */
+    public static final int CLAY_OPENING_COST = 5;
 
     private Knapping() {}
 
@@ -32,11 +34,17 @@ public final class Knapping {
         return stack.is(Items.FLINT);
     }
 
+    public static boolean isClay(ItemStack stack) {
+        return stack.is(Items.CLAY_BALL);
+    }
+
+    /** Anything that opens the grid: loose rocks, flint or clay. */
     public static boolean isKnappable(ItemStack stack) {
-        return isFlint(stack) || rockOf(stack).isPresent();
+        return isFlint(stack) || isClay(stack) || rockOf(stack).isPresent();
     }
 
     public static int openingCost(ItemStack stack) {
+        if (isClay(stack)) return CLAY_OPENING_COST;
         return isFlint(stack) ? FLINT_OPENING_COST : ROCK_OPENING_COST;
     }
 
@@ -47,23 +55,45 @@ public final class Knapping {
 
     /** Texture that fills the grid: the rock's own block texture, or the flint nodule texture. */
     public static Identifier gridTexture(ItemStack stack) {
+        if (isClay(stack)) return StrataIndustria.id("textures/gui/knapping/clay.png");
         return rockOf(stack)
                 .map(rock -> StrataIndustria.id("textures/block/" + rock.id() + ".png"))
                 .orElse(StrataIndustria.id("textures/gui/knapping/flint.png"));
     }
 
     public static SoundEvent strikeSound(ItemStack stack) {
+        if (isClay(stack)) return ModSounds.CLAY_SHAPE.get();
         return isFlint(stack) ? ModSounds.KNAP_FLINT.get() : ModSounds.KNAP_ROCK.get();
+    }
+
+    public static SoundEvent finishSound(ItemStack stack) {
+        return isClay(stack) ? ModSounds.CLAY_FINISH.get() : ModSounds.KNAP_FINISH.get();
+    }
+
+    /** Chips that fly off a strike: grey stone, dark flint, or brown clay crumbs. */
+    public static int chipColour(ItemStack stack, float shade) {
+        if (isClay(stack)) {
+            int r = Math.round(0x8e * shade), g = Math.round(0x7a * shade), b = Math.round(0x74 * shade);
+            return 0xFF000000 | r << 16 | g << 8 | b;
+        }
+        boolean flint = isFlint(stack);
+        int grey = (int) (shade * (flint ? 150 : 200));
+        return 0xFF000000 | grey << 16 | grey << 8 | Math.min(255, grey + (flint ? 18 : 6));
     }
 
     /** Opens the grid if the player holds enough material. Returns whether it opened. */
     public static boolean tryOpen(ServerPlayer player, InteractionHand hand) {
         ItemStack held = player.getItemInHand(hand);
-        if (!isKnappable(held) || held.getCount() < openingCost(held)) return false;
+        if (!isKnappable(held)) return false;
+        if (held.getCount() < openingCost(held)) {
+            player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".knapping.need_more",
+                    openingCost(held), held.getHoverName()));
+            return false;
+        }
         ItemStack material = held.copyWithCount(1);
         player.openMenu(new SimpleMenuProvider(
                 (id, inventory, p) -> new KnappingMenu(id, inventory, material, hand),
-                Component.translatable("container." + StrataIndustria.MOD_ID + ".knapping")),
+                Component.translatable("container." + StrataIndustria.MOD_ID + (isClay(material) ? ".clay_forming" : ".knapping"))),
                 buf -> {
                     ItemStack.STREAM_CODEC.encode(buf, material);
                     buf.writeBoolean(hand == InteractionHand.MAIN_HAND);

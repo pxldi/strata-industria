@@ -919,7 +919,11 @@ public final class TextureGen {
 
     /** The lit bed: charcoal with glowing cracks, brighter towards the middle. */
     static BufferedImage emberBed() {
-        double[][] n = fractal(919);
+        return emberBed(919);
+    }
+
+    static BufferedImage emberBed(long seed) {
+        double[][] n = fractal(seed);
         BufferedImage im = img();
         for (int y = 0; y < 16; y++)
             for (int x = 0; x < 16; x++) {
@@ -967,6 +971,283 @@ public final class TextureGen {
                 else if (ch == 'x') px(im, x, y, CHARCOAL.get(1));
             }
         return outline(im);
+    }
+
+    // ---------------------------------------------------------------- clay and ceramics (spec 4)
+    // Unfired and fired pieces share each silhouette and swap only the ramp (style guide 5).
+
+    /** Style guide sample: a tapered crucible with a lit rim. */
+    static final String[] CRUCIBLE_ITEM = {
+            "................",
+            "................",
+            "................",
+            "...1222222221...",
+            "...4555555553...",
+            "....34444432....",
+            "....44333322....",
+            "....44333322....",
+            "....43333221....",
+            "....43332221....",
+            ".....332221.....",
+            ".....332211.....",
+            "......2211......",
+            "................",
+            "................",
+            "................",
+    };
+
+    /** Style guide sample: an ingot tray with the cavity in shadow. */
+    static final String[] INGOT_MOLD_ITEM = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "....44444444....",
+            "...4555555553...",
+            "..455111111432..",
+            "..4511222212432.",
+            "..441111111232..",
+            "..3333333333322.",
+            "..22222222222...",
+            "................",
+            "................",
+            "................",
+            "................",
+    };
+
+    /** A small round-bellied pot with a short neck. */
+    static final String[] SMALL_VESSEL_ITEM = {
+            "................",
+            "................",
+            "................",
+            "......4553......",
+            "......1221......",
+            ".......43.......",
+            ".....444332.....",
+            "....45444332....",
+            "...4544443332...",
+            "...4444433322...",
+            "...4444333222...",
+            "...4433332221...",
+            "....33332221....",
+            ".....322221.....",
+            "................",
+            "................",
+    };
+
+    /** A tall storage jar: wide shoulders, a cord band, a narrow mouth. */
+    static final String[] LARGE_VESSEL_ITEM = {
+            "................",
+            ".....4555553....",
+            ".....1222221....",
+            "......44332.....",
+            "....444443332...",
+            "...45444443332..",
+            "...32323232322..",
+            "...44444433322..",
+            "...44444333222..",
+            "...44443333222..",
+            "...44433332221..",
+            "....433332221...",
+            "....333322221...",
+            ".....3322211....",
+            "......22111.....",
+            "................",
+    };
+
+    /** A rounded brick, lit from the top-left. */
+    static final String[] BRICK_ITEM = {
+            "................",
+            "................",
+            "................",
+            "................",
+            "................",
+            "....455555553...",
+            "...45555555543..",
+            "..4444444444332.",
+            "..4444444443322.",
+            "..4433333333221.",
+            "..3333333332211.",
+            "...222222222111.",
+            "................",
+            "................",
+            "................",
+            "................",
+    };
+
+    /** Each tool mold's cavity, 8x6, carved into the slab: the shape of the head it casts. */
+    static final java.util.Map<String, String[]> MOLD_CAVITIES = new java.util.LinkedHashMap<>();
+
+    static {
+        MOLD_CAVITIES.put("pickaxe_head", new String[] {"..####..", ".######.", "##....##", "#......#", "........", "........"});
+        MOLD_CAVITIES.put("axe_head", new String[] {"....##..", "..#####.", "########", "..#####.", "....##..", "........"});
+        MOLD_CAVITIES.put("shovel_head", new String[] {"..####..", ".######.", ".######.", ".######.", "..####..", "...##..."});
+        MOLD_CAVITIES.put("hoe_head", new String[] {"........", "########", "######..", "##......", "........", "........"});
+        MOLD_CAVITIES.put("knife_blade", new String[] {"......##", ".....###", "...####.", ".####...", "###.....", "........"});
+        MOLD_CAVITIES.put("hammer_head", new String[] {"........", "########", "########", "...##...", "...##...", "........"});
+        MOLD_CAVITIES.put("saw_blade", new String[] {"........", "########", "########", "#.#.#.#.", "........", "........"});
+        MOLD_CAVITIES.put("sword_blade", new String[] {"......##", ".....##.", "....##..", "...##...", "..##....", ".#......"});
+    }
+
+    /**
+     * A tool mold: a square slab seen from above with a front edge, the cavity sunk into it. The cavity's
+     * top-left walls are in shadow and its bottom-right walls catch the light.
+     */
+    static BufferedImage mold(Ramp a, String[] cavity) {
+        BufferedImage im = img();
+        int left = 2, top = 3, w = 12, h = 9, cx = 4, cy = 5;
+        for (int y = 0; y < h; y++)
+            for (int x = 0; x < w; x++) {
+                int step = 4;
+                if (y == 0 || x == 0) step = 5;
+                else if (x == w - 1) step = 3;
+                px(im, left + x, top + y, a.get(step));
+            }
+        for (int x = 0; x < w; x++) {
+            px(im, left + x, top + h, a.get(x == w - 1 ? 2 : 3));
+            px(im, left + x, top + h + 1, a.get(2));
+        }
+        java.util.function.BiPredicate<Integer, Integer> in = (x, y) ->
+                y >= 0 && y < cavity.length && x >= 0 && x < cavity[y].length() && cavity[y].charAt(x) == '#';
+        for (int y = 0; y < cavity.length; y++)
+            for (int x = 0; x < cavity[y].length(); x++) {
+                if (!in.test(x, y)) continue;
+                int step = 2;
+                if (!in.test(x, y - 1) || !in.test(x - 1, y)) step = 1;
+                else if (!in.test(x, y + 1) || !in.test(x + 1, y)) step = 3;
+                px(im, cx + x, cy + y, a.get(step));
+            }
+        return outline(im);
+    }
+
+    /** Smooth worked clay for the forming grid, with a few broad finger smears. */
+    static BufferedImage claySurface() {
+        double[][] n = fractal(5151);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int i = 3 + (int) Math.round((n[y][x] - 0.5) * 2.0);
+                px(im, x, y, CLAY.get(Math.max(2, Math.min(4, i))));
+            }
+        Random r = new Random(5151);
+        for (int k = 0; k < 3; k++) {
+            int x = r.nextInt(12), y = 2 + r.nextInt(12);
+            for (int i = 0; i < 4; i++) {
+                pxWrap(im, x + i, y, CLAY.get(4));
+                pxWrap(im, x + i, y + 1, CLAY.get(2));
+            }
+        }
+        return im;
+    }
+
+    /**
+     * Pit-fired ceramic for vessel walls: coil lines every three rows and darker fire clouds where
+     * the logs lay against the pot.
+     */
+    static BufferedImage ceramicWall(long seed, boolean band) {
+        double[][] n = fractal(seed);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.62 ? 4 : 3;
+                if (y % 3 == 2 && (x + y) % 7 != 0) step = Math.min(step, 3) - (n[y][x] < 0.4 ? 1 : 0);
+                // Fire clouds towards the base.
+                if (y > 9 && n[(y + 5) % 16][(x + 3) % 16] > 0.6) step = 2;
+                px(im, x, y, CERAMIC.get(Math.max(1, step)));
+            }
+        if (band) {
+            // A cord-impressed band under the shoulder: slanted ticks.
+            for (int x = 0; x < 16; x++) {
+                px(im, x, 5, CERAMIC.get(x % 3 == 0 ? 2 : 4));
+                px(im, x, 6, CERAMIC.get((x + 1) % 3 == 0 ? 2 : 3));
+            }
+        }
+        return im;
+    }
+
+    /** The vessel's top: shoulder ring, lit rim, dark mouth. */
+    static BufferedImage vesselTop() {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.max(Math.abs(x - 7.5), Math.abs(y - 7.5));
+                int c;
+                if (d < 2) c = CHARCOAL.get(1);
+                else if (d < 2.6) c = CERAMIC.get(2);
+                else if (d < 4) c = (x < 8 || y < 8) ? CERAMIC.get(5) : CERAMIC.get(4);
+                else c = CERAMIC.get(n2(x, y) ? 4 : 3);
+                px(im, x, y, c);
+            }
+        return im;
+    }
+
+    static boolean n2(int x, int y) { return ((x * 7 + y * 13) % 11) < 4; }
+
+    /** Plain ceramic in one or two steps: a base, a crucible floor. */
+    static BufferedImage ceramicPlain(long seed, int low, int high) {
+        double[][] n = fractal(seed);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, CERAMIC.get(n[y][x] > 0.55 ? high : low));
+        return im;
+    }
+
+    /** Crucible wall: refractory clay, sooty towards the base where it sits in the coals. */
+    static BufferedImage crucibleSide() {
+        double[][] n = fractal(8282);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.6 ? 4 : 3;
+                if (x % 5 == 1 && n[y][x] < 0.5) step = 3;
+                int c = CERAMIC.get(step);
+                if (y > 11 + (int) Math.round(n[y][x] * 2)) c = CHARCOAL.get(n[y][x] > 0.5 ? 4 : 3);
+                px(im, x, y, c);
+            }
+        return im;
+    }
+
+    /** Crucible rim seen from above: lit on the near edges. */
+    static BufferedImage crucibleTop() {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, CERAMIC.get((x < 3 || y < 3) ? 5 : 4));
+        return im;
+    }
+
+    /** Crucible floor and inner walls: darker, with a few glassy flecks of slag. */
+    static BufferedImage crucibleInside() {
+        BufferedImage im = ceramicPlain(9393, 1, 2);
+        Random r = new Random(9393);
+        for (int k = 0; k < 4; k++) speck(im, r, r.nextInt(16), r.nextInt(16), SLAG.get(4), SLAG.get(2), 2);
+        return im;
+    }
+
+    /** Thatch: overlapping straw strands laid at a slight slant, tiling in both directions. */
+    static BufferedImage thatch() {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, STRAW.get(y % 4 == 3 ? 2 : 3));
+        Random r = new Random(2468);
+        for (int k = 0; k < 26; k++) {
+            int x = r.nextInt(16), y = r.nextInt(16), len = 3 + r.nextInt(4);
+            int light = r.nextInt(3) == 0 ? 5 : 4;
+            for (int i = 0; i < len; i++) pxWrap(im, x + i, y + i / 3, STRAW.get(i == 0 ? light : 4));
+            pxWrap(im, x + len, y + len / 3 + 1, STRAW.get(2));
+        }
+        return im;
+    }
+
+    /** Small vessel screen, 176x133: four slots in a row, inventory from y 51. */
+    static BufferedImage smallVesselGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 133);
+        for (int i = 0; i < 4; i++) slot(im, 53 + i * 18, 20);
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 51 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 109);
+        return im;
     }
 
     // ---------------------------------------------------------------- GUI
@@ -1171,6 +1452,29 @@ public final class TextureGen {
         save("block/fire_pit_embers", emberBed());
         save("item/firestarter", firestarter());
         saveRaw("gui/fire_pit", firePitGui());
+
+        // Clay (spec 4.1 to 4.3).
+        save("gui/knapping/clay", claySurface());
+        for (var piece : List.of(java.util.Map.entry("small_vessel", SMALL_VESSEL_ITEM), java.util.Map.entry("large_vessel", LARGE_VESSEL_ITEM),
+                java.util.Map.entry("crucible", CRUCIBLE_ITEM), java.util.Map.entry("ingot_mold", INGOT_MOLD_ITEM))) {
+            save("item/unfired_" + piece.getKey(), art(CLAY, piece.getValue()));
+            save("item/" + piece.getKey(), art(CERAMIC, piece.getValue()));
+        }
+        save("item/unfired_brick", art(CLAY, BRICK_ITEM));
+        for (var cavity : MOLD_CAVITIES.entrySet()) {
+            save("item/unfired_" + cavity.getKey() + "_mold", mold(CLAY, cavity.getValue()));
+            save("item/" + cavity.getKey() + "_mold", mold(CERAMIC, cavity.getValue()));
+        }
+        save("block/large_vessel_side", ceramicWall(6161, true));
+        save("block/large_vessel_top", vesselTop());
+        save("block/large_vessel_bottom", ceramicPlain(6262, 2, 3));
+        save("block/crucible_side", crucibleSide());
+        save("block/crucible_top", crucibleTop());
+        save("block/crucible_inside", crucibleInside());
+        save("block/crucible_bottom", ceramicPlain(7373, 2, 3));
+        save("block/pit_kiln_thatch", thatch());
+        save("block/pit_kiln_embers", emberBed(1717));
+        saveRaw("gui/small_vessel", smallVesselGui());
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");
