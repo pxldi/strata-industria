@@ -84,6 +84,14 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         return MetalContent.of(stack).flatMap(Alloy::resultOf);
     }
 
+    /** Tier 3 spec 5.4: a raw bloom needs 1000 °C, hotter than the wrought iron it becomes. */
+    public static final int RAW_BLOOM_WORKING_TEMPERATURE = 1000;
+
+    public static int workingTemperature(ItemStack stack) {
+        if (stack.has(ModDataComponents.BLOOM_CONTENTS.get())) return RAW_BLOOM_WORKING_TEMPERATURE;
+        return metalOf(stack).map(Metal::workingTemperature).orElse(0);
+    }
+
     /** Rebuilds the plan buttons when the workpiece changes. */
     private void refreshPlans() {
         if (!(level instanceof ServerLevel server)) return;
@@ -142,7 +150,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         if (metal.isPresent() && metal.get().tier() > tier()) return Status.TOO_WEAK;
         if (input.getCount() < recipe.get().value().count()) return Status.NOT_ENOUGH;
         if (!items.get(OUTPUT).isEmpty()) return Status.OUTPUT_FULL;
-        if (level != null && metal.isPresent() && Heat.get(input, level) < metal.get().workingTemperature()) return Status.TOO_COLD;
+        if (level != null && metal.isPresent() && Heat.get(input, level) < workingTemperature(input)) return Status.TOO_COLD;
         if (player != null && hammer(player).isEmpty()) return Status.NO_HAMMER;
         return Status.READY;
     }
@@ -173,7 +181,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
                 broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
 
         float pitch = 0.9f + (type.delta() < 0 ? -type.delta() : type.delta()) * -0.012f + server.getRandom().nextFloat() * 0.1f;
-        server.playSound(null, worldPosition, ModSounds.SMITH_HIT.get(), SoundSource.BLOCKS, 0.7f, pitch + 0.3f);
+        server.playSound(null, worldPosition, hitSound(input), SoundSource.BLOCKS, 0.7f, pitch + 0.3f);
         server.sendParticles(ParticleTypes.SMALL_FLAME, worldPosition.getX() + 0.5, worldPosition.getY() + 1.02, worldPosition.getZ() + 0.5,
                 3 + server.getRandom().nextInt(3), 0.12, 0.0, 0.12, 0.04);
 
@@ -184,8 +192,20 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         setChanged();
     }
 
+    /** Bronze rings; wrought iron rings lower; a raw bloom only thuds (tier 3 spec 20.6). */
+    private static net.minecraft.sounds.SoundEvent hitSound(ItemStack input) {
+        if (input.has(ModDataComponents.BLOOM_CONTENTS.get())) return ModSounds.RAW_BLOOM_HIT.get();
+        if (metalOf(input).filter(m -> m == Metal.WROUGHT_IRON).isPresent()) return ModSounds.WROUGHT_IRON_HIT.get();
+        return ModSounds.SMITH_HIT.get();
+    }
+
     private void finish(ServerLevel server, RecipeHolder<AnvilRecipe> recipe, SmithingProgress progress, int target) {
         ItemStack input = input();
+        if (input.has(ModDataComponents.BLOOM_CONTENTS.get())) {
+            for (ServerPlayer player : server.getEntitiesOfClass(ServerPlayer.class, new net.minecraft.world.phys.AABB(worldPosition).inflate(8))) {
+                dev.strataindustria.journal.Journal.award(player, dev.strataindustria.journal.Journal.BLOOM_REFINED);
+            }
+        }
         float temperature = Heat.get(input, server);
         int material = MetalContent.of(input.copyWithCount(1)).map(Melt::quality).orElse(0);
         int craft = Smithing.craftQuality(progress.hits(), Smithing.minHits(target, recipe.value().rules()));
@@ -225,7 +245,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
                 if (index == DATA_SELECTED) return recipe.map(candidates::indexOf).orElse(-1);
                 if (index == DATA_STATUS) return status(player).ordinal();
                 if (index == DATA_HITS) return progress == null ? 0 : progress.hits();
-                if (index == DATA_WORKING) return metalOf(input).map(Metal::workingTemperature).orElse(0);
+                if (index == DATA_WORKING) return workingTemperature(input);
                 return 0;
             }
 

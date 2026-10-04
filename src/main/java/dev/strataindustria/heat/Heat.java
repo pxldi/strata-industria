@@ -30,7 +30,13 @@ public final class Heat {
 
     public static float get(ItemStack stack, long now) {
         Temperature t = stack.get(ModDataComponents.TEMPERATURE.get());
-        return t == null ? AMBIENT : get(t, now);
+        if (t == null) return AMBIENT;
+        return approach(t.value(), AMBIENT, coolingRate(stack), Math.max(0, now - t.updated()));
+    }
+
+    /** A raw bloom is porous and loses heat twice as fast (tier 3 spec 5.4). */
+    public static float coolingRate(ItemStack stack) {
+        return stack.has(ModDataComponents.BLOOM_CONTENTS.get()) ? 2 * AMBIENT_RATE : AMBIENT_RATE;
     }
 
     public static float get(Temperature t, long now) {

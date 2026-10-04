@@ -2,6 +2,7 @@ package dev.strataindustria.event;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.metal.CastMoldItem;
+import dev.strataindustria.metal.Melt;
 import dev.strataindustria.metal.Quality;
 import dev.strataindustria.registry.ModDataComponents;
 import net.minecraft.ChatFormatting;
@@ -22,6 +23,11 @@ public final class MetalEvents {
         CastMoldItem.contentsLine(stack).ifPresent(line -> event.getToolTip().add(1, line.copy().withStyle(ChatFormatting.GRAY)));
         Quality quality = stack.get(ModDataComponents.QUALITY.get());
         if (quality != null) event.getToolTip().add(1, quality.tooltip());
+        Melt bloom = stack.get(ModDataComponents.BLOOM_CONTENTS.get());
+        if (bloom != null) {
+            event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".bloomery.bloom_units", bloom.total())
+                    .withStyle(ChatFormatting.GRAY));
+        }
         if (stack.has(ModDataComponents.SLAG.get())) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".metal.slag_note").withStyle(ChatFormatting.DARK_GRAY));
         }

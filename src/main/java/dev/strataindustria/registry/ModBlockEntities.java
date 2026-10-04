@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.bloomery.BloomeryBlockEntity;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.LargeVesselBlockEntity;
 import dev.strataindustria.ceramics.PitKilnBlockEntity;
@@ -44,6 +45,9 @@ public final class ModBlockEntities {
             });
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
             BLOCK_ENTITIES.register("crucible", () -> new BlockEntityType<>(CrucibleBlockEntity::new, ModBlocks.CRUCIBLE.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BloomeryBlockEntity>> BLOOMERY =
+            BLOCK_ENTITIES.register("bloomery", () -> new BlockEntityType<>(BloomeryBlockEntity::new, ModBlocks.BLOOMERY.get()));
 
     private ModBlockEntities() {}
 }

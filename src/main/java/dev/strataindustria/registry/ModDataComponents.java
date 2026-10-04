@@ -56,5 +56,11 @@ public final class ModDataComponents {
                     .persistent(Melt.CODEC)
                     .networkSynchronized(Melt.STREAM_CODEC));
 
+    /** Tier 3 spec 5.4: the iron in a raw bloom. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Melt>> BLOOM_CONTENTS =
+            COMPONENTS.registerComponentType("bloom_contents", b -> b
+                    .persistent(Melt.CODEC)
+                    .networkSynchronized(Melt.STREAM_CODEC));
+
     private ModDataComponents() {}
 }
