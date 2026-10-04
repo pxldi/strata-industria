@@ -118,7 +118,6 @@ public final class Tier4Blocks {
                     .strength(3.0f, 6.0f)
                     .requiresCorrectToolForDrops()
                     .noOcclusion()
-                    .isViewBlocking((state, level, pos) -> false)
                     .sound(SoundType.COPPER));
 
     // Spec 9.3 and 10.5: the mechanical pump, and the steam engine that turns a shaft.
