@@ -24,6 +24,9 @@ final class Weathering {
         double p = switch (c) {
             case 'C' -> 0.12;
             case 'k' -> 0.10;
+            case 'w' -> 0.15;
+            case 'J' -> 0.3;
+            case 's', '|' -> plan.id().endsWith("tramway") ? 0.3 : 0;
             case '_' -> 0.08;
             // Parts of a ruin that are there in some and gone in others.
             case 'Y', 'Z', 'b' -> 0.5;

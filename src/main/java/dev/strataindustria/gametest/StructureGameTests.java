@@ -40,6 +40,7 @@ final class StructureGameTests {
         tests.put("structure_plans_in_forest", StructureGameTests::plansInForest);
         tests.put("structure_sluice_in_forest", StructureGameTests::sluiceInForest);
         tests.put("structure_adit_in_forest", StructureGameTests::aditInForest);
+        tests.put("structure_bunkhouse_cache", StructureGameTests::bunkhouseCache);
     }
 
     private static void plansInForest(GameTestHelper helper) {
@@ -59,6 +60,32 @@ final class StructureGameTests {
             }
         }
         helper.assertTrue(problems.isEmpty(), "unclean generation: " + problems.stream().limit(6).toList());
+        helper.succeed();
+    }
+
+    /** The foreman's cache sits in a crate under a floor hatch, and the crate wall, lamps and bunks are all there. */
+    private static void bunkhouseCache(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        Plan plan = Plans.BUNKHOUSE;
+        int minX = origin.getX() + PAD, minZ = origin.getZ() + PAD;
+        BoundingBox area = new BoundingBox(minX - PAD, groundY - 8, minZ - PAD, minX + plan.width() + PAD, groundY + 40, minZ + plan.depth() + PAD);
+        forest(level, area, groundY, minX, minZ, plan.width(), plan.depth());
+        build(level, new PlanPiece(plan, Rotation.NONE, minX, minZ, groundY, OreMineral.MALACHITE, PlanPiece.Wood.SPRUCE, 11L), area);
+        BlockPos cache = new BlockPos(minX + 10, groundY, minZ + 3);
+        helper.assertTrue(level.getBlockState(cache).is(dev.strataindustria.structure.SharedBlocks.CRATE.get()), "cache crate missing");
+        helper.assertTrue(level.getBlockState(cache.above()).is(BlockTags.TRAPDOORS), "hatch missing over the cache");
+        helper.assertTrue(level.getBlockEntity(cache) instanceof net.minecraft.world.RandomizableContainer c && c.getLootTable() != null,
+                "cache crate has no loot table");
+        int beds = 0, lamps = 0;
+        for (BlockPos pos : BlockPos.betweenClosed(minX, groundY + 1, minZ, minX + plan.width(), groundY + 4, minZ + plan.depth())) {
+            BlockState state = level.getBlockState(pos);
+            if (state.is(BlockTags.BEDS)) beds++;
+            if (state.is(dev.strataindustria.structure.SharedBlocks.MINERS_LAMP.get())) lamps++;
+        }
+        helper.assertTrue(beds >= 8, "expected four beds, found " + beds / 2);
+        helper.assertTrue(lamps >= 2, "expected lamps");
         helper.succeed();
     }
 
