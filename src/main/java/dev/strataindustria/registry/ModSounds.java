@@ -29,6 +29,14 @@ public final class ModSounds {
 
     /** Hot metal hissing in water. */
     public static final DeferredHolder<SoundEvent, SoundEvent> QUENCH = register("heat.quench");
+    /** A piece slumps into the melt. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRUCIBLE_MELT = register("crucible.melt");
+    /** Molten metal runs into a mold. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> CRUCIBLE_POUR = register("crucible.pour");
+    /** A cast part knocked out of its mold. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLD_KNOCK = register("mold.knock");
+    /** A mold cracks apart. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MOLD_BREAK = register("mold.break");
     /** Charcoal catching in the forge. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_IGNITE = register("forge.ignite");
 

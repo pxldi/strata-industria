@@ -6,6 +6,7 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.geology.RockCategory;
+import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import java.util.concurrent.CompletableFuture;
@@ -77,9 +78,49 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(ModTags.Items.AXES).addTag(ItemTags.AXES);
         tag(ModTags.Items.KNIVES).add(ModItems.STONE_KNIFE.getKey());
         tag(ModTags.Items.HAMMERS).add(ModItems.STONE_HAMMER.getKey());
-        tag(ModTags.Items.SAWS);
+        metals();
         tag(ItemTags.DURABILITY_ENCHANTABLE).addTag(ModTags.Items.KNIVES).addTag(ModTags.Items.HAMMERS);
         tag(ItemTags.MELEE_WEAPON_ENCHANTABLE).addTag(ModTags.Items.KNIVES).addTag(ModTags.Items.HAMMERS);
         tag(ItemTags.SHARP_WEAPON_ENCHANTABLE).addTag(ModTags.Items.KNIVES);
+    }
+
+    /** Spec 6.1 and 8.3: c:ingots and c:nuggets per metal, the any_bronze groups, and metal tools in the tool tags. */
+    private void metals() {
+        var saws = tag(ModTags.Items.SAWS);
+        for (Metal metal : Metal.values()) {
+            if (!metal.hasIngot()) continue;
+            if (!metal.isVanilla()) {
+                tag(ModTags.Items.ingots(metal)).add(key(ModItems.ingot(metal)));
+                tag(Tags.Items.INGOTS).addTag(ModTags.Items.ingots(metal));
+                if (metal.hasNugget()) {
+                    tag(ModTags.Items.nuggets(metal)).add(key(ModItems.NUGGETS.get(metal).get()));
+                    tag(Tags.Items.NUGGETS).addTag(ModTags.Items.nuggets(metal));
+                }
+            }
+            if (metal.isBronze()) {
+                tag(ModTags.Items.ANY_BRONZE_INGOTS).addTag(ModTags.Items.ingots(metal));
+                tag(ModTags.Items.ANY_BRONZE_PLATES).add(ModItems.PLATES.get(metal).getKey());
+            }
+            if (!metal.isToolMetal()) continue;
+            for (MoldType type : MoldType.values()) {
+                Item tool = ModItems.tool(metal, type);
+                if (metal.isVanilla() && tool.builtInRegistryHolder().key().identifier().getNamespace().equals("minecraft")) continue;
+                var toolKey = key(tool);
+                switch (type) {
+                    case PICKAXE_HEAD -> tag(ItemTags.PICKAXES).add(toolKey);
+                    case AXE_HEAD -> tag(ItemTags.AXES).add(toolKey);
+                    case SHOVEL_HEAD -> tag(ItemTags.SHOVELS).add(toolKey);
+                    case HOE_HEAD -> tag(ItemTags.HOES).add(toolKey);
+                    case KNIFE_BLADE -> tag(ModTags.Items.KNIVES).add(toolKey);
+                    case HAMMER_HEAD -> tag(ModTags.Items.HAMMERS).add(toolKey);
+                    case SAW_BLADE -> saws.add(toolKey);
+                    case SWORD_BLADE -> tag(ItemTags.SWORDS).add(toolKey);
+                }
+            }
+        }
+        // Saws mine like axes, so they join the axe enchantments but not the axe tag (that would make them strip logs).
+        tag(ItemTags.MINING_ENCHANTABLE).addTag(ModTags.Items.SAWS);
+        tag(ItemTags.MINING_LOOT_ENCHANTABLE).addTag(ModTags.Items.SAWS);
+        tag(ItemTags.DURABILITY_ENCHANTABLE).addTag(ModTags.Items.SAWS);
     }
 }

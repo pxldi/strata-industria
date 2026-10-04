@@ -49,6 +49,41 @@
     ],
     "subtitle": "subtitles.strataindustria.clay.shape"
   },
+  "crucible.melt": {
+    "sounds": [
+      {
+        "name": "liquid/lavapop",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "liquid/lavapop",
+        "pitch": 1.1,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crucible.melt"
+  },
+  "crucible.pour": {
+    "sounds": [
+      {
+        "name": "item/bucket/empty_lava1",
+        "pitch": 1.2,
+        "volume": 0.8
+      },
+      {
+        "name": "item/bucket/empty_lava2",
+        "pitch": 1.2,
+        "volume": 0.8
+      },
+      {
+        "name": "item/bucket/empty_lava3",
+        "pitch": 1.2,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crucible.pour"
+  },
   "fire_pit.extinguish": {
     "sounds": [
       "random/fizz"
@@ -203,6 +238,51 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.knapping.rock"
+  },
+  "mold.break": {
+    "sounds": [
+      {
+        "name": "random/glass1",
+        "pitch": 0.6,
+        "volume": 0.7
+      },
+      {
+        "name": "random/glass2",
+        "pitch": 0.6,
+        "volume": 0.7
+      },
+      {
+        "name": "random/glass3",
+        "pitch": 0.6,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.mold.break"
+  },
+  "mold.knock": {
+    "sounds": [
+      {
+        "name": "dig/stone1",
+        "pitch": 1.4,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 1.4,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/stone3",
+        "pitch": 1.4,
+        "volume": 0.8
+      },
+      {
+        "name": "dig/stone4",
+        "pitch": 1.4,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.mold.knock"
   },
   "pit_kiln.fired": {
     "sounds": [

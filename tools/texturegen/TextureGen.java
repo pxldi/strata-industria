@@ -698,7 +698,8 @@ public final class TextureGen {
             case "hoe" -> drawAt(im, h, new String[] {"4444455", "43333..", "32....."}, 7, 2);
             case "knife" -> drawAt(im, h, new String[] {"......45", ".....453", "....443.", "...443..", "..443...", ".332....", ".2......"}, 6, 1);
             case "hammer" -> drawAt(im, h, new String[] {"..4455.", ".44433s", "4433332", ".33322.", "..32..."}, 8, 1);
-            case "saw" -> drawAt(im, h, new String[] {"........45", ".......443", "......443.", ".....443..", "....443...", "...332....", "..32.....", ".2........"}, 6, 0);
+            // A wide blade with teeth along its lower edge.
+            case "saw" -> drawAt(im, h, new String[] {"........455", ".......44432", "......4443.", ".....44432.", "....4443...", "...44432...", "..332......", ".2........."}, 5, 0);
             case "sword" -> drawAt(im, h, SWORD_BLADE, 5, 0);
             case "spear" -> drawAt(im, h, new String[] {"..455", ".4453", "44332", "4332.", ".2..."}, 10, 1);
             case "prospectors_pick" -> drawAt(im, h, new String[] {"...4455", ".443334", "43....3", "3......"}, 6, 2);
@@ -1099,6 +1100,42 @@ public final class TextureGen {
      * A tool mold: a square slab seen from above with a front edge, the cavity sunk into it. The cavity's
      * top-left walls are in shadow and its bottom-right walls catch the light.
      */
+    /** Cast metal sitting in the cavity, in a neutral cooled-metal ramp, so one texture serves every metal. */
+    static final Ramp CAST_METAL = ramp(0xe6dccb, 0x3a3430, 0x5a524a, 0x81766a, 0xa69a8a, 0xc8bca8);
+
+    static BufferedImage filledMold(String[] cavity) {
+        BufferedImage im = mold(CERAMIC, cavity);
+        int cx = 4, cy = 5;
+        java.util.function.BiPredicate<Integer, Integer> in = (x, y) ->
+                y >= 0 && y < cavity.length && x >= 0 && x < cavity[y].length() && cavity[y].charAt(x) == '#';
+        boolean spec = false;
+        for (int y = 0; y < cavity.length; y++)
+            for (int x = 0; x < cavity[y].length(); x++) {
+                if (!in.test(x, y)) continue;
+                int step = 4;
+                if (!in.test(x, y - 1) || !in.test(x - 1, y)) step = 3;
+                else if (!in.test(x, y + 1) || !in.test(x + 1, y)) step = 5;
+                int c = CAST_METAL.get(step);
+                if (step == 5 && !spec) { c = CAST_METAL.spec(); spec = true; }
+                px(im, cx + x, cy + y, c);
+            }
+        return im;
+    }
+
+    /** The ingot mold with cast metal in it: the cavity's floor pixels turn to metal, lit at the bottom. */
+    static BufferedImage filledIngotMold() {
+        BufferedImage im = art(CERAMIC, INGOT_MOLD_ITEM);
+        for (int y = 7; y <= 9; y++)
+            for (int x = 4; x <= 11; x++) {
+                char ch = INGOT_MOLD_ITEM[y].charAt(x);
+                if (ch != '1' && ch != '2') continue;
+                int c = CAST_METAL.get(y == 7 ? 3 : y == 8 ? 4 : 5);
+                if (y == 9 && x == 9) c = CAST_METAL.spec();
+                px(im, x, y, c);
+            }
+        return im;
+    }
+
     static BufferedImage mold(Ramp a, String[] cavity) {
         BufferedImage im = img();
         int left = 2, top = 3, w = 12, h = 9, cx = 4, cy = 5;
@@ -1384,6 +1421,32 @@ public final class TextureGen {
         return im;
     }
 
+    /** Crucible (spec 7.1): 3x3 inputs, mold slot under them, melt bar, pour progress and gauge. */
+    static BufferedImage crucibleGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 210);
+        for (int i = 0; i < 9; i++) slot(im, 8 + (i % 3) * 18, 18 + (i / 3) * 18);
+        slot(im, 8, 78);
+        // A faint ingot shape in the empty mold slot.
+        for (int y = 0; y < INGOT.length; y++)
+            for (int x = 0; x < INGOT[y].length(); x++)
+                if (INGOT[y].charAt(x) != '.') im.setRGB(11 + x, 82 + y, 0xff000000 | SLOT_FILL - 0x080808);
+        // Melt bar and pour progress.
+        well(im, 65, 17, 10, 54, 0x2a2a2a);
+        for (int u = 1; u < 4; u++) fill(im, 75, 17 + 1 + Math.round(52 - u * 13f), 2, 1, SLOT_FILL);
+        well(im, 71, 83, 32, 6, 0x2a2a2a);
+        // Gauge: 0 to 1500 degrees over 52 px, a notch every 250.
+        well(im, 159, 17, 10, 54, 0x2a2a2a);
+        for (int t = 250; t < 1500; t += 250) {
+            int y = 18 + 52 - Math.round(t / 1500f * 52);
+            fill(im, 156, y, 3, 1, t % 500 == 0 ? GUI_SHADOW : SLOT_FILL);
+        }
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 128 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 186);
+        return im;
+    }
+
     // ---------------------------------------------------------------- GUI
 
     static final int GUI_FACE = 0xc6c6c6, GUI_LIGHT = 0xffffff, GUI_SHADOW = 0x555555, GUI_EDGE = 0x000000;
@@ -1595,9 +1658,11 @@ public final class TextureGen {
             save("item/" + piece.getKey(), art(CERAMIC, piece.getValue()));
         }
         save("item/unfired_brick", art(CLAY, BRICK_ITEM));
+        save("item/ingot_mold_filled", filledIngotMold());
         for (var cavity : MOLD_CAVITIES.entrySet()) {
             save("item/unfired_" + cavity.getKey() + "_mold", mold(CLAY, cavity.getValue()));
             save("item/" + cavity.getKey() + "_mold", mold(CERAMIC, cavity.getValue()));
+            save("item/" + cavity.getKey() + "_mold_filled", filledMold(cavity.getValue()));
         }
         save("block/large_vessel_side", ceramicWall(6161, true));
         save("block/large_vessel_top", vesselTop());
@@ -1622,6 +1687,34 @@ public final class TextureGen {
         save("block/forge_coals", forgeCoals());
         save("block/forge_embers", emberBed(919, 0.12));
         saveRaw("gui/forge", forgeGui());
+
+        // Metals (spec 6 to 8): one shared shape per form, recoloured per metal ramp.
+        java.util.Map<String, String[]> heads = new java.util.LinkedHashMap<>();
+        heads.put("pickaxe_head", PICKAXE_HEAD);
+        heads.put("axe_head", AXE_HEAD);
+        heads.put("shovel_head", SHOVEL_HEAD);
+        heads.put("hoe_head", HOE_HEAD);
+        heads.put("knife_blade", KNIFE_BLADE);
+        heads.put("hammer_head", HAMMER_HEAD);
+        heads.put("saw_blade", SAW_BLADE);
+        heads.put("sword_blade", SWORD_BLADE);
+        for (Metal metal : METALS) {
+            String n = metal.name();
+            if (!metal.vanillaIngot()) {
+                save("item/" + n + "_ingot", map(metal.ramp(), INGOT));
+                save("item/" + n + "_nugget", map(metal.ramp(), NUGGET));
+            }
+            if (n.equals("tin") || n.equals("bismuth")) continue;
+            save("item/" + n + "_plate", map(metal.ramp(), PLATE));
+            for (var head : heads.entrySet()) save("item/" + n + "_" + head.getKey(), map(metal.ramp(), head.getValue()));
+            for (String kind : List.of("pickaxe", "axe", "shovel", "hoe", "knife", "hammer", "saw", "sword")) {
+                // Copper's pickaxe, axe, shovel, hoe and sword are the vanilla items and keep vanilla art.
+                if (metal.vanillaIngot() && !List.of("knife", "hammer", "saw").contains(kind)) continue;
+                save("item/" + n + "_" + kind, tool(metal.ramp(), WOOD, null, kind));
+            }
+        }
+        save("item/slag_metal_ingot", map(SLAG, INGOT));
+        saveRaw("gui/crucible", crucibleGui());
         if (args.length > 0 && args[0].equals("--preview-only")) { preview(); return; }
         preview();
         System.out.println("Wrote " + PREVIEW.size() + " textures");

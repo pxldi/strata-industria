@@ -1,5 +1,8 @@
 {
   "values": [
-    "strataindustria:stone_pickaxe"
+    "strataindustria:stone_pickaxe",
+    "strataindustria:bronze_pickaxe",
+    "strataindustria:arsenical_bronze_pickaxe",
+    "strataindustria:bismuth_bronze_pickaxe"
   ]
 }

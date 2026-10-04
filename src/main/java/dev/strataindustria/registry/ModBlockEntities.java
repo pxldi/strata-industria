@@ -6,6 +6,7 @@ import dev.strataindustria.ceramics.PitKilnBlockEntity;
 import dev.strataindustria.charcoal.LogPileBlockEntity;
 import dev.strataindustria.fire.FirePitBlockEntity;
 import dev.strataindustria.forge.ForgeBlockEntity;
+import dev.strataindustria.metal.CrucibleBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -29,6 +30,9 @@ public final class ModBlockEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ForgeBlockEntity>> FORGE =
             BLOCK_ENTITIES.register("forge", () -> new BlockEntityType<>(ForgeBlockEntity::new, ModBlocks.FORGE.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<CrucibleBlockEntity>> CRUCIBLE =
+            BLOCK_ENTITIES.register("crucible", () -> new BlockEntityType<>(CrucibleBlockEntity::new, ModBlocks.CRUCIBLE.get()));
 
     private ModBlockEntities() {}
 }

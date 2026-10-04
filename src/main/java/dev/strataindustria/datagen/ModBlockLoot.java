@@ -5,6 +5,7 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import java.util.Set;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
@@ -19,7 +20,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
@@ -66,9 +70,22 @@ final class ModBlockLoot extends BlockLootSubProvider {
         dropSelf(ModBlocks.FIRE_PIT.get());
         // The pit kiln drops what it holds itself and has no loot table.
         add(ModBlocks.LARGE_VESSEL.get(), createShulkerBoxDrop(ModBlocks.LARGE_VESSEL.get()));
-        dropSelf(ModBlocks.CRUCIBLE.get());
+        crucible();
         charcoalPile();
         dropSelf(ModBlocks.FORGE.get());
+    }
+
+    /** The crucible keeps its pieces, its melt and its heat when picked up, like a shulker box. */
+    private void crucible() {
+        Block block = ModBlocks.CRUCIBLE.get();
+        add(block, LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool()
+                .setRolls(ContextIntProviders.exactly(1))
+                .add(LootItem.lootTableItem(block)
+                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                                .include(DataComponents.CUSTOM_NAME)
+                                .include(DataComponents.CONTAINER)
+                                .include(ModDataComponents.CRUCIBLE_MELT.get())
+                                .include(ModDataComponents.TEMPERATURE.get()))))));
     }
 
     /** Spec 4.4: the pile's state says how much charcoal and ash the burn left. The log pile drops its own logs. */

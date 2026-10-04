@@ -8,6 +8,16 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:copy_components",
+            "include": [
+              "minecraft:custom_name",
+              "minecraft:container",
+              "strataindustria:crucible_melt",
+              "strataindustria:temperature"
+            ],
+            "source": "block_entity"
+          },
           "name": "strataindustria:crucible"
         }
       ],

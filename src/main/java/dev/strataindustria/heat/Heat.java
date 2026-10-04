@@ -28,7 +28,10 @@ public final class Heat {
 
     public static float get(ItemStack stack, long now) {
         Temperature t = stack.get(ModDataComponents.TEMPERATURE.get());
-        if (t == null) return AMBIENT;
+        return t == null ? AMBIENT : get(t, now);
+    }
+
+    public static float get(Temperature t, long now) {
         return approach(t.value(), AMBIENT, AMBIENT_RATE, Math.max(0, now - t.updated()));
     }
 

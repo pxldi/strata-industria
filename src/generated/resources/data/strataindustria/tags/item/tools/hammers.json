@@ -1,5 +1,9 @@
 {
   "values": [
-    "strataindustria:stone_hammer"
+    "strataindustria:stone_hammer",
+    "strataindustria:copper_hammer",
+    "strataindustria:bronze_hammer",
+    "strataindustria:arsenical_bronze_hammer",
+    "strataindustria:bismuth_bronze_hammer"
   ]
 }

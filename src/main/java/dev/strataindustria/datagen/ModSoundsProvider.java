@@ -52,6 +52,18 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.FORGE_IGNITE, definition().subtitle(subtitle("forge.ignite"))
                 .with(sound("minecraft:fire/ignite").pitch(0.7f))
                 .with(sound("minecraft:fire/fire").pitch(0.8f).volume(0.8f)));
+        // Metal: lava pops for a piece slumping into the melt, a poured bucket of lava, and fired clay
+        // knocking or cracking.
+        add(ModSounds.CRUCIBLE_MELT, definition().subtitle(subtitle("crucible.melt"))
+                .with(sound("minecraft:liquid/lavapop").pitch(0.8f).volume(0.7f))
+                .with(sound("minecraft:liquid/lavapop").pitch(1.1f).volume(0.6f)));
+        SoundDefinition pour = definition().subtitle(subtitle("crucible.pour"));
+        for (int i = 1; i <= 3; i++) pour.with(sound("minecraft:item/bucket/empty_lava" + i).pitch(1.2f).volume(0.8f));
+        add(ModSounds.CRUCIBLE_POUR, pour);
+        add(ModSounds.MOLD_KNOCK, stone("mold.knock", 1.4f, 0.8f));
+        SoundDefinition crack = definition().subtitle(subtitle("mold.break"));
+        for (int i = 1; i <= 3; i++) crack.with(sound("minecraft:random/glass" + i).pitch(0.6f).volume(0.7f));
+        add(ModSounds.MOLD_BREAK, crack);
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }
