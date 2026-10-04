@@ -749,81 +749,6 @@ public final class TextureGen {
             "..3..3..",
             "..3..3..",
     };
-
-    // Knapped stone heads: faceted bifaces with flake scars (alternating steps) and chipped edges.
-    static final String[] KNAPPED_AXE_HEAD = {
-            "......455...",
-            "....44544...",
-            "...4543443..",
-            "..44434343..",
-            ".4434443432.",
-            ".4343434332.",
-            "44434343432.",
-            "4343434332..",
-            ".33434332...",
-            "..333322....",
-            "...2222.....",
-    };
-    static final String[] KNAPPED_KNIFE_BLADE = {
-            "..........45",
-            ".........454",
-            "........4543",
-            ".......4443.",
-            "......4543..",
-            ".....4443...",
-            "....4543....",
-            "...4433.....",
-            "..4332......",
-            ".3322.......",
-            ".22.........",
-    };
-    static final String[] KNAPPED_SHOVEL_HEAD = {
-            "..44554..",
-            ".4545444.",
-            "444434343",
-            "434343433",
-            "443434332",
-            "343433332",
-            ".3333322.",
-            "..33222..",
-            "...222...",
-    };
-    static final String[] KNAPPED_HOE_HEAD = {
-            "...4455554..",
-            ".4445454443.",
-            "444343434332",
-            "433333333322",
-            ".2222222221.",
-    };
-    static final String[] KNAPPED_HAMMER_HEAD = {
-            "..445554..",
-            ".44545444.",
-            "4445444343",
-            "4343434333",
-            "3434343332",
-            ".33333322.",
-            "..22222...",
-    };
-    static final String[] KNAPPED_SPEAR_HEAD = {
-            "...45...",
-            "..4554..",
-            "..4543..",
-            ".445443.",
-            ".454343.",
-            "44434332",
-            ".434332.",
-            ".43332..",
-            "..3322..",
-            "...22...",
-    };
-    static final String[] KNAPPED_PICKAXE_HEAD = {
-            "...445555443..",
-            ".44543434344..",
-            "443.......344.",
-            "43.........43.",
-            "3...........3.",
-    };
-
     /** Diagonal tool: handle bottom-left to head top-right. */
     static BufferedImage tool(Ramp head, Ramp handle, Ramp lashing, String kind) {
         BufferedImage im = img();
@@ -848,9 +773,18 @@ public final class TextureGen {
         }
         if (lashing != null) {
             int x = 2 + end - 2, y = 13 - (end - 2);
-            px(im, x, y, lashing.get(4));
-            px(im, x + 1, y, lashing.get(3));
-            px(im, x + 1, y - 1, lashing.get(3));
+            if (lashing == LEATHER) {
+                // Bark cord wound round the handle under the head, the knot's tail hanging down.
+                px(im, x, y, lashing.get(5));
+                px(im, x + 1, y, lashing.get(4));
+                px(im, x + 1, y - 1, lashing.get(4));
+                px(im, x - 1, y + 1, lashing.get(4));
+                px(im, x - 1, y + 2, lashing.get(3));
+            } else {
+                px(im, x, y, lashing.get(4));
+                px(im, x + 1, y, lashing.get(3));
+                px(im, x + 1, y - 1, lashing.get(3));
+            }
         }
         Ramp h = head;
         switch (kind) {
@@ -7858,15 +7792,8 @@ public final class TextureGen {
         save("item/cord", cordItem());
         save("item/field_journal", art(FIELD_JOURNAL, V2.STRAW_V2, V2.FIBRE_V2, PAPER));
         save("item/bark_cloth", barkCloth());
-        save("item/stone_axe_head", map(V2.FLINT_V2, KNAPPED_AXE_HEAD));
-        save("item/stone_knife_blade", map(V2.FLINT_V2, KNAPPED_KNIFE_BLADE));
-        save("item/stone_shovel_head", map(V2.FLINT_V2, KNAPPED_SHOVEL_HEAD));
-        save("item/stone_hoe_head", map(V2.FLINT_V2, KNAPPED_HOE_HEAD));
-        save("item/stone_hammer_head", map(V2.FLINT_V2, KNAPPED_HAMMER_HEAD));
-        save("item/stone_spear_head", map(V2.FLINT_V2, KNAPPED_SPEAR_HEAD));
-        save("item/stone_pickaxe_head", pickaxeHeadV2(V2.FLINT_V2));
         for (String kind : List.of("axe", "knife", "shovel", "hoe", "hammer", "pickaxe"))
-            save("item/stone_" + kind, tool(V2.FLINT_V2, V2.WOOD_V2, V2.FIBRE_V2, kind));
+            save("item/stone_" + kind, tool(V2.FLINT_V2, V2.WOOD_V2, LEATHER, kind));
         save("gui/knapping/flint", flintSurface());
 
         // Fire (spec 3.5).

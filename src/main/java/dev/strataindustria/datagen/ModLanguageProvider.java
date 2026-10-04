@@ -5,7 +5,6 @@ import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
-import dev.strataindustria.geology.RockCategory;
 import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlocks;
@@ -49,13 +48,6 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.CORD, "Bark Cord");
         addItem(ModItems.BARK_CLOTH, "Bark Cloth");
         addItem(ModItems.FIELD_JOURNAL, "Field Journal");
-        addItem(ModItems.STONE_AXE_HEAD, "Stone Axe Head");
-        addItem(ModItems.STONE_KNIFE_BLADE, "Stone Knife Blade");
-        addItem(ModItems.STONE_SHOVEL_HEAD, "Stone Shovel Head");
-        addItem(ModItems.STONE_HOE_HEAD, "Stone Hoe Head");
-        addItem(ModItems.STONE_HAMMER_HEAD, "Stone Hammer Head");
-        addItem(ModItems.STONE_SPEAR_HEAD, "Stone Spear Head");
-        addItem(ModItems.STONE_PICKAXE_HEAD, "Stone Pickaxe Head");
         addItem(ModItems.STONE_AXE, "Stone Axe");
         addItem(ModItems.STONE_KNIFE, "Stone Knife");
         addItem(ModItems.STONE_SHOVEL, "Stone Shovel");
@@ -64,16 +56,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.STONE_PICKAXE, "Stone Pickaxe");
 
         String knapped = StrataIndustria.MOD_ID + ".knapped_from.";
-        add(knapped + "rock", "Knapped from %s (%s), %s");
-        add(knapped + "grain.clean", "flakes clean");
-        add(knapped + "grain.coarse", "coarse");
-        add(knapped + "grain.crumbly", "crumbly");
-        add(knapped + "flint", "Knapped from flint");
+        add(knapped + "rock", "Struck from %s");
+        add(knapped + "flint", "Struck from flint");
         for (Rock rock : Rock.values()) {
             add(knapped + "material." + rock.id(), rock.id().replace('_', ' '));
-        }
-        for (RockCategory category : RockCategory.values()) {
-            add(knapped + "category." + category.getSerializedName(), category.getSerializedName().replace('_', ' '));
         }
         addBlock(ModBlocks.FIRE_PIT, "Fire Pit");
         add("container." + StrataIndustria.MOD_ID + ".fire_pit", "Fire Pit");
@@ -84,6 +70,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(StrataIndustria.MOD_ID + ".flint_strike.need_rock", "Hold a rock in your other hand to strike the flint on");
         add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s for this shape");
         add(StrataIndustria.MOD_ID + ".shaping.shape", "%s: %s blows, uses %s %s");
+        add(StrataIndustria.MOD_ID + ".shaping.shape_bound", "%s: %s blows, uses %s %s, a stick and a cord");
+        add(StrataIndustria.MOD_ID + ".shaping.need_binding", "A %s needs a stick and a cord in your pack");
         add(StrataIndustria.MOD_ID + ".shaping.progress", "%s  %s/%s");
         add(StrataIndustria.MOD_ID + ".shaping.done", "%s");
         add(StrataIndustria.MOD_ID + ".shaping.nothing", "Nothing to make from %s");
@@ -194,7 +182,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add("message." + StrataIndustria.MOD_ID + ".cord.need_cord", "Four cord make a cloth.");
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
-        add(subtitles + "knapping.finish", "Stone tool knapped");
+        add(subtitles + "knapping.finish", "Stone breaks free");
+        add(subtitles + "cord.bind", "Head bound on");
         add(subtitles + "shaping.chime", "Flint chimes");
         add(subtitles + "shaping.true_blow", "Strike lands true");
         add(subtitles + "shaping.glint", "Rebound ticks");
@@ -788,9 +777,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t0.boulder", "Boulder");
         add(journal + "t0.boulder.hint", "Hit a boulder with your bare hand until it splits, then pick up a shard.");
         add(journal + "t0.knap", "First Edge");
-        add(journal + "t0.knap.hint", "Hold two rock shards or one flint and use it to strike. Sneak and use picks which head. A few blows and it breaks free.");
+        add(journal + "t0.knap.hint", "Hold two rock shards or one flint, with a stick and a cord in your pack. Sneak and use picks the tool, use strikes. Four blows and it comes off bound.");
         add(journal + "t0.stone_axe", "Stone Axe");
-        add(journal + "t0.stone_axe.hint", "Bind a knapped axe head to a stick with cord.");
+        add(journal + "t0.stone_axe.hint", "Strike an axe from a shard. Pick the axe shape first.");
         add(journal + "t0.log", "Timber");
         add(journal + "t0.log.hint", "Fell a tree with your axe. Bare hands will not do.");
         add(journal + "t0.crafting_table", "A Proper Workbench");

@@ -173,10 +173,6 @@ final class ModModelProvider extends ModelProvider {
         flatItem(itemModels, ModItems.CORD.get());
         flatItem(itemModels, ModItems.BARK_CLOTH.get());
         flatItem(itemModels, ModItems.FIELD_JOURNAL.get());
-        for (var head : java.util.List.of(ModItems.STONE_AXE_HEAD, ModItems.STONE_KNIFE_BLADE, ModItems.STONE_SHOVEL_HEAD,
-                ModItems.STONE_HOE_HEAD, ModItems.STONE_HAMMER_HEAD, ModItems.STONE_SPEAR_HEAD, ModItems.STONE_PICKAXE_HEAD)) {
-            flatItem(itemModels, head.get());
-        }
         for (var tool : java.util.List.of(ModItems.STONE_AXE, ModItems.STONE_KNIFE, ModItems.STONE_SHOVEL,
                 ModItems.STONE_HOE, ModItems.STONE_HAMMER, ModItems.STONE_PICKAXE)) {
             itemModels.generateFlatItem(tool.get(), ModelTemplates.FLAT_HANDHELD_ITEM);

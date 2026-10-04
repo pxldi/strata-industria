@@ -43,6 +43,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         bronze();
         branches();
         cord();
+        bind();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -620,6 +621,16 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(dev.strataindustria.cord.CordSounds.CLOTH, definition().subtitle(subtitle("cord.cloth"))
                 .with(sound("minecraft:item.armor.equip_leather", event).pitch(1.2f).volume(0.7f))
                 .with(sound("minecraft:block.wool.place", event).pitch(1.3f).volume(0.7f)));
+    }
+
+    /** The finished stone tool is wrapped and knotted (redesign R4): a quick winding, a knot and a tug. */
+    private void bind() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.cord.CordSounds.BIND, definition().subtitle(subtitle("cord.bind"))
+                .with(sound("minecraft:block.wool.step", event).pitch(1.7f).volume(0.7f))
+                .with(sound("minecraft:entity.leash_knot.place", event).pitch(1.0f).volume(0.9f))
+                .with(sound("minecraft:item.armor.equip_leather", event).pitch(1.5f).volume(0.6f))
+                .with(sound("minecraft:block.bamboo.hit", event).pitch(1.9f).volume(0.4f)));
     }
 
     private void transport() {

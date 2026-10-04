@@ -12,8 +12,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 /**
- * What a knapped head (and the tool made from it) was struck from: a rock id or {@code flint}. The
- * rock category sets the tool's durability multiplier (tier 0-2 spec 3.4).
+ * What a stone tool was struck from: a rock id or {@code flint}. The rock sets how long the tool lasts
+ * ({@link Rock#toolDurability()}).
  */
 public record KnappedFrom(String source) {
     public static final String FLINT = "flint";
@@ -32,17 +32,14 @@ public record KnappedFrom(String source) {
     }
 
     public float durabilityMultiplier() {
-        return rock().map(r -> r.category().durabilityMultiplier() * r.grain().durabilityMultiplier()).orElse(FLINT.equals(source) ? FLINT_MULTIPLIER : 1.0f);
+        return rock().map(Rock::toolDurability).orElse(FLINT.equals(source) ? FLINT_MULTIPLIER : 1.0f);
     }
 
-    /** "Knapped from basalt (igneous extrusive)". */
+    /** "Struck from basalt". */
     public Component tooltip() {
         String prefix = StrataIndustria.MOD_ID + ".knapped_from.";
         return rock()
-                .map(r -> Component.translatable(prefix + "rock",
-                        Component.translatable(prefix + "material." + r.id()),
-                        Component.translatable(prefix + "category." + r.category().getSerializedName()),
-                        Component.translatable(prefix + "grain." + r.grain().id())))
+                .map(r -> Component.translatable(prefix + "rock", Component.translatable(prefix + "material." + r.id())))
                 .orElseGet(() -> Component.translatable(prefix + "flint"))
                 .withStyle(ChatFormatting.GRAY);
     }

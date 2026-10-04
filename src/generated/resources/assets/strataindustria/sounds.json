@@ -2311,6 +2311,34 @@
     ],
     "subtitle": "subtitles.strataindustria.cord.beat"
   },
+  "cord.bind": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wool.step",
+        "pitch": 1.7,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "entity.leash_knot.place",
+        "volume": 0.9
+      },
+      {
+        "type": "event",
+        "name": "item.armor.equip_leather",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.bamboo.hit",
+        "pitch": 1.9,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.cord.bind"
+  },
   "cord.cloth": {
     "sounds": [
       {

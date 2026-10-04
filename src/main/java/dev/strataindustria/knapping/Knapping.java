@@ -7,6 +7,8 @@ import dev.strataindustria.registry.ModSounds;
 import java.util.Optional;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -77,6 +79,33 @@ public final class Knapping {
     public static Optional<Grain> grainOf(ItemStack stack) {
         if (isFlint(stack)) return Optional.of(Grain.CLEAN);
         return rockOf(stack).map(Rock::grain);
+    }
+
+    /** Whether the player carries a stick and a cord to bind a stone tool with. */
+    public static boolean hasBinding(Player player) {
+        return player.hasInfiniteMaterials() || (carries(player, Items.STICK) && carries(player, ModItems.CORD.get()));
+    }
+
+    /** Takes the stick and the cord a bound tool is made with. */
+    public static void spendBinding(Player player) {
+        if (player.hasInfiniteMaterials()) return;
+        take(player, Items.STICK);
+        take(player, ModItems.CORD.get());
+    }
+
+    private static boolean carries(Player player, Item item) {
+        return player.getInventory().contains(s -> s.is(item));
+    }
+
+    private static void take(Player player, Item item) {
+        var inventory = player.getInventory();
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(item)) {
+                stack.shrink(1);
+                return;
+            }
+        }
     }
 
     public static Optional<KnappedFrom> sourceOf(ItemStack stack) {

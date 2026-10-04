@@ -43,12 +43,15 @@ final class ShapingGameTests {
         tests.put("shaping_cost", ShapingGameTests::cost);
         tests.put("shaping_clay_and_carving", ShapingGameTests::clayAndCarving);
         tests.put("shaping_remembers", ShapingGameTests::remembers);
+        tests.put("shaping_bound_tool", ShapingGameTests::boundTool);
     }
 
     private static FakePlayer player(GameTestHelper helper, ItemStack held) {
         FakePlayer player = new FakePlayer(helper.getLevel(), new GameProfile(UUID.randomUUID(), "shaper"));
         player.setPos(helper.absoluteVec(new Vec3(2.5, 1.0, 2.5)));
         player.setItemInHand(HAND, held);
+        player.getInventory().add(new ItemStack(Items.STICK, 8));
+        player.getInventory().add(new ItemStack(ModItems.CORD.get(), 8));
         return player;
     }
 
@@ -71,14 +74,14 @@ final class ShapingGameTests {
         ServerLevel level = helper.getLevel();
         ItemStack flint = new ItemStack(Items.FLINT);
         ItemStack rock = new ItemStack(ModItems.ROCK_SHARD.get(Rock.GRANITE).get());
-        Set<Item> stone = Set.of(ModItems.STONE_AXE_HEAD.get(), ModItems.STONE_KNIFE_BLADE.get(), ModItems.STONE_SHOVEL_HEAD.get(),
-                ModItems.STONE_HOE_HEAD.get(), ModItems.STONE_HAMMER_HEAD.get(), ModItems.STONE_SPEAR_HEAD.get(), ModItems.STONE_PICKAXE_HEAD.get());
-        helper.assertTrue(results(level, flint).containsAll(stone), "flint should offer every stone head");
+        Set<Item> stone = Set.of(ModItems.STONE_AXE.get(), ModItems.STONE_KNIFE.get(), ModItems.STONE_SHOVEL.get(),
+                ModItems.STONE_HOE.get(), ModItems.STONE_HAMMER.get(), Items.STONE_SPEAR, ModItems.STONE_PICKAXE.get());
+        helper.assertTrue(results(level, flint).containsAll(stone), "flint should offer every stone tool");
         helper.assertTrue(!results(level, flint).contains(ModItems.QUERNSTONE.get()), "flint is too small for a quernstone");
-        helper.assertTrue(results(level, rock).containsAll(stone), "rock should offer every stone head");
+        helper.assertTrue(results(level, rock).containsAll(stone), "rock should offer every stone tool");
         helper.assertTrue(results(level, rock).contains(ModItems.QUERNSTONE.get()), "rock should offer a quernstone");
         helper.assertTrue(results(level, new ItemStack(Items.CLAY_BALL)).contains(ModItems.UNFIRED_CRUCIBLE.get()), "clay should offer a crucible");
-        helper.assertTrue(!results(level, new ItemStack(Items.CLAY_BALL)).contains(ModItems.STONE_AXE_HEAD.get()), "clay offers no stone heads");
+        helper.assertTrue(!results(level, new ItemStack(Items.CLAY_BALL)).contains(ModItems.STONE_AXE.get()), "clay offers no stone tools");
         helper.assertValueEqual(Shaping.shapes(level, new ItemStack(PatternRegistry.PATTERN_BLANK.get())).size(), PatternRegistry.SHAPES.size(), "carvable shapes");
         for (RecipeHolder<KnappingRecipe> shape : level.recipeAccess().recipeMap().byType(dev.strataindustria.registry.ModRecipes.KNAPPING.get())) {
             int blows = shape.value().blows();
@@ -87,7 +90,7 @@ final class ShapingGameTests {
         helper.succeed();
     }
 
-    // Four spaced blows make an axe head from flint: nothing is spent until the last one, then the head hops free.
+    // Four spaced blows make an axe from flint: nothing is spent until the last one, then the bound axe hops free.
     private static void strikes(GameTestHelper helper) {
         FakePlayer player = player(helper, new ItemStack(Items.FLINT, 16));
         Shaping.cycle(player, HAND, 0);
@@ -97,14 +100,14 @@ final class ShapingGameTests {
             Shaping.strike(player, HAND, t);
             helper.assertValueEqual(Shaping.blows(player), blow, "blows after click " + blow);
             helper.assertValueEqual(player.getMainHandItem().getCount(), 16, "a half-shaped piece costs nothing");
-            helper.assertTrue(dropped(helper, player, ModItems.STONE_AXE_HEAD.get()).isEmpty(), "no head before the last blow");
+            helper.assertTrue(dropped(helper, player, ModItems.STONE_AXE.get()).isEmpty(), "no axe before the last blow");
             helper.assertValueEqual(pieces(helper, player), 2, "the piece and the growing result show on the surface");
         }
         Shaping.strike(player, HAND, t);
-        List<ItemEntity> heads = dropped(helper, player, ModItems.STONE_AXE_HEAD.get());
-        helper.assertValueEqual(heads.size(), 1, "the head drops on the last blow");
-        helper.assertValueEqual(pieces(helper, player), 0, "the pieces go when the head is done");
-        helper.assertTrue(heads.get(0).getItem().get(ModDataComponents.KNAPPED_FROM.get()).equals(new KnappedFrom(KnappedFrom.FLINT)), "the head remembers its flint");
+        List<ItemEntity> axes = dropped(helper, player, ModItems.STONE_AXE.get());
+        helper.assertValueEqual(axes.size(), 1, "the axe drops on the last blow");
+        helper.assertValueEqual(pieces(helper, player), 0, "the pieces go when the axe is done");
+        helper.assertTrue(axes.get(0).getItem().get(ModDataComponents.KNAPPED_FROM.get()).equals(new KnappedFrom(KnappedFrom.FLINT)), "the axe remembers its flint");
         helper.assertValueEqual(player.getMainHandItem().getCount(), 15, "one flint spent");
         helper.assertValueEqual(Shaping.blows(player), 0, "the next piece starts fresh");
         helper.succeed();
@@ -118,7 +121,7 @@ final class ShapingGameTests {
         Shaping.strike(player, HAND, 10);
         helper.assertValueEqual(Shaping.blows(player), 3, "a blow on the glint counts twice");
         Shaping.strike(player, HAND, 20);
-        helper.assertTrue(!dropped(helper, player, ModItems.STONE_AXE_HEAD.get()).isEmpty(), "three clicks finish a four-blow head");
+        helper.assertTrue(!dropped(helper, player, ModItems.STONE_AXE.get()).isEmpty(), "three clicks finish a four-blow axe");
         helper.succeed();
     }
 
@@ -127,9 +130,9 @@ final class ShapingGameTests {
         FakePlayer player = player(helper, new ItemStack(Items.FLINT, 16));
         for (long t = 0; t <= 44; t += 4) {
             Shaping.strike(player, HAND, t);
-            if (t < 36) helper.assertTrue(dropped(helper, player, ModItems.STONE_AXE_HEAD.get()).isEmpty(), "still shaping at tick " + t);
+            if (t < 36) helper.assertTrue(dropped(helper, player, ModItems.STONE_AXE.get()).isEmpty(), "still shaping at tick " + t);
         }
-        helper.assertValueEqual(dropped(helper, player, ModItems.STONE_AXE_HEAD.get()).size(), 1, "holding the button finishes the head");
+        helper.assertValueEqual(dropped(helper, player, ModItems.STONE_AXE.get()).size(), 1, "holding the button finishes the axe");
         FakePlayer quick = player(helper, new ItemStack(Items.FLINT, 16));
         Shaping.strike(quick, HAND, 100);
         Shaping.strike(quick, HAND, 102);
@@ -145,8 +148,8 @@ final class ShapingGameTests {
         player.setItemInHand(HAND, new ItemStack(ModItems.ROCK_SHARD.get(Rock.BASALT).get(), 5));
         long t = 100;
         for (int i = 0; i < 4; i++, t += GAP) Shaping.strike(player, HAND, t);
-        helper.assertValueEqual(dropped(helper, player, ModItems.STONE_AXE_HEAD.get()).size(), 1, "an axe head from rock");
-        helper.assertValueEqual(player.getMainHandItem().getCount(), 3, "an axe head costs two rocks");
+        helper.assertValueEqual(dropped(helper, player, ModItems.STONE_AXE.get()).size(), 1, "an axe from rock");
+        helper.assertValueEqual(player.getMainHandItem().getCount(), 3, "an axe costs two rocks");
         // The quernstone: four rocks, six blows.
         int guard = 0;
         while (!Shaping.current(player, player.getMainHandItem()).map(h -> h.value().result().item().value().equals(ModItems.QUERNSTONE.get())).orElse(false) && guard++ < 30) {
@@ -179,14 +182,14 @@ final class ShapingGameTests {
     // The next piece starts on the shape last worked, and switching shape drops the blows on the old one.
     private static void remembers(GameTestHelper helper) {
         FakePlayer player = player(helper, new ItemStack(Items.FLINT, 16));
-        pick(player, ModItems.STONE_HAMMER_HEAD.get());
+        pick(player, ModItems.STONE_HAMMER.get());
         long t = 0;
         for (int i = 0; i < 4; i++, t += GAP) Shaping.strike(player, HAND, t);
-        helper.assertValueEqual(dropped(helper, player, ModItems.STONE_HAMMER_HEAD.get()).size(), 1, "a hammer head");
+        helper.assertValueEqual(dropped(helper, player, ModItems.STONE_HAMMER.get()).size(), 1, "a hammer");
         helper.assertValueEqual(Shaping.current(player, player.getMainHandItem()).map(h -> h.value().result().item().value()).orElse(null),
-                ModItems.STONE_HAMMER_HEAD.get(), "the picker stays on the last shape");
+                ModItems.STONE_HAMMER.get(), "the picker stays on the last shape");
         Shaping.strike(player, HAND, t);
-        helper.assertValueEqual(Shaping.blows(player), 1, "one blow on the hammer head");
+        helper.assertValueEqual(Shaping.blows(player), 1, "one blow on the hammer");
         Shaping.cycle(player, HAND, 1);
         helper.assertValueEqual(Shaping.blows(player), 0, "a new shape starts from nothing");
         helper.succeed();
@@ -199,5 +202,35 @@ final class ShapingGameTests {
             if (guard++ > 40) throw new IllegalStateException("no shape gives " + result);
             Shaping.cycle(player, HAND, 1);
         }
+    }
+
+    // A stone tool needs a stick and a cord in the pack, spends them on the last blow, and lasts as long as its rock.
+    private static void boundTool(GameTestHelper helper) {
+        FakePlayer bare = new FakePlayer(helper.getLevel(), new GameProfile(UUID.randomUUID(), "bare"));
+        bare.setPos(helper.absoluteVec(new Vec3(2.5, 1.0, 2.5)));
+        bare.setItemInHand(HAND, new ItemStack(Items.FLINT, 16));
+        Shaping.strike(bare, HAND, 0);
+        helper.assertValueEqual(Shaping.blows(bare), 0, "no blow without a stick and a cord");
+        bare.getInventory().add(new ItemStack(Items.STICK));
+        Shaping.strike(bare, HAND, GAP);
+        helper.assertValueEqual(Shaping.blows(bare), 0, "a stick alone is not enough");
+
+        FakePlayer player = player(helper, new ItemStack(ModItems.ROCK_SHARD.get(Rock.RHYOLITE).get(), 8));
+        long t = 0;
+        for (int i = 0; i < 4; i++, t += GAP) Shaping.strike(player, HAND, t);
+        List<ItemEntity> axes = dropped(helper, player, ModItems.STONE_AXE.get());
+        helper.assertValueEqual(axes.size(), 1, "a bound axe comes off the last blow");
+        ItemStack axe = axes.get(0).getItem();
+        helper.assertValueEqual(axe.get(ModDataComponents.KNAPPED_FROM.get()), KnappedFrom.of(Rock.RHYOLITE), "struck from rhyolite");
+        helper.assertValueEqual(axe.getMaxDamage(), Math.round(ModItems.KNAPPED_DURABILITY * Rock.RHYOLITE.toolDurability()), "durability follows the rock");
+        helper.assertValueEqual(player.getInventory().countItem(Items.STICK), 7, "one stick spent");
+        helper.assertValueEqual(player.getInventory().countItem(ModItems.CORD.get()), 7, "one cord spent");
+
+        FakePlayer shale = player(helper, new ItemStack(ModItems.ROCK_SHARD.get(Rock.SHALE).get(), 8));
+        for (int i = 0; i < 4; i++, t += GAP) Shaping.strike(shale, HAND, t);
+        ItemStack soft = dropped(helper, shale, ModItems.STONE_AXE.get()).stream().map(ItemEntity::getItem)
+                .filter(a -> KnappedFrom.of(Rock.SHALE).equals(a.get(ModDataComponents.KNAPPED_FROM.get()))).findFirst().orElseThrow();
+        helper.assertTrue(soft.getMaxDamage() < axe.getMaxDamage(), "shale wears out before rhyolite");
+        helper.succeed();
     }
 }

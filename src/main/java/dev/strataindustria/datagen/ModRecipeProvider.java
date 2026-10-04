@@ -9,7 +9,6 @@ import dev.strataindustria.tanning.BarrelRecipe;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.crafting.ConfigCondition;
-import dev.strataindustria.crafting.KnappedToolRecipe;
 import dev.strataindustria.crafting.MetalArmourRecipe;
 import dev.strataindustria.crafting.MetalToolRecipe;
 import dev.strataindustria.crafting.ToolShapelessRecipe;
@@ -86,7 +85,6 @@ final class ModRecipeProvider extends RecipeProvider {
         forge();
         prologueMachines();
         fibre();
-        stoneTools();
         fire();
         planks();
         metals();
@@ -110,14 +108,15 @@ final class ModRecipeProvider extends RecipeProvider {
     private static final int KNAP_BLOWS = 4, CLAY_BLOWS = 3, CARVE_BLOWS = 3;
 
     // Tier 0-2 spec 3.2. Patterns are written top row first; '#' is the shape that comes out of the stone.
+    // Tools come off the last blow bound to a stick with cord (redesign R4).
     private void knapping() {
-        knap(ModItems.STONE_AXE_HEAD.get(), ".#...", "####.", "#####", "####.", ".#...");
-        knap(ModItems.STONE_KNIFE_BLADE.get(), "#....", "##...", ".##..", "..##.", "...##");
-        knap(ModItems.STONE_SHOVEL_HEAD.get(), ".###.", ".###.", ".###.", ".###.", "..#..");
-        knap(ModItems.STONE_HOE_HEAD.get(), "#####", "##...", ".....", ".....", ".....");
-        knap(ModItems.STONE_HAMMER_HEAD.get(), "#####", "#####", "..#..", ".....", ".....");
-        knap(ModItems.STONE_SPEAR_HEAD.get(), "..#..", ".###.", ".###.", "..#..", "..#..");
-        knap(ModItems.STONE_PICKAXE_HEAD.get(), ".###.", "#...#", ".....", ".....", ".....");
+        knapTool(ModItems.STONE_AXE.get(), ".#...", "####.", "#####", "####.", ".#...");
+        knapTool(ModItems.STONE_KNIFE.get(), "#....", "##...", ".##..", "..##.", "...##");
+        knapTool(ModItems.STONE_SHOVEL.get(), ".###.", ".###.", ".###.", ".###.", "..#..");
+        knapTool(ModItems.STONE_HOE.get(), "#####", "##...", ".....", ".....", ".....");
+        knapTool(ModItems.STONE_HAMMER.get(), "#####", "#####", "..#..", ".....", ".....");
+        knapTool(Items.STONE_SPEAR, "..#..", ".###.", ".###.", "..#..", "..#..");
+        knapTool(ModItems.STONE_PICKAXE.get(), ".###.", "#...#", ".....", ".....", ".....");
         // Spec 10.1: a round stone with a hole, worth four rock shards.
         int quernstone = GridPattern.parse(List.of(".###.", "#####", "##.##", "#####", ".###.")).getOrThrow();
         output.accept(key("knapping/quernstone"), new KnappingRecipe(tag(ModTags.Items.ROCK_SHARDS), 4, 6, quernstone,
@@ -219,9 +218,9 @@ final class ModRecipeProvider extends RecipeProvider {
                 Knapping.CLAY_OPENING_COST, CLAY_BLOWS, pattern, new ItemStackTemplate(result)), null);
     }
 
-    private void knap(Item result, String... rows) {
+    private void knapTool(Item result, String... rows) {
         int pattern = GridPattern.parse(List.of(rows)).getOrThrow();
-        var recipe = new KnappingRecipe(tag(ModTags.Items.KNAPPABLE), 1, KNAP_BLOWS, pattern, new ItemStackTemplate(result));
+        var recipe = new KnappingRecipe(tag(ModTags.Items.KNAPPABLE), 1, KNAP_BLOWS, pattern, new ItemStackTemplate(result), true);
         output.accept(key("knapping/" + name(result)), recipe, null);
     }
 
@@ -269,26 +268,6 @@ final class ModRecipeProvider extends RecipeProvider {
                 .requires(ModItems.STRAW.get())
                 .unlockedBy("has_straw", has(ModItems.STRAW.get()))
                 .save(output, key("fire_pit"));
-    }
-
-    // Spec 3.4: head + stick + cord.
-    private void stoneTools() {
-        knappedTool(ModItems.STONE_AXE.get(), ModItems.STONE_AXE_HEAD.get(), ModItems.KNAPPED_DURABILITY);
-        knappedTool(ModItems.STONE_KNIFE.get(), ModItems.STONE_KNIFE_BLADE.get(), ModItems.KNAPPED_DURABILITY);
-        knappedTool(ModItems.STONE_SHOVEL.get(), ModItems.STONE_SHOVEL_HEAD.get(), ModItems.KNAPPED_DURABILITY);
-        knappedTool(ModItems.STONE_HOE.get(), ModItems.STONE_HOE_HEAD.get(), ModItems.KNAPPED_DURABILITY);
-        knappedTool(ModItems.STONE_HAMMER.get(), ModItems.STONE_HAMMER_HEAD.get(), ModItems.KNAPPED_DURABILITY);
-        knappedTool(ModItems.STONE_PICKAXE.get(), ModItems.STONE_PICKAXE_HEAD.get(), ModItems.KNAPPED_DURABILITY);
-        knappedTool(Items.STONE_SPEAR, ModItems.STONE_SPEAR_HEAD.get(), ModItems.KNAPPED_SPEAR_DURABILITY);
-    }
-
-    private void knappedTool(Item tool, Item head, int durability) {
-        var recipe = new KnappedToolRecipe(new Recipe.CommonInfo(true),
-                new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.EQUIPMENT, ""),
-                new ItemStackTemplate(tool),
-                List.of(Ingredient.of(head), Ingredient.of(Items.STICK), Ingredient.of(ModItems.CORD.get())),
-                durability);
-        save(key(name(tool)), recipe, RecipeCategory.TOOLS, "has_" + name(head), has(head));
     }
 
     // Spec 2: log + axe gives 2 planks, log + saw gives 4; the tool takes 1 damage.
@@ -975,7 +954,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .save(output, key("saw_mill"));
         // Any hammer head will do, stone included, and sticks carry it, so the first trip hammer needs no iron.
         List<Item> hammerHeads = new java.util.ArrayList<>();
-        hammerHeads.add(ModItems.STONE_HAMMER_HEAD.get());
+        hammerHeads.add(ModItems.STONE_HAMMER.get());
         for (Metal metal : Metal.values()) {
             if ((metal.isBronze() || metal == Metal.WROUGHT_IRON) && metal.toolTypes().contains(MoldType.HAMMER_HEAD)) {
                 hammerHeads.add(ModItems.head(metal, MoldType.HAMMER_HEAD));

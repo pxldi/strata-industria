@@ -47,17 +47,17 @@ public final class ModItems {
     public static final DeferredItem<FieldJournalItem> FIELD_JOURNAL = ITEMS.registerItem("field_journal", FieldJournalItem::new,
             p -> p.stacksTo(1));
 
-    // Knapped heads (tier 0-2 spec 3.2). Each carries knapped_from.
-    public static final DeferredItem<Item> STONE_AXE_HEAD = ITEMS.registerSimpleItem("stone_axe_head", p -> p.stacksTo(16));
-    public static final DeferredItem<Item> STONE_KNIFE_BLADE = ITEMS.registerSimpleItem("stone_knife_blade", p -> p.stacksTo(16));
-    public static final DeferredItem<Item> STONE_SHOVEL_HEAD = ITEMS.registerSimpleItem("stone_shovel_head", p -> p.stacksTo(16));
-    public static final DeferredItem<Item> STONE_HOE_HEAD = ITEMS.registerSimpleItem("stone_hoe_head", p -> p.stacksTo(16));
-    public static final DeferredItem<Item> STONE_HAMMER_HEAD = ITEMS.registerSimpleItem("stone_hammer_head", p -> p.stacksTo(16));
-    public static final DeferredItem<Item> STONE_SPEAR_HEAD = ITEMS.registerSimpleItem("stone_spear_head", p -> p.stacksTo(16));
-    public static final DeferredItem<Item> STONE_PICKAXE_HEAD = ITEMS.registerSimpleItem("stone_pickaxe_head", p -> p.stacksTo(16));
+    static {
+        // Stone heads are gone (redesign R4): the tool comes off the last blow already bound. Old heads in a world become the tool.
+        for (String kind : new String[] {"axe_head", "shovel_head", "hoe_head", "hammer_head", "pickaxe_head"}) {
+            ITEMS.addAlias(StrataIndustria.id("stone_" + kind), StrataIndustria.id("stone_" + kind.replace("_head", "")));
+        }
+        ITEMS.addAlias(StrataIndustria.id("stone_knife_blade"), StrataIndustria.id("stone_knife"));
+        ITEMS.addAlias(StrataIndustria.id("stone_spear_head"), net.minecraft.resources.Identifier.withDefaultNamespace("stone_spear"));
+    }
 
-    // Knapped tools (spec 3.4). Base durability 80, scaled by the rock at assembly. The stone spear is
-    // the vanilla one, assembled from a knapped head.
+    // Stone tools (spec 3.4), struck from a rock shard or flint and bound with a stick and cord on the last blow.
+    // Base durability 80, scaled by the rock in the shaping recipe. The stone spear is the vanilla one.
     public static final int KNAPPED_DURABILITY = 80;
     public static final int KNAPPED_SPEAR_DURABILITY = 60;
     public static final DeferredItem<Item> STONE_AXE = ITEMS.registerSimpleItem("stone_axe",

@@ -5,6 +5,7 @@ import dev.strataindustria.compat.recipeview.RecipeText;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
+import dev.strataindustria.registry.ModItems;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -42,6 +43,10 @@ public class KnappingCategory extends StrataCategory<RecipeHolder<KnappingRecipe
         KnappingRecipe recipe = holder.value();
         builder.addInputSlot(INPUT_X, INPUT_Y).setStandardSlotBackground().setSlotName("material")
                 .addItemStacks(IngredientStacks.of(recipe.ingredient(), recipe.consume()));
+        if (recipe.bound()) {
+            builder.addInputSlot(INPUT_X, INPUT_Y + 22).setStandardSlotBackground().addItemStacks(java.util.List.of(new ItemStack(Items.STICK)));
+            builder.addInputSlot(INPUT_X + 18, INPUT_Y + 22).setStandardSlotBackground().addItemStacks(java.util.List.of(new ItemStack(ModItems.CORD.get())));
+        }
         builder.addOutputSlot(OUTPUT_X, OUTPUT_Y).setOutputSlotBackground().add(recipe.result());
     }
 
@@ -74,7 +79,7 @@ public class KnappingCategory extends StrataCategory<RecipeHolder<KnappingRecipe
             if (cx > 0 && !kept(mask, cell - 1)) g.fill(x, y, x + 1, y + CELL, 0x30FFFFFF);
         }
         // Below the arrow and clear of the 52 px silhouette.
-        centred(g, RecipeText.key("knapping.blows", recipe.blows()), 104, GRID - 10, TEXT_FAINT);
+        centred(g, RecipeText.key("knapping.blows", recipe.blows()), recipe.bound() ? OUTPUT_X + 9 : 104, GRID - 10, TEXT_FAINT);
     }
 
     private static boolean kept(int mask, int cell) {
