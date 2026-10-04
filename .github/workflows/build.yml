@@ -7,13 +7,22 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+  actions: write
+
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # On pull requests from this repository, check out the branch itself (not the merge commit),
+      # so regenerated resources can be committed back to it.
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.head_ref || '' }}
 
       - uses: actions/setup-java@v4
         with:
@@ -25,7 +34,33 @@ jobs:
       - name: Run data generators
         run: ./gradlew runData --stacktrace
 
+      # Same-repository pull requests: commit regenerated resources to the branch and keep going,
+      # so build and game tests run on exactly what lands. A push made with GITHUB_TOKEN starts no run
+      # by itself, so a dispatched run checks the new branch head and gives it its own status.
+      - name: Commit regenerated resources
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          git add -A src/generated
+          if git diff --cached --quiet; then
+            echo "Generated resources are up to date."
+            exit 0
+          fi
+          git --no-pager diff --cached --stat
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "Regenerate resources"
+          if ! git push origin "HEAD:${GITHUB_HEAD_REF}"; then
+            echo "::error::Could not push regenerated resources (the branch moved). Pull, run ./gradlew runData, and push again."
+            exit 1
+          fi
+          gh workflow run build.yml --ref "${GITHUB_HEAD_REF}"
+          echo "::notice::Committed regenerated resources to ${GITHUB_HEAD_REF}. Pull before your next push."
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # Everything else (main, forks): generated resources must already be committed.
       - name: Check generated resources are committed
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
         run: |
           git add -N src/generated
           if ! git diff --quiet -- src/generated; then
