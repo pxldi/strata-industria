@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "condition": "minecraft:tool/can_silk_touch",
+              "name": "strataindustria:cracked_fire_bricks"
+            },
+            {
+              "type": "minecraft:item",
+              "condition": {
+                "type": "minecraft:all_of",
+                "terms": [
+                  {
+                    "type": "minecraft:random_chance",
+                    "chance": 0.3
+                  },
+                  {
+                    "type": "minecraft:survives_explosion"
+                  }
+                ]
+              },
+              "name": "strataindustria:grog"
+            }
+          ]
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:blocks/cracked_fire_bricks"
+}
