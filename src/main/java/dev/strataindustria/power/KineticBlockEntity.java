@@ -29,7 +29,7 @@ public class KineticBlockEntity extends BlockEntity implements Kinetic {
     }
 
     @Override
-    public float ratio(@org.jspecify.annotations.Nullable net.minecraft.core.Direction from, net.minecraft.core.Direction to) {
+    public float ratio(net.minecraft.core.@org.jspecify.annotations.Nullable Direction from, net.minecraft.core.Direction to) {
         return getBlockState().getBlock() instanceof KineticBlock block ? block.ratio(getBlockState(), from, to) : 1.0f;
     }
 

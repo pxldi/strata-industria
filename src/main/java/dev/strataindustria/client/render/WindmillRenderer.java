@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
@@ -69,7 +70,7 @@ public class WindmillRenderer implements BlockEntityRenderer<WindmillBearingBloc
         // Sails turn about the centre of their plane, one block in front of the bearing.
         pose.pushPose();
         pose.translate(0.5 + facing.getStepX(), 0.5 + facing.getStepY(), 0.5 + facing.getStepZ());
-        pose.mulPose(Axis.of(new Vector3f(facing.getStepX(), facing.getStepY(), facing.getStepZ())).rotationDegrees(state.angle));
+        pose.mulPose(new Matrix4f().rotation(Axis.of(new Vector3f(facing.getStepX(), facing.getStepY(), facing.getStepZ())).rotationDegrees(state.angle)));
         for (BlockPos rel : state.sails) {
             pose.pushPose();
             pose.translate(rel.getX() - facing.getStepX(), rel.getY() - facing.getStepY(), rel.getZ() - facing.getStepZ());

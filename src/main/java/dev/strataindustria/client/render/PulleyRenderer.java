@@ -20,6 +20,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.joml.Matrix3f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -86,7 +87,7 @@ public class PulleyRenderer implements BlockEntityRenderer<PulleyBlockEntity, Pu
             pose.translate(0.5 + along.x * length / 2 + out.x * BELT_RADIUS * side,
                     0.5 + along.y * length / 2 + out.y * BELT_RADIUS * side,
                     0.5 + along.z * length / 2 + out.z * BELT_RADIUS * side);
-            pose.mulPose(facing);
+            pose.mulPose(new Matrix4f().rotation(facing));
             pose.scale(1.0f, 1.0f, length);
             state.beltItem.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
             pose.popPose();
