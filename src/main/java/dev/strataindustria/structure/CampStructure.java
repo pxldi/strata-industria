@@ -497,8 +497,7 @@ public class CampStructure extends Structure {
 
         /** Spruce in cold forests, dark oak in dark ones, oak elsewhere (structures spec 3.6). */
         PlanPiece.Wood wood(int x, int y, int z) {
-            Holder<Biome> biome = context.biomeSource().getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z),
-                    context.climateSampler());
+            Holder<Biome> biome = context.biomeResolver().getNoiseBiome(QuartPos.fromBlock(x), QuartPos.fromBlock(y), QuartPos.fromBlock(z));
             if (biome.is(Biomes.DARK_FOREST) || biome.is(Biomes.PALE_GARDEN)) return PlanPiece.Wood.DARK_OAK;
             if (biome.is(BiomeTags.IS_TAIGA) || biome.is(BiomeTags.SPAWNS_SNOW_FOXES)) {
                 return PlanPiece.Wood.SPRUCE;
