@@ -15,7 +15,9 @@ import dev.strataindustria.registry.ModTags;
 import dev.strataindustria.registry.Tier4BlockEntities;
 import dev.strataindustria.registry.Tier4Sounds;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponentMap;
@@ -362,7 +364,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
 
     /** Why a pour cannot start, as a lang key suffix; empty when it can. */
     public Optional<String> pourProblem() {
-        ItemStack mold = items.get(MOLD_SLOT);
+        ItemStack mold = targetMold();
         if (!(mold.getItem() instanceof CastMoldItem cast) || mold.has(ModDataComponents.CAST_CONTENTS.get())) {
             return Optional.of("no_mold");
         }
@@ -383,10 +385,41 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         return Optional.empty();
     }
 
+    /** The first casting table beside the pot, at its height or one lower, that still has an empty mold on it. */
+    private @Nullable CastingTableBlockEntity tableBeside() {
+        if (level == null) return null;
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            for (int drop = 0; drop <= 1; drop++) {
+                if (level.getBlockEntity(worldPosition.relative(side).below(drop)) instanceof CastingTableBlockEntity table && table.hasEmptyMold()) return table;
+            }
+        }
+        return null;
+    }
+
+    /** The table that holds {@code mold}, if the pot is pouring onto one. */
+    private @Nullable CastingTableBlockEntity tableBeside(ItemStack mold) {
+        if (level == null) return null;
+        for (Direction side : Direction.Plane.HORIZONTAL) {
+            for (int drop = 0; drop <= 1; drop++) {
+                if (level.getBlockEntity(worldPosition.relative(side).below(drop)) instanceof CastingTableBlockEntity table
+                        && table.molds().stream().anyMatch(m -> m == mold)) return table;
+            }
+        }
+        return null;
+    }
+
+    /** Where a pour goes: the mold in the pot's own slot, or with that slot bare, the next empty mold on a casting table beside it. */
+    private ItemStack targetMold() {
+        ItemStack own = items.get(MOLD_SLOT);
+        if (!own.isEmpty()) return own;
+        CastingTableBlockEntity table = tableBeside();
+        return table == null ? ItemStack.EMPTY : table.nextEmptyMold();
+    }
+
     /** Starts pouring into the mold; the metal flows over the next few ticks. */
     public boolean startPour() {
         if (pourProblem().isPresent()) return false;
-        CastMoldItem cast = (CastMoldItem) items.get(MOLD_SLOT).getItem();
+        CastMoldItem cast = (CastMoldItem) targetMold().getItem();
         pourLeft = pourTotal = cast.units();
         // The mold's share is set aside whole, so it keeps the melt's make-up (1% carbon stays 1%).
         Melt after = melt.minus(pourTotal);
@@ -406,7 +439,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
 
     private boolean pour(Level level, BlockPos pos) {
         if (pourLeft <= 0) return false;
-        ItemStack mold = items.get(MOLD_SLOT);
+        ItemStack mold = targetMold();
         Melt all = melt.plus(pourSlice);
         if (!(mold.getItem() instanceof CastMoldItem) || temperature < mixMeltingPoint(all)) {
             // The mold was taken away or the metal froze mid-pour: what flowed so far goes back.
@@ -428,6 +461,12 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
             poured = Melt.EMPTY;
             pourTotal = 0;
             level.playSound(null, pos, ModSounds.QUENCH.get(), SoundSource.BLOCKS, 0.4f, 1.6f);
+            if (items.get(MOLD_SLOT).isEmpty() && tableBeside(mold) instanceof CastingTableBlockEntity table) {
+                // Poured onto a casting table: tell it, and carry on into the next empty mold while the metal lasts.
+                table.changed();
+                Journal.awardNear(level, pos, Journal.CASTING_TABLE_POURED);
+                if (pourProblem().isEmpty()) startPour();
+            }
         }
         return true;
     }

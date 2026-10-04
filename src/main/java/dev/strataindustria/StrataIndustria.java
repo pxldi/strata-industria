@@ -63,6 +63,7 @@ public final class StrataIndustria {
         Tier6Blocks.init();
         Tier6Items.init();
         Tier6Sounds.init();
+        dev.strataindustria.registry.PrologueRegistry.init();
         Tier6Worldgen.init();
         Tier6Particles.PARTICLES.register(modEventBus);
         ModBlocks.BLOCKS.register(modEventBus);

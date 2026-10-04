@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_forge": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:forge"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:brick_kiln"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_forge"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:brick_kiln"
+    ]
+  }
+}

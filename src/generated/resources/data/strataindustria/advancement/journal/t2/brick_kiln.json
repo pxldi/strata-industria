@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t1/pit_kiln",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "brick_kiln_fired"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.brick_kiln.hint"
+    },
+    "icon": {
+      "id": "strataindustria:brick_kiln"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t2.brick_kiln"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

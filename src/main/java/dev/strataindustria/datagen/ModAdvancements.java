@@ -91,6 +91,10 @@ final class ModAdvancements extends AdvancementSubProvider {
         AdvancementHolder melt = goal(crucible, "t2/melt", ModItems.INGOT_MOLD.get(),
                 JournalTrigger.TriggerInstance.of(Journal.CRUCIBLE_MOLTEN));
         AdvancementHolder copperIngot = goal(melt, "t2/copper_ingot", Items.COPPER_INGOT, has(Items.COPPER_INGOT));
+        goal(kiln, "t2/brick_kiln", dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get(),
+                JournalTrigger.TriggerInstance.of(Journal.BRICK_KILN_FIRED));
+        goal(copperIngot, "t2/casting_table", dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_ITEM.get(),
+                JournalTrigger.TriggerInstance.of(Journal.CASTING_TABLE_POURED));
         AdvancementHolder copperPick = goal(copperIngot, "t2/copper_pickaxe", Items.COPPER_PICKAXE, has(Items.COPPER_PICKAXE));
         List<ItemLike> alloyOres = new ArrayList<>();
         List<ItemLike> crushed = new ArrayList<>();

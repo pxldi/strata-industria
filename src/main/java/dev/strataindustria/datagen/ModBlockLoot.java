@@ -82,6 +82,8 @@ final class ModBlockLoot extends BlockLootSubProvider {
         charcoalPile();
         dropSelf(ModBlocks.FORGE.get());
         dropSelf(ModBlocks.QUERN.get());
+        dropSelf(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN.get());
+        dropSelf(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE.get());
         // Spec 9.1: a stone anvil cannot be picked up and breaks back into two loose rocks.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
             Block anvil = entry.getValue().get();
