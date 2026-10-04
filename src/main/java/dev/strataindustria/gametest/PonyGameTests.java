@@ -312,7 +312,6 @@ final class PonyGameTests {
     // Leaving a stop in a charter's area, the pony holds a moving ticket; it lets go 30 seconds after resting in another station.
     private static void ticket(GameTestHelper helper) {
         RailGameTests.Plan plan = new RailGameTests.Plan(helper);
-        OutpostTickets.paused = true;
         try {
             RailGameTests.layRun(helper, 2, 6);
             RailGameTests.stopAt(helper, 1, StopRule.WAIT, 1, true);
@@ -326,7 +325,6 @@ final class PonyGameTests {
                     pony.discard();
                 } finally {
                     plan.close();
-                    OutpostTickets.paused = false;
                 }
                 helper.runAfterDelay(2, () -> {
                     helper.assertTrue(!VehicleTickets.holds(pony.getUUID()), "a removed pony gives its chunks back");
@@ -335,7 +333,6 @@ final class PonyGameTests {
             });
         } catch (RuntimeException e) {
             plan.close();
-            OutpostTickets.paused = false;
             throw e;
         }
     }
