@@ -3299,6 +3299,474 @@ public final class TextureGen {
         saveRaw("gui/millstone", millstoneGui());
     }
 
+    // ---------------------------------------------------------------- tier 3: machines (spec 22)
+
+    // Rough outer bark: grey-brown, cooler in the fissures, warmer on the ridges (built per SG 3).
+    static final Ramp BARK = ramp(0, 0x29211f, 0x3b302a, 0x524337, 0x6b5946, 0x857257);
+
+    /** Writes a vertical animation strip and its .mcmeta. */
+    static void saveAnimated(String path, BufferedImage strip, int frametime) throws IOException {
+        saveRaw(path, strip);
+        Files.writeString(OUT.resolve(path + ".png.mcmeta"), "{\"animation\":{\"frametime\":" + frametime + "}}\n");
+    }
+
+    /** A dome rivet: lit head, shadow below-right. */
+    static void rivet(BufferedImage im, int x, int y) {
+        px(im, x, y, WROUGHT_IRON.get(5));
+        px(im, x + 1, y, WROUGHT_IRON.get(2));
+        px(im, x, y + 1, WROUGHT_IRON.get(1));
+    }
+
+    /** A horizontal wrought iron strap, 2 rows, with its shadow on the wood below. */
+    static void strapH(BufferedImage im, int x0, int x1, int y, Ramp wood) {
+        for (int x = x0; x <= x1; x++) {
+            px(im, x, y, WROUGHT_IRON.get((x * 5 + y) % 7 == 0 ? 5 : 4));
+            px(im, x, y + 1, WROUGHT_IRON.get((x * 3) % 5 == 0 ? 2 : 3));
+            px(im, x, y + 2, wood.get(1));
+        }
+    }
+
+    /**
+     * Saw mill table body (the model shows rows 2-15): plank top edge, apron rail, two legs with iron bands,
+     * and recessed boards between the legs. {@code stretcher} adds the low rail of the plain sides.
+     */
+    static BufferedImage sawMillFrame(long seed, boolean stretcher) {
+        BufferedImage im = img();
+        Random r = new Random(seed);
+        grain(im, WOOD, r, 0, 0, 16, 4, 3, false);
+        for (int x = 0; x < 16; x++) { px(im, x, 2, WOOD.get(x % 7 == 3 ? 5 : 4)); px(im, x, 4, WOOD.get(1)); }
+        grain(im, WOOD, r, 3, 5, 10, 11, 2, true);
+        for (int y = 8; y < 16; y++) { px(im, 6, y, WOOD.get(1)); px(im, 7, y, WOOD.get(3)); px(im, 9, y, WOOD.get(1)); px(im, 10, y, WOOD.get(3)); }
+        grain(im, WOOD, r, 3, 5, 10, 3, 3, false);
+        for (int x = 3; x < 13; x++) { px(im, x, 5, WOOD.get(4)); px(im, x, 7, WOOD.get(2)); px(im, x, 8, WOOD.get(1)); }
+        if (stretcher) {
+            grain(im, WOOD, r, 3, 12, 10, 2, 3, false);
+            for (int x = 3; x < 13; x++) { px(im, x, 12, WOOD.get(4)); px(im, x, 13, WOOD.get(2)); px(im, x, 14, WOOD.get(1)); }
+        }
+        for (int lx : new int[] {0, 13}) {
+            grain(im, WOOD, r, lx, 5, 3, 11, 3, true);
+            for (int y = 5; y < 16; y++) { px(im, lx, y, WOOD.get(4)); px(im, lx + 2, y, WOOD.get(2)); }
+            px(im, lx, 5, WOOD.get(3)); px(im, lx + 1, 5, WOOD.get(2)); px(im, lx + 2, 5, WOOD.get(1));
+            peg(im, WOOD, lx, 6);
+            if (stretcher) peg(im, WOOD, lx, 12);
+            // Iron band round the foot of the leg.
+            for (int x = lx; x < lx + 3; x++) { px(im, x, 9, WROUGHT_IRON.get(x == lx ? 5 : 4)); px(im, x, 10, WROUGHT_IRON.get(x == lx + 2 ? 2 : 3)); px(im, x, 11, WOOD.get(2)); }
+            px(im, lx + 1, 9, WROUGHT_IRON.spec()); px(im, lx + 1, 10, WROUGHT_IRON.get(1));
+        }
+        return im;
+    }
+
+    static BufferedImage sawMillSide() { return sawMillFrame(9101, true); }
+
+    /**
+     * Saw mill front: the frame with an opening under the apron. Inside, the blade is seen edge-on dropping from the
+     * table slot to its toothed bottom, the arbor crossing it; a heap of sawdust on the sill.
+     * {@code frame} -1 is idle; 0-3 are running frames (teeth blurred, sawdust thrown out).
+     */
+    static BufferedImage sawMillFront(int frame) {
+        BufferedImage im = sawMillFrame(9102, false);
+        boolean run = frame >= 0;
+        // Opening x 4-11, rows 9-14.
+        for (int y = 9; y <= 14; y++)
+            for (int x = 4; x <= 11; x++) {
+                boolean far = x == 11 || y == 14;
+                px(im, x, y, far ? WOOD.get(2) : DARK_WOOD.get(1));
+            }
+        for (int x = 4; x <= 11; x++) px(im, x, 9, CHARCOAL.get(1));
+        for (int y = 9; y <= 14; y++) px(im, 4, y, CHARCOAL.get(1));
+        for (int x = 3; x <= 12; x++) px(im, x, 15, WOOD.get(x == 3 ? 3 : 4)); // lit sill
+        for (int y = 9; y <= 15; y++) { px(im, 3, y, WOOD.get(2)); px(im, 12, y, WOOD.get(4)); }
+        // The blade under the table, seen nearly edge-on as a narrow disc hanging from the slot: lit left rim,
+        // shaded right rim, a hub on the arbor and set teeth zig-zagging along both edges.
+        int phase = run ? frame : 0;
+        for (int y = 9; y <= 14; y++)
+            for (int x = 5; x <= 10; x++) {
+                double dx = (x - 7.5) / 2.4, dy = (y - 10.0) / 4.5;
+                double d = dx * dx + dy * dy;
+                if (d > 1.0) {
+                    // Set teeth just outside the rim, alternately left and right.
+                    double d2 = ((x - 7.5) / 3.4) * ((x - 7.5) / 3.4) + dy * dy;
+                    boolean left = x < 8;
+                    if (d2 <= 1.0 && Math.floorMod(y + phase + (left ? 0 : 1), 2) == 0)
+                        px(im, x, y, WROUGHT_IRON.get(run ? (left ? 4 : 3) : (left ? 3 : 2)));
+                    continue;
+                }
+                int step = x <= 6 ? 4 : x >= 9 ? 2 : 3;
+                if (run) step = Math.min(5, step + (Math.floorMod(x + y + frame, 3) == 0 ? 1 : 0));
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        px(im, 7, 10, WROUGHT_IRON.get(5)); px(im, 8, 10, WROUGHT_IRON.get(3));
+        px(im, 7, 11, WROUGHT_IRON.get(2)); px(im, 8, 11, WROUGHT_IRON.get(1));
+        if (!run) px(im, 6, 12, WROUGHT_IRON.spec());
+        // Sawdust heap on the sill.
+        int[][] heap = {{9, 14}, {10, 14}, {11, 14}, {10, 13}, {4, 14}, {5, 14}};
+        for (int[] h : heap) px(im, h[0], h[1], h[1] == 13 || h[0] == 4 ? STRAW.get(4) : STRAW.get(3));
+        if (run) {
+            // Sawdust thrown forward and down out of the opening, a different spray each frame.
+            int[][][] spray = {
+                    {{10, 10}, {11, 12}, {9, 15}, {13, 13}, {2, 14}},
+                    {{11, 11}, {10, 9}, {12, 15}, {13, 11}, {5, 15}},
+                    {{10, 12}, {11, 10}, {13, 14}, {2, 12}, {8, 15}},
+                    {{11, 13}, {9, 10}, {14, 15}, {12, 12}, {1, 15}},
+            };
+            int k = 0;
+            for (int[] s : spray[frame]) px(im, s[0], s[1], STRAW.get(k++ % 2 == 0 ? 5 : 4));
+        }
+        return im;
+    }
+
+    static BufferedImage sawMillFrontActive() {
+        BufferedImage strip = new BufferedImage(16, 64, BufferedImage.TYPE_INT_ARGB);
+        for (int f = 0; f < 4; f++) strip.getGraphics().drawImage(sawMillFront(f), 0, f * 16, null);
+        return strip;
+    }
+
+    /** Table top: planks running front to back, the blade slot down the middle between two riveted iron wear strips. */
+    static BufferedImage sawMillTop() {
+        BufferedImage im = img();
+        Random r = new Random(9103);
+        grain(im, WOOD, r, 0, 0, 16, 16, 3, true);
+        for (int y = 0; y < 16; y++) {
+            px(im, 4, y, WOOD.get(1)); px(im, 5, y, WOOD.get(4));
+            px(im, 11, y, WOOD.get(1)); px(im, 12, y, WOOD.get(4));
+            px(im, 0, y, WOOD.get(4)); px(im, 15, y, WOOD.get(2));
+        }
+        for (int x = 0; x < 16; x++) { px(im, x, 0, WOOD.get(4)); px(im, x, 15, WOOD.get(2)); }
+        // Iron wear strips either side of the slot.
+        for (int y = 1; y <= 14; y++) {
+            px(im, 6, y, WROUGHT_IRON.get(y == 1 ? 5 : 4)); px(im, 9, y, WROUGHT_IRON.get(y == 1 ? 4 : 3));
+        }
+        px(im, 6, 14, WROUGHT_IRON.get(3)); px(im, 9, 14, WROUGHT_IRON.get(2));
+        // The slot: dark, its far (right) wall catching a little light.
+        for (int y = 2; y <= 13; y++) { px(im, 7, y, CHARCOAL.get(1)); px(im, 8, y, y == 13 ? WOOD.get(2) : DARK_WOOD.get(2)); }
+        for (int y : new int[] {3, 8, 12}) { px(im, 6, y, WROUGHT_IRON.spec()); px(im, 9, y, WROUGHT_IRON.get(5)); }
+        // Sawdust gathered at the slot's ends and along the strips.
+        int[][] dust = {{7, 1}, {8, 1}, {7, 14}, {8, 14}, {10, 13}, {10, 2}, {5, 9}};
+        for (int[] d : dust) px(im, d[0], d[1], STRAW.get(d[1] == 1 || d[0] == 5 ? 5 : 4));
+        peg(im, WOOD, 1, 1); peg(im, WOOD, 13, 1); peg(im, WOOD, 1, 13); peg(im, WOOD, 13, 13);
+        return im;
+    }
+
+    /** Saw blade plate: set teeth along the top (rows 0-1), then the ground steel disc with arc scratches. */
+    static BufferedImage sawMillBlade() {
+        BufferedImage im = img();
+        double[][] n = fractal(9104);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.6 ? 4 : 3;
+                double d = Math.hypot(x - 7.5, y - 20);
+                if (Math.abs(d - 9.5) < 0.5 || Math.abs(d - 14.5) < 0.4) step = 4;
+                if (Math.abs(d - 12) < 0.45) step = 2;
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        int[] tooth = {5, 4, 2, 1};
+        int[] gullet = {4, 3, 3, 2};
+        for (int x = 0; x < 16; x++) {
+            px(im, x, 0, WROUGHT_IRON.get(tooth[x % 4]));
+            px(im, x, 1, WROUGHT_IRON.get(gullet[x % 4]));
+        }
+        px(im, 4, 0, WROUGHT_IRON.spec());
+        return im;
+    }
+
+    /** Heavy oak frame timber: lengthwise grain, two riveted wrought iron straps, a knot and a drying check. */
+    static BufferedImage tripHammerFrame() {
+        BufferedImage im = img();
+        Random r = new Random(9201);
+        grain(im, WOOD, r, 0, 0, 16, 16, 3, true);
+        // Knot and check.
+        px(im, 9, 7, WOOD.get(1)); px(im, 10, 7, WOOD.get(2)); px(im, 9, 8, WOOD.get(2)); px(im, 8, 7, WOOD.get(4));
+        for (int y = 6; y <= 9; y++) px(im, 4 + (y > 7 ? 1 : 0), y, WOOD.get(1));
+        for (int sy : new int[] {1, 11}) {
+            strapH(im, 0, 15, sy, WOOD);
+            for (int x : new int[] {2, 7, 13}) rivet(im, x, sy);
+        }
+        return im;
+    }
+
+    /** Wrought iron hammer head: forged dark body (rows 0-11) with hammer marks, bright worn striking face (rows 12-15). */
+    static BufferedImage tripHammerHead() {
+        double[][] n = fractal(9301), e = noise(9302, 4);
+        BufferedImage im = img();
+        for (int y = 0; y < 12; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.6 ? 3 : 2;
+                if (y == 0 || x == 0) step = 3;
+                if ((y == 0 && x < 6) || (x == 0 && y < 4)) step = 4;
+                if (x == 15 || (y == 11 && e[y][x] > 0.45)) step = 1;
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        int[][] dents = {{3, 3}, {9, 2}, {12, 6}, {5, 8}, {10, 9}};
+        for (int[] d : dents) {
+            px(im, d[0], d[1], WROUGHT_IRON.get(1));
+            px(im, d[0] + 1, d[1], WROUGHT_IRON.get(1));
+            px(im, d[0], d[1] + 1, WROUGHT_IRON.get(2));
+            px(im, d[0] + 1, d[1] + 1, WROUGHT_IRON.get(4));
+        }
+        // Striking face: polished by the work, brightest in the middle, a few pits.
+        for (int y = 12; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot((x - 7.5) / 2.0, y - 13.5);
+                int step = d < 1.6 ? 5 : d < 3.2 ? 4 : 3;
+                if (y == 15 || x == 15) step = Math.min(step, 3);
+                if (y == 12 || x == 0) step = Math.max(step, 4);
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        px(im, 7, 13, WROUGHT_IRON.spec()); px(im, 8, 13, WROUGHT_IRON.spec());
+        int[][] pits = {{3, 14}, {11, 13}, {13, 14}};
+        for (int[] p : pits) px(im, p[0], p[1], WROUGHT_IRON.get(2));
+        return im;
+    }
+
+    /** Oak beam side grain, along the texture, with an iron band (columns 7-8) round the beam. */
+    static BufferedImage tripHammerArm() {
+        BufferedImage im = img();
+        Random r = new Random(9401);
+        grain(im, WOOD, r, 0, 0, 16, 16, 3, false);
+        for (int y = 0; y < 16; y += 4) for (int x = 0; x < 16; x++) { px(im, x, y, WOOD.get(4)); }
+        px(im, 3, 9, WOOD.get(1)); px(im, 4, 9, WOOD.get(2)); px(im, 3, 10, WOOD.get(2)); px(im, 12, 5, WOOD.get(1)); px(im, 13, 5, WOOD.get(2));
+        for (int y = 0; y < 16; y++) {
+            px(im, 7, y, WROUGHT_IRON.get(4)); px(im, 8, y, WROUGHT_IRON.get(2)); px(im, 9, y, WOOD.get(1));
+        }
+        for (int y = 1; y < 16; y += 4) px(im, 7, y, WROUGHT_IRON.get(5));
+        return im;
+    }
+
+    /** Core sampler base side: four pegged horizontal boards with iron corner straps. */
+    static BufferedImage coreSamplerSide() {
+        BufferedImage im = img();
+        Random r = new Random(9501);
+        grain(im, WOOD, r, 0, 0, 16, 16, 3, false);
+        for (int b = 0; b < 4; b++) {
+            int y0 = b * 4;
+            for (int x = 0; x < 16; x++) { px(im, x, y0, WOOD.get(4)); px(im, x, y0 + 3, WOOD.get(r.nextInt(4) == 0 ? 2 : 1)); }
+            peg(im, WOOD, 3 + (b % 2) * 8, y0 + 1);
+        }
+        for (int y = 0; y < 16; y++) {
+            px(im, 0, y, WROUGHT_IRON.get(y % 4 == 0 ? 5 : 4)); px(im, 1, y, WROUGHT_IRON.get(3));
+            px(im, 14, y, WROUGHT_IRON.get(3)); px(im, 15, y, WROUGHT_IRON.get(2));
+        }
+        for (int y = 1; y < 16; y += 4) { px(im, 0, y, WROUGHT_IRON.get(5)); px(im, 1, y, WROUGHT_IRON.get(2)); px(im, 14, y, WROUGHT_IRON.get(5)); px(im, 15, y, WROUGHT_IRON.get(1)); }
+        return im;
+    }
+
+    /** Core sampler top: boards round a riveted wrought iron drill collar; the bore in the middle. */
+    static BufferedImage coreSamplerTop() {
+        BufferedImage im = img();
+        Random r = new Random(9502);
+        grain(im, WOOD, r, 0, 0, 16, 16, 3, true);
+        for (int y = 0; y < 16; y++) { px(im, 3, y, WOOD.get(1)); px(im, 4, y, WOOD.get(4)); px(im, 11, y, WOOD.get(1)); px(im, 12, y, WOOD.get(4)); }
+        for (int i = 0; i < 16; i++) { px(im, i, 0, WOOD.get(4)); px(im, 0, i, WOOD.get(4)); px(im, i, 15, WOOD.get(2)); px(im, 15, i, WOOD.get(2)); }
+        for (int y = 2; y <= 13; y++)
+            for (int x = 2; x <= 13; x++) {
+                double dx = x - 7.5, dy = y - 7.5, d = Math.hypot(dx, dy);
+                if (d > 4.9 && d < 5.6) px(im, x, y, WOOD.get(1)); // collar shadow cut into the boards
+                if (d <= 4.9 && d > 1.5) {
+                    int step = d > 4.0 ? (dx + dy < 0 ? 5 : 2) : d < 2.5 ? (dx + dy < 0 ? 2 : 4) : 3;
+                    px(im, x, y, WROUGHT_IRON.get(step));
+                }
+                if (d <= 1.5) px(im, x, y, CHARCOAL.get(1));
+            }
+        int[][] rv = {{7, 3}, {3, 7}, {11, 7}, {7, 11}};
+        for (int[] p : rv) rivet(im, p[0], p[1]);
+        px(im, 5, 5, WROUGHT_IRON.spec());
+        peg(im, WOOD, 1, 1); peg(im, WOOD, 13, 1); peg(im, WOOD, 1, 13); peg(im, WOOD, 13, 13);
+        return im;
+    }
+
+    /** Drill rod: wrought iron with a spiral flute winding down it (one dark groove with a lit lip every 6 rows). */
+    static BufferedImage coreSamplerDrill() {
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int k = Math.floorMod(y - x / 2, 8);
+                int step = k == 0 ? 1 : k == 1 ? 2 : k == 7 ? 4 : 3;
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        return im;
+    }
+
+    /**
+     * Bark: a broad strip lying diagonally, bowed like a trough. The upper-left half shows the pale, streaky inner
+     * bark; along the lower-right the rough outer bark with its fissures rolls into view; the top-right end curls
+     * over on itself.
+     */
+    static BufferedImage barkItem() {
+        BufferedImage im = img();
+        Random r = new Random(9601);
+        for (int y = 2; y <= 13; y++)
+            for (int x = 2; x <= 13; x++) {
+                int t = x - y;                 // along the strip: bottom-left negative, top-right positive
+                double c = 15.5 + 0.03 * t * t; // bowed centre line (x + y)
+                int k = (int) Math.floor(x + y - c + 0.5);
+                if (k < -3 || k > 3 || t < -9 || t > 4) continue;
+                int col;
+                if (k == -3) col = BARK.get(3);                                 // far rim: the bark's thickness
+                else if (k <= 0) {                                               // inner face, streaked lengthwise
+                    int step = k == -2 ? 4 : k == -1 ? 4 : 3;
+                    if (k == -1 && Math.floorMod(t, 5) == 1) step = 5;
+                    if (k == 0 && Math.floorMod(t, 4) == 2) step = 2;
+                    col = LEATHER.get(step);
+                } else {                                                         // outer bark rolling away
+                    int step = k == 1 ? 4 : k == 2 ? 2 : 1;
+                    if (k == 2 && Math.floorMod(t * 3, 7) < 2) step = 3;
+                    if (k == 1 && r.nextInt(4) == 0) step = 3;
+                    col = BARK.get(step);
+                }
+                px(im, x, y, col);
+            }
+        // The curl: the top-right end is rolled up into a tube lying across the strip, outer bark outside.
+        for (int y = 2; y <= 13; y++)
+            for (int x = 2; x <= 13; x++) {
+                int t = x - y, sum = x + y;
+                if (t < 4 || t > 6 || sum < 12 || sum > 19) continue;
+                int step = t == 4 ? 3 : t == 5 ? 4 : 2;
+                if (t == 5 && sum % 3 == 0) step = 5;
+                if (t == 4 && sum % 4 == 1) step = 2;
+                px(im, x, y, BARK.get(step));
+            }
+        // The roll's open end at the upper left: a spiral of bark round the pale inner layer.
+        px(im, 8, 3, BARK.get(4)); px(im, 9, 3, LEATHER.get(5)); px(im, 9, 4, LEATHER.get(3)); px(im, 10, 4, BARK.get(2));
+        px(im, 8, 4, BARK.get(3)); px(im, 9, 2, BARK.get(4)); px(im, 10, 3, BARK.get(1));
+        return outline(im);
+    }
+
+    /** Core sample: an upright stone cylinder, bedded bands of five rocks, a copper fleck in the granite. */
+    static BufferedImage coreSampleItem() {
+        BufferedImage im = img();
+        Ramp[] bands = {LIMESTONE, SHALE, RHYOLITE, BASALT, GRANITE};
+        int[] tops = {3, 5, 7, 9, 11};
+        int[][] wobble = {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 1, 1, 0, 0, 0}, {0, 0, 0, 0, -1, -1, 0, 0}, {1, 0, 0, 0, 0, 0, 1, 1}, {0, 0, 0, 0, 0, 1, 1, 0}};
+        int[] shade = {0, 1, 1, 0, 0, 0, -1, -1};
+        for (int y = 3; y <= 13; y++)
+            for (int x = 4; x <= 11; x++) {
+                if (y == 13 && (x == 4 || x == 11)) continue;
+                int b = 0;
+                for (int i = 1; i < 5; i++) if (y >= tops[i] + wobble[i][x - 4]) b = i;
+                int step = 3 + shade[x - 4];
+                if (y == 13) step--;
+                px(im, x, y, bands[b].get(clampStep(step)));
+            }
+        // Top: the cut face of the limestone, lit from above, a darker front lip.
+        for (int x = 5; x <= 10; x++) px(im, x, 2, LIMESTONE.get(x < 8 ? 5 : 4));
+        px(im, 4, 3, LIMESTONE.get(4)); px(im, 11, 3, LIMESTONE.get(2));
+        for (int x = 5; x <= 10; x++) px(im, x, 3, LIMESTONE.get(x < 8 ? 4 : 3));
+        // A parting in the shale, granite crystals, a vesicle in the basalt, and the ore fleck.
+        px(im, 6, 6, SHALE.get(5)); px(im, 7, 6, SHALE.get(4));
+        px(im, 9, 12, GRANITE.get(5)); px(im, 5, 13, GRANITE.get(1)); px(im, 10, 11, GRANITE.get(1));
+        px(im, 6, 11, COPPER.get(4)); px(im, 7, 11, COPPER.spec()); px(im, 7, 12, COPPER.get(2)); px(im, 6, 12, COPPER.get(3));
+        px(im, 8, 9, BASALT.get(1)); px(im, 9, 9, BASALT.get(4));
+        return outline(im);
+    }
+
+    static String[] sawBladeGhost() {
+        String[] rows = new String[16];
+        for (int y = 0; y < 16; y++) {
+            StringBuilder sb = new StringBuilder();
+            for (int x = 0; x < 16; x++) {
+                double dx = x - 7.5, dy = y - 7.5, d = Math.hypot(dx, dy);
+                double a = (Math.atan2(dy, dx) / (2 * Math.PI) + 1) * 12 % 1.0;
+                boolean rim = d >= 5.2 && d < 6.2 && a >= 0.4;
+                boolean tooth = d >= 5.2 && d < 7.4 && a < 0.4 && a > 0.05;
+                boolean hole = d >= 1.2 && d < 2.2;
+                sb.append(rim || tooth || hole ? '#' : '.');
+            }
+            rows[y] = sb.toString();
+        }
+        return rows;
+    }
+
+    static void inventory(BufferedImage im) {
+        for (int row = 0; row < 3; row++)
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 84 + row * 18);
+        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 142);
+    }
+
+    /** Trip hammer: pattern slot and workpiece slot; y 60-72 left for the status line. */
+    static BufferedImage tripHammerGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        slot(im, 44, 35);
+        slot(im, 80, 35);
+        ghost(im, 44, 35, GHOST_PATTERN);
+        ghost(im, 80, 35, GHOST_INGOT);
+        inventory(im);
+        return im;
+    }
+
+    /** Saw mill: input, blade, progress arrow, large plank output and a bark output. */
+    static BufferedImage sawMillGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        slot(im, 56, 35);
+        slot(im, 32, 35);
+        ghost(im, 32, 35, sawBladeGhost());
+        arrow(im, 79, 34);
+        well(im, 111, 30, 26, 26, SLOT_FILL);
+        slot(im, 142, 35);
+        for (int j = 0; j < 15; j++) {
+            int d = Math.abs(j - 7);
+            if (d <= 2) for (int i = 0; i < 15; i++) im.setRGB(176 + i, 14 + j, 0xff000000 | GUI_LIGHT);
+            for (int i = 15; i < 22 - d; i++) im.setRGB(176 + i, 14 + j, 0xff000000 | GUI_LIGHT);
+        }
+        inventory(im);
+        return im;
+    }
+
+    /** Core sampler: large output, drill button sprites (u 176, v 0/18/36), progress well and its brass fill (u 176, v 54). */
+    static BufferedImage coreSamplerGui() {
+        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+        panel(im, 176, 166);
+        well(im, 119, 30, 26, 26, SLOT_FILL);
+        well(im, 34, 58, 80, 6, 0x2a2a2a);
+        int[] faces = {0x8b8b8b, 0x9a9ec8, 0x5a5a5a};
+        int[] lights = {0xc6c6c6, 0xc8ccf0, 0x6e6e6e};
+        int[] shadows = {0x555555, 0x5a5e88, 0x404040};
+        for (int b = 0; b < 3; b++) {
+            int y0 = b * 18;
+            fill(im, 176, y0, 54, 18, faces[b]);
+            fill(im, 176, y0, 54, 1, GUI_EDGE);
+            fill(im, 176, y0 + 17, 54, 1, GUI_EDGE);
+            fill(im, 176, y0, 1, 18, GUI_EDGE);
+            fill(im, 229, y0, 1, 18, GUI_EDGE);
+            fill(im, 177, y0 + 1, 52, 1, lights[b]);
+            fill(im, 177, y0 + 1, 1, 16, lights[b]);
+            fill(im, 177, y0 + 15, 52, 2, shadows[b]);
+            fill(im, 228, y0 + 1, 1, 16, shadows[b]);
+            if (b == 1) { // hovered: white rim like vanilla
+                fill(im, 176, y0, 54, 1, GUI_LIGHT); fill(im, 176, y0 + 17, 54, 1, GUI_LIGHT);
+                fill(im, 176, y0, 1, 18, GUI_LIGHT); fill(im, 229, y0, 1, 18, GUI_LIGHT);
+            }
+        }
+        for (int x = 0; x < 80; x++)
+            for (int y = 0; y < 6; y++) {
+                int step = y == 0 ? 5 : y == 5 ? 2 : y == 4 ? 3 : 4;
+                if (y > 0 && y < 4 && x % 8 == 7) step = 3;
+                px(im, 176 + x, 54 + y, BRONZE.get(step));
+            }
+        inventory(im);
+        return im;
+    }
+
+    static void machines() throws IOException {
+        save("block/saw_mill_side", sawMillSide());
+        save("block/saw_mill_top", sawMillTop());
+        save("block/saw_mill_front", sawMillFront(-1));
+        saveAnimated("block/saw_mill_front_active", sawMillFrontActive(), 2);
+        save("block/saw_mill_blade", sawMillBlade());
+        save("block/trip_hammer_frame", tripHammerFrame());
+        save("block/trip_hammer_head", tripHammerHead());
+        save("block/trip_hammer_arm", tripHammerArm());
+        save("block/core_sampler_side", coreSamplerSide());
+        save("block/core_sampler_top", coreSamplerTop());
+        save("block/core_sampler_drill", coreSamplerDrill());
+        save("item/bark", barkItem());
+        save("item/core_sample", coreSampleItem());
+        saveRaw("gui/trip_hammer", tripHammerGui());
+        saveRaw("gui/saw_mill", sawMillGui());
+        saveRaw("gui/core_sampler", coreSamplerGui());
+    }
+
     // ---------------------------------------------------------------- output
 
     static void save(String path, BufferedImage im) throws IOException {
@@ -3480,6 +3948,7 @@ public final class TextureGen {
 
         tier3();
         kinetics();
+        machines();
 
         // Glow layers for hot metal: written last, from the finished item textures.
         glowLayers();
