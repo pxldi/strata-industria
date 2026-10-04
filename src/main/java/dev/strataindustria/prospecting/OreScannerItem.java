@@ -7,6 +7,7 @@ import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.registry.Tier5DataComponents;
 import dev.strataindustria.registry.Tier5Sounds;
+import dev.strataindustria.registry.Tier6DataComponents;
 import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -29,7 +30,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 /**
  * The ore scanner (spec 13.2, prospecting IV). It holds 10 000 J, filled by right-clicking a battery box with it.
  * Hold right-click for two seconds to scan the 3 x 3 chunks around you for 1000 J; the map opens and the result
- * stays on the item. Sneak and right-click reads the last scan again.
+ * stays on the item. Sneak and right-click reads the last scan, or the last seismic survey, again.
  */
 public class OreScannerItem extends Item {
     public static final int CAPACITY = 10_000;
@@ -66,8 +67,9 @@ public class OreScannerItem extends Item {
     public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         OreScan last = stack.get(Tier5DataComponents.ORE_SCAN.get());
-        if (player.isShiftKeyDown() && last != null) {
-            if (level.isClientSide()) OreScannerClient.openHeld();
+        boolean surveyed = stack.has(Tier6DataComponents.SEISMIC_RESULT.get());
+        if (player.isShiftKeyDown() && (last != null || surveyed)) {
+            if (level.isClientSide()) OreScannerClient.openHeld(last == null);
             return InteractionResult.SUCCESS;
         }
         if (energy(stack) < COST) {
@@ -97,7 +99,7 @@ public class OreScannerItem extends Item {
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity user) {
         if (!(level instanceof ServerLevel serverLevel) || !(user instanceof ServerPlayer player) || !scan(serverLevel, player, stack)) return stack;
         level.playSound(null, player.getX(), player.getY(), player.getZ(), Tier5Sounds.ORE_SCANNER_DONE.get(), SoundSource.PLAYERS, 0.8f, 1.0f);
-        PacketDistributor.sendToPlayer(player, new ScannerPayloads.Open());
+        PacketDistributor.sendToPlayer(player, new ScannerPayloads.Open(false));
         Journal.award(player, Journal.PROSPECT);
         Journal.award(player, Journal.ORE_SCAN);
         return stack;

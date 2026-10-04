@@ -1084,6 +1084,25 @@
     ],
     "subtitle": "subtitles.strataindustria.block.power_hammer.strike"
   },
+  "block.pump_jack.stroke": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.piston.contract",
+        "pitch": 0.6,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.piston.extend",
+        "pitch": 0.55,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.pump_jack.stroke"
+  },
   "block.rubble.break": {
     "sounds": [
       {
@@ -1116,6 +1135,36 @@
       }
     ],
     "subtitle": "subtitles.block.generic.footsteps"
+  },
+  "block.seismic_charge.fuse": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.tnt.primed",
+        "pitch": 1.4,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.seismic_charge.fuse"
+  },
+  "block.seismic_charge.thump": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 64,
+        "name": "entity.generic.explode",
+        "pitch": 0.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 64,
+        "name": "block.piston.extend",
+        "pitch": 0.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.seismic_charge.thump"
   },
   "block.slag_heap.break": {
     "sounds": [
@@ -1340,6 +1389,75 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.block.tree_tap.place"
+  },
+  "block.wellhead.casing": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.place",
+        "pitch": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 0.6,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.casing"
+  },
+  "block.wellhead.drill": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.grindstone.use",
+        "pitch": 0.6
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.grindstone.use",
+        "pitch": 0.55,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.drill"
+  },
+  "block.wellhead.flow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "pitch": 0.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_ambient",
+        "pitch": 0.45,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.flow"
+  },
+  "block.wellhead.gusher": {
+    "sounds": [
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "block.bubble_column.whirlpool_ambient",
+        "pitch": 0.6
+      },
+      {
+        "type": "event",
+        "attenuation_distance": 48,
+        "name": "entity.generic.splash",
+        "pitch": 0.7,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.wellhead.gusher"
   },
   "block.windlass.creak": {
     "sounds": [
@@ -2903,6 +3021,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.item.ore_scanner.done"
+  },
+  "item.ore_scanner.echo": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.bit",
+        "pitch": 0.7,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.bit",
+        "pitch": 0.6,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.note_block.bit",
+        "pitch": 0.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.item.ore_scanner.echo"
   },
   "item.ore_scanner.scan": {
     "sounds": [

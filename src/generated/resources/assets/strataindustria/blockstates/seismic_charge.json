@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "strataindustria:block/seismic_charge"
+    },
+    "lit=true": {
+      "model": "strataindustria:block/seismic_charge_lit"
+    }
+  }
+}

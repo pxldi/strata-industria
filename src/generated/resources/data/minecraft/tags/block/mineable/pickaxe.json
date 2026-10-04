@@ -2,6 +2,8 @@
   "values": [
     "strataindustria:kinetic_dynamo",
     "strataindustria:oil_still",
+    "strataindustria:wellhead",
+    "strataindustria:pump_jack",
     "strataindustria:battery_box",
     "strataindustria:lv_machine_hull",
     "strataindustria:electric_furnace",

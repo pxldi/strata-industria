@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "drilled=false": {
+      "model": "strataindustria:block/wellhead"
+    },
+    "drilled=true": {
+      "model": "strataindustria:block/wellhead_drilled"
+    }
+  }
+}
