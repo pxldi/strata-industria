@@ -824,7 +824,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.quern", "Ground Fine");
         add(journal + "t2.quern.hint", "Knap a quernstone from four loose rocks and stack two under a stick for a quern. Put ore in and keep turning it; crushed ore melts down to more metal.");
         add(journal + "t2.bronze", "Bronze Age");
-        add(journal + "t2.bronze.hint", "Melt copper with tin, bismuth or arsenic in the right shares and cast a bronze ingot.");
+        add(journal + "t2.bronze.hint", "Melt 3 parts copper with 1 part tin, or copper with bismuth or arsenic, and cast a bronze ingot.");
         add(journal + "t2.stone_anvil", "Dressed Stone");
         add(journal + "t2.stone_anvil.hint", "Sneak and strike the top of raw igneous rock with a hammer to dress it into an anvil for copper and bronze.");
         add(journal + "t2.smith", "Hammer Work");
@@ -1183,6 +1183,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".crucible.pour", "Pour");
         // The alloy name (%1$s) is left out to fit the line; the status line names it once it forms.
         add(id + ".crucible.hint", "Needs %2$s-%3$s%% %4$s, has %5$s%%");
+        add(id + ".crucible.hint_parts", "%1$s %2$s: add %3$s %4$s");
         String problem = id + ".crucible.problem.";
         add(problem + "no_mold", "Put an empty mold in the mold slot");
         add(problem + "pouring", "Already pouring");
@@ -1284,6 +1285,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "pit_kiln.fuel", "Under straw and logs");
         add(k + "charcoal_pit.cover", "Covered on every side");
         add(k + "alloying.share", "%s %s\u2013%s%%");
+        add(k + "alloying.parts", "%s %s to %s %s");
+        add(k + "alloying.parts_any", "Ingots, nuggets or ore, any multiple");
         add(k + "crucible.refractory", "Refractory crucible only");
         add(k + "casting.units", "%s units");
         add(k + "bloomery.per_level", "Per chimney level");

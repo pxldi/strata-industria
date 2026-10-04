@@ -11,7 +11,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 /**
- * Crucible alloying: the two metals, the share range each must fall in, the heat the mix has to reach, and
+ * Crucible alloying: the two metals in whole parts (or the share range each must fall in), the heat the mix has to reach, and
  * whether a clay crucible can get that hot.
  */
 public class AlloyingCategory extends StrataCategory<Processes.Alloying> {
@@ -34,10 +34,16 @@ public class AlloyingCategory extends StrataCategory<Processes.Alloying> {
 
     @Override
     public void draw(Processes.Alloying alloy, IRecipeSlotsView slots, GuiGraphicsExtractor g, double mouseX, double mouseY) {
-        text(g, RecipeText.key("alloying.share", RecipeText.metal(alloy.alloy().base()),
-                RecipeText.percent(alloy.baseMin()), RecipeText.percent(alloy.baseMax())), 6, 29, TEXT);
-        text(g, RecipeText.key("alloying.share", RecipeText.metal(alloy.alloy().added()),
-                RecipeText.percent(alloy.addedMin()), RecipeText.percent(alloy.addedMax())), 6, 29 + LINE - 1, TEXT);
+        if (alloy.alloy().byParts()) {
+            text(g, RecipeText.key("alloying.parts", alloy.alloy().baseParts(), RecipeText.metal(alloy.alloy().base()),
+                    alloy.alloy().addedParts(), RecipeText.metal(alloy.alloy().added())), 6, 29, TEXT);
+            text(g, RecipeText.key("alloying.parts_any"), 6, 29 + LINE - 1, TEXT);
+        } else {
+            text(g, RecipeText.key("alloying.share", RecipeText.metal(alloy.alloy().base()),
+                    RecipeText.percent(alloy.baseMin()), RecipeText.percent(alloy.baseMax())), 6, 29, TEXT);
+            text(g, RecipeText.key("alloying.share", RecipeText.metal(alloy.alloy().added()),
+                    RecipeText.percent(alloy.addedMin()), RecipeText.percent(alloy.addedMax())), 6, 29 + LINE - 1, TEXT);
+        }
         heat(g, "melt", alloy.meltingPoint(), 6, 29 + 2 * LINE);
         if (alloy.refractory()) text(g, RecipeText.key("crucible.refractory"), 6, 29 + 3 * LINE + 3, TEXT_WARN);
     }
