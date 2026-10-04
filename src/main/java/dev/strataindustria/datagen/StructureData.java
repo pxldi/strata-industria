@@ -8,7 +8,6 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.journal.JournalTrigger;
 import dev.strataindustria.material.Metal;
-import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.structure.CampLoot;
 import dev.strataindustria.structure.CampStructure;
@@ -337,7 +336,7 @@ final class StructureData {
     /** "Places" pages: hidden until visited, with no toast; {@link StructureEvents} plays a page turn instead. */
     static void places(BootstrapContext<Advancement> output, AdvancementHolder root) {
         Map<CampStructure.Layout, ItemLike> icons = Map.of(
-                CampStructure.Layout.CHARCOAL_BURNERS_CLEARING, ModBlocks.LOG_PILE.get(),
+                CampStructure.Layout.CHARCOAL_BURNERS_CLEARING, Items.OAK_LOG,
                 CampStructure.Layout.PROSPECTOR_CAMP, ModItems.STONE_PICKAXE.get(),
                 CampStructure.Layout.MINING_CAMP, StructureContent.PIT_PROP_ITEM.get(),
                 CampStructure.Layout.COLLAPSED_ADIT, Items.GRAVEL);
