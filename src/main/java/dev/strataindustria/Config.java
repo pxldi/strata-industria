@@ -189,12 +189,21 @@ public final class Config {
         BUILDER.comment("Anvil smithing.").push("smithing");
     }
 
-    public static final ModConfigSpec.BooleanValue SMITHING_RANDOM_TARGETS = BUILDER
-            .comment("Each world gets its own smithing targets. Off uses each recipe's default target.")
-            .define("randomTargets", true);
     public static final ModConfigSpec.IntValue SMITHING_HIT_COOLING = BUILDER
-            .comment("Degrees each hit takes off a tier 3 or higher workpiece, on top of normal cooling.")
-            .defineInRange("hitCooling", 20, 0, 200);
+            .comment("Degrees each blow takes off a tier 3 or higher workpiece, on top of normal cooling.")
+            .defineInRange("hitCooling", 15, 0, 200);
+    public static final ModConfigSpec.IntValue SMITHING_BRIGHT_MARGIN = BUILDER
+            .comment("Percent above its working temperature a piece must be for a blow to count as bright.")
+            .defineInRange("brightMargin", 12, 0, 100);
+    public static final ModConfigSpec.IntValue SMITHING_BEAT_WINDOW = BUILDER
+            .comment("Ticks either side of the hammer's rebound glint in which a strike is a true blow (counts twice).")
+            .defineInRange("beatWindow", 3, 0, 8);
+    public static final ModConfigSpec.IntValue SMITHING_SPARKS = BUILDER
+            .comment("Percent of the normal number of sparks a blow throws. 0 turns them off.")
+            .defineInRange("sparks", 100, 0, 300);
+    public static final ModConfigSpec.BooleanValue SMITHING_SCREEN_NUDGE = BUILDER
+            .comment("A small push of the camera on true blows and the last blow.")
+            .define("screenNudge", true);
 
     static {
         BUILDER.pop();

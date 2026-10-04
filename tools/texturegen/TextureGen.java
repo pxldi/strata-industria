@@ -2003,85 +2003,6 @@ public final class TextureGen {
         return im;
     }
 
-    /** Anvil (spec 9.2): workpiece, plans, work bar, eight hit buttons, rule and recent-hit boxes. */
-    static BufferedImage anvilGui() {
-        BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-        panel(im, 176, 252);
-        slot(im, 8, 27);
-        slot(im, 152, 27);
-        for (int i = 0; i < 12; i++) slot(im, 30 + (i % 6) * 18, 18 + (i / 6) * 18);
-        well(im, 25, 26, 4, 18, 0x2a2a2a);
-        // A small arrow from the plans to the finished piece.
-        for (int j = 0; j < 7; j++) {
-            int d = Math.abs(j - 3);
-            for (int i = 0; i < 9 - d; i++) if (i < 5 ? d <= 1 : true) im.setRGB(139 + i, 32 + j, 0xff000000 | SLOT_FILL);
-        }
-        // Work bar: 0 to 150 with a notch every 25.
-        well(im, 12, 60, 152, 8, 0x2a2a2a);
-        for (int t = 25; t < 150; t += 25) fill(im, 13 + t, 68, 1, 2, t % 50 == 0 ? GUI_SHADOW : SLOT_FILL);
-        for (int i = 0; i < 3; i++) {
-            well(im, 8 + i * 20, 106, 18, 18, SLOT_FILL);
-            well(im, 116 + i * 18, 106, 18, 18, SLOT_FILL);
-        }
-        // Weld row: second piece, flux, the weld button, and the pattern slot on the right.
-        slot(im, 8, 130);
-        slot(im, 26, 130);
-        slot(im, 152, 130);
-        ghost(im, 8, 130, GHOST_INGOT);
-        ghost(im, 26, 130, GHOST_FLUX);
-        ghost(im, 152, 130, GHOST_PATTERN);
-        for (int row = 0; row < 3; row++)
-            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 173 + row * 18);
-        for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 231);
-
-        // Sprites: button faces (normal, hovered, disabled), then the hit icons.
-        int[] faces = {0xa8a8a8, 0xc8c8d8, 0x6e6e6e};
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            fill(im, x0, 0, 18, 18, faces[b]);
-            fill(im, x0, 0, 18, 1, 0x000000);
-            fill(im, x0, 17, 18, 1, 0x000000);
-            fill(im, x0, 0, 1, 18, 0x000000);
-            fill(im, x0 + 17, 0, 1, 18, 0x000000);
-            fill(im, x0 + 1, 1, 16, 1, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 1, 1, 16, b == 2 ? 0x8a8a8a : 0xffffff);
-            fill(im, x0 + 1, 16, 16, 1, b == 2 ? 0x4a4a4a : 0x555555);
-            fill(im, x0 + 16, 1, 1, 16, b == 2 ? 0x4a4a4a : 0x555555);
-        }
-        int[] red = {0x5a1a10, 0xa0281a, 0xe0603a};
-        int[] green = {0x1e4a1e, 0x3a8a3a, 0x7ac07a};
-        for (int i = 0; i < 8; i++) {
-            BufferedImage icon = hitIcon(i < 4 ? red : green, i < 4, i % 4);
-            im.getGraphics().drawImage(icon, 176 + (i % 4) * 16, 18 + (i / 4) * 16, null);
-        }
-        im.getGraphics().drawImage(anyHitIcon(), 240, 18, null);
-        // Weld button faces (normal, hovered, disabled) with two bars meeting in a spark.
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            im.getGraphics().drawImage(im.getSubimage(176 + b * 18, 0, 18, 18), x0, 52, null);
-            drawRows(im, x0 + 1, 53, WELD_ICON, b == 2
-                    ? new int[] {0x5a5a5a, 0x6a6a6a, 0x7a7a7a, 0x8a8a8a, 0x8a8a8a}
-                    : new int[] {0x3a3d48, 0x838998, 0xd6dbe2, 0xf0a030, 0xfff0a0});
-        }
-        // Quick-smith button faces (normal, hovered, disabled) at v=72: two forward chevrons, like a fast-forward.
-        for (int b = 0; b < 3; b++) {
-            int x0 = 176 + b * 18;
-            im.getGraphics().drawImage(im.getSubimage(176 + b * 18, 0, 18, 18), x0, 72, null);
-            int[] ink = b == 2 ? new int[] {0x5a5a5a, 0x7a7a7a} : new int[] {0x3a3d48, 0xf0a030};
-            for (int c = 0; c < 2; c++) {
-                for (int i = 0; i < 9; i++) {
-                    int dx = i < 5 ? i : 8 - i;
-                    int x = x0 + 4 + c * 5 + dx;
-                    im.setRGB(x, 77 + i, 0xff000000 | ink[0]);
-                    im.setRGB(x + 1, 77 + i, 0xff000000 | ink[1]);
-                    im.setRGB(x + 2, 77 + i, 0xff000000 | ink[1]);
-                    im.setRGB(x + 3, 77 + i, 0xff000000 | ink[0]);
-                }
-            }
-        }
-        return im;
-    }
-
     static final String[] WELD_ICON = {
             "................",
             ".......5........",
@@ -8399,7 +8320,6 @@ public final class TextureGen {
         itemsV2 = false;
         saveRaw("gui/crucible", crucibleGui());
 
-        saveRaw("gui/anvil", anvilGui());
         for (Rock rock : ROCKS) {
             if (rock.category().equals("intrusive") || rock.category().equals("extrusive"))
                 save("block/" + rock.name() + "_anvil_top", stoneAnvilTop(rock));

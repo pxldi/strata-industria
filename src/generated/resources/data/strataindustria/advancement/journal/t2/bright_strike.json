@@ -3,7 +3,7 @@
   "criteria": {
     "done": {
       "conditions": {
-        "event": "quick_smith"
+        "event": "bright_strike"
       },
       "trigger": "strataindustria:journal"
     }
@@ -11,14 +11,14 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": "journal.strataindustria.t2.quick_smith.hint"
+      "translate": "journal.strataindustria.t2.bright_strike.hint"
     },
     "icon": {
       "id": "strataindustria:bronze_hammer"
     },
     "show_toast": false,
     "title": {
-      "translate": "journal.strataindustria.t2.quick_smith"
+      "translate": "journal.strataindustria.t2.bright_strike"
     }
   },
   "requirements": [

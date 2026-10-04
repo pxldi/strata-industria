@@ -1,18 +1,8 @@
 {
   "type": "strataindustria:anvil",
-  "default_target": 70,
+  "blows": 5,
   "ingredient": "strataindustria:steel_ingot",
   "result": {
     "id": "strataindustria:steel_hammer_head"
-  },
-  "rules": [
-    {
-      "hit": "punch",
-      "where": "last"
-    },
-    {
-      "hit": "shrink",
-      "where": "not_last"
-    }
-  ]
+  }
 }

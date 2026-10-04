@@ -117,10 +117,26 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.5f)));
         add(ModSounds.SMITH_DONE, definition().subtitle(subtitle("anvil.done"))
                 .with(sound("minecraft:random/anvil_land").pitch(1.4f).volume(0.5f)));
-        add(ModSounds.SMITH_QUICK, definition().subtitle(subtitle("anvil.quick"))
-                .with(sound("minecraft:random/anvil_use").pitch(1.5f).volume(0.6f))
-                .with(sound("minecraft:random/anvil_use").pitch(1.7f).volume(0.6f))
-                .with(sound("minecraft:random/anvil_use").pitch(1.4f).volume(0.6f)));
+        SoundDefinition.SoundType event = SoundDefinition.SoundType.EVENT;
+        // Each metal sings its own note over the hammer: copper soft and round, bronze bell-like, iron dry, steel bright and long.
+        add(ModSounds.ANVIL_VOICE_COPPER, definition().subtitle(subtitle("anvil.voice.copper"))
+                .with(sound("minecraft:block.note_block.flute", event).volume(0.55f)));
+        add(ModSounds.ANVIL_VOICE_BRONZE, definition().subtitle(subtitle("anvil.voice.bronze"))
+                .with(sound("minecraft:block.note_block.bell", event).volume(0.6f)));
+        add(ModSounds.ANVIL_VOICE_IRON, definition().subtitle(subtitle("anvil.voice.iron"))
+                .with(sound("minecraft:block.note_block.iron_xylophone", event).volume(0.6f)));
+        add(ModSounds.ANVIL_VOICE_STEEL, definition().subtitle(subtitle("anvil.voice.steel"))
+                .with(sound("minecraft:block.note_block.chime", event).volume(0.65f)));
+        add(ModSounds.ANVIL_TRUE_BLOW, definition().subtitle(subtitle("anvil.true_blow"))
+                .with(sound("minecraft:block.anvil.land", event).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.anvil.land", event).pitch(1.65f).volume(0.35f)));
+        add(ModSounds.ANVIL_COLD, definition().subtitle(subtitle("anvil.cold"))
+                .with(sound("minecraft:block.netherite_block.hit", event).pitch(0.6f).volume(0.8f))
+                .with(sound("minecraft:block.netherite_block.hit", event).pitch(0.7f).volume(0.8f)));
+        add(ModSounds.ANVIL_GLINT, definition().subtitle(subtitle("anvil.glint"))
+                .with(sound("minecraft:block.amethyst_block.chime", event).pitch(1.8f).volume(0.25f)));
+        add(ModSounds.ANVIL_SET, definition().subtitle(subtitle("anvil.set"))
+                .with(sound("minecraft:block.anvil.place", event).pitch(1.8f).volume(0.35f)));
         SoundDefinition dress = definition().subtitle(subtitle("anvil.dress"));
         for (int i = 1; i <= 4; i++) dress.with(sound("minecraft:dig/stone" + i).pitch(0.7f));
         add(ModSounds.ANVIL_DRESS, dress);

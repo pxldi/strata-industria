@@ -12,7 +12,6 @@ import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.HitType;
 import dev.strataindustria.smithing.Smithing;
 import dev.strataindustria.smithing.SmithingPattern;
 import dev.strataindustria.smithing.SmithingProgress;
@@ -129,9 +128,7 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
         if (pattern == null) return Status.NO_PATTERN;
         Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
         if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
-        // Targets changed since recording (config smithing.randomTargets): the hits would never finish (spec 9.5).
-        if (pattern.target() != dev.strataindustria.smithing.Smithing.target(level, pattern.recipe(), recipe)) return Status.OUTDATED_PATTERN;
-        hitsTotal = pattern.hits().size();
+        hitsTotal = AnvilBlockEntity.blowsFor(recipe, anvil.input().isEmpty() ? items.get(INPUT) : anvil.input());
 
         // A finished piece goes into a container under the anvil, or onto the anvil top.
         ItemStack done = anvil.getItem(AnvilBlockEntity.OUTPUT);
@@ -157,9 +154,9 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
             return Status.ANVIL_BUSY;
         }
         if (progress == null && !anvil.select(pattern.recipe())) return Status.ANVIL_BUSY;
-        hitsDone = progress == null ? 0 : progress.history().size();
+        hitsDone = progress == null ? 0 : progress.blows();
         if (rpm < MIN_SPEED) return rpm <= 0 ? Status.NOT_TURNING : Status.TOO_SLOW;
-        if (hitsDone >= pattern.hits().size()) return Status.ANVIL_BUSY;
+        if (hitsDone >= hitsTotal) return Status.ANVIL_BUSY;
         if (Heat.get(piece, level) < AnvilBlockEntity.workingTemperature(piece)) {
             // Back into the forge to heat up again, progress and all.
             if (returnToForge(level, anvil, piece)) anvil.setItem(AnvilBlockEntity.INPUT, ItemStack.EMPTY);
@@ -169,9 +166,7 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
         timer += rpm / 16.0f;
         if (timer < TICKS_PER_HIT) return Status.WORKING;
         timer = 0;
-        HitType type = HitType.byId(pattern.hits().get(hitsDone));
-        if (type == null) return Status.ANVIL_BUSY;
-        AnvilBlockEntity.MachineHit result = anvil.machineHit(type);
+                AnvilBlockEntity.MachineHit result = anvil.machineBlow(0);
         if (result == AnvilBlockEntity.MachineHit.STRUCK || result == AnvilBlockEntity.MachineHit.DONE) {
             hitsDone++;
             lastHit = level.getGameTime();
@@ -184,15 +179,11 @@ public class TripHammerBlockEntity extends BaseContainerBlockEntity implements K
         return result == AnvilBlockEntity.MachineHit.REFUSED ? Status.ANVIL_BUSY : Status.WORKING;
     }
 
-    /** The built-in bloom refining pattern: the shortest run that meets the recipe's rules. */
+    /** The built-in bloom refining shape: without a pattern the hammer still presses the slag out of a raw bloom. */
     private static @Nullable SmithingPattern bloomPattern(ServerLevel level) {
         ResourceKey<Recipe<?>> id = ResourceKey.create(Registries.RECIPE, StrataIndustria.id("anvil/bloom_refining"));
-        Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(id);
-        if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return null;
-        int target = Smithing.target(level, id, recipe);
-        List<Integer> hits = Smithing.solve(target, recipe.rules());
-        if (hits.isEmpty()) return null;
-        return new SmithingPattern(id, BuiltInRegistries.ITEM.getKey(Items.IRON_INGOT), target, hits, Smithing.craftQuality(hits.size(), hits.size()));
+        if (level.recipeAccess().byKey(id).isEmpty()) return null;
+        return new SmithingPattern(id, BuiltInRegistries.ITEM.getKey(Items.IRON_INGOT));
     }
 
     /** A hot workpiece for {@code recipe}: from the hammer's own slot, else from a forge beside the hammer or the anvil. */

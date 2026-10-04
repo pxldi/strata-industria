@@ -1503,16 +1503,12 @@ final class Tier4GameTests {
                 .getRecipesFor(dev.strataindustria.registry.ModRecipes.ANVIL.get(), new net.minecraft.world.item.crafting.SingleRecipeInput(ingot), level)
                 .filter(r -> r.value().result().create().is(steelPlate))
                 .findFirst().orElseThrow(() -> helper.assertionException("no steel plate recipe"));
-        int target = dev.strataindustria.smithing.Smithing.target(level, plate.id(), plate.value());
-        java.util.List<dev.strataindustria.smithing.HitType> hits = ModGameTests.solve(target, plate.value().rules());
-        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable");
-        int craft = dev.strataindustria.smithing.Smithing.craftQuality(hits.size(),
-                dev.strataindustria.smithing.Smithing.minHits(target, plate.value().rules()));
+        int total = dev.strataindustria.smithing.AnvilBlockEntity.blowsFor(plate.value(), ingot);
+        int craft = 2;
         ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
         helper.assertTrue(!hammer.canPlaceItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern),
                 "a blank pattern does not go in");
-        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(),
-                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate), target, hits.stream().map(Enum::ordinal).toList(), craft));
+        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(), net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate)));
         hammer.setItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern);
         int queue = dev.strataindustria.steam.SteamHammerBlockEntity.QUEUE, result = dev.strataindustria.steam.SteamHammerBlockEntity.RESULT;
         hammer.setItem(queue, ingot.copyWithCount(plate.value().count() * 2));
@@ -1536,7 +1532,7 @@ final class Tier4GameTests {
         for (; ticks < 1000 && hammer.getItem(result).isEmpty(); ticks++) steamTick(level, fireboxPos, firebox, hammerPos, hammer, 2.0f);
         helper.assertTrue(hammer.getItem(result).is(steelPlate), "a steel plate comes out, got " + hammer.getItem(result)
                 + ", status " + hammer.status());
-        helper.assertTrue(ticks <= hits.size() * 5 + 2, hits.size() + " blows at 2 bar took " + ticks + " ticks");
+        helper.assertTrue(ticks <= total * 5 + 2, total + " blows at 2 bar took " + ticks + " ticks");
         var quality = hammer.getItem(result).get(ModDataComponents.QUALITY.get());
         helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the pattern's craft part " + craft + ", got " + quality);
 
@@ -1547,8 +1543,8 @@ final class Tier4GameTests {
             if (hammer.status() == dev.strataindustria.steam.SteamHammerBlockEntity.Status.WORKING) working++;
         }
         helper.assertValueEqual(hammer.getItem(result).getCount(), 2, "plates after the second run, status " + hammer.status());
-        helper.assertTrue(working >= hits.size() * 10 - 1 && working <= hits.size() * 10 + 2,
-                hits.size() + " blows at 1.5 bar worked for " + working + " ticks");
+        helper.assertTrue(working >= total * 10 - 1 && working <= total * 10 + 2,
+                total + " blows at 1.5 bar worked for " + working + " ticks");
         helper.assertTrue(hammer.getItem(queue).isEmpty() && hammer.input().isEmpty(), "both ingots used up");
         helper.succeed();
     }

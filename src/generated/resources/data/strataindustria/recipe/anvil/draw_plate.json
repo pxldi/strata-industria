@@ -1,22 +1,8 @@
 {
   "type": "strataindustria:anvil",
-  "default_target": 80,
+  "blows": 6,
   "ingredient": "strataindustria:steel_plate",
   "result": {
     "id": "strataindustria:draw_plate"
-  },
-  "rules": [
-    {
-      "hit": "punch",
-      "where": "last"
-    },
-    {
-      "hit": "punch",
-      "where": "second_last"
-    },
-    {
-      "hit": "hit",
-      "where": "not_last"
-    }
-  ]
+  }
 }

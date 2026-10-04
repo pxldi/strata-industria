@@ -17,7 +17,6 @@ import dev.strataindustria.registry.Tier5BlockEntities;
 import dev.strataindustria.registry.Tier5Sounds;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.HitType;
 import dev.strataindustria.smithing.Smithing;
 import dev.strataindustria.smithing.SmithingPattern;
 import dev.strataindustria.smithing.SmithingProgress;
@@ -296,9 +295,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         if (pattern == null) return Status.NO_PATTERN;
         Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
         if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
-        // Targets changed since recording (config smithing.randomTargets): the hits would never finish (T3 spec 9.5).
-        if (pattern.target() != Smithing.target(level, pattern.recipe(), recipe)) return Status.OUTDATED_PATTERN;
-        hitsTotal = pattern.hits().size();
+        hitsTotal = blowsFor(recipe, input().isEmpty() ? getItem(QUEUE) : input());
 
         ItemStack piece = input();
         if (piece.isEmpty()) {
@@ -317,7 +314,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
             return Status.WRONG_PIECE;
         }
         if (progress == null && !select(pattern.recipe())) return Status.WRONG_PIECE;
-        hitsDone = progress == null ? 0 : progress.history().size();
+        hitsDone = progress == null ? 0 : progress.blows();
         if (hitsDone >= hitsTotal) return Status.WRONG_PIECE;
 
         // Induction: the coil heats the piece itself, so no forge or heat pipe is involved.
@@ -343,9 +340,7 @@ public class PowerHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         if (!drawBlow()) return heating && power <= 0.001f ? Status.NO_POWER : Status.LOW_POWER;
         if (++timer < hitTicks()) return Status.WORKING;
         timer = 0;
-        HitType type = HitType.byId(pattern.hits().get(hitsDone));
-        if (type == null) return Status.WRONG_PIECE;
-        MachineHit result = machineHit(type);
+                MachineHit result = machineBlow(4);
         if (result == MachineHit.TOO_COLD) return Status.HEATING;
         if (result == MachineHit.REFUSED) return Status.WRONG_PIECE;
         hitsDone++;

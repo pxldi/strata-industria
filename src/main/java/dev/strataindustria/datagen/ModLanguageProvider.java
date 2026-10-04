@@ -144,7 +144,14 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "raw_bloom.hit", "Bloom thuds");
         add(subtitles + "wrought_iron.hit", "Iron rings");
         add(subtitles + "anvil.done", "Piece finished");
-        add(subtitles + "anvil.quick", "Hammer rings steadily");
+        add(subtitles + "anvil.voice.copper", "Copper sings");
+        add(subtitles + "anvil.voice.bronze", "Bronze rings");
+        add(subtitles + "anvil.voice.iron", "Iron rings");
+        add(subtitles + "anvil.voice.steel", "Steel rings");
+        add(subtitles + "anvil.true_blow", "Hammer strikes true");
+        add(subtitles + "anvil.cold", "Hammer thuds on cold metal");
+        add(subtitles + "anvil.glint", "Hammer rebounds");
+        add(subtitles + "anvil.set", "Piece set on the anvil");
         add(subtitles + "brick_kiln.work", "Brick kiln burns");
         add(subtitles + "brick_kiln.done", "Brick kiln fired");
         add(subtitles + "pattern.carve", "Wood carved");
@@ -816,7 +823,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t2.stone_anvil", "Dressed Stone");
         add(journal + "t2.stone_anvil.hint", "Sneak and strike the top of raw igneous rock with a hammer to dress it into an anvil.");
         add(journal + "t2.smith", "Hammer Work");
-        add(journal + "t2.smith.hint", "Heat an ingot in the forge and smith it into a plate on an anvil.");
+        add(journal + "t2.smith.hint", "Heat an ingot in the forge and lay it on an anvil. Sneak and use a hammer to pick a shape, then strike.");
         add(journal + "t2.bronze_tools", "Full Kit");
         add(journal + "t2.bronze_tools.hint", "Own a bronze pickaxe, axe, shovel, knife, hammer, saw and sword.");
         add(journal + "t2.bronze_armour", "Clad in Bronze");
@@ -864,17 +871,17 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.charter", "Found an Outpost");
         add(journal + "t3.charter.hint", "A charter post holds an outpost once a line runs to it. Lay track to it and send a tub through.");
         add(journal + "t3.weld", "Forge Weld");
-        add(journal + "t3.weld.hint", "Heat two iron ingots, add flux, and weld them into a double ingot on the anvil.");
+        add(journal + "t3.weld.hint", "Heat two iron ingots, lay both on the anvil and strike them together into a double ingot.");
         add(journal + "t2.brick_kiln", "Brick Kiln");
         add(journal + "t2.brick_kiln.hint", "Build a brick kiln out of bricks, set it on a lit forge, and fire clay pieces in it.");
         add(journal + "t2.pattern_casting", "Pattern Casting");
         add(journal + "t2.pattern_casting.hint", "Cut a plank blank from planks and carve it on the grid into a pattern. Press the pattern into a sand flask (right-click with a flask in your pack) to get a sand mold. A sand mold takes any metal, once.");
         add(journal + "t2.casting_table", "Casting Table");
         add(journal + "t2.casting_table.hint", "Lay fired molds on a casting table beside a crucible and pour. One pour fills every empty mold. Click the table to knock the castings out.");
-        add(journal + "t2.quick_smith", "Quick Smith");
-        add(journal + "t2.quick_smith.hint", "Smith a piece by hand once. After that the Quick button on the anvil makes it for you at normal quality.");
+        add(journal + "t2.bright_strike", "Struck Bright");
+        add(journal + "t2.bright_strike.hint", "Finish a piece without letting the metal dull. Strike while it glows, and go back to the forge when it fades.");
         add(journal + "t3.pattern", "Smithing Pattern");
-        add(journal + "t3.pattern.hint", "Put a blank pattern in the anvil while you smith, and it records every hit.");
+        add(journal + "t3.pattern.hint", "Pick a shape on the anvil, then sneak and use a blank pattern on it. A hammer machine will work that shape.");
         add(journal + "t3.hide", "Raw Hide");
         add(journal + "t3.hide.hint", "Animals give raw hides now. Leather has to be tanned.");
         add(journal + "t3.leather", "Tanned Leather");
@@ -993,31 +1000,19 @@ final class ModLanguageProvider extends LanguageProvider {
         add("death.attack." + id + ".hot_item", "%1$s held on to hot metal for too long");
         add("death.attack." + id + ".hot_item.player", "%1$s held on to hot metal for too long while fighting %2$s");
         add("container." + id + ".anvil", "Anvil");
-        String status = id + ".anvil.status.";
-        add(status + "empty", "Put a heated workpiece in");
-        add(status + "choose", "Pick what to make");
-        add(status + "ready", "Hits so far: %s");
-        add(status + "too_cold", "Too cold to work");
-        add(status + "no_hammer", "Needs a hammer in your hotbar");
+        String status = id + ".anvil.";
+        add(status + "shape", "%s \u00b7 %s blows");
+        add(status + "shape_one", "%s \u00b7 1 blow");
+        add(status + "hint", "Sneak + use with a hammer to pick, use to strike.");
+        add(status + "too_cold", "Too cold. Back to the forge.");
+        add(status + "no_hammer", "You need a hammer");
         add(status + "too_weak", "This anvil cannot work that metal");
-        add(status + "output_full", "Take the finished piece out first");
-        add(status + "not_enough", "Needs more of that metal");
-        add(status + "no_plan", "Nothing can be smithed from that");
-        add(id + ".anvil.out_of_range", "That would overwork it");
-        add(id + ".anvil.rules", "Rules");
-        add(id + ".anvil.recent", "Last hits");
-        add(id + ".anvil.rule", "%s %s");
-        for (var hit : dev.strataindustria.smithing.HitType.values()) {
-            add(id + ".anvil.hit." + hit.id(), title(hit.id()) + " (%s)");
-        }
-        for (var kind : dev.strataindustria.smithing.Rule.Kind.values()) {
-            add(id + ".anvil.kind." + kind.getSerializedName(), title(kind.getSerializedName()));
-        }
-        add(id + ".anvil.where.last", "last");
-        add(id + ".anvil.where.second_last", "second last");
-        add(id + ".anvil.where.third_last", "third last");
-        add(id + ".anvil.where.not_last", "not last");
-        add(id + ".anvil.where.any", "any of the last three");
+        add(status + "output_full", "Take the finished piece first");
+        add(status + "not_enough", "Needs %s of that metal");
+        add(status + "no_plan", "Nothing to make from that");
+        add(status + "bright", "Struck bright");
+        add(status + "progress", "%s of %s blows");
+        add(status + "recorded", "Pattern set: %s");
 
         // Spec 7 and 8: mechanical power and machines.
         addBlock(ModBlocks.WOODEN_AXLE, "Wooden Axle");
@@ -1144,21 +1139,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");
         addItem(ModItems.FLUX, "Flux");
         addItem(ModItems.SMITHING_PATTERN, "Smithing Pattern");
-        add(id + ".anvil.quick", "Quick smith");
-        add(id + ".anvil.quick.tip", "Quick smith: finish this plan at normal quality. Costs the hammer wear and heat of the shortest run.");
-        add(id + ".anvil.quick.unknown", "Smith this plan by hand once first");
-        add(id + ".anvil.weld", "Weld");
-        add(id + ".anvil.pattern", "Pattern");
-        String weld = id + ".anvil.weld.";
-        add(weld + "ready", "Ready to weld");
-        add(weld + "no_recipe", "Those two pieces do not weld");
-        add(weld + "too_weak", "This anvil cannot weld that metal");
-        add(weld + "output_full", "Take the finished piece out first");
-        add(weld + "too_cold", "Both pieces need %s °C to weld");
-        add(weld + "no_flux", "Sprinkle flux in the flux slot");
-        add(weld + "no_hammer", "Needs a hammer in your hotbar");
-        add(id + ".pattern.recorded", "%s, %s hits, %s");
-        add(id + ".pattern.blank", "Put it in the anvil's pattern slot to record your next piece");
+        add(id + ".pattern.recorded", "Makes %s");
+        add(id + ".pattern.blank", "Sneak + use on an anvil with a shape picked to set it");
     }
 
     /** Spec 6 to 8: metal names, the crucible screen, molds, cast parts and tools. */
@@ -1196,7 +1178,7 @@ final class ModLanguageProvider extends LanguageProvider {
         }
         add("container." + id + ".crucible", "Crucible");
         String status = id + ".crucible.status.";
-        add(status + "cold", "Cold");
+        add(status + "too_cold", "Cold");
         add(status + "heating", "Heating up");
         add(status + "melting", "Melting... %s%%");
         add(status + "molten", "%s, molten");
@@ -1291,6 +1273,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(k + "extruder.mode.item_pipe", "Item pipe mode");
         add(k + "heat.work", "Work at %s heat");
         add(k + "heat.weld", "Weld at %s heat");
+        add(k + "anvil.blows", "%s blows");
+        add(k + "anvil.blows.tip", "Iron takes one more blow, steel two more");
         add(k + "heat.melt", "Melts at %s heat");
         add(k + "heat.roast", "Roast at %s heat");
         add(k + "heat.bloom", "Fire to %s heat");

@@ -17,7 +17,6 @@ import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
 import dev.strataindustria.smithing.Smithing;
-import dev.strataindustria.smithing.HitType;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -81,7 +80,7 @@ final class MarkGameTests {
                 .filter(r -> r.value().result().create().is(ModItems.PLATES.get(Metal.COPPER).get()))
                 .findFirst().orElseThrow(() -> helper.assertionException("no copper plate recipe"));
         helper.assertTrue(anvil.select(plate.id()), "the anvil should offer a copper plate");
-        for (HitType hit : ModGameTests.solve(Smithing.target(level, plate.id(), plate.value()), plate.value().rules())) anvil.hit(smith, hit);
+        for (int i = 0; i < 3; i++) anvil.strikeBy(smith, 100 + i * 20L);
 
         ItemStack out = anvil.getItem(AnvilBlockEntity.OUTPUT);
         helper.assertTrue(out.is(ModItems.PLATES.get(Metal.COPPER).get()), "the anvil should hold a copper plate, got " + out);
