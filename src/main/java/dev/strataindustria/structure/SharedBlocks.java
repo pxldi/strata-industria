@@ -42,6 +42,8 @@ public final class SharedBlocks {
     public static final DeferredHolder<SoundEvent, SoundEvent> RUBBLE_STEP = sound("block.rubble.step");
     public static final DeferredHolder<SoundEvent, SoundEvent> CRACKED_ROCK_BREAK = sound("block.cracked_rock.break");
     public static final DeferredHolder<SoundEvent, SoundEvent> SMOULDERING_CRACKLE = sound("block.smouldering_log_pile.crackle");
+    /** Water trickling through a sluice box. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> SLUICE_BOX_WATER = sound("block.sluice_box.water");
     public static final DeferredHolder<SoundEvent, SoundEvent> WINDLASS_CREAK = sound("block.windlass.creak");
 
     private static final class Sounds {

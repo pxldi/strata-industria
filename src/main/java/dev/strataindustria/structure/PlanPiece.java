@@ -299,6 +299,9 @@ public class PlanPiece extends StructurePiece {
             case '+' -> BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace("white_banner")).defaultBlockState();
             case '-' -> Blocks.CLAY.defaultBlockState();
             case ')' -> Blocks.WATER.defaultBlockState();
+            case '4' -> SharedBlocks.SLUICE_BOX.get().defaultBlockState();
+            case '5' -> Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING, Direction.WEST);
+            case '6' -> named("light_weighted_pressure_plate");
             default -> null;
         };
         if (state == null) return;
@@ -340,6 +343,7 @@ public class PlanPiece extends StructurePiece {
                     case "charcoal_burners_clearing" -> CampLoot.key(CampLoot.CLEARING_CACHE);
                     case "prospector_camp" -> CampLoot.key(CampLoot.PROSPECTOR_CACHE, mineral);
                     case "ruined_bloomery/works" -> CampLoot.key(CampLoot.BLOOMERY_CACHE);
+                    case "placer_workings/bank" -> CampLoot.key(CampLoot.PLACER_CACHE);
                     default -> CampLoot.key(CampLoot.MINING_CACHE);
                 };
                 RandomizableContainer.setBlockEntityLootTable(level, random, pos, table);
@@ -348,6 +352,11 @@ public class PlanPiece extends StructurePiece {
                 }
                 if (planId.equals("ruined_bloomery/works") && level.getBlockEntity(pos) instanceof CrateBlockEntity crate) {
                     crate.lock(brickGaps());
+                }
+            }
+            case 'j' -> {
+                if (planId.equals("placer_workings/bank")) {
+                    RandomizableContainer.setBlockEntityLootTable(level, random, pos, CampLoot.key(CampLoot.PLACER_TIN));
                 }
             }
             case '/' -> {
@@ -359,8 +368,9 @@ public class PlanPiece extends StructurePiece {
                             net.minecraft.world.level.block.entity.SignTextSlot.FRONT);
                 }
             }
-            case 'a' -> ToolRackBlockEntity.stock(level.getLevel(), pos, java.util.List.of(
-                    worn(ModItems.STONE_HAMMER.get(), random), worn(ModItems.STONE_AXE.get(), random)));
+            case 'a' -> ToolRackBlockEntity.stock(level.getLevel(), pos, planId.equals("placer_workings/bank")
+                    ? java.util.List.of(worn(Items.FISHING_ROD, random))
+                    : java.util.List.of(worn(ModItems.STONE_HAMMER.get(), random), worn(ModItems.STONE_AXE.get(), random)));
             case '$' -> {
                 if (level.getBlockEntity(pos) instanceof BrushableBlockEntity dig) {
                     dig.setLootTable(CampLoot.dig(planId, mineral), Weathering.hash(pos, seed));

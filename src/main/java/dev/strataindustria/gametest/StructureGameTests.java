@@ -46,6 +46,7 @@ final class StructureGameTests {
         tests.put("structure_clearing_cache", StructureGameTests::clearingCache);
         tests.put("structure_prospector_trench", StructureGameTests::prospectorTrench);
         tests.put("structure_bloomery_works", StructureGameTests::bloomeryWorks);
+        tests.put("structure_placer_stilt_hut", StructureGameTests::placerStiltHut);
     }
 
     private static void plansInForest(GameTestHelper helper) {
@@ -166,6 +167,33 @@ final class StructureGameTests {
             dev.strataindustria.structure.PuzzleLock.blockPlaced(level, step.pos());
         }
         helper.assertTrue(!level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED), "bricks in place did not open the crate");
+        helper.succeed();
+    }
+
+    /** The stilt hut stands over a backwater with the cache sunk in its bed; the sluice boxes, ladder and barrel are there. */
+    private static void placerStiltHut(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        Plan plan = Plans.PLACER_BANK;
+        int minX = origin.getX() + PAD, minZ = origin.getZ() + PAD;
+        BoundingBox area = new BoundingBox(minX - PAD, groundY - 8, minZ - PAD, minX + plan.width() + PAD, groundY + 40, minZ + plan.depth() + PAD);
+        forest(level, area, groundY, minX, minZ, plan.width(), plan.depth());
+        build(level, new PlanPiece(plan, Rotation.NONE, minX, minZ, groundY, OreMineral.NATIVE_GOLD, PlanPiece.Wood.SPRUCE, 11L), area);
+        BlockPos crate = new BlockPos(minX + 12, groundY - 2, minZ + 5);
+        helper.assertTrue(level.getBlockState(crate).is(dev.strataindustria.structure.SharedBlocks.CRATE.get()), "cache crate missing");
+        helper.assertTrue(level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED) == false, "cache crate is locked");
+        helper.assertTrue(level.getBlockState(crate.above()).is(Blocks.WATER), "no water over the cache");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 9, groundY + 2, minZ + 3)).is(BlockTags.LOGS), "no stilt");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 12, groundY + 3, minZ + 5)).is(BlockTags.PLANKS), "no hut floor over the pool");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 8, groundY + 2, minZ + 3)).is(Blocks.LADDER), "no ladder");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 12, groundY + 4, minZ + 4)).is(Blocks.BARREL), "hut barrel missing");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 10, groundY + 4, minZ + 7))
+                .is(dev.strataindustria.structure.SharedBlocks.CRATE.get()), "tin missing");
+        for (int z = 10; z <= 12; z++) {
+            helper.assertTrue(level.getBlockState(new BlockPos(minX + 5, groundY + 1, minZ + z))
+                    .is(dev.strataindustria.structure.SharedBlocks.SLUICE_BOX.get()), "sluice box missing at row " + z);
+        }
         helper.succeed();
     }
 

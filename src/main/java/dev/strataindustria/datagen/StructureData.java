@@ -255,6 +255,18 @@ final class StructureData {
         return pool;
     }
 
+    /** Lure I or Luck of the Sea I, for the panners' cache. */
+    private static LootPool.Builder fishingBook(LootTableSubProvider.Context context, float chance) {
+        var enchantments = context.lookup(Registries.ENCHANTMENT);
+        LootPool.Builder pool = LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
+                .when(LootItemRandomChanceCondition.randomChance(chance));
+        for (var key : List.of(Enchantments.LURE, Enchantments.LUCK_OF_THE_SEA)) {
+            pool.add(LootItem.lootTableItem(Items.ENCHANTED_BOOK).setWeight(1).apply(new SetEnchantmentsFunction.Builder()
+                    .withEnchantment(enchantments.getOrThrow(key), ContextIntProviders.exactly(1))));
+        }
+        return pool;
+    }
+
     static final class ChestLoot implements LootTableSubProvider {
         private final LootTableSubProvider.Context context;
 
@@ -354,21 +366,27 @@ final class StructureData {
                     .withPool(pool(0.5f, item(Items.EMERALD, 1, 3)))
                     .withPool(book(context, 0.2f)));
 
-            // Placer workings (H = 2): a few grains of gold, never the washed ore itself.
-            add(CampLoot.PLACER_CACHE, () -> LootTable.lootTable()
-                    .withPool(pool(0.7f, item(Items.GOLD_NUGGET, 2, 6)))
-                    .withPool(pool(0.5f, notes(PLACER_NOTES)))
-                    .withPool(pool(1, ledger("placer_workings", 2)))
+            // Placer workings (H = 2): the hut barrel holds the family's food, the tin a few grains of gold (30 units
+            // at most), the cache sunk in the bed the washer's pan and the way to native gold.
+            add(CampLoot.PLACER_HUT, () -> LootTable.lootTable()
                     .withPool(LootPool.lootPool().setRolls(ContextIntProviders.exactly(1))
-                            .when(LootItemRandomChanceCondition.randomChance(0.7f))
-                            .add(item(Items.BREAD, 8, 16).builder())
-                            .add(item(Items.COOKED_SALMON, 6, 12).builder()))
-                    .withPool(pool(0.5f, item(Items.BOWL, 1, 3)))
-                    .withPool(pool(0.5f, item(ModItems.TWINE.get(), 2, 8)))
+                            .add(item(Items.COOKED_SALMON, 4, 10).builder())
+                            .add(item(Items.COOKED_COD, 4, 10).builder()))
+                    .withPool(pool(0.7f, item(Items.BREAD, 4, 12)))
+                    .withPool(pool(0.6f, item(Items.BOWL, 1, 3)))
+                    .withPool(pool(0.6f, item(ModItems.TWINE.get(), 2, 8)))
+                    .withPool(pool(0.6f, worn(Items.FISHING_ROD)))
+                    .withPool(pool(0.6f, item(Items.TORCH, 4, 12))));
+            add(CampLoot.PLACER_TIN, () -> LootTable.lootTable()
+                    .withPool(pool(1, item(Items.GOLD_NUGGET, 2, 3))));
+            add(CampLoot.PLACER_CACHE, () -> LootTable.lootTable()
+                    .withPool(pool(0.6f, worn(ModItems.WASHING_PAN.get())))
+                    .withPool(pool(1, notes(PLACER_NOTES)))
+                    .withPool(pool(1, ledger("placer_workings", 2)))
                     .withPool(pool(0.6f, sherd("placer_workings")))
                     .withPool(pool(0.5f, specimen(OreMineral.NATIVE_GOLD)))
                     .withPool(pool(0.4f, item(Items.EMERALD, 1, 3)))
-                    .withPool(book(context, 0.2f)));
+                    .withPool(fishingBook(context, 0.3f)));
 
             for (OreMineral mineral : OreMineral.values()) {
                 // Abandoned prospector's camp (H = 1): the pack and the cache.
@@ -708,6 +726,7 @@ final class StructureData {
         add.accept(subtitles + "cracked_fire_bricks.break", "Brick crumbles");
         add.accept(subtitles + "cracked_fire_bricks.settle", "Bricks tick");
         add.accept(subtitles + "slag_heap.break", "Slag crunches");
+        add.accept(subtitles + "sluice_box.water", "Water trickles");
 
         String place = "journal." + id + ".place";
         add.accept(place + ".noted", "Field journal: %s");
@@ -734,7 +753,7 @@ final class StructureData {
         add.accept(place + ".placer_workings", "Placer workings");
         add.accept(place + ".placer_workings.hint", "Panners washed river gravel here and left a heap they never finished. "
                 + "Heavy grains settle when gravel is swirled in water; the light stuff washes away. Look for glints in river "
-                + "gravel.");
+                + "gravel. They hid what they found where the river could watch it.");
     }
 
     /** The prospector's remark, six per mineral. A few words each: the note says the rest (structures v2 2a). */

@@ -660,6 +660,9 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(SharedBlocks.MINERS_LAMP_FLUTTER, definition().subtitle(subtitle("miners_lamp.flutter"))
                 .with(sound("minecraft:block.candle.ambient", event).pitch(1.0f).volume(0.5f))
                 .with(sound("minecraft:block.fire.ambient", event).pitch(1.9f).volume(0.3f)));
+        add(SharedBlocks.SLUICE_BOX_WATER, definition().subtitle(subtitle("sluice_box.water"))
+                .with(sound("minecraft:block.water.ambient", event).pitch(1.3f).volume(0.5f).weight(2))
+                .with(sound("minecraft:block.pointed_dripstone.drip_water", event).pitch(1.1f).volume(0.4f)));
         add(SharedBlocks.ORE_CART_RATTLE, definition().subtitle(subtitle("ore_cart.rattle"))
                 .with(sound("minecraft:block.chain.place", event).pitch(0.7f).weight(2))
                 .with(sound("minecraft:block.gravel.hit", event).pitch(0.8f).volume(0.7f)));
