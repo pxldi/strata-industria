@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:copper_plate",
+    "minecraft:stick",
+    "minecraft:bowl"
+  ],
+  "result": {
+    "id": "strataindustria:tree_tap"
+  }
+}

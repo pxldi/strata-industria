@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:barrel",
+  "count": 8,
+  "fluid": {
+    "amount": 1000,
+    "fluid": "minecraft:water"
+  },
+  "fluid_result": {
+    "amount": 250,
+    "fluid": "strataindustria:latex"
+  },
+  "ingredient": "minecraft:dandelion",
+  "ticks": 2400
+}

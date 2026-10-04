@@ -1,0 +1,12 @@
+{
+  "type": "strataindustria:barrel",
+  "fluid": {
+    "amount": 1000,
+    "fluid": "strataindustria:latex"
+  },
+  "result": {
+    "count": 4,
+    "id": "strataindustria:raw_rubber"
+  },
+  "ticks": 1200
+}
