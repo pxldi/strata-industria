@@ -173,7 +173,19 @@ final class ModAdvancements extends AdvancementSubProvider {
         for (OreGrade grade : OreGrade.values()) calcines.add(Tier4Items.zincCalcine(grade));
         AdvancementHolder roast = goal(zincOre, "t4/roast", Tier4Items.zincCalcine(OreGrade.NORMAL), anyOf(calcines));
         goal(roast, "t4/brass", ModItems.ingot(Metal.BRASS), has(ModItems.ingot(Metal.BRASS)));
-        goal(zincOre, "t4/solder", ModItems.ingot(Metal.SOLDER), has(ModItems.ingot(Metal.SOLDER)));
+        AdvancementHolder solder = goal(zincOre, "t4/solder", ModItems.ingot(Metal.SOLDER), has(ModItems.ingot(Metal.SOLDER)));
+        // Spec 15, goals 62 and 63: lay any fluid pipe, then raise a boiler to 1 bar.
+        AdvancementHolder pipe = Advancement.Builder.advancement()
+                .parent(solder)
+                .display(Tier4Items.COPPER_FLUID_PIPE.get(), title("t4.pipe"), hint("t4.pipe"), AdvancementType.TASK, true, false, false)
+                .addCriterion("copper", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.COPPER_FLUID_PIPE.get()))
+                .addCriterion("bronze", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.BRONZE_FLUID_PIPE.get()))
+                .addCriterion("steel", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.STEEL_FLUID_PIPE.get()))
+                .addCriterion("gauge", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.PRESSURE_GAUGE.get()))
+                .requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR)
+                .save(output, Journal.goal("t4/pipe").toString());
+        AdvancementHolder boiler = goal(pipe, "t4/boiler", Tier4Items.BRONZE_BOILER.get(), JournalTrigger.TriggerInstance.of(Journal.BOILER));
+        goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

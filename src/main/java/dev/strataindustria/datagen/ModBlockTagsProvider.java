@@ -102,7 +102,12 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(Tier4Blocks.COKE_OVEN_BRICKS.getKey()).add(Tier4Blocks.COKE_OVEN_DOOR.getKey())
                 .add(Tier4Blocks.COKE_BLOCK.getKey()).add(Tier4Blocks.REFRACTORY_CRUCIBLE.getKey())
                 .add(Tier4Blocks.STEEL_ANVIL.getKey()).add(Tier4Blocks.IRON_AXLE.getKey()).add(Tier4Blocks.IRON_GEARBOX.getKey())
-                .add(Tier4Blocks.IRON_STEP_UP_GEARBOX.getKey());
+                .add(Tier4Blocks.IRON_STEP_UP_GEARBOX.getKey()).add(Tier4Blocks.FIREBOX.getKey()).add(Tier4Blocks.BRONZE_BOILER.getKey())
+                .add(Tier4Blocks.CRACKED_BRONZE_BOILER.getKey()).add(Tier4Blocks.COPPER_FLUID_PIPE.getKey())
+                .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey())
+                .add(Tier4Blocks.MECHANICAL_PUMP.getKey()).add(Tier4Blocks.STEAM_ENGINE.getKey());
+        tag(dev.strataindustria.registry.ModTags.Blocks.FLUID_PIPES).add(Tier4Blocks.COPPER_FLUID_PIPE.getKey())
+                .add(Tier4Blocks.BRONZE_FLUID_PIPE.getKey()).add(Tier4Blocks.STEEL_FLUID_PIPE.getKey()).add(Tier4Blocks.PRESSURE_GAUGE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(Tier4Blocks.TREATED_PLANKS.getKey()).add(Tier4Blocks.TREATED_SLAB.getKey())
                 .add(Tier4Blocks.TREATED_STAIRS.getKey()).add(Tier4Blocks.TREATED_FENCE.getKey());
         tag(BlockTags.WOODEN_SLABS).add(Tier4Blocks.TREATED_SLAB.getKey());

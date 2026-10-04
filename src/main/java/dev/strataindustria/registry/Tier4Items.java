@@ -58,6 +58,17 @@ public final class Tier4Items {
     // Spec 11.7: iron transmission.
     public static final DeferredItem<BlockItem> IRON_AXLE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_AXLE);
     public static final DeferredItem<BlockItem> IRON_GEARBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_GEARBOX);
+
+    // Spec 8.1, 9.2, 9.3 and 10.2: steam.
+    public static final DeferredItem<BlockItem> FIREBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.FIREBOX);
+    public static final DeferredItem<BlockItem> BRONZE_BOILER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BRONZE_BOILER);
+    public static final DeferredItem<BlockItem> CRACKED_BRONZE_BOILER = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.CRACKED_BRONZE_BOILER);
+    public static final DeferredItem<BlockItem> COPPER_FLUID_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.COPPER_FLUID_PIPE);
+    public static final DeferredItem<BlockItem> BRONZE_FLUID_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.BRONZE_FLUID_PIPE);
+    public static final DeferredItem<BlockItem> STEEL_FLUID_PIPE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEEL_FLUID_PIPE);
+    public static final DeferredItem<BlockItem> PRESSURE_GAUGE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.PRESSURE_GAUGE);
+    public static final DeferredItem<BlockItem> MECHANICAL_PUMP = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.MECHANICAL_PUMP);
+    public static final DeferredItem<BlockItem> STEAM_ENGINE = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.STEAM_ENGINE);
     public static final DeferredItem<BlockItem> IRON_STEP_UP_GEARBOX = ModItems.ITEMS.registerSimpleBlockItem(Tier4Blocks.IRON_STEP_UP_GEARBOX);
 
     // Spec 4.4 and 5.3: roasted sphalerite, by grade, and the small piece from a surface indicator.

@@ -1,0 +1,203 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "#housing",
+    "housing": "strataindustria:block/pressure_gauge",
+    "dial": "strataindustria:block/pressure_gauge_dial_0",
+    "pipe": "strataindustria:block/bronze_fluid_pipe"
+  },
+  "elements": [
+    {
+      "from": [
+        5.5,
+        5.5,
+        0
+      ],
+      "to": [
+        10.5,
+        10.5,
+        5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            11,
+            5,
+            16
+          ],
+          "texture": "#pipe",
+          "cullface": "north"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe",
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        4,
+        4
+      ],
+      "to": [
+        12,
+        12,
+        12
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#dial"
+        },
+        "south": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#dial"
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#dial"
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#dial"
+        },
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#housing"
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ],
+          "texture": "#housing"
+        }
+      }
+    },
+    {
+      "from": [
+        5.5,
+        5.5,
+        11
+      ],
+      "to": [
+        10.5,
+        10.5,
+        16
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            11,
+            5,
+            16
+          ],
+          "texture": "#pipe",
+          "cullface": "south"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe",
+          "rotation": 90
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#pipe",
+          "rotation": 90
+        }
+      }
+    }
+  ]
+}

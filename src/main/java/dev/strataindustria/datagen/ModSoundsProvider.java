@@ -225,6 +225,57 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.CALCINE_REDUCE, definition().subtitle(subtitle("crucible.calcine_reduce"))
                 .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.5f))
                 .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.3f)));
+
+        // Spec 21.7: the firebox flares and crackles; a refused pipe clanks and hisses.
+        add(Tier4Sounds.FIREBOX_LIGHT, definition().subtitle(subtitle("firebox.light"))
+                .with(sound("minecraft:item.firecharge.use", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.7f))
+                .with(sound("minecraft:item.firecharge.use", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.6f)));
+        SoundDefinition burn = definition().subtitle(subtitle("firebox.burn"));
+        for (int i = 1; i <= 3; i++) burn.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.85f).volume(0.8f));
+        burn.with(sound("minecraft:fire/fire").pitch(0.7f).volume(0.4f));
+        add(Tier4Sounds.FIREBOX_BURN, burn);
+        add(Tier4Sounds.FLUID_PIPE_REFUSE, definition().subtitle(subtitle("fluid_pipe.refuse"))
+                .with(sound("minecraft:block.anvil.land", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.3f)));
+        // Spec 21.7: the boiler. Warming creaks, a deep rumble while it makes steam, the safety valve's
+        // whistle, warnings, and the bang and split of a dry-fired shell.
+        add(Tier4Sounds.BOILER_HEAT, definition().subtitle(subtitle("boiler.heat"))
+                .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.7f))
+                .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.4f)));
+        add(Tier4Sounds.BOILER_RUN, definition().subtitle(subtitle("boiler.run"))
+                .with(sound("minecraft:block.lava.ambient", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.8f))
+                .with(sound("minecraft:block.lava.ambient", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.7f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.15f)));
+        add(Tier4Sounds.BOILER_VENT, definition().subtitle(subtitle("boiler.vent"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.5f))
+                .with(sound("minecraft:block.note_block.flute", SoundDefinition.SoundType.EVENT).pitch(1.8f).volume(0.6f)));
+        add(Tier4Sounds.BOILER_LOW_WATER, definition().subtitle(subtitle("boiler.low_water"))
+                .with(sound("minecraft:block.note_block.didgeridoo", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.5f)));
+        add(Tier4Sounds.BOILER_DRY_FIRE, definition().subtitle(subtitle("boiler.dry_fire"))
+                .with(sound("minecraft:block.chain.step", SoundDefinition.SoundType.EVENT).pitch(0.5f))
+                .with(sound("minecraft:block.chain.break", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f)));
+        add(Tier4Sounds.BOILER_STEAM_BURST, definition().subtitle(subtitle("boiler.steam_burst"))
+                .with(sound("minecraft:entity.generic.extinguish_fire", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(1.5f)));
+        add(Tier4Sounds.BOILER_CRACK, definition().subtitle(subtitle("boiler.crack"))
+                .with(sound("minecraft:entity.item.break", SoundDefinition.SoundType.EVENT).pitch(0.5f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
+        add(Tier4Sounds.BOILER_REPAIR, definition().subtitle(subtitle("boiler.repair"))
+                .with(sound("minecraft:block.anvil.use", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.7f))
+                .with(sound("minecraft:block.anvil.use", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.6f)));
+        // Spec 21.7: the engine's chuff and knock, its start and stop, and the pump's suck and thump.
+        add(Tier4Sounds.STEAM_ENGINE_CHUFF, definition().subtitle(subtitle("steam_engine.chuff"))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.65f).volume(0.55f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.25f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        add(Tier4Sounds.STEAM_ENGINE_START, definition().subtitle(subtitle("steam_engine.start"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.7f)));
+        add(Tier4Sounds.STEAM_ENGINE_STOP, definition().subtitle(subtitle("steam_engine.stop"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.6f)));
+        add(Tier4Sounds.MECHANICAL_PUMP_RUN, definition().subtitle(subtitle("mechanical_pump.run"))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.35f))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.3f))
+                .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.3f)));
     }
 
     private static String subtitle(String name) {
