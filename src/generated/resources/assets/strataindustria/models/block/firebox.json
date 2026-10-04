@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "strataindustria:block/firebox_front",
+    "side": "strataindustria:block/firebox_side",
+    "top": "strataindustria:block/firebox_top"
+  }
+}

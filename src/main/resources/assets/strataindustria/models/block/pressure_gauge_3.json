@@ -1,0 +1,7 @@
+{
+  "parent": "strataindustria:block/pressure_gauge_housing",
+  "textures": {
+    "housing": "strataindustria:block/pressure_gauge",
+    "dial": "strataindustria:block/pressure_gauge_dial_3"
+  }
+}

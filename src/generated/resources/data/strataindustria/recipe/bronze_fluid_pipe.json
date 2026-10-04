@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "P": "#strataindustria:plates/any_bronze",
+    "S": "strataindustria:solder_ingot"
+  },
+  "pattern": [
+    "PSP"
+  ],
+  "result": {
+    "count": 4,
+    "id": "strataindustria:bronze_fluid_pipe"
+  }
+}

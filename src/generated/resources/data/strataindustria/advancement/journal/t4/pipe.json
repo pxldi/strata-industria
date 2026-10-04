@@ -1,0 +1,62 @@
+{
+  "parent": "strataindustria:journal/t4/solder",
+  "criteria": {
+    "bronze": {
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "strataindustria:bronze_fluid_pipe"
+        }
+      },
+      "trigger": "minecraft:placed_block"
+    },
+    "copper": {
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "strataindustria:copper_fluid_pipe"
+        }
+      },
+      "trigger": "minecraft:placed_block"
+    },
+    "gauge": {
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "strataindustria:pressure_gauge"
+        }
+      },
+      "trigger": "minecraft:placed_block"
+    },
+    "steel": {
+      "conditions": {
+        "location": {
+          "type": "minecraft:match_block",
+          "blocks": "strataindustria:steel_fluid_pipe"
+        }
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.pipe.hint"
+    },
+    "icon": {
+      "id": "strataindustria:copper_fluid_pipe"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.pipe"
+    }
+  },
+  "requirements": [
+    [
+      "copper",
+      "bronze",
+      "steel",
+      "gauge"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

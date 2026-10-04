@@ -6,6 +6,7 @@ import dev.strataindustria.power.Kinetics;
 import dev.strataindustria.power.WindmillBearingBlockEntity;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -31,8 +32,8 @@ import org.jspecify.annotations.Nullable;
  */
 public class WindmillRenderer implements BlockEntityRenderer<WindmillBearingBlockEntity, WindmillRenderer.State> {
     private final ItemModelResolver itemModelResolver;
-    private final ItemStack hub = RotorRenderer.rotorStack("windmill_hub");
-    private final ItemStack sail = RotorRenderer.rotorStack("windmill_sail");
+    private final Supplier<ItemStack> hub = RotorRenderer.rotorStack("windmill_hub");
+    private final Supplier<ItemStack> sail = RotorRenderer.rotorStack("windmill_sail");
 
     public WindmillRenderer(BlockEntityRendererProvider.Context context) {
         this.itemModelResolver = context.itemModelResolver();
@@ -52,8 +53,8 @@ public class WindmillRenderer implements BlockEntityRenderer<WindmillBearingBloc
         state.facing = bearing.facing();
         state.sails.clear();
         state.sails.addAll(bearing.sails());
-        itemModelResolver.updateForTopItem(state.hub, hub, ItemDisplayContext.NONE, bearing.getLevel(), null, 0);
-        itemModelResolver.updateForTopItem(state.sail, sail, ItemDisplayContext.NONE, bearing.getLevel(), null, 0);
+        itemModelResolver.updateForTopItem(state.hub, hub.get(), ItemDisplayContext.NONE, bearing.getLevel(), null, 0);
+        itemModelResolver.updateForTopItem(state.sail, sail.get(), ItemDisplayContext.NONE, bearing.getLevel(), null, 0);
     }
 
     @Override
