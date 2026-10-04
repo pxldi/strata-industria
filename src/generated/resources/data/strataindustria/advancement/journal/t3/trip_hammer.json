@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t3/pattern",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "trip_hammer"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.trip_hammer.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:trip_hammer"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.trip_hammer"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

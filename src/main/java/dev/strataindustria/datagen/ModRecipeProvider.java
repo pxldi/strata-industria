@@ -13,6 +13,7 @@ import dev.strataindustria.geology.Rock;
 import dev.strataindustria.knapping.GridPattern;
 import dev.strataindustria.knapping.Knapping;
 import dev.strataindustria.knapping.KnappingRecipe;
+import dev.strataindustria.machine.SawingRecipe;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernRecipe;
 import dev.strataindustria.smithing.AnvilRecipe;
@@ -466,6 +467,60 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('R', rod)
                 .unlockedBy("has_wrought_iron_rod", has(rod))
                 .save(output, key("bellows"));
+
+        // Spec 8.2 and 8.4: the saw mill and the trip hammer.
+        shaped(RecipeCategory.REDSTONE, ModItems.SAW_MILL.get())
+                .pattern("PRP")
+                .pattern("GAG")
+                .pattern("PPP")
+                .define('P', ItemTags.PLANKS)
+                .define('R', rod)
+                .define('G', gear)
+                .define('A', axle)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("saw_mill"));
+        List<Item> hammerHeads = new java.util.ArrayList<>();
+        for (Metal metal : Metal.values()) {
+            if ((metal.isBronze() || metal == Metal.WROUGHT_IRON) && metal.toolTypes().contains(MoldType.HAMMER_HEAD)) {
+                hammerHeads.add(ModItems.head(metal, MoldType.HAMMER_HEAD));
+            }
+        }
+        shaped(RecipeCategory.REDSTONE, ModItems.TRIP_HAMMER.get())
+                .pattern(" H ")
+                .pattern("RAR")
+                .pattern("PGP")
+                .define('H', Ingredient.of(hammerHeads.toArray(Item[]::new)))
+                .define('R', rod)
+                .define('A', axle)
+                .define('P', ItemTags.PLANKS)
+                .define('G', gear)
+                .unlockedBy("has_wooden_gear", has(gear))
+                .save(output, key("trip_hammer"));
+
+        Item bark = ModItems.BARK.get();
+        saw("oak_planks", ItemTags.OAK_LOGS, Items.OAK_PLANKS, bark);
+        saw("spruce_planks", ItemTags.SPRUCE_LOGS, Items.SPRUCE_PLANKS, bark);
+        saw("birch_planks", ItemTags.BIRCH_LOGS, Items.BIRCH_PLANKS, bark);
+        saw("jungle_planks", ItemTags.JUNGLE_LOGS, Items.JUNGLE_PLANKS, bark);
+        saw("acacia_planks", ItemTags.ACACIA_LOGS, Items.ACACIA_PLANKS, bark);
+        saw("dark_oak_planks", ItemTags.DARK_OAK_LOGS, Items.DARK_OAK_PLANKS, bark);
+        saw("mangrove_planks", ItemTags.MANGROVE_LOGS, Items.MANGROVE_PLANKS, bark);
+        saw("cherry_planks", ItemTags.CHERRY_LOGS, Items.CHERRY_PLANKS, bark);
+        saw("pale_oak_planks", ItemTags.PALE_OAK_LOGS, Items.PALE_OAK_PLANKS, bark);
+        saw("poplar_planks", ItemTags.POPLAR_LOGS, Items.POPLAR_PLANKS, bark);
+        // Nether stems have no bark worth tanning with.
+        saw("crimson_planks", ItemTags.CRIMSON_STEMS, Items.CRIMSON_PLANKS, null);
+        saw("warped_planks", ItemTags.WARPED_STEMS, Items.WARPED_PLANKS, null);
+        output.accept(key("sawing/bamboo_planks"), new SawingRecipe(Ingredient.of(Items.BAMBOO_BLOCK, Items.STRIPPED_BAMBOO_BLOCK),
+                new ItemStackTemplate(Items.BAMBOO_PLANKS, 3), java.util.Optional.empty(), SawingRecipe.DEFAULT_TICKS), null);
+        output.accept(key("sawing/sticks"), new SawingRecipe(tag(ItemTags.PLANKS), new ItemStackTemplate(Items.STICK, 3),
+                java.util.Optional.empty(), SawingRecipe.DEFAULT_TICKS / 2), null);
+    }
+
+    /** A log gives six planks and, for overworld wood, a strip of bark (spec 8.2). */
+    private void saw(String path, TagKey<Item> logs, Item planks, @org.jspecify.annotations.Nullable Item bark) {
+        output.accept(key("sawing/" + path), new SawingRecipe(tag(logs), new ItemStackTemplate(planks, 6),
+                java.util.Optional.ofNullable(bark).map(ItemStackTemplate::new), SawingRecipe.DEFAULT_TICKS), null);
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {

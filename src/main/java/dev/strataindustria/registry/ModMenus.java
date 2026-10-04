@@ -8,6 +8,8 @@ import dev.strataindustria.forge.ForgeMenu;
 import dev.strataindustria.metal.CrucibleMenu;
 import dev.strataindustria.knapping.KnappingMenu;
 import dev.strataindustria.machine.MillstoneMenu;
+import dev.strataindustria.machine.SawMillMenu;
+import dev.strataindustria.machine.TripHammerMenu;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
@@ -40,6 +42,11 @@ public final class ModMenus {
 
     public static final DeferredHolder<MenuType<?>, MenuType<MillstoneMenu>> MILLSTONE =
             MENUS.register("millstone", () -> IMenuTypeExtension.create(MillstoneMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<SawMillMenu>> SAW_MILL =
+            MENUS.register("saw_mill", () -> IMenuTypeExtension.create(SawMillMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<TripHammerMenu>> TRIP_HAMMER =
+            MENUS.register("trip_hammer", () -> IMenuTypeExtension.create(TripHammerMenu::new));
 
     private ModMenus() {}
 }

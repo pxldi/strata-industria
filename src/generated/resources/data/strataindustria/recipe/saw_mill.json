@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "A": "strataindustria:wooden_axle",
+    "G": "strataindustria:wooden_gear",
+    "P": "#minecraft:planks",
+    "R": "strataindustria:wrought_iron_rod"
+  },
+  "pattern": [
+    "PRP",
+    "GAG",
+    "PPP"
+  ],
+  "result": {
+    "id": "strataindustria:saw_mill"
+  }
+}

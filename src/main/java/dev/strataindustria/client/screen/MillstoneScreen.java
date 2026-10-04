@@ -41,7 +41,7 @@ public class MillstoneScreen extends AbstractContainerScreen<MillstoneMenu> {
         g.text(font, line, 8, STATUS_Y, colour, false);
         if (minecraft.level != null && minecraft.level.getBlockEntity(menu.pos()) instanceof Kinetic kinetic) {
             Component network = kinetic.kinetic().line();
-            g.text(font, network, imageWidth - 8 - font.width(network), STATUS_Y, 0xFF404040, false);
+            g.text(font, network, imageWidth - 8 - font.width(network), titleLabelY, 0xFF404040, false);
         }
     }
 }

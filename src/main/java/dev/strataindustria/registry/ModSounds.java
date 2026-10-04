@@ -86,6 +86,8 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> KINETIC_OVERSTRESS = register("kinetic.overstress");
     public static final DeferredHolder<SoundEvent, SoundEvent> MILLSTONE_GRIND = register("millstone.grind");
     public static final DeferredHolder<SoundEvent, SoundEvent> BELLOWS_PUMP = register("bellows.pump");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SAW_MILL_SAW = register("saw_mill.saw");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SAW_MILL_BLADE_BREAK = register("saw_mill.blade_break");
 
     /** Pages of the field journal turning. */
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");

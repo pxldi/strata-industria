@@ -7,6 +7,9 @@ import dev.strataindustria.client.render.QuernRenderer;
 import dev.strataindustria.client.render.AnvilRenderer;
 import dev.strataindustria.client.render.RotorRenderer;
 import dev.strataindustria.client.screen.MillstoneScreen;
+import dev.strataindustria.client.screen.SawMillScreen;
+import dev.strataindustria.client.screen.TripHammerScreen;
+import dev.strataindustria.client.render.TripHammerRenderer;
 import dev.strataindustria.power.AxleBlock;
 import dev.strataindustria.power.HandCrankBlock;
 import dev.strataindustria.power.WaterWheelBlock;
@@ -53,6 +56,8 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.ANVIL.get(), AnvilScreen::new);
         event.register(ModMenus.BLOOMERY.get(), BloomeryScreen::new);
         event.register(ModMenus.MILLSTONE.get(), MillstoneScreen::new);
+        event.register(ModMenus.SAW_MILL.get(), SawMillScreen::new);
+        event.register(ModMenus.TRIP_HAMMER.get(), TripHammerScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -70,6 +75,7 @@ public final class StrataIndustriaClient {
                 state -> Direction.fromAxisAndDirection(state.getValue(WaterWheelBlock.AXIS), Direction.AxisDirection.POSITIVE), 1));
         event.registerBlockEntityRenderer(ModBlockEntities.MILLSTONE.get(), context -> new RotorRenderer<>(context, "millstone_runner",
                 state -> Direction.UP, 0));
+        event.registerBlockEntityRenderer(ModBlockEntities.TRIP_HAMMER.get(), TripHammerRenderer::new);
     }
 
     private static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {

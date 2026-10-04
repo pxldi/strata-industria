@@ -11,6 +11,8 @@ import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
 import dev.strataindustria.machine.BellowsBlock;
+import dev.strataindustria.machine.SawMillBlock;
+import dev.strataindustria.machine.TripHammerBlock;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.quern.QuernBlock;
 import dev.strataindustria.registry.ModBlocks;
@@ -334,6 +336,32 @@ final class ModModelProvider extends ModelProvider {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.BELLOWS.get()).with(bellows));
         itemModels.itemModelOutput.accept(ModItems.BELLOWS.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bellows")));
+
+        // Spec 8.2 and 8.4: both face north in their models.
+        var sawIdle = BlockModelGenerators.plainVariant(StrataIndustria.id("block/saw_mill"));
+        var sawActive = BlockModelGenerators.plainVariant(StrataIndustria.id("block/saw_mill_active"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> saw =
+                PropertyDispatch.initial(SawMillBlock.FACING, SawMillBlock.ACTIVE);
+        for (boolean active : new boolean[] {false, true}) {
+            var base = active ? sawActive : sawIdle;
+            saw.select(net.minecraft.core.Direction.NORTH, active, base);
+            saw.select(net.minecraft.core.Direction.EAST, active, base.with(BlockModelGenerators.Y_ROT_90));
+            saw.select(net.minecraft.core.Direction.SOUTH, active, base.with(BlockModelGenerators.Y_ROT_180));
+            saw.select(net.minecraft.core.Direction.WEST, active, base.with(BlockModelGenerators.Y_ROT_270));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SAW_MILL.get()).with(saw));
+        itemModels.itemModelOutput.accept(ModItems.SAW_MILL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/saw_mill")));
+        var frame = BlockModelGenerators.plainVariant(StrataIndustria.id("block/trip_hammer"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> hammer = PropertyDispatch.initial(TripHammerBlock.FACING);
+        hammer.select(net.minecraft.core.Direction.NORTH, frame);
+        hammer.select(net.minecraft.core.Direction.EAST, frame.with(BlockModelGenerators.Y_ROT_90));
+        hammer.select(net.minecraft.core.Direction.SOUTH, frame.with(BlockModelGenerators.Y_ROT_180));
+        hammer.select(net.minecraft.core.Direction.WEST, frame.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.TRIP_HAMMER.get()).with(hammer));
+        itemModels.itemModelOutput.accept(ModItems.TRIP_HAMMER.get(), ItemModelUtils.composite(
+                ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer")),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/trip_hammer_arm"))));
+        flatItem(itemModels, ModItems.BARK.get());
     }
 
     /** Metal anvils turn like a vanilla anvil; the model JSON is hand-written on the vanilla anvil template. */
