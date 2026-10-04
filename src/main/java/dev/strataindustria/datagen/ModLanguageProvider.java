@@ -371,6 +371,24 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "boiler.repair", "Boiler patched");
         add(config + "boilerExplosions", "Cracking boilers explode");
         add(config + "dryFiringDamagePerSecond", "Dry firing damage per second (%)");
+        add(config + "engineCapacity", "Steam engine capacity (SU)");
+        addBlock(Tier4Blocks.MECHANICAL_PUMP, "Mechanical Pump");
+        addBlock(Tier4Blocks.STEAM_ENGINE, "Steam Engine");
+        String engine = id + ".steam_engine.";
+        add(engine + "no_steam", "No steam");
+        add(engine + "low_pressure", "Steam pressure under 1 bar");
+        add(engine + "running", "%s RPM on %s bar");
+        String pump = id + ".mechanical_pump.status.";
+        add(pump + "not_turning", "Not turning");
+        add(pump + "too_slow", "Too slow: needs 8 RPM");
+        add(pump + "no_water", "No water source at the intake");
+        add(pump + "no_outlet", "No pipe at the outlet");
+        add(pump + "outlet_full", "Nothing takes the water");
+        add(pump + "pumping", "Pumping %s mB/t");
+        add(subtitles + "steam_engine.chuff", "Steam engine chuffs");
+        add(subtitles + "steam_engine.start", "Steam engine starts");
+        add(subtitles + "steam_engine.stop", "Steam engine stops");
+        add(subtitles + "mechanical_pump.run", "Pump thumps");
     }
 
     private void ironAge() {
@@ -558,6 +576,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.pipe.hint", "Join copper plates with solder into pipe. Copper carries a bronze boiler's steam.");
         add(journal + "t4.boiler", "Raising Steam");
         add(journal + "t4.boiler.hint", "Set a bronze boiler on a burning firebox, fill it with water and wait for the needle to rise.");
+        add(journal + "t4.steam_engine", "Steam Power");
+        add(journal + "t4.steam_engine.hint", "Pipe a boiler's steam into the back of a steam engine. At 2 bar it turns a shaft at 32 RPM.");
         add(journal + "t4.steel_anvil", "Steel Anvil");
         add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }

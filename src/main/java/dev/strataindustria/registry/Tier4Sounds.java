@@ -45,6 +45,15 @@ public final class Tier4Sounds {
     /** A plate hammered over a weak spot. */
     public static final DeferredHolder<SoundEvent, SoundEvent> BOILER_REPAIR = register("boiler.repair");
 
+    /** A stroke of the steam engine: a chuff with a piston knock. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_ENGINE_CHUFF = register("steam_engine.chuff");
+    /** The engine takes steam and its flywheel whirs up. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_ENGINE_START = register("steam_engine.start");
+    /** The engine runs out of steam and winds down. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> STEAM_ENGINE_STOP = register("steam_engine.stop");
+    /** The rhythmic suck and thump of a mechanical pump. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MECHANICAL_PUMP_RUN = register("mechanical_pump.run");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

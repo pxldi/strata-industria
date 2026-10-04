@@ -46,6 +46,7 @@ public final class Journal {
     public static final String COKE_OVEN_BUILT = "coke_oven_built";
     public static final String MOLTEN_IRON = "molten_iron";
     public static final String BOILER = "boiler";
+    public static final String STEAM_ENGINE = "steam_engine";
 
     /** Block events count for players this close: whoever lit the kiln is standing near it. */
     static final double NEARBY = 16;
@@ -63,7 +64,7 @@ public final class Journal {
             "t3/rotation", "t3/water_power", "t3/millstone", "t3/saw_mill", "t3/bellows", "t3/pattern",
             "t3/trip_hammer", "t3/core_sample", "t3/wash", "t3/hide", "t3/leather", "t3/iron_anvil",
             "t4/coal", "t4/coke_oven", "t4/coke", "t4/creosote", "t4/refractory_crucible", "t4/molten_iron", "t4/steel",
-            "t4/sphalerite", "t4/roast", "t4/brass", "t4/solder", "t4/pipe", "t4/boiler", "t4/steel_anvil");
+            "t4/sphalerite", "t4/roast", "t4/brass", "t4/solder", "t4/pipe", "t4/boiler", "t4/steam_engine", "t4/steel_anvil");
 
     public static Identifier goal(String path) {
         return StrataIndustria.id("journal/" + path);

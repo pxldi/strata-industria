@@ -9,6 +9,8 @@ import dev.strataindustria.smithing.AnvilBlock;
 import dev.strataindustria.steam.BoilerBlock;
 import dev.strataindustria.steam.CrackedBoilerBlock;
 import dev.strataindustria.steam.FireboxBlock;
+import dev.strataindustria.steam.MechanicalPumpBlock;
+import dev.strataindustria.steam.SteamEngineBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -108,6 +110,19 @@ public final class Tier4Blocks {
             p -> new FluidPipeBlock(400, 400, p), p -> pipe(p, MapColor.METAL, HEAVY_METAL));
     public static final DeferredBlock<PressureGaugeBlock> PRESSURE_GAUGE = ModBlocks.BLOCKS.registerBlock("pressure_gauge",
             p -> new PressureGaugeBlock(220, 200, p), p -> pipe(p, MapColor.GOLD, BRASS_SOUND));
+
+    // Spec 9.3 and 10.5: the mechanical pump, and the steam engine that turns a shaft.
+    public static final DeferredBlock<MechanicalPumpBlock> MECHANICAL_PUMP = ModBlocks.BLOCKS.registerBlock("mechanical_pump",
+            MechanicalPumpBlock::new, p -> p.mapColor(MapColor.COLOR_BROWN)
+                    .strength(3.0f, 6.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(SoundType.COPPER));
+    public static final DeferredBlock<SteamEngineBlock> STEAM_ENGINE = ModBlocks.BLOCKS.registerBlock("steam_engine", SteamEngineBlock::new,
+            p -> p.mapColor(MapColor.METAL)
+                    .strength(4.0f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(HEAVY_METAL));
 
     private static Block.Properties boiler(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BROWN)

@@ -35,6 +35,7 @@ import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -558,6 +559,19 @@ final class ModModelProvider extends ModelProvider {
         arms(gauge, StrataIndustria.id("block/bronze_fluid_pipe_arm"));
         blockModels.blockStateOutput.accept(gauge);
         itemModels.itemModelOutput.accept(Tier4Items.PRESSURE_GAUGE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/pressure_gauge")));
+
+        // Spec 9.3 and 10.5: hand-built models facing north; the engine's flywheel is drawn by its renderer.
+        for (var machine : java.util.List.of(Tier4Blocks.MECHANICAL_PUMP, Tier4Blocks.STEAM_ENGINE)) {
+            var model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + machine.getId().getPath()));
+            PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> facing = PropertyDispatch.initial(HorizontalDirectionalBlock.FACING);
+            facing.select(net.minecraft.core.Direction.NORTH, model);
+            facing.select(net.minecraft.core.Direction.EAST, model.with(BlockModelGenerators.Y_ROT_90));
+            facing.select(net.minecraft.core.Direction.SOUTH, model.with(BlockModelGenerators.Y_ROT_180));
+            facing.select(net.minecraft.core.Direction.WEST, model.with(BlockModelGenerators.Y_ROT_270));
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(machine.get()).with(facing));
+        }
+        itemModels.itemModelOutput.accept(Tier4Items.MECHANICAL_PUMP.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/mechanical_pump")));
+        itemModels.itemModelOutput.accept(Tier4Items.STEAM_ENGINE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/steam_engine_item")));
     }
 
     /** A pipe arm, modelled pointing north, on each face the pipe joins. */

@@ -5911,6 +5911,149 @@ public final class TextureGen {
         return im;
     }
 
+    /** Riveted wrought iron plate with a rivet row round the edge: the engine's bed. */
+    static BufferedImage engineBase() {
+        BufferedImage im = img();
+        double[][] n = fractal(8801);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.66 ? 4 : n[y][x] < 0.3 ? 2 : 3;
+                if (x == 0 || y == 0) step = 4;
+                if (x == 15 || y == 15) step = 2;
+                px(im, x, y, WROUGHT_IRON.get(step));
+            }
+        for (int i = 2; i <= 12; i += 5) {
+            rivet(im, i, 2);
+            rivet(im, i, 12);
+            rivet(im, 2, i);
+            rivet(im, 12, i);
+        }
+        return im;
+    }
+
+    /** The cylinder: brass lagging in vertical staves, held by two steel bands. */
+    static BufferedImage engineCylinder() {
+        BufferedImage im = img();
+        double[][] n = fractal(8802);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = x % 3 == 0 ? 2 : x % 3 == 1 ? 4 : 3;
+                if (n[y][x] < 0.25 && step > 2) step--;
+                px(im, x, y, BRASS.get(step));
+            }
+        for (int band : new int[] {3, 12}) {
+            for (int x = 0; x < 16; x++) {
+                px(im, x, band, STEEL.get(x % 6 == 1 ? 5 : 4));
+                px(im, x, band + 1, STEEL.get(2));
+            }
+            px(im, 7, band, STEEL.spec());
+        }
+        return im;
+    }
+
+    /** Cylinder end, in the centre 8x8: a bolted brass cover round the steam inlet. */
+    static BufferedImage engineCylinderEnd() {
+        BufferedImage im = engineCylinder();
+        for (int y = 4; y <= 11; y++)
+            for (int x = 4; x <= 11; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                int c = d > 3.6 ? BRASS.get(x + y < 15 ? 4 : 2) : d > 1.6 ? BRASS.get(x + y < 15 ? 5 : 3) : 0x0e0c0c;
+                px(im, x, y, c);
+            }
+        for (int[] b : new int[][] {{4, 4}, {11, 4}, {4, 11}, {11, 11}, {7, 4}, {4, 7}, {11, 8}, {8, 11}}) px(im, b[0], b[1], STEEL.get(5));
+        px(im, 6, 6, BRASS.spec());
+        return im;
+    }
+
+    /** Polished steel bar for the shaft and piston rod. */
+    static BufferedImage engineRod() {
+        BufferedImage im = img();
+        int[] shade = {3, 4, 5, 5, 4, 4, 3, 3, 3, 4, 5, 5, 4, 4, 3, 2};
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) px(im, x, y, STEEL.get(shade[(x + y) % 16] - (y % 8 == 7 ? 1 : 0)));
+        px(im, 2, 2, STEEL.spec());
+        px(im, 10, 10, STEEL.spec());
+        return im;
+    }
+
+    /** Cast flywheel iron: dark and grainy, with lit casting edges. */
+    static BufferedImage engineFlywheel() {
+        BufferedImage im = img();
+        double[][] n = fractal(8803);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.7 ? 4 : n[y][x] < 0.32 ? 2 : 3;
+                if (x % 8 == 0 || y % 8 == 0) step = 4;
+                if (x % 8 == 7 || y % 8 == 7) step = 2;
+                px(im, x, y, PIG_IRON.get(step));
+            }
+        px(im, 3, 3, PIG_IRON.spec());
+        px(im, 11, 11, PIG_IRON.spec());
+        return im;
+    }
+
+    /** Pump intake: a bronze housing round a grille of dark slots. */
+    static BufferedImage pumpFront() {
+        BufferedImage im = bronzePlates(8811);
+        for (int y = 3; y <= 12; y++)
+            for (int x = 3; x <= 12; x++) {
+                boolean frame = x == 3 || y == 3 || x == 12 || y == 12;
+                int c;
+                if (frame) c = BRONZE.get(x == 3 || y == 3 ? 5 : 2);
+                else c = y % 2 == 0 ? BRONZE.get(4) : 0x141010;
+                px(im, x, y, c);
+            }
+        for (int[] b : new int[][] {{2, 2}, {13, 2}, {2, 13}, {13, 13}}) rivet(im, b[0], b[1]);
+        return im;
+    }
+
+    /** Pump side: the brass gear on the shaft, behind a bronze cover. */
+    static BufferedImage pumpSide() {
+        BufferedImage im = bronzePlates(8812);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                double a = Math.atan2(y - 7.5, x - 7.5);
+                boolean tooth = Math.cos(a * 8) > 0.2;
+                if (d <= 4.6 || (d <= 6.0 && tooth)) {
+                    int step = (x + y < 15) ? 4 : 3;
+                    if (d > 4.6) step = (x + y < 15) ? 5 : 2;
+                    px(im, x, y, BRASS.get(step));
+                }
+                if (d <= 6.0 && d > 5.4 && !tooth) px(im, x, y, BRONZE.get(1));
+            }
+        // Shaft end through the middle.
+        for (int y = 6; y <= 9; y++)
+            for (int x = 6; x <= 9; x++) px(im, x, y, WROUGHT_IRON.get(x + y < 15 ? 4 : 2));
+        px(im, 7, 7, WROUGHT_IRON.get(1));
+        return im;
+    }
+
+    /** Pump outlet: a flange with a dark bore, where the pipe joins. */
+    static BufferedImage pumpBack() {
+        BufferedImage im = bronzePlates(8813);
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                double d = Math.hypot(x - 7.5, y - 7.5);
+                if (d <= 4.8 && d > 2.6) px(im, x, y, BRONZE.get(x + y < 15 ? 5 : 3));
+                else if (d <= 2.6) px(im, x, y, d > 1.6 ? BRONZE.get(1) : 0x0e0c0c);
+            }
+        for (int[] b : new int[][] {{7, 3}, {12, 7}, {8, 12}, {3, 8}}) px(im, b[0], b[1], SOLDER.get(5));
+        return im;
+    }
+
+    static void engines() throws IOException {
+        save("block/steam_engine_base", engineBase());
+        save("block/steam_engine_cylinder", engineCylinder());
+        save("block/steam_engine_cylinder_end", engineCylinderEnd());
+        save("block/steam_engine_rod", engineRod());
+        save("block/steam_engine_flywheel", engineFlywheel());
+        save("block/mechanical_pump_front", pumpFront());
+        save("block/mechanical_pump_side", pumpSide());
+        save("block/mechanical_pump_back", pumpBack());
+        save("block/mechanical_pump_top", bronzePlates(8814));
+    }
+
     static void steam() throws IOException {
         save("block/firebox_side", fireboxSide());
         save("block/firebox_top", fireboxTop());
@@ -5930,6 +6073,7 @@ public final class TextureGen {
         for (int r = 0; r <= 4; r++) save("block/pressure_gauge_dial_" + r, gaugeDial(r));
         saveRaw("gui/firebox", fireboxGui());
         saveRaw("gui/bronze_boiler", boilerGui());
+        engines();
     }
 
     static void tier4() throws IOException {

@@ -488,6 +488,26 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('G', Tier4Items.PRESSURE_GAUGE.get())
                 .unlockedBy("has_pressure_gauge", has(Tier4Items.PRESSURE_GAUGE.get()))
                 .save(output, key("bronze_boiler"));
+        shaped(RecipeCategory.REDSTONE, Tier4Items.MECHANICAL_PUMP.get())
+                .pattern("PGP")
+                .pattern(" A ")
+                .pattern("PRP")
+                .define('P', ModTags.Items.ANY_BRONZE_PLATES)
+                .define('G', brassGear)
+                .define('A', ironAxle)
+                .define('R', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .unlockedBy("has_bronze_fluid_pipe", has(Tier4Items.BRONZE_FLUID_PIPE.get()))
+                .save(output, key("mechanical_pump"));
+        shaped(RecipeCategory.REDSTONE, Tier4Items.STEAM_ENGINE.get())
+                .pattern("BGB")
+                .pattern("PRP")
+                .pattern("PPP")
+                .define('B', brassPlate)
+                .define('G', brassGear)
+                .define('R', ModItems.RODS.get(Metal.STEEL).get())
+                .define('P', ModItems.PLATES.get(Metal.WROUGHT_IRON).get())
+                .unlockedBy("has_bronze_boiler", has(Tier4Items.BRONZE_BOILER.get()))
+                .save(output, key("steam_engine"));
         // Spec 10.4: a cracked boiler is good for four of its plates.
         shapeless(RecipeCategory.MISC, ModItems.PLATES.get(Metal.BRONZE).get(), 4)
                 .requires(Tier4Items.CRACKED_BRONZE_BOILER.get())

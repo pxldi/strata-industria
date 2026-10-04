@@ -267,6 +267,9 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue STEAM_DRY_FIRING_DAMAGE = BUILDER
             .comment("Integrity, in percent, a dry-fired boiler loses each second.")
             .defineInRange("dryFiringDamagePerSecond", 1.0, 0.0, 100.0);
+    public static final ModConfigSpec.IntValue STEAM_ENGINE_CAPACITY = BUILDER
+            .comment("Stress capacity, in SU, of one steam engine.")
+            .defineInRange("engineCapacity", 1024, 1, 65536);
 
     static {
         BUILDER.pop();

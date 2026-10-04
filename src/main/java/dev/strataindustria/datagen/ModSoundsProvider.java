@@ -262,6 +262,20 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.BOILER_REPAIR, definition().subtitle(subtitle("boiler.repair"))
                 .with(sound("minecraft:block.anvil.use", SoundDefinition.SoundType.EVENT).pitch(1.2f).volume(0.7f))
                 .with(sound("minecraft:block.anvil.use", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.6f)));
+        // Spec 21.7: the engine's chuff and knock, its start and stop, and the pump's suck and thump.
+        add(Tier4Sounds.STEAM_ENGINE_CHUFF, definition().subtitle(subtitle("steam_engine.chuff"))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f))
+                .with(sound("minecraft:block.piston.contract", SoundDefinition.SoundType.EVENT).pitch(0.65f).volume(0.55f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.25f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        add(Tier4Sounds.STEAM_ENGINE_START, definition().subtitle(subtitle("steam_engine.start"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.7f)));
+        add(Tier4Sounds.STEAM_ENGINE_STOP, definition().subtitle(subtitle("steam_engine.stop"))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.6f)));
+        add(Tier4Sounds.MECHANICAL_PUMP_RUN, definition().subtitle(subtitle("mechanical_pump.run"))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.35f))
+                .with(sound("minecraft:block.piston.extend", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.3f))
+                .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.3f)));
     }
 
     private static String subtitle(String name) {

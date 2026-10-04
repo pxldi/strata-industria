@@ -184,7 +184,8 @@ final class ModAdvancements extends AdvancementSubProvider {
                 .addCriterion("gauge", ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.PRESSURE_GAUGE.get()))
                 .requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR)
                 .save(output, Journal.goal("t4/pipe").toString());
-        goal(pipe, "t4/boiler", Tier4Items.BRONZE_BOILER.get(), JournalTrigger.TriggerInstance.of(Journal.BOILER));
+        AdvancementHolder boiler = goal(pipe, "t4/boiler", Tier4Items.BRONZE_BOILER.get(), JournalTrigger.TriggerInstance.of(Journal.BOILER));
+        goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */
