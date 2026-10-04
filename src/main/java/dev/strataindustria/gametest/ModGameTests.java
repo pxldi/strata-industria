@@ -94,6 +94,7 @@ public final class ModGameTests {
 
     static {
         ShapingGameTests.register(TESTS);
+        FellingGameTests.register(TESTS);
         FlintStrikeGameTests.register(TESTS);
         TESTS.put("alloy_rules", ModGameTests::alloyRules);
         TESTS.put("smithing_shapes", ModGameTests::smithingShapes);
@@ -147,6 +148,7 @@ public final class ModGameTests {
         PreviewExport.register(TESTS);
         CollectibleGameTests.register(TESTS);
         SharedBlockGameTests.register(TESTS);
+        BranchGameTests.register(TESTS);
     }
 
     private ModGameTests() {}

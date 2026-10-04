@@ -3,6 +3,7 @@ package dev.strataindustria.electric;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.fluid.FluidPort;
 import dev.strataindustria.heat.Heat;
+import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.heat.HeatEmitter;
 import dev.strataindustria.heat.HeatNetwork;
 import dev.strataindustria.heat.HeatPipeBlock;
@@ -217,8 +218,8 @@ public class LiquidFuelBurnerBlockEntity extends BlockEntity implements HeatPort
         String key = StrataIndustria.MOD_ID + ".liquid_fuel_burner.";
         if (amount <= 0 && !burning && temperature <= Heat.AMBIENT + 1) return Component.translatable(key + "empty");
         Component tank = amount > 0 ? fluid.getFluidType().getDescription() : Component.translatable(key + "no_fuel");
-        if (!burning) return Component.translatable(key + "idle", tank, amount, CAPACITY, Math.round(temperature));
-        return Component.translatable(key + "burning", tank, amount, CAPACITY, Math.round(temperature), taken);
+        if (!burning) return Component.translatable(key + "idle", tank, amount, CAPACITY, HeatBand.words(temperature));
+        return Component.translatable(key + "burning", tank, amount, CAPACITY, HeatBand.words(temperature), taken);
     }
 
     // ------------------------------------------------------------------ lifecycle

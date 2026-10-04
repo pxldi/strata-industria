@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.material.Metal;
@@ -131,7 +132,7 @@ public class CrucibleScreen extends AbstractContainerScreen<CrucibleMenu> {
     static Component statusLine(CrucibleStatus status, Melt melt, int meltingPercent, int maxTemperature) {
         return switch (status) {
             case MELTING -> Component.translatable(status.key(), meltingPercent);
-            case AT_LIMIT -> Component.translatable(status.key(), maxTemperature);
+            case AT_LIMIT -> Component.translatable(status.key(), HeatWords.of(maxTemperature));
             case MOLTEN -> Alloy.resultOf(melt)
                     .map(m -> Component.translatable(status.key(), Component.translatable(StrataIndustria.MOD_ID + ".metal." + m.id())))
                     .orElse(Component.translatable(StrataIndustria.MOD_ID + ".crucible.status.molten_unknown"));

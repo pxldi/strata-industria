@@ -1,5 +1,6 @@
 package dev.strataindustria.client.screen;
 
+import dev.strataindustria.client.HeatWords;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.heat.HeatBand;
 import dev.strataindustria.steam.BoilerBlockEntity;
@@ -77,13 +78,13 @@ public class BoilerScreen extends AbstractContainerScreen<BoilerMenu> {
         if (menu.temperature() > 0) {
             HeatBand band = HeatBand.of(menu.temperature());
             int colour = band == HeatBand.NONE ? 0xFF404040 : 0xFF000000 | band.colour();
-            g.text(font, Component.translatable(KEY + "fire", menu.temperature()), COLUMN_X, 40, colour, false);
+            g.text(font, Component.translatable(KEY + "fire", HeatWords.of(menu.temperature())), COLUMN_X, 40, colour, false);
         }
 
         BoilerBlockEntity.Status status = menu.status();
         Component line = switch (status) {
             case HEATING -> Component.translatable(status.key(), menu.warmth());
-            case TOO_COOL -> Component.translatable(status.key(), BoilerBlockEntity.MIN_TEMPERATURE, menu.temperature());
+            case TOO_COOL -> Component.translatable(status.key(), HeatWords.of(BoilerBlockEntity.MIN_TEMPERATURE), HeatWords.of(menu.temperature()));
             case DRY_FIRING -> Component.translatable(status.key(), Math.round(menu.integrity()));
             case INCOMPLETE -> Component.translatable(menu.problem().key(), menu.problemLayer(),
                     Component.translatable(StrataIndustria.MOD_ID + ".blast_furnace.spot." + menu.problemSpot()));
