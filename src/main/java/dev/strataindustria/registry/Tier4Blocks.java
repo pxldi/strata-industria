@@ -101,6 +101,13 @@ public final class Tier4Blocks {
             Tier4Blocks::boiler);
     public static final DeferredBlock<CrackedBoilerBlock> CRACKED_BRONZE_BOILER = ModBlocks.BLOCKS.registerBlock("cracked_bronze_boiler",
             CrackedBoilerBlock::new, Tier4Blocks::boiler);
+    // Spec 13.3: the chute.
+    public static final DeferredBlock<dev.strataindustria.automation.ChuteBlock> CHUTE = ModBlocks.BLOCKS.registerBlock("chute",
+            dev.strataindustria.automation.ChuteBlock::new, p -> p.mapColor(MapColor.METAL)
+                    .strength(3.0f, 6.0f)
+                    .requiresCorrectToolForDrops()
+                    .noOcclusion()
+                    .sound(HEAVY_METAL));
     // Spec 10.3: the steel boiler multiblock.
     public static final DeferredBlock<dev.strataindustria.steam.SteelBoilerShellBlock> STEEL_BOILER_SHELL = ModBlocks.BLOCKS.registerBlock(
             "steel_boiler_shell", dev.strataindustria.steam.SteelBoilerShellBlock::new, Tier4Blocks::steelBoiler);

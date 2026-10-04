@@ -697,6 +697,23 @@
     ],
     "subtitle": "subtitles.strataindustria.boiler.vent"
   },
+  "chute.drop": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.1,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.25,
+        "volume": 0.45
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.chute.drop"
+  },
   "clay.finish": {
     "sounds": [
       {
@@ -1002,6 +1019,21 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.electric.spark"
+  },
+  "filter.configure": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 1.1
+      },
+      {
+        "type": "event",
+        "name": "item.book.page_turn",
+        "pitch": 1.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.filter.configure"
   },
   "fire_pit.extinguish": {
     "sounds": [

@@ -121,7 +121,7 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(Tier4Blocks.SMELTER.getKey()).add(Tier4Blocks.STEAM_HAMMER.getKey())
                 .add(Tier4Blocks.VALVE.getKey()).add(Tier4Blocks.FLUID_TANK.getKey()).add(Tier4Blocks.BLOWING_ENGINE.getKey())
                 .add(Tier4Blocks.STEEL_BOILER_SHELL.getKey()).add(Tier4Blocks.BOILER_FLUID_PORT.getKey())
-                .add(Tier4Blocks.BOILER_CONTROLLER.getKey()).add(Tier4Blocks.CRACKED_BOILER_CONTROLLER.getKey());
+                .add(Tier4Blocks.BOILER_CONTROLLER.getKey()).add(Tier4Blocks.CRACKED_BOILER_CONTROLLER.getKey()).add(Tier4Blocks.CHUTE.getKey());
         tag(ModTags.Blocks.HEAT_PIPES).add(Tier4Blocks.COPPER_HEAT_PIPE.getKey()).add(Tier4Blocks.REFRACTORY_HEAT_DUCT.getKey())
                 .add(Tier4Blocks.INSULATED_COPPER_HEAT_PIPE.getKey()).add(Tier4Blocks.INSULATED_REFRACTORY_HEAT_DUCT.getKey());
         tag(dev.strataindustria.registry.ModTags.Blocks.FLUID_PIPES).add(Tier4Blocks.COPPER_FLUID_PIPE.getKey())

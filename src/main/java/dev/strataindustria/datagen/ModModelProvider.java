@@ -792,6 +792,11 @@ final class ModModelProvider extends ModelProvider {
 
         flatItem(itemModels, Tier4Items.SLAG.get());
         flatItem(itemModels, Tier4Items.SLAG_DUST.get());
+        // Spec 13.3 and 13.5: the chute's tube is a hand-built model; the filter is a flat item.
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier4Blocks.CHUTE.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/chute"))));
+        itemModels.itemModelOutput.accept(Tier4Items.CHUTE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/chute")));
+        flatItem(itemModels, Tier4Items.FILTER.get());
         flatItem(itemModels, Tier4Items.SLAG_WOOL.get());
     }
 
