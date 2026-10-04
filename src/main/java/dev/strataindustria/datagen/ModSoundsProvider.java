@@ -730,6 +730,25 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:item.lead.break", event).pitch(0.8f).volume(1.0f))
                 .with(sound("minecraft:block.tripwire.detach", event).pitch(0.5f).volume(0.8f))
                 .with(sound("minecraft:block.chain.break", event).pitch(0.7f).volume(0.6f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.ANGLE_TURN, definition().subtitle(subtitle("ropeway.angle_turn"))
+                .with(sound("minecraft:block.chain.step", event).pitch(0.7f).volume(0.6f))
+                .with(sound("minecraft:block.grindstone.use", event).pitch(0.9f).volume(0.25f))
+                .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.3f).volume(0.3f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.SEAT_CLIP, definition().subtitle(subtitle("ropeway.seat_clip"))
+                .with(sound("minecraft:block.chain.place", event).pitch(1.2f).volume(0.8f))
+                .with(sound("minecraft:block.iron_trapdoor.close", event).pitch(1.4f).volume(0.5f))
+                .with(sound("minecraft:entity.horse.saddle", event).pitch(1.2f).volume(0.35f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.SEAT_RELEASE, definition().subtitle(subtitle("ropeway.seat_release"))
+                .with(sound("minecraft:block.chain.hit", event).pitch(1.1f).volume(0.6f))
+                .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.5f).volume(0.4f))
+                .with(sound("minecraft:block.wood.place", event).pitch(1.3f).volume(0.4f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.RIDE_WIND, definition().subtitle(subtitle("ropeway.ride_wind"))
+                .with(sound("minecraft:item.elytra.flying", event).pitch(0.7f).volume(0.35f))
+                .with(sound("minecraft:weather.rain.above", event).pitch(0.6f).volume(0.2f)));
+        add(dev.strataindustria.transport.ropeway.RopewayRegistry.TOP_UP, definition().subtitle(subtitle("ropeway.top_up"))
+                .with(sound("minecraft:block.chain.place", event).pitch(0.9f).volume(0.5f))
+                .with(sound("minecraft:entity.item.pickup", event).pitch(0.8f).volume(0.4f))
+                .with(sound("minecraft:block.barrel.close", event).pitch(1.2f).volume(0.3f)));
         add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
                 .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
                 .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))

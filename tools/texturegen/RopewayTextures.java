@@ -121,6 +121,59 @@ public final class RopewayTextures {
         return im;
     }
 
+    /** Brushed steel casing with a brass bend: two strokes meeting at a right angle, the mark of a turn in the line. */
+    static BufferedImage angleStation() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(2108);
+        TextureGen.grain(im, STEEL, r, 0, 0, 16, 16, 3, false);
+        bevel(im, STEEL);
+        for (int i = 0; i < 9; i++) {
+            // The upright stroke: light left edge, dark right edge.
+            for (int w = 0; w < 3; w++) {
+                int step = w == 0 ? 5 : w == 1 ? ((i % 3 == 0) ? 4 : 3) : 1;
+                TextureGen.px(im, 3 + w, 3 + i, BRASS.get(step));
+            }
+        }
+        for (int x = 6; x < 13; x++) {
+            TextureGen.px(im, x, 9, BRASS.get(5));
+            TextureGen.px(im, x, 10, (x % 3 == 0) ? BRASS.get(4) : BRASS.get(3));
+            TextureGen.px(im, x, 11, BRASS.get(1));
+        }
+        TextureGen.px(im, 12, 10, BRASS.spec());
+        rivet(im, 2, 13, STEEL);
+        rivet(im, 12, 2, STEEL);
+        return im;
+    }
+
+    /**
+     * The riding seat: the top eight rows are the plank, treated boards worn pale in the middle; the bottom eight are
+     * the hanger iron, rods and a rivetted strap.
+     */
+    static BufferedImage seat() {
+        BufferedImage im = TextureGen.img();
+        Random r = new Random(2109);
+        TextureGen.grain(im, TIMBER, r, 0, 0, 16, 8, 3, false);
+        for (int x = 0; x < 16; x++) {
+            TextureGen.px(im, x, 0, TIMBER.get(5));
+            TextureGen.px(im, x, 3, TIMBER.get(1));
+            TextureGen.px(im, x, 7, TIMBER.get(1));
+        }
+        for (int x : new int[] {3, 12}) {
+            for (int y = 0; y < 8; y++) TextureGen.px(im, x, y, y % 4 == 1 ? IRON.get(5) : IRON.get(2));
+        }
+        TextureGen.grain(im, IRON, r, 0, 8, 16, 8, 3, true);
+        for (int y = 8; y < 16; y++) {
+            TextureGen.px(im, 0, y, IRON.get(4));
+            TextureGen.px(im, 15, y, IRON.get(1));
+        }
+        for (int x = 0; x < 16; x++) {
+            TextureGen.px(im, x, 9, STEEL.get(5));
+            TextureGen.px(im, x, 10, STEEL.get(2));
+        }
+        for (int x : new int[] {3, 8, 12}) rivet(im, x, 12, IRON);
+        return im;
+    }
+
     /** A lattice of steel flats on black: the steel tower. */
     static BufferedImage steelTower() {
         BufferedImage im = TextureGen.img();
@@ -281,6 +334,8 @@ public final class RopewayTextures {
         TextureGen.save("block/ropeway_return", station());
         TextureGen.save("block/wooden_ropeway_tower", woodenTower());
         TextureGen.save("block/steel_ropeway_tower", steelTower());
+        TextureGen.save("block/ropeway_angle_station", angleStation());
+        TextureGen.save("block/ropeway_seat", seat());
         TextureGen.save("block/ropeway_wheel", wheel());
         TextureGen.save("block/ropeway_cable", cable());
         TextureGen.save("block/ropeway_bucket", bucket());

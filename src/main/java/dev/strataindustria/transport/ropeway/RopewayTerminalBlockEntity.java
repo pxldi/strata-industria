@@ -10,8 +10,13 @@ import dev.strataindustria.transport.outpost.LinkKind;
 import dev.strataindustria.transport.outpost.RouteIndex;
 import dev.strataindustria.transport.rail.TramwayRoutes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -25,6 +30,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.WorldlyContainer;
@@ -66,6 +73,26 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
     private int delivered;
     private boolean stalled;
     private boolean goalGiven;
+
+    /** A rider asking for a bucket at node {@code node}; {@code sent} when a bucket has been sent out to fetch them. */
+    private static final class Waiting {
+        final ServerPlayer player;
+        final int node;
+        final long expires;
+        boolean sent;
+
+        Waiting(ServerPlayer player, int node, long expires) {
+            this.player = player;
+            this.node = node;
+            this.expires = expires;
+        }
+    }
+
+    /** Blocks within which a waiting rider has to stay of their station. */
+    private static final double STAY = 7.0;
+    private final Map<UUID, Waiting> waiting = new HashMap<>();
+    private double stepFrom;
+    private boolean holding;
 
     private double speed;
     private boolean netDirty = true;
@@ -187,9 +214,12 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
         BlockPos from = worldPosition;
         for (RopewayBucket bucket : buckets) {
             if (!bucket.stack.isEmpty()) Containers.dropItemStack(level, from.getX() + 0.5, from.getY() + 1.0, from.getZ() + 0.5, bucket.stack);
+            if (bucket.rider != null) dropRider(level, bucket, "snapped");
             spare++;
         }
         buckets.clear();
+        waiting.clear();
+        updateHold(level, false);
         for (int i = 1; i < nodes.size(); i++) {
             BlockPos node = nodes.get(i);
             if (!level.hasChunkAt(node)) continue;
@@ -291,7 +321,9 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
         if ((time + pos.asLong()) % VALIDATE == 0 && terminal.validate(server)) return;
         BlockPos far = terminal.nodes.getLast();
         double target = terminal.powered() && server.hasChunkAt(far) ? terminal.kinetic().rpm() * SPEED_PER_RPM : 0.0;
+        terminal.stepFrom = terminal.advance;
         terminal.run(server, target);
+        terminal.rides(server, time);
         terminal.share(server, time);
     }
 
@@ -337,11 +369,16 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
             double before = bucket.at(from, loop), after = bucket.at(to, loop);
             for (int node = 1; node < nodes.size() - 1; node++) {
                 double at = line.at(node);
-                if (RopewayPath.crosses(before, after, at, loop) || RopewayPath.crosses(before, after, loop - at, loop)) {
+                boolean out = RopewayPath.crosses(before, after, at, loop), home = RopewayPath.crosses(before, after, loop - at, loop);
+                if (!out && !home) continue;
+                if (isAngle(level, node)) {
+                    level.playSound(null, nodes.get(node), RopewayRegistry.ANGLE_TURN.get(), SoundSource.BLOCKS, 0.8f, 0.9f + level.getRandom().nextFloat() * 0.2f);
+                    if (out && !bucket.stack.isEmpty()) topUp(level, bucket, node);
+                } else {
                     level.playSound(null, nodes.get(node), RopewayRegistry.SHEAVE.get(), SoundSource.BLOCKS, 0.7f, 0.85f + level.getRandom().nextFloat() * 0.3f);
                 }
             }
-            if (!RopewayPath.crosses(before, after, 0, loop)) continue;
+            if (!RopewayPath.crosses(before, after, 0, loop) || bucket.rider != null) continue;
             if (bucket.delivered) {
                 bucket.delivered = false;
                 tripDone(level);
@@ -363,11 +400,7 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
 
     /** With cargo waiting and a bucket to spare, sends one out as soon as there is room on the rope behind the last. */
     private void hangNext(ServerLevel level, double loop) {
-        if (spare <= 0 || speed <= 0) return;
-        for (RopewayBucket bucket : buckets) {
-            double s = bucket.at(advance, loop);
-            if (Math.min(s, loop - s) < SPACING) return;
-        }
+        if (spare <= 0 || speed <= 0 || !roomAtTerminal(loop)) return;
         ItemStack cargo = take(level);
         if (cargo.isEmpty()) return;
         spare--;
@@ -375,6 +408,15 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
         hung(level);
         netDirty = true;
         setChanged();
+    }
+
+    /** Whether the rope behind the terminal is clear for a bucket to be hung. */
+    private boolean roomAtTerminal(double loop) {
+        for (RopewayBucket bucket : buckets) {
+            double s = bucket.at(advance, loop);
+            if (Math.min(s, loop - s) < SPACING) return false;
+        }
+        return true;
     }
 
     private void hung(ServerLevel level) {
@@ -385,9 +427,16 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
 
     /** One stack from the container behind the terminal, else the one under it. */
     private ItemStack take(ServerLevel level) {
-        Direction back = facing().getOpposite();
+        return pull(level, worldPosition, facing().getOpposite(), stack -> true, 0);
+    }
+
+    /**
+     * A stack of what {@code wanted} accepts from the container behind {@code station} (on its {@code back} side), else
+     * the one beneath it; at most {@code limit} items, or a full stack when that is 0.
+     */
+    private static ItemStack pull(ServerLevel level, BlockPos station, Direction back, Predicate<ItemStack> wanted, int limit) {
         for (Direction side : new Direction[] {back, Direction.DOWN}) {
-            Container source = HopperBlockEntity.getContainerAt(level, worldPosition.relative(side));
+            Container source = HopperBlockEntity.getContainerAt(level, station.relative(side));
             if (source == null) continue;
             Direction face = side.getOpposite();
             int[] slots = source instanceof WorldlyContainer worldly ? worldly.getSlotsForFace(face) : null;
@@ -395,14 +444,36 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
             for (int n = 0; n < count; n++) {
                 int slot = slots == null ? n : slots[n];
                 ItemStack stack = source.getItem(slot);
-                if (stack.isEmpty()) continue;
+                if (stack.isEmpty() || !wanted.test(stack)) continue;
                 if (source instanceof WorldlyContainer worldly && !worldly.canTakeItemThroughFace(slot, stack, face)) continue;
-                ItemStack taken = source.removeItem(slot, stack.getMaxStackSize());
+                ItemStack taken = source.removeItem(slot, limit > 0 ? Math.min(limit, stack.getCount()) : stack.getMaxStackSize());
                 source.setChanged();
                 if (!taken.isEmpty()) return taken;
             }
         }
         return ItemStack.EMPTY;
+    }
+
+    /** Whether node {@code node} (a tower position on the line) is an angle station. */
+    private boolean isAngle(ServerLevel level, int node) {
+        BlockPos pos = nodes.get(node);
+        return level.hasChunkAt(pos) && level.getBlockState(pos).is(RopewayRegistry.ANGLE_STATION.get());
+    }
+
+    /** A bucket passing an angle station takes what it can of its own kind from the chest behind or beneath the station. */
+    private void topUp(ServerLevel level, RopewayBucket bucket, int node) {
+        BlockPos station = nodes.get(node);
+        BlockState state = level.getBlockState(station);
+        int room = bucket.stack.getMaxStackSize() - bucket.stack.getCount();
+        if (room <= 0) return;
+        ItemStack more = pull(level, station, state.getValue(RopewayAngleBlock.FACING).getOpposite(),
+                stack -> ItemStack.isSameItemSameComponents(stack, bucket.stack), room);
+        if (more.isEmpty()) return;
+        bucket.stack.grow(more.getCount());
+        netDirty = true;
+        level.playSound(null, station, RopewayRegistry.TOP_UP.get(), SoundSource.BLOCKS, 0.7f, 0.9f + 0.2f * bucket.stack.getCount() / bucket.stack.getMaxStackSize());
+        level.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, bucket.stack.getItem()), station.getX() + 0.5, station.getY() + 1.1, station.getZ() + 0.5,
+                2 + more.getCount() / 8, 0.15, 0.1, 0.15, 0.05);
     }
 
     /** Tips what a bucket carries into the return station's container. Returns whether the bucket is empty now. */
@@ -458,6 +529,200 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
         }
     }
 
+    // ---------------------------------------------------------------- riding
+
+    /** How long a rider waits at a station for a bucket, in ticks: long enough for one to come round the whole loop. */
+    private int patience() {
+        double speedNow = Math.max(0.05, kinetic().rpm() * SPEED_PER_RPM);
+        return 400 + (int) Math.ceil(2.0 * path.length() / speedNow);
+    }
+
+    /** Riders asking for a bucket at a station. */
+    public int waiting() {
+        return waiting.size();
+    }
+
+    /** Whether a bucket is out that nobody sits in: every one of them comes home past the return, empty. */
+    private boolean hasBucketOut() {
+        for (RopewayBucket bucket : buckets) if (bucket.rider == null) return true;
+        return false;
+    }
+
+    private void say(Player player, String key) {
+        player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".ropeway.ride." + key));
+    }
+
+    /**
+     * An empty hand on a station asks for a seat. At the terminal one of the spare buckets is hung for the rider and
+     * goes out empty. Anywhere else the next empty bucket coming home takes them up as it swings round the wheel, and if
+     * none is out, a spare one is sent to fetch them.
+     */
+    public InteractionResult ride(ServerPlayer player, BlockPos station) {
+        if (!(level instanceof ServerLevel server)) return InteractionResult.SUCCESS;
+        int node = nodes.indexOf(station);
+        if (path == null || node < 0) say(player, "no_line");
+        else if (player.isPassenger()) return InteractionResult.SUCCESS_SERVER;
+        else if (waiting.containsKey(player.getUUID())) say(player, "waiting");
+        else if (!powered()) say(player, "unpowered");
+        else if (!server.hasChunkAt(nodes.getLast())) say(player, "far_station");
+        else if (spare == 0 && (node == 0 || !hasBucketOut())) say(player, node == 0 ? "no_spare" : "no_bucket");
+        else {
+            waiting.put(player.getUUID(), new Waiting(player, node, server.getGameTime() + patience()));
+            server.playSound(null, station, RopewayRegistry.BUCKET_HANG.get(), SoundSource.BLOCKS, 0.5f, 1.3f);
+            say(player, node == 0 ? "waiting_out" : "waiting_back");
+        }
+        return InteractionResult.SUCCESS_SERVER;
+    }
+
+    /** Boards, seats, rides and lets off; called every tick once the rope has moved. */
+    private void rides(ServerLevel level, long time) {
+        RopewayPath line = path;
+        if (line == null) return;
+        double loop = 2.0 * line.length();
+        int riders = 0;
+        Iterator<RopewayBucket> each = buckets.iterator();
+        while (each.hasNext()) {
+            RopewayBucket bucket = each.next();
+            if (bucket.rider == null) continue;
+            ServerPlayer rider = bucket.rider;
+            Entity seat = bucket.seat == null ? null : level.getEntity(bucket.seat);
+            if (rider.isRemoved() || !(seat instanceof RopewaySeatEntity chair) || chair.isRemoved() || rider.getVehicle() != chair) {
+                if (seat != null) seat.discard();
+                bucket.rider = null;
+                bucket.seat = null;
+                netDirty = true;
+                continue;
+            }
+            double before = bucket.at(stepFrom, loop), after = bucket.at(advance, loop);
+            int station = time > bucket.boarded ? stationPassed(level, line, before, after, loop) : -1;
+            if (station >= 0) {
+                letOff(level, bucket, rider, chair, station);
+                // Home at the terminal, an empty bucket is simply hung up again.
+                if (station == 0 && bucket.stack.isEmpty()) {
+                    each.remove();
+                    spare++;
+                }
+                continue;
+            }
+            RopewayPath.Point point = line.point(after);
+            chair.drive(point.position(), point.heading(), speed, time);
+            if ((time + riders) % 16 == 0) {
+                level.playSound(null, chair.getX(), chair.getY() + 1.0, chair.getZ(), RopewayRegistry.RIDE_WIND.get(), SoundSource.BLOCKS,
+                        (float) (0.15 + speed * 1.5), 0.8f + (float) speed * 1.5f);
+            }
+            riders++;
+        }
+        serveWaiting(level, line, loop, time);
+        updateHold(level, riders > 0 || !waiting.isEmpty());
+    }
+
+    private void updateHold(ServerLevel level, boolean hold) {
+        if (hold == holding) return;
+        holding = hold;
+        RopewayRides.hold(level, worldPosition, hold);
+    }
+
+    /** The first station (the terminal, an angle station or the return) the bucket passed between {@code before} and {@code after}, else -1. */
+    private int stationPassed(ServerLevel level, RopewayPath line, double before, double after, double loop) {
+        for (int node = 0; node < nodes.size(); node++) {
+            boolean station = node == 0 || node == nodes.size() - 1 || isAngle(level, node);
+            if (!station) continue;
+            double at = line.at(node);
+            if (RopewayPath.crosses(before, after, at, loop) || RopewayPath.crosses(before, after, loop - at, loop)) return node;
+        }
+        return -1;
+    }
+
+    private void serveWaiting(ServerLevel level, RopewayPath line, double loop, long time) {
+        Iterator<Map.Entry<UUID, Waiting>> each = waiting.entrySet().iterator();
+        while (each.hasNext()) {
+            Map.Entry<UUID, Waiting> entry = each.next();
+            Waiting wait = entry.getValue();
+            ServerPlayer player = wait.player;
+            if (player.isRemoved() || player.isPassenger() || wait.node >= nodes.size()) {
+                each.remove();
+                continue;
+            }
+            BlockPos station = nodes.get(wait.node);
+            if (player.level() != level || player.distanceToSqr(Vec3.atCenterOf(station)) > STAY * STAY || time > wait.expires) {
+                say(player, "gave_up");
+                each.remove();
+                continue;
+            }
+            if (wait.node == 0) {
+                if (spare > 0 && speed > 0 && roomAtTerminal(loop)) {
+                    spare--;
+                    RopewayBucket bucket = new RopewayBucket(((-advance % loop) + loop) % loop, ItemStack.EMPTY, false);
+                    buckets.add(bucket);
+                    board(level, player, bucket, time);
+                    each.remove();
+                }
+                continue;
+            }
+            double mark = loop - line.at(wait.node);
+            RopewayBucket pick = null;
+            for (RopewayBucket bucket : buckets) {
+                if (!bucket.stack.isEmpty() || bucket.rider != null) continue;
+                if (RopewayPath.crosses(bucket.at(stepFrom, loop), bucket.at(advance, loop), mark, loop)) pick = bucket;
+            }
+            if (pick != null) {
+                board(level, player, pick, time);
+                each.remove();
+            } else if (!wait.sent && !hasBucketOut() && spare > 0 && speed > 0 && roomAtTerminal(loop)) {
+                spare--;
+                buckets.add(new RopewayBucket(((-advance % loop) + loop) % loop, ItemStack.EMPTY, false));
+                wait.sent = true;
+                netDirty = true;
+                hung(level);
+                say(player, "sent");
+            }
+        }
+    }
+
+    private void board(ServerLevel level, ServerPlayer player, RopewayBucket bucket, long time) {
+        RopewayPath line = path;
+        if (line == null) return;
+        double loop = 2.0 * line.length();
+        RopewayPath.Point point = line.point(bucket.at(advance, loop));
+        RopewaySeatEntity seat = RopewayRegistry.SEAT.get().create(level, EntitySpawnReason.TRIGGERED);
+        if (seat == null) return;
+        seat.drive(point.position(), point.heading(), speed, time);
+        level.addFreshEntity(seat);
+        player.startRiding(seat, true, false);
+        bucket.rider = player;
+        bucket.seat = seat.getUUID();
+        bucket.boarded = time;
+        netDirty = true;
+        level.playSound(null, seat.getX(), seat.getY() + 1.2, seat.getZ(), RopewayRegistry.SEAT_CLIP.get(), SoundSource.BLOCKS, 0.9f, 1.0f);
+        level.sendParticles(ParticleTypes.CLOUD, seat.getX(), seat.getY() + 1.4, seat.getZ(), 6, 0.25, 0.1, 0.25, 0.02);
+        say(player, "aboard");
+    }
+
+    /** The rider steps off at {@code node}: onto the top of the station, with a clack and a puff. */
+    private void letOff(ServerLevel level, RopewayBucket bucket, ServerPlayer rider, RopewaySeatEntity seat, int node) {
+        BlockPos at = nodes.get(node);
+        seat.release();
+        rider.stopRiding();
+        seat.discard();
+        rider.teleportTo(level, at.getX() + 0.5, at.getY() + 1.0, at.getZ() + 0.5, Set.of(), rider.getYRot(), rider.getXRot(), true);
+        bucket.rider = null;
+        bucket.seat = null;
+        netDirty = true;
+        level.playSound(null, at, RopewayRegistry.SEAT_RELEASE.get(), SoundSource.BLOCKS, 0.9f, 1.0f);
+        level.sendParticles(ParticleTypes.CLOUD, at.getX() + 0.5, at.getY() + 1.1, at.getZ() + 0.5, 8, 0.3, 0.1, 0.3, 0.02);
+        say(rider, node == 0 ? "off_terminal" : node == nodes.size() - 1 ? "off_return" : "off_angle");
+    }
+
+    /** The line is down under a rider: the seat goes and they come down slowly, with a word. */
+    private void dropRider(ServerLevel level, RopewayBucket bucket, String key) {
+        ServerPlayer rider = bucket.rider;
+        Entity seat = bucket.seat == null ? null : level.getEntity(bucket.seat);
+        if (seat != null) seat.discard();
+        if (rider != null) say(rider, key);
+        bucket.rider = null;
+        bucket.seat = null;
+    }
+
     // ---------------------------------------------------------------- telling the players
 
     private void share(ServerLevel level, long time) {
@@ -470,7 +735,7 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
         lastSend = time;
         sentSpeed = speed;
         List<RopewayPayloads.BucketView> views = new ArrayList<>(buckets.size());
-        for (RopewayBucket bucket : buckets) views.add(new RopewayPayloads.BucketView((float) bucket.offset, bucket.stack));
+        for (RopewayBucket bucket : buckets) views.add(new RopewayPayloads.BucketView((float) bucket.offset, bucket.stack, bucket.rider != null));
         tell(level, nodes, new RopewayPayloads.LineState(worldPosition, nodes, advance, (float) speed, views));
     }
 
@@ -479,7 +744,7 @@ public class RopewayTerminalBlockEntity extends KineticBlockEntity implements Ki
         if (line.isEmpty()) return;
         RopewayPath shape = RopewayPath.of(line);
         for (ServerPlayer player : level.players()) {
-            if (shape.distanceTo(player.position()) <= TELL_RANGE) PacketDistributor.sendToPlayer(player, state);
+            if (shape.distanceTo(player.position()) <= TELL_RANGE && player.connection.hasChannel(RopewayPayloads.LineState.TYPE)) PacketDistributor.sendToPlayer(player, state);
         }
     }
 

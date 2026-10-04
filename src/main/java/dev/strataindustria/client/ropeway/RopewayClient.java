@@ -2,6 +2,7 @@ package dev.strataindustria.client.ropeway;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.transport.ropeway.RopewayRegistry;
+import net.minecraft.client.renderer.entity.NoopRenderer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -16,6 +17,7 @@ public final class RopewayClient {
     static void renderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(RopewayRegistry.TERMINAL_ENTITY.get(), context -> new RopewayRenderer<>(context, RopewayRenderer.Role.TERMINAL));
         event.registerBlockEntityRenderer(RopewayRegistry.RETURN_ENTITY.get(), context -> new RopewayRenderer<>(context, RopewayRenderer.Role.RETURN));
+        event.registerEntityRenderer(RopewayRegistry.SEAT.get(), NoopRenderer::new);
         event.registerBlockEntityRenderer(RopewayRegistry.TOWER_ENTITY.get(), context -> new RopewayRenderer<>(context, RopewayRenderer.Role.TOWER));
     }
 }
