@@ -746,6 +746,10 @@ final class ModModelProvider extends ModelProvider {
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/steam_whistle"))));
         itemModels.itemModelOutput.accept(dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get(),
                 ItemModelUtils.plainModel(StrataIndustria.id("block/steam_whistle")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/fume_hood"))));
+        itemModels.itemModelOutput.accept(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD_ITEM.get(),
+                ItemModelUtils.plainModel(StrataIndustria.id("block/fume_hood")));
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.get(),
                 BlockModelGenerators.plainVariant(StrataIndustria.id("block/builders_crate"))));
         itemModels.itemModelOutput.accept(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE_ITEM.get(),

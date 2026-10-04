@@ -134,6 +134,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
         }
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);
         dropSelf(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.get());
+        dropSelf(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD.get());
         tier5();
     }
 

@@ -720,6 +720,12 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('I', ModItems.ingot(Metal.BRONZE))
                 .unlockedBy("has_bronze_ingot", has(ModItems.ingot(Metal.BRONZE)))
                 .save(output, key("builders_crate"));
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD_ITEM.get())
+                .pattern("III")
+                .pattern("I I")
+                .define('I', ModItems.ingot(Metal.COPPER))
+                .unlockedBy("has_copper_ingot", has(ModItems.ingot(Metal.COPPER)))
+                .save(output, key("fume_hood"));
         shaped(RecipeCategory.REDSTONE, dev.strataindustria.listening.ListeningBlocks.STEAM_WHISTLE_ITEM.get())
                 .pattern(" R ")
                 .pattern("PRP")

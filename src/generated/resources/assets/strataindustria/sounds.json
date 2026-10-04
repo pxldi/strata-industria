@@ -1806,6 +1806,23 @@
     ],
     "subtitle": "subtitles.strataindustria.crucible.carbon_burn"
   },
+  "crucible.fumes": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.5,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.lava.extinguish",
+        "pitch": 1.8,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crucible.fumes"
+  },
   "crucible.melt": {
     "sounds": [
       {
@@ -2491,6 +2508,31 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.kinetic_dynamo.run"
+  },
+  "knapping.crumble": {
+    "sounds": [
+      {
+        "name": "dig/gravel1",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel3",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/gravel4",
+        "pitch": 0.8,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.knapping.crumble"
   },
   "knapping.finish": {
     "sounds": [

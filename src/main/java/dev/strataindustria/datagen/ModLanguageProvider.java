@@ -59,7 +59,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addItem(ModItems.STONE_PICKAXE, "Stone Pickaxe");
 
         String knapped = StrataIndustria.MOD_ID + ".knapped_from.";
-        add(knapped + "rock", "Knapped from %s (%s)");
+        add(knapped + "rock", "Knapped from %s (%s), %s");
+        add(knapped + "grain.clean", "flakes clean");
+        add(knapped + "grain.coarse", "coarse");
+        add(knapped + "grain.crumbly", "crumbly");
         add(knapped + "flint", "Knapped from flint");
         for (Rock rock : Rock.values()) {
             add(knapped + "material." + rock.id(), rock.id().replace('_', ' '));
@@ -78,6 +81,7 @@ final class ModLanguageProvider extends LanguageProvider {
         }
         add(StrataIndustria.MOD_ID + ".knapping.repeat", "Repeat last: cut the same shape again. Costs the same material.");
         add(StrataIndustria.MOD_ID + ".knapping.repeat.unknown", "Knap a shape from this material by hand first");
+        add(StrataIndustria.MOD_ID + ".knapping.crumbled", "It crumbled");
         add(StrataIndustria.MOD_ID + ".knapping.need_more", "You need %s %s to start");
         add("container." + StrataIndustria.MOD_ID + ".clay_forming", "Clay Forming");
         addItem(ModItems.UNFIRED_SMALL_VESSEL, "Unfired Small Vessel");
@@ -177,6 +181,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");
         add(subtitles + "knapping.repeat", "Flakes fall quickly");
+        add(subtitles + "knapping.crumble", "Stone crumbles");
+        add(subtitles + "crucible.fumes", "Fumes hiss");
         add(subtitles + "firestarter.drill", "Bow drill whirs");
         add(subtitles + "fire_pit.ignite", "Fire catches");
         add(subtitles + "fire_pit.extinguish", "Fire goes out");
@@ -540,6 +546,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "mark.stamp", "Mark stamped");
         add(subtitles + "mark.cut", "Punch taps");
         addItem(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_LEDGER, "Builder's Ledger");
+        addBlock(dev.strataindustria.bronze.BronzeRegistry.FUME_HOOD, "Fume Hood");
+        add(StrataIndustria.MOD_ID + ".fumes.sting", "The fumes sting. Get out of the room");
         addBlock(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE, "Builder's Crate");
         add(id + ".ledger.plan.coke_oven", "coke oven");
         add(id + ".ledger.plan.blast_furnace", "blast furnace");

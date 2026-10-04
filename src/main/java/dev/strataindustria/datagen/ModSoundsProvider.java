@@ -30,10 +30,15 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         listening();
         marks();
         ledger();
+        bronze();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
         add(ModSounds.KNAP_FLINT, stone("knapping.flint", 1.7f, 0.8f));
+        // Crumbly stone gives way: gravel and a dull stone slip.
+        SoundDefinition crumble = definition().subtitle(subtitle("knapping.crumble"));
+        for (int i = 1; i <= 4; i++) crumble.with(sound("minecraft:dig/gravel" + i).pitch(0.8f).volume(0.7f));
+        add(ModSounds.KNAP_CRUMBLE, crumble);
         // A known pattern cut again in one go: flakes falling in a rush.
         SoundDefinition rush = definition().subtitle(subtitle("knapping.repeat"));
         for (int i = 1; i <= 4; i++) {
@@ -473,6 +478,14 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(dev.strataindustria.mark.MarkRegistry.MARK_CUT, definition().subtitle(subtitle("mark.cut"))
                 .with(sound("minecraft:block.copper.hit", event).pitch(1.7f).volume(0.5f))
                 .with(sound("minecraft:block.chain.hit", event).pitch(1.8f).volume(0.35f)));
+    }
+
+    /** Bronze age touches (uniqueness 4.2, 4.3), from vanilla fire and fizz samples. */
+    private void bronze() {
+        var event = SoundDefinition.SoundType.EVENT;
+        add(dev.strataindustria.bronze.BronzeRegistry.FUMES, definition().subtitle(subtitle("crucible.fumes"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.5f).volume(0.5f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(1.8f).volume(0.4f)));
     }
 
     /** The builder's ledger (uniqueness 2.5), from vanilla book, wood and metal samples. */

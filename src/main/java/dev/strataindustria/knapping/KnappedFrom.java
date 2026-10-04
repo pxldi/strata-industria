@@ -32,7 +32,7 @@ public record KnappedFrom(String source) {
     }
 
     public float durabilityMultiplier() {
-        return rock().map(r -> r.category().durabilityMultiplier()).orElse(FLINT.equals(source) ? FLINT_MULTIPLIER : 1.0f);
+        return rock().map(r -> r.category().durabilityMultiplier() * r.grain().durabilityMultiplier()).orElse(FLINT.equals(source) ? FLINT_MULTIPLIER : 1.0f);
     }
 
     /** "Knapped from basalt (igneous extrusive)". */
@@ -41,7 +41,8 @@ public record KnappedFrom(String source) {
         return rock()
                 .map(r -> Component.translatable(prefix + "rock",
                         Component.translatable(prefix + "material." + r.id()),
-                        Component.translatable(prefix + "category." + r.category().getSerializedName())))
+                        Component.translatable(prefix + "category." + r.category().getSerializedName()),
+                        Component.translatable(prefix + "grain." + r.grain().id())))
                 .orElseGet(() -> Component.translatable(prefix + "flint"))
                 .withStyle(ChatFormatting.GRAY);
     }
