@@ -129,6 +129,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "wrought_iron.hit", "Iron rings");
         add(subtitles + "anvil.done", "Piece finished");
         add(subtitles + "anvil.dress", "Stone dressed");
+        add(subtitles + "anvil.weld", "Metal welds");
+        add(subtitles + "anvil.weld_fail", "Weld refused");
         add(subtitles + "quern.load", "Quern loaded");
         add(subtitles + "quern.done", "Quern spills ground");
         add(subtitles + "crucible.pour", "Molten metal pours");
@@ -348,6 +350,12 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.bucket.hint", "Wrought iron is finally enough for a bucket.");
         add(journal + "t3.furnace", "Furnace");
         add(journal + "t3.furnace.hint", "Eight fire bricks make a furnace.");
+        add(journal + "t3.weld", "Forge Weld");
+        add(journal + "t3.weld.hint", "Heat two iron ingots, add flux, and weld them into a double ingot on the anvil.");
+        add(journal + "t3.pattern", "Smithing Pattern");
+        add(journal + "t3.pattern.hint", "Put a blank pattern in the anvil while you smith, and it records every hit.");
+        add(journal + "t3.iron_anvil", "Wrought Iron Anvil");
+        add(journal + "t3.iron_anvil.hint", "Build a wrought iron anvil from double ingots. It can work steel later on.");
     }
 
     /** Spec 9: anvils, the smithing screen, and tongs. */
@@ -387,6 +395,23 @@ final class ModLanguageProvider extends LanguageProvider {
         add(id + ".anvil.where.third_last", "third last");
         add(id + ".anvil.where.not_last", "not last");
         add(id + ".anvil.where.any", "any of the last three");
+
+        // Spec 9.4 and 9.5: welding, flux and patterns.
+        addBlock(ModBlocks.WROUGHT_IRON_ANVIL, "Wrought Iron Anvil");
+        addItem(ModItems.FLUX, "Flux");
+        addItem(ModItems.SMITHING_PATTERN, "Smithing Pattern");
+        add(id + ".anvil.weld", "Weld");
+        add(id + ".anvil.pattern", "Pattern");
+        String weld = id + ".anvil.weld.";
+        add(weld + "ready", "Ready to weld");
+        add(weld + "no_recipe", "Those two pieces do not weld");
+        add(weld + "too_weak", "This anvil cannot weld that metal");
+        add(weld + "output_full", "Take the finished piece out first");
+        add(weld + "too_cold", "Both pieces need %s °C to weld");
+        add(weld + "no_flux", "Sprinkle flux in the flux slot");
+        add(weld + "no_hammer", "Needs a hammer in your hotbar");
+        add(id + ".pattern.recorded", "%s, %s hits, %s");
+        add(id + ".pattern.blank", "Put it in the anvil's pattern slot to record your next piece");
     }
 
     /** Spec 6 to 8: metal names, the crucible screen, molds, cast parts and tools. */

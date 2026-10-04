@@ -117,6 +117,12 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(ModSounds.RAW_BLOOM_HIT, bloomHit);
         add(ModSounds.WROUGHT_IRON_HIT, definition().subtitle(subtitle("wrought_iron.hit"))
                 .with(sound("minecraft:random/anvil_use").pitch(0.85f).volume(0.8f)));
+        // Spec 9.4: a weld is two heavy blows close together with a hiss of flux; a refusal is a dull click.
+        add(ModSounds.ANVIL_WELD, definition().subtitle(subtitle("anvil.weld"))
+                .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.7f))
+                .with(sound("minecraft:random/anvil_land").pitch(1.1f).volume(0.4f)));
+        add(ModSounds.ANVIL_WELD_FAIL, definition().subtitle(subtitle("anvil.weld_fail"))
+                .with(sound("minecraft:random/click").pitch(0.6f).volume(0.5f)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

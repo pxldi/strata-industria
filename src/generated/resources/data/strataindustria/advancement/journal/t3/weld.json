@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/refine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:wrought_iron_double_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.weld.hint"
+    },
+    "icon": {
+      "id": "strataindustria:wrought_iron_double_ingot"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.weld"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

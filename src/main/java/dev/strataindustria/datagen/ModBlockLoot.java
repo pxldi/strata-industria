@@ -83,6 +83,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
                             .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))))));
         }
         dropSelf(ModBlocks.BRONZE_ANVIL.get());
+        dropSelf(ModBlocks.WROUGHT_IRON_ANVIL.get());
 
         // Tier 3 spec 3 and 4.
         oreDrops(ModBlocks.BOG_IRON.get(), OreMineral.LIMONITE, fortune);

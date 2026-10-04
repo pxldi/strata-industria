@@ -131,14 +131,8 @@ final class ModModelProvider extends ModelProvider {
                     .put(TextureSlot.TOP, blockTexture(entry.getKey().id() + "_anvil_top")), blockModels.modelOutput);
             blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(anvil, BlockModelGenerators.plainVariant(model)));
         }
-        var bronzeAnvil = BlockModelGenerators.plainVariant(StrataIndustria.id("block/bronze_anvil"));
-        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> anvilFacing = PropertyDispatch.initial(AnvilBlock.FACING);
-        anvilFacing.select(net.minecraft.core.Direction.SOUTH, bronzeAnvil);
-        anvilFacing.select(net.minecraft.core.Direction.WEST, bronzeAnvil.with(BlockModelGenerators.Y_ROT_90));
-        anvilFacing.select(net.minecraft.core.Direction.NORTH, bronzeAnvil.with(BlockModelGenerators.Y_ROT_180));
-        anvilFacing.select(net.minecraft.core.Direction.EAST, bronzeAnvil.with(BlockModelGenerators.Y_ROT_270));
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.BRONZE_ANVIL.get()).with(anvilFacing));
-        itemModels.itemModelOutput.accept(ModItems.BRONZE_ANVIL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/bronze_anvil")));
+        metalAnvil(blockModels, itemModels, ModBlocks.BRONZE_ANVIL.get(), ModItems.BRONZE_ANVIL.get(), "bronze_anvil");
+        metalAnvil(blockModels, itemModels, ModBlocks.WROUGHT_IRON_ANVIL.get(), ModItems.WROUGHT_IRON_ANVIL.get(), "wrought_iron_anvil");
         heatable(itemModels, ModItems.TONGS_JAW.get());
         itemModels.generateFlatItem(ModItems.TONGS.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
@@ -294,6 +288,27 @@ final class ModModelProvider extends ModelProvider {
 
         heatable(itemModels, ModItems.WROUGHT_IRON_ROD.get());
         heatable(itemModels, ModItems.WROUGHT_IRON_DOUBLE_INGOT.get());
+
+        // Spec 9.4 and 9.5: flux, and a pattern that shows its notes once a sequence is recorded on it.
+        flatItem(itemModels, ModItems.FLUX.get());
+        Item pattern = ModItems.SMITHING_PATTERN.get();
+        var blank = itemModels.createFlatItemModel(pattern, ModelTemplates.FLAT_ITEM);
+        var recorded = itemModels.createFlatItemModel(pattern, "_recorded", ModelTemplates.FLAT_ITEM);
+        itemModels.itemModelOutput.accept(pattern, ItemModelUtils.conditional(
+                ItemModelUtils.hasComponent(ModDataComponents.SMITHING_PATTERN.get()),
+                ItemModelUtils.plainModel(recorded), ItemModelUtils.plainModel(blank)));
+    }
+
+    /** Metal anvils turn like a vanilla anvil; the model JSON is hand-written on the vanilla anvil template. */
+    private static void metalAnvil(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, Item item, String name) {
+        var model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> facing = PropertyDispatch.initial(AnvilBlock.FACING);
+        facing.select(net.minecraft.core.Direction.SOUTH, model);
+        facing.select(net.minecraft.core.Direction.WEST, model.with(BlockModelGenerators.Y_ROT_90));
+        facing.select(net.minecraft.core.Direction.NORTH, model.with(BlockModelGenerators.Y_ROT_180));
+        facing.select(net.minecraft.core.Direction.EAST, model.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(facing));
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
     }
 
     private static void oreBlock(BlockModelGenerators blockModels, Rock rock, OreMineral mineral) {
