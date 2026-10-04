@@ -1,6 +1,7 @@
 package dev.strataindustria.power;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 /**
  * A block entity that is part of an electric network (tier 5 spec 6.1): cables, generators, storage
@@ -9,4 +10,25 @@ import net.minecraft.core.Direction;
 public interface ElectricNode {
     /** Whether power passes through {@code side} of this block. */
     boolean connectsElectric(Direction side);
+
+    /**
+     * Which port of the block {@code side} belongs to. A block with several ports (the transformer) joins a
+     * different network through each; {@link #port} gives the node that stands for a port in its network.
+     */
+    default int ports() {
+        return 1;
+    }
+
+    default int portAt(Direction side) {
+        return 0;
+    }
+
+    default ElectricNode port(int index) {
+        return this;
+    }
+
+    /** Whether the block this node belongs to has been removed from the world. */
+    default boolean removed() {
+        return this instanceof BlockEntity be && be.isRemoved();
+    }
 }

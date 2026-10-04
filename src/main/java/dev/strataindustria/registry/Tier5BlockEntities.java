@@ -2,6 +2,8 @@ package dev.strataindustria.registry;
 
 import dev.strataindustria.electric.BatteryBoxBlockEntity;
 import dev.strataindustria.electric.CableBlockEntity;
+import dev.strataindustria.electric.EnergyAdapterBlockEntity;
+import dev.strataindustria.electric.TransformerBlockEntity;
 import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
 import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
@@ -29,6 +31,13 @@ public final class Tier5BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryBoxBlockEntity>> BATTERY_BOX =
             ModBlockEntities.BLOCK_ENTITIES.register("battery_box", () -> new BlockEntityType<>(BatteryBoxBlockEntity::new,
                     Tier5Blocks.BATTERY_BOX.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TransformerBlockEntity>> TRANSFORMER =
+            ModBlockEntities.BLOCK_ENTITIES.register("transformer", () -> new BlockEntityType<>(TransformerBlockEntity::new,
+                    Tier5Blocks.TRANSFORMER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<EnergyAdapterBlockEntity>> ENERGY_ADAPTER =
+            ModBlockEntities.BLOCK_ENTITIES.register("energy_adapter", () -> new BlockEntityType<>(EnergyAdapterBlockEntity::new,
+                    Tier5Blocks.ENERGY_ADAPTER.get()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TreeTapBlockEntity>> TREE_TAP =
             ModBlockEntities.BLOCK_ENTITIES.register("tree_tap", () -> new BlockEntityType<>(TreeTapBlockEntity::new,

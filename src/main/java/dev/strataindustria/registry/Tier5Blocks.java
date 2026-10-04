@@ -5,6 +5,8 @@ import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
 import dev.strataindustria.electric.GeneratorBlock;
 import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.CableBlock;
+import dev.strataindustria.electric.EnergyAdapterBlock;
+import dev.strataindustria.electric.TransformerBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
 import dev.strataindustria.electric.machine.ChemicalMachineBlock;
@@ -98,10 +100,16 @@ public final class Tier5Blocks {
     public static final DeferredBlock<ChemicalMachineBlock<AssemblerBlockEntity>> ASSEMBLER = ModBlocks.BLOCKS.registerBlock(
             "assembler", p -> new ChemicalMachineBlock<>(Tier5BlockEntities.ASSEMBLER, AssemblerBlockEntity::new, p), Tier5Blocks::machine);
 
+    // Spec 8.2 and 8.5: the transformer and the energy adapter.
+    public static final DeferredBlock<TransformerBlock> TRANSFORMER = ModBlocks.BLOCKS.registerBlock("transformer", TransformerBlock::new,
+            Tier5Blocks::machine);
+    public static final DeferredBlock<EnergyAdapterBlock> ENERGY_ADAPTER = ModBlocks.BLOCKS.registerBlock("energy_adapter", EnergyAdapterBlock::new,
+            Tier5Blocks::machine);
+
     /** Spec 9.5: every machine that comes in LV and MV; the kit upgrades these and they drop with their tier. */
     public static java.util.List<DeferredBlock<? extends Block>> upgradable() {
         return java.util.List.of(BATTERY_BOX, ELECTRIC_FURNACE, MACERATOR, WIREMILL, BENDER, LATHE, MIXER, ELECTROLYSER, ASSEMBLER, STEAM_TURBINE,
-                COMBUSTION_GENERATOR);
+                COMBUSTION_GENERATOR, ENERGY_ADAPTER);
     }
 
     private static Block.Properties cable(Block.Properties p) {

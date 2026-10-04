@@ -4,7 +4,9 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.GeneratorBlock;
+import dev.strataindustria.electric.EnergyAdapterBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
+import dev.strataindustria.electric.TransformerBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.electric.machine.LatheBlock;
 import dev.strataindustria.power.ElectricTier;
@@ -55,6 +57,8 @@ final class Tier5Models {
         machine(blockModels, itemModels, Tier5Blocks.ASSEMBLER.get(), "assembler");
         machine(blockModels, itemModels, Tier5Blocks.ELECTROLYSER.get(), "electrolyser");
         lathe(blockModels, itemModels);
+        transformer(blockModels, itemModels);
+        energyAdapter(blockModels, itemModels);
         generator(blockModels, itemModels, Tier5Blocks.STEAM_TURBINE.get(), "steam_turbine", false);
         generator(blockModels, itemModels, Tier5Blocks.COMBUSTION_GENERATOR.get(), "combustion_generator", true);
 
@@ -202,6 +206,51 @@ final class Tier5Models {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
         tieredItem(itemModels, block.asItem(), "block/lathe_lv_off", "block/lathe_mv_off");
+    }
+
+    // Spec 23.3: the MV front with its fins, the coil window on the other sides, an arrow on top for the mode.
+    private static void transformer(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        PropertyDispatch.C3<MultiVariant, Direction, Boolean, Boolean> dispatch = PropertyDispatch.initial(TransformerBlock.FACING,
+                TransformerBlock.STEP_UP, TransformerBlock.ACTIVE);
+        Identifier first = null;
+        for (boolean up : new boolean[] {false, true}) {
+            String mode = up ? "step_up" : "step_down";
+            TextureMapping faces = new TextureMapping().put(TextureSlot.FRONT, texture("transformer_front"))
+                    .put(TextureSlot.SIDE, texture("transformer_side")).put(TextureSlot.TOP, texture("transformer_top_" + mode))
+                    .put(TextureSlot.BOTTOM, texture("casing/mv_bottom"));
+            Identifier id = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(StrataIndustria.id("block/transformer_" + mode), faces, blockModels.modelOutput);
+            if (first == null) first = id;
+            MultiVariant model = BlockModelGenerators.plainVariant(id);
+            for (boolean active : new boolean[] {false, true}) {
+                dispatch.select(Direction.NORTH, up, active, model);
+                dispatch.select(Direction.EAST, up, active, model.with(BlockModelGenerators.Y_ROT_90));
+                dispatch.select(Direction.SOUTH, up, active, model.with(BlockModelGenerators.Y_ROT_180));
+                dispatch.select(Direction.WEST, up, active, model.with(BlockModelGenerators.Y_ROT_270));
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.TRANSFORMER.get()).with(dispatch));
+        plainItem(itemModels, Tier5Items.TRANSFORMER.get(), first);
+    }
+
+    // Spec 23.3: a brass socket on the front, six-way like the dynamo.
+    private static void energyAdapter(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        PropertyDispatch.C2<MultiVariant, Direction, ElectricTier> dispatch = PropertyDispatch.initial(EnergyAdapterBlock.FACING, EnergyAdapterBlock.TIER);
+        for (ElectricTier tier : ElectricTier.values()) {
+            String t = tier.getSerializedName();
+            TextureMapping faces = new TextureMapping().put(TextureSlot.FRONT, texture("energy_adapter_front_" + t))
+                    .put(TextureSlot.SIDE, texture("casing/" + t + "_side")).put(TextureSlot.TOP, texture("casing/" + t + "_side"))
+                    .put(TextureSlot.BOTTOM, texture("casing/" + t + "_side"));
+            Identifier id = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(StrataIndustria.id("block/energy_adapter_" + t), faces, blockModels.modelOutput);
+            MultiVariant model = BlockModelGenerators.plainVariant(id);
+            dispatch.select(Direction.NORTH, tier, model);
+            dispatch.select(Direction.EAST, tier, model.with(BlockModelGenerators.Y_ROT_90));
+            dispatch.select(Direction.SOUTH, tier, model.with(BlockModelGenerators.Y_ROT_180));
+            dispatch.select(Direction.WEST, tier, model.with(BlockModelGenerators.Y_ROT_270));
+            dispatch.select(Direction.UP, tier, model.with(BlockModelGenerators.X_ROT_270));
+            dispatch.select(Direction.DOWN, tier, model.with(BlockModelGenerators.X_ROT_90));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.ENERGY_ADAPTER.get()).with(dispatch));
+        tieredItem(itemModels, Tier5Items.ENERGY_ADAPTER.get(), "block/energy_adapter_lv", "block/energy_adapter_mv");
     }
 
     private static final TextureSlot BACK = TextureSlot.create("back");

@@ -13,6 +13,8 @@
     "strataindustria:electrolyser",
     "strataindustria:steam_turbine",
     "strataindustria:combustion_generator",
+    "strataindustria:transformer",
+    "strataindustria:energy_adapter",
     "#strataindustria:rocks",
     "strataindustria:cobbled_limestone",
     "strataindustria:limestone_native_copper_ore",

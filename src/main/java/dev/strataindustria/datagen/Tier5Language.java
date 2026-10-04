@@ -57,6 +57,11 @@ final class Tier5Language {
         lang.accept(block + "lathe", "Lathe");
         lang.accept(block + "mixer", "Mixer");
         lang.accept(block + "assembler", "Assembler");
+        lang.accept(block + "transformer", "Transformer");
+        lang.accept(block + "energy_adapter", "Energy Adapter");
+        lang.accept(id + ".transformer.readout.down", "Transformer, step down: %s J/t in on the MV side, %s J/t out on the LV side");
+        lang.accept(id + ".transformer.readout.up", "Transformer, step up: %s J/t in on the LV side, %s J/t out on the MV side");
+        lang.accept(id + ".energy_adapter.readout", "%s energy adapter: %s J/t (%s FE/t) out, %s J/t (%s FE/t) in");
         lang.accept(block + "electrolyser", "Electrolyser");
         lang.accept(block + "steam_turbine", "Steam Turbine");
         lang.accept(block + "combustion_generator", "Combustion Generator");
@@ -121,6 +126,8 @@ final class Tier5Language {
         lang.accept(subtitles + "battery_box.charge", "Battery hums");
         lang.accept(subtitles + "block.tree_tap.place", "Tree tap knocked in");
         lang.accept(subtitles + "block.tree_tap.drip", "Latex drips");
+        lang.accept(subtitles + "block.transformer.hum", "Transformer hums");
+        lang.accept(subtitles + "block.transformer.switch", "Transformer switches");
         lang.accept(subtitles + "block.machine.upgrade", "Machine upgraded");
         lang.accept(subtitles + "block.machine.power_on", "Machine powers up");
         lang.accept(subtitles + "block.machine.power_off", "Machine powers down");

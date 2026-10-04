@@ -43,12 +43,12 @@ public final class ElectricNetworks {
 
     /** The networks of one level, and which network each block belongs to. */
     private static final class Grid {
-        final Map<BlockPos, ElectricNetwork> byPos = new HashMap<>();
+        final Map<PortKey, ElectricNetwork> byPos = new HashMap<>();
         final Set<ElectricNetwork> networks = new LinkedHashSet<>();
 
         void drop(ElectricNetwork network) {
             if (!networks.remove(network)) return;
-            for (BlockPos pos : network.members()) byPos.remove(pos, network);
+            for (PortKey key : network.keys()) byPos.remove(key, network);
         }
     }
 
@@ -102,7 +102,13 @@ public final class ElectricNetworks {
 
     public static @Nullable ElectricNetwork networkAt(Level level, BlockPos pos) {
         Grid grid = GRIDS.get(level.dimension());
-        return grid == null ? null : grid.byPos.get(pos);
+        return grid == null ? null : grid.byPos.get(new PortKey(pos, 0));
+    }
+
+    /** The network joined through port {@code port} of the block at {@code pos}. */
+    public static @Nullable ElectricNetwork networkAt(Level level, BlockPos pos, int port) {
+        Grid grid = GRIDS.get(level.dimension());
+        return grid == null ? null : grid.byPos.get(new PortKey(pos, port));
     }
 
     /** What the network did for the device at {@code pos} on its last tick. */
@@ -111,63 +117,75 @@ public final class ElectricNetworks {
         return network == null ? ElectricNetwork.Report.NONE : network.report(pos);
     }
 
+    /** Most ports any block has. */
+    private static final int MAX_PORTS = 2;
+
     private static void rebuildDirty(ServerLevel level) {
         Set<BlockPos> dirty = DIRTY.remove(level.dimension());
         if (dirty == null) return;
         Grid grid = GRIDS.computeIfAbsent(level.dimension(), k -> new Grid());
         // Every block of a network touched by a change is rebuilt, so no part of it is left without a network.
-        Set<BlockPos> seeds = new LinkedHashSet<>(dirty);
+        Set<PortKey> seeds = new LinkedHashSet<>();
         for (BlockPos pos : dirty) {
-            ElectricNetwork old = grid.byPos.get(pos);
-            if (old != null) {
-                seeds.addAll(old.members());
-                grid.drop(old);
+            for (int port = 0; port < MAX_PORTS; port++) {
+                PortKey key = new PortKey(pos, port);
+                seeds.add(key);
+                ElectricNetwork old = grid.byPos.get(key);
+                if (old != null) {
+                    seeds.addAll(old.keys());
+                    grid.drop(old);
+                }
             }
         }
-        Set<BlockPos> done = new HashSet<>();
-        for (BlockPos pos : seeds) {
-            if (!done.contains(pos)) build(level, grid, pos, done);
+        Set<PortKey> done = new HashSet<>();
+        for (PortKey key : seeds) {
+            if (!done.contains(key)) build(level, grid, key, done);
         }
     }
 
-    private static void build(ServerLevel level, Grid grid, BlockPos start, Set<BlockPos> done) {
-        if (!level.isLoaded(start) || !(level.getBlockEntity(start) instanceof ElectricNode first)) return;
+    private static void build(ServerLevel level, Grid grid, PortKey start, Set<PortKey> done) {
+        if (!level.isLoaded(start.pos()) || !(level.getBlockEntity(start.pos()) instanceof ElectricNode block)) return;
+        if (start.port() >= block.ports()) return;
+        ElectricNode first = block.port(start.port());
         ElectricNetwork existing = grid.byPos.get(start);
         if (existing != null) grid.drop(existing);
         int max = Config.ELECTRIC_MAX_NETWORK.get();
-        Map<BlockPos, ElectricNode> nodes = new LinkedHashMap<>();
-        Map<BlockPos, List<BlockPos>> edges = new HashMap<>();
+        Map<PortKey, ElectricNode> nodes = new LinkedHashMap<>();
+        Map<PortKey, List<PortKey>> edges = new HashMap<>();
         nodes.put(start, first);
-        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
+        ArrayDeque<PortKey> queue = new ArrayDeque<>();
         queue.add(start);
         boolean tooLarge = false;
         while (!queue.isEmpty()) {
-            BlockPos pos = queue.poll();
-            ElectricNode node = nodes.get(pos);
+            PortKey key = queue.poll();
+            ElectricNode node = nodes.get(key);
             for (Direction side : Direction.values()) {
                 if (!node.connectsElectric(side)) continue;
-                BlockPos next = pos.relative(side);
+                BlockPos next = key.pos().relative(side);
                 // A network split by an unloaded chunk runs each loaded part on its own (spec 6.6).
                 if (!level.isLoaded(next)) continue;
-                if (!(level.getBlockEntity(next) instanceof ElectricNode neighbour) || !neighbour.connectsElectric(side.getOpposite())) continue;
-                edges.computeIfAbsent(pos, k -> new ArrayList<>()).add(next.immutable());
-                if (nodes.containsKey(next)) continue;
+                if (!(level.getBlockEntity(next) instanceof ElectricNode neighbourBlock)) continue;
+                PortKey nextKey = new PortKey(next, neighbourBlock.portAt(side.getOpposite()));
+                ElectricNode neighbour = neighbourBlock.port(nextKey.port());
+                if (neighbour == null || !neighbour.connectsElectric(side.getOpposite())) continue;
+                edges.computeIfAbsent(key, k -> new ArrayList<>()).add(nextKey);
+                if (nodes.containsKey(nextKey)) continue;
                 if (nodes.size() >= max) {
                     tooLarge = true;
                     continue;
                 }
-                nodes.put(next.immutable(), neighbour);
-                queue.add(next.immutable());
+                nodes.put(nextKey, neighbour);
+                queue.add(nextKey);
             }
         }
         done.addAll(nodes.keySet());
-        for (BlockPos pos : nodes.keySet()) {
-            ElectricNetwork old = grid.byPos.get(pos);
+        for (PortKey key : nodes.keySet()) {
+            ElectricNetwork old = grid.byPos.get(key);
             if (old != null) grid.drop(old);
         }
         ElectricNetwork network = new ElectricNetwork(nodes, edges, tooLarge);
         grid.networks.add(network);
-        for (BlockPos pos : nodes.keySet()) grid.byPos.put(pos, network);
+        for (PortKey key : nodes.keySet()) grid.byPos.put(key, network);
     }
 
     // ---------------------------------------------------------------- diagnostics (spec 6.5)
@@ -181,7 +199,13 @@ public final class ElectricNetworks {
 
     /** The diagnostics line for the block at {@code pos}: the network for a cable, the device's own numbers otherwise. */
     public static Component line(Level level, BlockPos pos) {
-        ElectricNetwork network = networkAt(level, pos);
+        return line(level, pos, 0);
+    }
+
+    /** Like {@link #line(Level, BlockPos)} for one port of a block that joins two networks (the transformer). */
+    public static Component line(Level level, BlockPos pos, int port) {
+        ElectricNetwork network = networkAt(level, pos, port);
+        ElectricNode node = level.getBlockEntity(pos) instanceof ElectricNode block ? block.port(port) : null;
         String prefix = StrataIndustria.MOD_ID + ".electric.";
         if (network == null) return Component.translatable(ElectricStatus.NO_SOURCE.key());
         if (network.tooLarge()) return Component.translatable(ElectricStatus.TOO_LARGE.key()).withStyle(ChatFormatting.RED);
@@ -192,8 +216,8 @@ public final class ElectricNetworks {
         }
         if (network.tier() == null) return Component.translatable(ElectricStatus.NO_SOURCE.key());
         MutableComponent line;
-        if (level.getBlockEntity(pos) instanceof ElectricDevice device && !(device instanceof ElectricConductor)) {
-            line = deviceLine(network, pos, device, prefix);
+        if (node instanceof ElectricDevice device && !(device instanceof ElectricConductor)) {
+            line = deviceLine(network, new PortKey(pos, port), device, prefix);
         } else {
             line = Component.translatable(prefix + "network", network.tier().label(), power(network.delivered()), power(network.supply()),
                     percent(network.worstLoss()), joules(network.stored()), joules(network.storageCapacity()));
@@ -205,8 +229,8 @@ public final class ElectricNetworks {
         return line;
     }
 
-    private static MutableComponent deviceLine(ElectricNetwork network, BlockPos pos, ElectricDevice device, String prefix) {
-        ElectricNetwork.Report report = network.report(pos);
+    private static MutableComponent deviceLine(ElectricNetwork network, PortKey key, ElectricDevice device, String prefix) {
+        ElectricNetwork.Report report = network.report(key);
         return switch (report.status()) {
             case OVERVOLTAGE -> Component.translatable(ElectricStatus.OVERVOLTAGE.key(), device.tier().label(), network.tier().label())
                     .withStyle(ChatFormatting.RED);

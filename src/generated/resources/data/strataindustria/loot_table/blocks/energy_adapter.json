@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:survives_explosion"
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_components",
+            "components": {
+              "strataindustria:machine_tier": "mv"
+            },
+            "condition": {
+              "type": "minecraft:match_block",
+              "blocks": "strataindustria:energy_adapter",
+              "state": {
+                "tier": "mv"
+              }
+            }
+          },
+          "name": "strataindustria:energy_adapter"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:blocks/energy_adapter"
+}

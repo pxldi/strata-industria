@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "H": "strataindustria:lv_machine_hull",
+    "L": "strataindustria:lv_cable",
+    "Q": "strataindustria:mv_cable",
+    "W": "strataindustria:copper_wire"
+  },
+  "pattern": [
+    " Q ",
+    "WHW",
+    " L "
+  ],
+  "result": {
+    "id": "strataindustria:transformer"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "strataindustria:block/casing/mv_bottom",
+    "front": "strataindustria:block/transformer_front",
+    "side": "strataindustria:block/transformer_side",
+    "top": "strataindustria:block/transformer_top_step_down"
+  }
+}

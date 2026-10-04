@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=down,tier=lv": {
+      "model": "strataindustria:block/energy_adapter_lv",
+      "x": 90
+    },
+    "facing=down,tier=mv": {
+      "model": "strataindustria:block/energy_adapter_mv",
+      "x": 90
+    },
+    "facing=east,tier=lv": {
+      "model": "strataindustria:block/energy_adapter_lv",
+      "y": 90
+    },
+    "facing=east,tier=mv": {
+      "model": "strataindustria:block/energy_adapter_mv",
+      "y": 90
+    },
+    "facing=north,tier=lv": {
+      "model": "strataindustria:block/energy_adapter_lv"
+    },
+    "facing=north,tier=mv": {
+      "model": "strataindustria:block/energy_adapter_mv"
+    },
+    "facing=south,tier=lv": {
+      "model": "strataindustria:block/energy_adapter_lv",
+      "y": 180
+    },
+    "facing=south,tier=mv": {
+      "model": "strataindustria:block/energy_adapter_mv",
+      "y": 180
+    },
+    "facing=up,tier=lv": {
+      "model": "strataindustria:block/energy_adapter_lv",
+      "x": 270
+    },
+    "facing=up,tier=mv": {
+      "model": "strataindustria:block/energy_adapter_mv",
+      "x": 270
+    },
+    "facing=west,tier=lv": {
+      "model": "strataindustria:block/energy_adapter_lv",
+      "y": 270
+    },
+    "facing=west,tier=mv": {
+      "model": "strataindustria:block/energy_adapter_mv",
+      "y": 270
+    }
+  }
+}
