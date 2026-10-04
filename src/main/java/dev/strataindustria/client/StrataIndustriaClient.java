@@ -14,7 +14,6 @@ import dev.strataindustria.power.AxleBlock;
 import dev.strataindustria.power.HandCrankBlock;
 import dev.strataindustria.power.WaterWheelBlock;
 import net.minecraft.core.Direction;
-import dev.strataindustria.client.screen.AnvilScreen;
 import dev.strataindustria.client.screen.BloomeryScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
@@ -58,7 +57,6 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
         event.register(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_MENU.get(), dev.strataindustria.client.screen.BrickKilnScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
-        event.register(ModMenus.ANVIL.get(), AnvilScreen::new);
         event.register(ModMenus.BLOOMERY.get(), BloomeryScreen::new);
         event.register(ModMenus.MILLSTONE.get(), MillstoneScreen::new);
         event.register(ModMenus.SAW_MILL.get(), SawMillScreen::new);

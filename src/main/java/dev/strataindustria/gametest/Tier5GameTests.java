@@ -1075,15 +1075,11 @@ final class Tier5GameTests {
                 .getRecipesFor(dev.strataindustria.registry.ModRecipes.ANVIL.get(), new net.minecraft.world.item.crafting.SingleRecipeInput(ingot), level)
                 .filter(r -> r.value().result().create().is(steelPlate))
                 .findFirst().orElseThrow(() -> helper.assertionException("no steel plate recipe"));
-        int target = dev.strataindustria.smithing.Smithing.target(level, plate.id(), plate.value());
-        java.util.List<dev.strataindustria.smithing.HitType> hits = ModGameTests.solve(target, plate.value().rules());
-        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable");
-        int craft = dev.strataindustria.smithing.Smithing.craftQuality(hits.size(),
-                dev.strataindustria.smithing.Smithing.minHits(target, plate.value().rules()));
+        int total = dev.strataindustria.smithing.AnvilBlockEntity.blowsFor(plate.value(), ingot);
+        int craft = 4;
         ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
         helper.assertTrue(!hammer.canPlaceItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern), "a blank pattern does not go in");
-        pattern.set(dev.strataindustria.registry.ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(),
-                net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate), target, hits.stream().map(Enum::ordinal).toList(), craft));
+        pattern.set(dev.strataindustria.registry.ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(), net.minecraft.core.registries.BuiltInRegistries.ITEM.getKey(steelPlate)));
         hammer.setItem(dev.strataindustria.smithing.AnvilBlockEntity.PATTERN, pattern);
         int result = dev.strataindustria.electric.PowerHammerBlockEntity.RESULT;
         hammer.setItem(dev.strataindustria.electric.PowerHammerBlockEntity.QUEUE, ingot.copyWithCount(plate.value().count() * 2));
@@ -1105,7 +1101,7 @@ final class Tier5GameTests {
         }
         helper.assertTrue(heated, "it heated the piece itself first");
         helper.assertTrue(hammer.getItem(result).is(steelPlate), "a steel plate comes out, got " + hammer.getItem(result) + ", status " + hammer.status() + ", piece " + hammer.input() + " heat " + dev.strataindustria.heat.Heat.get(hammer.input(), level) + " max " + dev.strataindustria.forge.ForgeLimits.maxFor(hammer.input()) + " working " + dev.strataindustria.smithing.AnvilBlockEntity.workingTemperature(hammer.input()));
-        helper.assertTrue(working >= hits.size() * 4 - 1 && working <= hits.size() * 4 + 1, hits.size() + " blows at LV worked for " + working + " ticks");
+        helper.assertTrue(working >= total * 4 - 1 && working <= total * 4 + 1, total + " blows at LV worked for " + working + " ticks");
         var quality = hammer.getItem(result).get(dev.strataindustria.registry.ModDataComponents.QUALITY.get());
         helper.assertTrue(quality != null && quality.craft() == craft, "the plate carries the pattern's craft part " + craft + ", got " + quality);
 
@@ -1119,7 +1115,7 @@ final class Tier5GameTests {
             if (hammer.status() == dev.strataindustria.electric.PowerHammerBlockEntity.Status.WORKING) working++;
         }
         helper.assertValueEqual(hammer.getItem(result).getCount(), 2, "plates after the second run, status " + hammer.status());
-        helper.assertTrue(working >= hits.size() * 2 - 1 && working <= hits.size() * 2 + 1, hits.size() + " blows at MV worked for " + working + " ticks");
+        helper.assertTrue(working >= total * 2 - 1 && working <= total * 2 + 1, total + " blows at MV worked for " + working + " ticks");
         helper.succeed();
     }
 

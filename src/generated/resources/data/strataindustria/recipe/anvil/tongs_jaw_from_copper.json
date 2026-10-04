@@ -1,18 +1,8 @@
 {
   "type": "strataindustria:anvil",
-  "default_target": 80,
+  "blows": 4,
   "ingredient": "minecraft:copper_ingot",
   "result": {
     "id": "strataindustria:tongs_jaw"
-  },
-  "rules": [
-    {
-      "hit": "hit",
-      "where": "last"
-    },
-    {
-      "hit": "draw",
-      "where": "not_last"
-    }
-  ]
+  }
 }

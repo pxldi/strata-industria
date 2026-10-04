@@ -1,5 +1,6 @@
 package dev.strataindustria.compat.jei;
 
+import dev.strataindustria.compat.recipeview.RecipeText;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.WeldingRecipe;
@@ -23,20 +24,20 @@ public class WeldingCategory extends StrataCategory<RecipeHolder<WeldingRecipe>>
         WeldingRecipe recipe = holder.value();
         builder.addInputSlot(6, 6).setStandardSlotBackground().setSlotName("first").add(recipe.first());
         builder.addInputSlot(38, 6).setStandardSlotBackground().setSlotName("second").add(recipe.second());
-        builder.addInputSlot(60, 6).setStandardSlotBackground().add(ModItems.FLUX.get());
-        builder.addOutputSlot(122, 6).setOutputSlotBackground().add(recipe.result());
+        builder.addOutputSlot(66, 6).setOutputSlotBackground().add(recipe.result());
     }
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<WeldingRecipe> holder, IFocusGroup focuses) {
         builder.addRecipePlusSignWidget().setPosition(24, 8);
-        builder.addRecipeArrowWidget().setPosition(86, 6);
+        builder.addRecipeArrowWidget().setPosition(42, 6);
     }
 
     @Override
     public void draw(RecipeHolder<WeldingRecipe> holder, IRecipeSlotsView slots, GuiGraphicsExtractor g, double mouseX, double mouseY) {
         ItemStack a = slots.findSlotByName("first").flatMap(s -> s.getDisplayedItemStack()).orElse(ItemStack.EMPTY);
         ItemStack b = slots.findSlotByName("second").flatMap(s -> s.getDisplayedItemStack()).orElse(ItemStack.EMPTY);
+        text(g, RecipeText.key("anvil.blows", dev.strataindustria.smithing.Smithing.WELD_BLOWS), 92, 11, TEXT);
         int needed = AnvilBlockEntity.weldingTemperature(a, b);
         if (needed > 0) heat(g, "weld", needed, 6, 30);
     }

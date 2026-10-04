@@ -1,23 +1,9 @@
 {
   "type": "strataindustria:anvil",
-  "default_target": 45,
+  "blows": 3,
   "ingredient": "strataindustria:aluminium_ingot",
   "result": {
     "count": 2,
     "id": "strataindustria:aluminium_rod"
-  },
-  "rules": [
-    {
-      "hit": "draw",
-      "where": "last"
-    },
-    {
-      "hit": "draw",
-      "where": "second_last"
-    },
-    {
-      "hit": "hit",
-      "where": "not_last"
-    }
-  ]
+  }
 }

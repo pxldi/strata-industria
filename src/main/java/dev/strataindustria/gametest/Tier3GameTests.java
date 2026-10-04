@@ -19,7 +19,6 @@ import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.HitType;
 import dev.strataindustria.smithing.Smithing;
 import dev.strataindustria.smithing.SmithingPattern;
 import java.util.List;
@@ -138,13 +137,9 @@ final class Tier3GameTests {
                 .getRecipesFor(dev.strataindustria.registry.ModRecipes.ANVIL.get(), new SingleRecipeInput(ingot), level)
                 .filter(r -> r.value().result().create().is(ModItems.PLATES.get(Metal.COPPER).get()))
                 .findFirst().orElseThrow(() -> helper.assertionException("no copper plate recipe"));
-        int target = Smithing.target(level, plate.id(), plate.value());
-        List<HitType> hits = ModGameTests.solve(target, plate.value().rules());
-        helper.assertTrue(!hits.isEmpty(), "the plate should be solvable");
+        int total = dev.strataindustria.smithing.AnvilBlockEntity.blowsFor(plate.value(), ingot);
         ItemStack pattern = new ItemStack(ModItems.SMITHING_PATTERN.get());
-        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new SmithingPattern(plate.id(),
-                BuiltInRegistries.ITEM.getKey(ModItems.PLATES.get(Metal.COPPER).get()), target,
-                hits.stream().map(Enum::ordinal).toList(), 10));
+        pattern.set(ModDataComponents.SMITHING_PATTERN.get(), new dev.strataindustria.smithing.SmithingPattern(plate.id(), BuiltInRegistries.ITEM.getKey(ModItems.PLATES.get(Metal.COPPER).get())));
         hammer.setItem(TripHammerBlockEntity.PATTERN, pattern);
         hammer.setItem(TripHammerBlockEntity.INPUT, ingot.copyWithCount(plate.value().count()));
 
@@ -155,7 +150,7 @@ final class Tier3GameTests {
         ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(smith);
         ((HandCrankBlockEntity) level.getBlockEntity(topCrankPos)).crank(smith);
         KineticNetworks.rebuildNow(level, hammerPos);
-        for (int tick = 0; tick < (hits.size() + 2) * 12; tick++) {
+        for (int tick = 0; tick < (total + 2) * 12; tick++) {
             TripHammerBlockEntity.serverTick(level, hammerPos, level.getBlockState(hammerPos), hammer);
         }
         Container chest = (Container) level.getBlockEntity(anvilPos.below());

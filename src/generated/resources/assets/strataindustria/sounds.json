@@ -1,4 +1,21 @@
 {
+  "anvil.cold": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.netherite_block.hit",
+        "pitch": 0.6,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.netherite_block.hit",
+        "pitch": 0.7,
+        "volume": 0.8
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.cold"
+  },
   "anvil.done": {
     "sounds": [
       {
@@ -30,6 +47,17 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.dress"
   },
+  "anvil.glint": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.8,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.glint"
+  },
   "anvil.hit": {
     "sounds": [
       {
@@ -40,25 +68,73 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.hit"
   },
-  "anvil.quick": {
+  "anvil.set": {
     "sounds": [
       {
-        "name": "random/anvil_use",
+        "type": "event",
+        "name": "block.anvil.place",
+        "pitch": 1.8,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.set"
+  },
+  "anvil.true_blow": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.anvil.land",
         "pitch": 1.5,
-        "volume": 0.6
+        "volume": 0.35
       },
       {
-        "name": "random/anvil_use",
-        "pitch": 1.7,
-        "volume": 0.6
-      },
+        "type": "event",
+        "name": "block.anvil.land",
+        "pitch": 1.65,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.true_blow"
+  },
+  "anvil.voice.bronze": {
+    "sounds": [
       {
-        "name": "random/anvil_use",
-        "pitch": 1.4,
+        "type": "event",
+        "name": "block.note_block.bell",
         "volume": 0.6
       }
     ],
-    "subtitle": "subtitles.strataindustria.anvil.quick"
+    "subtitle": "subtitles.strataindustria.anvil.voice.bronze"
+  },
+  "anvil.voice.copper": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.flute",
+        "volume": 0.55
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.voice.copper"
+  },
+  "anvil.voice.iron": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.iron_xylophone",
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.voice.iron"
+  },
+  "anvil.voice.steel": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.note_block.chime",
+        "volume": 0.65
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.voice.steel"
   },
   "anvil.weld": {
     "sounds": [

@@ -16,7 +16,6 @@ import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Sounds;
 import dev.strataindustria.smithing.AnvilBlockEntity;
 import dev.strataindustria.smithing.AnvilRecipe;
-import dev.strataindustria.smithing.HitType;
 import dev.strataindustria.smithing.Smithing;
 import dev.strataindustria.smithing.SmithingPattern;
 import dev.strataindustria.smithing.SmithingProgress;
@@ -164,9 +163,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         if (pattern == null) return Status.NO_PATTERN;
         Optional<RecipeHolder<?>> holder = level.recipeAccess().byKey(pattern.recipe());
         if (holder.isEmpty() || !(holder.get().value() instanceof AnvilRecipe recipe)) return Status.NO_PATTERN;
-        // Targets changed since recording (config smithing.randomTargets): the hits would never finish (T3 spec 9.5).
-        if (pattern.target() != Smithing.target(level, pattern.recipe(), recipe)) return Status.OUTDATED_PATTERN;
-        hitsTotal = pattern.hits().size();
+        hitsTotal = blowsFor(recipe, input().isEmpty() ? getItem(QUEUE) : input());
 
         ItemStack piece = input();
         if (piece.isEmpty()) {
@@ -185,7 +182,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
             return Status.WRONG_PIECE;
         }
         if (progress == null && !select(pattern.recipe())) return Status.WRONG_PIECE;
-        hitsDone = progress == null ? 0 : progress.history().size();
+        hitsDone = progress == null ? 0 : progress.blows();
         if (hitsDone >= hitsTotal) return Status.WRONG_PIECE;
 
         // The hammer keeps its own piece hot, towards whatever its heat comes in at.
@@ -206,9 +203,7 @@ public class SteamHammerBlockEntity extends AnvilBlockEntity implements WorldlyC
         steam -= STEAM_USE;
         if (++timer < (pressure >= FULL_PRESSURE ? FAST_TICKS : SLOW_TICKS)) return Status.WORKING;
         timer = 0;
-        HitType type = HitType.byId(pattern.hits().get(hitsDone));
-        if (type == null) return Status.WRONG_PIECE;
-        MachineHit result = machineHit(type);
+                MachineHit result = machineBlow(2);
         if (result == MachineHit.TOO_COLD) return Status.HEATING;
         if (result == MachineHit.REFUSED) return Status.WRONG_PIECE;
         hitsDone++;

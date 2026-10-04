@@ -123,8 +123,8 @@ final class ModAdvancements extends AdvancementSubProvider {
         ModItems.PLATES.values().forEach(plate -> plates.add(plate.get()));
         AdvancementHolder smith = goal(stoneAnvil, "t2/smith", ModItems.PLATES.get(Metal.BRONZE).get(), anyOf(plates));
 
-        goal(smith, "t2/quick_smith", ModItems.tool(Metal.BRONZE, MoldType.HAMMER_HEAD),
-                JournalTrigger.TriggerInstance.of(Journal.QUICK_SMITH));
+        goal(smith, "t2/bright_strike", ModItems.tool(Metal.BRONZE, MoldType.HAMMER_HEAD),
+                JournalTrigger.TriggerInstance.of(Journal.BRIGHT_STRIKE));
         goal(smith, "t2/bronze_tools", ModItems.tool(Metal.BRONZE, MoldType.PICKAXE_HEAD), AdvancementType.GOAL,
                 InventoryChangeTrigger.TriggerInstance.hasItems(bronzeTools()));
         goal(smith, "t2/bronze_armour", ModItems.ARMOUR.get(Metal.BRONZE).get(ModItems.armourTypes()[1]).get(), AdvancementType.GOAL,

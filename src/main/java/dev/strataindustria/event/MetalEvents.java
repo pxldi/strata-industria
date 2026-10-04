@@ -26,7 +26,12 @@ public final class MetalEvents {
         ItemStack stack = event.getItemStack();
         CastMoldItem.contentsLine(stack).ifPresent(line -> event.getToolTip().add(1, line.copy().withStyle(ChatFormatting.GRAY)));
         Quality quality = stack.get(ModDataComponents.QUALITY.get());
-        if (quality != null) event.getToolTip().add(1, quality.tooltip());
+        if (quality != null) {
+            if (quality.craft() >= dev.strataindustria.smithing.Smithing.MAX_CRAFT) {
+                event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".anvil.bright").withStyle(ChatFormatting.GOLD));
+            }
+            event.getToolTip().add(1, quality.tooltip());
+        }
         Melt bloom = stack.get(ModDataComponents.BLOOM_CONTENTS.get());
         if (bloom != null) {
             event.getToolTip().add(1, Component.translatable(StrataIndustria.MOD_ID + ".bloomery.bloom_units", bloom.total())

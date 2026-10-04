@@ -1,18 +1,8 @@
 {
   "type": "strataindustria:anvil",
-  "default_target": 50,
+  "blows": 5,
   "ingredient": "minecraft:iron_ingot",
   "result": {
     "id": "strataindustria:wrought_iron_shovel_head"
-  },
-  "rules": [
-    {
-      "hit": "punch",
-      "where": "last"
-    },
-    {
-      "hit": "hit",
-      "where": "not_last"
-    }
-  ]
+  }
 }

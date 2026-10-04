@@ -53,8 +53,19 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_HIT = register("anvil.hit");
     /** The last blow that finishes a piece. */
     public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_DONE = register("anvil.done");
-    /** Several quick blows in a row: a known piece smithed at a steady pace. */
-    public static final DeferredHolder<SoundEvent, SoundEvent> SMITH_QUICK = register("anvil.quick");
+    /** The note a blow sings in each metal's voice; played over the hammer sound at the pitch of the scale. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_COPPER = register("anvil.voice.copper");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_BRONZE = register("anvil.voice.bronze");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_IRON = register("anvil.voice.iron");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_VOICE_STEEL = register("anvil.voice.steel");
+    /** A strike on the glint: the heavier layer under the note. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_TRUE_BLOW = register("anvil.true_blow");
+    /** A blow on metal that is too cold: a dead thud. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_COLD = register("anvil.cold");
+    /** The soft tick at the top of the hammer's rebound. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_GLINT = register("anvil.glint");
+    /** A piece set down on or taken off the anvil. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_SET = register("anvil.set");
     /** Raw rock dressed into a stone anvil. */
     public static final DeferredHolder<SoundEvent, SoundEvent> ANVIL_DRESS = register("anvil.dress");
     /** A prospector's pick tapping the rock. */

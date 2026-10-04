@@ -99,8 +99,8 @@ final class JournalLanguage {
                 "A block of hard rock dressed flat on top. It will take a beating.");
         lead.add("t2/smith", "Can I beat hot metal into a shape a mold cannot give?",
                 "Heat, strike, heat again. The ingot spread into a thin, even plate.");
-        lead.add("t2/quick_smith", "I know this work now. Do I have to count every blow again?",
-                "A known piece goes quicker. Not my best work, but good enough.");
+        lead.add("t2/bright_strike", "The metal glows brightest just out of the forge. What if I never let it dull?",
+                "Every blow landed on bright metal. The piece came out finer than any I had made.");
         lead.add("t2/bronze_tools", "Bronze holds an edge. Every tool I own could be better for it.",
                 "Pick, axe, shovel, knife, hammer, saw and sword, all in bronze. A proper kit.");
         lead.add("t2/bronze_armour", "Bronze plate would turn a blow that would cut through leather.",
@@ -142,10 +142,10 @@ final class JournalLanguage {
                 "Charter set at the tin workings. The line runs; the place keeps working while I'm home.");
         lead.add("t3/weld", "One ingot is too small for the bigger tools. Could two be joined while hot?",
                 "Hammered together white hot, two ingots became one. The seam does not show.");
-        lead.add("t3/pattern", "I smith the same pieces again and again. Could the anvil remember my hits?",
-                "Every hit marked on a blank pattern. The anvil knows the work now.");
+        lead.add("t3/pattern", "I smith the same pieces again and again. Could the anvil remember a shape for a machine?",
+                "The shape is marked on a blank pattern. A machine can work it now.");
         lead.add("t3/trip_hammer", "With a pattern and a turning shaft, could a hammer work by itself?",
-                "The trip hammer rises and falls on its own, following my pattern hit for hit.");
+                "The trip hammer rises and falls on its own, following my pattern blow for blow.");
         lead.add("t3/core_sample", "My prospector's pick only hears so far. What lies deep below?",
                 "The core came up in bands: every layer of rock beneath me, laid out in order.");
         lead.add("t3/wash", "There is ore in the river gravel. Could I wash it out?",
