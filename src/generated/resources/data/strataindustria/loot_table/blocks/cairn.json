@@ -1,0 +1,510 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "limestone"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_limestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "limestone"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_limestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "limestone"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_limestone"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "shale"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_shale"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "shale"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_shale"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "shale"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_shale"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "slate"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_slate"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "slate"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_slate"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "slate"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_slate"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "marble"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_marble"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "marble"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_marble"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "marble"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_marble"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "granite"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_granite"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "granite"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_granite"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "granite"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_granite"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "gabbro"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_gabbro"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "gabbro"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_gabbro"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "gabbro"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_gabbro"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "basalt"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_basalt"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "basalt"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_basalt"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "basalt"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_basalt"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "1",
+          "rock": "rhyolite"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 4
+          },
+          "name": "strataindustria:loose_rhyolite"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "2",
+          "rock": "rhyolite"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 8
+          },
+          "name": "strataindustria:loose_rhyolite"
+        }
+      ],
+      "rolls": 1
+    },
+    {
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "strataindustria:cairn",
+        "state": {
+          "height": "3",
+          "rock": "rhyolite"
+        }
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "modifier": {
+            "type": "minecraft:set_count",
+            "count": 12
+          },
+          "name": "strataindustria:loose_rhyolite"
+        }
+      ],
+      "rolls": 1
+    }
+  ],
+  "random_sequence": "strataindustria:blocks/cairn"
+}

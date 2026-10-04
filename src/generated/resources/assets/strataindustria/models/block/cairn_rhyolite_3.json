@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_cairn_3",
+  "textures": {
+    "rock": "strataindustria:block/rhyolite"
+  }
+}

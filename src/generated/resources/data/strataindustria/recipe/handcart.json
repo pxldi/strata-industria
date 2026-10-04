@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "strataindustria:bronze_ingot",
+    "P": "#minecraft:planks",
+    "S": "minecraft:stick"
+  },
+  "pattern": [
+    "PBP",
+    "PPP",
+    "S S"
+  ],
+  "result": {
+    "id": "strataindustria:handcart"
+  }
+}

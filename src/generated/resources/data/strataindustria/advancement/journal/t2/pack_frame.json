@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t2/bronze",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "pack_frame_worn"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.pack_frame.hint"
+    },
+    "icon": {
+      "id": "strataindustria:pack_frame"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t2.pack_frame"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

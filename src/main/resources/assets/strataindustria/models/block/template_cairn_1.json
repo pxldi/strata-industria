@@ -1,0 +1,137 @@
+{
+  "parent": "minecraft:block/block",
+  "ambientocclusion": false,
+  "textures": {
+    "particle": "#rock"
+  },
+  "elements": [
+    {
+      "from": [
+        3,
+        0,
+        3
+      ],
+      "to": [
+        13,
+        3,
+        12
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            3,
+            3,
+            13,
+            12
+          ],
+          "texture": "#rock"
+        },
+        "down": {
+          "uv": [
+            3,
+            3,
+            13,
+            12
+          ],
+          "texture": "#rock",
+          "cullface": "down"
+        },
+        "north": {
+          "uv": [
+            3,
+            13,
+            13,
+            16
+          ],
+          "texture": "#rock"
+        },
+        "south": {
+          "uv": [
+            3,
+            13,
+            13,
+            16
+          ],
+          "texture": "#rock"
+        },
+        "west": {
+          "uv": [
+            3,
+            13,
+            12,
+            16
+          ],
+          "texture": "#rock"
+        },
+        "east": {
+          "uv": [
+            3,
+            13,
+            12,
+            16
+          ],
+          "texture": "#rock"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        3,
+        4
+      ],
+      "to": [
+        12,
+        5,
+        11
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            4,
+            4,
+            12,
+            11
+          ],
+          "texture": "#rock"
+        },
+        "north": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#rock"
+        },
+        "south": {
+          "uv": [
+            4,
+            11,
+            12,
+            13
+          ],
+          "texture": "#rock"
+        },
+        "west": {
+          "uv": [
+            4,
+            11,
+            11,
+            13
+          ],
+          "texture": "#rock"
+        },
+        "east": {
+          "uv": [
+            4,
+            11,
+            11,
+            13
+          ],
+          "texture": "#rock"
+        }
+      }
+    }
+  ]
+}

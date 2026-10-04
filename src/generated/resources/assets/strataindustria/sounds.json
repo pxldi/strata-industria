@@ -176,6 +176,31 @@
     ],
     "subtitle": "subtitles.strataindustria.blast_furnace.tap"
   },
+  "blaze.cut": {
+    "sounds": [
+      {
+        "name": "dig/wood1",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/wood2",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/wood3",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/wood4",
+        "pitch": 1.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.blaze.cut"
+  },
   "block.assembler.work": {
     "sounds": [
       {
@@ -1521,6 +1546,41 @@
     ],
     "subtitle": "subtitles.strataindustria.brick_kiln.work"
   },
+  "cairn.stack": {
+    "sounds": [
+      {
+        "name": "dig/stone1",
+        "pitch": 0.9,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 0.9,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone3",
+        "pitch": 0.9,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone4",
+        "pitch": 0.9,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/gravel1",
+        "pitch": 1.1,
+        "volume": 0.5
+      },
+      {
+        "name": "dig/gravel2",
+        "pitch": 1.1,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.cairn.stack"
+  },
   "casting_table.knock": {
     "sounds": [
       {
@@ -2089,6 +2149,68 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.hand_crank.turn"
+  },
+  "handcart.roll": {
+    "sounds": [
+      {
+        "name": "step/wood1",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/wood2",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/wood3",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/wood4",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "step/gravel1",
+        "pitch": 0.8,
+        "volume": 0.4
+      },
+      {
+        "name": "step/gravel2",
+        "pitch": 0.8,
+        "volume": 0.4
+      },
+      {
+        "name": "step/gravel3",
+        "pitch": 0.8,
+        "volume": 0.4
+      },
+      {
+        "name": "step/gravel4",
+        "pitch": 0.8,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.handcart.roll"
+  },
+  "handcart.shafts": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.wood.place",
+        "pitch": 0.8,
+        "volume": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.chain.hit",
+        "pitch": 1.2,
+        "volume": 0.25
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.handcart.shafts"
   },
   "heat.quench": {
     "sounds": [
@@ -2776,6 +2898,23 @@
     ],
     "subtitle": "subtitles.strataindustria.multiblock.form"
   },
+  "pack.open": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.armor.equip_leather",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.wood.hit",
+        "pitch": 1.4,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pack.open"
+  },
   "pattern.carve": {
     "sounds": [
       {
@@ -3100,6 +3239,31 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.roasting.sizzle"
+  },
+  "rope.hang": {
+    "sounds": [
+      {
+        "name": "dig/wool1",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/wool2",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/wool3",
+        "pitch": 0.8,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/wool4",
+        "pitch": 0.8,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.rope.hang"
   },
   "saw_mill.blade_break": {
     "sounds": [

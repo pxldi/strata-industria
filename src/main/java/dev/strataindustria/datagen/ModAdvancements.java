@@ -129,6 +129,13 @@ final class ModAdvancements extends AdvancementSubProvider {
                 InventoryChangeTrigger.TriggerInstance.hasItems(bronzeTools()));
         goal(smith, "t2/bronze_armour", ModItems.ARMOUR.get(Metal.BRONZE).get(ModItems.armourTypes()[1]).get(), AdvancementType.GOAL,
                 JournalTrigger.TriggerInstance.of(Journal.BRONZE_ARMOUR));
+        // Outposts and transport spec 11: the T2 goals, all optional.
+        goal(bronze, "t2/pack_frame", dev.strataindustria.transport.foot.FootRegistry.PACK_FRAME.get(),
+                JournalTrigger.TriggerInstance.of(Journal.PACK_FRAME_WORN));
+        goal(bronze, "t2/handcart", dev.strataindustria.transport.foot.FootRegistry.HANDCART.get(),
+                JournalTrigger.TriggerInstance.of(Journal.HANDCART_HAUL));
+        goal(bronze, "t2/trail", dev.strataindustria.transport.foot.FootRegistry.ROPE.get(),
+                JournalTrigger.TriggerInstance.of(Journal.TRAIL_MARKED));
         goal(bronze, "t2/prospectors_pick", ModItems.PROSPECTORS_PICKS.get(Metal.BRONZE).get(),
                 JournalTrigger.TriggerInstance.of(Journal.PROSPECT));
         AdvancementHolder bronzeAnvil = goal(smith, "t2/bronze_anvil", ModItems.BRONZE_ANVIL.get(), AdvancementType.GOAL,

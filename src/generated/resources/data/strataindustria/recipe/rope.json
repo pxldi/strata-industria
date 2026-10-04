@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    "strataindustria:twine",
+    "strataindustria:twine",
+    "strataindustria:twine"
+  ],
+  "result": {
+    "id": "strataindustria:rope"
+  }
+}

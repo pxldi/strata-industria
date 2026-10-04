@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/template_cairn_2",
+  "textures": {
+    "rock": "strataindustria:block/marble"
+  }
+}

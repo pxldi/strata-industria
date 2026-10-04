@@ -208,6 +208,9 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.LOG_PILE.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(StructureContent.PIT_PROP.getKey());
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.ledger.LedgerRegistry.BUILDERS_CRATE.getKey());
+        // Outposts and transport spec 4: tier 2 on foot.
+        tag(BlockTags.CLIMBABLE).add(dev.strataindustria.transport.foot.FootRegistry.ROPE_LADDER.getKey());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(dev.strataindustria.transport.foot.FootRegistry.CAIRN.getKey());
         // Structures v2 shared blocks.
         tag(BlockTags.MINEABLE_WITH_AXE).add(SharedBlocks.CRATE.getKey()).add(SharedBlocks.ORE_CART.getKey())
                 .add(SharedBlocks.TOOL_RACK.getKey()).add(SharedBlocks.WINDLASS.getKey()).add(SharedBlocks.SLUICE_BOX.getKey())

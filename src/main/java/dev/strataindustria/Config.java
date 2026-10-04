@@ -393,6 +393,18 @@ public final class Config {
         BUILDER.pop();
     }
 
+    static {
+        BUILDER.comment("Outposts and transport (outposts and transport spec 13).").push("outposts");
+    }
+
+    public static final ModConfigSpec.IntValue TRAIL_STEP = BUILDER
+            .comment("Most blocks between two trail marks (cairns and blazes) for them to count as one trail.")
+            .defineInRange("trailStep", 64, 8, 512);
+
+    static {
+        BUILDER.pop();
+    }
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {}

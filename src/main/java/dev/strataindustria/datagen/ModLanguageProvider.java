@@ -35,6 +35,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add(ModCreativeTabs.MAIN_TAB_TITLE, "Strata Industria");
         StructureData.lang(this::add);
         Tier5Language.add(this::add);
+        FootData.lang(this::add);
         JournalLanguage.add(this::add);
         Tier6Data.lang(this::add);
         recipeViewer();

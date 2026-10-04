@@ -70,6 +70,8 @@ public final class StrataIndustria {
         dev.strataindustria.registry.PatternRegistry.init();
         dev.strataindustria.mark.MarkRegistry.init();
         dev.strataindustria.ledger.LedgerRegistry.init();
+        dev.strataindustria.transport.foot.FootRegistry.init();
+        dev.strataindustria.transport.foot.FootRegistry.register(modEventBus);
         dev.strataindustria.ledger.Ledgers.register(modEventBus);
         dev.strataindustria.mark.MakerMarks.register(modEventBus);
         Tier6Worldgen.init();
