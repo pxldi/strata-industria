@@ -487,6 +487,23 @@ final class ModRecipeProvider extends RecipeProvider {
                 .requires(ModItems.FIRE_BRICKS.get())
                 .unlockedBy("has_refractory_heat_duct", has(Tier4Items.REFRACTORY_HEAT_DUCT.get()))
                 .save(output, key("heat_inlet"));
+        // Spec 8.2 and 8.6: wrapping pipes in slag wool, and the kiln that makes it.
+        for (var pair : java.util.List.of(java.util.Map.entry(Tier4Items.COPPER_HEAT_PIPE, Tier4Items.INSULATED_COPPER_HEAT_PIPE),
+                java.util.Map.entry(Tier4Items.REFRACTORY_HEAT_DUCT, Tier4Items.INSULATED_REFRACTORY_HEAT_DUCT))) {
+            shapeless(RecipeCategory.REDSTONE, pair.getValue().get())
+                    .requires(pair.getKey().get())
+                    .requires(Tier4Items.SLAG_WOOL.get())
+                    .unlockedBy("has_slag_wool", has(Tier4Items.SLAG_WOOL.get()))
+                    .save(output, key(pair.getValue().getId().getPath()));
+        }
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.KILN.get())
+                .pattern("BBB")
+                .pattern("B B")
+                .pattern("FFF")
+                .define('B', fireBrick)
+                .define('F', ModItems.FIRE_BRICKS.get())
+                .unlockedBy("has_firebox", has(Tier4Items.FIREBOX.get()))
+                .save(output, key("kiln"));
         shaped(RecipeCategory.REDSTONE, Tier4Items.BRONZE_FLUID_PIPE.get(), 4)
                 .pattern("PSP")
                 .define('P', ModTags.Items.ANY_BRONZE_PLATES)

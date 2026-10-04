@@ -7166,6 +7166,312 @@ public final class TextureGen {
         save("block/heat_inlet", Hp.inlet());
     }
 
+    // ---------------------------------------------------------------- tier 4: kiln and insulated heat lines
+
+    static final class Kn {
+        static int fb(int s) { return FIRE_BRICK.get(s); }
+        static int st(int s) { return STEEL.get(s); }
+        static int pi(int s) { return PIG_IRON.get(s); }
+        static int cu(int s) { return COPPER.get(s); }
+
+        // ---- fire brick faces
+        static boolean isMortar(BufferedImage im, int x, int y) { return rgb(im, x, y) == fb(1); }
+
+        /** Fire brick ring-and-radial joints around a centre, between radii r0 and r1 (dome voussoirs). */
+        static BufferedImage front(boolean active) {
+            BufferedImage im = fireBricks();
+            double cx = 7.5, cy = 8.0;
+            // Voussoir ring round the arch: radial joints every ~30 degrees, keystone lit.
+            for (int y = 0; y < 8; y++)
+                for (int x = 0; x < 16; x++) {
+                    double dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
+                    if (d < 5.2 || d > 7.8) continue;
+                    double ang = Math.toDegrees(Math.atan2(-dy, dx)); // 0 right, 90 up
+                    int sector = (int) Math.floor((ang + 15) / 30.0);
+                    double edge = ((ang + 15) % 30 + 30) % 30;
+                    boolean joint = edge < 7.0 / Math.max(d, 1) * 8 && edge < 6.0 && d > 5.2;
+                    boolean lit = dx + dy < -1;
+                    int step = lit ? 5 : (dx > 1.5 ? 3 : 4);
+                    if (Math.abs(sector - 3) == 0 && d < 7.0) step = 5;
+                    if (joint) step = 1;
+                    else if (d > 7.0 && step > 3) step--;
+                    px(im, x, y, fb(step));
+                }
+            // Door opening, 8 wide, round-headed: cells by row range.
+            int[][] span = {{6, 9}, {5, 10}, {4, 11}, {4, 11}};
+            int top = 3, bottom = 14;
+            boolean[][] open = new boolean[16][16];
+            for (int y = top; y <= bottom; y++) {
+                int a = y - top < 3 ? span[y - top][0] : 4, b = y - top < 3 ? span[y - top][1] : 11;
+                for (int x = a; x <= b; x++) open[y][x] = true;
+            }
+            // Frame ring (dark iron) around the opening, lit top-left.
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    if (open[y][x]) continue;
+                    boolean near = false;
+                    for (int j = -1; j <= 1; j++)
+                        for (int i = -1; i <= 1; i++) {
+                            int nx = x + i, ny = y + j;
+                            if (nx >= 0 && ny >= 0 && nx < 16 && ny < 16 && open[ny][nx]) near = true;
+                        }
+                    if (!near) continue;
+                    boolean up = y < 9 && (x + y < 12 || x - y > 3 ? true : false);
+                    int s = (x <= 3 || y <= 3 && x < 8) ? 4 : 2;
+                    if (y == bottom + 1) s = 2;
+                    if ((x == 2 && y == 6) || (x == 13 && y == 6) || (x == 2 && y == 13) || (x == 13 && y == 13)) s = 5;
+                    px(im, x, y, pi(s));
+                }
+            // Door leaf inside a 1 px gap.
+            for (int y = top; y <= bottom; y++)
+                for (int x = 3; x <= 12; x++) {
+                    if (!open[y][x]) continue;
+                    boolean leaf = isLeaf(open, x, y);
+                    int c;
+                    if (!leaf) c = active ? Hp.band(y > 8 ? 0.85 : 0.65) : 0x16110f;
+                    else {
+                        int s = 3;
+                        if (x == 5 || y == top + 1 && x < 8 || y == top + 1 && x == 5) s = 4;
+                        if (x == 10 || y == bottom - 1) s = 2;
+                        c = pi(s);
+                    }
+                    px(im, x, y, c);
+                }
+            // Vent slits and handle.
+            for (int x = 6; x <= 9; x++) {
+                px(im, x, 7, active ? Hp.band(1.0) : pi(1));
+                px(im, x, 11, active ? Hp.band(0.9) : pi(1));
+            }
+            for (int x = 6; x <= 9; x++) { px(im, x, 6, pi(4)); px(im, x, 10, pi(4)); }
+            px(im, 9, 9, st(5)); px(im, 9, 10, st(3));
+            px(im, 6, 5, st(4)); px(im, 6, 13, st(4));
+            if (active) {
+                // Warm bleed on the frame pixels touching the gaps.
+                for (int y = top - 1; y <= bottom + 1; y++)
+                    for (int x = 2; x <= 13; x++) {
+                        if (y < 0 || y > 15 || open[y][x] || (y >= 0 && y <= 15 && !isFrame(im, x, y))) continue;
+                        Hp.glow(im, x, y, 0.35, 0.7);
+                    }
+            }
+            return im;
+        }
+
+        static boolean isLeaf(boolean[][] open, int x, int y) {
+            // Leaf = open cell whose 4 neighbours are all open (gap is the 1 px ring inside the frame).
+            return open[y][x] && open[y - 1][x] && open[y + 1 < 16 ? y + 1 : y][x] && open[y][x - 1] && open[y][x + 1]
+                    && y + 1 <= 14 + 0 && true;
+        }
+
+        static boolean isFrame(BufferedImage im, int x, int y) {
+            int c = rgb(im, x, y);
+            for (int s = 1; s <= 5; s++) if (c == pi(s)) return true;
+            return false;
+        }
+
+        static BufferedImage side() {
+            BufferedImage im = img();
+            Random r = new Random(9101);
+            // Bricks in three bands separated by a riveted iron hoop; edge columns step down to read as curved.
+            int[][] joints = {{3, 9, 14}, {6, 12, 1}, {2, 8, 13}};
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int row = y < 7 ? y / 3 : y > 8 ? (y - 9) / 3 : -1; // 0,1 above ; courses
+                    int step;
+                    int a = y < 7 ? y % 3 : (y - 9) % 3;
+                    if (y < 7 || y > 8) {
+                        int c = y < 7 ? y / 3 : 2 + (y - 9) / 3;
+                        int[] j = joints[c % 3];
+                        boolean joint = a == 2 || x == j[0] || x == j[1] || x == j[2];
+                        if (y < 7 && y % 3 == 2 && y == 6) joint = false;
+                        step = joint ? 1 : (a == 0 ? 5 : 4);
+                        if (step != 1) {
+                            if (x == j[0] - 1 || x == j[1] - 1 || x == j[2] - 1) step = Math.max(3, step - 1);
+                            if (x <= 1) step = Math.min(5, step + 1);
+                            if (x >= 14) step = Math.max(2, step - 1);
+                            if (r.nextInt(7) == 0) step = Math.max(2, step - 1);
+                        } else if (y == 6 || y == 15 || y == 0) step = 1;
+                    } else {
+                        // Iron hoop, 2 px tall.
+                        int s = y == 7 ? 4 : 2;
+                        if (x == 0) s = y == 7 ? 5 : 3;
+                        if (x == 15) s = 1;
+                        px(im, x, y, pi(s));
+                        continue;
+                    }
+                    px(im, x, y, fb(step));
+                }
+            for (int x : new int[] {3, 11}) { px(im, x, 7, st(5)); px(im, x + 1, 8, pi(1)); }
+            return im;
+        }
+
+        static BufferedImage top() {
+            BufferedImage im = img();
+            double c = 7.5;
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    double dx = x - c, dy = y - c, d = Math.hypot(dx, dy);
+                    double ang = Math.toDegrees(Math.atan2(dy, dx));
+                    int step;
+                    if (d <= 2.0) step = -1;
+                    else if (d <= 3.4) step = -2;
+                    else {
+                        boolean ring = (d > 5.5 && d <= 6.4) || (d > 8.2 && d <= 9.0);
+                        int seg = d < 5.5 ? 6 : d < 8.2 ? 10 : 14;
+                        double w = 360.0 / seg;
+                        double off = d > 5.5 && d < 8.2 ? w / 2 : 0;
+                        double e = (((ang + off) % w) + w) % w;
+                        boolean joint = ring || e * Math.PI / 180 * d < 1.0 && d < 8.2;
+                        if (d > 8.2 && !ring) joint = (((ang) % 22.5) + 22.5) % 22.5 * Math.PI / 180 * d < 1.0;
+                        step = joint ? 1 : (dx + dy < -2 ? 5 : dx + dy > 5 ? 3 : 4);
+                    }
+                    int col;
+                    if (step == -1) col = x + y < 14 ? 0x0e0c0c : 0x1a1514;
+                    else if (step == -2) col = dx + dy < 0 ? pi(5) : dx + dy < 2.5 ? pi(4) : pi(2);
+                    else col = fb(step);
+                    if (step == -1 && (x == 6 && y == 6 || x == 7 && y == 6 || x == 6 && y == 7)) col = pi(1);
+                    px(im, x, y, col);
+                }
+            return im;
+        }
+
+        // ---- insulated lines: slag wool wrap
+        static int wc(int s) { return mix(Bf.SLAG_TINT.get(s), Bf.SLAG_SPEC.get(s), 0.4); }
+
+        /** Tile of wool steps (2..5): clustered fibres, a lit tuft or two, wrapped so edges tile. */
+        static int[][] wool(long seed) {
+            Random r = new Random(seed);
+            int[][] f = new int[16][16];
+            for (int[] row : f) java.util.Arrays.fill(row, 3);
+            for (int n = 0; n < 16; n++) {
+                int x = r.nextInt(16), y = r.nextInt(16), w = 2 + r.nextInt(2), dir = r.nextInt(3) - 1;
+                int tone = r.nextInt(5) < 3 ? 1 : -1;
+                for (int i = 0; i < w; i++) {
+                    f[Math.floorMod(y + (dir * i) / 2, 16)][Math.floorMod(x + i, 16)] += tone;
+                    if (i == 0 || i == w - 1) f[Math.floorMod(y + 1, 16)][Math.floorMod(x + i, 16)] += tone > 0 ? 0 : 0;
+                }
+            }
+            for (int[] row : f) for (int i = 0; i < 16; i++) row[i] = Math.max(2, Math.min(4, row[i]));
+            return f;
+        }
+
+        static int ws(int[][] f, int x, int y, int shade) {
+            return Math.max(2, Math.min(5, f[Math.floorMod(y, 16)][Math.floorMod(x, 16)] + shade));
+        }
+
+        static BufferedImage insulated(boolean duct) {
+            BufferedImage im = img();
+            int[][] f = wool(duct ? 7702 : 7701);
+            int[] sh = {1, 1, 0, 0, 0, -1, -1};
+            int[] wire = {5, 4, 3, 3, 2, 2, 1};
+            // Wrapped tube side everywhere (also fills the unused pixels): shaded across 7 rows, wire ties x=1 and x=3... one tie at x=3.
+            for (int y = 0; y < 16; y++)
+                for (int x = 0; x < 16; x++) {
+                    int a = y % 7;
+                    if (x % 4 == 3 && !(x >= 4 && x <= 11 && y >= 4 && y <= 11)) px(im, x, y, st(wire[a] == 1 ? 1 : Math.min(5, wire[a])));
+                    else px(im, x, y, wc(ws(f, x, y, sh[a])));
+                }
+            // Hub: wrapped joint, two ties, an exposed band of the pipe material.
+            for (int y = 4; y <= 11; y++)
+                for (int x = 4; x <= 11; x++) {
+                    boolean top = y == 4, left = x == 4, bot = y == 11, right = x == 11;
+                    int sh2 = (top || left) ? 1 : (bot || right) ? -1 : (x + y < 14 ? 0 : -0);
+                    int s = ws(f, x + 3, y + 5, sh2);
+                    if (top || left) s = Math.max(s, 4);
+                    if (bot || right) s = Math.min(s, 3);
+                    px(im, x, y, wc(s));
+                }
+            for (int y = 5; y <= 10; y++) { // wire ties
+                px(im, 5, y, st(y == 5 ? 5 : 3)); px(im, 10, y, st(y == 5 ? 4 : 2));
+            }
+            // Exposed band between the ties.
+            for (int y = 7; y <= 8; y++)
+                for (int x = 6; x <= 9; x++) {
+                    if (duct) px(im, x, y, fb(y == 7 ? (x == 6 ? 5 : 4) : (x == 9 ? 2 : 3)));
+                    else px(im, x, y, cu(y == 7 ? (x == 6 ? 5 : 4) : (x == 9 ? 2 : 3)));
+                }
+            if (duct) px(im, 8, 7, fb(1));
+            else px(im, 6, 7, COPPER.spec());
+            px(im, 7, 5, wc(5)); px(im, 6, 10, wc(2));
+            // End: wool ring, then pipe material ring, then bore.
+            for (int y = 9; y <= 15; y++)
+                for (int x = 0; x <= 6; x++) {
+                    int dx = Math.min(x, 6 - x), dy = Math.min(y - 9, 15 - y), d = Math.min(dx, dy);
+                    boolean lit = x + (y - 9) < 6;
+                    int c;
+                    if (d == 0) c = wc(ws(f, x + 9, y, lit ? 1 : -1));
+                    else if (d == 1) c = duct ? (lit ? fb(4) : fb(2)) : cu(lit ? 4 : 3);
+                    else c = (y == 11 || x == 2) ? (duct ? fb(1) : cu(1)) : Hp.BORE;
+                    px(im, x, y, c);
+                }
+            if (duct) { px(im, 1, 10, st(5)); px(im, 5, 14, st(2)); }
+            else px(im, 1, 10, COPPER.spec());
+            px(im, 3, 9, wc(4)); // wire tie crosses the ring
+            px(im, 3, 15, st(2));
+            return im;
+        }
+
+        static BufferedImage wool() {
+            BufferedImage im = img();
+            Random r = new Random(7703);
+            // Overlapping puffs: centre x, y, radius.
+            double[][] puffs = {{8, 9.5, 4.4}, {5, 8, 3.2}, {11, 8.5, 3.4}, {7.5, 6, 3.3}, {10, 11.5, 2.8}, {5, 11, 2.6}};
+            for (int y = 1; y < 15; y++)
+                for (int x = 1; x < 15; x++) {
+                    double best = -1;
+                    for (double[] p : puffs) {
+                        double d = Math.hypot(x - p[0], (y - p[1]) * 1.1) / p[2];
+                        if (d < 1 && (1 - d) > best) best = 1 - d;
+                    }
+                    if (best < 0) continue;
+                    int s = 3;
+                    double lx = x - 6.5, ly = y - 6.5;
+                    if (lx + ly < 0) s++;
+                    if (lx + ly < -5) s++;
+                    if (lx + ly > 6) s--;
+                    if (best < 0.18 && lx + ly > 0) s--;
+                    if (r.nextInt(5) == 0) s += r.nextBoolean() ? 1 : -1;
+                    px(im, x, y, wc(Math.max(2, Math.min(5, s))));
+                }
+            // Fibre wisps: short bright strands on the lit side, dark creases between puffs.
+            int[][] wisps = {{6, 3}, {7, 2}, {10, 4}, {3, 7}, {12, 10}, {13, 9}};
+            for (int[] w : wisps) if (!opaque(im, w[0], w[1])) px(im, w[0], w[1], wc(w[0] + w[1] < 11 ? 4 : 3));
+            int[][] creases = {{8, 7}, {9, 7}, {6, 10}, {7, 11}, {10, 9}, {11, 9}};
+            for (int[] c : creases) if (opaque(im, c[0], c[1])) px(im, c[0], c[1], wc(2));
+            int[][] bright = {{5, 6}, {6, 5}, {7, 4}};
+            for (int[] c : bright) if (opaque(im, c[0], c[1])) px(im, c[0], c[1], wc(5));
+            return outline(im);
+        }
+
+        static BufferedImage gui() {
+            BufferedImage im = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            panel(im, 176, 176);
+            for (int x : new int[] {8, 26, 44, 62}) for (int y : new int[] {20, 38}) slot(im, x, y);
+            for (int x : new int[] {98, 116, 134, 152}) for (int y : new int[] {20, 38}) slot(im, x, y);
+            for (int y = 0; y < 14; y++)
+                for (int x = 0; x < 14; x++)
+                    if (FLAME_SILHOUETTE[y].charAt(x) == '#') {
+                        im.setRGB(81 + x, 28 + y, 0xff000000 | SLOT_FILL);
+                        int band = y < 4 ? 4 : y < 8 ? 3 : y < 11 ? 2 : 1;
+                        im.setRGB(176 + x, y, 0xff000000 | HEAT_BAND[band]);
+                    }
+            for (int row = 0; row < 3; row++)
+                for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 94 + row * 18);
+            for (int col = 0; col < 9; col++) slot(im, 8 + col * 18, 152);
+            return im;
+        }
+
+        static void kiln() throws IOException {
+            save("block/kiln_front", front(false));
+            save("block/kiln_front_active", front(true));
+            save("block/kiln_side", side());
+            save("block/kiln_top", top());
+            save("block/insulated_copper_heat_pipe", insulated(false));
+            save("block/insulated_refractory_heat_duct", insulated(true));
+            save("item/slag_wool", wool());
+            saveRaw("gui/kiln", gui());
+        }
+    }
+
     static void converter() throws IOException {
         save("block/converter_controller_front", Cv.front(-1));
         saveAnimated("block/converter_controller_front_blowing", Cv.blowing(), 2);
@@ -7187,6 +7493,7 @@ public final class TextureGen {
         blastFurnace();
         converter();
         heatPipes();
+        Kn.kiln();
     }
 
     static void steam() throws IOException {

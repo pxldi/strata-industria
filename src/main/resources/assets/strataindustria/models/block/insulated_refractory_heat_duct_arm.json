@@ -1,0 +1,6 @@
+{
+  "parent": "strataindustria:block/heat_pipe_arm",
+  "textures": {
+    "pipe": "strataindustria:block/insulated_refractory_heat_duct"
+  }
+}

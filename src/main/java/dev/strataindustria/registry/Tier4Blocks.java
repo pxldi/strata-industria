@@ -171,8 +171,19 @@ public final class Tier4Blocks {
     public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> REFRACTORY_HEAT_DUCT = ModBlocks.BLOCKS.registerBlock(
             "refractory_heat_duct", p -> new dev.strataindustria.heat.HeatPipeBlock(1800, 5.0f, 0.005f, p),
             p -> pipe(p, MapColor.COLOR_ORANGE, FIRE_BRICK_SOUND).lightLevel(Tier4Blocks::heatGlow));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> INSULATED_COPPER_HEAT_PIPE = ModBlocks.BLOCKS.registerBlock(
+            "insulated_copper_heat_pipe", p -> new dev.strataindustria.heat.HeatPipeBlock(1000, 5.0f, 0.005f, p),
+            p -> pipe(p, MapColor.COLOR_LIGHT_GRAY, SoundType.WOOL));
+    public static final DeferredBlock<dev.strataindustria.heat.HeatPipeBlock> INSULATED_REFRACTORY_HEAT_DUCT = ModBlocks.BLOCKS.registerBlock(
+            "insulated_refractory_heat_duct", p -> new dev.strataindustria.heat.HeatPipeBlock(1800, 2.5f, 0.0025f, p),
+            p -> pipe(p, MapColor.COLOR_LIGHT_GRAY, SoundType.WOOL));
     public static final DeferredBlock<dev.strataindustria.heat.HeatInletBlock> HEAT_INLET = ModBlocks.BLOCKS.registerBlock("heat_inlet",
             dev.strataindustria.heat.HeatInletBlock::new, Tier4Blocks::refractory);
+
+    // Spec 8.6: the kiln.
+    public static final DeferredBlock<dev.strataindustria.ceramics.KilnBlock> KILN = ModBlocks.BLOCKS.registerBlock("kiln",
+            dev.strataindustria.ceramics.KilnBlock::new,
+            p -> refractory(p).lightLevel(state -> state.getValue(dev.strataindustria.ceramics.KilnBlock.LIT) ? 10 : 0));
 
     private static int heatGlow(BlockState state) {
         return state.getValue(dev.strataindustria.heat.HeatPipeBlock.HOT) ? 6 : 0;
