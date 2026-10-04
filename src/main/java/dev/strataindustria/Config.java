@@ -75,6 +75,9 @@ public final class Config {
     public static final ModConfigSpec.BooleanValue REMOVE_BLAST_FURNACE = BUILDER
             .comment("Remove the vanilla blast furnace recipe.")
             .define("removeBlastFurnace", true);
+    public static final ModConfigSpec.BooleanValue HIDES_INSTEAD_OF_LEATHER = BUILDER
+            .comment("Animals drop raw hides instead of leather; leather is tanned in a soaking barrel.")
+            .define("hidesInsteadOfLeather", true);
     public static final ModConfigSpec.BooleanValue REPLACE_IRON_GEAR = BUILDER
             .comment("Replace the recipes of vanilla iron tools and armour with smithing and plates.")
             .define("replaceIronGear", true);

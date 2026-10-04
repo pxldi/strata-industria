@@ -179,6 +179,20 @@ public final class ModBlocks {
             dev.strataindustria.machine.CoreSamplerBlock::new, p -> kineticWood(p).strength(2.5f, 4.0f).noOcclusion());
     public static final DeferredBlock<dev.strataindustria.washing.SluiceBlock> SLUICE = BLOCKS.registerBlock("sluice",
             dev.strataindustria.washing.SluiceBlock::new, p -> kineticWood(p).noOcclusion());
+    // Tier 3 spec 7.2 and 7.3: wind power and transmission.
+    public static final DeferredBlock<dev.strataindustria.power.StepUpGearboxBlock> STEP_UP_GEARBOX = BLOCKS.registerBlock("step_up_gearbox",
+            dev.strataindustria.power.StepUpGearboxBlock::new, ModBlocks::kineticWood);
+    public static final DeferredBlock<dev.strataindustria.power.PulleyBlock> PULLEY = BLOCKS.registerBlock("pulley",
+            dev.strataindustria.power.PulleyBlock::new, p -> kineticWood(p).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.power.WindmillBearingBlock> WINDMILL_BEARING = BLOCKS.registerBlock("windmill_bearing",
+            dev.strataindustria.power.WindmillBearingBlock::new, p -> kineticWood(p).strength(2.5f, 4.0f).noOcclusion());
+    public static final DeferredBlock<dev.strataindustria.power.WindmillSailBlock> WINDMILL_SAIL = BLOCKS.registerBlock("windmill_sail",
+            dev.strataindustria.power.WindmillSailBlock::new, p -> p.mapColor(MapColor.WOOL).strength(0.8f).sound(SoundType.WOOL)
+                    .noOcclusion().ignitedByLava());
+    // Tier 3 spec 12.1: tanning.
+    public static final DeferredBlock<dev.strataindustria.tanning.SoakingBarrelBlock> SOAKING_BARREL = BLOCKS.registerBlock("soaking_barrel",
+            dev.strataindustria.tanning.SoakingBarrelBlock::new, p -> p.mapColor(MapColor.WOOD).strength(2.0f).sound(SoundType.WOOD)
+                    .noOcclusion().ignitedByLava());
     public static final DeferredBlock<TripHammerBlock> TRIP_HAMMER = BLOCKS.registerBlock("trip_hammer", TripHammerBlock::new,
             p -> kineticWood(p).strength(3.0f, 4.0f).noOcclusion());
 

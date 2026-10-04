@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "strataindustria:block/windmill_bearing",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "strataindustria:block/windmill_bearing"
+    },
+    "facing=south": {
+      "model": "strataindustria:block/windmill_bearing",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "strataindustria:block/windmill_bearing",
+      "y": 270
+    }
+  }
+}

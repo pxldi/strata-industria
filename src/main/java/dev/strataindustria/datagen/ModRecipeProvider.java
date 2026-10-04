@@ -1,5 +1,10 @@
 package dev.strataindustria.datagen;
 
+import java.util.Optional;
+import net.minecraft.world.level.material.Fluids;
+import dev.strataindustria.registry.ModFluids;
+import dev.strataindustria.tanning.FluidAmount;
+import dev.strataindustria.tanning.BarrelRecipe;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.ceramics.MoldType;
 import dev.strataindustria.crafting.ConfigCondition;
@@ -509,6 +514,44 @@ final class ModRecipeProvider extends RecipeProvider {
                 .unlockedBy("has_wooden_gear", has(gear))
                 .save(output, key("core_sampler"));
         washing();
+        // Spec 7.2 and 7.3: wind, gearing and belts.
+        shapeless(RecipeCategory.REDSTONE, ModItems.STEP_UP_GEARBOX.get())
+                .requires(ModItems.WOODEN_GEARBOX.get())
+                .requires(gear, 2)
+                .requires(rod)
+                .unlockedBy("has_wooden_gearbox", has(ModItems.WOODEN_GEARBOX.get()))
+                .save(output, key("step_up_gearbox"));
+        shaped(RecipeCategory.REDSTONE, ModItems.PULLEY.get())
+                .pattern(" P ")
+                .pattern("PAP")
+                .pattern(" P ")
+                .define('P', ItemTags.PLANKS)
+                .define('A', axle)
+                .unlockedBy("has_wooden_axle", has(axle))
+                .save(output, key("pulley"));
+        shapeless(RecipeCategory.REDSTONE, ModItems.LEATHER_BELT.get())
+                .requires(Items.LEATHER, 3)
+                .requires(ModItems.TWINE.get())
+                .unlockedBy("has_pulley", has(ModItems.PULLEY.get()))
+                .save(output, key("leather_belt"));
+        Item ironPlate = ModItems.PLATES.get(Metal.WROUGHT_IRON).get();
+        shaped(RecipeCategory.REDSTONE, ModItems.WINDMILL_BEARING.get())
+                .pattern("PIP")
+                .pattern(" A ")
+                .pattern("PIP")
+                .define('P', ItemTags.PLANKS)
+                .define('I', ironPlate)
+                .define('A', axle)
+                .unlockedBy("has_wrought_iron_plate", has(ironPlate))
+                .save(output, key("windmill_bearing"));
+        shapeless(RecipeCategory.REDSTONE, ModItems.WINDMILL_SAIL.get(), 2)
+                .requires(ItemTags.PLANKS)
+                .requires(ItemTags.PLANKS)
+                .requires(ModItems.FIBRE_CLOTH.get())
+                .unlockedBy("has_windmill_bearing", has(ModItems.WINDMILL_BEARING.get()))
+                .save(output, key("windmill_sail"));
+
+        tanning();
 
         Item bark = ModItems.BARK.get();
         saw("oak_planks", ItemTags.OAK_LOGS, Items.OAK_PLANKS, bark);
@@ -652,6 +695,38 @@ final class ModRecipeProvider extends RecipeProvider {
                 new ItemStackTemplate(Items.SAND), List.of(new WashingRecipe.Chance(new ItemStackTemplate(gold), 0.25f),
                 new WashingRecipe.Chance(new ItemStackTemplate(magnetite), 0.25f), new WashingRecipe.Chance(new ItemStackTemplate(cassiterite), 0.05f)),
                 WashingRecipe.DEFAULT_TICKS), null);
+    }
+
+    /** Tier 3 spec 12.1: the soaking barrel, its four soaks, and scraping limed hides with a knife. */
+    private void tanning() {
+        shaped(RecipeCategory.MISC, ModItems.SOAKING_BARREL.get())
+                .pattern("P P")
+                .pattern("P P")
+                .pattern("PPP")
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_raw_hide", has(ModItems.RAW_HIDE.get()))
+                .save(output, key("soaking_barrel"));
+        FluidAmount water = new FluidAmount(Fluids.WATER, 1000);
+        soak("lye", Optional.of(Ingredient.of(ModItems.ASH.get())), 2, water,
+                Optional.empty(), Optional.of(new FluidAmount(ModFluids.LYE.get(), 1000)), 600);
+        soak("tannin", Optional.of(Ingredient.of(ModItems.BARK.get())), 4, water,
+                Optional.empty(), Optional.of(new FluidAmount(ModFluids.TANNIN.get(), 1000)), 2400);
+        soak("limed_hide", Optional.of(Ingredient.of(ModItems.RAW_HIDE.get())), 1, new FluidAmount(ModFluids.LYE.get(), 250),
+                Optional.of(new ItemStackTemplate(ModItems.LIMED_HIDE.get())), Optional.empty(), 4000);
+        soak("leather", Optional.of(Ingredient.of(ModItems.SCRAPED_HIDE.get())), 1, new FluidAmount(ModFluids.TANNIN.get(), 250),
+                Optional.of(new ItemStackTemplate(Items.LEATHER, 2)), Optional.empty(), 8000);
+        Ingredient knife = tag(ModTags.Items.KNIVES);
+        var scraping = new ToolShapelessRecipe(new Recipe.CommonInfo(true),
+                new CraftingRecipe.CraftingBookInfo(CraftingBookCategory.MISC, ""),
+                new ItemStackTemplate(ModItems.SCRAPED_HIDE.get()),
+                List.of(Ingredient.of(ModItems.LIMED_HIDE.get()), knife),
+                knife);
+        save(key("scraped_hide"), scraping, RecipeCategory.MISC, "has_limed_hide", has(ModItems.LIMED_HIDE.get()));
+    }
+
+    private void soak(String path, Optional<Ingredient> input, int count, FluidAmount fluid, Optional<ItemStackTemplate> result,
+                      Optional<FluidAmount> fluidResult, int ticks) {
+        output.accept(key("barrel/" + path), new BarrelRecipe(input, count, Optional.of(fluid), result, fluidResult, ticks), null);
     }
 
     private void grind(String path, Ingredient input, Item result, int count) {

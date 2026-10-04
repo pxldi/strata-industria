@@ -143,6 +143,21 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.25f)));
         add(ModSounds.CORE_SAMPLER_DONE, definition().subtitle(subtitle("core_sampler.done"))
                 .with(sound("minecraft:block.note_block.bell", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.4f)));
+        add(ModSounds.WINDMILL_TURN, definition().subtitle(subtitle("windmill.turn"))
+                .with(sound("minecraft:block.wood.step", SoundDefinition.SoundType.EVENT).pitch(0.5f).volume(0.6f))
+                .with(sound("minecraft:block.wool.step", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.4f)));
+        add(ModSounds.BELT_ATTACH, definition().subtitle(subtitle("belt.attach"))
+                .with(sound("minecraft:entity.leash_knot.place", SoundDefinition.SoundType.EVENT)));
+        add(ModSounds.SOAKING_BARREL_SEAL, definition().subtitle(subtitle("soaking_barrel.seal"))
+                .with(sound("minecraft:block.barrel.close", SoundDefinition.SoundType.EVENT).pitch(0.85f)));
+        add(ModSounds.SOAKING_BARREL_OPEN, definition().subtitle(subtitle("soaking_barrel.open"))
+                .with(sound("minecraft:block.barrel.open", SoundDefinition.SoundType.EVENT).pitch(0.85f)));
+        add(ModSounds.SOAKING_BARREL_FILL, definition().subtitle(subtitle("soaking_barrel.fill"))
+                .with(sound("minecraft:item.bucket.empty", SoundDefinition.SoundType.EVENT).pitch(0.9f)));
+        add(ModSounds.SOAKING_BARREL_DONE, definition().subtitle(subtitle("soaking_barrel.done"))
+                .with(sound("minecraft:block.bubble_column.upwards_inside", SoundDefinition.SoundType.EVENT).volume(0.6f).pitch(0.8f)));
+        add(ModSounds.HIDE_SCRAPE, definition().subtitle(subtitle("hide.scrape"))
+                .with(sound("minecraft:entity.sheep.shear", SoundDefinition.SoundType.EVENT).pitch(1.2f)));
         add(ModSounds.SLUICE_WASH, definition().subtitle(subtitle("sluice.wash"))
                 .with(sound("minecraft:block.water.ambient", SoundDefinition.SoundType.EVENT).volume(0.6f)));
         add(ModSounds.WASHING_PAN_SWIRL, definition().subtitle(subtitle("washing_pan.swirl"))

@@ -81,5 +81,11 @@ public final class ModDataComponents {
                     .persistent(dev.strataindustria.washing.PanContents.CODEC)
                     .networkSynchronized(dev.strataindustria.washing.PanContents.STREAM_CODEC));
 
+    /** Tier 3 spec 7.3: the pulley a leather belt was first used on. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<net.minecraft.core.BlockPos>> BELT_START =
+            COMPONENTS.registerComponentType("belt_start", b -> b
+                    .persistent(net.minecraft.core.BlockPos.CODEC)
+                    .networkSynchronized(net.minecraft.core.BlockPos.STREAM_CODEC));
+
     private ModDataComponents() {}
 }

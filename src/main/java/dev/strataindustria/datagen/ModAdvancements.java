@@ -142,6 +142,8 @@ final class ModAdvancements extends AdvancementSubProvider {
                 JournalTrigger.TriggerInstance.of(Journal.TRIP_HAMMER));
         goal(rotation, "t3/core_sample", ModItems.CORE_SAMPLE.get(), has(ModItems.CORE_SAMPLE.get()));
         goal(refine, "t3/wash", ModItems.WASHING_PAN.get(), JournalTrigger.TriggerInstance.of(Journal.WASH));
+        AdvancementHolder hide = goal(waterPower, "t3/hide", ModItems.RAW_HIDE.get(), has(ModItems.RAW_HIDE.get()));
+        goal(hide, "t3/leather", Items.LEATHER, AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.LEATHER));
         goal(weld, "t3/iron_anvil", ModItems.WROUGHT_IRON_ANVIL.get(), AdvancementType.GOAL,
                 ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, ModBlocks.WROUGHT_IRON_ANVIL.get()));
     }

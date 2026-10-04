@@ -22,7 +22,9 @@ public final class KineticState {
         /** Part of the network is in an unloaded chunk. */
         INCOMPLETE,
         /** The network is larger than {@code kinetics.maxNetworkSize}. */
-        TOO_LARGE;
+        TOO_LARGE,
+        /** Gearing would turn a wooden part faster than it can take. */
+        OVERSPEED;
 
         public String key() {
             return StrataIndustria.MOD_ID + ".kinetic." + name().toLowerCase(java.util.Locale.ROOT);

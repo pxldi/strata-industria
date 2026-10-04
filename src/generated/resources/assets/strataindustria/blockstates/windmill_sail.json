@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "attached=false,axis=x": {
+      "model": "strataindustria:block/windmill_sail",
+      "y": 90
+    },
+    "attached=false,axis=z": {
+      "model": "strataindustria:block/windmill_sail"
+    },
+    "attached=true,axis=x": {
+      "model": "strataindustria:block/windmill_sail",
+      "y": 90
+    },
+    "attached=true,axis=z": {
+      "model": "strataindustria:block/windmill_sail"
+    }
+  }
+}

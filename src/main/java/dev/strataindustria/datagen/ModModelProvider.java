@@ -127,6 +127,7 @@ final class ModModelProvider extends ModelProvider {
         metals(itemModels);
         ironAge(blockModels, itemModels);
         kinetics(blockModels, itemModels);
+        windAndBelts(blockModels, itemModels);
 
         // Spec 9.1: stone anvils are the raw rock with a dressed face; the bronze anvil turns like a vanilla anvil.
         for (var entry : ModBlocks.STONE_ANVILS.entrySet()) {
@@ -437,6 +438,59 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(item, ItemModelUtils.conditional(HeatGlow.Glowing.INSTANCE,
                 ItemModelUtils.tintedModel(glowing, ItemModelUtils.constantTint(-1), HeatGlow.Tint.INSTANCE),
                 ItemModelUtils.plainModel(cold)));
+    }
+
+    /**
+     * Tier 3 spec 7.2 to 7.4. The step-up gearbox and the windmill bearing face north in their models
+     * and the sail lies across the z axis; pulleys and their belts are drawn by the pulley renderer.
+     */
+    private static void windAndBelts(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        var gearbox = BlockModelGenerators.plainVariant(StrataIndustria.id("block/step_up_gearbox"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> stepUp =
+                PropertyDispatch.initial(dev.strataindustria.power.StepUpGearboxBlock.FACING);
+        stepUp.select(net.minecraft.core.Direction.NORTH, gearbox);
+        stepUp.select(net.minecraft.core.Direction.EAST, gearbox.with(BlockModelGenerators.Y_ROT_90));
+        stepUp.select(net.minecraft.core.Direction.SOUTH, gearbox.with(BlockModelGenerators.Y_ROT_180));
+        stepUp.select(net.minecraft.core.Direction.WEST, gearbox.with(BlockModelGenerators.Y_ROT_270));
+        stepUp.select(net.minecraft.core.Direction.UP, gearbox.with(BlockModelGenerators.X_ROT_270));
+        stepUp.select(net.minecraft.core.Direction.DOWN, gearbox.with(BlockModelGenerators.X_ROT_90));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.STEP_UP_GEARBOX.get()).with(stepUp));
+        itemModels.itemModelOutput.accept(ModItems.STEP_UP_GEARBOX.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/step_up_gearbox")));
+
+        var bearing = BlockModelGenerators.plainVariant(StrataIndustria.id("block/windmill_bearing"));
+        PropertyDispatch.C1<MultiVariant, net.minecraft.core.Direction> bearings =
+                PropertyDispatch.initial(dev.strataindustria.power.WindmillBearingBlock.FACING);
+        bearings.select(net.minecraft.core.Direction.NORTH, bearing);
+        bearings.select(net.minecraft.core.Direction.EAST, bearing.with(BlockModelGenerators.Y_ROT_90));
+        bearings.select(net.minecraft.core.Direction.SOUTH, bearing.with(BlockModelGenerators.Y_ROT_180));
+        bearings.select(net.minecraft.core.Direction.WEST, bearing.with(BlockModelGenerators.Y_ROT_270));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.WINDMILL_BEARING.get()).with(bearings));
+        itemModels.itemModelOutput.accept(ModItems.WINDMILL_BEARING.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/windmill_bearing")));
+
+        var sail = BlockModelGenerators.plainVariant(StrataIndustria.id("block/windmill_sail"));
+        PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction.Axis, Boolean> sails = PropertyDispatch.initial(
+                dev.strataindustria.power.WindmillSailBlock.AXIS, dev.strataindustria.power.WindmillSailBlock.ATTACHED);
+        for (boolean attached : new boolean[] {false, true}) {
+            sails.select(net.minecraft.core.Direction.Axis.Z, attached, sail);
+            sails.select(net.minecraft.core.Direction.Axis.X, attached, sail.with(BlockModelGenerators.Y_ROT_90));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.WINDMILL_SAIL.get()).with(sails));
+        itemModels.itemModelOutput.accept(ModItems.WINDMILL_SAIL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/windmill_sail")));
+
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.PULLEY.get(),
+                BlockModelGenerators.plainVariant(StrataIndustria.id("block/pulley"))));
+        itemModels.itemModelOutput.accept(ModItems.PULLEY.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/rotor/pulley")));
+        flatItem(itemModels, ModItems.LEATHER_BELT.get());
+
+        // Spec 12.1: the soaking barrel shows its lid when sealed; the fluid is drawn by its renderer.
+        PropertyDispatch.C1<MultiVariant, Boolean> barrel = PropertyDispatch.initial(dev.strataindustria.tanning.SoakingBarrelBlock.SEALED);
+        barrel.select(false, BlockModelGenerators.plainVariant(StrataIndustria.id("block/soaking_barrel")));
+        barrel.select(true, BlockModelGenerators.plainVariant(StrataIndustria.id("block/soaking_barrel_sealed")));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(ModBlocks.SOAKING_BARREL.get()).with(barrel));
+        itemModels.itemModelOutput.accept(ModItems.SOAKING_BARREL.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/soaking_barrel_sealed")));
+        flatItem(itemModels, ModItems.RAW_HIDE.get());
+        flatItem(itemModels, ModItems.LIMED_HIDE.get());
+        flatItem(itemModels, ModItems.SCRAPED_HIDE.get());
     }
 
     private static void flatItem(ItemModelGenerators itemModels, Item item) {

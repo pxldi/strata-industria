@@ -60,6 +60,7 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.TRIP_HAMMER.get(), TripHammerScreen::new);
         event.register(ModMenus.CORE_SAMPLER.get(), dev.strataindustria.client.screen.CoreSamplerScreen::new);
         event.register(ModMenus.SLUICE.get(), dev.strataindustria.client.screen.SluiceScreen::new);
+        event.register(ModMenus.SOAKING_BARREL.get(), dev.strataindustria.client.screen.SoakingBarrelScreen::new);
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -78,6 +79,9 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(ModBlockEntities.MILLSTONE.get(), context -> new RotorRenderer<>(context, "millstone_runner",
                 state -> Direction.UP, 0));
         event.registerBlockEntityRenderer(ModBlockEntities.TRIP_HAMMER.get(), TripHammerRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.WINDMILL_BEARING.get(), dev.strataindustria.client.render.WindmillRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.SOAKING_BARREL.get(), dev.strataindustria.client.render.SoakingBarrelRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.PULLEY.get(), dev.strataindustria.client.render.PulleyRenderer::new);
     }
 
     private static void registerTints(RegisterColorHandlersEvent.ItemTintSources event) {

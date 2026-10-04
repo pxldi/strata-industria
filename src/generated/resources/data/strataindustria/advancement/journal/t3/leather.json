@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t3/hide",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "leather"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.leather.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "minecraft:leather"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.leather"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

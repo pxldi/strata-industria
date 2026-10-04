@@ -108,6 +108,18 @@ public final class ModItems {
     /** Tier 3 spec 8.5: a drilled core; use it to read the ground below the sampler. */
     public static final DeferredItem<dev.strataindustria.prospecting.CoreSampleItem> CORE_SAMPLE = ITEMS.registerItem("core_sample",
             dev.strataindustria.prospecting.CoreSampleItem::new, p -> p.stacksTo(1));
+    // Tier 3 spec 7.2 and 7.3.
+    public static final DeferredItem<BlockItem> STEP_UP_GEARBOX = ITEMS.registerSimpleBlockItem(ModBlocks.STEP_UP_GEARBOX);
+    public static final DeferredItem<BlockItem> PULLEY = ITEMS.registerSimpleBlockItem(ModBlocks.PULLEY);
+    public static final DeferredItem<BlockItem> WINDMILL_BEARING = ITEMS.registerSimpleBlockItem(ModBlocks.WINDMILL_BEARING);
+    public static final DeferredItem<BlockItem> WINDMILL_SAIL = ITEMS.registerSimpleBlockItem(ModBlocks.WINDMILL_SAIL);
+    public static final DeferredItem<dev.strataindustria.power.LeatherBeltItem> LEATHER_BELT = ITEMS.registerItem("leather_belt",
+            dev.strataindustria.power.LeatherBeltItem::new, p -> p.stacksTo(16));
+    // Tier 3 spec 12.1: hides and the soaking barrel.
+    public static final DeferredItem<Item> RAW_HIDE = ITEMS.registerSimpleItem("raw_hide");
+    public static final DeferredItem<Item> LIMED_HIDE = ITEMS.registerSimpleItem("limed_hide");
+    public static final DeferredItem<Item> SCRAPED_HIDE = ITEMS.registerSimpleItem("scraped_hide");
+    public static final DeferredItem<BlockItem> SOAKING_BARREL = ITEMS.registerSimpleBlockItem(ModBlocks.SOAKING_BARREL);
     // Tier 3 spec 11: washing.
     public static final DeferredItem<dev.strataindustria.washing.WashingPanItem> WASHING_PAN = ITEMS.registerItem("washing_pan",
             dev.strataindustria.washing.WashingPanItem::new, p -> p.durability(128));

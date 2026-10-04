@@ -71,7 +71,15 @@ public class RotorRenderer<T extends BlockEntity & Kinetic> implements BlockEnti
         if (state.up == null || state.item.isEmpty()) return;
         pose.pushPose();
         pose.translate(0.5, 0.5, 0.5);
-        switch (state.up) {
+        orient(pose, state.up);
+        pose.rotateDegrees(Axis.YP, state.angle);
+        state.item.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
+        pose.popPose();
+    }
+
+    /** Turns a rotor model's +Y to point {@code up}. */
+    public static void orient(PoseStack pose, Direction up) {
+        switch (up) {
             case DOWN -> pose.rotateDegrees(Axis.XP, 180);
             case NORTH -> pose.rotateDegrees(Axis.XP, -90);
             case SOUTH -> pose.rotateDegrees(Axis.XP, 90);
@@ -79,9 +87,13 @@ public class RotorRenderer<T extends BlockEntity & Kinetic> implements BlockEnti
             case WEST -> pose.rotateDegrees(Axis.ZP, 90);
             default -> {}
         }
-        pose.rotateDegrees(Axis.YP, state.angle);
-        state.item.submit(pose, collector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
-        pose.popPose();
+    }
+
+    /** A stick that draws as the named rotor model. */
+    public static ItemStack rotorStack(String model) {
+        ItemStack stack = new ItemStack(Items.STICK);
+        stack.set(DataComponents.ITEM_MODEL, StrataIndustria.id("rotor/" + model));
+        return stack;
     }
 
     @Override
