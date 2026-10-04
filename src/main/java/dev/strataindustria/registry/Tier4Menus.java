@@ -23,7 +23,11 @@ public final class Tier4Menus {
     public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.steam.SteamHammerMenu>> STEAM_HAMMER =
             ModMenus.MENUS.register("steam_hammer", () -> IMenuTypeExtension.create(dev.strataindustria.steam.SteamHammerMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<BoilerMenu>> BRONZE_BOILER =
-            ModMenus.MENUS.register("bronze_boiler", () -> IMenuTypeExtension.create(BoilerMenu::new));
+            ModMenus.MENUS.register("bronze_boiler", () -> IMenuTypeExtension.create((id, inventory, buf) ->
+                    new BoilerMenu(Tier4Menus.BRONZE_BOILER.get(), id, inventory, buf)));
+    public static final DeferredHolder<MenuType<?>, MenuType<BoilerMenu>> BOILER_CONTROLLER =
+            ModMenus.MENUS.register("boiler_controller", () -> IMenuTypeExtension.create((id, inventory, buf) ->
+                    new BoilerMenu(Tier4Menus.BOILER_CONTROLLER.get(), id, inventory, buf)));
 
     public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.processing.ProcessingMenu>> CRUSHER =
             ModMenus.MENUS.register("crusher", () -> IMenuTypeExtension.create((id, inventory, buf) ->

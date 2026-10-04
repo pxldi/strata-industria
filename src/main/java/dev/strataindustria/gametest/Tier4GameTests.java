@@ -84,6 +84,7 @@ final class Tier4GameTests {
         tests.put("tier4_steam_hammer", Tier4GameTests::steamHammer);
         tests.put("tier4_fluid_tank", Tier4GameTests::fluidTank);
         tests.put("tier4_blowing_engine", Tier4GameTests::blowingEngine);
+        tests.put("tier4_steel_boiler", Tier4GameTests::steelBoiler);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -974,6 +975,85 @@ final class Tier4GameTests {
         helper.assertTrue(smelter.melt().isEmpty(), "the pot is empty");
         helper.assertTrue(smelter.getItem(out).getCount() == 2, "the castings stack though they came out at different heats");
         helper.succeed();
+    }
+
+    // Steel boiler (spec 10.3): nine coke fireboxes under two shell layers. It is not built until it has a
+    // steam port; built, it takes 90 HU/t a layer for 45 mB/t of steam a layer, sends it out of the steam
+    // port into a tank, takes water at the water port, and with a shell block gone it stops but keeps
+    // what it holds.
+    private static void steelBoiler(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos controllerPos = helper.absolutePos(new BlockPos(4, 1, 2));
+        BlockPos centre = controllerPos.south();
+        java.util.List<BlockPos> fireboxes = new java.util.ArrayList<>();
+        for (int dx = -1; dx <= 1; dx++)
+            for (int dz = -1; dz <= 1; dz++) {
+                BlockPos pos = centre.offset(dx, -1, dz);
+                level.setBlock(pos, Tier4Blocks.FIREBOX.get().defaultBlockState(), Block.UPDATE_ALL);
+                FireboxBlockEntity firebox = (FireboxBlockEntity) level.getBlockEntity(pos);
+                firebox.setItem(0, new ItemStack(Tier4Items.COKE.get(), 8));
+                firebox.preheat(1600.0f);
+                fireboxes.add(pos);
+            }
+        BlockPos waterPort = centre.east(), steamPort = centre.above().west();
+        for (int layer = 0; layer < 2; layer++)
+            for (int dx = -1; dx <= 1; dx++)
+                for (int dz = -1; dz <= 1; dz++) {
+                    BlockPos pos = centre.offset(dx, layer, dz);
+                    if (pos.equals(controllerPos)) continue;
+                    Block block = pos.equals(waterPort) || pos.equals(steamPort) ? Tier4Blocks.BOILER_FLUID_PORT.get() : Tier4Blocks.STEEL_BOILER_SHELL.get();
+                    level.setBlock(pos, block.defaultBlockState(), Block.UPDATE_ALL);
+                }
+        level.setBlock(controllerPos, Tier4Blocks.BOILER_CONTROLLER.get().defaultBlockState(), Block.UPDATE_ALL);
+        var boiler = (dev.strataindustria.steam.SteelBoilerControllerBlockEntity) level.getBlockEntity(controllerPos);
+        // Steam leaves the west port through two steel pipes into a tank.
+        BlockPos tankPos = steamPort.west(3);
+        level.setBlock(steamPort.west(), Tier4Blocks.STEEL_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(steamPort.west(2), Tier4Blocks.STEEL_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(tankPos, Tier4Blocks.FLUID_TANK.get().defaultBlockState(), Block.UPDATE_ALL);
+
+        var problem = boiler.check(level, controllerPos).problem();
+        helper.assertValueEqual(problem, dev.strataindustria.steam.SteelBoilerStructure.Problem.NEEDS_STEAM_PORT, "two water ports and no steam port");
+        BlockState port = level.getBlockState(steamPort);
+        level.setBlock(steamPort, port.setValue(dev.strataindustria.steam.BoilerFluidPortBlock.MODE,
+                dev.strataindustria.steam.BoilerFluidPortBlock.Mode.STEAM), Block.UPDATE_ALL);
+        var built = boiler.check(level, controllerPos);
+        helper.assertTrue(built.complete(), "the boiler should be built, problem " + built.problem() + " at " + built.at());
+        helper.assertValueEqual(boiler.layers(), 2, "shell layers");
+        helper.assertValueEqual(boiler.waterCapacity(), 16000, "water held by two layers");
+        helper.assertValueEqual(boiler.maxHeat(), 180, "HU/t two layers take");
+
+        boiler.prime(12000, true);
+        steelBoilerTicks(level, fireboxes, controllerPos, boiler, 40);
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.RUNNING, "status of a warm boiler on nine coke fireboxes");
+        helper.assertValueEqual(boiler.heatTaken(), 180, "HU/t taken through the shell and the controller");
+        var tank = (dev.strataindustria.fluid.FluidTankBlockEntity) level.getBlockEntity(tankPos);
+        helper.assertTrue(tank.fluid().isSame(Tier4Fluids.STEAM.get()) && tank.amount() > 0, "steam reaches the tank, got " + tank.amount());
+        helper.assertValueEqual(boiler.water(), 12000 - 40 * 90, "water boiled at 90 mB/t");
+        helper.assertValueEqual(level.getBlockState(controllerPos).getValue(dev.strataindustria.steam.SteelBoilerControllerBlock.LIGHT),
+                dev.strataindustria.steam.SteelBoilerControllerBlock.Light.GREEN, "the light while it runs");
+
+        var waterLink = (dev.strataindustria.steam.BoilerPartBlockEntity) level.getBlockEntity(waterPort);
+        helper.assertValueEqual(waterLink.fill(Direction.EAST, net.minecraft.world.level.material.Fluids.WATER, 1000, 0, false), 1000, "water taken at the water port");
+        var steamLink = (dev.strataindustria.steam.BoilerPartBlockEntity) level.getBlockEntity(steamPort);
+        helper.assertValueEqual(steamLink.fill(Direction.WEST, net.minecraft.world.level.material.Fluids.WATER, 1000, 0, false), 0, "the steam port takes no water");
+
+        int water = boiler.water();
+        level.setBlock(centre.above().south(), Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        boiler.check(level, controllerPos);
+        steelBoilerTicks(level, fireboxes, controllerPos, boiler, 5);
+        helper.assertValueEqual(boiler.status(), BoilerBlockEntity.Status.INCOMPLETE, "status with a shell block gone");
+        helper.assertValueEqual(boiler.water(), water, "a broken boiler keeps its water");
+        helper.succeed();
+    }
+
+    private static void steelBoilerTicks(ServerLevel level, java.util.List<BlockPos> fireboxes, BlockPos controllerPos, BoilerBlockEntity boiler, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            for (BlockPos pos : fireboxes) {
+                FireboxBlockEntity.serverTick(level, pos, level.getBlockState(pos), (FireboxBlockEntity) level.getBlockEntity(pos));
+            }
+            BoilerBlockEntity.serverTick(level, controllerPos, level.getBlockState(controllerPos), boiler);
+        }
     }
 
     // Blowing engine (spec 10.5 and 11.6): no air without steam; at 2 bar it blows two blowers' worth

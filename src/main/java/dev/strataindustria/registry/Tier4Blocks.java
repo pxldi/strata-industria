@@ -101,6 +101,17 @@ public final class Tier4Blocks {
             Tier4Blocks::boiler);
     public static final DeferredBlock<CrackedBoilerBlock> CRACKED_BRONZE_BOILER = ModBlocks.BLOCKS.registerBlock("cracked_bronze_boiler",
             CrackedBoilerBlock::new, Tier4Blocks::boiler);
+    // Spec 10.3: the steel boiler multiblock.
+    public static final DeferredBlock<dev.strataindustria.steam.SteelBoilerShellBlock> STEEL_BOILER_SHELL = ModBlocks.BLOCKS.registerBlock(
+            "steel_boiler_shell", dev.strataindustria.steam.SteelBoilerShellBlock::new, Tier4Blocks::steelBoiler);
+    public static final DeferredBlock<dev.strataindustria.steam.BoilerFluidPortBlock> BOILER_FLUID_PORT = ModBlocks.BLOCKS.registerBlock(
+            "boiler_fluid_port", dev.strataindustria.steam.BoilerFluidPortBlock::new, Tier4Blocks::steelBoiler);
+    public static final DeferredBlock<dev.strataindustria.steam.SteelBoilerControllerBlock> BOILER_CONTROLLER = ModBlocks.BLOCKS.registerBlock(
+            "boiler_controller", dev.strataindustria.steam.SteelBoilerControllerBlock::new,
+            p -> steelBoiler(p).lightLevel(state -> state.getValue(dev.strataindustria.steam.SteelBoilerControllerBlock.LIGHT)
+                    == dev.strataindustria.steam.SteelBoilerControllerBlock.Light.OFF ? 0 : 4));
+    public static final DeferredBlock<CrackedBoilerBlock> CRACKED_BOILER_CONTROLLER = ModBlocks.BLOCKS.registerBlock("cracked_boiler_controller",
+            CrackedBoilerBlock::new, Tier4Blocks::steelBoiler);
 
     // Spec 9.2 and 9.3: fluid pipes, rated by the hottest fluid and the flow they take, and the gauge.
     public static final DeferredBlock<FluidPipeBlock> COPPER_FLUID_PIPE = ModBlocks.BLOCKS.registerBlock("copper_fluid_pipe",
@@ -231,6 +242,13 @@ public final class Tier4Blocks {
     private static Block.Properties boiler(Block.Properties p) {
         return p.mapColor(MapColor.COLOR_BROWN)
                 .strength(4.0f, 8.0f)
+                .requiresCorrectToolForDrops()
+                .sound(HEAVY_METAL);
+    }
+
+    private static Block.Properties steelBoiler(Block.Properties p) {
+        return p.mapColor(MapColor.METAL)
+                .strength(5.0f, 10.0f)
                 .requiresCorrectToolForDrops()
                 .sound(HEAVY_METAL);
     }

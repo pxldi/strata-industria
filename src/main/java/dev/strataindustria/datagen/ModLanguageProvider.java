@@ -330,6 +330,10 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(Tier4Blocks.FIREBOX, "Firebox");
         addBlock(Tier4Blocks.BRONZE_BOILER, "Bronze Boiler");
         addBlock(Tier4Blocks.CRACKED_BRONZE_BOILER, "Cracked Bronze Boiler");
+        addBlock(Tier4Blocks.STEEL_BOILER_SHELL, "Steel Boiler Shell");
+        addBlock(Tier4Blocks.BOILER_FLUID_PORT, "Boiler Fluid Port");
+        addBlock(Tier4Blocks.BOILER_CONTROLLER, "Steel Boiler Controller");
+        addBlock(Tier4Blocks.CRACKED_BOILER_CONTROLLER, "Cracked Steel Boiler Controller");
         addBlock(Tier4Blocks.COPPER_FLUID_PIPE, "Copper Fluid Pipe");
         addBlock(Tier4Blocks.BRONZE_FLUID_PIPE, "Bronze Fluid Pipe");
         addBlock(Tier4Blocks.STEEL_FLUID_PIPE, "Steel Fluid Pipe");
@@ -372,6 +376,7 @@ final class ModLanguageProvider extends LanguageProvider {
         add("fluid_type." + id + ".steam", "Steam");
         add("container." + id + ".firebox", "Firebox");
         add("container." + id + ".bronze_boiler", "Bronze Boiler");
+        add("container." + id + ".boiler_controller", "Steel Boiler");
         String firebox = id + ".firebox.";
         add(firebox + "status.empty", "Add fuel");
         add(firebox + "status.idle", "Burning, %s HU/t wasted");
@@ -410,6 +415,12 @@ final class ModLanguageProvider extends LanguageProvider {
         add(boiler + "water", "Water %s / %s mB");
         add(boiler + "steam", "Steam %s / %s mB");
         add(boiler + "integrity", "Integrity %s%%");
+        // Spec 10.3: what the steel boiler's structure lacks, by layer (1 is the fire) and spot.
+        add(boiler + "problem.none", "Built");
+        add(boiler + "problem.needs_fire", "Firebox or heat inlet: layer %s, %s");
+        add(boiler + "problem.needs_shell", "Boiler shell: layer %s, %s");
+        add(boiler + "problem.needs_water_port", "Needs a water port in the shell");
+        add(boiler + "problem.needs_steam_port", "Needs a steam port in the shell");
         addBlock(Tier4Blocks.VALVE, "Valve");
         add(id + ".valve.held_shut", "Opened, but a redstone signal holds it shut");
         addBlock(Tier4Blocks.FLUID_TANK, "Fluid Tank");

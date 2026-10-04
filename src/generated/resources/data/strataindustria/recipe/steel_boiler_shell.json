@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": "strataindustria:steel_plate",
+    "W": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "SW",
+    "WS"
+  ],
+  "result": {
+    "id": "strataindustria:steel_boiler_shell"
+  }
+}
