@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "G": "strataindustria:brass_gear",
+    "P": [
+      "strataindustria:bronze_plate",
+      "strataindustria:arsenical_bronze_plate",
+      "strataindustria:bismuth_bronze_plate"
+    ],
+    "R": "strataindustria:bronze_fluid_pipe",
+    "T": "strataindustria:treated_planks"
+  },
+  "pattern": [
+    "TPT",
+    "TGT",
+    "TRT"
+  ],
+  "result": {
+    "id": "strataindustria:washer"
+  }
+}

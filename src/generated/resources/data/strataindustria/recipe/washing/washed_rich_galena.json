@@ -1,5 +1,13 @@
 {
   "type": "strataindustria:washing",
+  "chances": [
+    {
+      "chance": 0.15,
+      "item": {
+        "id": "strataindustria:small_bismuthinite"
+      }
+    }
+  ],
   "ingredient": "strataindustria:crushed_rich_galena",
   "result": {
     "id": "strataindustria:washed_rich_galena"

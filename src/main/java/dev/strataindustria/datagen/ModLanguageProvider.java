@@ -390,6 +390,14 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "steam_engine.start", "Steam engine starts");
         add(subtitles + "steam_engine.stop", "Steam engine stops");
         add(subtitles + "mechanical_pump.run", "Pump thumps");
+        addBlock(Tier4Blocks.CRUSHER, "Crusher");
+        add("container." + id + ".crusher", "Crusher");
+        add(subtitles + "crusher.crush", "Crusher grinds");
+        addBlock(Tier4Blocks.WASHER, "Washer");
+        add("container." + id + ".washer", "Washer");
+        add(subtitles + "washer.wash", "Washer sloshes");
+        add(id + ".machine.no_water", "Needs water: pipe it in");
+        add(id + ".washer.water", "Water: %s / %s mB");
     }
 
     private void ironAge() {
@@ -579,6 +587,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t4.boiler.hint", "Set a bronze boiler on a burning firebox, fill it with water and wait for the needle to rise.");
         add(journal + "t4.steam_engine", "Steam Power");
         add(journal + "t4.steam_engine.hint", "Pipe a boiler's steam into the back of a steam engine. At 2 bar it turns a shaft at 32 RPM.");
+        add(journal + "t4.crusher", "Crushing Power");
+        add(journal + "t4.crusher.hint", "Drive a crusher at 16 RPM or more. Ore comes out crushed, sometimes with a second piece and a bit of another mineral.");
         add(journal + "t4.steel_anvil", "Steel Anvil");
         add(journal + "t4.steel_anvil.hint", "Weld steel into double ingots and build an anvil that can work anything.");
     }

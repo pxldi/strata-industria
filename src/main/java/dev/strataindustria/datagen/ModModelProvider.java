@@ -572,6 +572,31 @@ final class ModModelProvider extends ModelProvider {
         }
         itemModels.itemModelOutput.accept(Tier4Items.MECHANICAL_PUMP.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/mechanical_pump")));
         itemModels.itemModelOutput.accept(Tier4Items.STEAM_ENGINE.get(), ItemModelUtils.plainModel(StrataIndustria.id("block/steam_engine_item")));
+        processing(blockModels, itemModels);
+    }
+
+    // Spec 11.2 to 11.4: ore processing machines face the player; the front shows the works, moving while active.
+    private static void processing(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        for (var machine : java.util.List.of(Tier4Blocks.CRUSHER, Tier4Blocks.WASHER)) {
+            Block block = machine.get();
+            String name = machine.getId().getPath();
+            TextureMapping idle = new TextureMapping().put(TextureSlot.FRONT, blockTexture(name + "_front"))
+                    .put(TextureSlot.SIDE, blockTexture(name + "_side")).put(TextureSlot.TOP, blockTexture(name + "_top"));
+            var still = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(block, idle, blockModels.modelOutput));
+            var active = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(block, "_active",
+                    idle.copyAndUpdate(TextureSlot.FRONT, blockTexture(name + "_front_active")), blockModels.modelOutput));
+            PropertyDispatch.C2<MultiVariant, net.minecraft.core.Direction, Boolean> state = PropertyDispatch.initial(
+                    dev.strataindustria.processing.ProcessingBlock.FACING, dev.strataindustria.processing.ProcessingBlock.ACTIVE);
+            for (boolean on : new boolean[] {false, true}) {
+                var model = on ? active : still;
+                state.select(net.minecraft.core.Direction.NORTH, on, model);
+                state.select(net.minecraft.core.Direction.EAST, on, model.with(BlockModelGenerators.Y_ROT_90));
+                state.select(net.minecraft.core.Direction.SOUTH, on, model.with(BlockModelGenerators.Y_ROT_180));
+                state.select(net.minecraft.core.Direction.WEST, on, model.with(BlockModelGenerators.Y_ROT_270));
+            }
+            blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(state));
+            itemModels.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(StrataIndustria.id("block/" + name)));
+        }
     }
 
     /** A pipe arm, modelled pointing north, on each face the pipe joins. */
