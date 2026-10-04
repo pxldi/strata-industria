@@ -9,6 +9,7 @@ import dev.strataindustria.charcoal.LogPileBlock;
 import dev.strataindustria.ceramics.LargeVesselBlock;
 import dev.strataindustria.ceramics.PitKilnBlock;
 import dev.strataindustria.fire.FirePitBlock;
+import dev.strataindustria.forge.ForgeBlock;
 import dev.strataindustria.geology.OreGrade;
 import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.geology.Rock;
@@ -85,6 +86,14 @@ public final class ModBlocks {
                     .strength(0.8f)
                     .sound(SoundType.GRAVEL)
                     .requiresCorrectToolForDrops());
+
+    /** Brick forge (spec 4.5). Light 13 while the coals glow. */
+    public static final DeferredBlock<ForgeBlock> FORGE = BLOCKS.registerBlock("forge", ForgeBlock::new,
+            p -> p.mapColor(MapColor.COLOR_RED)
+                    .strength(2.0f, 6.0f)
+                    .sound(SoundType.STONE)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(state -> state.getValue(ForgeBlock.HOT) ? 13 : state.getValue(ForgeBlock.LIT) ? 7 : 0));
 
     static {
         for (Rock rock : Rock.values()) {

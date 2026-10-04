@@ -89,6 +89,8 @@ final class ModLanguageProvider extends LanguageProvider {
         addBlock(ModBlocks.LOG_PILE, "Log Pile");
         addBlock(ModBlocks.CHARCOAL_PILE, "Charcoal Pile");
         addItem(ModItems.ASH, "Ash");
+        addBlock(ModBlocks.FORGE, "Forge");
+        add("container." + StrataIndustria.MOD_ID + ".forge", "Forge");
         String kiln = StrataIndustria.MOD_ID + ".pit_kiln.";
         add(kiln + "burning", "The kiln is already burning");
         add(kiln + "needs_straw", "The kiln needs 8 straw on top first");
@@ -103,6 +105,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "pit_kiln.straw", "Straw laid");
         add(subtitles + "pit_kiln.log", "Log stacked");
         add(subtitles + "pit_kiln.fired", "Kiln burns out");
+        add(subtitles + "heat.quench", "Hot metal hisses");
+        add(subtitles + "forge.ignite", "Forge catches");
         add(subtitles + "knapping.rock", "Stone chips");
         add(subtitles + "knapping.flint", "Flint chips");
         add(subtitles + "knapping.finish", "Stone tool knapped");

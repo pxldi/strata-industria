@@ -68,6 +68,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
         add(ModBlocks.LARGE_VESSEL.get(), createShulkerBoxDrop(ModBlocks.LARGE_VESSEL.get()));
         dropSelf(ModBlocks.CRUCIBLE.get());
         charcoalPile();
+        dropSelf(ModBlocks.FORGE.get());
     }
 
     /** Spec 4.4: the pile's state says how much charcoal and ash the burn left. The log pile drops its own logs. */

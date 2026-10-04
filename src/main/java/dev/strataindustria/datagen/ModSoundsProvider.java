@@ -46,6 +46,12 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         SoundDefinition log = definition().subtitle(subtitle("pit_kiln.log"));
         for (int i = 1; i <= 4; i++) log.with(sound("minecraft:dig/wood" + i).pitch(0.8f));
         add(ModSounds.KILN_LOG, log);
+        add(ModSounds.QUENCH, definition().subtitle(subtitle("heat.quench"))
+                .with(sound("minecraft:random/fizz").pitch(1.4f).volume(0.6f))
+                .with(sound("minecraft:random/fizz").pitch(1.7f).volume(0.5f)));
+        add(ModSounds.FORGE_IGNITE, definition().subtitle(subtitle("forge.ignite"))
+                .with(sound("minecraft:fire/ignite").pitch(0.7f))
+                .with(sound("minecraft:fire/fire").pitch(0.8f).volume(0.8f)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

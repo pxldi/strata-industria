@@ -69,6 +69,7 @@ public final class ModItems {
             p -> new LargeVesselItem(ModBlocks.LARGE_VESSEL.get(), p), p -> p.stacksTo(1).useBlockDescriptionPrefix());
     public static final DeferredItem<BlockItem> CRUCIBLE = ITEMS.registerSimpleBlockItem(ModBlocks.CRUCIBLE, p -> p.stacksTo(1));
     public static final DeferredItem<Item> INGOT_MOLD = ITEMS.registerSimpleItem("ingot_mold", p -> p.stacksTo(16));
+    public static final DeferredItem<BlockItem> FORGE = ITEMS.registerSimpleBlockItem(ModBlocks.FORGE);
     // Charcoal (spec 4.4).
     public static final DeferredItem<AshItem> ASH = ITEMS.registerItem("ash", AshItem::new);
     public static final Map<MoldType, DeferredItem<Item>> UNFIRED_MOLDS = new EnumMap<>(MoldType.class);

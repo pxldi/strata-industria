@@ -57,6 +57,7 @@ final class ModRecipeProvider extends RecipeProvider {
 
         knapping();
         clayForming();
+        forge();
         fibre();
         stoneTools();
         fire();
@@ -90,6 +91,18 @@ final class ModRecipeProvider extends RecipeProvider {
         form(mold(MoldType.HAMMER_HEAD), 1, ".....", ".....", "##.##", "#####", "#####");
         form(mold(MoldType.SAW_BLADE), 1, "#####", "#####", ".....", ".....", "#####");
         form(mold(MoldType.SWORD_BLADE), 1, "###..", "##..#", "#..##", "..###", ".####");
+    }
+
+    // Spec 4.5: seven bricks around a charcoal hearth.
+    private void forge() {
+        shaped(RecipeCategory.DECORATIONS, ModItems.FORGE.get())
+                .pattern("B B")
+                .pattern("BCB")
+                .pattern("BBB")
+                .define('B', Items.BRICK)
+                .define('C', Items.CHARCOAL)
+                .unlockedBy("has_brick", has(Items.BRICK))
+                .save(output, key("forge"));
     }
 
     private static Item mold(MoldType type) {

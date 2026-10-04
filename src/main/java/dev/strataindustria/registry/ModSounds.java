@@ -27,6 +27,11 @@ public final class ModSounds {
     /** The kiln burns out and the pots are fired. */
     public static final DeferredHolder<SoundEvent, SoundEvent> KILN_FIRED = register("pit_kiln.fired");
 
+    /** Hot metal hissing in water. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> QUENCH = register("heat.quench");
+    /** Charcoal catching in the forge. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> FORGE_IGNITE = register("forge.ignite");
+
     /** The spindle of a bow drill working against the hearth board. */
     public static final DeferredHolder<SoundEvent, SoundEvent> FIRESTARTER_DRILL = register("firestarter.drill");
     /** Tinder catches in the fire pit. */
