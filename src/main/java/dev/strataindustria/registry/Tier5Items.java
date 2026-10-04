@@ -1,0 +1,44 @@
+package dev.strataindustria.registry;
+
+import dev.strataindustria.electric.BatteryBoxItem;
+import dev.strataindustria.material.Metal;
+import dev.strataindustria.metal.Melt;
+import java.util.Map;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.neoforged.neoforge.registries.DeferredItem;
+
+/** Tier 5 (electric) items, kept apart from the earlier tiers' items. */
+public final class Tier5Items {
+    /** Tier 4 spec 4.6: a steel rod magnetised by rich magnetite; the dynamo and motors need one. */
+    public static final DeferredItem<Item> MAGNET = ModItems.ITEMS.registerSimpleItem("magnet");
+
+    // Spec 4.1: new forms of existing metals.
+    public static final DeferredItem<Item> COPPER_ROD = ModItems.ITEMS.registerSimpleItem("copper_rod");
+    public static final DeferredItem<Item> COPPER_WIRE = ModItems.ITEMS.registerSimpleItem("copper_wire");
+    public static final DeferredItem<Item> LEAD_PLATE = ModItems.ITEMS.registerSimpleItem("lead_plate");
+
+    // Spec 5.2 and 5.3: rubber, which insulates every cable.
+    public static final DeferredItem<Item> RAW_RUBBER = ModItems.ITEMS.registerSimpleItem("raw_rubber");
+    public static final DeferredItem<Item> COMPOUNDED_RUBBER = ModItems.ITEMS.registerSimpleItem("compounded_rubber");
+    public static final DeferredItem<Item> RUBBER = ModItems.ITEMS.registerSimpleItem("rubber");
+
+    public static final DeferredItem<BlockItem> LV_CABLE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_CABLE);
+    public static final DeferredItem<BlockItem> MV_CABLE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MV_CABLE);
+    public static final DeferredItem<BlockItem> KINETIC_DYNAMO = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.KINETIC_DYNAMO);
+    public static final DeferredItem<BatteryBoxItem> BATTERY_BOX = ModItems.ITEMS.registerItem("battery_box",
+            p -> new BatteryBoxItem(Tier5Blocks.BATTERY_BOX.get(), p), p -> p.stacksTo(1).useBlockDescriptionPrefix());
+    public static final DeferredItem<BlockItem> LV_MACHINE_HULL = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_MACHINE_HULL);
+
+    /** Metal content of the new forms (spec 4.1): rods are half an ingot, wire a quarter, plates a whole one. */
+    public static void metalContent(Map<Item, Melt> map) {
+        map.put(COPPER_ROD.get(), Melt.of(Metal.COPPER, 50, 0));
+        map.put(COPPER_WIRE.get(), Melt.of(Metal.COPPER, 25, 0));
+        map.put(LEAD_PLATE.get(), Melt.of(Metal.LEAD, 100, 0));
+    }
+
+    /** Loads the class so its items join the register before it fires. */
+    public static void init() {}
+
+    private Tier5Items() {}
+}

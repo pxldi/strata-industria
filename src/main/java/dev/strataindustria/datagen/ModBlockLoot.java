@@ -8,6 +8,8 @@ import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModDataComponents;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Blocks;
+import dev.strataindustria.registry.Tier5Blocks;
+import dev.strataindustria.registry.Tier5DataComponents;
 import java.util.Set;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
@@ -119,6 +121,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
             dropSelf(block.get());
         }
         add(Tier4Blocks.TREATED_SLAB.get(), this::createSlabItemTable);
+        tier5();
     }
 
     /** The crucible keeps its pieces, its melt and its heat when picked up, like a shulker box. */
@@ -192,6 +195,20 @@ final class ModBlockLoot extends BlockLootSubProvider {
                             .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1)))));
         }
         add(block, table);
+    }
+
+    /** Tier 5: cables, the dynamo and the hull drop themselves; a battery box keeps its charge (spec 7.4). */
+    private void tier5() {
+        for (var block : java.util.List.of(Tier5Blocks.LV_CABLE, Tier5Blocks.MV_CABLE, Tier5Blocks.KINETIC_DYNAMO, Tier5Blocks.LV_MACHINE_HULL)) {
+            dropSelf(block.get());
+        }
+        Block box = Tier5Blocks.BATTERY_BOX.get();
+        add(box, LootTable.lootTable().withPool(applyExplosionCondition(box, LootPool.lootPool()
+                .setRolls(ContextIntProviders.exactly(1))
+                .add(LootItem.lootTableItem(box)
+                        .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
+                                .include(DataComponents.CUSTOM_NAME)
+                                .include(Tier5DataComponents.ENERGY.get()))))));
     }
 
     @Override

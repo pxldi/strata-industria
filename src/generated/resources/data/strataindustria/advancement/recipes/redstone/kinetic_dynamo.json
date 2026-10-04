@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_magnet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:magnet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:kinetic_dynamo"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_magnet"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:kinetic_dynamo"
+    ]
+  }
+}

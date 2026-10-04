@@ -1,0 +1,96 @@
+{
+  "variants": {
+    "facing=down,status=error": {
+      "model": "strataindustria:block/kinetic_dynamo_error",
+      "x": 90
+    },
+    "facing=down,status=off": {
+      "model": "strataindustria:block/kinetic_dynamo_off",
+      "x": 90
+    },
+    "facing=down,status=run": {
+      "model": "strataindustria:block/kinetic_dynamo_run",
+      "x": 90
+    },
+    "facing=down,status=wait": {
+      "model": "strataindustria:block/kinetic_dynamo_wait",
+      "x": 90
+    },
+    "facing=east,status=error": {
+      "model": "strataindustria:block/kinetic_dynamo_error",
+      "y": 90
+    },
+    "facing=east,status=off": {
+      "model": "strataindustria:block/kinetic_dynamo_off",
+      "y": 90
+    },
+    "facing=east,status=run": {
+      "model": "strataindustria:block/kinetic_dynamo_run",
+      "y": 90
+    },
+    "facing=east,status=wait": {
+      "model": "strataindustria:block/kinetic_dynamo_wait",
+      "y": 90
+    },
+    "facing=north,status=error": {
+      "model": "strataindustria:block/kinetic_dynamo_error"
+    },
+    "facing=north,status=off": {
+      "model": "strataindustria:block/kinetic_dynamo_off"
+    },
+    "facing=north,status=run": {
+      "model": "strataindustria:block/kinetic_dynamo_run"
+    },
+    "facing=north,status=wait": {
+      "model": "strataindustria:block/kinetic_dynamo_wait"
+    },
+    "facing=south,status=error": {
+      "model": "strataindustria:block/kinetic_dynamo_error",
+      "y": 180
+    },
+    "facing=south,status=off": {
+      "model": "strataindustria:block/kinetic_dynamo_off",
+      "y": 180
+    },
+    "facing=south,status=run": {
+      "model": "strataindustria:block/kinetic_dynamo_run",
+      "y": 180
+    },
+    "facing=south,status=wait": {
+      "model": "strataindustria:block/kinetic_dynamo_wait",
+      "y": 180
+    },
+    "facing=up,status=error": {
+      "model": "strataindustria:block/kinetic_dynamo_error",
+      "x": 270
+    },
+    "facing=up,status=off": {
+      "model": "strataindustria:block/kinetic_dynamo_off",
+      "x": 270
+    },
+    "facing=up,status=run": {
+      "model": "strataindustria:block/kinetic_dynamo_run",
+      "x": 270
+    },
+    "facing=up,status=wait": {
+      "model": "strataindustria:block/kinetic_dynamo_wait",
+      "x": 270
+    },
+    "facing=west,status=error": {
+      "model": "strataindustria:block/kinetic_dynamo_error",
+      "y": 270
+    },
+    "facing=west,status=off": {
+      "model": "strataindustria:block/kinetic_dynamo_off",
+      "y": 270
+    },
+    "facing=west,status=run": {
+      "model": "strataindustria:block/kinetic_dynamo_run",
+      "y": 270
+    },
+    "facing=west,status=wait": {
+      "model": "strataindustria:block/kinetic_dynamo_wait",
+      "y": 270
+    }
+  }
+}

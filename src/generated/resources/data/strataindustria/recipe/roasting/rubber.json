@@ -1,0 +1,9 @@
+{
+  "type": "strataindustria:roasting",
+  "ingredient": "strataindustria:compounded_rubber",
+  "min_temperature": 140,
+  "result": {
+    "id": "strataindustria:rubber"
+  },
+  "ticks": 200
+}

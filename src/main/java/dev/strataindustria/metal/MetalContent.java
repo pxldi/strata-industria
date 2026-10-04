@@ -76,6 +76,7 @@ public final class MetalContent {
             }
             map.put(dev.strataindustria.registry.Tier4Items.SMALL_ZINC_CALCINE.get(),
                     new Melt(Map.of(Metal.ZINC, OreMineral.SMALL_ORE_UNITS), 0));
+            dev.strataindustria.registry.Tier5Items.metalContent(map);
             // Tier 3 spec 5.4: bloomery slag still holds some iron.
             map.put(ModItems.BLOOMERY_SLAG.get(), Melt.of(Metal.WROUGHT_IRON, BLOOMERY_SLAG_UNITS, 0));
             // Spec 4.2: vanilla raw ores from loot count as raw normal ore.

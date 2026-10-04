@@ -1,0 +1,364 @@
+{
+  "variants": {
+    "charge=0,charging=false,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0",
+      "y": 90
+    },
+    "charge=0,charging=false,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0",
+      "y": 90
+    },
+    "charge=0,charging=false,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0"
+    },
+    "charge=0,charging=false,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0"
+    },
+    "charge=0,charging=false,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0",
+      "y": 180
+    },
+    "charge=0,charging=false,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0",
+      "y": 180
+    },
+    "charge=0,charging=false,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0",
+      "y": 270
+    },
+    "charge=0,charging=false,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0",
+      "y": 270
+    },
+    "charge=0,charging=true,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0",
+      "y": 90
+    },
+    "charge=0,charging=true,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0",
+      "y": 90
+    },
+    "charge=0,charging=true,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0"
+    },
+    "charge=0,charging=true,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0"
+    },
+    "charge=0,charging=true,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0",
+      "y": 180
+    },
+    "charge=0,charging=true,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0",
+      "y": 180
+    },
+    "charge=0,charging=true,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_0",
+      "y": 270
+    },
+    "charge=0,charging=true,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_0",
+      "y": 270
+    },
+    "charge=1,charging=false,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1",
+      "y": 90
+    },
+    "charge=1,charging=false,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1",
+      "y": 90
+    },
+    "charge=1,charging=false,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1"
+    },
+    "charge=1,charging=false,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1"
+    },
+    "charge=1,charging=false,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1",
+      "y": 180
+    },
+    "charge=1,charging=false,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1",
+      "y": 180
+    },
+    "charge=1,charging=false,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1",
+      "y": 270
+    },
+    "charge=1,charging=false,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1",
+      "y": 270
+    },
+    "charge=1,charging=true,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1",
+      "y": 90
+    },
+    "charge=1,charging=true,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1",
+      "y": 90
+    },
+    "charge=1,charging=true,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1"
+    },
+    "charge=1,charging=true,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1"
+    },
+    "charge=1,charging=true,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1",
+      "y": 180
+    },
+    "charge=1,charging=true,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1",
+      "y": 180
+    },
+    "charge=1,charging=true,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_1",
+      "y": 270
+    },
+    "charge=1,charging=true,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_1",
+      "y": 270
+    },
+    "charge=2,charging=false,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2",
+      "y": 90
+    },
+    "charge=2,charging=false,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2",
+      "y": 90
+    },
+    "charge=2,charging=false,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2"
+    },
+    "charge=2,charging=false,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2"
+    },
+    "charge=2,charging=false,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2",
+      "y": 180
+    },
+    "charge=2,charging=false,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2",
+      "y": 180
+    },
+    "charge=2,charging=false,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2",
+      "y": 270
+    },
+    "charge=2,charging=false,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2",
+      "y": 270
+    },
+    "charge=2,charging=true,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2",
+      "y": 90
+    },
+    "charge=2,charging=true,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2",
+      "y": 90
+    },
+    "charge=2,charging=true,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2"
+    },
+    "charge=2,charging=true,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2"
+    },
+    "charge=2,charging=true,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2",
+      "y": 180
+    },
+    "charge=2,charging=true,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2",
+      "y": 180
+    },
+    "charge=2,charging=true,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_2",
+      "y": 270
+    },
+    "charge=2,charging=true,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_2",
+      "y": 270
+    },
+    "charge=3,charging=false,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3",
+      "y": 90
+    },
+    "charge=3,charging=false,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3",
+      "y": 90
+    },
+    "charge=3,charging=false,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3"
+    },
+    "charge=3,charging=false,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3"
+    },
+    "charge=3,charging=false,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3",
+      "y": 180
+    },
+    "charge=3,charging=false,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3",
+      "y": 180
+    },
+    "charge=3,charging=false,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3",
+      "y": 270
+    },
+    "charge=3,charging=false,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3",
+      "y": 270
+    },
+    "charge=3,charging=true,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3",
+      "y": 90
+    },
+    "charge=3,charging=true,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3",
+      "y": 90
+    },
+    "charge=3,charging=true,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3"
+    },
+    "charge=3,charging=true,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3"
+    },
+    "charge=3,charging=true,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3",
+      "y": 180
+    },
+    "charge=3,charging=true,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3",
+      "y": 180
+    },
+    "charge=3,charging=true,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_3",
+      "y": 270
+    },
+    "charge=3,charging=true,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_3",
+      "y": 270
+    },
+    "charge=4,charging=false,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4",
+      "y": 90
+    },
+    "charge=4,charging=false,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4",
+      "y": 90
+    },
+    "charge=4,charging=false,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4"
+    },
+    "charge=4,charging=false,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4"
+    },
+    "charge=4,charging=false,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4",
+      "y": 180
+    },
+    "charge=4,charging=false,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4",
+      "y": 180
+    },
+    "charge=4,charging=false,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4",
+      "y": 270
+    },
+    "charge=4,charging=false,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4",
+      "y": 270
+    },
+    "charge=4,charging=true,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4",
+      "y": 90
+    },
+    "charge=4,charging=true,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4",
+      "y": 90
+    },
+    "charge=4,charging=true,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4"
+    },
+    "charge=4,charging=true,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4"
+    },
+    "charge=4,charging=true,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4",
+      "y": 180
+    },
+    "charge=4,charging=true,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4",
+      "y": 180
+    },
+    "charge=4,charging=true,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_4",
+      "y": 270
+    },
+    "charge=4,charging=true,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_4",
+      "y": 270
+    },
+    "charge=5,charging=false,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5",
+      "y": 90
+    },
+    "charge=5,charging=false,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5",
+      "y": 90
+    },
+    "charge=5,charging=false,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5"
+    },
+    "charge=5,charging=false,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5"
+    },
+    "charge=5,charging=false,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5",
+      "y": 180
+    },
+    "charge=5,charging=false,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5",
+      "y": 180
+    },
+    "charge=5,charging=false,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5",
+      "y": 270
+    },
+    "charge=5,charging=false,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5",
+      "y": 270
+    },
+    "charge=5,charging=true,facing=east,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5",
+      "y": 90
+    },
+    "charge=5,charging=true,facing=east,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5",
+      "y": 90
+    },
+    "charge=5,charging=true,facing=north,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5"
+    },
+    "charge=5,charging=true,facing=north,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5"
+    },
+    "charge=5,charging=true,facing=south,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5",
+      "y": 180
+    },
+    "charge=5,charging=true,facing=south,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5",
+      "y": 180
+    },
+    "charge=5,charging=true,facing=west,tier=lv": {
+      "model": "strataindustria:block/battery_box_lv_5",
+      "y": 270
+    },
+    "charge=5,charging=true,facing=west,tier=mv": {
+      "model": "strataindustria:block/battery_box_mv_5",
+      "y": 270
+    }
+  }
+}
