@@ -10,6 +10,7 @@ import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.smithing.Smithing;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
@@ -62,7 +63,7 @@ public class AnvilScreen extends AbstractContainerScreen<AnvilMenu> {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() == 0 && minecraft.gameMode != null) {
+        if (event.button() == InputConstants.MOUSE_BUTTON_LEFT && minecraft.gameMode != null) {
             int button = hoveredButton(event.x(), event.y());
             if (button >= 0) {
                 minecraft.gameMode.handleInventoryButtonClick(menu.containerId, button);
