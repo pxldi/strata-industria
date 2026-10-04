@@ -85,11 +85,12 @@ final class ModModelProvider extends ModelProvider {
             var model = SMALL_ORE_TEMPLATE.create(small, TextureMapping.singleSlot(ORE, blockTexture("small_" + mineral.id())), blockModels.modelOutput);
             blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(small,
                     BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(model))));
+            if (!mineral.hasPieces()) continue;
             flatItem(itemModels, ModItems.SMALL_ORES.get(mineral).get());
             for (OreGrade grade : OreGrade.values()) {
                 flatItem(itemModels, ModItems.orePiece(mineral, grade));
                 flatItem(itemModels, ModItems.crushedOre(mineral, grade));
-                flatItem(itemModels, ModItems.washedOre(mineral, grade));
+                if (mineral.washable()) flatItem(itemModels, ModItems.washedOre(mineral, grade));
             }
         }
 
@@ -126,6 +127,7 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(ModItems.FORGE.get(), ItemModelUtils.plainModel(forge));
 
         metals(itemModels);
+        tier4(itemModels);
         ironAge(blockModels, itemModels);
         kinetics(blockModels, itemModels);
         windAndBelts(blockModels, itemModels);
@@ -224,8 +226,10 @@ final class ModModelProvider extends ModelProvider {
                 heatable(itemModels, ModItems.ingot(metal));
                 if (metal.hasNugget()) heatable(itemModels, ModItems.NUGGETS.get(metal).get());
             }
+            if (metal.hasPlate()) heatable(itemModels, ModItems.PLATES.get(metal).get());
+            if (ModItems.RODS.containsKey(metal)) heatable(itemModels, ModItems.RODS.get(metal).get());
+            if (ModItems.GEARS.containsKey(metal)) heatable(itemModels, ModItems.GEARS.get(metal).get());
             if (!metal.isToolMetal()) continue;
-            heatable(itemModels, ModItems.PLATES.get(metal).get());
             if (!metal.isVanilla()) {
                 for (var piece : ModItems.ARMOUR.get(metal).values()) flatItem(itemModels, piece.get());
             }
@@ -424,6 +428,15 @@ final class ModModelProvider extends ModelProvider {
         var model = GROUND_FLAT_TEMPLATE.create(block, TextureMapping.singleSlot(TextureSlot.TEXTURE, blockTexture(texture)), blockModels.modelOutput);
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block,
                 BlockModelGenerators.createRotatedVariants(BlockModelGenerators.plainModel(model))));
+    }
+
+    // Tier 4 spec 4.6 and 21.4: materials.
+    private static void tier4(ItemModelGenerators itemModels) {
+        heatable(itemModels, ModItems.STEEL_DOUBLE_INGOT.get());
+        for (var item : java.util.List.of(dev.strataindustria.registry.Tier4Items.SULFUR, dev.strataindustria.registry.Tier4Items.SULFUR_DUST,
+                dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST)) {
+            flatItem(itemModels, item.get());
+        }
     }
 
     /**

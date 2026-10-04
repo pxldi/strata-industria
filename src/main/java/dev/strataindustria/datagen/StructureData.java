@@ -457,6 +457,7 @@ final class StructureData {
         add.accept(notes + ".size.large", "A large deposit");
         add.accept(notes + ".tool.copper", "Needs a copper pick");
         add.accept(notes + ".tool.bronze", "Needs a bronze pick");
+        add.accept(notes + ".tool.wrought_iron", "Needs an iron pick");
         for (OreMineral mineral : OreMineral.values()) {
             String[] hands = hands(mineral);
             for (int i = 0; i < hands.length; i++) add.accept(notes + ".hand." + mineral.id() + "." + i, hands[i]);

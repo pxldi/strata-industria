@@ -21,6 +21,8 @@ public final class ModTags {
         public static final TagKey<Block> INCORRECT_FOR_BRONZE_TOOL = tag("incorrect_for_bronze_tool");
         public static final TagKey<Block> NEEDS_STEEL_TOOL = tag("needs_steel_tool");
         public static final TagKey<Block> INCORRECT_FOR_WROUGHT_IRON_TOOL = tag("incorrect_for_wrought_iron_tool");
+        /** Tier 4 spec 4.7: what a steel tool cannot mine, the vanilla diamond tier's list. */
+        public static final TagKey<Block> INCORRECT_FOR_STEEL_TOOL = tag("incorrect_for_steel_tool");
         /** Blocks every heat structure accepts as its walls (tier 3 spec 3.3). */
         public static final TagKey<Block> REFRACTORY = tag("refractory");
         /** Non-ore deposits the prospector's pick reports: lignite, fire clay and bog iron. */

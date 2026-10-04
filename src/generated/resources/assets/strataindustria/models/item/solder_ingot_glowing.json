@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/solder_ingot",
+    "layer1": "strataindustria:item/glow/solder_ingot"
+  }
+}

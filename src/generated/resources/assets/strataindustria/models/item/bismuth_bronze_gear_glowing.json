@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/bismuth_bronze_gear",
+    "layer1": "strataindustria:item/glow/bismuth_bronze_gear"
+  }
+}

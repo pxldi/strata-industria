@@ -23,13 +23,25 @@ public enum Metal implements StringRepresentable {
     /** Tier 3. Its ingot and nugget are the vanilla iron items; it never melts in tier 3. */
     WROUGHT_IRON(1538, 3, 0x6A6A6C, Forms.TOOL_METAL, true),
     /** Gold works like copper: it melts, casts and smiths on a stone anvil. */
-    GOLD(1064, 1, 0xC08A26, Forms.TOOL_METAL, true);
+    GOLD(1064, 1, 0xC08A26, Forms.TOOL_METAL, true),
+    // Tier 4 spec 4.1. Colours are each ramp's base step (spec 21.1).
+    /** Cast from the blast furnace; too brittle to smith. */
+    PIG_IRON(1200, 4, 0x45403C, Forms.INGOT_ONLY, false),
+    STEEL(1450, 4, 0x5C636E, Forms.TOOL_METAL, false),
+    ZINC(420, 3, 0x6E767E, Forms.STORAGE, false),
+    LEAD(327, 3, 0x444A5C, Forms.STORAGE, false),
+    /** The fittings metal: plates, rods and gears, but no tools. */
+    BRASS(930, 3, 0xA8862E, Forms.PARTS, false),
+    SOLDER(190, 3, 0x737A7C, Forms.INGOT_ONLY, false),
+    /** Exists only dissolved in a melt, like arsenic. */
+    CARBON(0, 0, 0x2A2A2A, Forms.NONE, false);
 
     public static final Codec<Metal> CODEC = StringRepresentable.fromEnum(Metal::values);
     public static final StreamCodec<ByteBuf, Metal> STREAM_CODEC =
             ByteBufCodecs.VAR_INT.map(i -> values()[i], Metal::ordinal);
 
-    public enum Forms { NONE, INGOT_ONLY, STORAGE, TOOL_METAL }
+    /** PARTS: ingot, nugget, plate, rod and gear, but no tools (brass). */
+    public enum Forms { NONE, INGOT_ONLY, STORAGE, PARTS, TOOL_METAL }
 
     private final int meltingPoint;
     private final int tier;
@@ -81,7 +93,22 @@ public enum Metal implements StringRepresentable {
     }
 
     public boolean hasNugget() {
-        return forms == Forms.STORAGE || forms == Forms.TOOL_METAL;
+        return forms == Forms.STORAGE || forms == Forms.PARTS || forms == Forms.TOOL_METAL;
+    }
+
+    /** Plates: every tool metal and brass. */
+    public boolean hasPlate() {
+        return forms == Forms.PARTS || forms == Forms.TOOL_METAL;
+    }
+
+    /** Generic rods (tier 4 spec 4.1): steel and brass. Wrought iron has its own tier 3 rod item. */
+    public boolean hasRod() {
+        return this == STEEL || this == BRASS;
+    }
+
+    /** Gears (tier 4 spec 6.1): brass, steel and the bronzes. */
+    public boolean hasGear() {
+        return this == STEEL || this == BRASS || isBronze();
     }
 
     /** Plates, tool heads and tools. */
@@ -109,9 +136,14 @@ public enum Metal implements StringRepresentable {
         return java.util.List.of(dev.strataindustria.ceramics.MoldType.values());
     }
 
-    /** Whether any furnace of tier 3 gets hot enough to melt it (spec 4.1: iron does not). */
+    /** Whether a clay crucible gets hot enough to melt it (tier 3 spec 4.1: iron does not). */
     public boolean meltsInCrucible() {
-        return this != WROUGHT_IRON;
+        return meltingPoint <= 1400;
+    }
+
+    /** Metals that only exist dissolved in a melt and never pour on their own: arsenic and carbon. */
+    public boolean dissolvedOnly() {
+        return this == ARSENIC || this == CARBON;
     }
 
     @Override

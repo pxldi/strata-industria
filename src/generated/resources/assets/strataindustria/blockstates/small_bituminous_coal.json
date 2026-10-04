@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/small_bituminous_coal"
+      },
+      {
+        "model": "strataindustria:block/small_bituminous_coal",
+        "y": 90
+      },
+      {
+        "model": "strataindustria:block/small_bituminous_coal",
+        "y": 180
+      },
+      {
+        "model": "strataindustria:block/small_bituminous_coal",
+        "y": 270
+      }
+    ]
+  }
+}

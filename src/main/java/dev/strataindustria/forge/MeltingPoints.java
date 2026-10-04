@@ -22,13 +22,14 @@ public final class MeltingPoints {
             Map<Item, Float> map = new IdentityHashMap<>();
             map.put(Items.COPPER_INGOT, (float) Metal.COPPER.meltingPoint());
             map.put(Items.COPPER_NUGGET, (float) Metal.COPPER.meltingPoint());
-            for (OreMineral mineral : OreMineral.values()) {
+            for (OreMineral mineral : OreMineral.withPieces()) {
+                if (mineral.isSulfide()) continue;
                 float lowest = (float) mineral.composition().keySet().stream().mapToInt(Metal::meltingPoint).min().orElseThrow();
                 map.put(ModItems.SMALL_ORES.get(mineral).get(), lowest);
                 for (OreGrade grade : OreGrade.values()) {
                     map.put(ModItems.orePiece(mineral, grade), lowest);
                     map.put(ModItems.crushedOre(mineral, grade), lowest);
-                    map.put(ModItems.washedOre(mineral, grade), lowest);
+                    if (mineral.washable()) map.put(ModItems.washedOre(mineral, grade), lowest);
                 }
             }
             points = map;

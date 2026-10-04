@@ -4,6 +4,10 @@
     "#c:nuggets/bismuth",
     "#c:nuggets/bronze",
     "#c:nuggets/arsenical_bronze",
-    "#c:nuggets/bismuth_bronze"
+    "#c:nuggets/bismuth_bronze",
+    "#c:nuggets/steel",
+    "#c:nuggets/zinc",
+    "#c:nuggets/lead",
+    "#c:nuggets/brass"
   ]
 }

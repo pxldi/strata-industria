@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/steel_sword_blade",
+    "layer1": "strataindustria:item/glow/steel_sword_blade"
+  }
+}

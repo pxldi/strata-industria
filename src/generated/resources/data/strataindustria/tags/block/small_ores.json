@@ -8,6 +8,10 @@
     "strataindustria:small_limonite",
     "strataindustria:small_hematite",
     "strataindustria:small_magnetite",
-    "strataindustria:small_native_gold"
+    "strataindustria:small_native_gold",
+    "strataindustria:small_sphalerite",
+    "strataindustria:small_galena",
+    "strataindustria:small_bituminous_coal",
+    "strataindustria:small_sulfur"
   ]
 }

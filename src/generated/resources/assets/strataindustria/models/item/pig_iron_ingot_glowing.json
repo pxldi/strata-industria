@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "strataindustria:item/pig_iron_ingot",
+    "layer1": "strataindustria:item/glow/pig_iron_ingot"
+  }
+}

@@ -283,9 +283,11 @@ final class ModRecipeProvider extends RecipeProvider {
                 anvil("tongs_jaw_from_" + m, ingot, 1, ModItems.TONGS_JAW.get(), 80,
                         rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.NOT_LAST));
             }
-            // Tier 3 spec 9.3: a wrought iron sword blade is drawn from one welded double ingot.
-            Item bladeStock = metal == Metal.WROUGHT_IRON ? ModItems.WROUGHT_IRON_DOUBLE_INGOT.get() : ingot;
-            anvil(m + "_sword_blade", bladeStock, metal == Metal.WROUGHT_IRON ? 1 : 2, ModItems.head(metal, MoldType.SWORD_BLADE), 100,
+            // Tier 3 spec 9.3 and tier 4 spec 14.1: iron and steel sword blades are drawn from one welded double ingot.
+            Item doubleIngot = metal == Metal.WROUGHT_IRON ? ModItems.WROUGHT_IRON_DOUBLE_INGOT.get()
+                    : metal == Metal.STEEL ? ModItems.STEEL_DOUBLE_INGOT.get() : null;
+            Item bladeStock = doubleIngot != null ? doubleIngot : ingot;
+            anvil(m + "_sword_blade", bladeStock, doubleIngot != null ? 1 : 2, ModItems.head(metal, MoldType.SWORD_BLADE), 100,
                     rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.BEND, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.THIRD_LAST));
             if (metal == Metal.WROUGHT_IRON) {
                 output.accept(key("anvil/wrought_iron_rod"), new AnvilRecipe(Ingredient.of(ingot), 1,
@@ -303,6 +305,22 @@ final class ModRecipeProvider extends RecipeProvider {
                         List.of(Ingredient.of(head), Ingredient.of(Items.STICK))), RecipeCategory.TOOLS, "has_" + name(head), has(head));
             }
             armour(metal);
+        }
+        // Tier 4 spec 14.1: brass and steel plates, rods and gears.
+        for (Metal metal : Metal.values()) {
+            if (!ModItems.RODS.containsKey(metal)) continue;
+            Item ingot = ModItems.ingot(metal);
+            String m = metal.id();
+            if (!metal.isToolMetal()) {
+                anvil(m + "_plate", ingot, 1, ModItems.PLATES.get(metal).get(), 60,
+                        rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.HIT, Rule.Where.SECOND_LAST), rule(Rule.Kind.HIT, Rule.Where.THIRD_LAST));
+            }
+            output.accept(key("anvil/" + m + "_rod"), new AnvilRecipe(Ingredient.of(ingot), 1,
+                    new ItemStackTemplate(ModItems.RODS.get(metal).get(), 2),
+                    List.of(rule(Rule.Kind.DRAW, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST),
+                            rule(Rule.Kind.HIT, Rule.Where.NOT_LAST)), 45), null);
+            anvil(m + "_gear", ingot, 1, ModItems.GEARS.get(metal).get(), 70,
+                    rule(Rule.Kind.PUNCH, Rule.Where.LAST), rule(Rule.Kind.UPSET, Rule.Where.SECOND_LAST), rule(Rule.Kind.BEND, Rule.Where.NOT_LAST));
         }
         shaped(RecipeCategory.DECORATIONS, ModItems.BRONZE_ANVIL.get())
                 .pattern("PPP")
@@ -323,7 +341,7 @@ final class ModRecipeProvider extends RecipeProvider {
     private void armour(Metal metal) {
         Item plate = ModItems.PLATES.get(metal).get();
         // Tier 3 spec 10.4: iron and gold plates are laced onto leather instead of fibre cloth.
-        Item cloth = metal == Metal.WROUGHT_IRON || metal == Metal.GOLD ? Items.LEATHER : ModItems.FIBRE_CLOTH.get();
+        Item cloth = metal == Metal.WROUGHT_IRON || metal == Metal.GOLD || metal == Metal.STEEL ? Items.LEATHER : ModItems.FIBRE_CLOTH.get();
         var pieces = ModItems.ARMOUR.get(metal);
         // Shapes from the spec table: helmet, chestplate, leggings, boots.
         String[][] shapes = {{"PPP", " C "}, {"P P", "PCP", " P "}, {"PCP", "P P"}, {"PCP"}};
@@ -618,13 +636,21 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('Q', ModItems.QUERNSTONE.get())
                 .unlockedBy("has_quernstone", has(ModItems.QUERNSTONE.get()))
                 .save(output, key("quern"));
-        for (OreMineral mineral : OreMineral.values()) {
+        for (OreMineral mineral : OreMineral.withPieces()) {
             for (OreGrade grade : OreGrade.values()) {
                 Item crushed = ModItems.crushedOre(mineral, grade);
                 grind(name(crushed), Ingredient.of(ModItems.orePiece(mineral, grade)), crushed, 1);
             }
         }
         grind("bone_meal", Ingredient.of(Items.BONE), Items.BONE_MEAL, 4);
+        // Tier 4 spec 3: carbon and sulfur dusts.
+        grind("charcoal_dust", Ingredient.of(Items.CHARCOAL), dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST.get(), 2);
+        grind("sulfur_dust", Ingredient.of(dev.strataindustria.registry.Tier4Items.SULFUR.get()), dev.strataindustria.registry.Tier4Items.SULFUR_DUST.get(), 1);
+        shapeless(RecipeCategory.MISC, Items.GUNPOWDER, 2)
+                .requires(dev.strataindustria.registry.Tier4Items.SULFUR.get(), 2)
+                .requires(dev.strataindustria.registry.Tier4Items.CHARCOAL_DUST.get())
+                .unlockedBy("has_sulfur", has(dev.strataindustria.registry.Tier4Items.SULFUR.get()))
+                .save(output, key("gunpowder_from_sulfur"));
         // Every vanilla flower that crafts into a dye gives two of it.
         flower(Items.DANDELION, Items.DYE.pick(DyeColor.YELLOW));
         flower(Items.POPPY, Items.DYE.pick(DyeColor.RED));
@@ -695,7 +721,7 @@ final class ModRecipeProvider extends RecipeProvider {
         odds.put(OreMineral.HEMATITE, 0.15f);
         byproduct.put(OreMineral.MAGNETITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get());
         odds.put(OreMineral.MAGNETITE, 0.10f);
-        for (OreMineral mineral : OreMineral.values()) {
+        for (OreMineral mineral : OreMineral.washableValues()) {
             for (OreGrade grade : OreGrade.values()) {
                 List<WashingRecipe.Chance> chances = byproduct.containsKey(mineral)
                         ? List.of(new WashingRecipe.Chance(new ItemStackTemplate(byproduct.get(mineral)), odds.get(mineral)))

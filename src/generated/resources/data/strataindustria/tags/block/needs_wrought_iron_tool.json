@@ -1,3 +1,36 @@
 {
-  "values": []
+  "values": [
+    "strataindustria:limestone_sphalerite_ore",
+    "strataindustria:limestone_galena_ore",
+    "strataindustria:limestone_bituminous_coal_ore",
+    "strataindustria:limestone_sulfur_ore",
+    "strataindustria:shale_sphalerite_ore",
+    "strataindustria:shale_galena_ore",
+    "strataindustria:shale_bituminous_coal_ore",
+    "strataindustria:shale_sulfur_ore",
+    "strataindustria:slate_sphalerite_ore",
+    "strataindustria:slate_galena_ore",
+    "strataindustria:slate_bituminous_coal_ore",
+    "strataindustria:slate_sulfur_ore",
+    "strataindustria:marble_sphalerite_ore",
+    "strataindustria:marble_galena_ore",
+    "strataindustria:marble_bituminous_coal_ore",
+    "strataindustria:marble_sulfur_ore",
+    "strataindustria:granite_sphalerite_ore",
+    "strataindustria:granite_galena_ore",
+    "strataindustria:granite_bituminous_coal_ore",
+    "strataindustria:granite_sulfur_ore",
+    "strataindustria:gabbro_sphalerite_ore",
+    "strataindustria:gabbro_galena_ore",
+    "strataindustria:gabbro_bituminous_coal_ore",
+    "strataindustria:gabbro_sulfur_ore",
+    "strataindustria:basalt_sphalerite_ore",
+    "strataindustria:basalt_galena_ore",
+    "strataindustria:basalt_bituminous_coal_ore",
+    "strataindustria:basalt_sulfur_ore",
+    "strataindustria:rhyolite_sphalerite_ore",
+    "strataindustria:rhyolite_galena_ore",
+    "strataindustria:rhyolite_bituminous_coal_ore",
+    "strataindustria:rhyolite_sulfur_ore"
+  ]
 }

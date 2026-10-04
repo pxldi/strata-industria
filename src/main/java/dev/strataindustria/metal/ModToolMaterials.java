@@ -17,6 +17,10 @@ public final class ModToolMaterials {
     public static final ToolMaterial WROUGHT_IRON = new ToolMaterial(ModTags.Blocks.INCORRECT_FOR_WROUGHT_IRON_TOOL, 520, 6.5f, 2.5f, 14,
             net.minecraft.tags.ItemTags.IRON_TOOL_MATERIALS);
 
+    /** Tier 4 spec 14.2: mines what a vanilla diamond pickaxe mines. */
+    public static final ToolMaterial STEEL = new ToolMaterial(ModTags.Blocks.INCORRECT_FOR_STEEL_TOOL, 800, 7.5f, 3.0f, 12,
+            ModTags.Items.ingots(Metal.STEEL));
+
     private ModToolMaterials() {}
 
     public static ToolMaterial of(Metal metal) {
@@ -27,6 +31,7 @@ public final class ModToolMaterials {
             case BISMUTH_BRONZE -> BISMUTH_BRONZE;
             case WROUGHT_IRON -> WROUGHT_IRON;
             case GOLD -> ToolMaterial.GOLD;
+            case STEEL -> STEEL;
             default -> throw new IllegalArgumentException(metal + " makes no tools");
         };
     }

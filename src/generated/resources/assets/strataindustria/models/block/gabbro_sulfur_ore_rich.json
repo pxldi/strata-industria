@@ -1,0 +1,7 @@
+{
+  "parent": "strataindustria:block/template_ore",
+  "textures": {
+    "ore": "strataindustria:block/ore/sulfur_rich",
+    "rock": "strataindustria:block/gabbro"
+  }
+}
