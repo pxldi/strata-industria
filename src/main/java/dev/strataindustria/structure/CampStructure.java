@@ -138,31 +138,19 @@ public class CampStructure extends Structure {
         long campSeed = random.nextLong();
         PlanPiece camp = new PlanPiece(plan, rotation, minX, minZ, ground.getAsInt(), mineral, wood, campSeed);
 
-        // A trial pit dug at the edge of the vein, half the time.
-        PlanPiece pit = null;
-        if (random.nextBoolean()) {
-            Plan pitPlan = Plans.TRIAL_PIT;
-            int along = plan.depth() / 2 + 5 + pitPlan.depth() / 2 + 1;
-            int px = campX + toVein.getStepX() * along, pz = campZ + toVein.getStepZ() * along;
-            int[] size = PlanPiece.size(pitPlan, rotation);
-            int pMinX = px - size[0] / 2, pMinZ = pz - size[1] / 2;
-            OptionalInt pitGround = site.level(pMinX, pMinZ, pMinX + size[0] - 1, pMinZ + size[1] - 1, 3);
-            if (pitGround.isPresent()) {
-                pit = new PlanPiece(pitPlan, rotation, pMinX, pMinZ, pitGround.getAsInt(), mineral, wood, random.nextLong());
-            }
+        // Three cairns lead on from the end of the trench toward the vein.
+        List<PlanPiece> cairns = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            int along = plan.depth() / 2 + 3 + 4 * i, across = 2 + i;
+            int cairnX = campX + toVein.getStepX() * along + side.getStepX() * across;
+            int cairnZ = campZ + toVein.getStepZ() * along + side.getStepZ() * across;
+            cairns.add(new PlanPiece(Plans.CAIRN, Rotation.NONE, cairnX, cairnZ, site.surface(cairnX, cairnZ), mineral, wood,
+                    random.nextLong()));
         }
 
-        // The cairn points the way, off the corner of the camp on the vein side.
-        int cairnX = campX + toVein.getStepX() * 6 + side.getStepX() * 6;
-        int cairnZ = campZ + toVein.getStepZ() * 6 + side.getStepZ() * 6;
-        PlanPiece cairn = new PlanPiece(Plans.CAIRN, Rotation.NONE, cairnX, cairnZ, site.surface(cairnX, cairnZ), mineral, wood,
-                random.nextLong());
-
-        PlanPiece trialPit = pit;
         return Optional.of(new GenerationStub(new BlockPos(campX, ground.getAsInt(), campZ), builder -> {
             builder.addPiece(camp);
-            if (trialPit != null) builder.addPiece(trialPit);
-            builder.addPiece(cairn);
+            cairns.forEach(builder::addPiece);
         }));
     }
 

@@ -709,9 +709,9 @@ final class StructureData {
                 + "them. A pile sealed on every side burns slowly into charcoal instead of ash. Cover the open side with earth, "
                 + "then light it. They slept warm. Look where they slept.");
         add.accept(place + ".prospector_camp", "Abandoned prospector's camp");
-        add.accept(place + ".prospector_camp.hint", "A prospector laid three stones on a log: the rock at the surface, the rock "
+        add.accept(place + ".prospector_camp.hint", "A prospector laid three stones on a counter: the rock at the surface, the rock "
                 + "below it, and the hard rock at the bottom. Every region stacks its own three rocks, and every rock keeps its "
-                + "own ores. The pebbles of ore on the ground here sit above a vein.");
+                + "own ores. The pebbles of ore on the ground here sit above a vein. The trench ends where they stopped digging.");
         add.accept(place + ".mining_camp", "Mining camp");
         add.accept(place + ".mining_camp.hint", "Miners followed this vein into the hill, propping the tunnel as they went. They "
                 + "stopped at the poor ore on the vein's edge; the rich ore at the heart of a vein is still down there. Their "
@@ -762,7 +762,7 @@ final class StructureData {
                     "Third burn this month. Sealed it with turf this time and it came out black all the way through. Last one was half ash.",
                     "Out of straw. Walked to the next clearing for more, two days there and back. Leaving the axe here, the handle is split anyway."};
             case "prospector_camp" -> new String[] {
-                    "Three stones on the log: top rock, middle rock, bottom rock. Every hill here stacks them the same way. Look at the stones before you dig.",
+                    "Three stones on the counter, top rock, middle rock, bottom rock, in that order. Every hill here stacks them the same way. Look at the stones before you dig. Spare things are in the crate at the end of the trench.",
                     "Tin stone half a day out. Needs a copper pick and mine is stone. Marked the spot, will come back."};
             case "mining_camp" -> new String[] {
                     "Lower level flooded again. Pumps can't keep up. Moving the crew to the east face.",

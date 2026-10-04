@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.LanternBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.FurnaceBlock;
@@ -285,12 +286,16 @@ public class PlanPiece extends StructurePiece {
             case '!' -> Blocks.BASALT.defaultBlockState();
             case '?' -> Blocks.TUFF.defaultBlockState();
             case '0' -> Blocks.GRASS_BLOCK.defaultBlockState();
+            case '(' -> Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true);
+            case '+' -> BuiltInRegistries.BLOCK.getValue(Identifier.withDefaultNamespace("white_banner")).defaultBlockState();
+            case '-' -> Blocks.CLAY.defaultBlockState();
+            case ')' -> Blocks.WATER.defaultBlockState();
             default -> null;
         };
         if (state == null) return;
         level.setBlock(pos, state.rotate(rotation), Block.UPDATE_CLIENTS);
         if (c == 'k') fences.add(pos.immutable());
-        fill(level, random, pos, c);
+        fill(level, random, pos, c, rock);
         if (c == 'm' && Weathering.chance(pos.above(), seed, 0.5) && level.getBlockState(pos.above()).isAir()) {
             level.setBlock(pos.above(), Blocks.MOSS_CARPET.defaultBlockState(), Block.UPDATE_CLIENTS);
         }
@@ -311,14 +316,23 @@ public class PlanPiece extends StructurePiece {
     }
 
     /** Loot, logs and fuel for the blocks that hold things. */
-    private void fill(WorldGenLevel level, RandomSource random, BlockPos pos, char c) {
+    private void fill(WorldGenLevel level, RandomSource random, BlockPos pos, char c, LocalRock rock) {
         switch (c) {
             case 'B', 'b', 'u', 'N' -> {
                 var table = CampLoot.barrel(planId, mineral);
                 if (table != null) RandomizableContainer.setBlockEntityLootTable(level, random, pos, table);
             }
-            case 'X' -> RandomizableContainer.setBlockEntityLootTable(level, random, pos,
-                    CampLoot.key(planId.startsWith("charcoal") ? CampLoot.CLEARING_CACHE : CampLoot.MINING_CACHE));
+            case 'X' -> {
+                var table = switch (planId) {
+                    case "charcoal_burners_clearing" -> CampLoot.key(CampLoot.CLEARING_CACHE);
+                    case "prospector_camp" -> CampLoot.key(CampLoot.PROSPECTOR_CACHE, mineral);
+                    default -> CampLoot.key(CampLoot.MINING_CACHE);
+                };
+                RandomizableContainer.setBlockEntityLootTable(level, random, pos, table);
+                if (planId.equals("prospector_camp") && level.getBlockEntity(pos) instanceof CrateBlockEntity crate) {
+                    crate.lock(sampleOrder(rock));
+                }
+            }
             case 'a' -> ToolRackBlockEntity.stock(level.getLevel(), pos, java.util.List.of(
                     worn(ModItems.STONE_HAMMER.get(), random), worn(ModItems.STONE_AXE.get(), random)));
             case '$' -> {
@@ -345,6 +359,30 @@ public class PlanPiece extends StructurePiece {
             default -> {
             }
         }
+    }
+
+    /**
+     * The crate stays shut until the three rock samples on the counter lie in the order of the strata: top rock,
+     * middle rock, bottom rock, from the west end of the counter as the plan is drawn.
+     */
+    private PuzzleLock sampleOrder(LocalRock rock) {
+        List<Rock> order = List.of(rock.top(), rock.middle(), rock.bottom());
+        List<int[]> slots = new ArrayList<>();
+        for (int pz = 0; pz < plan.depth(); pz++) {
+            for (int px = 0; px < plan.width(); px++) {
+                for (int layer = 0; layer < plan.height(); layer++) {
+                    if ("123".indexOf(plan.at(px, layer, pz)) >= 0) slots.add(new int[] {px, layer, pz});
+                }
+            }
+        }
+        slots.sort(java.util.Comparator.comparingInt(slot -> slot[0]));
+        List<PuzzleLock.Step> steps = new ArrayList<>();
+        for (int i = 0; i < slots.size() && i < order.size(); i++) {
+            int[] slot = slots.get(i);
+            BlockPos at = new BlockPos(worldX(slot[0], slot[2]), groundY + slot[1] - Plans.base(plan), worldZ(slot[0], slot[2]));
+            steps.add(new PuzzleLock.Step(at, BuiltInRegistries.BLOCK.getKey(rock.loose(order.get(i)).getBlock()).toString()));
+        }
+        return PuzzleLock.blocks(steps);
     }
 
     /** A tool somebody used for years: a good share of its durability gone. */

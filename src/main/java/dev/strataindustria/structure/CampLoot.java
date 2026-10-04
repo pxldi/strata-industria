@@ -58,7 +58,7 @@ public final class CampLoot {
     /** Archaeology loot of a plan's suspicious gravel. */
     public static ResourceKey<LootTable> dig(String plan, OreMineral mineral) {
         return switch (plan) {
-            case "trial_pit" -> key(DIG_PROSPECTOR, mineral);
+            case "trial_pit", "prospector_camp" -> key(DIG_PROSPECTOR, mineral);
             case "collapsed_adit/portal", "adit/collapsed" -> key(DIG_ADIT, mineral);
             default -> key(DIG_SPOIL, mineral);
         };

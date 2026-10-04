@@ -43,6 +43,7 @@ final class StructureGameTests {
         tests.put("structure_adit_miners_end", StructureGameTests::aditMinersEnd);
         tests.put("structure_bunkhouse_cache", StructureGameTests::bunkhouseCache);
         tests.put("structure_clearing_cache", StructureGameTests::clearingCache);
+        tests.put("structure_prospector_trench", StructureGameTests::prospectorTrench);
     }
 
     private static void plansInForest(GameTestHelper helper) {
@@ -108,6 +109,32 @@ final class StructureGameTests {
                 "cache crate has no loot table");
         helper.assertTrue(level.getBlockState(new BlockPos(minX + 6, groundY + 1, minZ + 5))
                 .is(dev.strataindustria.structure.SharedBlocks.SMOULDERING_LOG_PILE.get()), "pit A is not smouldering");
+        helper.succeed();
+    }
+
+    /** The trench is cut four deep with the cache under rubble at its end; the crate stays shut until the samples are in order. */
+    private static void prospectorTrench(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int groundY = helper.absolutePos(new BlockPos(0, 1, 0)).getY();
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        Plan plan = Plans.PROSPECTOR_CAMP;
+        int minX = origin.getX() + PAD, minZ = origin.getZ() + PAD;
+        BoundingBox area = new BoundingBox(minX - PAD, groundY - 8, minZ - PAD, minX + plan.width() + PAD, groundY + 40, minZ + plan.depth() + PAD);
+        forest(level, area, groundY, minX, minZ, plan.width(), plan.depth());
+        build(level, new PlanPiece(plan, Rotation.NONE, minX, minZ, groundY, OreMineral.MALACHITE, PlanPiece.Wood.SPRUCE, 11L), area);
+        BlockPos crate = new BlockPos(minX + 9, groundY - 3, minZ + 19);
+        helper.assertTrue(level.getBlockState(crate).is(dev.strataindustria.structure.SharedBlocks.CRATE.get()), "cache crate missing");
+        helper.assertTrue(level.getBlockState(crate.above()).getBlock() instanceof dev.strataindustria.structure.RubbleBlock, "no rubble over the cache");
+        helper.assertTrue(level.getBlockState(new BlockPos(minX + 8, groundY - 3, minZ + 16)).isAir(), "trench floor is not four deep");
+        helper.assertTrue(level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED), "cache crate is not locked");
+        var lock = ((dev.strataindustria.structure.CrateBlockEntity) level.getBlockEntity(crate)).puzzle();
+        helper.assertTrue(lock != null && lock.steps().size() == 3, "no rock order puzzle on the crate");
+        for (var step : lock.steps()) {
+            level.setBlock(step.pos(), net.minecraft.core.registries.BuiltInRegistries.BLOCK.getValue(
+                    net.minecraft.resources.Identifier.parse(step.block())).defaultBlockState(), 3);
+            dev.strataindustria.structure.PuzzleLock.blockPlaced(level, step.pos());
+        }
+        helper.assertTrue(!level.getBlockState(crate).getValue(dev.strataindustria.structure.CrateBlock.LOCKED), "rocks in order did not open the crate");
         helper.succeed();
     }
 
