@@ -6,6 +6,7 @@ import dev.strataindustria.heat.HeatEmitter;
 import dev.strataindustria.heat.HeatNetwork;
 import dev.strataindustria.heat.HeatPipeBlock;
 import dev.strataindustria.heat.HeatPort;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricConsumer;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
@@ -137,6 +138,7 @@ public class ElectricHeaterBlockEntity extends BlockEntity implements ElectricCo
             int output = wanting ? (int) Math.min(limit, buffer) : 0;
             taken = Math.max(0, Math.min(output, HeatNetwork.deliver(level, targets, temperature, output)));
             buffer = Math.max(0, buffer - taken);
+            if (taken > 0 && age % 100 == 0) Journal.awardNear(level, pos, Journal.ELECTRIC_HEAT);
         }
         emitter.glow(level, temperature >= HeatPipeBlock.GLOWS_FROM && (wanting || taken > 0));
 

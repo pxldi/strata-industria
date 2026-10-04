@@ -43,6 +43,8 @@ public final class ElectricNetwork {
     private final List<Member<ElectricStorage>> storages = new ArrayList<>();
     /** Loss on the path from the nearest source, for each consumer, and from the nearest generator, for each storage block. */
     private final Map<PortKey, Double> losses = new HashMap<>();
+    /** Blocks of overhead span on the cheapest path from the nearest source, for each consumer. */
+    private final Map<PortKey, Double> spanBlocks = new HashMap<>();
     private final Map<PortKey, Report> reports = new HashMap<>();
     private final @Nullable ElectricTier tier;
     private final @Nullable ElectricTier weakestCable;
@@ -96,15 +98,19 @@ public final class ElectricNetwork {
         List<PortKey> allSources = new ArrayList<>();
         generators.forEach(m -> allSources.add(m.pos()));
         storages.forEach(m -> allSources.add(m.pos()));
-        Map<PortKey, Double> fromAny = pathLosses(nodes, edges, spans, allSources);
-        for (var m : consumers) losses.put(m.pos(), fromAny.getOrDefault(m.pos(), 1.0));
-        Map<PortKey, Double> fromGenerators = pathLosses(nodes, edges, spans, generators.stream().map(Member::pos).toList());
+        Map<PortKey, Double> onSpans = new HashMap<>();
+        Map<PortKey, Double> fromAny = pathLosses(nodes, edges, spans, allSources, onSpans);
+        for (var m : consumers) {
+            losses.put(m.pos(), fromAny.getOrDefault(m.pos(), 1.0));
+            spanBlocks.put(m.pos(), onSpans.getOrDefault(m.pos(), 0.0));
+        }
+        Map<PortKey, Double> fromGenerators = pathLosses(nodes, edges, spans, generators.stream().map(Member::pos).toList(), new HashMap<>());
         for (var m : storages) losses.put(m.pos(), fromGenerators.getOrDefault(m.pos(), 1.0));
     }
 
     /** Sum of loss rates along the cheapest path from any of {@code starts} to every block (one Dijkstra, spec 6.6). */
     private static Map<PortKey, Double> pathLosses(Map<PortKey, ElectricNode> nodes, Map<PortKey, List<PortKey>> edges, Map<Link, Double> spans,
-            List<PortKey> starts) {
+            List<PortKey> starts, Map<PortKey, Double> onSpans) {
         Map<PortKey, Double> best = new HashMap<>();
         record Step(PortKey pos, double loss) {}
         PriorityQueue<Step> queue = new PriorityQueue<>((a, b) -> Double.compare(a.loss(), b.loss()));
@@ -121,6 +127,7 @@ public final class ElectricNetwork {
                 double loss = step.loss() + cost;
                 if (loss < best.getOrDefault(next, Double.MAX_VALUE)) {
                     best.put(next, loss);
+                    onSpans.put(next, onSpans.getOrDefault(step.pos(), 0.0) + (span != null ? span / SPAN_LOSS_PER_BLOCK : 0.0));
                     queue.add(new Step(next, loss));
                 }
             }
@@ -259,6 +266,11 @@ public final class ElectricNetwork {
 
     public Set<BlockPos> members() {
         return members;
+    }
+
+    /** Blocks of overhead span between the consumer at {@code pos} and its nearest source. */
+    public double spanBlocks(BlockPos pos) {
+        return spanBlocks.getOrDefault(new PortKey(pos, 0), 0.0);
     }
 
     public Report report(BlockPos pos) {

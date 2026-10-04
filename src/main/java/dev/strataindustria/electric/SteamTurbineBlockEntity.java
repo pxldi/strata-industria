@@ -2,6 +2,7 @@ package dev.strataindustria.electric;
 
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.fluid.FluidPort;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricSource;
@@ -144,6 +145,7 @@ public class SteamTurbineBlockEntity extends BlockEntity implements ElectricSour
         float before = spin;
         spin = supplied ? Math.min(1.0f, spin + 1.0f / RISE_TICKS) : Math.max(0.0f, spin - 1.0f / FALL_TICKS);
         if (spin != before) setChanged();
+        if (spin >= 1.0f && pressure >= fullPressure(tier) && age % 100 == 0) Journal.awardNear(level, pos, Journal.TURBINE);
 
         float pitch = (0.6f + 0.8f * spin) + (tier == ElectricTier.MV ? 0.1f : 0.0f);
         if (spin > REST && age % SOUND_INTERVAL == 0) {

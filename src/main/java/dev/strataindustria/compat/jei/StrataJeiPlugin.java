@@ -9,6 +9,8 @@ import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModRecipes;
 import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.registry.Tier4Recipes;
+import dev.strataindustria.registry.Tier5Items;
+import dev.strataindustria.registry.Tier5Recipes;
 import dev.strataindustria.smithing.AnvilBlock;
 import java.util.List;
 import mezz.jei.api.IModPlugin;
@@ -60,7 +62,13 @@ public final class StrataJeiPlugin implements IModPlugin {
                 new BarrelCategory(gui),
                 new RoastingCategory(gui),
                 new CokingCategory(gui),
-                new FireboxFuelCategory(gui));
+                new FireboxFuelCategory(gui),
+                new CrushingCategory(gui),
+                new MachiningCategory(gui),
+                new ChemicalCategory<>(JeiTypes.MIXING, "mixing", Tier5Items.MIXER.get(), gui, 66),
+                new ChemicalCategory<>(JeiTypes.ELECTROLYSIS, "electrolysis", Tier5Items.ELECTROLYSER.get(), gui, 66),
+                new ChemicalCategory<>(JeiTypes.ASSEMBLING, "assembling", Tier5Items.ASSEMBLER.get(), gui, 84),
+                new ChemicalCategory<>(JeiTypes.EXTRUDING, "extruding", Tier5Items.EXTRUDER.get(), gui, 66));
     }
 
     @Override
@@ -76,6 +84,12 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addRecipes(JeiTypes.WASHING, ClientRecipes.byType(ModRecipes.WASHING.get()));
         registration.addRecipes(JeiTypes.BARREL, ClientRecipes.byType(ModRecipes.BARREL.get()));
         registration.addRecipes(JeiTypes.ROASTING, ClientRecipes.byType(Tier4Recipes.ROASTING.get()));
+        registration.addRecipes(JeiTypes.CRUSHING, ClientRecipes.byType(Tier4Recipes.CRUSHING.get()));
+        registration.addRecipes(JeiTypes.MACHINING, ClientRecipes.byType(Tier5Recipes.MACHINING.get()));
+        registration.addRecipes(JeiTypes.MIXING, ClientRecipes.byType(Tier5Recipes.MIXING.get()));
+        registration.addRecipes(JeiTypes.ELECTROLYSIS, ClientRecipes.byType(Tier5Recipes.ELECTROLYSIS.get()));
+        registration.addRecipes(JeiTypes.ASSEMBLING, ClientRecipes.byType(Tier5Recipes.ASSEMBLING.get()));
+        registration.addRecipes(JeiTypes.EXTRUDING, ClientRecipes.byType(Tier5Recipes.EXTRUDING.get()));
 
         registration.addRecipes(JeiTypes.PIT_KILN, Processes.kilnFiring());
         registration.addRecipes(JeiTypes.CHARCOAL_PIT, Processes.charcoalPit());
@@ -101,8 +115,14 @@ public final class StrataJeiPlugin implements IModPlugin {
         registration.addCraftingStation(JeiTypes.BLOOMERY, ModItems.BLOOMERY.get(), ModItems.BELLOWS.get());
         registration.addCraftingStation(JeiTypes.SAWING, ModItems.SAW_MILL.get());
         registration.addCraftingStation(JeiTypes.WASHING, ModItems.WASHING_PAN.get(), ModItems.SLUICE.get());
-        registration.addCraftingStation(JeiTypes.BARREL, ModItems.SOAKING_BARREL.get());
-        registration.addCraftingStation(JeiTypes.ROASTING, ModItems.FORGE.get(), Tier4Items.ROASTER.get());
+        registration.addCraftingStation(JeiTypes.BARREL, ModItems.SOAKING_BARREL.get(), Tier5Items.MIXER.get());
+        registration.addCraftingStation(JeiTypes.ROASTING, ModItems.FORGE.get(), Tier4Items.ROASTER.get(), Tier5Items.ELECTRIC_FURNACE.get());
+        registration.addCraftingStation(JeiTypes.CRUSHING, Tier4Items.CRUSHER.get(), Tier5Items.MACERATOR.get());
+        registration.addCraftingStation(JeiTypes.MACHINING, Tier5Items.WIREMILL.get(), Tier5Items.BENDER.get(), Tier5Items.LATHE.get());
+        registration.addCraftingStation(JeiTypes.MIXING, Tier5Items.MIXER.get());
+        registration.addCraftingStation(JeiTypes.ELECTROLYSIS, Tier5Items.ELECTROLYSER.get());
+        registration.addCraftingStation(JeiTypes.ASSEMBLING, Tier5Items.ASSEMBLER.get());
+        registration.addCraftingStation(JeiTypes.EXTRUDING, Tier5Items.EXTRUDER.get());
         registration.addCraftingStation(JeiTypes.COKING, Tier4Items.COKE_OVEN_DOOR.get());
         registration.addCraftingStation(JeiTypes.FIREBOX_FUEL, Tier4Items.FIREBOX.get());
         // The fire pit cooks vanilla campfire recipes.

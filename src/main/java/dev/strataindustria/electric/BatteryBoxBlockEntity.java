@@ -1,6 +1,7 @@
 package dev.strataindustria.electric;
 
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricStorage;
 import dev.strataindustria.power.ElectricTier;
@@ -34,6 +35,7 @@ public class BatteryBoxBlockEntity extends BlockEntity implements ElectricStorag
     public static void serverTick(Level level, BlockPos pos, BlockState state, BatteryBoxBlockEntity box) {
         BlockState next = state.setValue(BatteryBoxBlock.CHARGE, box.segments()).setValue(BatteryBoxBlock.CHARGING, box.charged > 0);
         box.charged = 0;
+        if (box.stored >= box.capacity() / 2 && level.getGameTime() % 100 == 0) Journal.awardNear(level, pos, Journal.BATTERY);
         if (next != state) level.setBlock(pos, next, Block.UPDATE_CLIENTS);
     }
 

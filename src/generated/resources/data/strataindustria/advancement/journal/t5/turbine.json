@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t5/dynamo",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "turbine"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.turbine.hint"
+    },
+    "icon": {
+      "id": "strataindustria:steam_turbine"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.turbine"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,6 +1,7 @@
 package dev.strataindustria.electric;
 
 import dev.strataindustria.Config;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricSource;
@@ -39,6 +40,7 @@ public class KineticDynamoBlockEntity extends KineticBlockEntity implements Kine
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, KineticDynamoBlockEntity dynamo) {
         StatusLight light = dynamo.light(ElectricNetworks.report(level, pos));
+        if (dynamo.extracted > 0 && level.getGameTime() % 100 == 0) Journal.awardNear(level, pos, Journal.DYNAMO);
         dynamo.extracted = 0;
         if (state.getValue(KineticDynamoBlock.STATUS) != light) {
             level.setBlock(pos, state.setValue(KineticDynamoBlock.STATUS, light), Block.UPDATE_CLIENTS);

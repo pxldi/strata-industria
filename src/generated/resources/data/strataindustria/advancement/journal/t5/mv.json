@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/t5/assembler",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "mv_upgrade"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.mv.hint"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "strataindustria:mv_upgrade_kit"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.mv"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

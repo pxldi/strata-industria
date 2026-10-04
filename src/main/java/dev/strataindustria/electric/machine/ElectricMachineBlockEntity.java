@@ -1,6 +1,8 @@
 package dev.strataindustria.electric.machine;
 
+import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.processing.Processing;
 import dev.strataindustria.power.ElectricConsumer;
 import dev.strataindustria.power.ElectricNetwork;
@@ -100,6 +102,8 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
     private Status status = Status.EMPTY;
     private float power;
     private int finished;
+    /** Operations at full power since a player last opened this machine (spec 12.5). */
+    private int chain;
     private long nextEject;
 
     private final ContainerData data = new ContainerData() {
@@ -151,6 +155,11 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
 
     /** Called once for each finished item, after its outputs are in. */
     protected void finished(ServerLevel level, Operation operation) {}
+
+    /** The field journal goal for a finished item, or null for none. */
+    protected @Nullable String journalGoal() {
+        return layout == ElectricMachineLayout.MACERATOR ? Journal.MACERATOR : null;
+    }
 
     /** Called every tick the machine runs, for particles. */
     protected void running(ServerLevel level, ItemStack shown) {}
@@ -241,6 +250,11 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
                 input.shrink(1);
                 finished++;
                 finished(level, op);
+                Journal.awardNear(level, worldPosition, Journal.FIRST_MACHINE);
+                String goal = journalGoal();
+                if (goal != null) Journal.awardNear(level, worldPosition, goal);
+                chain = power >= 0.999f ? chain + 1 : 0;
+                if (chain >= Config.AUTOMATION_CHAIN_OPERATIONS.getAsInt()) Journal.awardNear(level, worldPosition, Journal.ELECTRIC_CHAIN);
             }
         }
         if (level.getGameTime() % 40 == 0) {
@@ -249,6 +263,7 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
             level.playSound(null, worldPosition, workSound(), SoundSource.BLOCKS, 0.5f, pitch * (0.95f + level.getRandom().nextFloat() * 0.1f));
         }
         running(level, shown);
+        ElectricNetworks.spanGoal(level, worldPosition);
         setChanged();
         return power >= 0.999f ? Status.WORKING : Status.LOW_POWER;
     }
@@ -471,6 +486,7 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
 
     @Override
     protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
+        chain = 0;
         return new ElectricMachineMenu(layout, tier(), id, inventory, worldPosition, this, data);
     }
 
@@ -483,6 +499,7 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
         buffer = in.getDoubleOr("buffer", 0.0);
         autoEject = in.getBooleanOr("auto_eject", false);
         finished = in.getIntOr("finished", 0);
+        chain = in.getIntOr("chain", 0);
     }
 
     @Override
@@ -493,6 +510,7 @@ public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntit
         out.putDouble("buffer", buffer);
         out.putBoolean("auto_eject", autoEject);
         out.putInt("finished", finished);
+        out.putInt("chain", chain);
     }
 
     @Override

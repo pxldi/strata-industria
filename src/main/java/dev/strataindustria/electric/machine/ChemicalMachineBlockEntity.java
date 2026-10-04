@@ -1,8 +1,10 @@
 package dev.strataindustria.electric.machine;
 
+import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.fluid.FluidPipes;
 import dev.strataindustria.fluid.FluidPort;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricConsumer;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
@@ -81,6 +83,8 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
     private boolean autoEject;
     private long nextEject;
     private int finished;
+    /** Operations at full power since a player last opened this machine (spec 12.5). */
+    private int chain;
     private ElectricMachineBlockEntity.Status status = ElectricMachineBlockEntity.Status.EMPTY;
     private Fluid fullFluid = Fluids.EMPTY;
     /** Per face: 0 = auto, 1 to 3 = only that product leaves here, fluidOutputs + 1 = nothing leaves (spec 11.2). */
@@ -229,14 +233,32 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
             consume(io, batch);
             produce(level, io, batch);
             finished++;
+            journal(level, io);
             level.playSound(null, worldPosition, finishSound(), SoundSource.BLOCKS, 0.3f, 1.2f);
         }
         if (level.getGameTime() % 40 == 0) {
             float pitch = 0.7f + 0.3f * power + (tier == ElectricTier.MV ? 0.1f : 0.0f);
             level.playSound(null, worldPosition, workSound(), SoundSource.BLOCKS, 0.5f, pitch * (0.95f + level.getRandom().nextFloat() * 0.1f));
         }
+        ElectricNetworks.spanGoal(level, worldPosition);
         setChanged();
         return power >= 0.999f ? ElectricMachineBlockEntity.Status.WORKING : ElectricMachineBlockEntity.Status.LOW_POWER;
+    }
+
+    /** Field journal goals for a finished operation: any machine, the assembler, acid, water splitting, the long run. */
+    private void journal(ServerLevel level, ChemicalIo io) {
+        Journal.awardNear(level, worldPosition, Journal.FIRST_MACHINE);
+        if (layout == ChemicalMachineLayout.ASSEMBLER) Journal.awardNear(level, worldPosition, Journal.ASSEMBLER);
+        for (FluidAmount result : io.fluidResults()) {
+            if (result.fluid().isSame(Tier5Fluids.SULFURIC_ACID.source().get())) Journal.awardNear(level, worldPosition, Journal.SULFURIC_ACID);
+        }
+        if (layout == ChemicalMachineLayout.ELECTROLYSER) {
+            for (FluidAmount need : io.fluids()) {
+                if (need.fluid().isSame(Fluids.WATER)) Journal.awardNear(level, worldPosition, Journal.ELECTROLYSIS);
+            }
+        }
+        chain = power >= 0.999f ? chain + 1 : 0;
+        if (chain >= Config.AUTOMATION_CHAIN_OPERATIONS.getAsInt()) Journal.awardNear(level, worldPosition, Journal.ELECTRIC_CHAIN);
     }
 
     private boolean holdsNothing() {
@@ -616,6 +638,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
 
     @Override
     protected AbstractContainerMenu createMenu(int id, Inventory inventory) {
+        chain = 0;
         return new ChemicalMachineMenu(layout, tier(), id, inventory, worldPosition, this, data);
     }
 
@@ -628,6 +651,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
         progress = in.getFloatOr("progress", 0.0f);
         autoEject = in.getBooleanOr("auto_eject", false);
         finished = in.getIntOr("finished", 0);
+        chain = in.getIntOr("chain", 0);
         for (int i = 0; i < 6; i++) faceMode[i] = in.getIntOr("face" + i, 0);
         for (int i = 0; i < layout.tanks(); i++) {
             amount[i] = in.getIntOr("tank" + i, 0);
@@ -644,6 +668,7 @@ public abstract class ChemicalMachineBlockEntity extends BaseContainerBlockEntit
         out.putFloat("progress", progress);
         out.putBoolean("auto_eject", autoEject);
         out.putInt("finished", finished);
+        out.putInt("chain", chain);
         for (int i = 0; i < 6; i++) if (faceMode[i] != 0) out.putInt("face" + i, faceMode[i]);
         for (int i = 0; i < layout.tanks(); i++) {
             out.putInt("tank" + i, amount[i]);

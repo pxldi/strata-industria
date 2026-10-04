@@ -2,6 +2,7 @@ package dev.strataindustria.logistics;
 
 import dev.strataindustria.Config;
 import dev.strataindustria.automation.FilterContents;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricConsumer;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
@@ -304,6 +305,7 @@ public class StorageControllerBlockEntity extends BlockEntity implements Worldly
         received = 0;
         boolean was = powered;
         powered = fraction >= 0.5;
+        if (powered && level.getGameTime() % 100 == 0 && inventories().size() >= 4) Journal.awardNear(level, worldPosition, Journal.STORAGE);
         if (powered != was || state.getValue(StorageControllerBlock.ACTIVE) != powered) {
             level.setBlock(worldPosition, state.setValue(StorageControllerBlock.ACTIVE, powered), Block.UPDATE_CLIENTS);
         }

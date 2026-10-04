@@ -3,6 +3,7 @@ package dev.strataindustria.logistics;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.strataindustria.automation.FilterContents;
+import dev.strataindustria.journal.Journal;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.BlockPos;
@@ -173,6 +174,7 @@ public class ItemPipeBlockEntity extends BlockEntity implements WorldlyContainer
                 ItemStack left = container == null ? t.stack : HopperBlockEntity.addItem(null, container, t.stack.copy(), out.getOpposite());
                 if (left.isEmpty()) {
                     items.remove(i--);
+                    Journal.awardNear(level, worldPosition, Journal.ITEM_PIPE);
                 } else {
                     t.stack = left;
                     reroute(level, t, now);

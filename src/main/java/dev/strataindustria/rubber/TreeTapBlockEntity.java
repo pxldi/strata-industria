@@ -4,6 +4,7 @@ import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.fluid.FluidPipes;
 import dev.strataindustria.fluid.FluidPort;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.Tier5BlockEntities;
 import dev.strataindustria.registry.Tier5Fluids;
 import dev.strataindustria.registry.Tier5Particles;
@@ -156,6 +157,7 @@ public class TreeTapBlockEntity extends BlockEntity implements FluidPort {
         } else {
             if (age % 20 == 5 || network.isEmpty()) network = FluidPipes.find(level, worldPosition, Direction.DOWN);
             moved = FluidPipes.push(level, network, fluid, Math.min(amount, PUSH), 20.0f, 0.0f).moved();
+            if (moved > 0) Journal.awardNear(level, worldPosition, Journal.LATEX_PIPED);
         }
         if (moved > 0) {
             amount -= moved;

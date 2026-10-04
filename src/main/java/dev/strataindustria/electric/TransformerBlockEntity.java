@@ -2,6 +2,7 @@ package dev.strataindustria.electric;
 
 import dev.strataindustria.Config;
 import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.journal.Journal;
 import dev.strataindustria.power.ElectricConsumer;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricNode;
@@ -47,6 +48,7 @@ public class TransformerBlockEntity extends BlockEntity implements ElectricNode 
         transformer.out = transformer.sentOut;
         transformer.takenIn = transformer.sentOut = 0;
         boolean active = transformer.out > 0.01 || transformer.in > 0.01;
+        if (active && transformer.out > 0.01 && level.getGameTime() % 100 == 0) Journal.awardNear(level, pos, Journal.TRANSFORMER);
         if (state.getValue(TransformerBlock.ACTIVE) != active) {
             level.setBlock(pos, state.setValue(TransformerBlock.ACTIVE, active), Block.UPDATE_CLIENTS);
         }

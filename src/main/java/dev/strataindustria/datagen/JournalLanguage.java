@@ -197,6 +197,59 @@ final class JournalLanguage {
                 "Air through molten pig iron, a roaring flame, and when it died down: steel by the ton.");
         lead.add("t4/automated_chain", "I spend my days carrying ore from one machine to the next. Could the machines pass it along themselves?",
                 "Belts, chutes and inserters, and a crusher that ran through a whole load with nobody there to feed it.");
+        // Tier 5: electricity
+        lead.add("t5/latex", "Some trees run thick and white where the bark is cut. Could I collect it?",
+                "Latex, slow and sticky. A cup fills in about a day.");
+        lead.add("t5/rubber", "Latex sets soft and tacky. How do I make it hold its shape?",
+                "Roasted slowly, the raw rubber turned firm and springy.");
+        lead.add("t5/cinnabar", "A red ore turns up in the dark rock, and it breaks my pick. What is it?",
+                "Cinnabar. It crushes to redstone.");
+        lead.add("t5/red_alloy", "Redstone carries a signal like nothing else. Could copper carry it further?",
+                "Copper and redstone ran together into a dull red metal.");
+        lead.add("t5/wire", "A rod is too thick to carry much. Could I draw it out thinner?",
+                "Pulled through the plate, the rod became fine wire. Slow work.");
+        lead.add("t5/circuit", "Wire alone does nothing. What would let a machine decide?",
+                "Red wire on a soaked board. The first circuit.");
+        lead.add("t5/dynamo", "Magnet, wire and something turning. Could that make power?",
+                "The dynamo spins and the wire hums. Power from a shaft.");
+        lead.add("t5/cable", "Power in the dynamo is no use there. How do I carry it to a machine?",
+                "Copper in rubber, laid block to block. The power follows it.");
+        lead.add("t5/first_machine", "I have power in the wire. What can it do?",
+                "The machine woke, worked, and slowed when the shaft did.");
+        lead.add("t5/turbine", "A steam engine turns a shaft and a dynamo turns it back. Is there a shorter way?",
+                "Steam straight to power, with no shaft between.");
+        lead.add("t5/macerator", "The crusher needs a shaft and steam. Could a machine on the wire do its work?",
+                "The macerator grinds ore to grit, and often gives me a second piece.");
+        lead.add("t5/assembler", "Small parts take me a day by hand. Could a machine put them together?",
+                "The assembler fitted six parts together on its own.");
+        lead.add("t5/power_hammer", "The steam hammer needs a boiler and a heat pipe. Could the hammer heat its own work?",
+                "The coil heats the metal and the hammer falls. No firebox needed.");
+        lead.add("t5/battery", "A dynamo makes power only while the shaft turns. Can I keep some?",
+                "Half full and holding. It will run a machine when the shaft stops.");
+        lead.add("t5/electric_heat", "A firebox needs fuel and tending. Could the wire heat a crucible instead?",
+                "The coil glows and the crucible warms. No fuel to carry.");
+        lead.add("t5/sulfuric_acid", "Lye eats grease. Is there something that eats stone and metal?",
+                "Acid, heavy and clear. It needs a tank and a steady hand.");
+        lead.add("t5/electrolysis", "Could the wire pull water apart?",
+                "Two gases from one water, twice as much hydrogen as oxygen.");
+        lead.add("t5/alumina", "Clay is mostly one metal that fire alone cannot free. What else could pull it out?",
+                "White powder, alumina, and sulfur gas going up the vent.");
+        lead.add("t5/aluminium", "Alumina will not melt out like other ores. Could the wire drag the metal out?",
+                "A silver ingot, light as wood. Aluminium.");
+        lead.add("t5/mv", "My machines are slow. Can they take more power?",
+                "The same machine runs four times as fast on the heavier supply.");
+        lead.add("t5/transformer", "LV and MV do not mix. Is there a way to pass power between them?",
+                "The transformer hums. A little is lost, and both sides stay apart.");
+        lead.add("t5/power_line", "Cable wastes power over distance. Is there a way to carry it far?",
+                "Pole to pole across the valley, and the machine at the far end ran.");
+        lead.add("t5/item_pipe", "I carry every load by hand. Could pipes do it?",
+                "Items travel the pipe and land in the chest. No hands.");
+        lead.add("t5/storage", "Chests everywhere and I never know what is in which. Could one screen list them?",
+                "One screen, every chest. Powered, it also moves items.");
+        lead.add("t5/ore_scanner", "Prospecting by pick is slow. Could a machine do it for me?",
+                "The scanner showed me every ore for three chunks around.");
+        lead.add("t5/electric_chain", "I still carry ore from machine to machine. Could the wire and pipes run the whole line?",
+                "A line from macerator to furnace to chest, and nobody there to run it.");
     }
 
     private static void observations(BiConsumer<String, String> lang, String observe) {

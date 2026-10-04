@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t5/wire",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "dynamo"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t5.dynamo.hint"
+    },
+    "icon": {
+      "id": "strataindustria:kinetic_dynamo"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t5.dynamo"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
