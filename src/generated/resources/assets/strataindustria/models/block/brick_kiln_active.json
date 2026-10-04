@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "strataindustria:block/brick_kiln_front_active",
+    "side": "strataindustria:block/brick_kiln_side",
+    "top": "strataindustria:block/brick_kiln_top"
+  }
+}

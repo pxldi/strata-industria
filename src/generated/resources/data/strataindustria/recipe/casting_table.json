@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "minecraft:brick",
+    "S": "#minecraft:stone_crafting_materials"
+  },
+  "pattern": [
+    "SSS",
+    "B B"
+  ],
+  "result": {
+    "id": "strataindustria:casting_table"
+  }
+}

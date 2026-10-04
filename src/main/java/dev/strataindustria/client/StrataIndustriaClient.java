@@ -55,6 +55,7 @@ public final class StrataIndustriaClient {
         event.register(ModMenus.FIRE_PIT.get(), FirePitScreen::new);
         event.register(ModMenus.SMALL_VESSEL.get(), SmallVesselScreen::new);
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
+        event.register(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_MENU.get(), dev.strataindustria.client.screen.BrickKilnScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
         event.register(ModMenus.ANVIL.get(), AnvilScreen::new);
         event.register(ModMenus.BLOOMERY.get(), BloomeryScreen::new);
@@ -89,6 +90,7 @@ public final class StrataIndustriaClient {
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_BE.get(), dev.strataindustria.client.render.CastingTableRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.QUERN.get(), QuernRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ANVIL.get(), AnvilRenderer::new);
         // Tier 3 spec 7: rotors spin at their network's speed.

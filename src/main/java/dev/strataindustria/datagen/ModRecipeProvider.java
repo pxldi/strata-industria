@@ -88,6 +88,7 @@ final class ModRecipeProvider extends RecipeProvider {
         knapping();
         clayForming();
         forge();
+        prologueMachines();
         fibre();
         stoneTools();
         fire();
@@ -143,6 +144,24 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('C', Items.CHARCOAL)
                 .unlockedBy("has_brick", has(Items.BRICK))
                 .save(output, key("forge"));
+    }
+
+    // Prologue machines: a ring of bricks makes the kiln, a stone top on brick legs makes the table.
+    private void prologueMachines() {
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_ITEM.get())
+                .pattern("BBB")
+                .pattern("B B")
+                .pattern("BBB")
+                .define('B', Items.BRICK)
+                .unlockedBy("has_forge", has(ModItems.FORGE.get()))
+                .save(output, key("brick_kiln"));
+        shaped(RecipeCategory.DECORATIONS, dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_ITEM.get())
+                .pattern("SSS")
+                .pattern("B B")
+                .define('S', ItemTags.STONE_CRAFTING_MATERIALS)
+                .define('B', Items.BRICK)
+                .unlockedBy("has_crucible", has(ModItems.CRUCIBLE.get()))
+                .save(output, key("casting_table"));
     }
 
     private static Item mold(MoldType type) {

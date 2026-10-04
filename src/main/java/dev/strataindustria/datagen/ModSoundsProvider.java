@@ -21,6 +21,7 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
     public void registerSounds() {
         tier5();
         tier6();
+        prologue();
         // A dull chip off a rock.
         add(ModSounds.KNAP_ROCK, stone("knapping.rock", 1.15f, 0.9f));
         // Flint rings sharper and higher.
@@ -410,6 +411,21 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
 
     private static String subtitle(String name) {
         return "subtitles." + StrataIndustria.MOD_ID + "." + name;
+    }
+
+    /** The brick kiln and the casting table, from vanilla fire, stone and pottery samples. */
+    private void prologue() {
+        SoundDefinition work = definition().subtitle(subtitle("brick_kiln.work"));
+        for (int i = 1; i <= 3; i++) work.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.95f).volume(0.5f));
+        add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_WORK, work);
+        add(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_DONE, definition().subtitle(subtitle("brick_kiln.done"))
+                .with(sound("minecraft:block.decorated_pot.hit", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.7f))
+                .with(sound("minecraft:block.fire.extinguish", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.2f)));
+        add(dev.strataindustria.registry.PrologueRegistry.TABLE_SET, stone("casting_table.set", 0.7f, 0.7f));
+        SoundDefinition knock = definition().subtitle(subtitle("casting_table.knock"));
+        for (int i = 1; i <= 4; i++) knock.with(sound("minecraft:dig/stone" + i).pitch(1.25f).volume(0.9f));
+        for (int i = 1; i <= 2; i++) knock.with(sound("minecraft:dig/stone" + i).pitch(1.5f).volume(0.6f));
+        add(dev.strataindustria.registry.PrologueRegistry.TABLE_KNOCK, knock);
     }
 
     private static SoundDefinition stone(String subtitle, float pitch, float volume) {

@@ -1077,6 +1077,103 @@
     ],
     "subtitle": "subtitles.strataindustria.boiler.vent"
   },
+  "brick_kiln.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.decorated_pot.hit",
+        "pitch": 1.1,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.5,
+        "volume": 0.2
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.brick_kiln.done"
+  },
+  "brick_kiln.work": {
+    "sounds": [
+      {
+        "name": "block/furnace/fire_crackle1",
+        "pitch": 0.95,
+        "volume": 0.5
+      },
+      {
+        "name": "block/furnace/fire_crackle2",
+        "pitch": 0.95,
+        "volume": 0.5
+      },
+      {
+        "name": "block/furnace/fire_crackle3",
+        "pitch": 0.95,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.brick_kiln.work"
+  },
+  "casting_table.knock": {
+    "sounds": [
+      {
+        "name": "dig/stone1",
+        "pitch": 1.25,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 1.25,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone3",
+        "pitch": 1.25,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone4",
+        "pitch": 1.25,
+        "volume": 0.9
+      },
+      {
+        "name": "dig/stone1",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 1.5,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.casting_table.knock"
+  },
+  "casting_table.set": {
+    "sounds": [
+      {
+        "name": "dig/stone1",
+        "pitch": 0.7,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/stone2",
+        "pitch": 0.7,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/stone3",
+        "pitch": 0.7,
+        "volume": 0.7
+      },
+      {
+        "name": "dig/stone4",
+        "pitch": 0.7,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.casting_table.set"
+  },
   "chute.drop": {
     "sounds": [
       {
