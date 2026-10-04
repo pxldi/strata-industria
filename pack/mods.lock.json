@@ -1,0 +1,134 @@
+[
+  {
+    "slug": "sodium",
+    "version": "mc26.3-0.9.2-neoforge",
+    "channel": "release",
+    "environment": "client_only",
+    "path": "mods/sodium-neoforge-0.9.2+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/AANobbMI/versions/VHtnT9Q4/sodium-neoforge-0.9.2%2Bmc26.3.jar",
+    "size": 1208169,
+    "sha1": "9015607e5ae2c5b9692ebf05113f9caca6ec41bf",
+    "sha512": "f5b62730bbee7d116a83c765b8e7cdb660da97ab7f122f180293eda3e56b5ca4d701b0bf18c36f087e9a7349f8ec113f1f8c0d462a8893c551a2f3e163bd0cb8"
+  },
+  {
+    "slug": "iris",
+    "version": "1.11.7+26.3-neoforge",
+    "channel": "release",
+    "environment": "client_only",
+    "path": "mods/iris-neoforge-1.11.7+mc26.3.jar",
+    "url": "https://cdn.modrinth.com/data/YL57xq9U/versions/Ag5S66CF/iris-neoforge-1.11.7%2Bmc26.3.jar",
+    "size": 2804761,
+    "sha1": "57cbbd1f58b6226c633520541c1a3ae57c019373",
+    "sha512": "302659f09e50d02a6cd96075be93aade2a2f9d709afe21d56465228fb7d7f4717566e3702a7872479df2fff9b7a5ff5b1b6047cc95e09ee6120fad5ea5857eec"
+  },
+  {
+    "slug": "ferrite-core",
+    "version": "9.0.0-neoforge",
+    "channel": "release",
+    "environment": "client_or_server",
+    "path": "mods/ferritecore-9.0.0-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/uXXizFIs/versions/LtVvw4uS/ferritecore-9.0.0-neoforge.jar",
+    "size": 71947,
+    "sha1": "b8bfb14ba6ce7068aae08c3a132ca40bda6bd143",
+    "sha512": "e96a99ac5539f56a1f4cd109d62b668ebd5283f0068491ede956f52e67023beba7abe2e40021499352ffc41ead950bebcabce7792352249a1b45c5dccb3cf99c"
+  },
+  {
+    "slug": "immediatelyfast",
+    "version": "1.17.1+26.3-neoforge",
+    "channel": "release",
+    "environment": "client_only",
+    "path": "mods/ImmediatelyFast-NeoForge-1.17.1+26.3.jar",
+    "url": "https://cdn.modrinth.com/data/5ZwdcRci/versions/4SovUFpn/ImmediatelyFast-NeoForge-1.17.1%2B26.3.jar",
+    "size": 109497,
+    "sha1": "a072863c3b4e7cfed81899d8d3115839a161a708",
+    "sha512": "6fddcf7e9de2bf179bdd18cc317fa1cc50ea9c3a40b06a0e0673ecb1dba29fb2ac2743ada361e32f52c2c1f333043795a5149b8b89ee467665c2b734e7d5d951"
+  },
+  {
+    "slug": "distanthorizons",
+    "version": "3.3.4-26.3",
+    "channel": "release",
+    "environment": "client_or_server_prefers_both",
+    "path": "mods/DistantHorizons-3.3.4-26.3-fabric-neoforge.jar",
+    "url": "https://cdn.modrinth.com/data/uCdwusMi/versions/TGgEbP9A/DistantHorizons-3.3.4-26.3-fabric-neoforge.jar",
+    "size": 28476894,
+    "sha1": "310c0363068dfae18e91f799ed671a591b6ad49a",
+    "sha512": "0b90b1b08d99974bfc3c8e86b2ceb252e2f91715ed66b925004c28335fb44e1bddbbb6b8043e4d4d53c87ed247789cd1788b1ba4e3f4394efe154e0c59cff236"
+  },
+  {
+    "slug": "sound-physics-remastered",
+    "version": "neoforge-1.5.1+26.3",
+    "channel": "beta",
+    "environment": "client_only_server_optional",
+    "path": "mods/sound-physics-remastered-neoforge-1.5.1+26.3.jar",
+    "url": "https://cdn.modrinth.com/data/qyVF9oeo/versions/MVooSqHq/sound-physics-remastered-neoforge-1.5.1%2B26.3.jar",
+    "size": 201492,
+    "sha1": "11fd87ebd79594516a289c7c9f39cabf25f0a3b2",
+    "sha512": "9aac9471bc56c30ec0701fa2ca3895157c55d276c88308b667eb052d4cb178b4a9ee818e49de63cb73def12d5009a1166be3cc70f1f62731badf4a525305aa64"
+  },
+  {
+    "slug": "jade",
+    "version": "26.3.5+neoforge",
+    "channel": "release",
+    "environment": "client_or_server_prefers_both",
+    "path": "mods/Jade-mc26.3-NeoForge-26.3.5.jar",
+    "url": "https://cdn.modrinth.com/data/nvQzSEkH/versions/dVB8U7Td/Jade-mc26.3-NeoForge-26.3.5.jar",
+    "size": 1084541,
+    "sha1": "add5199928930724adbe6f9dfaaf646bd1027294",
+    "sha512": "32219fb2a8b004d027179bdf2707647be4c08ab374ca5204432d63601e7e4cbc4f4574273289bb867a8afa476db63a69a5a0d08746e9bc134d52eb41489e3add"
+  },
+  {
+    "slug": "jei",
+    "version": "31.8.0.55",
+    "channel": "beta",
+    "environment": "client_or_server_prefers_both",
+    "path": "mods/jei-26.3-neoforge-31.8.0.55.jar",
+    "url": "https://cdn.modrinth.com/data/u6dRKJwZ/versions/caxTwwUI/jei-26.3-neoforge-31.8.0.55.jar",
+    "size": 2362464,
+    "sha1": "e1ad5c728f9e3b0e710a3a1df16c77f3683fcb0f",
+    "sha512": "90fb43b385cfc445a339c44c3f0960bfa010c4a14f7ec47649c739873c9c5483a23949e526e22da24f58a219ca4a16a8982d32ce3225784e7a14e004a6bd2e38"
+  },
+  {
+    "slug": "mezzconfig",
+    "version": "0.6.8",
+    "channel": "beta",
+    "environment": "client_or_server_prefers_both",
+    "path": "mods/mezz_config-26.3-neoforge-0.6.8-standalone.jar",
+    "url": "https://cdn.modrinth.com/data/7tEfOcA7/versions/WFeT02Wv/mezz_config-26.3-neoforge-0.6.8-standalone.jar",
+    "size": 327189,
+    "sha1": "a1c1f51cb1e99eef3b4d6c84415ce98e71a51742",
+    "sha512": "6774c36d33775fb72d5b1079271c381d0935ef6cdf8a4ae3b84c63a657d8aa4fee10d67432f9cbddb27741fc9434f5347eed0f05b1fe64205dc2c6809c5197fd"
+  },
+  {
+    "slug": "xaeros-minimap",
+    "version": "neoforge-26.3-26.5.3",
+    "channel": "release",
+    "environment": "client_only_server_optional",
+    "path": "mods/xaerominimap-neoforge-26.3-26.5.3.jar",
+    "url": "https://cdn.modrinth.com/data/1bokaNcj/versions/6zzKPjLq/xaerominimap-neoforge-26.3-26.5.3.jar",
+    "size": 2178209,
+    "sha1": "16bf8eae1710a57bc398b796cd4475d0dcce7564",
+    "sha512": "bb3e9f49e5e2c501690c01b031dec1e168c850032ca56a16f50356e710490f16c391c3cfd267b3161283bef6d1834a509fc18047b325eadeb73eccf1967e21ba"
+  },
+  {
+    "slug": "xaeros-world-map",
+    "version": "neoforge-26.3-1.46.4",
+    "channel": "release",
+    "environment": "client_only_server_optional",
+    "path": "mods/xaeroworldmap-neoforge-26.3-1.46.4.jar",
+    "url": "https://cdn.modrinth.com/data/NcUtCpym/versions/dLK8qn7v/xaeroworldmap-neoforge-26.3-1.46.4.jar",
+    "size": 1448991,
+    "sha1": "2fbaf4d9fdeee3e70d3ad0f62a8c2cb9f2ccb9c7",
+    "sha512": "16e0d6b744b4a0dc77d4dd701cd5605d146747e0a3ce75a5cb535f16656d3453b29fb84955db0a8b89d137d745fc5fe7b07f7ae8facc45869b226e549c327168"
+  },
+  {
+    "slug": "mouse-tweaks",
+    "version": "26.3-2.31-neoforge",
+    "channel": "release",
+    "environment": "client_only",
+    "path": "mods/MouseTweaks-neoforge-mc26.3-2.31.jar",
+    "url": "https://cdn.modrinth.com/data/aC3cM3Vq/versions/f4tPRGDq/MouseTweaks-neoforge-mc26.3-2.31.jar",
+    "size": 74133,
+    "sha1": "de224d4e3c270b749345c3a6703b51336a3ce5d3",
+    "sha512": "93e7ac34bbc15de635073722054b11fed3981e0f39954286e8a57214ce5ce007e5562882cb81cd230c8ea49970970c84548cfc598332c539777986090b090798"
+  }
+]

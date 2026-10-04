@@ -185,7 +185,10 @@ final class ModAdvancements extends AdvancementSubProvider {
                 .requirements(net.minecraft.advancements.AdvancementRequirements.Strategy.OR)
                 .save(output, Journal.goal("t4/pipe").toString());
         AdvancementHolder boiler = goal(pipe, "t4/boiler", Tier4Items.BRONZE_BOILER.get(), JournalTrigger.TriggerInstance.of(Journal.BOILER));
-        goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL, JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
+        AdvancementHolder engine = goal(boiler, "t4/steam_engine", Tier4Items.STEAM_ENGINE.get(), AdvancementType.GOAL,
+                JournalTrigger.TriggerInstance.of(Journal.STEAM_ENGINE));
+        // Spec 15, goal 69: a powered crusher finishes something.
+        goal(engine, "t4/crusher", Tier4Items.CRUSHER.get(), JournalTrigger.TriggerInstance.of(Journal.CRUSHER));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

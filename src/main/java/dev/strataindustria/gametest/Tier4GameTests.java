@@ -33,6 +33,10 @@ import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.steam.BoilerBlockEntity;
 import dev.strataindustria.steam.FireboxBlockEntity;
+import dev.strataindustria.processing.CrusherBlockEntity;
+import dev.strataindustria.processing.ProcessingBlock;
+import dev.strataindustria.processing.ProcessingBlockEntity;
+import dev.strataindustria.processing.WasherBlockEntity;
 import dev.strataindustria.steam.MechanicalPumpBlock;
 import dev.strataindustria.steam.MechanicalPumpBlockEntity;
 import dev.strataindustria.steam.SteamEngineBlock;
@@ -44,6 +48,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -66,6 +71,8 @@ final class Tier4GameTests {
         tests.put("tier4_fluid_pipes", Tier4GameTests::fluidPipes);
         tests.put("tier4_steam_engine", Tier4GameTests::steamEngine);
         tests.put("tier4_mechanical_pump", Tier4GameTests::mechanicalPump);
+        tests.put("tier4_crusher", Tier4GameTests::crusher);
+        tests.put("tier4_washer", Tier4GameTests::washer);
     }
 
     // Spec 4.3: the example batches for steel, pig iron, brass and solder, and the gap between steel and pig iron.
@@ -466,6 +473,93 @@ final class Tier4GameTests {
         helper.assertValueEqual(boiler.water(), MechanicalPumpBlockEntity.SOURCE_AMOUNT, "water pumped from one source");
         helper.assertTrue(level.getFluidState(intake).isEmpty(), "a lone source is used up after a bucket");
         helper.succeed();
+    }
+
+    // Spec 11.2: a crusher on a steam engine's 32 RPM works its three inputs side by side, 80 ticks each at
+    // 16 RPM and so 40 here. Ore comes out crushed, rock as gravel, and coal is refused. (A hand crank's
+    // 64 SU cannot carry a crusher's 128 SU at 16 RPM.)
+    private static void crusher(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos crusherPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        level.setBlock(crusherPos, Tier4Blocks.CRUSHER.get().defaultBlockState().setValue(ProcessingBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        CrusherBlockEntity crusher = (CrusherBlockEntity) level.getBlockEntity(crusherPos);
+        crusher.setItem(0, new ItemStack(ModItems.orePiece(OreMineral.HEMATITE, OreGrade.NORMAL), 2));
+        crusher.setItem(1, new ItemStack(ModItems.COBBLED_ROCK.get(dev.strataindustria.geology.Rock.GRANITE).get()));
+        crusher.setItem(2, new ItemStack(Items.COAL));
+
+        crush(level, crusherPos, crusher, 1);
+        helper.assertValueEqual(crusher.status(), ProcessingBlockEntity.Status.NOT_TURNING, "crusher status without a shaft turning");
+
+        drive(level, crusherPos.west(), Direction.EAST, crusherPos);
+        crush(level, crusherPos, crusher, 39);
+        helper.assertValueEqual(crusher.status(), ProcessingBlockEntity.Status.WORKING, "crusher status at 32 RPM");
+        helper.assertValueEqual(crusher.finishedCount(), 0, "items done after 39 ticks");
+        helper.assertTrue(level.getBlockState(crusherPos).getValue(ProcessingBlock.ACTIVE), "the front shows the jaws moving");
+        crush(level, crusherPos, crusher, 1);
+        helper.assertValueEqual(crusher.finishedCount(), 2, "ore and rock both done after 40 ticks");
+        helper.assertTrue(count(crusher, ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL)) >= 1, "crushed hematite out");
+        helper.assertValueEqual(count(crusher, Items.GRAVEL), 1, "gravel from cobbled granite");
+        helper.assertValueEqual(crusher.getItem(2).getCount(), 1, "coal stays in its slot");
+        helper.assertTrue(!crusher.canPlaceItem(0, new ItemStack(Items.COAL)), "a hopper cannot put coal in");
+
+        crush(level, crusherPos, crusher, 40);
+        helper.assertTrue(crusher.getItem(0).isEmpty(), "second ore piece crushed");
+        crush(level, crusherPos, crusher, 1);
+        helper.assertValueEqual(crusher.status(), ProcessingBlockEntity.Status.NO_RECIPE, "status with only coal left");
+        helper.assertTrue(!level.getBlockState(crusherPos).getValue(ProcessingBlock.ACTIVE), "the jaws stop");
+        helper.succeed();
+    }
+
+    // Spec 11.3: the washer works crushed ore on piped water, 100 mB an item and 40 ticks at 16 RPM (20 at
+    // the engine's 32), and has nothing to do with sulfide ore.
+    private static void washer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos washerPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        level.setBlock(washerPos, Tier4Blocks.WASHER.get().defaultBlockState().setValue(ProcessingBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        WasherBlockEntity washer = (WasherBlockEntity) level.getBlockEntity(washerPos);
+        Item crushed = ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL);
+        washer.setItem(0, new ItemStack(crushed, 3));
+        helper.assertTrue(!washer.canPlaceItem(1, new ItemStack(ModItems.crushedOre(OreMineral.SPHALERITE, OreGrade.NORMAL))),
+                "the washer refuses sulfide ore");
+        drive(level, washerPos.west(), Direction.EAST, washerPos);
+
+        wash(level, washerPos, washer, 1);
+        helper.assertValueEqual(washer.status(), ProcessingBlockEntity.Status.NO_WATER, "washer status with an empty tank");
+        helper.assertValueEqual(washer.fill(Direction.UP, net.minecraft.world.level.material.Fluids.WATER, 1000, 0, false), 0,
+                "the top takes hoppers, not pipes");
+        helper.assertValueEqual(washer.fill(Direction.EAST, net.minecraft.world.level.material.Fluids.WATER, 150, 0, false), 150,
+                "water a side pipe adds");
+
+        wash(level, washerPos, washer, 20);
+        helper.assertValueEqual(count(washer, ModItems.washedOre(OreMineral.HEMATITE, OreGrade.NORMAL)), 1, "washed hematite after 20 ticks");
+        helper.assertValueEqual(washer.water(), 50, "water left after one item");
+        wash(level, washerPos, washer, 1);
+        helper.assertValueEqual(washer.status(), ProcessingBlockEntity.Status.NO_WATER, "washer status with 50 mB left");
+        helper.assertValueEqual(washer.getItem(0).getCount(), 2, "the rest waits for water");
+        helper.succeed();
+    }
+
+    /** A steam engine at {@code pos} with its shaft toward {@code facing}, given 2.5 bar steam once so it runs at 32 RPM. */
+    private static void drive(ServerLevel level, BlockPos pos, Direction facing, BlockPos machine) {
+        level.setBlock(pos, Tier4Blocks.STEAM_ENGINE.get().defaultBlockState().setValue(SteamEngineBlock.FACING, facing), Block.UPDATE_ALL);
+        SteamEngineBlockEntity engine = (SteamEngineBlockEntity) level.getBlockEntity(pos);
+        engine.fill(facing.getOpposite(), Tier4Fluids.STEAM.get(), SteamEngineBlockEntity.BUFFER, 2.5f, false);
+        SteamEngineBlockEntity.serverTick(level, pos, level.getBlockState(pos), engine);
+        KineticNetworks.rebuildNow(level, machine);
+    }
+
+    private static void wash(ServerLevel level, BlockPos pos, WasherBlockEntity washer, int ticks) {
+        for (int i = 0; i < ticks; i++) ProcessingBlockEntity.serverTick(level, pos, level.getBlockState(pos), washer);
+    }
+
+    private static void crush(ServerLevel level, BlockPos pos, CrusherBlockEntity crusher, int ticks) {
+        for (int i = 0; i < ticks; i++) ProcessingBlockEntity.serverTick(level, pos, level.getBlockState(pos), crusher);
+    }
+
+    private static int count(ProcessingBlockEntity machine, net.minecraft.world.item.Item item) {
+        int n = 0;
+        for (int i = 0; i < machine.getContainerSize(); i++) if (machine.getItem(i).is(item)) n += machine.getItem(i).getCount();
+        return n;
     }
 
     private static void engine(ServerLevel level, BlockPos fireboxPos, FireboxBlockEntity firebox, BlockPos boilerPos, BoilerBlockEntity boiler,

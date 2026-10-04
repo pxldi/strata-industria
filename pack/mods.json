@@ -1,0 +1,20 @@
+{
+  "name": "Strata Industria",
+  "summary": "Strata Industria with performance, visual and quality-of-life companion mods.",
+  "minecraft": "26.3",
+  "neoforge": "26.3.0.23-beta",
+  "mods": [
+    {"slug": "sodium", "version": "mc26.3-0.9.2-neoforge", "note": "Stable build; 0.9.3 is still alpha."},
+    {"slug": "iris", "version": "1.11.7+26.3-neoforge"},
+    {"slug": "ferrite-core", "version": "9.0.0-neoforge"},
+    {"slug": "immediatelyfast", "version": "1.17.1+26.3-neoforge"},
+    {"slug": "distanthorizons", "version": "3.3.4-26.3"},
+    {"slug": "sound-physics-remastered", "version": "neoforge-1.5.1+26.3", "note": "Beta channel, only build for 26.3."},
+    {"slug": "jade", "version": "26.3.5+neoforge"},
+    {"slug": "jei", "version": "31.8.0.55", "note": "Only beta builds exist for 26.3. Stands in for EMI."},
+    {"slug": "mezzconfig", "version": "auto", "note": "Required by JEI."},
+    {"slug": "xaeros-minimap", "version": "neoforge-26.3-26.5.3"},
+    {"slug": "xaeros-world-map", "version": "neoforge-26.3-1.46.4"},
+    {"slug": "mouse-tweaks", "version": "26.3-2.31-neoforge"}
+  ]
+}

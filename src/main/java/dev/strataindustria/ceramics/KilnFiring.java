@@ -36,6 +36,11 @@ public final class KilnFiring {
         return results;
     }
 
+    /** Every unfired piece and what it fires into, for recipe viewers. */
+    public static Map<Item, Item> all() {
+        return java.util.Collections.unmodifiableMap(results());
+    }
+
     public static boolean isFireable(ItemStack stack) {
         return results().containsKey(stack.getItem());
     }

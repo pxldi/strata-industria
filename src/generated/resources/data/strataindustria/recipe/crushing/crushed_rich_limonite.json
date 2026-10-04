@@ -1,0 +1,21 @@
+{
+  "type": "strataindustria:crushing",
+  "chances": [
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:crushed_rich_limonite"
+      }
+    },
+    {
+      "chance": 0.2,
+      "item": {
+        "id": "minecraft:clay_ball"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:rich_limonite",
+  "result": {
+    "id": "strataindustria:crushed_rich_limonite"
+  }
+}

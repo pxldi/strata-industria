@@ -615,6 +615,29 @@
     ],
     "subtitle": "subtitles.strataindustria.crucible.pour"
   },
+  "crusher.crush": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.5,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.grindstone.use",
+        "pitch": 0.45,
+        "volume": 0.55
+      },
+      {
+        "type": "event",
+        "name": "block.stone.break",
+        "pitch": 0.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crusher.crush"
+  },
   "fire_pit.extinguish": {
     "sounds": [
       "random/fizz"
@@ -1423,6 +1446,29 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.journal.place"
+  },
+  "washer.wash": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "pitch": 0.8,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.water.ambient",
+        "pitch": 0.9,
+        "volume": 0.45
+      },
+      {
+        "type": "event",
+        "name": "block.gravel.hit",
+        "pitch": 0.7,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.washer.wash"
   },
   "washing_pan.find": {
     "sounds": [
