@@ -187,9 +187,9 @@ final class Tier3GameTests {
                 ((HandCrankBlockEntity) level.getBlockEntity(crankPos)).crank(miller);
                 KineticNetworks.rebuildNow(level, start);
                 var axle = (dev.strataindustria.power.Kinetic) level.getBlockEntity(axlePos);
-                var gearbox = (dev.strataindustria.power.Kinetic) level.getBlockEntity(centre);
+                var crank = (dev.strataindustria.power.Kinetic) level.getBlockEntity(crankPos);
                 String where = "facing " + facing + ", measured from " + start.subtract(centre);
-                helper.assertValueEqual(Math.round(gearbox.kinetic().rpm()), 16, "gearbox RPM, " + where);
+                helper.assertValueEqual(Math.round(crank.kinetic().rpm()), 16, "crank RPM, " + where);
                 helper.assertValueEqual(Math.round(axle.kinetic().rpm()), 32, "axle RPM, " + where);
                 for (BlockPos pos : List.of(crankPos, centre, axlePos)) level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }
