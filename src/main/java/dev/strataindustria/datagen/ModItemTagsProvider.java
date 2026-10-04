@@ -30,6 +30,10 @@ final class ModItemTagsProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider registries) {
+        // Tier 5 spec 16.6: common tags so other mods' copper wire and lead plates are interchangeable.
+        tag(common("wires/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_WIRE.getKey());
+        tag(common("rods/copper")).add(dev.strataindustria.registry.Tier5Items.COPPER_ROD.getKey());
+        tag(common("plates/lead")).add(dev.strataindustria.registry.Tier5Items.LEAD_PLATE.getKey());
         for (RockCategory category : RockCategory.values()) {
             var categoryTag = tag(ModTags.Items.rocks(category));
             for (Rock rock : Rock.values()) {
@@ -160,5 +164,9 @@ final class ModItemTagsProvider extends ItemTagsProvider {
         tag(ItemTags.MINING_ENCHANTABLE).addTag(ModTags.Items.SAWS);
         tag(ItemTags.MINING_LOOT_ENCHANTABLE).addTag(ModTags.Items.SAWS);
         tag(ItemTags.DURABILITY_ENCHANTABLE).addTag(ModTags.Items.SAWS);
+    }
+
+    private static net.minecraft.tags.TagKey<net.minecraft.world.item.Item> common(String path) {
+        return net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM, net.minecraft.resources.Identifier.fromNamespaceAndPath("c", path));
     }
 }

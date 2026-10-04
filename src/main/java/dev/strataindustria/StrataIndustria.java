@@ -42,6 +42,11 @@ public final class StrataIndustria {
         Tier4Menus.init();
         Tier4Sounds.init();
         Tier4Recipes.init();
+        dev.strataindustria.registry.Tier5Blocks.init();
+        dev.strataindustria.registry.Tier5Items.init();
+        dev.strataindustria.registry.Tier5BlockEntities.init();
+        dev.strataindustria.registry.Tier5Sounds.init();
+        dev.strataindustria.registry.Tier5DataComponents.init();
         ModBlocks.BLOCKS.register(modEventBus);
         ModItems.ITEMS.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);

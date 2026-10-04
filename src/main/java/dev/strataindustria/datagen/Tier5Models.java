@@ -1,0 +1,114 @@
+package dev.strataindustria.datagen;
+
+import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.electric.BatteryBoxBlock;
+import dev.strataindustria.electric.CableBlock;
+import dev.strataindustria.electric.KineticDynamoBlock;
+import dev.strataindustria.power.ElectricTier;
+import dev.strataindustria.power.StatusLight;
+import dev.strataindustria.registry.Tier5Blocks;
+import dev.strataindustria.registry.Tier5Items;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.model.ItemModelUtils;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
+
+/** Block states and models for tier 5 (electric). {@link ModModelProvider} calls it. */
+final class Tier5Models {
+    private Tier5Models() {}
+
+    static void register(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        for (var item : java.util.List.of(Tier5Items.MAGNET, Tier5Items.COPPER_ROD, Tier5Items.COPPER_WIRE, Tier5Items.LEAD_PLATE,
+                Tier5Items.RAW_RUBBER, Tier5Items.COMPOUNDED_RUBBER, Tier5Items.RUBBER)) {
+            itemModels.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
+        }
+        cables(blockModels, itemModels);
+        dynamo(blockModels, itemModels);
+        batteryBox(blockModels, itemModels);
+
+        // Spec 9.5: casing all round, with a blank access panel on the sides so it reads as unfinished.
+        TextureMapping hull = new TextureMapping().put(TextureSlot.SIDE, texture("lv_machine_hull_front"))
+                .put(TextureSlot.TOP, texture("casing/lv_top")).put(TextureSlot.BOTTOM, texture("casing/lv_bottom"));
+        Identifier hullModel = ModelTemplates.CUBE_BOTTOM_TOP.create(Tier5Blocks.LV_MACHINE_HULL.get(), hull, blockModels.modelOutput);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.LV_MACHINE_HULL.get(), BlockModelGenerators.plainVariant(hullModel)));
+        plainItem(itemModels, Tier5Items.LV_MACHINE_HULL.get(), hullModel);
+    }
+
+    // Spec 8.1: hand-built core and arm models (core, arm pointing north) joined on each connected face.
+    private static void cables(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        for (var cable : java.util.List.of(Tier5Blocks.LV_CABLE, Tier5Blocks.MV_CABLE)) {
+            String name = cable.getId().getPath();
+            MultiPartGenerator parts = MultiPartGenerator.multiPart(cable.get())
+                    .with(BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_core")));
+            MultiVariant north = BlockModelGenerators.plainVariant(StrataIndustria.id("block/" + name + "_arm"));
+            var props = CableBlock.PROPERTIES;
+            parts.with(BlockModelGenerators.condition(props.get(Direction.NORTH), true), north);
+            parts.with(BlockModelGenerators.condition(props.get(Direction.EAST), true), north.with(BlockModelGenerators.Y_ROT_90));
+            parts.with(BlockModelGenerators.condition(props.get(Direction.SOUTH), true), north.with(BlockModelGenerators.Y_ROT_180));
+            parts.with(BlockModelGenerators.condition(props.get(Direction.WEST), true), north.with(BlockModelGenerators.Y_ROT_270));
+            parts.with(BlockModelGenerators.condition(props.get(Direction.UP), true), north.with(BlockModelGenerators.X_ROT_270));
+            parts.with(BlockModelGenerators.condition(props.get(Direction.DOWN), true), north.with(BlockModelGenerators.X_ROT_90));
+            blockModels.blockStateOutput.accept(parts);
+            plainItem(itemModels, cable.get().asItem(), StrataIndustria.id("block/" + name));
+        }
+    }
+
+    // Spec 7.1 and 23.2: a hand-built body facing north with the armature window in front; one model per status lamp.
+    private static void dynamo(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        PropertyDispatch.C2<MultiVariant, Direction, StatusLight> dispatch = PropertyDispatch.initial(KineticDynamoBlock.FACING, KineticDynamoBlock.STATUS);
+        for (StatusLight light : StatusLight.values()) {
+            MultiVariant model = BlockModelGenerators.plainVariant(StrataIndustria.id("block/kinetic_dynamo_" + light.getSerializedName()));
+            dispatch.select(Direction.NORTH, light, model);
+            dispatch.select(Direction.EAST, light, model.with(BlockModelGenerators.Y_ROT_90));
+            dispatch.select(Direction.SOUTH, light, model.with(BlockModelGenerators.Y_ROT_180));
+            dispatch.select(Direction.WEST, light, model.with(BlockModelGenerators.Y_ROT_270));
+            dispatch.select(Direction.UP, light, model.with(BlockModelGenerators.X_ROT_270));
+            dispatch.select(Direction.DOWN, light, model.with(BlockModelGenerators.X_ROT_90));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.KINETIC_DYNAMO.get()).with(dispatch));
+        plainItem(itemModels, Tier5Items.KINETIC_DYNAMO.get(), StrataIndustria.id("block/kinetic_dynamo_off"));
+    }
+
+    // Spec 7.4 and 23.3: casing on the sides and top, cells behind a grille on the front, the meter lit by charge.
+    private static void batteryBox(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        PropertyDispatch.C4<MultiVariant, Direction, ElectricTier, Integer, Boolean> dispatch = PropertyDispatch.initial(
+                BatteryBoxBlock.FACING, BatteryBoxBlock.TIER, BatteryBoxBlock.CHARGE, BatteryBoxBlock.CHARGING);
+        for (ElectricTier tier : ElectricTier.values()) {
+            String t = tier.getSerializedName();
+            for (int charge = 0; charge <= BatteryBoxBlock.SEGMENTS; charge++) {
+                TextureMapping faces = new TextureMapping().put(TextureSlot.FRONT, texture("battery_box_front_" + t + "_" + charge))
+                        .put(TextureSlot.SIDE, texture("casing/" + t + "_side")).put(TextureSlot.TOP, texture("casing/" + t + "_top"))
+                        .put(TextureSlot.BOTTOM, texture("casing/" + t + "_bottom"));
+                Identifier id = ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(StrataIndustria.id("block/battery_box_" + t + "_" + charge), faces,
+                        blockModels.modelOutput);
+                MultiVariant model = BlockModelGenerators.plainVariant(id);
+                for (boolean charging : new boolean[] {false, true}) {
+                    dispatch.select(Direction.NORTH, tier, charge, charging, model);
+                    dispatch.select(Direction.EAST, tier, charge, charging, model.with(BlockModelGenerators.Y_ROT_90));
+                    dispatch.select(Direction.SOUTH, tier, charge, charging, model.with(BlockModelGenerators.Y_ROT_180));
+                    dispatch.select(Direction.WEST, tier, charge, charging, model.with(BlockModelGenerators.Y_ROT_270));
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.BATTERY_BOX.get()).with(dispatch));
+        plainItem(itemModels, Tier5Items.BATTERY_BOX.get(), StrataIndustria.id("block/battery_box_lv_0"));
+    }
+
+    private static void plainItem(ItemModelGenerators itemModels, Item item, Identifier model) {
+        itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(model));
+    }
+
+    private static Material texture(String path) {
+        return new Material(StrataIndustria.id("block/" + path));
+    }
+}

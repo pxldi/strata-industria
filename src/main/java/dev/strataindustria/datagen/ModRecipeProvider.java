@@ -59,8 +59,13 @@ import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
 
 final class ModRecipeProvider extends RecipeProvider {
+    private final BootstrapContext<Recipe<?>> recipeContext;
+    private final BootstrapContext<Advancement> advancementContext;
+
     ModRecipeProvider(BootstrapContext<Recipe<?>> recipeOutput, BootstrapContext<Advancement> advancementOutput) {
         super(recipeOutput, advancementOutput);
+        this.recipeContext = recipeOutput;
+        this.advancementContext = advancementOutput;
     }
 
     @Override
@@ -92,6 +97,7 @@ final class ModRecipeProvider extends RecipeProvider {
         smithing();
         ironAge();
         tier4();
+        new Tier5RecipeProvider(recipeContext, advancementContext).buildRecipes();
         vanillaOverrides();
     }
 

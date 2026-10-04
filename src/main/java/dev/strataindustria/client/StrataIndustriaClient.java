@@ -86,6 +86,9 @@ public final class StrataIndustriaClient {
         event.registerBlockEntityRenderer(ModBlockEntities.WINDMILL_BEARING.get(), dev.strataindustria.client.render.WindmillRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.SOAKING_BARREL.get(), dev.strataindustria.client.render.SoakingBarrelRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.PULLEY.get(), dev.strataindustria.client.render.PulleyRenderer::new);
+        // Tier 5 spec 7.1: the dynamo's armature turns with its shaft, seen through the front window.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.KINETIC_DYNAMO.get(), context -> new RotorRenderer<>(context,
+                "kinetic_dynamo_armature", state -> state.getValue(dev.strataindustria.electric.KineticDynamoBlock.FACING), 0));
         // Tier 4 spec 11.7: iron axles turn like the wooden ones.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.IRON_TRANSMISSION.get(), context -> new RotorRenderer<>(context,
                 "iron_axle", state -> state.hasProperty(AxleBlock.AXIS)
