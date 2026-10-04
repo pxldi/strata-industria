@@ -47,6 +47,11 @@ public final class Tier5Sounds {
     /** A steady puttering thrum. */
     public static final DeferredHolder<SoundEvent, SoundEvent> COMBUSTION_GENERATOR_RUN = register("block.combustion_generator.run");
 
+    /** Spec 23.6: the mixer's paddle sloshing. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> MIXER_STIR = register("block.mixer.stir");
+    /** Fizzing bubbles with a low hum. */
+    public static final DeferredHolder<SoundEvent, SoundEvent> ELECTROLYSER_BUBBLE = register("block.electrolyser.bubble");
+
     private static DeferredHolder<SoundEvent, SoundEvent> register(String name) {
         return ModSounds.SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(StrataIndustria.id(name)));
     }

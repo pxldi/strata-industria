@@ -1,0 +1,14 @@
+{
+  "type": "strataindustria:roasting",
+  "forge": false,
+  "gas": {
+    "amount": 50,
+    "fluid": "strataindustria:sulfur_dioxide"
+  },
+  "ingredient": "strataindustria:alum",
+  "min_temperature": 800,
+  "result": {
+    "id": "strataindustria:alumina"
+  },
+  "ticks": 200
+}

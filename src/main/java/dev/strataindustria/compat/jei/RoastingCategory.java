@@ -21,7 +21,7 @@ public class RoastingCategory extends StrataCategory<RecipeHolder<RoastingRecipe
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<RoastingRecipe> holder, IFocusGroup focuses) {
         RoastingRecipe recipe = holder.value();
         builder.addInputSlot(6, 6).setStandardSlotBackground().add(recipe.ingredient());
-        builder.addOutputSlot(72, 6).setOutputSlotBackground().add(recipe.result());
+        recipe.result().ifPresent(result -> builder.addOutputSlot(72, 6).setOutputSlotBackground().add(result));
         recipe.gas().ifPresent(gas -> builder.addSlot(RecipeIngredientRole.OUTPUT, 102, 6).setStandardSlotBackground()
                 .add(gas.fluid(), gas.amount()).setFluidRenderer(gas.amount(), false, 16, 16));
     }

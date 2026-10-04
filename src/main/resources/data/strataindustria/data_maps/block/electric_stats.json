@@ -1,33 +1,108 @@
 {
   "values": {
     "strataindustria:electric_furnace": {
-      "draw": { "lv": 8, "mv": 32 },
-      "ticks": { "lv": 1.0, "mv": 0.5 },
-      "parallel": { "lv": 1, "mv": 2 },
+      "draw": {
+        "lv": 8,
+        "mv": 32
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
       "buffer_ticks": 20
     },
     "strataindustria:wiremill": {
-      "draw": { "lv": 8, "mv": 32 },
-      "ticks": { "lv": 1.0, "mv": 0.5 },
-      "parallel": { "lv": 1, "mv": 2 },
+      "draw": {
+        "lv": 8,
+        "mv": 32
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
       "buffer_ticks": 20
     },
     "strataindustria:bender": {
-      "draw": { "lv": 16, "mv": 64 },
-      "ticks": { "lv": 1.0, "mv": 0.5 },
-      "parallel": { "lv": 1, "mv": 2 },
+      "draw": {
+        "lv": 16,
+        "mv": 64
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
       "buffer_ticks": 20
     },
     "strataindustria:lathe": {
-      "draw": { "lv": 16, "mv": 64 },
-      "ticks": { "lv": 1.0, "mv": 0.5 },
-      "parallel": { "lv": 1, "mv": 2 },
+      "draw": {
+        "lv": 16,
+        "mv": 64
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
       "buffer_ticks": 20
     },
     "strataindustria:macerator": {
-      "draw": { "lv": 16, "mv": 64 },
-      "ticks": { "lv": 1.0, "mv": 0.5 },
-      "parallel": { "lv": 1, "mv": 2 },
+      "draw": {
+        "lv": 16,
+        "mv": 64
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
+      "buffer_ticks": 20
+    },
+    "strataindustria:mixer": {
+      "draw": {
+        "lv": 8,
+        "mv": 32
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
+      "buffer_ticks": 20
+    },
+    "strataindustria:electrolyser": {
+      "draw": {
+        "lv": 32,
+        "mv": 128
+      },
+      "ticks": {
+        "lv": 1.0,
+        "mv": 0.5
+      },
+      "parallel": {
+        "lv": 1,
+        "mv": 2
+      },
       "buffer_ticks": 20
     }
   }

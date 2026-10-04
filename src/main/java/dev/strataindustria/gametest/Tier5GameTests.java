@@ -11,6 +11,11 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
+import dev.strataindustria.electric.machine.ChemicalMachineBlockEntity;
+import dev.strataindustria.electric.machine.ElectrolyserBlockEntity;
+import dev.strataindustria.electric.machine.MixerBlockEntity;
+import dev.strataindustria.heat.Heat;
+import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlockEntity;
@@ -88,6 +93,7 @@ final class Tier5GameTests {
         tests.put("tier5_steam_turbine", Tier5GameTests::steamTurbine);
         tests.put("tier5_combustion_generator", Tier5GameTests::combustionGenerator);
         tests.put("tier5_shaping_machines", Tier5GameTests::shapingMachines);
+        tests.put("tier5_aluminium_chain", Tier5GameTests::aluminiumChain);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -529,6 +535,78 @@ final class Tier5GameTests {
             helper.assertTrue(Math.abs(joules - entry.getValue()) < 1e-6, "energy per item " + joules);
         }
         helper.succeed();
+    }
+
+
+    // Spec 24: 100 mB SO2 + 50 mB oxygen + 100 mB water make 100 mB acid in 40 ticks; 4 clay + 100 mB acid make alum in
+    // 200; alum roasts to alumina; 2 alumina + coke dust make a 700 degree aluminium ingot for 19 200 J; water splits
+    // into hydrogen and oxygen; a full hydrogen tank stops the electrolyser.
+    private static void aluminiumChain(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos base = helper.absolutePos(new BlockPos(1, 1, 1));
+        Fluid so2 = Tier4Fluids.SULFUR_DIOXIDE.get(), oxygen = Tier5Fluids.OXYGEN.source().get(), acid = Tier5Fluids.SULFURIC_ACID.source().get(),
+                hydrogen = Tier5Fluids.HYDROGEN.source().get();
+
+        BlockPos mixerPos = base;
+        level.setBlock(mixerPos, Tier5Blocks.MIXER.get().defaultBlockState(), Block.UPDATE_ALL);
+        MixerBlockEntity mixer = (MixerBlockEntity) level.getBlockEntity(mixerPos);
+        mixer.setTank(0, so2, 100);
+        mixer.setTank(1, oxygen, 50);
+        mixer.setTank(2, Fluids.WATER, 100);
+        helper.assertValueEqual(chemicalTicks(level, mixerPos, mixer, () -> mixer.amount(3) >= 100), 40, "acid takes 40 ticks");
+        helper.assertTrue(mixer.fluid(3).isSame(acid) && mixer.amount(3) == 100, "100 mB acid");
+        helper.assertTrue(mixer.amount(0) == 0 && mixer.amount(1) == 0 && mixer.amount(2) == 0, "the inputs are used up");
+
+        mixer.setItem(0, new ItemStack(Items.CLAY_BALL, 4));
+        mixer.setTank(0, acid, 100);
+        helper.assertValueEqual(chemicalTicks(level, mixerPos, mixer, () -> mixer.getItem(2).is(Tier5Items.ALUM.get())), 200, "alum takes 200 ticks");
+        helper.assertValueEqual(mixer.getItem(2).getCount(), 1, "one alum");
+        helper.assertValueEqual(mixer.amount(0), 0, "the acid is used up");
+
+        BlockPos furnacePos = base.south(2);
+        level.setBlock(furnacePos, Tier5Blocks.ELECTRIC_FURNACE.get().defaultBlockState(), Block.UPDATE_ALL);
+        ElectricFurnaceBlockEntity furnace = (ElectricFurnaceBlockEntity) level.getBlockEntity(furnacePos);
+        helper.assertTrue(furnaceTicks(level, furnacePos, furnace, new ItemStack(Tier5Items.ALUM.get()), Tier5Items.ALUMINA.get()) > 0, "alum roasts to alumina");
+
+        BlockPos cellPos = base.south(4);
+        level.setBlock(cellPos, Tier5Blocks.ELECTROLYSER.get().defaultBlockState(), Block.UPDATE_ALL);
+        ElectrolyserBlockEntity cell = (ElectrolyserBlockEntity) level.getBlockEntity(cellPos);
+        cell.setItem(0, new ItemStack(Tier5Items.ALUMINA.get(), 2));
+        cell.setItem(1, new ItemStack(Tier4Items.COKE_DUST.get()));
+        helper.assertValueEqual(chemicalTicks(level, cellPos, cell, () -> cell.getItem(2).is(ModItems.ingot(Metal.ALUMINIUM))), 600, "reduction takes 600 ticks");
+        helper.assertTrue(Heat.get(cell.getItem(2), level) > 650.0f, "the ingot comes out hot");
+        helper.assertTrue(Math.abs(cell.stats().draw().get(ElectricTier.LV) * 600 - 19200.0) < 1e-6, "19 200 J");
+        cell.getItem(2).setCount(0);
+
+        cell.setTank(0, Fluids.WATER, 1000);
+        helper.assertValueEqual(chemicalTicks(level, cellPos, cell, () -> cell.amount(1) >= 1000), 200, "water splits in 200 ticks");
+        helper.assertTrue(cell.fluid(1).isSame(hydrogen) && cell.amount(2) == 500 && cell.fluid(2).isSame(oxygen), "1000 mB hydrogen and 500 mB oxygen");
+
+        cell.setTank(0, Fluids.WATER, 1000);
+        cell.setTank(1, hydrogen, 4000);
+        cell.setBuffer(cell.bufferCapacity());
+        ElectricMachineBlockEntity.Status status = null;
+        for (int tick = 0; tick < 5; tick++) {
+            cell.setBuffer(cell.bufferCapacity());
+            ChemicalMachineBlockEntity.serverTick(level, cellPos, level.getBlockState(cellPos), cell);
+        }
+        status = cell.status();
+        helper.assertValueEqual(status, ElectricMachineBlockEntity.Status.TANK_FULL, "full hydrogen tank stops it");
+        helper.assertValueEqual(cell.amount(0), 1000, "the water is kept");
+
+        // Bucket by hand, and the acid only goes where a recipe wants it.
+        helper.assertTrue(mixer.fill(Direction.UP, acid, 1000, 0, true) == 1000, "acid goes in the mixer");
+        helper.assertTrue(mixer.fill(Direction.UP, hydrogen, 1000, 0, true) == 0, "hydrogen does not");
+        helper.succeed();
+    }
+
+    private static int chemicalTicks(ServerLevel level, BlockPos pos, ChemicalMachineBlockEntity machine, java.util.function.BooleanSupplier done) {
+        for (int tick = 1; tick <= 2000; tick++) {
+            machine.setBuffer(machine.bufferCapacity());
+            ChemicalMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+            if (done.getAsBoolean()) return tick;
+        }
+        return -1;
     }
 
     /** Ticks {@code machine} takes to put {@code result} in its output on a full buffer; -1 if it never does. */

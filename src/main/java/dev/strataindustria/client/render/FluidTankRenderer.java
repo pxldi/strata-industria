@@ -29,7 +29,8 @@ import org.jspecify.annotations.Nullable;
 public class FluidTankRenderer implements BlockEntityRenderer<FluidTankBlockEntity, FluidTankRenderer.State> {
     /** Fluids with a tank model; anything else is drawn as water. */
     private static final Set<String> MODELS = Set.of("water", "creosote", "steam", "sulfur_dioxide", "lye", "tannin", "latex",
-            "crude_oil", "naphtha", "diesel", "heavy_oil", "refinery_gas", "ethylene", "butadiene", "vinyl_chloride", "hydrogen_chloride");
+            "crude_oil", "naphtha", "diesel", "heavy_oil", "refinery_gas", "ethylene", "butadiene", "vinyl_chloride", "hydrogen_chloride",
+            "sulfuric_acid", "brine", "hydrogen", "oxygen", "chlorine");
 
     private final ItemModelResolver itemModelResolver;
     private final Map<String, Supplier<ItemStack>> columns = new HashMap<>();

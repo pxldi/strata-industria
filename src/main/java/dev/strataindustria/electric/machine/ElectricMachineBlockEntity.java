@@ -52,7 +52,9 @@ import org.jspecify.annotations.Nullable;
 public abstract class ElectricMachineBlockEntity extends BaseContainerBlockEntity implements ElectricConsumer, WorldlyContainer {
     public enum Status {
         EMPTY(StatusLight.OFF), WORKING(StatusLight.RUN), LOW_POWER(StatusLight.WAIT), NO_POWER(StatusLight.WAIT),
-        NO_RECIPE(StatusLight.OFF), OUTPUT_FULL(StatusLight.ERROR), OVERVOLTAGE(StatusLight.ERROR), TOO_FAR(StatusLight.ERROR);
+        NO_RECIPE(StatusLight.OFF), OUTPUT_FULL(StatusLight.ERROR), OVERVOLTAGE(StatusLight.ERROR), TOO_FAR(StatusLight.ERROR),
+        /** A fluid machine whose product has nowhere to go (spec 11.2: "Hydrogen tank full"). */
+        TANK_FULL(StatusLight.ERROR);
 
         private final StatusLight light;
 

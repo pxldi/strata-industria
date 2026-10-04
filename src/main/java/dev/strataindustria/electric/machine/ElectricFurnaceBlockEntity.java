@@ -50,7 +50,7 @@ public class ElectricFurnaceBlockEntity extends ElectricMachineBlockEntity imple
                 .filter(r -> r.value().minTemperature() <= MAX_ROASTING_TEMPERATURE);
         if (roasting.isPresent()) {
             RoastingRecipe recipe = roasting.get().value();
-            return Optional.of(new Operation(new Processing(List.of(recipe.assemble(recipeInput)), List.of()),
+            return Optional.of(new Operation(new Processing(recipe.assemble(recipeInput).isEmpty() ? List.of() : List.of(recipe.assemble(recipeInput)), List.of()),
                     recipe.ticks() * ROASTING_FACTOR, recipe.gas()));
         }
         if (KilnFiring.isFireable(input)) {

@@ -6,7 +6,13 @@ import dev.strataindustria.geology.OreMineral;
 import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.Tier4Items;
+import dev.strataindustria.power.ElectricTier;
+import dev.strataindustria.processing.ChemicalIo;
+import dev.strataindustria.processing.ElectrolysisRecipe;
+import dev.strataindustria.processing.MixingRecipe;
+import dev.strataindustria.registry.Tier4Fluids;
 import dev.strataindustria.registry.Tier5Fluids;
+import dev.strataindustria.registry.Tier5Recipes;
 import dev.strataindustria.registry.Tier5Items;
 import dev.strataindustria.tanning.BarrelRecipe;
 import dev.strataindustria.tanning.FluidAmount;
@@ -42,6 +48,7 @@ final class Tier5RecipeProvider extends RecipeProvider {
         electric();
         generators();
         shapingMachines();
+        chemistry();
     }
 
     // Spec 4.1, 9.1 and 9.4: rods and wire drawn on the anvil, plates hit flat, and the magnet.
@@ -275,6 +282,68 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .define('C', Tier5Items.BASIC_CIRCUIT.get())
                 .unlockedBy("has_lv_machine_hull", has(hull))
                 .save(output, key("combustion_generator"));
+    }
+
+
+    // Spec 11.1 to 11.4: the mixer and electrolyser, the acid and the aluminium chain. H hull, C basic circuit.
+    private void chemistry() {
+        Item hull = Tier5Items.LV_MACHINE_HULL.get();
+        shaped(RecipeCategory.REDSTONE, Tier5Items.MIXER.get())
+                .pattern(" F ")
+                .pattern("CHM")
+                .pattern(" F ")
+                .define('F', Tier4Items.BRONZE_FLUID_PIPE.get())
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('H', hull)
+                .define('M', Tier5Items.ELECTRIC_MOTOR.get())
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("mixer"));
+        shaped(RecipeCategory.REDSTONE, Tier5Items.ELECTROLYSER.get())
+                .pattern(" Q ")
+                .pattern("CHW")
+                .pattern(" Q ")
+                .define('Q', Tier5Items.LEAD_PLATE.get())
+                .define('C', Tier5Items.BASIC_CIRCUIT.get())
+                .define('H', hull)
+                .define('W', Tier5Items.COPPER_WIRE.get())
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("electrolyser"));
+
+        FluidAmount so2 = new FluidAmount(Tier4Fluids.SULFUR_DIOXIDE.get(), 100), oxygen = new FluidAmount(Tier5Fluids.OXYGEN.source().get(), 50),
+                water = new FluidAmount(Fluids.WATER, 100), acid = new FluidAmount(Tier5Fluids.SULFURIC_ACID.source().get(), 100);
+        // Contact process: SO2 + oxygen + water make acid, 1 : 0.5 : 1 by mB.
+        chemical("mixing/sulfuric_acid", Tier5Recipes.MIXING, new ChemicalIo(List.of(), List.of(so2, oxygen, water), List.of(), List.of(acid), 40,
+                ElectricTier.LV, 0));
+        chemical("mixing/alum", Tier5Recipes.MIXING, new ChemicalIo(List.of(new ChemicalIo.ItemInput(Ingredient.of(Items.CLAY_BALL), 4)),
+                List.of(acid), List.of(new ItemStackTemplate(Tier5Items.ALUM.get())), List.of(), 200, ElectricTier.LV, 0));
+        // Alum needs a roaster or electric furnace: a forge would lose the gas.
+        output.accept(key("roasting/alumina"), new RoastingRecipe(Ingredient.of(Tier5Items.ALUM.get()), new ItemStackTemplate(Tier5Items.ALUMINA.get()),
+                800, 200, Optional.of(new FluidAmount(Tier4Fluids.SULFUR_DIOXIDE.get(), 50)), false), null);
+        output.accept(key("roasting/sulfur"), new RoastingRecipe(Ingredient.of(Tier4Items.SULFUR_DUST.get()), Optional.empty(),
+                400, 100, Optional.of(new FluidAmount(Tier4Fluids.SULFUR_DIOXIDE.get(), 100)), false), null);
+
+        chemical("electrolysis/water", Tier5Recipes.ELECTROLYSIS, new ChemicalIo(List.of(), List.of(new FluidAmount(Fluids.WATER, 1000)), List.of(),
+                List.of(new FluidAmount(Tier5Fluids.HYDROGEN.source().get(), 1000), new FluidAmount(Tier5Fluids.OXYGEN.source().get(), 500)), 200,
+                ElectricTier.LV, 0));
+        chemical("electrolysis/brine", Tier5Recipes.ELECTROLYSIS, new ChemicalIo(List.of(), List.of(new FluidAmount(Tier5Fluids.BRINE.source().get(), 1000)),
+                List.of(), List.of(new FluidAmount(Tier5Fluids.CHLORINE.source().get(), 500), new FluidAmount(Tier5Fluids.HYDROGEN.source().get(), 500),
+                new FluidAmount(dev.strataindustria.registry.ModFluids.LYE.get(), 1000)), 200, ElectricTier.LV, 0));
+        chemical("electrolysis/aluminium", Tier5Recipes.ELECTROLYSIS, new ChemicalIo(List.of(
+                new ChemicalIo.ItemInput(Ingredient.of(Tier5Items.ALUMINA.get()), 2), new ChemicalIo.ItemInput(Ingredient.of(Tier4Items.COKE_DUST.get()), 1)),
+                List.of(), List.of(new ItemStackTemplate(ModItems.ingot(Metal.ALUMINIUM))), List.of(), 600, ElectricTier.LV, 700));
+
+        // Spec 4.1 and 10.4: wire from rods, drawn by hand too for aluminium.
+        machining("wiremill", null, ModItems.RODS.get(Metal.ALUMINIUM).get(), Tier5Items.ALUMINIUM_WIRE.get(), 2);
+        machining("wiremill", null, ModItems.RODS.get(Metal.STEEL).get(), Tier5Items.STEEL_WIRE.get(), 2);
+        anvil("aluminium_wire", ModItems.ingot(Metal.ALUMINIUM), Tier5Items.ALUMINIUM_WIRE.get(), 3, 80,
+                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+        anvil("steel_wire", ModItems.ingot(Metal.STEEL), Tier5Items.STEEL_WIRE.get(), 3, 90,
+                rule(Rule.Kind.HIT, Rule.Where.LAST), rule(Rule.Kind.DRAW, Rule.Where.SECOND_LAST), rule(Rule.Kind.DRAW, Rule.Where.THIRD_LAST));
+    }
+
+    private <R extends Recipe<?>> void chemical(String path, net.neoforged.neoforge.registries.DeferredHolder<net.minecraft.world.item.crafting.RecipeType<?>,
+            ? extends net.minecraft.world.item.crafting.RecipeType<?>> type, ChemicalIo io) {
+        output.accept(key(path), type == Tier5Recipes.MIXING ? new MixingRecipe(io) : new ElectrolysisRecipe(io), null);
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {

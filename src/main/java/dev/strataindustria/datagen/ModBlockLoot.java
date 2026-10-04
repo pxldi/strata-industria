@@ -208,7 +208,7 @@ final class ModBlockLoot extends BlockLootSubProvider {
     /** Tier 5: cables, the dynamo and the hull drop themselves; a battery box keeps its charge (spec 7.4). */
     private void tier5() {
         for (var block : java.util.List.of(Tier5Blocks.LV_CABLE, Tier5Blocks.MV_CABLE, Tier5Blocks.KINETIC_DYNAMO, Tier5Blocks.LV_MACHINE_HULL, Tier5Blocks.TREE_TAP,
-                Tier5Blocks.ELECTRIC_FURNACE, Tier5Blocks.MACERATOR, Tier5Blocks.WIREMILL, Tier5Blocks.BENDER, Tier5Blocks.LATHE, Tier5Blocks.STEAM_TURBINE, Tier5Blocks.COMBUSTION_GENERATOR)) {
+                Tier5Blocks.ELECTRIC_FURNACE, Tier5Blocks.MACERATOR, Tier5Blocks.WIREMILL, Tier5Blocks.BENDER, Tier5Blocks.LATHE, Tier5Blocks.MIXER, Tier5Blocks.ELECTROLYSER, Tier5Blocks.STEAM_TURBINE, Tier5Blocks.COMBUSTION_GENERATOR)) {
             dropSelf(block.get());
         }
         Block box = Tier5Blocks.BATTERY_BOX.get();

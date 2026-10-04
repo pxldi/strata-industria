@@ -21,6 +21,8 @@ public final class Tier5Items {
     public static final DeferredItem<Item> LEAD_PLATE = ModItems.ITEMS.registerSimpleItem("lead_plate");
     public static final DeferredItem<Item> RED_ALLOY_ROD = ModItems.ITEMS.registerSimpleItem("red_alloy_rod");
     public static final DeferredItem<Item> RED_ALLOY_WIRE = ModItems.ITEMS.registerSimpleItem("red_alloy_wire");
+    public static final DeferredItem<Item> ALUMINIUM_WIRE = ModItems.ITEMS.registerSimpleItem("aluminium_wire");
+    public static final DeferredItem<Item> STEEL_WIRE = ModItems.ITEMS.registerSimpleItem("steel_wire");
     /** Spec 9.1: the steel die the wiremill and extruder pull metal through. */
     public static final DeferredItem<Item> DRAW_PLATE = ModItems.ITEMS.registerSimpleItem("draw_plate", p -> p.stacksTo(1));
 
@@ -37,6 +39,12 @@ public final class Tier5Items {
     /** Spec 5.2: a bucket of latex from a full tap cup or a barrel; the bucket comes back when it is poured. */
     public static final DeferredItem<Item> LATEX_BUCKET = ModItems.ITEMS.registerSimpleItem("latex_bucket",
             p -> p.stacksTo(1).craftRemainder(net.minecraft.world.item.Items.BUCKET));
+    /** Spec 11.3: the acid made in a mixer; like the latex bucket it hands the empty bucket back when it is poured. */
+    public static final DeferredItem<Item> SULFURIC_ACID_BUCKET = ModItems.ITEMS.registerSimpleItem("sulfuric_acid_bucket",
+            p -> p.stacksTo(1).craftRemainder(net.minecraft.world.item.Items.BUCKET));
+    /** Spec 11.4: clay and acid make alum, roasting alum makes alumina, and electrolysis turns alumina into aluminium. */
+    public static final DeferredItem<Item> ALUM = ModItems.ITEMS.registerSimpleItem("alum");
+    public static final DeferredItem<Item> ALUMINA = ModItems.ITEMS.registerSimpleItem("alumina");
     public static final DeferredItem<BlockItem> TREE_TAP = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.TREE_TAP);
 
     public static final DeferredItem<BlockItem> LV_CABLE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LV_CABLE);
@@ -51,6 +59,9 @@ public final class Tier5Items {
     public static final DeferredItem<BlockItem> BENDER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.BENDER);
     public static final DeferredItem<BlockItem> LATHE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.LATHE);
 
+    public static final DeferredItem<BlockItem> MIXER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MIXER);
+    public static final DeferredItem<BlockItem> ELECTROLYSER = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTROLYSER);
+
     public static final DeferredItem<BlockItem> STEAM_TURBINE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.STEAM_TURBINE);
     public static final DeferredItem<BlockItem> COMBUSTION_GENERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.COMBUSTION_GENERATOR);
 
@@ -61,6 +72,8 @@ public final class Tier5Items {
         map.put(LEAD_PLATE.get(), Melt.of(Metal.LEAD, 100, 0));
         map.put(RED_ALLOY_ROD.get(), Alloy.parts(Metal.RED_ALLOY, 50));
         map.put(RED_ALLOY_WIRE.get(), Alloy.parts(Metal.RED_ALLOY, 25));
+        map.put(ALUMINIUM_WIRE.get(), Melt.of(Metal.ALUMINIUM, 25, 0));
+        map.put(STEEL_WIRE.get(), Melt.of(Metal.STEEL, 25, 0));
         // Spec 4.2: redstone counts only inside a melt, and dissolves only into molten copper.
         map.put(Items.REDSTONE, Melt.of(Metal.REDSTONE, 25, 0));
         map.put(Items.REDSTONE_BLOCK, Melt.of(Metal.REDSTONE, 225, 0));

@@ -1,0 +1,24 @@
+{
+  "type": "strataindustria:electrolysis",
+  "fluid_results": [
+    {
+      "amount": 500,
+      "fluid": "strataindustria:chlorine"
+    },
+    {
+      "amount": 500,
+      "fluid": "strataindustria:hydrogen"
+    },
+    {
+      "amount": 1000,
+      "fluid": "strataindustria:lye"
+    }
+  ],
+  "fluids": [
+    {
+      "amount": 1000,
+      "fluid": "strataindustria:brine"
+    }
+  ],
+  "ticks": 200
+}

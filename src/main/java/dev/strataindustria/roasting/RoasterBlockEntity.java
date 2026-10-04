@@ -143,8 +143,8 @@ public class RoasterBlockEntity extends BaseContainerBlockEntity implements Worl
             any = true;
             total[i] = ticks(recipe);
             ItemStack made = recipe.assemble(new SingleRecipeInput(input));
-            made.setCount(made.getCount() * input.getCount());
-            if (!fits(OUTPUT_SLOTS[i], made)) continue;
+            if (!made.isEmpty()) made.setCount(made.getCount() * input.getCount());
+            if (!made.isEmpty() && !fits(OUTPUT_SLOTS[i], made)) continue;
             blocked = false;
             if (!hot || intake.temperature() < recipe.minTemperature()) continue;
             // A short supply of heat roasts more slowly.
@@ -152,7 +152,7 @@ public class RoasterBlockEntity extends BaseContainerBlockEntity implements Worl
             if (progress[i] < total[i]) continue;
             progress[i] = 0;
             released += recipe.gas().map(g -> g.amount() * input.getCount()).orElse(0);
-            insert(OUTPUT_SLOTS[i], made);
+            if (!made.isEmpty()) insert(OUTPUT_SLOTS[i], made);
             items.set(INPUT_SLOTS[i], ItemStack.EMPTY);
             finished = true;
         }

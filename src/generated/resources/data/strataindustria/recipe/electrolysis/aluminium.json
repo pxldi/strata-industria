@@ -1,0 +1,19 @@
+{
+  "type": "strataindustria:electrolysis",
+  "item_results": [
+    {
+      "id": "strataindustria:aluminium_ingot"
+    }
+  ],
+  "items": [
+    {
+      "count": 2,
+      "ingredient": "strataindustria:alumina"
+    },
+    {
+      "ingredient": "strataindustria:coke_dust"
+    }
+  ],
+  "result_temperature": 700,
+  "ticks": 600
+}

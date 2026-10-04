@@ -6,6 +6,8 @@ import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
 import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
+import dev.strataindustria.electric.machine.ElectrolyserBlockEntity;
+import dev.strataindustria.electric.machine.MixerBlockEntity;
 import dev.strataindustria.electric.machine.BenderBlockEntity;
 import dev.strataindustria.electric.machine.LatheBlockEntity;
 import dev.strataindustria.electric.machine.MaceratorBlockEntity;
@@ -43,6 +45,12 @@ public final class Tier5BlockEntities {
             ModBlockEntities.BLOCK_ENTITIES.register("bender", () -> new BlockEntityType<>(BenderBlockEntity::new, Tier5Blocks.BENDER.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<LatheBlockEntity>> LATHE =
             ModBlockEntities.BLOCK_ENTITIES.register("lathe", () -> new BlockEntityType<>(LatheBlockEntity::new, Tier5Blocks.LATHE.get()));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MixerBlockEntity>> MIXER =
+            ModBlockEntities.BLOCK_ENTITIES.register("mixer", () -> new BlockEntityType<>(MixerBlockEntity::new, Tier5Blocks.MIXER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ElectrolyserBlockEntity>> ELECTROLYSER =
+            ModBlockEntities.BLOCK_ENTITIES.register("electrolyser", () -> new BlockEntityType<>(ElectrolyserBlockEntity::new,
+                    Tier5Blocks.ELECTROLYSER.get()));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SteamTurbineBlockEntity>> STEAM_TURBINE =
             ModBlockEntities.BLOCK_ENTITIES.register("steam_turbine", () -> new BlockEntityType<>(SteamTurbineBlockEntity::new,
