@@ -8,4 +8,9 @@ public class MineTubRenderState extends MinecartRenderState {
     public boolean coupled;
     /** A tank wagon's fluid level, 0 to 16. */
     public int gauge;
+    /** For vehicles with a front: the way they head, in degrees, and whether that counts. */
+    public float headingYaw;
+    public boolean directional;
+    /** How far the coupling rods have turned, in radians. */
+    public float wheelPhase;
 }

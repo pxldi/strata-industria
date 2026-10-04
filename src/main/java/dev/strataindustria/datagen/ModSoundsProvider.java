@@ -643,6 +643,26 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.water.ambient", event).pitch(1.2f).volume(0.7f))
                 .with(sound("minecraft:item.bucket.fill", event).pitch(1.4f).volume(0.35f))
                 .with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.6f).volume(0.2f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_CHUFF, definition().subtitle(subtitle("locomotive.chuff"))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.9f).volume(0.55f))
+                .with(sound("minecraft:block.piston.contract", event).pitch(1.9f).volume(0.35f))
+                .with(sound("minecraft:block.lava.extinguish", event).pitch(1.7f).volume(0.3f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_WHISTLE, definition().subtitle(subtitle("locomotive.whistle"))
+                .with(sound("minecraft:block.note_block.flute", event).pitch(1.25f).volume(1.0f))
+                .with(sound("minecraft:block.note_block.didgeridoo", event).pitch(1.5f).volume(0.35f))
+                .with(sound("minecraft:block.fire.extinguish", event).pitch(1.5f).volume(0.4f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.LOCOMOTIVE_BRAKE, definition().subtitle(subtitle("locomotive.brake"))
+                .with(sound("minecraft:block.grindstone.use", event).pitch(1.7f).volume(0.5f))
+                .with(sound("minecraft:item.axe.scrape", event).pitch(1.3f).volume(0.45f))
+                .with(sound("minecraft:block.chain.hit", event).pitch(0.8f).volume(0.35f)));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.WATER_POUR, definition().subtitle(subtitle("water_tower.pour"))
+                .with(sound("minecraft:block.water.ambient", event).pitch(1.0f).volume(0.8f))
+                .with(sound("minecraft:item.bucket.empty", event).pitch(1.3f).volume(0.35f))
+                .with(sound("minecraft:block.pointed_dripstone.drip_water", event).pitch(1.2f).volume(0.5f)));
+        SoundDefinition coal = definition().subtitle(subtitle("coal_stage.load"));
+        for (int i = 1; i <= 3; i++) coal.with(sound("minecraft:dig/gravel" + i).pitch(1.1f).volume(0.7f));
+        coal.with(sound("minecraft:block.iron_trapdoor.open", event).pitch(1.8f).volume(0.15f));
+        add(dev.strataindustria.transport.rail.RailwayRegistry.COAL_LOAD, coal);
         add(dev.strataindustria.transport.rail.RailwayRegistry.FLAT_LOAD, definition().subtitle(subtitle("flat_wagon.load"))
                 .with(sound("minecraft:block.anvil.place", event).pitch(1.3f).volume(0.6f))
                 .with(sound("minecraft:block.wood.place", event).pitch(0.7f).volume(0.9f))

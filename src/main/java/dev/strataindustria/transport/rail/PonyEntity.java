@@ -69,7 +69,6 @@ public class PonyEntity extends MineTubEntity {
     private static final int TURN_TICKS = 30;
     private static final int BALK_TICKS = 100;
     private static final int NAG_TICKS = 200;
-    private static final int TICKET_LINGER = 600;
     private static final double EDGE_OFFSET = 0.2;
 
     private static final EntityDataAccessor<Integer> DATA_KIND = SynchedEntityData.defineId(PonyEntity.class, EntityDataSerializers.INT);
@@ -86,9 +85,8 @@ public class PonyEntity extends MineTubEntity {
     private int turnLeft;
     private int eatLeft;
     private int nagLeft;
-    private int lingering;
     private boolean rideWalk;
-    private boolean ticketed;
+    private final LineTicket ticket = new LineTicket();
     // client
     private float walkSpeed, walkSpeedO, walkPos;
 
@@ -256,53 +254,12 @@ public class PonyEntity extends MineTubEntity {
         balkLeft = 0;
     }
 
-    /** Whether the track climbs on the way the pony is going. */
-    private boolean uphill(BlockPos rail) {
-        BlockState state = level().getBlockState(rail);
-        if (!(state.getBlock() instanceof BaseRailBlock block)) return false;
-        Direction up = switch (state.getValue(block.getShapeProperty())) {
-            case ASCENDING_EAST -> Direction.EAST;
-            case ASCENDING_WEST -> Direction.WEST;
-            case ASCENDING_NORTH -> Direction.NORTH;
-            case ASCENDING_SOUTH -> Direction.SOUTH;
-            default -> null;
-        };
-        return up != null && heading.x * up.getStepX() + heading.z * up.getStepZ() > 0.1;
-    }
-
-    /** True when the track ends ahead: no rail where the pony is headed, in a loaded chunk. */
-    private boolean deadEnd(BlockPos rail) {
-        BlockState state = level().getBlockState(rail);
-        if (!(state.getBlock() instanceof BaseRailBlock block)) return false;
-        Vec3 ahead = null;
-        double best = 0.1;
-        for (Vec3i exit : new Vec3i[] {
-                net.minecraft.world.entity.vehicle.minecart.AbstractMinecart.exits(state.getValue(block.getShapeProperty())).getFirst(),
-                net.minecraft.world.entity.vehicle.minecart.AbstractMinecart.exits(state.getValue(block.getShapeProperty())).getSecond()}) {
-            double dot = exit.getX() * heading.x + exit.getZ() * heading.z;
-            if (dot > best) {
-                best = dot;
-                ahead = new Vec3(exit.getX(), exit.getY(), exit.getZ());
-            }
-        }
-        if (ahead == null) return false;
-        BlockPos next = rail.offset((int) ahead.x, (int) ahead.y, (int) ahead.z);
-        if (!level().hasChunkAt(next)) return false;
-        return !(BaseRailBlock.isRail(level(), next) || BaseRailBlock.isRail(level(), next.below()) || BaseRailBlock.isRail(level(), next.above()));
-    }
-
-    /** Whether the pony is far enough into its block, going the way it heads, to be stopped before the edge. */
-    private boolean nearEdge(BlockPos rail) {
-        double offset = (getX() - (rail.getX() + 0.5)) * heading.x + (getZ() - (rail.getZ() + 0.5)) * heading.z;
-        return offset > EDGE_OFFSET;
-    }
-
     /** The speed it wants this tick; zero while held, balking, ridden and told to stop, or at an end of the line. */
     private double walkSpeedFor(BlockPos rail) {
         if (balkLeft > 0 || turnLeft > 0) return 0;
         if (isHeld()) return 0;
         if (hasPassenger(e -> e instanceof Player) && !rideWalk) return 0;
-        return uphill(rail) ? UPHILL : WALK;
+        return uphill(rail, heading) ? UPHILL : WALK;
     }
 
     /** The pony walks by itself: a steady pace along the track in the way it heads, and it never loses speed to friction. */
@@ -322,7 +279,7 @@ public class PonyEntity extends MineTubEntity {
         }
         if (!level().hasChunkAt(rail.relative(Direction.getApproximateNearest(heading.x, 0, heading.z)))) return Vec3.ZERO;
         double speed = walkSpeedFor(rail);
-        if (speed > 0 && nearEdge(rail) && (deadEnd(rail) || atBuffer())) {
+        if (speed > 0 && nearEdge(rail, heading) && (deadEnd(rail, heading) || atBuffer())) {
             turnLeft = TURN_TICKS;
             speed = 0;
         }
@@ -349,7 +306,7 @@ public class PonyEntity extends MineTubEntity {
         if (rail != null && !winched() && isLead() && !rail.equals(lastRail)) {
             lastRail = rail;
             if (isHeld() || !onOurTrack()) slopeRun = 0;
-            else if (uphill(rail)) {
+            else if (uphill(rail, heading)) {
                 if (++slopeRun > MAX_SLOPE_RAILS && balkLeft <= 0) {
                     balkLeft = BALK_TICKS;
                     tell(server, "pony.balks");
@@ -367,7 +324,7 @@ public class PonyEntity extends MineTubEntity {
         if (isHeld()) feed(server);
         else if (eatLeft > 0) eatLeft = 0;
         entityData.set(DATA_EATING, eatLeft > 0);
-        ticket(server);
+        ticket.tick(server, this);
     }
 
     /** A rider sets walk or stop with W and S, the way it does on a horse. */
@@ -440,17 +397,9 @@ public class PonyEntity extends MineTubEntity {
             dev.strataindustria.journal.Observations.hungryPony(server, blockPosition());
             return false;
         }
-        BlockPos stop = heldAt();
-        if (stop != null && !ticketed && !hasPassenger(e -> e instanceof Player)) {
-            Charter charter = TramwayRoutes.stationCharter(RouteIndex.get(server), stop);
-            if (charter != null && VehicleTickets.ownerAround(server, charter)) {
-                if (!VehicleTickets.available(server, charter.owner())) {
-                    tell(server, "pony.no_line");
-                    return false;
-                }
-                VehicleTickets.open(getUUID(), charter.owner());
-                ticketed = true;
-            }
+        if (!ticket.admit(server, this, heldAt())) {
+            tell(server, "pony.no_line");
+            return false;
         }
         return true;
     }
@@ -467,29 +416,13 @@ public class PonyEntity extends MineTubEntity {
             heading = flat.normalize();
             syncHeading();
         }
-        lingering = 0;
+        ticket.leaving();
         slopeRun = 0;
-    }
-
-    /** Keeps the nine chunks around the pony loaded while it runs a line, and lets them go 30 seconds after it rests in a station. */
-    private void ticket(ServerLevel server) {
-        if (!ticketed) return;
-        if (isHeld() && heldAt() != null && TramwayRoutes.stationCharter(RouteIndex.get(server), heldAt()) != null) {
-            if (++lingering >= TICKET_LINGER) {
-                VehicleTickets.release(server, getUUID());
-                ticketed = false;
-                lingering = 0;
-                return;
-            }
-        } else {
-            lingering = 0;
-        }
-        if (tickCount % 4 == 0) VehicleTickets.follow(server, getUUID(), chunkPosition());
     }
 
     @Override
     public void remove(RemovalReason reason) {
-        if (level() instanceof ServerLevel server) VehicleTickets.release(server, getUUID());
+        if (level() instanceof ServerLevel server) ticket.release(server, this);
         super.remove(reason);
     }
 
@@ -602,7 +535,7 @@ public class PonyEntity extends MineTubEntity {
 
     /** Whether the pony holds a moving ticket, for tests. */
     public boolean ticketed() {
-        return ticketed;
+        return ticket.open();
     }
 
     public UUID id() {
