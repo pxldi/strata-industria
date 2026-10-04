@@ -100,6 +100,29 @@
     ],
     "subtitle": "subtitles.strataindustria.cracked_fire_bricks.break"
   },
+  "block.crude_oil.bubble": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.bubble_pop",
+        "pitch": 0.5,
+        "volume": 0.6
+      },
+      {
+        "type": "event",
+        "name": "block.lava.pop",
+        "pitch": 0.6,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.honey_block.slide",
+        "pitch": 0.5,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.block.crude_oil.bubble"
+  },
   "block.pit_prop.creak": {
     "sounds": [
       {
@@ -770,6 +793,38 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.hide.scrape"
+  },
+  "item.bucket.empty_crude_oil": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.empty_lava",
+        "pitch": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.mud.place",
+        "pitch": 0.7,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.item.bucket.empty_crude_oil"
+  },
+  "item.bucket.fill_crude_oil": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "item.bucket.fill_lava",
+        "pitch": 0.8
+      },
+      {
+        "type": "event",
+        "name": "block.honey_block.slide",
+        "pitch": 0.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.item.bucket.fill_crude_oil"
   },
   "item.survey_notes.found": {
     "sounds": [

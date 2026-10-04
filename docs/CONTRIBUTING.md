@@ -52,7 +52,8 @@ src/generated/resources/ generated assets and data (do not edit by hand)
   (`java tools/texturegen/TextureGen.java` from the repo root). Output is deterministic and
   written into `src/main/resources/assets/strataindustria/textures`; a preview sheet goes to
   `build/texturegen/preview.png`. Files in `HAND_MADE` are never overwritten.
-- Structure blocks have their own generator, `tools/texturegen/StructureTextures.java`.
+- Structure blocks have their own generator, `tools/texturegen/StructureTextures.java`, and so does tier 6
+  (`tools/texturegen/Tier6Textures.java`).
 
 ### Sounds
 

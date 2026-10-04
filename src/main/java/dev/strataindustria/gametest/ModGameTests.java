@@ -112,6 +112,7 @@ public final class ModGameTests {
         TESTS.put("soaking_barrel", ModGameTests::soakingBarrel);
         Tier3GameTests.register(TESTS);
         Tier4GameTests.register(TESTS);
+        Tier6GameTests.register(TESTS);
     }
 
     private ModGameTests() {}
