@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.machine.SawingRecipe;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.crafting.KnappedToolRecipe;
 import dev.strataindustria.crafting.MetalArmourRecipe;
@@ -54,6 +55,12 @@ public final class ModRecipes {
             TYPES.register("welding", () -> RecipeType.simple(StrataIndustria.id("welding")));
     public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<WeldingRecipe>> WELDING_SERIALIZER =
             SERIALIZERS.register("welding", () -> WeldingRecipe.SERIALIZER);
+
+    /** The saw mill (tier 3 spec 8.2). */
+    public static final DeferredHolder<RecipeType<?>, RecipeType<SawingRecipe>> SAWING =
+            TYPES.register("sawing", () -> RecipeType.simple(StrataIndustria.id("sawing")));
+    public static final DeferredHolder<RecipeSerializer<?>, RecipeSerializer<SawingRecipe>> SAWING_SERIALIZER =
+            SERIALIZERS.register("sawing", () -> SawingRecipe.SERIALIZER);
 
     private ModRecipes() {}
 }

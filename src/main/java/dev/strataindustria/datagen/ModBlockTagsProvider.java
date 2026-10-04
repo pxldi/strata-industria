@@ -83,7 +83,8 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(ModBlocks.FIRE_BRICK_SLAB.getKey()).add(ModBlocks.FIRE_BRICK_STAIRS.getKey()).add(ModBlocks.FIRE_BRICK_WALL.getKey());
         // Tier 3 spec 7 and 8: wooden power parts take an axe, the millstone a pickaxe.
         tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.WOODEN_AXLE.getKey()).add(ModBlocks.WOODEN_GEARBOX.getKey())
-                .add(ModBlocks.HAND_CRANK.getKey()).add(ModBlocks.WATER_WHEEL.getKey()).add(ModBlocks.BELLOWS.getKey());
+                .add(ModBlocks.HAND_CRANK.getKey()).add(ModBlocks.WATER_WHEEL.getKey()).add(ModBlocks.BELLOWS.getKey())
+                .add(ModBlocks.SAW_MILL.getKey()).add(ModBlocks.TRIP_HAMMER.getKey());
         tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.MILLSTONE.getKey());
         tag(BlockTags.SLABS).add(ModBlocks.FIRE_BRICK_SLAB.getKey());
         tag(BlockTags.STAIRS).add(ModBlocks.FIRE_BRICK_STAIRS.getKey());

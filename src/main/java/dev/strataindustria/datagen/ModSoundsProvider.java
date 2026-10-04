@@ -134,6 +134,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.6f)));
         add(ModSounds.BELLOWS_PUMP, definition().subtitle(subtitle("bellows.pump"))
                 .with(sound("minecraft:entity.horse.breathe", SoundDefinition.SoundType.EVENT).pitch(0.7f)));
+        add(ModSounds.SAW_MILL_SAW, definition().subtitle(subtitle("saw_mill.saw"))
+                .with(sound("minecraft:entity.sheep.shear", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.6f)));
+        add(ModSounds.SAW_MILL_BLADE_BREAK, definition().subtitle(subtitle("saw_mill.blade_break"))
+                .with(sound("minecraft:entity.item.break", SoundDefinition.SoundType.EVENT)));
         add(ModSounds.KILN_FIRED, definition().subtitle(subtitle("pit_kiln.fired"))
                 .with(sound("minecraft:random/fizz").pitch(0.6f).volume(0.7f)));
     }

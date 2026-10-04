@@ -1,0 +1,548 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "strataindustria:block/core_sampler_side",
+    "side": "strataindustria:block/core_sampler_side",
+    "top": "strataindustria:block/core_sampler_top",
+    "frame": "strataindustria:block/trip_hammer_frame",
+    "drill": "strataindustria:block/core_sampler_drill",
+    "end": "strataindustria:block/wooden_axle_end"
+  },
+  "elements": [
+    {
+      "name": "base",
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        4,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ],
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ],
+          "cullface": "south"
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ],
+          "cullface": "east"
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            0,
+            12,
+            16,
+            16
+          ],
+          "cullface": "west"
+        },
+        "up": {
+          "texture": "#top",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#top",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "cullface": "down"
+        }
+      }
+    },
+    {
+      "name": "leg",
+      "from": [
+        1,
+        4,
+        1
+      ],
+      "to": [
+        3,
+        16,
+        3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#end",
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "name": "leg",
+      "from": [
+        1,
+        4,
+        13
+      ],
+      "to": [
+        3,
+        16,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#end",
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "name": "leg",
+      "from": [
+        13,
+        4,
+        1
+      ],
+      "to": [
+        15,
+        16,
+        3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#end",
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "name": "leg",
+      "from": [
+        13,
+        4,
+        13
+      ],
+      "to": [
+        15,
+        16,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            6,
+            0,
+            8,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#end",
+          "uv": [
+            7,
+            7,
+            9,
+            9
+          ],
+          "cullface": "up"
+        }
+      }
+    },
+    {
+      "name": "rail",
+      "from": [
+        3,
+        14,
+        1
+      ],
+      "to": [
+        13,
+        16,
+        3
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90
+        },
+        "up": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90,
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "name": "rail",
+      "from": [
+        3,
+        14,
+        13
+      ],
+      "to": [
+        13,
+        16,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90
+        },
+        "south": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90
+        },
+        "up": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90,
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            5,
+            3,
+            7,
+            13
+          ],
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "name": "crosshead",
+      "from": [
+        7,
+        14,
+        3
+      ],
+      "to": [
+        9,
+        16,
+        13
+      ],
+      "faces": {
+        "east": {
+          "texture": "#frame",
+          "uv": [
+            9,
+            3,
+            11,
+            13
+          ],
+          "rotation": 90
+        },
+        "west": {
+          "texture": "#frame",
+          "uv": [
+            9,
+            3,
+            11,
+            13
+          ],
+          "rotation": 90
+        },
+        "up": {
+          "texture": "#frame",
+          "uv": [
+            9,
+            3,
+            11,
+            13
+          ],
+          "cullface": "up"
+        },
+        "down": {
+          "texture": "#frame",
+          "uv": [
+            9,
+            3,
+            11,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "name": "drill",
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        14,
+        9
+      ],
+      "faces": {
+        "north": {
+          "texture": "#drill",
+          "uv": [
+            0,
+            2,
+            2,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#drill",
+          "uv": [
+            4,
+            2,
+            6,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#drill",
+          "uv": [
+            2,
+            2,
+            4,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#drill",
+          "uv": [
+            6,
+            2,
+            8,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}
