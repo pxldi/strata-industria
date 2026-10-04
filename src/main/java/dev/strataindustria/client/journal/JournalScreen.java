@@ -13,6 +13,7 @@ import java.util.Map;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -148,7 +149,7 @@ public class JournalScreen extends Screen {
             }
             List<FormattedCharSequence> question = font.split(JournalText.question(lead), PAGE_W - 20);
             List<FormattedCharSequence> hint = lead.hinted()
-                    ? font.split(JournalText.ui("remember", JournalText.hint(lead)).copy().withStyle(ChatFormatting.ITALIC), PAGE_W - 4)
+                    ? font.split(JournalText.ui("remember", JournalText.hint(lead)).copy().withStyle(ChatFormatting.ITALIC), PAGE_W - 8)
                     : List.of();
             int height = Math.max(18, question.size() * 9 + 2) + hint.size() * 9 + 5;
             ItemStack icon = JournalText.icon(lead.icon());
@@ -385,7 +386,7 @@ public class JournalScreen extends Screen {
             }
             return true;
         }
-        if (view == View.LEADS && event.button() == 0) {
+        if (view == View.LEADS && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             int y = top + ARROW_Y;
             if (turn(mx, my, left + LEFT_X, y, true)) return true;
             if (turn(mx, my, left + RIGHT_X, y, false)) return true;
@@ -405,7 +406,7 @@ public class JournalScreen extends Screen {
 
     @Override
     public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
-        if (view == View.CORKBOARD && event.button() == 0) {
+        if (view == View.CORKBOARD && event.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             panX += dx;
             panY += dy;
             return true;
