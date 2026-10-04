@@ -1,4 +1,59 @@
 {
+  "fire_pit.extinguish": {
+    "sounds": [
+      "random/fizz"
+    ],
+    "subtitle": "subtitles.strataindustria.fire_pit.extinguish"
+  },
+  "fire_pit.ignite": {
+    "sounds": [
+      {
+        "name": "fire/ignite",
+        "pitch": 0.9
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 1.2,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fire_pit.ignite"
+  },
+  "fire_pit.torch": {
+    "sounds": [
+      {
+        "name": "fire/ignite",
+        "pitch": 1.3,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fire_pit.torch"
+  },
+  "firestarter.drill": {
+    "sounds": [
+      {
+        "name": "step/wood1",
+        "pitch": 1.6,
+        "volume": 0.5
+      },
+      {
+        "name": "step/wood2",
+        "pitch": 1.6,
+        "volume": 0.5
+      },
+      {
+        "name": "step/wood3",
+        "pitch": 1.6,
+        "volume": 0.5
+      },
+      {
+        "name": "step/wood4",
+        "pitch": 1.6,
+        "volume": 0.5
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.firestarter.drill"
+  },
   "knapping.finish": {
     "sounds": [
       {
