@@ -292,10 +292,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
         add(Tier4Sounds.BLOWER_RUN, definition().subtitle(subtitle("blower.run"))
                 .with(sound("minecraft:item.elytra.flying", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.12f))
                 .with(sound("minecraft:entity.horse.breathe", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.3f)));
-        SoundDefinition roar = definition().subtitle(subtitle("blast_furnace.roar"));
-        for (int i = 1; i <= 3; i++) roar.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.4f).volume(1.0f));
-        roar.with(sound("minecraft:fire/fire").pitch(0.35f).volume(0.9f));
-        add(Tier4Sounds.BLAST_FURNACE_ROAR, roar);
+        SoundDefinition furnaceRoar = definition().subtitle(subtitle("blast_furnace.roar"));
+        for (int i = 1; i <= 3; i++) furnaceRoar.with(sound("minecraft:block/furnace/fire_crackle" + i).pitch(0.4f).volume(1.0f));
+        furnaceRoar.with(sound("minecraft:fire/fire").pitch(0.35f).volume(0.9f));
+        add(Tier4Sounds.BLAST_FURNACE_ROAR, furnaceRoar);
         add(Tier4Sounds.BLAST_FURNACE_TAP, definition().subtitle(subtitle("blast_furnace.tap"))
                 .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.8f))
                 .with(sound("minecraft:item.bucket.empty_lava", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.9f)));
