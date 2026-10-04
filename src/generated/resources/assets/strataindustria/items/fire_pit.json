@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "strataindustria:block/fire_pit"
+    "model": "strataindustria:block/fire_pit_cold_1"
   }
 }

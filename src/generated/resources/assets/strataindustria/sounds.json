@@ -2387,6 +2387,41 @@
     ],
     "subtitle": "subtitles.strataindustria.fire_pit.extinguish"
   },
+  "fire_pit.feed": {
+    "sounds": [
+      {
+        "name": "dig/wood1",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/wood2",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/wood3",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "dig/wood4",
+        "pitch": 0.7,
+        "volume": 0.6
+      },
+      {
+        "name": "fire/ignite",
+        "pitch": 1.5,
+        "volume": 0.55
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 1.1,
+        "volume": 0.9
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fire_pit.feed"
+  },
   "fire_pit.ignite": {
     "sounds": [
       {
@@ -2400,6 +2435,27 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.fire_pit.ignite"
+  },
+  "fire_pit.ready": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.amethyst_block.chime",
+        "pitch": 1.6,
+        "volume": 0.5
+      },
+      {
+        "name": "fire/fire",
+        "pitch": 1.8,
+        "volume": 0.7
+      },
+      {
+        "name": "liquid/lavapop",
+        "pitch": 1.3,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.fire_pit.ready"
   },
   "fire_pit.ring": {
     "sounds": [

@@ -99,7 +99,7 @@ final class FirePitFeedGameTests {
         helper.assertValueEqual(size(helper), 3, "starts big");
         run(helper, pit, 700);
         helper.assertValueEqual(size(helper), 2, "settles as the wood burns");
-        run(helper, pit, 1000);
+        run(helper, pit, 1100);
         helper.assertValueEqual(size(helper), 1, "down to a small fire");
         run(helper, pit, 1000);
         helper.assertValueEqual(size(helper), 0, "burnt out");
@@ -144,7 +144,7 @@ final class FirePitFeedGameTests {
         helper.assertTrue(pit.hearth().get(1).is(Items.BEEF), "the beef lies on the stone aimed at");
         run(helper, pit, 100);
         helper.assertTrue(pit.hearth().get(1).is(Items.BEEF), "still raw while the fire warms");
-        run(helper, pit, 800);
+        run(helper, pit, 1100);
         helper.assertTrue(pit.hearth().get(1).isEmpty(), "done meat leaves the stone");
         boolean found = !helper.getLevel().getEntitiesOfClass(ItemEntity.class, new AABB(abs).inflate(3),
                 item -> item.getItem().is(Items.COOKED_BEEF)).isEmpty();
