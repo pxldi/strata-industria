@@ -177,6 +177,12 @@ public class ItemPipeBlock extends BaseEntityBlock {
             player.sendOverlayMessage(describe(side, face(state, side), pipe.hasFilter(side)));
             return InteractionResult.SUCCESS;
         }
+        cycleFace(level, pos, state, side, pipe, player);
+        return InteractionResult.SUCCESS;
+    }
+
+    /** Steps a connected face through port, storage and off: an empty-hand click or the wrench. */
+    static void cycleFace(Level level, BlockPos pos, BlockState state, Direction side, ItemPipeBlockEntity pipe, Player player) {
         Face next = switch (face(state, side)) {
             case PORT -> StorageRules.plain(level.getBlockEntity(pos.relative(side))) ? Face.STORAGE : Face.OFF;
             case STORAGE -> Face.OFF;
@@ -185,6 +191,13 @@ public class ItemPipeBlock extends BaseEntityBlock {
         level.setBlock(pos, state.setValue(FACES.get(side), next), Block.UPDATE_ALL);
         level.playSound(null, pos, Tier4Sounds.FILTER_CONFIGURE.get(), SoundSource.BLOCKS, 0.5f, 1.3f);
         player.sendOverlayMessage(describe(side, next, pipe.hasFilter(side)));
+    }
+
+    /** The wrench's click (spec 13.1): cycles the face under the cursor. Passes when it is not a connected inventory face. */
+    public InteractionResult wrench(Level level, BlockPos pos, BlockState state, Player player, BlockHitResult hit) {
+        Direction side = faceAt(state, pos, hit);
+        if (side == null || !face(state, side).inventory()) return InteractionResult.PASS;
+        if (!level.isClientSide() && level.getBlockEntity(pos) instanceof ItemPipeBlockEntity pipe) cycleFace(level, pos, state, side, pipe, player);
         return InteractionResult.SUCCESS;
     }
 

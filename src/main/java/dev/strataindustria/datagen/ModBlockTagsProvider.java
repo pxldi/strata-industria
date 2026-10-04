@@ -41,6 +41,9 @@ final class ModBlockTagsProvider extends BlockTagsProvider {
                 .add(dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE.getKey()).add(dev.strataindustria.logistics.Tier5Logistics.PIPE_EXTRACTOR.getKey())
                 .add(dev.strataindustria.logistics.Tier5Logistics.FAST_PIPE_EXTRACTOR.getKey()).add(dev.strataindustria.logistics.Tier5Logistics.STORAGE_CONTROLLER.getKey())
                 .add(dev.strataindustria.logistics.Tier5Logistics.FLUID_FILTER.getKey());
+        tag(ModTags.Blocks.WRENCH_BREAKABLE).add(dev.strataindustria.registry.Tier5Blocks.LV_CABLE.getKey())
+                .add(dev.strataindustria.registry.Tier5Blocks.MV_CABLE.getKey()).add(dev.strataindustria.logistics.Tier5Logistics.ITEM_PIPE.getKey())
+                .addTag(ModTags.Blocks.FLUID_PIPES);
         // Spec 5.4 and 8.3: treated wood is chopped, never burnt; insulators are pottery.
         tag(BlockTags.MINEABLE_WITH_AXE).add(dev.strataindustria.registry.Tier5Blocks.TREATED_LOG.getKey())
                 .add(dev.strataindustria.registry.Tier5Blocks.UTILITY_POLE.getKey());

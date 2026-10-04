@@ -27,7 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * The transformer (spec 8.2): the front is the MV side and the rest is the LV side. A click toggles step down
- * and step up (the wrench of spec 13 will too); sneak and click shows the diagnostics line of the side clicked.
+ * and step up (so does the wrench of spec 13.1); sneak and click shows the diagnostics line of the side clicked.
  */
 public class TransformerBlock extends BaseEntityBlock {
     public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
@@ -69,15 +69,18 @@ public class TransformerBlock extends BaseEntityBlock {
             if (!level.isClientSide()) player.sendOverlayMessage(ElectricNetworks.line(level, pos, transformer.portAt(hit.getDirection())));
             return InteractionResult.SUCCESS;
         }
-        if (!level.isClientSide()) {
-            BlockState next = state.cycle(STEP_UP);
-            transformer.clearBuffer();
-            level.setBlock(pos, next, Block.UPDATE_ALL);
-            ElectricNetworks.markDirty(level, pos);
-            level.playSound(null, pos, Tier5Sounds.TRANSFORMER_SWITCH.get(), SoundSource.BLOCKS, 0.8f, next.getValue(STEP_UP) ? 1.1f : 0.9f);
-            if (level.getBlockEntity(pos) instanceof TransformerBlockEntity changed) player.sendOverlayMessage(changed.readout());
-        }
+        if (!level.isClientSide()) toggle(level, pos, state, transformer, player);
         return InteractionResult.SUCCESS;
+    }
+
+    /** Switches between step down and step up: an empty-hand click or the wrench. */
+    public static void toggle(Level level, BlockPos pos, BlockState state, TransformerBlockEntity transformer, Player player) {
+        BlockState next = state.cycle(STEP_UP);
+        transformer.clearBuffer();
+        level.setBlock(pos, next, Block.UPDATE_ALL);
+        ElectricNetworks.markDirty(level, pos);
+        level.playSound(null, pos, Tier5Sounds.TRANSFORMER_SWITCH.get(), SoundSource.BLOCKS, 0.8f, next.getValue(STEP_UP) ? 1.1f : 0.9f);
+        if (level.getBlockEntity(pos) instanceof TransformerBlockEntity changed) player.sendOverlayMessage(changed.readout());
     }
 
     @Override

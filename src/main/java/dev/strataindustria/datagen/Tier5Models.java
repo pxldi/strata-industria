@@ -47,7 +47,7 @@ final class Tier5Models {
                 Tier5Items.RED_ALLOY_ROD, Tier5Items.RED_ALLOY_WIRE, Tier5Items.DRAW_PLATE, Tier5Items.CIRCUIT_BOARD, Tier5Items.BASIC_CIRCUIT,
                 Tier5Items.ELECTRIC_MOTOR, Tier5Items.ALUMINIUM_WIRE, Tier5Items.STEEL_WIRE, Tier5Items.SULFURIC_ACID_BUCKET, Tier5Items.ALUM,
                 Tier5Items.ALUMINA, Tier5Items.LEAD_ACID_CELL, Tier5Items.MV_UPGRADE_KIT, Tier5Items.UNFIRED_INSULATOR, Tier5Items.CERAMIC_INSULATOR,
-                Tier5Items.ACSR_CONDUCTOR)) {
+                Tier5Items.ACSR_CONDUCTOR, Tier5Items.WRENCH, Tier5Items.ORE_SCANNER)) {
             itemModels.generateFlatItem(item.get(), ModelTemplates.FLAT_ITEM);
         }
         treeTap(blockModels);

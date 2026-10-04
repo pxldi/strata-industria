@@ -27,6 +27,12 @@ public final class Tier5DataComponents {
                     .persistent(net.minecraft.core.BlockPos.CODEC)
                     .networkSynchronized(net.minecraft.core.BlockPos.STREAM_CODEC));
 
+    /** Spec 13.2: what the ore scanner found last; kept on the item until the next scan. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<dev.strataindustria.prospecting.OreScan>> ORE_SCAN =
+            ModDataComponents.COMPONENTS.registerComponentType("ore_scan", b -> b
+                    .persistent(dev.strataindustria.prospecting.OreScan.CODEC)
+                    .networkSynchronized(dev.strataindustria.prospecting.OreScan.STREAM_CODEC));
+
     public static void init() {}
 
     private Tier5DataComponents() {}
