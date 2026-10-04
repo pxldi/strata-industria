@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:washing",
+  "chances": [
+    {
+      "chance": 0.1,
+      "item": {
+        "id": "strataindustria:small_native_copper"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:crushed_magnetite",
+  "result": {
+    "id": "strataindustria:washed_magnetite"
+  }
+}

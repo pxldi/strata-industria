@@ -21,6 +21,7 @@ import dev.strataindustria.smithing.Rule;
 import dev.strataindustria.smithing.WeldingRecipe;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.washing.WashingRecipe;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.advancements.Advancement;
@@ -507,6 +508,7 @@ final class ModRecipeProvider extends RecipeProvider {
                 .define('G', gear)
                 .unlockedBy("has_wooden_gear", has(gear))
                 .save(output, key("core_sampler"));
+        washing();
 
         Item bark = ModItems.BARK.get();
         saw("oak_planks", ItemTags.OAK_LOGS, Items.OAK_PLANKS, bark);
@@ -589,6 +591,67 @@ final class ModRecipeProvider extends RecipeProvider {
 
     private void flower(Item flower, Item dye) {
         grind(name(dye) + "_from_" + name(flower), Ingredient.of(flower), dye, 2);
+    }
+
+    /** Tier 3 spec 11: the pan, the sluice, and the washing recipes they share. */
+    private void washing() {
+        List<Item> panPlates = new java.util.ArrayList<>();
+        for (Metal metal : Metal.values()) {
+            if ((metal == Metal.COPPER || metal.isBronze()) && ModItems.PLATES.containsKey(metal)) panPlates.add(ModItems.PLATES.get(metal).get());
+        }
+        shapeless(RecipeCategory.TOOLS, ModItems.WASHING_PAN.get())
+                .requires(Ingredient.of(panPlates.toArray(Item[]::new)))
+                .requires(Items.STICK)
+                .unlockedBy("has_placer_gravel", has(ModItems.PLACER_GRAVEL.get()))
+                .unlockedBy("has_stick", has(Items.STICK))
+                .save(output, key("washing_pan"));
+        shaped(RecipeCategory.MISC, ModItems.SLUICE.get())
+                .pattern("S  ")
+                .pattern("PS ")
+                .pattern("PPP")
+                .define('S', Items.STICK)
+                .define('P', ItemTags.PLANKS)
+                .unlockedBy("has_washing_pan", has(ModItems.WASHING_PAN.get()))
+                .save(output, key("sluice"));
+
+        Map<OreMineral, Item> byproduct = new java.util.EnumMap<>(OreMineral.class);
+        Map<OreMineral, Float> odds = new java.util.EnumMap<>(OreMineral.class);
+        byproduct.put(OreMineral.NATIVE_COPPER, ModItems.SMALL_ORES.get(OreMineral.NATIVE_GOLD).get());
+        odds.put(OreMineral.NATIVE_COPPER, 0.08f);
+        byproduct.put(OreMineral.MALACHITE, Items.DYE.pick(DyeColor.GREEN));
+        odds.put(OreMineral.MALACHITE, 0.15f);
+        byproduct.put(OreMineral.TENNANTITE, ModItems.SMALL_ORES.get(OreMineral.BISMUTHINITE).get());
+        odds.put(OreMineral.TENNANTITE, 0.15f);
+        byproduct.put(OreMineral.CASSITERITE, ModItems.SMALL_ORES.get(OreMineral.MAGNETITE).get());
+        odds.put(OreMineral.CASSITERITE, 0.15f);
+        byproduct.put(OreMineral.BISMUTHINITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_GOLD).get());
+        odds.put(OreMineral.BISMUTHINITE, 0.10f);
+        byproduct.put(OreMineral.LIMONITE, Items.CLAY_BALL);
+        odds.put(OreMineral.LIMONITE, 0.30f);
+        byproduct.put(OreMineral.HEMATITE, Items.DYE.pick(DyeColor.RED));
+        odds.put(OreMineral.HEMATITE, 0.15f);
+        byproduct.put(OreMineral.MAGNETITE, ModItems.SMALL_ORES.get(OreMineral.NATIVE_COPPER).get());
+        odds.put(OreMineral.MAGNETITE, 0.10f);
+        for (OreMineral mineral : OreMineral.values()) {
+            for (OreGrade grade : OreGrade.values()) {
+                List<WashingRecipe.Chance> chances = byproduct.containsKey(mineral)
+                        ? List.of(new WashingRecipe.Chance(new ItemStackTemplate(byproduct.get(mineral)), odds.get(mineral)))
+                        : List.of();
+                Item washed = ModItems.washedOre(mineral, grade);
+                output.accept(key("washing/" + name(washed)), new WashingRecipe(Ingredient.of(ModItems.crushedOre(mineral, grade)),
+                        new ItemStackTemplate(washed), chances, WashingRecipe.DEFAULT_TICKS), null);
+            }
+        }
+        Item gold = ModItems.SMALL_ORES.get(OreMineral.NATIVE_GOLD).get(), magnetite = ModItems.SMALL_ORES.get(OreMineral.MAGNETITE).get(),
+                cassiterite = ModItems.SMALL_ORES.get(OreMineral.CASSITERITE).get();
+        output.accept(key("washing/placer_gravel"), new WashingRecipe(Ingredient.of(ModItems.PLACER_GRAVEL.get()),
+                new ItemStackTemplate(Items.GRAVEL), List.of(new WashingRecipe.Chance(new ItemStackTemplate(gold), 0.30f),
+                new WashingRecipe.Chance(new ItemStackTemplate(magnetite), 0.20f), new WashingRecipe.Chance(new ItemStackTemplate(cassiterite), 0.10f)),
+                WashingRecipe.DEFAULT_TICKS), null);
+        output.accept(key("washing/placer_sand"), new WashingRecipe(Ingredient.of(ModItems.PLACER_SAND.get()),
+                new ItemStackTemplate(Items.SAND), List.of(new WashingRecipe.Chance(new ItemStackTemplate(gold), 0.25f),
+                new WashingRecipe.Chance(new ItemStackTemplate(magnetite), 0.25f), new WashingRecipe.Chance(new ItemStackTemplate(cassiterite), 0.05f)),
+                WashingRecipe.DEFAULT_TICKS), null);
     }
 
     private void grind(String path, Ingredient input, Item result, int count) {

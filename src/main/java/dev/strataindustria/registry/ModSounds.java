@@ -91,6 +91,9 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLER_DRILL = register("core_sampler.drill");
     public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLER_DONE = register("core_sampler.done");
     public static final DeferredHolder<SoundEvent, SoundEvent> CORE_SAMPLE_OPEN = register("core_sample.open");
+    public static final DeferredHolder<SoundEvent, SoundEvent> SLUICE_WASH = register("sluice.wash");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WASHING_PAN_SWIRL = register("washing_pan.swirl");
+    public static final DeferredHolder<SoundEvent, SoundEvent> WASHING_PAN_FIND = register("washing_pan.find");
 
     /** Pages of the field journal turning. */
     public static final DeferredHolder<SoundEvent, SoundEvent> JOURNAL_OPEN = register("journal.open");

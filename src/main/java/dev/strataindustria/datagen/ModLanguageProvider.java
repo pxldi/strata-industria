@@ -140,6 +140,9 @@ final class ModLanguageProvider extends LanguageProvider {
         add(subtitles + "core_sampler.drill", "Core drill grinds");
         add(subtitles + "core_sampler.done", "Core sample ready");
         add(subtitles + "core_sample.open", "Core sample examined");
+        add(subtitles + "sluice.wash", "Sluice water runs");
+        add(subtitles + "washing_pan.swirl", "Pan swirls");
+        add(subtitles + "washing_pan.find", "Something glints");
         add(subtitles + "anvil.weld_fail", "Weld refused");
         add(subtitles + "quern.load", "Quern loaded");
         add(subtitles + "quern.done", "Quern spills ground");
@@ -170,6 +173,7 @@ final class ModLanguageProvider extends LanguageProvider {
                 String graded = grade == OreGrade.NORMAL ? name : title(grade.getSerializedName()) + " " + name;
                 addItem(ModItems.ORE_PIECES.get(mineral).get(grade), graded);
                 addItem(ModItems.CRUSHED_ORES.get(mineral).get(grade), "Crushed " + graded);
+                addItem(ModItems.WASHED_ORES.get(mineral).get(grade), "Washed " + graded);
             }
         }
         ironAge();
@@ -371,6 +375,8 @@ final class ModLanguageProvider extends LanguageProvider {
         add(journal + "t3.saw_mill", "Saw Mill");
         add(journal + "t3.saw_mill.hint", "Fit a saw blade to a saw mill and saw a log: six planks and the bark.");
         add(journal + "t3.trip_hammer", "Trip Hammer");
+        add(journal + "t3.wash", "Panning");
+        add(journal + "t3.wash.hint", "Scoop placer gravel from a river bed with a washing pan and swirl it standing in water.");
         add(journal + "t3.core_sample", "Core Sample");
         add(journal + "t3.core_sample.hint", "Turn a core sampler and press Drill to read the ground 64 blocks down.");
         add(journal + "t3.trip_hammer.hint", "Give a trip hammer a recorded pattern and a forge beside its anvil, and let it smith.");
@@ -452,6 +458,19 @@ final class ModLanguageProvider extends LanguageProvider {
         add("container." + id + ".saw_mill", "Saw Mill");
         add("container." + id + ".trip_hammer", "Trip Hammer");
         add("container." + id + ".core_sampler", "Core Sampler");
+        add("container." + id + ".sluice", "Sluice");
+        addBlock(ModBlocks.SLUICE, "Sluice");
+        addItem(ModItems.WASHING_PAN, "Washing Pan");
+        String sluice = id + ".sluice.";
+        add(sluice + "empty", "Throw in crushed ore or placer gravel");
+        add(sluice + "working", "Washing: %s%%");
+        add(sluice + "no_water", "No water flow at the back");
+        add(sluice + "no_recipe", "Washing out what it cannot use");
+        String pan = id + ".washing_pan.";
+        add(pan + "how", "Scoop up placer gravel or sand, or hold crushed ore in your other hand");
+        add(pan + "cannot", "%s cannot be washed");
+        add(pan + "no_water", "Stand in water to wash");
+        add(pan + "holds", "Holds %s");
         addBlock(ModBlocks.CORE_SAMPLER, "Core Sampler");
         addItem(ModItems.CORE_SAMPLE, "Core Sample");
         String sampler = id + ".core_sampler.";

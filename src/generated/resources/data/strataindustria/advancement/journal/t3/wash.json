@@ -1,0 +1,29 @@
+{
+  "parent": "strataindustria:journal/t3/refine",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "wash"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.wash.hint"
+    },
+    "icon": {
+      "id": "strataindustria:washing_pan"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.wash"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

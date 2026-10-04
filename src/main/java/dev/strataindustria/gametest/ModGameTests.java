@@ -107,6 +107,7 @@ public final class ModGameTests {
         TESTS.put("anvil_smithing", ModGameTests::anvilSmithing);
         TESTS.put("kinetic_network", ModGameTests::kineticNetwork);
         TESTS.put("core_sample", ModGameTests::coreSample);
+        TESTS.put("sluice_washing", ModGameTests::sluiceWashing);
     }
 
     private ModGameTests() {}
@@ -558,6 +559,32 @@ public final class ModGameTests {
         helper.assertValueEqual(find.get().count(), 2, "hematite blocks");
         helper.assertValueEqual(find.get().grade(), OreGrade.RICH.ordinal(), "best grade");
         helper.assertValueEqual(sample.mainDeposits().getFirst(), OreMineral.HEMATITE.id(), "main deposit");
+        helper.succeed();
+    }
+
+    // Sluice (tier 3 spec 8.6 and 11.2): water at the back washes crushed ore into the chest in front, one block down.
+
+    private static void sluiceWashing(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos sluicePos = helper.absolutePos(new BlockPos(4, 2, 4));
+        level.setBlock(sluicePos, ModBlocks.SLUICE.get().defaultBlockState().setValue(dev.strataindustria.washing.SluiceBlock.FACING, Direction.NORTH),
+                Block.UPDATE_ALL);
+        level.setBlock(sluicePos.south(), net.minecraft.world.level.block.Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
+        BlockPos chestPos = sluicePos.north().below();
+        level.setBlock(chestPos, net.minecraft.world.level.block.Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        var sluice = (dev.strataindustria.washing.SluiceBlockEntity) level.getBlockEntity(sluicePos);
+        sluice.setItem(0, new ItemStack(ModItems.crushedOre(OreMineral.HEMATITE, OreGrade.NORMAL), 2));
+        for (int tick = 0; tick < 2 * dev.strataindustria.washing.WashingRecipe.DEFAULT_TICKS; tick++) {
+            dev.strataindustria.washing.SluiceBlockEntity.serverTick(level, sluicePos, level.getBlockState(sluicePos), sluice);
+        }
+        var chest = (net.minecraft.world.Container) level.getBlockEntity(chestPos);
+        int washed = 0;
+        for (int slot = 0; slot < chest.getContainerSize(); slot++) {
+            ItemStack stack = chest.getItem(slot);
+            if (stack.is(ModItems.washedOre(OreMineral.HEMATITE, OreGrade.NORMAL))) washed += stack.getCount();
+        }
+        helper.assertValueEqual(washed, 2, "washed hematite in the chest");
+        helper.assertTrue(sluice.getItem(0).isEmpty(), "the buffer should be empty");
         helper.succeed();
     }
 }

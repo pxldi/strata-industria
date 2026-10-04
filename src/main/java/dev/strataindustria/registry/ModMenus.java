@@ -49,6 +49,8 @@ public final class ModMenus {
             MENUS.register("trip_hammer", () -> IMenuTypeExtension.create(TripHammerMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.machine.CoreSamplerMenu>> CORE_SAMPLER =
             MENUS.register("core_sampler", () -> IMenuTypeExtension.create(dev.strataindustria.machine.CoreSamplerMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<dev.strataindustria.washing.SluiceMenu>> SLUICE =
+            MENUS.register("sluice", () -> IMenuTypeExtension.create(dev.strataindustria.washing.SluiceMenu::new));
 
     private ModMenus() {}
 }

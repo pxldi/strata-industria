@@ -76,6 +76,9 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.machine.CoreSamplerBlockEntity>> CORE_SAMPLER =
             BLOCK_ENTITIES.register("core_sampler", () -> new BlockEntityType<>(dev.strataindustria.machine.CoreSamplerBlockEntity::new,
                     ModBlocks.CORE_SAMPLER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.strataindustria.washing.SluiceBlockEntity>> SLUICE =
+            BLOCK_ENTITIES.register("sluice", () -> new BlockEntityType<>(dev.strataindustria.washing.SluiceBlockEntity::new,
+                    ModBlocks.SLUICE.get()));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<TripHammerBlockEntity>> TRIP_HAMMER =
             BLOCK_ENTITIES.register("trip_hammer", () -> new BlockEntityType<>(TripHammerBlockEntity::new, ModBlocks.TRIP_HAMMER.get()));
 

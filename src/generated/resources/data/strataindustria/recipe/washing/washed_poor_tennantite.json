@@ -1,0 +1,15 @@
+{
+  "type": "strataindustria:washing",
+  "chances": [
+    {
+      "chance": 0.15,
+      "item": {
+        "id": "strataindustria:small_bismuthinite"
+      }
+    }
+  ],
+  "ingredient": "strataindustria:crushed_poor_tennantite",
+  "result": {
+    "id": "strataindustria:washed_poor_tennantite"
+  }
+}
