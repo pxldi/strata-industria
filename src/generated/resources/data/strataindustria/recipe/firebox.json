@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "B": "strataindustria:fire_brick",
+    "P": "strataindustria:wrought_iron_plate"
+  },
+  "pattern": [
+    "BBB",
+    "B B",
+    "BPB"
+  ],
+  "result": {
+    "id": "strataindustria:firebox"
+  }
+}
