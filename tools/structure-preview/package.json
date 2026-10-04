@@ -1,0 +1,11 @@
+{
+  "name": "structure-preview",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "deepslate": "0.27.2",
+    "gl-matrix": "^3.4.4",
+    "playwright-core": "1.56.1",
+    "pngjs": "^7.0.0"
+  }
+}
