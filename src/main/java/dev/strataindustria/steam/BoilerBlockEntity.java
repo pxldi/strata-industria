@@ -108,7 +108,7 @@ public class BoilerBlockEntity extends BlockEntity implements HeatConsumer, Flui
     private int age;
 
     private FluidPipes.Network network = FluidPipes.Network.NONE;
-    private int networkAge = Integer.MAX_VALUE;
+    private int networkAge = 20;
 
     private final ContainerData data = new ContainerData() {
         @Override
