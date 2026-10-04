@@ -77,6 +77,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private Melt poured = Melt.EMPTY;
     private boolean forgeTooHot;
     private boolean carbonWaiting;
+    private boolean calcineShort;
     private int burnedOff;
 
     private final ContainerData data = new ContainerData() {
@@ -201,6 +202,10 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
         boolean changed = false;
         int melting = 0, sum = 0;
         carbonWaiting = false;
+        calcineShort = false;
+        boolean calcine = hasCalcine();
+        // Carbon already promised to calcine pieces that are reducing this tick.
+        int reserved = 0;
         for (int i = 0; i < INPUT_SLOTS; i++) {
             ItemStack stack = items.get(i);
             Optional<Melt> content = MetalContent.of(stack);
@@ -210,29 +215,66 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
             }
             int point = mixMeltingPoint(content.get());
             if (isCarbon(content.get())) {
-                // Tier 4 spec 4.2: carbon dust dissolves only into molten iron.
-                if (!melt.units().containsKey(Metal.WROUGHT_IRON) || !isMolten()) {
+                // Tier 4 spec 4.2: carbon dust dissolves only into molten iron, or to reduce calcine.
+                boolean iron = melt.units().containsKey(Metal.WROUGHT_IRON) && isMolten();
+                if (!iron && !calcine) {
                     progress[i] = 0;
                     carbonWaiting = true;
                     continue;
                 }
-                point = mixMeltingPoint(melt);
+                point = iron ? mixMeltingPoint(melt) : MetalContent.CALCINE_REDUCTION;
+            } else if (MetalContent.isCalcine(stack)) {
+                // Each piece takes a tenth of its zinc in carbon from the melt before it can melt.
+                point = MetalContent.CALCINE_REDUCTION;
+                int need = MetalContent.carbonFor(content.get());
+                if (melt.units().getOrDefault(Metal.CARBON, 0) - reserved < need) {
+                    progress[i] = 0;
+                    // Short only once it is hot enough and no more dust is waiting to dissolve.
+                    if (temperature >= point && !carbonInSlots()) calcineShort = true;
+                    continue;
+                }
+                if (temperature >= point) reserved += need;
             }
             if (temperature < point) continue;
             progress[i] += (float) Math.pow(2, (temperature - point) / 200.0);
             melting++;
             sum += Math.round(Math.min(100, progress[i] / MELT_TICKS * 100));
             if (progress[i] >= MELT_TICKS) {
+                boolean reduce = MetalContent.isCalcine(stack);
                 melt = melt.plus(content.get());
+                if (reduce) melt = withoutCarbon(melt, MetalContent.carbonFor(content.get()));
                 stack.shrink(1);
                 progress[i] = 0;
-                level.playSound(null, pos, ModSounds.CRUCIBLE_MELT.get(), SoundSource.BLOCKS, 0.5f,
+                level.playSound(null, pos, reduce ? Tier4Sounds.CALCINE_REDUCE.get() : ModSounds.CRUCIBLE_MELT.get(), SoundSource.BLOCKS, 0.5f,
                         0.8f + level.getRandom().nextFloat() * 0.3f);
                 changed = true;
             }
         }
         meltingPercent = melting == 0 ? 0 : sum / melting;
         return changed || melting > 0;
+    }
+
+    private boolean carbonInSlots() {
+        for (int i = 0; i < INPUT_SLOTS; i++) {
+            if (MetalContent.of(items.get(i)).map(CrucibleBlockEntity::isCarbon).orElse(false)) return true;
+        }
+        return false;
+    }
+
+    private boolean hasCalcine() {
+        for (int i = 0; i < INPUT_SLOTS; i++) if (MetalContent.isCalcine(items.get(i))) return true;
+        return false;
+    }
+
+    /** The melt with {@code amount} units of carbon taken out (spent reducing calcine, or burned off). */
+    private static Melt withoutCarbon(Melt melt, int amount) {
+        java.util.Map<Metal, Integer> left = new java.util.EnumMap<>(melt.units());
+        int carbon = left.getOrDefault(Metal.CARBON, 0);
+        int taken = Math.min(carbon, amount);
+        if (carbon - taken > 0) left.put(Metal.CARBON, carbon - taken);
+        else left.remove(Metal.CARBON);
+        int total = melt.total();
+        return new Melt(left, total == 0 ? 0 : Math.round(melt.qualityUnits() * (float) (total - taken) / total));
     }
 
     private static boolean isCarbon(Melt content) {
@@ -243,11 +285,9 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
     private boolean burnOffCarbon(Level level, BlockPos pos) {
         if (burnedOff > 0) burnedOff--;
         if (!melt.units().containsKey(Metal.CARBON) || melt.units().containsKey(Metal.WROUGHT_IRON)) return false;
-        if (meltingPercent > 0 || !isMolten()) return false;
-        java.util.Map<Metal, Integer> left = new java.util.EnumMap<>(melt.units());
-        int carbon = left.remove(Metal.CARBON);
-        int total = melt.total();
-        melt = new Melt(left, total == 0 ? 0 : Math.round(melt.qualityUnits() * (float) (total - carbon) / total));
+        // Calcine still in the slots keeps its carbon waiting for it.
+        if (meltingPercent > 0 || !isMolten() || hasCalcine()) return false;
+        melt = withoutCarbon(melt, melt.units().get(Metal.CARBON));
         burnedOff = BURN_OFF_TICKS;
         level.playSound(null, pos, Tier4Sounds.CARBON_BURN.get(), SoundSource.BLOCKS, 0.6f, 0.9f + level.getRandom().nextFloat() * 0.2f);
         return true;
@@ -255,6 +295,7 @@ public class CrucibleBlockEntity extends BaseContainerBlockEntity {
 
     private CrucibleStatus computeStatus(boolean forgeBelow) {
         if (meltingPercent > 0) return CrucibleStatus.MELTING;
+        if (calcineShort) return CrucibleStatus.CALCINE_SHORT;
         if (burnedOff > 0 && isMolten()) return CrucibleStatus.CARBON_BURNED;
         boolean atLimit = forgeTooHot && temperature >= maxTemperature() - 5;
         if (!melt.isEmpty()) {

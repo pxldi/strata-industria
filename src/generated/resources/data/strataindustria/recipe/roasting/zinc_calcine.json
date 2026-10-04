@@ -1,0 +1,13 @@
+{
+  "type": "strataindustria:roasting",
+  "gas": {
+    "amount": 50,
+    "fluid": "strataindustria:sulfur_dioxide"
+  },
+  "ingredient": "strataindustria:crushed_sphalerite",
+  "min_temperature": 800,
+  "result": {
+    "id": "strataindustria:zinc_calcine"
+  },
+  "ticks": 400
+}

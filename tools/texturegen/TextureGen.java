@@ -5391,7 +5391,94 @@ public final class TextureGen {
             "................",
     };
 
+    // Tier 4 spec 21: zinc calcine, chalky roasted lumps with scorched spots, sized by grade.
+    static final Ramp CALCINE = ramp(0, 0x6a6660, 0x8a867e, 0xaaa69c, 0xc6c2b8, 0xdcd8d0);
+    static final Ramp SCORCH = ramp(0, 0x3e3226, 0x56463a, 0x6e5c4a, 0x86735c, 0x9e8a70);
+    static final String[] CALCINE_SMALL = {
+            "..45..",
+            ".4554.",
+            "45b443",
+            "34432a",
+            ".2322.",
+    };
+    static final String[] CALCINE_POOR = {
+            "...45.....",
+            "..4554.45.",
+            ".4b4434543",
+            ".34432b432",
+            "..2a22.22.",
+    };
+    static final String[] CALCINE_NORMAL = {
+            "....455....",
+            "...45544...",
+            "..4b5443.45",
+            ".45443a2453",
+            "454332343b2",
+            "3433b223322",
+            ".222.2a21..",
+    };
+    static final String[] CALCINE_RICH = {
+            ".....455.....",
+            "...45554445..",
+            "..4b5443b554.",
+            ".4554432443b3",
+            "45443a2345432",
+            "4b43322433a22",
+            "3433223b33222",
+            ".2222.2a222..",
+    };
+
+    /** Steel anvil body: rolled steel, fine-grained and even, with a crisp dark edge and a cool vertical sheen. */
+    static BufferedImage steelAnvilBody() {
+        double[][] n = fractal(6161), e = noise(6162, 2);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step = n[y][x] > 0.6 ? 4 : n[y][x] < 0.38 ? 2 : 3;
+                if (e[y][x] > 0.82) step = Math.min(5, step + 1);
+                else if (e[y][x] < 0.12) step = Math.max(2, step - 1);
+                if (x == 3 || x == 4) step = Math.min(5, step + 1);
+                int d = Math.min(Math.min(x, y), Math.min(15 - x, 15 - y));
+                if (d == 0) step = 1;
+                else if (d == 1 && (x == 1 || y == 1)) step = Math.min(5, step + 1);
+                px(im, x, y, STEEL.get(step));
+            }
+        px(im, 3, 4, STEEL.spec());
+        return im;
+    }
+
+    /** Steel anvil face (visible columns 3-12): a ground, bright working face with crisp edges and a polished horn. */
+    static BufferedImage steelAnvilTop() {
+        double[][] n = fractal(6262), e = noise(6263, 2);
+        BufferedImage im = img();
+        for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 16; x++) {
+                int step;
+                boolean rim = x <= 3 || x >= 12 || y == 0 || y == 15;
+                boolean edge = x == 4 || x == 11 || y == 1 || y == 14;
+                if (rim) step = e[y][x] > 0.6 ? 3 : 2;
+                else if (edge) step = x == 4 || y == 1 ? 5 : 3;
+                else {
+                    step = x >= 6 && x <= 9 ? 5 : 4;
+                    if (n[y][x] < 0.3) step--;
+                    else if (step == 4 && n[y][x] > 0.7) step = 5;
+                }
+                px(im, x, y, STEEL.get(step));
+            }
+        // The horn end (top) is polished to a highlight.
+        px(im, 7, 2, STEEL.spec());
+        px(im, 8, 3, STEEL.spec());
+        return im;
+    }
+
     static void tier4() throws IOException {
+        // Spec 4.4 and 14.4: zinc calcines and the steel anvil.
+        save("item/poor_zinc_calcine", map(CALCINE, SCORCH, CALCINE_POOR));
+        save("item/zinc_calcine", map(CALCINE, SCORCH, CALCINE_NORMAL));
+        save("item/rich_zinc_calcine", map(CALCINE, SCORCH, CALCINE_RICH));
+        save("item/small_zinc_calcine", map(CALCINE, SCORCH, CALCINE_SMALL));
+        save("block/steel_anvil", steelAnvilBody());
+        save("block/steel_anvil_top", steelAnvilTop());
         // Ores (worldgen spec 14.2 and 14.3).
         for (String grade : List.of("poor", "normal", "rich")) {
             save("block/ore/sphalerite_" + grade, pieceOverlay(T4_MINERALS.get(0), grade, SPHALERITE_GRAINS, 4));

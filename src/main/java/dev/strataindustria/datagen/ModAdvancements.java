@@ -10,6 +10,7 @@ import dev.strataindustria.material.Metal;
 import dev.strataindustria.registry.ModBlocks;
 import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
+import dev.strataindustria.registry.Tier4Blocks;
 import dev.strataindustria.registry.Tier4Items;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,12 +160,20 @@ final class ModAdvancements extends AdvancementSubProvider {
                 has(Tier4Items.REFRACTORY_CRUCIBLE.get()));
         AdvancementHolder moltenIron = goal(refractory, "t4/molten_iron", Items.IRON_INGOT,
                 JournalTrigger.TriggerInstance.of(Journal.MOLTEN_IRON));
-        goal(moltenIron, "t4/steel", ModItems.ingot(Metal.STEEL), AdvancementType.GOAL, has(ModItems.ingot(Metal.STEEL)));
+        AdvancementHolder steel = goal(moltenIron, "t4/steel", ModItems.ingot(Metal.STEEL), AdvancementType.GOAL, has(ModItems.ingot(Metal.STEEL)));
+        goal(steel, "t4/steel_anvil", Tier4Items.STEEL_ANVIL.get(), AdvancementType.GOAL,
+                ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(blocks, Tier4Blocks.STEEL_ANVIL.get()));
         goal(cokeOven, "t4/creosote", Tier4Items.TREATED_PLANKS.get(), has(Tier4Items.TREATED_PLANKS.get()));
         List<ItemLike> sphalerite = new ArrayList<>();
         sphalerite.add(ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get());
         for (OreGrade grade : OreGrade.values()) sphalerite.add(ModItems.orePiece(OreMineral.SPHALERITE, grade));
-        goal(ironAnvil, "t4/sphalerite", ModItems.orePiece(OreMineral.SPHALERITE, OreGrade.NORMAL), anyOf(sphalerite));
+        AdvancementHolder zincOre = goal(ironAnvil, "t4/sphalerite", ModItems.orePiece(OreMineral.SPHALERITE, OreGrade.NORMAL), anyOf(sphalerite));
+        List<ItemLike> calcines = new ArrayList<>();
+        calcines.add(Tier4Items.SMALL_ZINC_CALCINE.get());
+        for (OreGrade grade : OreGrade.values()) calcines.add(Tier4Items.zincCalcine(grade));
+        AdvancementHolder roast = goal(zincOre, "t4/roast", Tier4Items.zincCalcine(OreGrade.NORMAL), anyOf(calcines));
+        goal(roast, "t4/brass", ModItems.ingot(Metal.BRASS), has(ModItems.ingot(Metal.BRASS)));
+        goal(zincOre, "t4/solder", ModItems.ingot(Metal.SOLDER), has(ModItems.ingot(Metal.SOLDER)));
     }
 
     /** Pickaxe, axe, shovel, knife, hammer, saw and sword, each from any bronze (spec 11, goal 23). */

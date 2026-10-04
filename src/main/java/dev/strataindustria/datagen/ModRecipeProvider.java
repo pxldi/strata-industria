@@ -29,6 +29,8 @@ import dev.strataindustria.registry.ModItems;
 import dev.strataindustria.registry.ModTags;
 import dev.strataindustria.registry.Tier4Items;
 import dev.strataindustria.washing.WashingRecipe;
+import dev.strataindustria.roasting.RoastingRecipe;
+import dev.strataindustria.registry.Tier4Fluids;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.advancements.Advancement;
@@ -396,6 +398,26 @@ final class ModRecipeProvider extends RecipeProvider {
         formFireClay(Tier4Items.UNFIRED_REFRACTORY_INGOT_MOLD.get(), ".....", "#####", "#...#", "#####", ".....");
         formFireClay(Tier4Items.UNFIRED_REFRACTORY_GEAR_MOLD.get(), "#.#.#", ".....", "#...#", ".....", "#.#.#");
         form(Tier4Items.UNFIRED_GEAR_MOLD.get(), 1, "#.#.#", ".....", "#...#", ".....", "#.#.#");
+
+        // Spec 5.3: crushed sphalerite roasts to zinc calcine at 800 °C, giving off sulfur dioxide.
+        for (OreGrade grade : OreGrade.values()) {
+            roast(grade.prefix() + "zinc_calcine", ModItems.crushedOre(OreMineral.SPHALERITE, grade), Tier4Items.zincCalcine(grade), 400, 50);
+        }
+        roast("small_zinc_calcine", ModItems.SMALL_ORES.get(OreMineral.SPHALERITE).get(), Tier4Items.SMALL_ZINC_CALCINE.get(), 200, 15);
+
+        // Spec 14.1 and 14.4: welded steel, and the steel anvil built from it.
+        Item steel = ModItems.ingot(Metal.STEEL);
+        Item steelDouble = ModItems.STEEL_DOUBLE_INGOT.get();
+        output.accept(key("welding/steel_double_ingot"), new WeldingRecipe(Ingredient.of(steel), Ingredient.of(steel),
+                new ItemStackTemplate(steelDouble)), null);
+        shaped(RecipeCategory.DECORATIONS, Tier4Items.STEEL_ANVIL.get())
+                .pattern("DDD")
+                .pattern(" I ")
+                .pattern("III")
+                .define('D', steelDouble)
+                .define('I', steel)
+                .unlockedBy("has_steel_double_ingot", has(steelDouble))
+                .save(output, key("steel_anvil"));
 
         Item coke = Tier4Items.COKE.get();
         shaped(RecipeCategory.MISC, Tier4Items.COKE_BLOCK.get())
@@ -864,6 +886,11 @@ final class ModRecipeProvider extends RecipeProvider {
     private void soak(String path, Optional<Ingredient> input, int count, FluidAmount fluid, Optional<ItemStackTemplate> result,
                       Optional<FluidAmount> fluidResult, int ticks) {
         output.accept(key("barrel/" + path), new BarrelRecipe(input, count, Optional.of(fluid), result, fluidResult, ticks), null);
+    }
+
+    private void roast(String path, Item input, Item result, int ticks, int gas) {
+        output.accept(key("roasting/" + path), new RoastingRecipe(Ingredient.of(input), new ItemStackTemplate(result), 800, ticks,
+                Optional.of(new FluidAmount(Tier4Fluids.SULFUR_DIOXIDE.get(), gas))), null);
     }
 
     private void grind(String path, Ingredient input, Item result, int count) {

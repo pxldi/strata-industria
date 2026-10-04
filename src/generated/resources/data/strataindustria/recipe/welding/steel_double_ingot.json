@@ -1,0 +1,8 @@
+{
+  "type": "strataindustria:welding",
+  "first": "strataindustria:steel_ingot",
+  "result": {
+    "id": "strataindustria:steel_double_ingot"
+  },
+  "second": "strataindustria:steel_ingot"
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "strataindustria:journal/t4/sphalerite",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "strataindustria:small_zinc_calcine",
+              "strataindustria:poor_zinc_calcine",
+              "strataindustria:zinc_calcine",
+              "strataindustria:rich_zinc_calcine"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.roast.hint"
+    },
+    "icon": {
+      "id": "strataindustria:zinc_calcine"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.roast"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
