@@ -15,28 +15,28 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Minecraft artifacts
         run: ./gradlew createMinecraftArtifacts || true
-      - name: Decompile
+      - name: Javap
         run: |
           set +e
           JAR=$GITHUB_WORKSPACE/build/moddev/artifacts/minecraft-patched-26.3.0.23-beta.jar
-          curl -sSL -o /tmp/vf.jar https://repo1.maven.org/maven2/org/vineflower/vineflower/1.11.1/vineflower-1.11.1.jar
-          mkdir -p /tmp/cls /tmp/out && cd /tmp/cls
-          P=net/minecraft/world/level/levelgen/structure
-          unzip -q -o $JAR "$P/Structure.class" "$P/Structure\$*" "$P/StructureType*" "$P/StructurePiece.class" "$P/StructurePiece\$*" "$P/StructurePieceType*" "$P/StructureSet*" "$P/ScatteredFeaturePiece*" "$P/TerrainAdjustment*" "$P/StructureSpawnOverride*" "$P/BoundingBox.class" \
-            "$P/structures/SwampHutPiece*" "$P/structures/SwampHutStructure*" "$P/structures/DesertPyramidStructure*" "$P/structures/IglooStructure*" \
-            "$P/placement/RandomSpreadStructurePlacement*" "$P/placement/ConcentricRingsStructurePlacement*" "$P/placement/StructurePlacement.class" "$P/placement/StructurePlacement\$*" \
-            "$P/pieces/StructurePieceSerializationContext*" "$P/pieces/StructurePiecesBuilder*" \
-            "net/minecraft/data/worldgen/Structures.class" "net/minecraft/data/worldgen/StructureSets.class" \
-            "net/minecraft/world/RandomizableContainer*" \
-            "net/minecraft/advancements/predicates/LocationPredicate*" "net/minecraft/advancements/triggers/PlayerTrigger*" \
-            "net/minecraft/world/level/storage/loot/functions/SetComponentsFunction*" "net/minecraft/world/level/storage/loot/functions/SetItemDamageFunction*" \
-            "net/minecraft/client/gui/screens/Screen.class" "net/minecraft/client/gui/screens/inventory/BookViewScreen.class" \
-            "net/minecraft/client/color/item/ItemTintSource*" "net/minecraft/client/color/item/ItemTintSources*" "net/minecraft/client/color/item/Constant*" \
-            "net/minecraft/world/level/block/CarpetBlock.class" "net/minecraft/world/level/block/RotatedPillarBlock.class" \
-            "net/minecraft/data/loot/LootTableSubProvider.class" "net/minecraft/data/loot/packs/VanillaChestLoot.class" \
-            "net/minecraft/world/level/storage/loot/BuiltInLootTables.class" 2>&1 | tail -3
-          find . -name "*.class" | wc -l
-          java -jar /tmp/vf.jar -din=0 -rbr=1 -dgs=1 -log=WARN /tmp/cls /tmp/out > /dev/null 2>&1
-          cd /tmp/out
-          find . -name "*.java" | sort
-          for f in $(find . -name "*.java" | sort); do echo "######## $f"; cat "$f"; done
+          NEO=$(find ~/.gradle/caches -name "neoforge-26.3.0.23-beta-universal.jar" | head -1)
+          echo "NEO=$NEO"
+          CP="$JAR:$NEO"
+          echo "== tint/location/screen class names"
+          unzip -l $JAR | awk '{print $4}' | grep -iE "ItemTintSource|tint/|LocationPredicate|ContextIntProvider|ContextFloatProvider|StructurePieceType|ItemModelUtils|client/gui/screens/Screen|GuiGraphicsExtractor\.class|RandomChance|LootTableSubProvider|predicates/StructurePredicate" | head -60
+          unzip -l $NEO | awk '{print $4}' | grep -iE "RegisterColorHandlersEvent|RegisterItemModels|ClientTooltip|RegisterGuiLayers|ModConfigSpec\.class" | head
+          for c in net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType 'net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType$ContextlessType' 'net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType$StructureTemplateType' \
+             net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition net.minecraft.world.level.storage.loot.functions.SetItemCountFunction \
+             net.minecraft.data.loot.LootTableSubProvider 'net.minecraft.data.loot.LootTableSubProvider$Context' 'net.minecraft.world.level.storage.loot.LootPool$Builder' 'net.minecraft.world.level.storage.loot.LootTable$Builder' \
+             net.minecraft.world.level.storage.loot.entries.LootItem 'net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer$Builder' 'net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer$Builder' \
+             net.minecraft.client.gui.screens.Screen net.minecraft.client.gui.GuiGraphicsExtractor net.minecraft.client.gui.Font \
+             net.minecraft.advancements.predicates.LocationPredicate 'net.minecraft.advancements.predicates.LocationPredicate$Builder' 'net.minecraft.advancements.triggers.PlayerTrigger$TriggerInstance' \
+             net.minecraft.client.color.item.ItemTintSource net.minecraft.client.color.item.ItemTintSources net.minecraft.client.color.item.Constant \
+             net.minecraft.world.level.chunk.ChunkGenerator net.minecraft.world.level.block.BarrelBlock net.minecraft.world.level.block.state.BlockBehaviour\$BlockStateBase \
+             net.minecraft.world.level.storage.loot.LootTable net.minecraft.data.loot.LootTableProvider 'net.minecraft.data.loot.LootTableProvider$SubProviderEntry' net.minecraft.world.level.storage.loot.parameters.LootContextParamSets \
+             net.minecraft.world.level.block.entity.BrushableBlockEntity net.minecraft.world.item.Item\$TooltipContext net.minecraft.world.item.component.TooltipDisplay net.minecraft.world.item.Item \
+             net.minecraft.client.data.models.ItemModelGenerators net.minecraft.client.data.models.model.ItemModelUtils net.minecraft.client.renderer.item.ItemModel\$Unbaked \
+             net.minecraft.world.level.levelgen.structure.StructureStart net.minecraft.world.level.StructureManager ; do
+            echo "===== $c"; javap -p -cp "$CP" "$c" 2>&1 | grep -v "lambda\$" 
+          done
+          find ~/.gradle/caches -name "neoforge-26.3.0.23-beta*.jar" | head
