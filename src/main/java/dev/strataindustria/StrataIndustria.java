@@ -1,6 +1,7 @@
 package dev.strataindustria;
 
 import com.mojang.logging.LogUtils;
+import dev.strataindustria.gametest.ModGameTests;
 import dev.strataindustria.journal.Journal;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModBlocks;
@@ -37,6 +38,7 @@ public final class StrataIndustria {
         ModRecipes.SERIALIZERS.register(modEventBus);
         ModConditions.CONDITIONS.register(modEventBus);
         Journal.TRIGGERS.register(modEventBus);
+        ModGameTests.INSTANCE_TYPES.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
