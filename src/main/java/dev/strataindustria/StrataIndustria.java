@@ -54,6 +54,7 @@ public final class StrataIndustria {
         dev.strataindustria.registry.Tier5Sounds.init();
         dev.strataindustria.registry.Tier5DataComponents.init();
         dev.strataindustria.registry.Tier5Fluids.init();
+        dev.strataindustria.registry.Tier5Particles.PARTICLES.register(modEventBus);
         // Tier 6 likewise.
         Tier6Fluids.init();
         Tier6Blocks.init();

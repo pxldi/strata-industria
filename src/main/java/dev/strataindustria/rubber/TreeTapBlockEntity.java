@@ -6,6 +6,7 @@ import dev.strataindustria.fluid.FluidPipes;
 import dev.strataindustria.fluid.FluidPort;
 import dev.strataindustria.registry.Tier5BlockEntities;
 import dev.strataindustria.registry.Tier5Fluids;
+import dev.strataindustria.registry.Tier5Particles;
 import dev.strataindustria.registry.Tier5Sounds;
 import dev.strataindustria.tanning.SoakingBarrelBlock;
 import dev.strataindustria.tanning.SoakingBarrelBlockEntity;
@@ -14,8 +15,6 @@ import java.util.Comparator;
 import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -26,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -168,8 +166,7 @@ public class TreeTapBlockEntity extends BlockEntity implements FluidPort {
         double x = worldPosition.getX() + 0.5 - facing.getStepX() * 3 / 16.0;
         double z = worldPosition.getZ() + 0.5 - facing.getStepZ() * 3 / 16.0;
         double y = worldPosition.getY() + 9 / 16.0;
-        level.sendParticles(new BlockParticleOption(ParticleTypes.FALLING_DUST, Blocks.WHITE_CONCRETE_POWDER.defaultBlockState()),
-                x, y, z, 1, 0.0, 0.0, 0.0, 0.0);
+        level.sendParticles(Tier5Particles.LATEX_DRIP.get(), x, y, z, 1, 0.0, 0.0, 0.0, 0.0);
         level.playSound(null, worldPosition, Tier5Sounds.TREE_TAP_DRIP.get(), SoundSource.BLOCKS, 0.35f, 0.9f + level.getRandom().nextFloat() * 0.2f);
     }
 
