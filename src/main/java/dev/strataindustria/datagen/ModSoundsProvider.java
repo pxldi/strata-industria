@@ -499,6 +499,18 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:entity.minecart.riding", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.35f))
                 .with(sound("minecraft:entity.minecart.riding", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.3f))
                 .with(sound("minecraft:block.furnace.fire_crackle", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.3f)));
+        add(Tier5Sounds.LIQUID_FUEL_BURNER_RUN, definition().subtitle(subtitle("block.liquid_fuel_burner.run"))
+                .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.6f))
+                .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.5f)));
+        add(Tier5Sounds.ELECTRIC_HEATER_RUN, definition().subtitle(subtitle("block.electric_heater.run"))
+                .with(sound("minecraft:block.furnace.fire_crackle", SoundDefinition.SoundType.EVENT).pitch(1.4f).volume(0.3f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.12f)));
+        add(Tier5Sounds.ELECTRIC_PUMP_RUN, definition().subtitle(subtitle("block.electric_pump.run"))
+                .with(sound("minecraft:item.bucket.fill", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.3f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.1f).volume(0.1f)));
+        add(Tier5Sounds.KINETIC_MOTOR_RUN, definition().subtitle(subtitle("block.kinetic_motor.run"))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.3f).volume(0.2f))
+                .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.25f).volume(0.15f)));
         add(Tier5Sounds.BATTERY_BOX_CHARGE, definition().subtitle(subtitle("battery_box.charge"))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.15f))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.12f)));

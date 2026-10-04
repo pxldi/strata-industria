@@ -2,6 +2,13 @@ package dev.strataindustria.gametest;
 
 import com.mojang.authlib.GameProfile;
 import dev.strataindustria.electric.BatteryBoxBlock;
+import dev.strataindustria.electric.ElectricHeaterBlockEntity;
+import dev.strataindustria.electric.ElectricPumpBlock;
+import dev.strataindustria.electric.ElectricPumpBlockEntity;
+import dev.strataindustria.electric.KineticMotorBlock;
+import dev.strataindustria.electric.KineticMotorBlockEntity;
+import dev.strataindustria.electric.LiquidFuelBurnerBlockEntity;
+import dev.strataindustria.steam.BoilerBlockEntity;
 import dev.strataindustria.electric.OverheadLine;
 import dev.strataindustria.electric.BatteryBoxBlockEntity;
 import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
@@ -104,6 +111,10 @@ final class Tier5GameTests {
         tests.put("tier5_transformer", Tier5GameTests::transformer);
         tests.put("tier5_energy_adapter", Tier5GameTests::energyAdapter);
         tests.put("tier5_overhead_line", Tier5GameTests::overheadLine);
+        tests.put("tier5_electric_heater", Tier5GameTests::electricHeater);
+        tests.put("tier5_liquid_fuel_burner", Tier5GameTests::liquidFuelBurner);
+        tests.put("tier5_kinetic_motor", Tier5GameTests::kineticMotor);
+        tests.put("tier5_electric_pump", Tier5GameTests::electricPump);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -981,5 +992,166 @@ final class Tier5GameTests {
 
     private static void tickTap(ServerLevel level, BlockPos pos, TreeTapBlockEntity tap) {
         TreeTapBlockEntity.serverTick(level, pos, level.getBlockState(pos), tap);
+    }
+
+    // Spec 7.6: an LV heater under a boiler climbs 20 °C a second to 1000 °C and gives the boiler 30 HU/t for
+    // 30 J/t; an MV heater goes on to 1700 °C; with nothing above it the coil cools and the battery is left alone.
+    private static void electricHeater(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 2)), boxPos = pos.east(), boilerPos = pos.above();
+        level.setBlock(pos, Tier5Blocks.ELECTRIC_HEATER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, dev.strataindustria.registry.Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        ElectricHeaterBlockEntity heater = (ElectricHeaterBlockEntity) level.getBlockEntity(pos);
+        BatteryBoxBlockEntity box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        boiler.prime(BoilerBlockEntity.WATER_CAPACITY, false);
+        box.setStored(100_000);
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, pos);
+        for (int tick = 0; tick < 100; tick++) heatTick(level, network, pos, heater, boilerPos, boiler);
+        helper.assertTrue(Math.abs(heater.temperature() - (Heat.AMBIENT + 100)) < 1.5f, "20 °C a second from cold, got " + heater.temperature());
+        heater.preheat(990.0f);
+        for (int tick = 0; tick < 60; tick++) heatTick(level, network, pos, heater, boilerPos, boiler);
+        helper.assertValueEqual(heater.temperature(), 1000.0f, "an LV heater stops at 1000 °C");
+        helper.assertValueEqual(heater.taken(), 30, "HU/t the boiler takes");
+        helper.assertTrue(box.stored() < 100_000 - 1000, "the heater drew from the battery, left " + box.stored());
+
+        // Nothing wants heat: the coil cools and the battery is not touched.
+        level.setBlock(boilerPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        for (int tick = 0; tick < 25; tick++) {
+            network.tick();
+            heater.tick(level, pos, level.getBlockState(pos));
+        }
+        double before = box.stored();
+        for (int tick = 0; tick < 25; tick++) {
+            network.tick();
+            heater.tick(level, pos, level.getBlockState(pos));
+        }
+        helper.assertTrue(heater.temperature() < 960.0f, "it cools without demand, got " + heater.temperature());
+        helper.assertTrue(before - box.stored() < 5.0, "and draws nothing, used " + (before - box.stored()));
+
+        // MV: its own limit.
+        level.setBlock(pos, level.getBlockState(pos).setValue(GeneratorBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
+        level.setBlock(boxPos, level.getBlockState(boxPos).setValue(BatteryBoxBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, dev.strataindustria.registry.Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        heater = (ElectricHeaterBlockEntity) level.getBlockEntity(pos);
+        box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        boiler.prime(BoilerBlockEntity.WATER_CAPACITY, false);
+        box.setStored(1_000_000);
+        network = ElectricNetworks.rebuildNow(level, pos);
+        heater.preheat(1690.0f);
+        for (int tick = 0; tick < 40; tick++) heatTick(level, network, pos, heater, boilerPos, boiler);
+        helper.assertValueEqual(heater.temperature(), 1700.0f, "an MV heater stops at 1700 °C");
+        helper.succeed();
+    }
+
+    private static void heatTick(ServerLevel level, ElectricNetwork network, BlockPos pos, ElectricHeaterBlockEntity heater, BlockPos boilerPos,
+            BoilerBlockEntity boiler) {
+        network.tick();
+        heater.tick(level, pos, level.getBlockState(pos));
+        BoilerBlockEntity.serverTick(level, boilerPos, level.getBlockState(boilerPos), boiler);
+    }
+
+    // Spec 7.5: creosote gives 16 HU a mB at up to 1350 °C; the burner burns only what the boiler takes (30 HU/t,
+    // about 1.9 mB/t) and keeps its fuel when nothing wants heat. It takes creosote only, 4000 mB of it.
+    private static void liquidFuelBurner(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 2)), boilerPos = pos.above();
+        level.setBlock(pos, Tier5Blocks.LIQUID_FUEL_BURNER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, dev.strataindustria.registry.Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        LiquidFuelBurnerBlockEntity burner = (LiquidFuelBurnerBlockEntity) level.getBlockEntity(pos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        boiler.prime(BoilerBlockEntity.WATER_CAPACITY, false);
+        Fluid creosote = Tier4Fluids.CREOSOTE.get();
+        helper.assertValueEqual(burner.fill(Direction.UP, Fluids.WATER, 1000, 0, false), 0, "water does not burn");
+        helper.assertValueEqual(burner.fill(Direction.UP, creosote, 6000, 0, false), 4000, "the tank holds 4000 mB");
+        burner.preheat(1300.0f);
+        for (int tick = 0; tick < 200; tick++) {
+            burner.tick(level, pos, level.getBlockState(pos));
+            BoilerBlockEntity.serverTick(level, boilerPos, level.getBlockState(boilerPos), boiler);
+        }
+        helper.assertValueEqual(burner.taken(), 30, "HU/t the boiler takes");
+        helper.assertTrue(burner.burning() && level.getBlockState(pos).getValue(dev.strataindustria.electric.LiquidFuelBurnerBlock.LIT), "lit while heating");
+        int used = 4000 - burner.amount();
+        helper.assertTrue(used > 250 && used < 380, "about 1.9 mB a tick, used " + used);
+        helper.assertTrue(burner.temperature() > 1300.0f, "it keeps climbing, got " + burner.temperature());
+
+        level.setBlock(boilerPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        int kept = burner.amount();
+        for (int tick = 0; tick < 100; tick++) burner.tick(level, pos, level.getBlockState(pos));
+        helper.assertValueEqual(burner.amount(), kept, "no demand, no fuel burnt");
+        helper.assertTrue(!burner.burning(), "out with no demand");
+        helper.succeed();
+    }
+
+    // Spec 10.11: 32 RPM and 512 SU at the full 16 J/t, half of both from 50 to 99%, nothing below; MV 64 RPM, 2048 SU.
+    private static void kineticMotor(GameTestHelper helper) {
+        helper.assertValueEqual(KineticMotorBlockEntity.speedAt(ElectricTier.LV, 1.0), 32.0f, "LV at full power");
+        helper.assertValueEqual(KineticMotorBlockEntity.speedAt(ElectricTier.LV, 0.7), 16.0f, "LV at 70%");
+        helper.assertValueEqual(KineticMotorBlockEntity.speedAt(ElectricTier.LV, 0.3), 0.0f, "LV at 30%");
+        helper.assertValueEqual(KineticMotorBlockEntity.speedAt(ElectricTier.MV, 1.0), 64.0f, "MV at full power");
+        helper.assertValueEqual(KineticMotorBlockEntity.capacityAt(ElectricTier.LV, 1.0), 512, "LV capacity");
+        helper.assertValueEqual(KineticMotorBlockEntity.capacityAt(ElectricTier.LV, 0.6), 256, "LV capacity at 60%");
+        helper.assertValueEqual(KineticMotorBlockEntity.capacityAt(ElectricTier.MV, 1.0), 2048, "MV capacity");
+
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(2, 1, 2)), boxPos = pos.east();
+        level.setBlock(pos, Tier5Blocks.KINETIC_MOTOR.get().defaultBlockState().setValue(KineticMotorBlock.FACING, Direction.WEST), Block.UPDATE_ALL);
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        KineticMotorBlockEntity motor = (KineticMotorBlockEntity) level.getBlockEntity(pos);
+        BatteryBoxBlockEntity box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        box.setStored(10_000);
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, pos);
+        for (int tick = 0; tick < 5; tick++) {
+            network.tick();
+            KineticMotorBlockEntity.serverTick(level, pos, level.getBlockState(pos), motor);
+        }
+        helper.assertValueEqual(motor.sourceSpeed(), 32.0f, "a powered LV motor turns at 32 RPM");
+        helper.assertValueEqual(motor.capacity(), 512, "and carries 512 SU");
+        box.setStored(0);
+        for (int tick = 0; tick < 5; tick++) {
+            network.tick();
+            KineticMotorBlockEntity.serverTick(level, pos, level.getBlockState(pos), motor);
+        }
+        helper.assertValueEqual(motor.sourceSpeed(), 0.0f, "an unpowered motor stops");
+        helper.succeed();
+    }
+
+    // Spec 10.10: the mechanical pump's rules at 100 mB a tick; a powered pump on a water source fills a boiler
+    // through a pipe, an unpowered one does not.
+    private static void electricPump(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pumpPos = helper.absolutePos(new BlockPos(2, 1, 2)), boxPos = pumpPos.east(), intake = pumpPos.north(), boilerPos = pumpPos.south(2);
+        level.setBlock(pumpPos, Tier5Blocks.ELECTRIC_PUMP.get().defaultBlockState().setValue(ElectricPumpBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        level.setBlock(pumpPos.south(), dev.strataindustria.registry.Tier4Blocks.COPPER_FLUID_PIPE.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boilerPos, dev.strataindustria.registry.Tier4Blocks.BRONZE_BOILER.get().defaultBlockState(), Block.UPDATE_ALL);
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState(), Block.UPDATE_ALL);
+        ElectricPumpBlockEntity pump = (ElectricPumpBlockEntity) level.getBlockEntity(pumpPos);
+        BoilerBlockEntity boiler = (BoilerBlockEntity) level.getBlockEntity(boilerPos);
+        BatteryBoxBlockEntity box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, pumpPos);
+        pumpTick(level, network, pumpPos, pump, 2);
+        helper.assertValueEqual(pump.status(), ElectricPumpBlockEntity.Status.NO_WATER, "nothing at the intake");
+
+        level.setBlock(intake, Blocks.WATER.defaultBlockState(), Block.UPDATE_ALL);
+        pumpTick(level, network, pumpPos, pump, 3);
+        helper.assertValueEqual(pump.status(), ElectricPumpBlockEntity.Status.NO_POWER, "no battery charge");
+        helper.assertValueEqual(boiler.water(), 0, "an unpowered pump moves nothing");
+
+        box.setStored(10_000);
+        pumpTick(level, network, pumpPos, pump, 3);
+        helper.assertValueEqual(pump.status(), ElectricPumpBlockEntity.Status.PUMPING, "powered on a water source");
+        pumpTick(level, network, pumpPos, pump, 20);
+        helper.assertTrue(boiler.water() >= ElectricPumpBlockEntity.SOURCE_AMOUNT, "water arrives in the boiler, got " + boiler.water());
+        helper.assertTrue(level.getFluidState(intake).isEmpty(), "a lone source is used up after a bucket");
+        helper.succeed();
+    }
+
+    private static void pumpTick(ServerLevel level, ElectricNetwork network, BlockPos pos, ElectricPumpBlockEntity pump, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            network.tick();
+            ElectricPumpBlockEntity.serverTick(level, pos, level.getBlockState(pos), pump);
+        }
     }
 }

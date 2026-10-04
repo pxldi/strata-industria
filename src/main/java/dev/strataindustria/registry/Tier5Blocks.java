@@ -5,7 +5,11 @@ import dev.strataindustria.electric.CombustionGeneratorBlockEntity;
 import dev.strataindustria.electric.GeneratorBlock;
 import dev.strataindustria.electric.SteamTurbineBlockEntity;
 import dev.strataindustria.electric.CableBlock;
+import dev.strataindustria.electric.ElectricHeaterBlockEntity;
+import dev.strataindustria.electric.ElectricPumpBlock;
 import dev.strataindustria.electric.EnergyAdapterBlock;
+import dev.strataindustria.electric.KineticMotorBlock;
+import dev.strataindustria.electric.LiquidFuelBurnerBlock;
 import dev.strataindustria.electric.TransformerBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
@@ -88,6 +92,20 @@ public final class Tier5Blocks {
             "combustion_generator", p -> new GeneratorBlock<>(Tier5BlockEntities.COMBUSTION_GENERATOR, CombustionGeneratorBlockEntity::new, p),
             Tier5Blocks::machine);
 
+    // Spec 7.5, 7.6, 10.10 and 10.11: heat from fuel and from the grid, water by motor, rotation by motor.
+    public static final DeferredBlock<LiquidFuelBurnerBlock> LIQUID_FUEL_BURNER = ModBlocks.BLOCKS.registerBlock("liquid_fuel_burner",
+            LiquidFuelBurnerBlock::new, p -> p.mapColor(MapColor.SAND)
+                    .strength(2.5f, 8.0f)
+                    .requiresCorrectToolForDrops()
+                    .sound(Tier4Blocks.FIRE_BRICK_SOUND)
+                    .lightLevel(state -> state.getValue(LiquidFuelBurnerBlock.LIT) ? 11 : 0));
+    public static final DeferredBlock<GeneratorBlock<ElectricHeaterBlockEntity>> ELECTRIC_HEATER = ModBlocks.BLOCKS.registerBlock("electric_heater",
+            p -> new GeneratorBlock<>(Tier5BlockEntities.ELECTRIC_HEATER, ElectricHeaterBlockEntity::new, p), Tier5Blocks::machine);
+    public static final DeferredBlock<ElectricPumpBlock> ELECTRIC_PUMP = ModBlocks.BLOCKS.registerBlock("electric_pump", ElectricPumpBlock::new,
+            p -> p.mapColor(MapColor.COLOR_BROWN).strength(3.0f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.COPPER).noOcclusion());
+    public static final DeferredBlock<KineticMotorBlock> KINETIC_MOTOR = ModBlocks.BLOCKS.registerBlock("kinetic_motor", KineticMotorBlock::new,
+            p -> p.mapColor(MapColor.METAL).strength(3.5f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion());
+
     /** Spec 9.5: the shell every electric machine is built around; also a decorative block. */
     public static final DeferredBlock<Block> LV_MACHINE_HULL = ModBlocks.BLOCKS.registerSimpleBlock("lv_machine_hull", Tier5Blocks::machine);
 
@@ -124,7 +142,7 @@ public final class Tier5Blocks {
     /** Spec 9.5: every machine that comes in LV and MV; the kit upgrades these and they drop with their tier. */
     public static java.util.List<DeferredBlock<? extends Block>> upgradable() {
         return java.util.List.of(BATTERY_BOX, ELECTRIC_FURNACE, MACERATOR, WIREMILL, BENDER, LATHE, MIXER, ELECTROLYSER, ASSEMBLER, STEAM_TURBINE,
-                COMBUSTION_GENERATOR, ENERGY_ADAPTER);
+                COMBUSTION_GENERATOR, ENERGY_ADAPTER, ELECTRIC_HEATER, KINETIC_MOTOR);
     }
 
     private static Block.Properties cable(Block.Properties p) {

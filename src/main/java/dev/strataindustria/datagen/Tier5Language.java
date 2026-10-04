@@ -87,6 +87,24 @@ final class Tier5Language {
         lang.accept(turbine + "spinning_down", "Spinning down: steam below %s bar");
         lang.accept(combustion + "empty", "Out of fuel");
         lang.accept(combustion + "tank", "%s: %s / %s mB");
+        lang.accept(block + "electric_heater", "Electric Heater");
+        lang.accept(block + "liquid_fuel_burner", "Liquid-Fuel Burner");
+        lang.accept(block + "electric_pump", "Electric Pump");
+        lang.accept(block + "kinetic_motor", "Kinetic Motor");
+        String heater = id + ".electric_heater.", burner = id + ".liquid_fuel_burner.", motor = id + ".kinetic_motor.", pump = id + ".electric_pump.status.";
+        lang.accept(heater + "idle", "Idle: no heat demand");
+        lang.accept(heater + "heating", "Coil at %s °C, giving %s of up to %s HU/t");
+        lang.accept(burner + "empty", "Out of fuel");
+        lang.accept(burner + "no_fuel", "No fuel");
+        lang.accept(burner + "idle", "Idle: no heat demand. %s %s / %s mB, %s °C");
+        lang.accept(burner + "burning", "Burning: %s %s / %s mB, %s °C, giving %s HU/t");
+        lang.accept(motor + "no_power", "No power");
+        lang.accept(motor + "low_power", "Low power: not turning");
+        lang.accept(pump + "no_power", "No power");
+        lang.accept(pump + "no_water", "No water at the intake");
+        lang.accept(pump + "no_outlet", "Nothing on the outlet");
+        lang.accept(pump + "outlet_full", "Outlet full");
+        lang.accept(pump + "pumping", "Pumping %s mB/t");
 
         // Spec 10.1: machine status lines and screen tooltips.
         String machine = id + ".electric_machine.";
@@ -163,5 +181,9 @@ final class Tier5Language {
         lang.accept(subtitles + "block.steam_turbine.spin_down", "Steam turbine spins down");
         lang.accept(subtitles + "block.combustion_generator.ignite", "Combustion generator coughs");
         lang.accept(subtitles + "block.combustion_generator.run", "Combustion generator putters");
+        lang.accept(subtitles + "block.liquid_fuel_burner.run", "Burner roars");
+        lang.accept(subtitles + "block.electric_heater.run", "Electric heater hums");
+        lang.accept(subtitles + "block.electric_pump.run", "Electric pump gulps");
+        lang.accept(subtitles + "block.kinetic_motor.run", "Kinetic motor whines");
     }
 }

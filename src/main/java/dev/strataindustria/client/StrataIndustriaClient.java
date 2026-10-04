@@ -112,6 +112,9 @@ public final class StrataIndustriaClient {
         // Tier 5 spec 7.1: the dynamo's armature turns with its shaft, seen through the front window.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.KINETIC_DYNAMO.get(), context -> new RotorRenderer<>(context,
                 "kinetic_dynamo_armature", state -> state.getValue(dev.strataindustria.electric.KineticDynamoBlock.FACING), 0));
+        // Tier 5 spec 10.11: the motor's shaft turns in its front window.
+        event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier5BlockEntities.KINETIC_MOTOR.get(), context -> new RotorRenderer<>(context,
+                "kinetic_motor_shaft", state -> state.getValue(dev.strataindustria.electric.KineticMotorBlock.FACING), 0));
         // Tier 4 spec 11.7: iron axles turn like the wooden ones.
         // Tier 4 spec 10.5: the steam engine's flywheel turns on the shaft it drives.
         event.registerBlockEntityRenderer(dev.strataindustria.registry.Tier4BlockEntities.STEAM_ENGINE.get(), context -> new RotorRenderer<>(context,

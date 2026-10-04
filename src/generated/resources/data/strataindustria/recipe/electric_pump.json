@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "ingredients": [
+    "strataindustria:mechanical_pump",
+    "strataindustria:electric_motor",
+    "strataindustria:basic_circuit",
+    "strataindustria:lv_cable"
+  ],
+  "result": {
+    "id": "strataindustria:electric_pump"
+  }
+}

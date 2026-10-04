@@ -79,7 +79,7 @@ public final class Tier4Blocks {
 
     // Spec 21.7: fire brick for the firebox; a heavy, deep metal for boilers; copper for copper and bronze
     // pipes; brass fittings ring higher.
-    private static final SoundType FIRE_BRICK_SOUND = new SoundType(1.0f, 1.1f, SoundType.DEEPSLATE_BRICKS.getBreakSound(),
+    public static final SoundType FIRE_BRICK_SOUND = new SoundType(1.0f, 1.1f, SoundType.DEEPSLATE_BRICKS.getBreakSound(),
             SoundType.DEEPSLATE_BRICKS.getStepSound(), SoundType.DEEPSLATE_BRICKS.getPlaceSound(),
             SoundType.DEEPSLATE_BRICKS.getHitSound(), SoundType.DEEPSLATE_BRICKS.getFallSound());
     public static final SoundType HEAVY_METAL = new SoundType(1.0f, 0.9f, SoundType.NETHERITE_BLOCK.getBreakSound(),

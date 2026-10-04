@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "B": "strataindustria:fire_brick",
+    "F": "strataindustria:bronze_fluid_pipe",
+    "V": "strataindustria:valve"
+  },
+  "pattern": [
+    "BFB",
+    "B B",
+    "BVB"
+  ],
+  "result": {
+    "id": "strataindustria:liquid_fuel_burner"
+  }
+}

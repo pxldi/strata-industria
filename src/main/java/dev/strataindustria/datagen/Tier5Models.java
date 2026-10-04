@@ -5,7 +5,10 @@ import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.GeneratorBlock;
 import dev.strataindustria.electric.EnergyAdapterBlock;
+import dev.strataindustria.electric.ElectricPumpBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
+import dev.strataindustria.electric.KineticMotorBlock;
+import dev.strataindustria.electric.LiquidFuelBurnerBlock;
 import dev.strataindustria.electric.TransformerBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.electric.machine.LatheBlock;
@@ -64,6 +67,10 @@ final class Tier5Models {
         energyAdapter(blockModels, itemModels);
         generator(blockModels, itemModels, Tier5Blocks.STEAM_TURBINE.get(), "steam_turbine", false);
         generator(blockModels, itemModels, Tier5Blocks.COMBUSTION_GENERATOR.get(), "combustion_generator", true);
+        generator(blockModels, itemModels, Tier5Blocks.ELECTRIC_HEATER.get(), "electric_heater", true);
+        liquidFuelBurner(blockModels, itemModels);
+        electricPump(blockModels, itemModels);
+        kineticMotor(blockModels, itemModels);
 
         // Spec 9.5: casing all round, with a blank access panel on the sides so it reads as unfinished.
         TextureMapping hull = new TextureMapping().put(TextureSlot.SIDE, texture("lv_machine_hull_front"))
@@ -314,6 +321,67 @@ final class Tier5Models {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
         tieredItem(itemModels, block.asItem(), "block/" + name + "_lv_off", "block/" + name + "_mv_off");
+    }
+
+    // Spec 7.5 and 23.2: fire bricks with a brass valve on the front; the lit front shows a nozzle flame.
+    private static void liquidFuelBurner(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        Block block = Tier5Blocks.LIQUID_FUEL_BURNER.get();
+        TextureMapping cold = new TextureMapping().put(TextureSlot.FRONT, texture("liquid_fuel_burner_front"))
+                .put(TextureSlot.SIDE, texture("liquid_fuel_burner_side")).put(TextureSlot.TOP, texture("liquid_fuel_burner_top"));
+        MultiVariant unlit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.create(block, cold, blockModels.modelOutput));
+        MultiVariant lit = BlockModelGenerators.plainVariant(ModelTemplates.CUBE_ORIENTABLE.createWithSuffix(block, "_lit",
+                cold.copyAndUpdate(TextureSlot.FRONT, texture("liquid_fuel_burner_front_lit")), blockModels.modelOutput));
+        PropertyDispatch.C2<MultiVariant, Direction, Boolean> dispatch = PropertyDispatch.initial(LiquidFuelBurnerBlock.FACING, LiquidFuelBurnerBlock.LIT);
+        for (boolean on : new boolean[] {false, true}) horizontal(dispatch, on, on ? lit : unlit);
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+        plainItem(itemModels, Tier5Items.LIQUID_FUEL_BURNER.get(), StrataIndustria.id("block/liquid_fuel_burner"));
+    }
+
+    // Spec 23.2: the mechanical pump's casing cut low with a motor housing on top (hand-made models, one per ACTIVE).
+    private static void electricPump(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        PropertyDispatch.C2<MultiVariant, Direction, Boolean> dispatch = PropertyDispatch.initial(ElectricPumpBlock.FACING, ElectricPumpBlock.ACTIVE);
+        for (boolean active : new boolean[] {false, true}) {
+            horizontal(dispatch, active, BlockModelGenerators.plainVariant(StrataIndustria.id("block/electric_pump" + (active ? "_active" : ""))));
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.ELECTRIC_PUMP.get()).with(dispatch));
+        plainItem(itemModels, Tier5Items.ELECTRIC_PUMP.get(), StrataIndustria.id("block/electric_pump"));
+    }
+
+    private static void horizontal(PropertyDispatch.C2<MultiVariant, Direction, Boolean> dispatch, boolean flag, MultiVariant model) {
+        dispatch.select(Direction.NORTH, flag, model);
+        dispatch.select(Direction.EAST, flag, model.with(BlockModelGenerators.Y_ROT_90));
+        dispatch.select(Direction.SOUTH, flag, model.with(BlockModelGenerators.Y_ROT_180));
+        dispatch.select(Direction.WEST, flag, model.with(BlockModelGenerators.Y_ROT_270));
+    }
+
+    private static final TextureSlot INNER = TextureSlot.create("inner");
+    /** The dynamo's window geometry with the motor's own faces; the shaft is drawn by its renderer. */
+    private static final ModelTemplate MOTOR = new ModelTemplate(Optional.of(StrataIndustria.id("block/kinetic_dynamo")), Optional.empty(),
+            TextureSlot.PARTICLE, TextureSlot.FRONT, BACK, TextureSlot.SIDE, INNER);
+
+    // Spec 10.11 and 23.2: shaft out of the front face (a window the rotor shows through), fan grille on the back.
+    private static void kineticMotor(BlockModelGenerators blockModels, ItemModelGenerators itemModels) {
+        PropertyDispatch.C3<MultiVariant, Direction, ElectricTier, StatusLight> dispatch = PropertyDispatch.initial(KineticMotorBlock.FACING,
+                KineticMotorBlock.TIER, KineticMotorBlock.STATUS);
+        for (ElectricTier tier : ElectricTier.values()) {
+            String t = tier.getSerializedName();
+            for (StatusLight light : StatusLight.values()) {
+                TextureMapping faces = new TextureMapping().put(TextureSlot.PARTICLE, texture("casing/" + t + "_side"))
+                        .put(TextureSlot.FRONT, texture("kinetic_motor_front_" + t + "_" + light.getSerializedName()))
+                        .put(BACK, texture("kinetic_motor_back_" + t)).put(TextureSlot.SIDE, texture("casing/" + t + "_side"))
+                        .put(INNER, texture("kinetic_motor_inner"));
+                MultiVariant model = BlockModelGenerators.plainVariant(MOTOR.create(StrataIndustria.id("block/kinetic_motor_" + t + "_" + light.getSerializedName()),
+                        faces, blockModels.modelOutput));
+                dispatch.select(Direction.NORTH, tier, light, model);
+                dispatch.select(Direction.EAST, tier, light, model.with(BlockModelGenerators.Y_ROT_90));
+                dispatch.select(Direction.SOUTH, tier, light, model.with(BlockModelGenerators.Y_ROT_180));
+                dispatch.select(Direction.WEST, tier, light, model.with(BlockModelGenerators.Y_ROT_270));
+                dispatch.select(Direction.UP, tier, light, model.with(BlockModelGenerators.X_ROT_270));
+                dispatch.select(Direction.DOWN, tier, light, model.with(BlockModelGenerators.X_ROT_90));
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.KINETIC_MOTOR.get()).with(dispatch));
+        tieredItem(itemModels, Tier5Items.KINETIC_MOTOR.get(), "block/kinetic_motor_lv_off", "block/kinetic_motor_mv_off");
     }
 
     /** Spec 23.7: a machine item shows the MV casing once it carries the {@code machine_tier} component. */
