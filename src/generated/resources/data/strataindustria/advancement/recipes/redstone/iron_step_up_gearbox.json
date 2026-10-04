@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron_gearbox": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:iron_gearbox"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipes": "strataindustria:iron_step_up_gearbox"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_iron_gearbox"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "strataindustria:iron_step_up_gearbox"
+    ]
+  }
+}
