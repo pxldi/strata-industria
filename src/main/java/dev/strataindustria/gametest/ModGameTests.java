@@ -208,10 +208,10 @@ public final class ModGameTests {
         helper.assertValueEqual(missing.metal(), Metal.TIN, "bronze wants tin");
         helper.assertValueEqual(missing.units(), 100, "one tin ingot");
 
-        Melt arsenical = new Melt(Map.of(Metal.COPPER, 700, Metal.ARSENIC, 100), 0);
+        Melt arsenical = new Melt(Map.of(Metal.COPPER, 700, Metal.ARSENIC, 100));
         helper.assertValueEqual(Alloy.resultOf(arsenical).orElse(null), Metal.ARSENICAL_BRONZE, "7 copper + 1 arsenic");
 
-        Melt bismuth = new Melt(Map.of(Metal.COPPER, 500, Metal.BISMUTH, 100), 0);
+        Melt bismuth = new Melt(Map.of(Metal.COPPER, 500, Metal.BISMUTH, 100));
         helper.assertValueEqual(Alloy.resultOf(bismuth).orElse(null), Metal.BISMUTH_BRONZE, "5 copper + 1 bismuth");
 
         Melt off = new Melt(Map.of(Metal.COPPER, 87, Metal.TIN, 13));
