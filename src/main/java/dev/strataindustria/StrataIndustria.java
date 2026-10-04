@@ -41,6 +41,7 @@ public final class StrataIndustria {
         ModFluids.FLUIDS.register(modEventBus);
         ModRecipes.TYPES.register(modEventBus);
         ModRecipes.SERIALIZERS.register(modEventBus);
+        dev.strataindustria.structure.StructureContent.register(modEventBus);
         ModConditions.CONDITIONS.register(modEventBus);
         Journal.TRIGGERS.register(modEventBus);
         ModGameTests.INSTANCE_TYPES.register(modEventBus);

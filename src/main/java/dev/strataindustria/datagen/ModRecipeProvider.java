@@ -1,5 +1,6 @@
 package dev.strataindustria.datagen;
 
+import dev.strataindustria.structure.StructureContent;
 import java.util.Optional;
 import net.minecraft.world.level.material.Fluids;
 import dev.strataindustria.registry.ModFluids;
@@ -169,6 +170,25 @@ final class ModRecipeProvider extends RecipeProvider {
                 .requires(ModItems.TWINE.get())
                 .unlockedBy("has_twine", has(ModItems.TWINE.get()))
                 .save(output, key("field_journal"));
+        // Structures spec 9.
+        shaped(RecipeCategory.BUILDING_BLOCKS, StructureContent.FIBRE_CANVAS_ITEM.get())
+                .pattern("CC")
+                .pattern("CC")
+                .define('C', ModItems.FIBRE_CLOTH.get())
+                .unlockedBy("has_fibre_cloth", has(ModItems.FIBRE_CLOTH.get()))
+                .save(output, key("fibre_canvas"));
+        shaped(RecipeCategory.DECORATIONS, StructureContent.FIBRE_CANVAS_CARPET_ITEM.get(), 3)
+                .pattern("CC")
+                .define('C', StructureContent.FIBRE_CANVAS_ITEM.get())
+                .unlockedBy("has_fibre_canvas", has(StructureContent.FIBRE_CANVAS_ITEM.get()))
+                .save(output, key("fibre_canvas_carpet"));
+        shaped(RecipeCategory.BUILDING_BLOCKS, StructureContent.PIT_PROP_ITEM.get(), 4)
+                .pattern("L")
+                .pattern("L")
+                .pattern("L")
+                .define('L', net.neoforged.neoforge.common.Tags.Items.STRIPPED_LOGS)
+                .unlockedBy("has_stripped_log", has(net.neoforged.neoforge.common.Tags.Items.STRIPPED_LOGS))
+                .save(output, key("pit_prop"));
     }
 
     // Spec 3.5.

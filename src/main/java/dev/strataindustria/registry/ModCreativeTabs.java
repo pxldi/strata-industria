@@ -1,5 +1,6 @@
 package dev.strataindustria.registry;
 
+import dev.strataindustria.structure.StructureContent;
 import dev.strataindustria.StrataIndustria;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,10 @@ public final class ModCreativeTabs {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = CREATIVE_MODE_TABS.register("main", () -> CreativeModeTab.builder()
             .title(Component.translatable(MAIN_TAB_TITLE))
             .icon(() -> ModItems.PLANT_FIBRE.get().getDefaultInstance())
-            .displayItems((parameters, output) -> ModItems.ITEMS.getEntries().forEach(item -> output.accept(item.get())))
+            .displayItems((parameters, output) -> {
+                ModItems.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
+                StructureContent.ITEMS.getEntries().forEach(item -> output.accept(item.get()));
+            })
             .build());
 
     private ModCreativeTabs() {}

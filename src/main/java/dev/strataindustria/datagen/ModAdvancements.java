@@ -56,6 +56,8 @@ final class ModAdvancements extends AdvancementSubProvider {
                 .addCriterion("tick", PlayerTrigger.TriggerInstance.tick())
                 .save(output, Journal.ROOT.toString());
 
+        StructureData.places(output, root);
+
         // Tier 0: stone
         AdvancementHolder looseRock = goal(root, "t0/loose_rock", ModItems.LOOSE_ROCK.values().iterator().next().get(),
                 InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(items, ModTags.Items.LOOSE_ROCKS)));

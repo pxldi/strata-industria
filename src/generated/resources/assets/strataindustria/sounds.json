@@ -84,6 +84,36 @@
     ],
     "subtitle": "subtitles.strataindustria.belt.attach"
   },
+  "block.pit_prop.creak": {
+    "sounds": [
+      {
+        "name": "block/scaffold/place1",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "name": "block/scaffold/place2",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "name": "block/scaffold/place3",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "name": "block/scaffold/place4",
+        "pitch": 0.55,
+        "volume": 0.6
+      },
+      {
+        "name": "random/door_open",
+        "pitch": 0.5,
+        "volume": 0.35
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.pit_prop.creak"
+  },
   "bloomery.charge": {
     "sounds": [
       {
@@ -419,6 +449,41 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.hide.scrape"
+  },
+  "item.survey_notes.found": {
+    "sounds": [
+      {
+        "name": "block/note_block/chime",
+        "pitch": 0.8,
+        "volume": 0.35
+      },
+      {
+        "name": "item/book/page_turn1",
+        "pitch": 1.1,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.survey_notes.found"
+  },
+  "item.survey_notes.open": {
+    "sounds": [
+      {
+        "name": "item/book/open_flip1",
+        "pitch": 1.25,
+        "volume": 0.7
+      },
+      {
+        "name": "item/book/open_flip2",
+        "pitch": 1.25,
+        "volume": 0.7
+      },
+      {
+        "name": "item/book/open_flip3",
+        "pitch": 1.25,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.survey_notes.open"
   },
   "journal.open": {
     "sounds": [
@@ -854,6 +919,26 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.soaking_barrel.seal"
+  },
+  "ui.journal.place": {
+    "sounds": [
+      {
+        "name": "item/book/page_turn1",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "name": "item/book/page_turn2",
+        "pitch": 0.9,
+        "volume": 0.7
+      },
+      {
+        "name": "item/book/page_turn3",
+        "pitch": 0.9,
+        "volume": 0.7
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.journal.place"
   },
   "washing_pan.find": {
     "sounds": [

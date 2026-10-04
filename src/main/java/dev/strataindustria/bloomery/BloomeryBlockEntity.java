@@ -55,6 +55,19 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
     /** At and above this the yield is full. */
     public static final float FULL_YIELD_TEMPERATURE = 1300.0f;
     public static final float LOW_YIELD = 0.85f;
+
+    /** The configured bloom thresholds (config {@code bloomery.*}); the constants are their defaults. */
+    public static float minTemperature() {
+        return dev.strataindustria.Config.BLOOMERY_MIN_TEMPERATURE.getAsInt();
+    }
+
+    public static float fullYieldTemperature() {
+        return Math.max(minTemperature(), dev.strataindustria.Config.BLOOMERY_FULL_YIELD_TEMPERATURE.getAsInt());
+    }
+
+    public static float lowYield() {
+        return (float) dev.strataindustria.Config.BLOOMERY_LOW_YIELD.getAsDouble();
+    }
     public static final int BLOOM_UNITS = 100;
     public static final int MIN_PARTIAL_UNITS = 10;
     static final float HEAT_PER_TICK = 5.0f / 20;
@@ -220,8 +233,8 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
     public Status status() {
         if (hasBlooms()) return Status.READY;
         if (lit()) {
-            if (temperature >= MIN_TEMPERATURE) return Status.BURNING;
-            return targetTemperature() < MIN_TEMPERATURE && temperature >= targetTemperature() - 1 ? Status.TOO_COOL : Status.HEATING;
+            if (temperature >= minTemperature()) return Status.BURNING;
+            return targetTemperature() < minTemperature() && temperature >= targetTemperature() - 1 ? Status.TOO_COOL : Status.HEATING;
         }
         if (!structure.complete()) return Status.INCOMPLETE;
         if (tooCool) return Status.TOO_COOL;
@@ -270,10 +283,10 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
             float target = bloomery.targetTemperature();
             if (bloomery.temperature < target) bloomery.temperature = Math.min(target, bloomery.temperature + HEAT_PER_TICK);
             else bloomery.temperature = Math.max(target, bloomery.temperature - COOL_PER_TICK);
-            if (bloomery.temperature >= MIN_TEMPERATURE) {
+            if (bloomery.temperature >= minTemperature()) {
                 bloomery.progress += 1.0f / Math.max(1, bloomery.burnTicks());
                 if (bloomery.progress >= 1) bloomery.finish((ServerLevel) level);
-            } else if (target < MIN_TEMPERATURE && bloomery.temperature >= target - 1) {
+            } else if (target < minTemperature() && bloomery.temperature >= target - 1) {
                 // Too cool to ever make a bloom: the fire dies down and the charge stays (spec 5.3).
                 bloomery.tooCool = true;
                 BloomeryBlock.setLit(level, pos, state, false);
@@ -314,7 +327,7 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
 
     /** The charge becomes blooms and slag (spec 5.4). */
     private void finish(ServerLevel level) {
-        float yield = temperature >= FULL_YIELD_TEMPERATURE ? 1.0f : LOW_YIELD;
+        float yield = temperature >= fullYieldTemperature() ? 1.0f : lowYield();
         int ore = oreCount();
         Melt iron = Melt.EMPTY;
         for (ItemStack stack : charge) {
@@ -349,7 +362,7 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
         }
         ItemStack bloom = new ItemStack(ModItems.RAW_BLOOM.get());
         bloom.set(ModDataComponents.BLOOM_CONTENTS.get(), Melt.of(Metal.WROUGHT_IRON, units, bloomQuality));
-        Heat.set(bloom, Math.max(temperature, MIN_TEMPERATURE), level.getGameTime());
+        Heat.set(bloom, Math.max(temperature, minTemperature()), level.getGameTime());
         if (!hasBlooms() && slag > 0) {
             Block.popResource(level, worldPosition.relative(facing()), new ItemStack(ModItems.BLOOMERY_SLAG.get(), slag));
             slag = 0;
@@ -362,8 +375,8 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
     public int expectedBlooms() {
         if (hasBlooms()) return fullBlooms + (partialUnits > 0 ? 1 : 0);
         float hottest = targetTemperature();
-        if (hottest < MIN_TEMPERATURE) return 0;
-        float yield = hottest >= FULL_YIELD_TEMPERATURE ? 1.0f : LOW_YIELD;
+        if (hottest < minTemperature()) return 0;
+        float yield = hottest >= fullYieldTemperature() ? 1.0f : lowYield();
         int units = 0;
         for (ItemStack stack : charge) {
             if (stack.isEmpty() || isFuel(stack)) continue;
@@ -376,8 +389,8 @@ public class BloomeryBlockEntity extends BlockEntity implements MenuProvider {
 
     public int expectedYield() {
         float hottest = lit() || hasBlooms() ? Math.max(temperature, targetTemperature()) : targetTemperature();
-        if (hottest < MIN_TEMPERATURE) return 0;
-        return hottest >= FULL_YIELD_TEMPERATURE ? 100 : Math.round(LOW_YIELD * 100);
+        if (hottest < minTemperature()) return 0;
+        return hottest >= fullYieldTemperature() ? 100 : Math.round(lowYield() * 100);
     }
 
     public float temperature() {

@@ -1,0 +1,31 @@
+{
+  "parent": "strataindustria:journal/root",
+  "criteria": {
+    "visited": {
+      "conditions": {
+        "event": "place/prospector_camp"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.place.prospector_camp.hint"
+    },
+    "hidden": true,
+    "icon": {
+      "id": "strataindustria:stone_pickaxe"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.place.prospector_camp"
+    }
+  },
+  "requirements": [
+    [
+      "visited"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -106,6 +106,7 @@ final class ModModelProvider extends ModelProvider {
         itemModels.itemModelOutput.accept(ModItems.FIRE_PIT.get(), ItemModelUtils.plainModel(firePit));
         itemModels.generateFlatItem(ModItems.FIRESTARTER.get(), ModelTemplates.FLAT_HANDHELD_ITEM);
 
+        StructureData.models(blockModels, itemModels);
         clay(blockModels, itemModels);
 
         // Spec 4.4: one look for the log pile, lit or not, since a lit pile is buried.
