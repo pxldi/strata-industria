@@ -1,7 +1,7 @@
 package dev.strataindustria.client;
 
 import dev.strataindustria.StrataIndustria;
-import dev.strataindustria.client.render.PitKilnRenderer;
+import dev.strataindustria.client.render.FirePitRenderer;
 import dev.strataindustria.client.render.QuernRenderer;
 import dev.strataindustria.client.render.AnvilRenderer;
 import dev.strataindustria.client.render.RotorRenderer;
@@ -17,7 +17,6 @@ import dev.strataindustria.client.screen.BloomeryScreen;
 import dev.strataindustria.client.screen.CrucibleScreen;
 import dev.strataindustria.client.screen.FirePitScreen;
 import dev.strataindustria.client.screen.ForgeScreen;
-import dev.strataindustria.client.screen.SmallVesselScreen;
 import dev.strataindustria.registry.ModBlockEntities;
 import dev.strataindustria.registry.ModMenus;
 import net.neoforged.bus.api.IEventBus;
@@ -47,7 +46,6 @@ public final class StrataIndustriaClient {
     private static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(dev.strataindustria.mark.MarkRegistry.MENU.get(), dev.strataindustria.client.screen.MarkScreen::new);
         event.register(ModMenus.FIRE_PIT.get(), FirePitScreen::new);
-        event.register(ModMenus.SMALL_VESSEL.get(), SmallVesselScreen::new);
         event.register(ModMenus.FORGE.get(), ForgeScreen::new);
         event.register(dev.strataindustria.registry.PrologueRegistry.BRICK_KILN_MENU.get(), dev.strataindustria.client.screen.BrickKilnScreen::new);
         event.register(ModMenus.CRUCIBLE.get(), CrucibleScreen::new);
@@ -85,7 +83,7 @@ public final class StrataIndustriaClient {
     }
 
     private static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(ModBlockEntities.PIT_KILN.get(), PitKilnRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.FIRE_PIT.get(), FirePitRenderer::new);
         event.registerBlockEntityRenderer(dev.strataindustria.registry.PrologueRegistry.CASTING_TABLE_BE.get(), dev.strataindustria.client.render.CastingTableRenderer::new);
         event.registerBlockEntityRenderer(dev.strataindustria.structure.StructureContent.SPECIMEN_SHELF_ENTITY.get(),
                 dev.strataindustria.client.render.SpecimenShelfRenderer::new);

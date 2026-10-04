@@ -77,8 +77,6 @@ final class ModBlockLoot extends BlockLootSubProvider {
         dev.strataindustria.flora.FloraBlocks.PLANTS.values().forEach(plant -> dropSelf(plant.get()));
         dropOther(ModBlocks.LOOSE_FLINT.get(), Items.FLINT);
         dropSelf(ModBlocks.FIRE_PIT.get());
-        // The pit kiln drops what it holds itself and has no loot table.
-        add(ModBlocks.LARGE_VESSEL.get(), createShulkerBoxDrop(ModBlocks.LARGE_VESSEL.get()));
         crucible();
         charcoalPile();
         dropSelf(ModBlocks.FORGE.get());

@@ -1,6 +1,7 @@
 {
   "values": [
-    "#strataindustria:pit_kiln/large",
+    "strataindustria:unfired_crucible",
+    "strataindustria:unfired_refractory_crucible",
     "strataindustria:unfired_ingot_mold",
     "strataindustria:unfired_brick",
     "strataindustria:unfired_fire_brick",

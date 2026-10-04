@@ -82,7 +82,7 @@ public class BrickKilnBlockEntity extends BaseContainerBlockEntity implements Wo
 
     /** What the brick kiln fires: the same unfired clay a pit kiln fires. */
     public static boolean fires(ItemStack stack) {
-        return stack.is(ModTags.Items.PIT_KILN_FIREABLE) && KilnFiring.isFireable(stack);
+        return stack.is(ModTags.Items.FIREABLE) && KilnFiring.isFireable(stack);
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, BrickKilnBlockEntity kiln) {
