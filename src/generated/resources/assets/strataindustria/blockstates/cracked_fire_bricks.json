@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "strataindustria:block/cracked_fire_bricks",
+        "weight": 3
+      },
+      {
+        "model": "strataindustria:block/cracked_fire_bricks_sooted"
+      }
+    ]
+  }
+}

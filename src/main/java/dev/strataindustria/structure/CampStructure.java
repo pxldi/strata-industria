@@ -33,14 +33,14 @@ import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 
 /**
- * The structure type behind all four wave 1 structures (structures spec 3). Each start reads the vein cells
+ * The structure type behind the world structures (structures spec 3). Each start reads the vein cells
  * around its chunk, picks a vein to camp beside, checks the ground, and lays out its pieces in a fixed
  * order: levelled pieces first, so the soft edges they blend into the land never cut into a piece built
  * later, then paths and heaps that follow the ground, then cuttings into hillsides, then the tunnel.
  */
 public class CampStructure extends Structure {
     public enum Layout implements StringRepresentable {
-        CHARCOAL_BURNERS_CLEARING, PROSPECTOR_CAMP, MINING_CAMP, COLLAPSED_ADIT;
+        CHARCOAL_BURNERS_CLEARING, PROSPECTOR_CAMP, MINING_CAMP, COLLAPSED_ADIT, RUINED_BLOOMERY;
 
         public static final Codec<Layout> CODEC = StringRepresentable.fromEnum(Layout::values);
 
@@ -66,6 +66,8 @@ public class CampStructure extends Structure {
     /** The four minerals a mining camp works (structures spec 6.3). */
     private static final List<OreMineral> MINING_MINERALS =
             List.of(OreMineral.NATIVE_COPPER, OreMineral.MALACHITE, OreMineral.TENNANTITE, OreMineral.CASSITERITE);
+    /** The iron ores an old bloomery was built beside (structures spec 6.5). */
+    private static final List<OreMineral> BLOOMERY_MINERALS = List.of(OreMineral.HEMATITE, OreMineral.MAGNETITE);
 
     private final Layout layout;
 
@@ -87,6 +89,7 @@ public class CampStructure extends Structure {
             case PROSPECTOR_CAMP -> prospectorCamp(site);
             case MINING_CAMP -> miningCamp(site);
             case COLLAPSED_ADIT -> collapsedAdit(site);
+            case RUINED_BLOOMERY -> ruinedBloomery(site);
         };
     }
 
@@ -113,7 +116,7 @@ public class CampStructure extends Structure {
         GeologyContext geology = StructureGeology.of(site.context);
         if (geology == null) return Optional.empty();
         // Only veins of the stone and copper tiers: the camp's pebbles are its loot (structures spec 4.1, L6).
-        VeinCells.Vein vein = anchor(geology, cx, cz, 48, 32, type -> !mainMineral(type, null).needsBronzeTool());
+        VeinCells.Vein vein = anchor(geology, cx, cz, 48, 32, true, type -> !mainMineral(type, null).needsBronzeTool());
         if (vein == null) return Optional.empty();
         RandomSource random = site.context.random();
 
@@ -180,7 +183,7 @@ public class CampStructure extends Structure {
         int cx = site.context.chunkPos().getMiddleBlockX(), cz = site.context.chunkPos().getMiddleBlockZ();
         GeologyContext geology = StructureGeology.of(site.context);
         if (geology == null) return Optional.empty();
-        VeinCells.Vein vein = anchor(geology, cx, cz, 40, 24, type -> MINING_MINERALS.stream().anyMatch(m -> holds(type, m)));
+        VeinCells.Vein vein = anchor(geology, cx, cz, 40, 24, true, type -> MINING_MINERALS.stream().anyMatch(m -> holds(type, m)));
         if (vein == null) return Optional.empty();
         RandomSource random = site.context.random();
 
@@ -312,7 +315,7 @@ public class CampStructure extends Structure {
         int cx = site.context.chunkPos().getMiddleBlockX(), cz = site.context.chunkPos().getMiddleBlockZ();
         GeologyContext geology = StructureGeology.of(site.context);
         if (geology == null) return Optional.empty();
-        VeinCells.Vein vein = anchor(geology, cx, cz, 40, 32, type -> true);
+        VeinCells.Vein vein = anchor(geology, cx, cz, 40, 32, true, type -> true);
         if (vein == null) return Optional.empty();
         RandomSource random = site.context.random();
         Direction toVein = cardinal(vein.x() - cx, vein.z() - cz);
@@ -358,14 +361,63 @@ public class CampStructure extends Structure {
         }));
     }
 
+    // ---------------------------------------------------------------- 6.5 ruined bloomery
+
+    private static Optional<GenerationStub> ruinedBloomery(Site site) {
+        int cx = site.context.chunkPos().getMiddleBlockX(), cz = site.context.chunkPos().getMiddleBlockZ();
+        GeologyContext geology = StructureGeology.of(site.context);
+        if (geology == null) return Optional.empty();
+        // The old smiths knew where the iron was even where nothing shows at the surface.
+        VeinCells.Vein vein = anchor(geology, cx, cz, 64, 48, false, type -> BLOOMERY_MINERALS.stream().anyMatch(m -> holds(type, m)));
+        if (vein == null) return Optional.empty();
+        RandomSource random = site.context.random();
+
+        double[] away = away(vein, cx, cz, random);
+        int dist = 24 + random.nextInt(33);
+        int x = vein.x() + (int) Math.round(away[0] * dist), z = vein.z() + (int) Math.round(away[1] * dist);
+        Direction toVein = cardinal(-away[0], -away[1]);
+        Plan plan = Plans.BLOOMERY_STUMP;
+        Rotation rotation = facing(toVein);
+        int minX = x - plan.width() / 2, minZ = z - plan.depth() / 2;
+        OptionalInt ground = site.level(minX, minZ, minX + plan.width() - 1, minZ + plan.depth() - 1, 3);
+        if (ground.isEmpty()) return Optional.empty();
+
+        OreMineral mineral = mainMineral(vein, BLOOMERY_MINERALS);
+        PlanPiece.Wood wood = site.wood(x, ground.getAsInt(), z);
+        PlanPiece stump = new PlanPiece(plan, rotation, minX, minZ, ground.getAsInt(), mineral, wood, random.nextLong());
+
+        // The charcoal was burned off to one side of the stack, most of the time.
+        PlanPiece scar = null;
+        if (random.nextInt(10) < 7) {
+            Direction side = random.nextBoolean() ? toVein.getClockWise() : toVein.getCounterClockWise();
+            Plan scarPlan = Plans.CHARCOAL_SCAR;
+            int along = plan.width() / 2 + 3 + scarPlan.width() / 2;
+            int sx = x + side.getStepX() * along - scarPlan.width() / 2, sz = z + side.getStepZ() * along - scarPlan.depth() / 2;
+            if (!site.wet(sx + scarPlan.width() / 2, sz + scarPlan.depth() / 2)) {
+                scar = new PlanPiece(scarPlan, Rotation.NONE, sx, sz, site.surface(sx + scarPlan.width() / 2, sz + scarPlan.depth() / 2),
+                        mineral, wood, random.nextLong());
+            }
+        }
+
+        PlanPiece charcoalScar = scar;
+        return Optional.of(new GenerationStub(new BlockPos(x, ground.getAsInt(), z), builder -> {
+            builder.addPiece(stump);
+            if (charcoalScar != null) builder.addPiece(charcoalScar);
+        }));
+    }
+
     // ---------------------------------------------------------------- shared
 
-    /** The nearest indicator vein whose top lies at most {@code maxDepth} below the surface. */
-    private static VeinCells.Vein anchor(GeologyContext geology, int x, int z, int radius, int maxDepth, Predicate<VeinType> filter) {
+    /**
+     * The nearest vein whose top lies at most {@code maxDepth} below the surface; only veins that show at the
+     * surface when {@code indicators} is set.
+     */
+    private static VeinCells.Vein anchor(GeologyContext geology, int x, int z, int radius, int maxDepth, boolean indicators,
+            Predicate<VeinType> filter) {
         VeinCells.Vein best = null;
         long bestDist = Long.MAX_VALUE;
         for (VeinCells.Vein vein : geology.veins().around(x, z)) {
-            if (!vein.type().indicators() || !filter.test(vein.type())) continue;
+            if ((indicators && !vein.type().indicators()) || !filter.test(vein.type())) continue;
             if (vein.surfaceY() - (vein.y() + vein.radiusV()) > maxDepth) continue;
             long dx = vein.x() - x, dz = vein.z() - z, dist = dx * dx + dz * dz;
             if (dist > (long) radius * radius || dist >= bestDist) continue;

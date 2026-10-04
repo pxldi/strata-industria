@@ -25,6 +25,8 @@ final class Weathering {
             case 'C' -> 0.12;
             case 'k' -> 0.10;
             case '_' -> 0.08;
+            // Parts of a ruin that are there in some and gone in others.
+            case 'Y', 'Z', 'b' -> 0.5;
             default -> 0;
         };
         return p > 0 && chance(pos, seed + c, p);

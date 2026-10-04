@@ -1,0 +1,18 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "exclusion_zone": {
+      "chunk_count": 5,
+      "other_set": "minecraft:villages"
+    },
+    "salt": 934521187,
+    "separation": 12,
+    "spacing": 36
+  },
+  "structures": [
+    {
+      "structure": "strataindustria:ruined_bloomery",
+      "weight": 1
+    }
+  ]
+}

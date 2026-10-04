@@ -29,6 +29,7 @@ public final class CampLoot {
     public static final String MINING_SMITHY = "chests/mining_camp/smithy";
     public static final String MINING_ORE_CART = "chests/mining_camp/ore_cart";
     public static final String ADIT_CACHE = "chests/collapsed_adit/cache";
+    public static final String BLOOMERY_CACHE = "chests/ruined_bloomery/cache";
     public static final String DIG_PROSPECTOR = "archaeology/prospector_camp";
     public static final String DIG_SPOIL = "archaeology/mining_camp_spoil";
     public static final String DIG_ADIT = "archaeology/collapsed_adit";
@@ -42,6 +43,7 @@ public final class CampLoot {
             case "mining_camp/forge_shed" -> key(MINING_SMITHY);
             case "mining_camp/ore_sorting" -> key(MINING_ORE_CART, mineral);
             case "adit/cache" -> key(ADIT_CACHE, mineral);
+            case "ruined_bloomery/stump" -> key(BLOOMERY_CACHE);
             default -> null;
         };
     }
