@@ -30,7 +30,6 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.model.ItemModelUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -43,6 +42,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.random.Weighted;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
@@ -389,10 +389,9 @@ final class StructureData {
         var plain = ModelTemplates.CUBE_ALL.create(cracked, TextureMapping.cube(cracked), blockModels.modelOutput);
         var sooted = ModelTemplates.CUBE_ALL.createWithSuffix(cracked, "_sooted", TextureMapping.cube(TextureMapping.getBlockTexture(cracked,
                 "_sooted")), blockModels.modelOutput);
-        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(cracked, new MultiVariant(WeightedList.<Variant>builder()
-                .add(BlockModelGenerators.plainModel(plain), 3)
-                .add(BlockModelGenerators.plainModel(sooted), 1)
-                .build())));
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(cracked, new MultiVariant(WeightedList.of(List.of(
+                new Weighted<>(BlockModelGenerators.plainModel(plain), 3),
+                new Weighted<>(BlockModelGenerators.plainModel(sooted), 1))))));
         itemModels.itemModelOutput.accept(StructureContent.CRACKED_FIRE_BRICKS_ITEM.get(), ItemModelUtils.plainModel(plain));
 
         // Lumps of slag on the ground; the model is hand-built in resources.
