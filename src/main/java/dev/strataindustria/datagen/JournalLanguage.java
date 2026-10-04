@@ -248,6 +248,10 @@ final class JournalLanguage {
                 "Items travel the pipe and land in the chest. No hands.");
         lead.add("t5/storage", "Chests everywhere and I never know what is in which. Could one screen list them?",
                 "One screen, every chest. Powered, it also moves items.");
+        lead.add("t5/stethoscope", "The shed hums, but I cannot tell if it is well. Could I hear it?",
+                "A steady beat is a good machine. A rough one is short of power.");
+        lead.add("t5/lightning", "Every storm throws more power at the hill than I make in a week. Could I catch some?",
+                "A mast of rods over a row of jars. One bolt filled them.");
         lead.add("t5/ore_scanner", "Prospecting by pick is slow. Could a machine do it for me?",
                 "The scanner showed me every ore for three chunks around.");
         lead.add("t5/electric_chain", "I still carry ore from machine to machine. Could the wire and pipes run the whole line?",

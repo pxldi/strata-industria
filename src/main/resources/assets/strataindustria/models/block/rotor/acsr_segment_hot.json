@@ -1,0 +1,58 @@
+{
+  "textures": {
+    "particle": "strataindustria:block/acsr_line_hot",
+    "line": "strataindustria:block/acsr_line_hot"
+  },
+  "elements": [
+    {
+      "from": [
+        7.5,
+        7.5,
+        0
+      ],
+      "to": [
+        8.5,
+        8.5,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        },
+        "west": {
+          "texture": "#line",
+          "uv": [
+            0,
+            0,
+            1,
+            16
+          ]
+        }
+      }
+    }
+  ]
+}

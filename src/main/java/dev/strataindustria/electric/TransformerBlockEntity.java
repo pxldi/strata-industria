@@ -48,6 +48,9 @@ public class TransformerBlockEntity extends BlockEntity implements ElectricNode 
         transformer.out = transformer.sentOut;
         transformer.takenIn = transformer.sentOut = 0;
         boolean active = transformer.out > 0.01 || transformer.in > 0.01;
+        if (level instanceof net.minecraft.server.level.ServerLevel server) {
+            dev.strataindustria.grid.GridVoices.transformer(server, pos, Math.max(transformer.in, transformer.out) / LIMIT);
+        }
         if (active && transformer.out > 0.01 && level.getGameTime() % 100 == 0) Journal.awardNear(level, pos, Journal.TRANSFORMER);
         if (state.getValue(TransformerBlock.ACTIVE) != active) {
             level.setBlock(pos, state.setValue(TransformerBlock.ACTIVE, active), Block.UPDATE_CLIENTS);
