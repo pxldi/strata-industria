@@ -9,7 +9,17 @@ import dev.strataindustria.registry.Tier6Items;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+import dev.strataindustria.StrataIndustria;
+import dev.strataindustria.geology.VeinType;
+import dev.strataindustria.registry.ModBlocks;
+import dev.strataindustria.registry.ModItems;
+import java.util.List;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -28,6 +38,7 @@ final class Tier6GameTests {
         tests.put("tier6_reservoir_drain", Tier6GameTests::reservoirDrain);
         tests.put("tier6_crude_oil", Tier6GameTests::crudeOil);
         tests.put("tier6_seep_pool", Tier6GameTests::seepPool);
+        tests.put("tier6_bauxite_bed", Tier6GameTests::bauxiteBed);
     }
 
     /** A site with a fixed chance and flat ground at Y 40; seeps allowed only west of x = 0. */
@@ -125,6 +136,28 @@ final class Tier6GameTests {
     }
 
     // Spec 19.1.5: a seep is a sealed pool of 2 to 6 sources one block deep that never spills.
+    // Bauxite (tier 6 spec 19.4): the bed drops bauxite, digs with a shovel, and its vein is limited to hot biomes.
+    private static void bauxiteBed(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(1, 1, 1));
+        level.setBlock(pos, ModBlocks.BAUXITE_BED.get().defaultBlockState(), Block.UPDATE_ALL);
+        List<ItemStack> drops = Block.getDrops(level.getBlockState(pos), level, pos, null);
+        helper.assertValueEqual(drops.size(), 1, "one drop");
+        helper.assertTrue(drops.get(0).is(ModItems.BAUXITE.get()) && drops.get(0).getCount() == 3, "three bauxite");
+        helper.assertTrue(level.getBlockState(pos).is(BlockTags.MINEABLE_WITH_SHOVEL), "the bed digs with a shovel");
+
+        var vein = level.registryAccess().lookupOrThrow(VeinType.REGISTRY)
+                .getOrThrow(ResourceKey.create(VeinType.REGISTRY, StrataIndustria.id("bauxite"))).value();
+        helper.assertTrue(vein.pass() == VeinType.Pass.SEDIMENT && vein.maxDepth() == 10, "a shallow sediment bed");
+        var hot = vein.biomes().orElseThrow(() -> helper.assertionException("the bauxite vein has no biome limit"));
+        var biomes = level.registryAccess().lookupOrThrow(Registries.BIOME);
+        for (var hotBiome : List.of(Biomes.SAVANNA, Biomes.JUNGLE, Biomes.BADLANDS))
+            helper.assertTrue(hot.contains(biomes.getOrThrow(hotBiome)), hotBiome.identifier() + " hosts bauxite");
+        for (var coldBiome : List.of(Biomes.PLAINS, Biomes.TAIGA, Biomes.DESERT))
+            helper.assertTrue(!hot.contains(biomes.getOrThrow(coldBiome)), coldBiome.identifier() + " does not");
+        helper.succeed();
+    }
+
     private static void seepPool(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         for (int x = 0; x < 9; x++) {

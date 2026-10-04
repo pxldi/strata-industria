@@ -147,6 +147,8 @@ public final class ModItems {
     public static final DeferredItem<Item> BLOOMERY_SLAG = ITEMS.registerSimpleItem("bloomery_slag");
     // Tier 3 deposits (spec 4.3).
     public static final DeferredItem<Item> LIGNITE = ITEMS.registerSimpleItem("lignite");
+    public static final DeferredItem<Item> BAUXITE = ITEMS.registerSimpleItem("bauxite");
+    public static final DeferredItem<BlockItem> BAUXITE_BED = ITEMS.registerSimpleBlockItem(ModBlocks.BAUXITE_BED);
     public static final DeferredItem<BlockItem> LIGNITE_SEAM = ITEMS.registerSimpleBlockItem(ModBlocks.LIGNITE_SEAM);
     public static final DeferredItem<BlockItem> BOG_IRON = ITEMS.registerSimpleBlockItem(ModBlocks.BOG_IRON);
     public static final DeferredItem<BlockItem> PLACER_GRAVEL = ITEMS.registerSimpleBlockItem(ModBlocks.PLACER_GRAVEL);

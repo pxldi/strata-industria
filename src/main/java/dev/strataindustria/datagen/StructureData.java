@@ -142,6 +142,9 @@ final class StructureData {
 
         @Override
         protected void addTags(HolderLookup.Provider registries) {
+            // Hot climates where laterite forms (tier 6 spec 19.4).
+            tag(TagKey.create(Registries.BIOME, StrataIndustria.id("bauxite_hosts")))
+                    .addTag(BiomeTags.IS_SAVANNA).addTag(BiomeTags.IS_JUNGLE).addTag(BiomeTags.IS_BADLANDS);
             tag(biomes(CampStructure.Layout.CHARCOAL_BURNERS_CLEARING))
                     .add(Biomes.FOREST, Biomes.FLOWER_FOREST, Biomes.BIRCH_FOREST, Biomes.OLD_GROWTH_BIRCH_FOREST,
                             Biomes.DARK_FOREST, Biomes.TAIGA, Biomes.OLD_GROWTH_PINE_TAIGA, Biomes.OLD_GROWTH_SPRUCE_TAIGA);

@@ -104,6 +104,10 @@ final class ModBlockLoot extends BlockLootSubProvider {
                 LootItem.lootTableItem(ModItems.LIGNITE.get())
                         .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(2)))
                         .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1)))));
+        add(ModBlocks.BAUXITE_BED.get(), block -> createSilkTouchDispatchTable(block, applyExplosionDecay(block,
+                LootItem.lootTableItem(ModItems.BAUXITE.get())
+                        .apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(3)))
+                        .apply(ApplyBonusCount.addUniformBonusCount(fortune, 1)))));
         dropSelf(ModBlocks.FIRE_BRICKS.get());
         dropSelf(ModBlocks.BLOOMERY.get());
         for (var block : java.util.List.of(ModBlocks.WOODEN_AXLE, ModBlocks.WOODEN_GEARBOX, ModBlocks.HAND_CRANK, ModBlocks.WATER_WHEEL,
