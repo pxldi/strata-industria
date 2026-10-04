@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "A": "strataindustria:iron_axle",
+    "E": "strataindustria:steel_plate",
+    "X": "strataindustria:treated_planks",
+    "g": "strataindustria:brass_gear"
+  },
+  "pattern": [
+    "EgE",
+    "AXA",
+    "EXE"
+  ],
+  "result": {
+    "id": "strataindustria:ropeway_terminal"
+  }
+}
