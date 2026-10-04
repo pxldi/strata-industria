@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": "strataindustria:basic_circuit",
+    "F": "strataindustria:bronze_fluid_pipe",
+    "G": "strataindustria:steel_gear",
+    "H": "strataindustria:lv_machine_hull",
+    "P": "strataindustria:steel_plate"
+  },
+  "pattern": [
+    "PFP",
+    "GHG",
+    "PCP"
+  ],
+  "result": {
+    "id": "strataindustria:combustion_generator"
+  }
+}

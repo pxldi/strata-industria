@@ -443,6 +443,19 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.9f).volume(0.5f))
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.82f).volume(0.45f))
                 .with(sound("minecraft:block.grindstone.use", SoundDefinition.SoundType.EVENT).pitch(0.98f).volume(0.45f)));
+        add(Tier5Sounds.STEAM_TURBINE_RUN, definition().subtitle(subtitle("block.steam_turbine.run"))
+                .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.5f))
+                .with(sound("minecraft:entity.minecart.riding", SoundDefinition.SoundType.EVENT).pitch(1.6f).volume(0.3f))
+                .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(1.5f).volume(0.45f)));
+        add(Tier5Sounds.STEAM_TURBINE_SPIN_DOWN, definition().subtitle(subtitle("block.steam_turbine.spin_down"))
+                .with(sound("minecraft:block.beacon.deactivate", SoundDefinition.SoundType.EVENT).pitch(0.8f).volume(0.5f)));
+        add(Tier5Sounds.COMBUSTION_GENERATOR_IGNITE, definition().subtitle(subtitle("block.combustion_generator.ignite"))
+                .with(sound("minecraft:entity.generic.explode", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.25f))
+                .with(sound("minecraft:block.fire.ambient", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.5f)));
+        add(Tier5Sounds.COMBUSTION_GENERATOR_RUN, definition().subtitle(subtitle("block.combustion_generator.run"))
+                .with(sound("minecraft:entity.minecart.riding", SoundDefinition.SoundType.EVENT).pitch(0.6f).volume(0.35f))
+                .with(sound("minecraft:entity.minecart.riding", SoundDefinition.SoundType.EVENT).pitch(0.55f).volume(0.3f))
+                .with(sound("minecraft:block.furnace.fire_crackle", SoundDefinition.SoundType.EVENT).pitch(0.7f).volume(0.3f)));
         add(Tier5Sounds.BATTERY_BOX_CHARGE, definition().subtitle(subtitle("battery_box.charge"))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(2.0f).volume(0.15f))
                 .with(sound("minecraft:block.beacon.ambient", SoundDefinition.SoundType.EVENT).pitch(1.9f).volume(0.12f)));

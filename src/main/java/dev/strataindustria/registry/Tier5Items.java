@@ -48,6 +48,9 @@ public final class Tier5Items {
     public static final DeferredItem<BlockItem> ELECTRIC_FURNACE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.ELECTRIC_FURNACE);
     public static final DeferredItem<BlockItem> MACERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.MACERATOR);
 
+    public static final DeferredItem<BlockItem> STEAM_TURBINE = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.STEAM_TURBINE);
+    public static final DeferredItem<BlockItem> COMBUSTION_GENERATOR = ModItems.ITEMS.registerSimpleBlockItem(Tier5Blocks.COMBUSTION_GENERATOR);
+
     /** Metal content of the new forms (spec 4.1): rods are half an ingot, wire a quarter, plates a whole one. */
     public static void metalContent(Map<Item, Melt> map) {
         map.put(COPPER_ROD.get(), Melt.of(Metal.COPPER, 50, 0));

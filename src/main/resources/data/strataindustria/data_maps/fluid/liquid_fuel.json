@@ -1,0 +1,8 @@
+{
+  "values": {
+    "strataindustria:creosote": {
+      "joules_per_mb": 8,
+      "bucket": "strataindustria:creosote_bucket"
+    }
+  }
+}

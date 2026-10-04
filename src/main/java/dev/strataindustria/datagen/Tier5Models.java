@@ -3,6 +3,7 @@ package dev.strataindustria.datagen;
 import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.CableBlock;
+import dev.strataindustria.electric.GeneratorBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.power.ElectricTier;
@@ -45,6 +46,8 @@ final class Tier5Models {
         batteryBox(blockModels, itemModels);
         machine(blockModels, itemModels, Tier5Blocks.ELECTRIC_FURNACE.get(), "electric_furnace");
         machine(blockModels, itemModels, Tier5Blocks.MACERATOR.get(), "macerator");
+        generator(blockModels, itemModels, Tier5Blocks.STEAM_TURBINE.get(), "steam_turbine", false);
+        generator(blockModels, itemModels, Tier5Blocks.COMBUSTION_GENERATOR.get(), "combustion_generator", true);
 
         // Spec 9.5: casing all round, with a blank access panel on the sides so it reads as unfinished.
         TextureMapping hull = new TextureMapping().put(TextureSlot.SIDE, texture("lv_machine_hull_front"))
@@ -149,6 +152,41 @@ final class Tier5Models {
                             ? ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(model, faces, blockModels.modelOutput)
                             : MACHINE.create(model, faces.put(STATUS, texture("overlay/status_" + light.getSerializedName())), blockModels.modelOutput);
                     MultiVariant variant = BlockModelGenerators.plainVariant(id);
+                    dispatch.select(Direction.NORTH, tier, light, active, variant);
+                    dispatch.select(Direction.EAST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_90));
+                    dispatch.select(Direction.SOUTH, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_180));
+                    dispatch.select(Direction.WEST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_270));
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+        plainItem(itemModels, block.asItem(), StrataIndustria.id("block/" + name + "_lv_off"));
+    }
+
+    private static final TextureSlot BACK = TextureSlot.create("back");
+    /** Like {@link #MACHINE} with its own back face. */
+    private static final ModelTemplate GENERATOR = new ModelTemplate(Optional.of(StrataIndustria.id("block/electric_generator")), Optional.empty(),
+            TextureSlot.FRONT, BACK, TextureSlot.SIDE, TextureSlot.TOP, TextureSlot.BOTTOM, STATUS);
+
+    // Spec 23.2: a generator has a front per tier and active, a back (the turbine's steam flange), and for the
+    // combustion generator an exhaust stack on top.
+    private static void generator(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String name, boolean stack) {
+        PropertyDispatch.C4<MultiVariant, Direction, ElectricTier, StatusLight, Boolean> dispatch = PropertyDispatch.initial(
+                GeneratorBlock.FACING, GeneratorBlock.TIER, GeneratorBlock.STATUS, GeneratorBlock.ACTIVE);
+        for (ElectricTier tier : ElectricTier.values()) {
+            String t = tier.getSerializedName();
+            for (boolean active : new boolean[] {false, true}) {
+                for (StatusLight light : StatusLight.values()) {
+                    TextureMapping faces = new TextureMapping()
+                            .put(TextureSlot.FRONT, texture(name + "_front_" + t + (active ? "_active" : "")))
+                            .put(BACK, texture(stack ? "casing/" + t + "_side" : name + "_back_" + t))
+                            .put(TextureSlot.SIDE, texture("casing/" + t + "_side"))
+                            .put(TextureSlot.TOP, texture(stack ? name + "_top_" + t : "casing/" + t + "_top"))
+                            .put(TextureSlot.BOTTOM, texture("casing/" + t + "_bottom"))
+                            .put(STATUS, texture("overlay/status_" + light.getSerializedName()));
+                    Identifier model = GENERATOR.create(StrataIndustria.id("block/" + name + "_" + t + (active ? "_active" : "") + "_" + light.getSerializedName()),
+                            faces, blockModels.modelOutput);
+                    MultiVariant variant = BlockModelGenerators.plainVariant(model);
                     dispatch.select(Direction.NORTH, tier, light, active, variant);
                     dispatch.select(Direction.EAST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_90));
                     dispatch.select(Direction.SOUTH, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_180));
