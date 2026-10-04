@@ -397,6 +397,23 @@
     ],
     "subtitle": "subtitles.strataindustria.creosote.fill"
   },
+  "crucible.calcine_reduce": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.bubble_column.upwards_inside",
+        "pitch": 0.8,
+        "volume": 0.5
+      },
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.2,
+        "volume": 0.3
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.crucible.calcine_reduce"
+  },
   "crucible.carbon_burn": {
     "sounds": [
       {
@@ -967,6 +984,40 @@
       }
     ],
     "subtitle": "subtitles.strataindustria.raw_bloom.hit"
+  },
+  "roasting.done": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.suspicious_gravel.break",
+        "pitch": 1.3,
+        "volume": 0.7
+      },
+      {
+        "type": "event",
+        "name": "block.tuff.break",
+        "pitch": 1.4,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.roasting.done"
+  },
+  "roasting.sizzle": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "block.fire.extinguish",
+        "pitch": 1.4,
+        "volume": 0.3
+      },
+      {
+        "type": "event",
+        "name": "block.lava.pop",
+        "pitch": 1.5,
+        "volume": 0.4
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.roasting.sizzle"
   },
   "saw_mill.blade_break": {
     "sounds": [

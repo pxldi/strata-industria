@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t4/sphalerite",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "strataindustria:solder_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t4.solder.hint"
+    },
+    "icon": {
+      "id": "strataindustria:solder_ingot"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t4.solder"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
