@@ -4,6 +4,7 @@ import dev.strataindustria.StrataIndustria;
 import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.CableBlock;
 import dev.strataindustria.electric.KineticDynamoBlock;
+import dev.strataindustria.electric.machine.ElectricMachineBlock;
 import dev.strataindustria.power.ElectricTier;
 import dev.strataindustria.power.StatusLight;
 import dev.strataindustria.registry.Tier5Blocks;
@@ -16,13 +17,16 @@ import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.ItemModelUtils;
+import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import java.util.Optional;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 
 /** Block states and models for tier 5 (electric). {@link ModModelProvider} calls it. */
 final class Tier5Models {
@@ -39,6 +43,8 @@ final class Tier5Models {
         cables(blockModels, itemModels);
         dynamo(blockModels, itemModels);
         batteryBox(blockModels, itemModels);
+        machine(blockModels, itemModels, Tier5Blocks.ELECTRIC_FURNACE.get(), "electric_furnace");
+        machine(blockModels, itemModels, Tier5Blocks.MACERATOR.get(), "macerator");
 
         // Spec 9.5: casing all round, with a blank access panel on the sides so it reads as unfinished.
         TextureMapping hull = new TextureMapping().put(TextureSlot.SIDE, texture("lv_machine_hull_front"))
@@ -119,6 +125,39 @@ final class Tier5Models {
         }
         blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(Tier5Blocks.BATTERY_BOX.get()).with(dispatch));
         plainItem(itemModels, Tier5Items.BATTERY_BOX.get(), StrataIndustria.id("block/battery_box_lv_0"));
+    }
+
+    private static final TextureSlot STATUS = TextureSlot.create("status");
+    /** A cube with the front's status lamp as an emissive overlay (spec 23.2). */
+    private static final ModelTemplate MACHINE = new ModelTemplate(Optional.of(StrataIndustria.id("block/electric_machine")), Optional.empty(),
+            TextureSlot.FRONT, TextureSlot.SIDE, TextureSlot.TOP, TextureSlot.BOTTOM, STATUS);
+
+    // Spec 23.2: the front per tier and active, the casing by tier, the lamp lit by status (none when off).
+    private static void machine(BlockModelGenerators blockModels, ItemModelGenerators itemModels, Block block, String name) {
+        PropertyDispatch.C4<MultiVariant, Direction, ElectricTier, StatusLight, Boolean> dispatch = PropertyDispatch.initial(
+                ElectricMachineBlock.FACING, ElectricMachineBlock.TIER, ElectricMachineBlock.STATUS, ElectricMachineBlock.ACTIVE);
+        for (ElectricTier tier : ElectricTier.values()) {
+            String t = tier.getSerializedName();
+            for (boolean active : new boolean[] {false, true}) {
+                for (StatusLight light : StatusLight.values()) {
+                    TextureMapping faces = new TextureMapping()
+                            .put(TextureSlot.FRONT, texture(name + "_front_" + t + (active ? "_active" : "")))
+                            .put(TextureSlot.SIDE, texture("casing/" + t + "_side")).put(TextureSlot.TOP, texture("casing/" + t + "_top"))
+                            .put(TextureSlot.BOTTOM, texture("casing/" + t + "_bottom"));
+                    Identifier model = StrataIndustria.id("block/" + name + "_" + t + (active ? "_active" : "") + "_" + light.getSerializedName());
+                    Identifier id = light == StatusLight.OFF
+                            ? ModelTemplates.CUBE_ORIENTABLE_TOP_BOTTOM.create(model, faces, blockModels.modelOutput)
+                            : MACHINE.create(model, faces.put(STATUS, texture("overlay/status_" + light.getSerializedName())), blockModels.modelOutput);
+                    MultiVariant variant = BlockModelGenerators.plainVariant(id);
+                    dispatch.select(Direction.NORTH, tier, light, active, variant);
+                    dispatch.select(Direction.EAST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_90));
+                    dispatch.select(Direction.SOUTH, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_180));
+                    dispatch.select(Direction.WEST, tier, light, active, variant.with(BlockModelGenerators.Y_ROT_270));
+                }
+            }
+        }
+        blockModels.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(dispatch));
+        plainItem(itemModels, block.asItem(), StrataIndustria.id("block/" + name + "_lv_off"));
     }
 
     private static void plainItem(ItemModelGenerators itemModels, Item item, Identifier model) {

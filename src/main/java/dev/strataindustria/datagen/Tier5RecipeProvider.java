@@ -170,6 +170,30 @@ final class Tier5RecipeProvider extends RecipeProvider {
                 .define('L', cable)
                 .unlockedBy("has_lv_cable", has(cable))
                 .save(output, key("lv_machine_hull"));
+
+        // Spec 10.2 and 10.3: H hull, C basic circuit, W copper wire, M electric motor.
+        Item hull = Tier5Items.LV_MACHINE_HULL.get();
+        Item circuit = Tier5Items.BASIC_CIRCUIT.get();
+        shaped(RecipeCategory.REDSTONE, Tier5Items.ELECTRIC_FURNACE.get())
+                .pattern(" B ")
+                .pattern("CHW")
+                .pattern(" B ")
+                .define('B', ModItems.FIRE_BRICKS.get())
+                .define('C', circuit)
+                .define('H', hull)
+                .define('W', wire)
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("electric_furnace"));
+        shaped(RecipeCategory.REDSTONE, Tier5Items.MACERATOR.get())
+                .pattern(" G ")
+                .pattern("CHM")
+                .pattern(" G ")
+                .define('G', ModItems.GEARS.get(Metal.STEEL).get())
+                .define('C', circuit)
+                .define('H', hull)
+                .define('M', Tier5Items.ELECTRIC_MOTOR.get())
+                .unlockedBy("has_lv_machine_hull", has(hull))
+                .save(output, key("macerator"));
     }
 
     private static Rule rule(Rule.Kind kind, Rule.Where where) {

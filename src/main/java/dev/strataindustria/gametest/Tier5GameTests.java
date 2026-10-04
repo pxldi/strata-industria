@@ -5,6 +5,16 @@ import dev.strataindustria.electric.BatteryBoxBlock;
 import dev.strataindustria.electric.BatteryBoxBlockEntity;
 import dev.strataindustria.electric.KineticDynamoBlock;
 import dev.strataindustria.electric.KineticDynamoBlockEntity;
+import dev.strataindustria.electric.machine.ElectricFurnaceBlockEntity;
+import dev.strataindustria.electric.machine.ElectricMachineBlock;
+import dev.strataindustria.electric.machine.ElectricMachineBlockEntity;
+import dev.strataindustria.electric.machine.ElectricMachineLayout;
+import dev.strataindustria.electric.machine.MaceratorBlockEntity;
+import dev.strataindustria.power.StatusLight;
+import dev.strataindustria.processing.CrushingRecipe;
+import dev.strataindustria.processing.Processing;
+import dev.strataindustria.StrataIndustria;
+import net.minecraft.core.registries.BuiltInRegistries;
 import dev.strataindustria.power.ElectricNetwork;
 import dev.strataindustria.power.ElectricNetworks;
 import dev.strataindustria.power.ElectricShare;
@@ -63,6 +73,10 @@ final class Tier5GameTests {
         tests.put("tier5_no_living_tree", Tier5GameTests::noLivingTree);
         tests.put("tier5_latex_to_rubber", Tier5GameTests::latexToRubber);
         tests.put("tier5_red_alloy", Tier5GameTests::redAlloy);
+        tests.put("tier5_macerator_mv_rule", Tier5GameTests::maceratorMvRule);
+        tests.put("tier5_macerator_second_piece", Tier5GameTests::maceratorSecondPiece);
+        tests.put("tier5_machine_low_power", Tier5GameTests::machineLowPower);
+        tests.put("tier5_electric_furnace", Tier5GameTests::electricFurnace);
     }
 
     // Spec 6.3, 6.7 and 24: the worked example gives 88% to every machine; a charged battery box covers the
@@ -314,6 +328,145 @@ final class Tier5GameTests {
         helper.assertValueEqual(crucible.melt().total(), 400, "units of copper and redstone");
         helper.assertValueEqual(crucible.result().orElse(null), Metal.RED_ALLOY, "melt result");
         helper.succeed();
+    }
+
+    // Spec 10.1 and 24: an LV macerator on a charged battery box crushes one item per 100 ticks at 16 J/t; an MV
+    // one crushes four times as many for four times the power, the same 1600 J per item; an LV macerator on an
+    // MV network stops with overvoltage.
+    private static void maceratorMvRule(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        int lv = runMacerator(helper, level, helper.absolutePos(new BlockPos(1, 1, 1)), ElectricTier.LV, 1000);
+        int mv = runMacerator(helper, level, helper.absolutePos(new BlockPos(1, 1, 5)), ElectricTier.MV, 1000);
+        helper.assertValueEqual(lv, 10, "LV macerator items in 1000 ticks");
+        helper.assertValueEqual(mv, 40, "MV macerator items in 1000 ticks");
+
+        BlockPos boxPos = helper.absolutePos(new BlockPos(5, 1, 1)), machinePos = boxPos.east();
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState().setValue(BatteryBoxBlock.TIER, ElectricTier.MV), Block.UPDATE_ALL);
+        level.setBlock(machinePos, Tier5Blocks.MACERATOR.get().defaultBlockState(), Block.UPDATE_ALL);
+        ((BatteryBoxBlockEntity) level.getBlockEntity(boxPos)).setStored(10_000);
+        MaceratorBlockEntity machine = (MaceratorBlockEntity) level.getBlockEntity(machinePos);
+        machine.setItem(0, new ItemStack(Items.GRAVEL, 4));
+        ElectricNetworks.rebuildNow(level, boxPos).tick();
+        ElectricMachineBlockEntity.serverTick(level, machinePos, level.getBlockState(machinePos), machine);
+        helper.assertValueEqual(machine.status(), ElectricMachineBlockEntity.Status.OVERVOLTAGE, "an LV macerator on an MV network");
+        helper.assertValueEqual(level.getBlockState(machinePos).getValue(ElectricMachineBlock.STATUS), StatusLight.ERROR, "red status lamp");
+        helper.succeed();
+    }
+
+    /** A macerator of {@code tier} beside a charged battery box of the same tier, crushing gravel; returns the items done. */
+    private static int runMacerator(GameTestHelper helper, ServerLevel level, BlockPos boxPos, ElectricTier tier, int ticks) {
+        BlockPos machinePos = boxPos.east();
+        level.setBlock(boxPos, Tier5Blocks.BATTERY_BOX.get().defaultBlockState().setValue(BatteryBoxBlock.TIER, tier), Block.UPDATE_ALL);
+        level.setBlock(machinePos, Tier5Blocks.MACERATOR.get().defaultBlockState().setValue(ElectricMachineBlock.TIER, tier), Block.UPDATE_ALL);
+        BatteryBoxBlockEntity box = (BatteryBoxBlockEntity) level.getBlockEntity(boxPos);
+        box.setStored(100_000);
+        MaceratorBlockEntity machine = (MaceratorBlockEntity) level.getBlockEntity(machinePos);
+        machine.setItem(0, new ItemStack(Items.GRAVEL, 64));
+        machine.setBuffer(machine.bufferCapacity());
+        ElectricNetwork network = ElectricNetworks.rebuildNow(level, boxPos);
+        helper.assertTrue(network != null && network.members().contains(machinePos), "the macerator joins the battery box");
+        helper.assertValueEqual(machine.lanes(), tier == ElectricTier.MV ? 2 : 1, tier.label() + " lanes");
+        for (int tick = 0; tick < ticks; tick++) {
+            ElectricMachineBlockEntity.serverTick(level, machinePos, level.getBlockState(machinePos), machine);
+            network.tick();
+        }
+        int done = machine.finishedCount();
+        helper.assertValueEqual(machine.status(), ElectricMachineBlockEntity.Status.WORKING, tier.label() + " macerator status");
+        helper.assertValueEqual(level.getBlockState(machinePos).getValue(ElectricMachineBlock.STATUS), StatusLight.RUN, "green status lamp");
+        double used = 100_000 - box.stored();
+        helper.assertTrue(Math.abs(used - done * 1600.0) < 1e-6, tier.label() + " energy per item is 1600 J, used " + used + " for " + done);
+        int sand = 0;
+        for (int slot = 0; slot < machine.getContainerSize(); slot++) {
+            if (machine.getItem(slot).is(Items.SAND)) sand += machine.getItem(slot).getCount();
+        }
+        helper.assertValueEqual(sand, done, tier.label() + " sand out");
+        return done;
+    }
+
+    // Spec 10.3 and 24: an ore piece gives a second crushed piece 25% of the time over 1000 trials (within 3%).
+    private static void maceratorSecondPiece(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Item galena = BuiltInRegistries.ITEM.getValue(StrataIndustria.id("galena"));
+        Item crushed = BuiltInRegistries.ITEM.getValue(StrataIndustria.id("crushed_galena"));
+        var recipe = CrushingRecipe.recipeFor(level, new ItemStack(galena));
+        helper.assertTrue(recipe.isPresent(), "galena has a crushing recipe");
+        Processing processing = MaceratorBlockEntity.maceration(recipe.get().value());
+        int seconds = 0;
+        for (int trial = 0; trial < 1000; trial++) {
+            int pieces = 0;
+            for (ItemStack out : processing.roll(level.getRandom())) if (out.is(crushed)) pieces += out.getCount();
+            helper.assertTrue(pieces == 1 || pieces == 2, "one or two crushed pieces, got " + pieces);
+            if (pieces == 2) seconds++;
+        }
+        helper.assertTrue(Math.abs(seconds - 250) <= 30, "second pieces in 1000 trials, got " + seconds);
+        helper.succeed();
+    }
+
+    // Spec 6.1 and 6.4: half the draw runs at half speed with "Low power (50%)" and an amber lamp; no power stops
+    // it; a full output stops it with a red lamp; auto-eject empties it into a chest behind.
+    private static void machineLowPower(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(3, 1, 3));
+        level.setBlock(pos, Tier5Blocks.MACERATOR.get().defaultBlockState().setValue(ElectricMachineBlock.FACING, Direction.NORTH), Block.UPDATE_ALL);
+        MaceratorBlockEntity machine = (MaceratorBlockEntity) level.getBlockEntity(pos);
+        machine.setItem(0, new ItemStack(Items.GRAVEL, 3));
+        for (int tick = 0; tick < 199; tick++) {
+            machine.setBuffer(8);
+            ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+        }
+        helper.assertValueEqual(machine.status(), ElectricMachineBlockEntity.Status.LOW_POWER, "status on half power");
+        helper.assertValueEqual(Math.round(machine.power() * 100), 50, "power percent");
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.STATUS), StatusLight.WAIT, "amber status lamp");
+        helper.assertValueEqual(machine.finishedCount(), 0, "199 ticks at half speed is not yet one item");
+        machine.setBuffer(8);
+        ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+        helper.assertValueEqual(machine.finishedCount(), 1, "200 ticks at half speed is one item");
+
+        machine.setBuffer(0);
+        ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+        helper.assertValueEqual(machine.status(), ElectricMachineBlockEntity.Status.NO_POWER, "status with an empty buffer");
+
+        for (int i = 0; i < 3; i++) machine.setItem(ElectricMachineLayout.MACERATOR.outputSlot(0, i), new ItemStack(Items.SAND, 64));
+        machine.setBuffer(machine.bufferCapacity());
+        ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+        helper.assertValueEqual(machine.status(), ElectricMachineBlockEntity.Status.OUTPUT_FULL, "status with full outputs");
+        helper.assertValueEqual(level.getBlockState(pos).getValue(ElectricMachineBlock.STATUS), StatusLight.ERROR, "red status lamp");
+
+        BlockPos chestPos = pos.south();
+        level.setBlock(chestPos, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
+        machine.toggleAutoEject();
+        ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), machine);
+        var chest = (net.minecraft.world.level.block.entity.ChestBlockEntity) level.getBlockEntity(chestPos);
+        helper.assertValueEqual(chest.getItem(0).getCount(), 64, "auto-eject moves one stack into the chest behind");
+        helper.succeed();
+    }
+
+    // Spec 10.2: the electric furnace roasts (half the recipe ticks, the gas vented with no pipe), fires clay in
+    // 200 ticks and smelts in 100; it refuses what none of those take.
+    private static void electricFurnace(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(3, 1, 3));
+        level.setBlock(pos, Tier5Blocks.ELECTRIC_FURNACE.get().defaultBlockState(), Block.UPDATE_ALL);
+        ElectricFurnaceBlockEntity furnace = (ElectricFurnaceBlockEntity) level.getBlockEntity(pos);
+        Item sphalerite = BuiltInRegistries.ITEM.getValue(StrataIndustria.id("crushed_sphalerite"));
+        Item calcine = BuiltInRegistries.ITEM.getValue(StrataIndustria.id("zinc_calcine"));
+        helper.assertValueEqual(furnaceTicks(level, pos, furnace, new ItemStack(sphalerite), calcine), 200, "roasting sphalerite (400 ticks at 800 C)");
+        helper.assertValueEqual(furnaceTicks(level, pos, furnace, new ItemStack(ModItems.UNFIRED_BRICK.get()), Items.BRICK), 200, "firing a brick");
+        helper.assertValueEqual(furnaceTicks(level, pos, furnace, new ItemStack(Items.SAND), Items.GLASS), 100, "smelting sand");
+        helper.assertTrue(!furnace.canPlaceItem(0, new ItemStack(Items.STICK)), "a stick is refused");
+        helper.succeed();
+    }
+
+    /** Ticks the furnace takes to turn {@code input} into {@code result} on a full buffer. */
+    private static int furnaceTicks(ServerLevel level, BlockPos pos, ElectricFurnaceBlockEntity furnace, ItemStack input, Item result) {
+        furnace.clearContent();
+        furnace.setItem(0, input);
+        for (int tick = 1; tick <= 1000; tick++) {
+            furnace.setBuffer(furnace.bufferCapacity());
+            ElectricMachineBlockEntity.serverTick(level, pos, level.getBlockState(pos), furnace);
+            if (furnace.getItem(ElectricMachineLayout.ELECTRIC_FURNACE.outputSlot(0, 0)).is(result)) return tick;
+        }
+        return -1;
     }
 
     private static void heatCrucible(ServerLevel level, FakePlayer smith, BlockPos bellowsPos, BellowsBlockEntity bellows, BlockPos forgePos,
