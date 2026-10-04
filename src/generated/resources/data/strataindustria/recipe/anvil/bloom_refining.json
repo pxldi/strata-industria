@@ -1,0 +1,22 @@
+{
+  "type": "strataindustria:anvil",
+  "default_target": 60,
+  "ingredient": "strataindustria:raw_bloom",
+  "result": {
+    "id": "minecraft:iron_ingot"
+  },
+  "rules": [
+    {
+      "hit": "hit",
+      "where": "last"
+    },
+    {
+      "hit": "hit",
+      "where": "second_last"
+    },
+    {
+      "hit": "hit",
+      "where": "third_last"
+    }
+  ]
+}

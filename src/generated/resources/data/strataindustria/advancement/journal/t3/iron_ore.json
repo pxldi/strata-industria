@@ -1,0 +1,33 @@
+{
+  "parent": "strataindustria:journal/t3/fire_brick",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#strataindustria:ores/iron_any"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t3.iron_ore.hint"
+    },
+    "icon": {
+      "id": "strataindustria:hematite"
+    },
+    "title": {
+      "translate": "journal.strataindustria.t3.iron_ore"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

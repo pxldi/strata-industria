@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "F": "strataindustria:fire_brick",
+    "P": "#strataindustria:plates/copper_or_bronze"
+  },
+  "pattern": [
+    "FFF",
+    "F F",
+    "FPF"
+  ],
+  "result": {
+    "id": "strataindustria:bloomery"
+  }
+}
