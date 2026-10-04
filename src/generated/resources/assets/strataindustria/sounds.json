@@ -40,6 +40,26 @@
     ],
     "subtitle": "subtitles.strataindustria.anvil.hit"
   },
+  "anvil.quick": {
+    "sounds": [
+      {
+        "name": "random/anvil_use",
+        "pitch": 1.5,
+        "volume": 0.6
+      },
+      {
+        "name": "random/anvil_use",
+        "pitch": 1.7,
+        "volume": 0.6
+      },
+      {
+        "name": "random/anvil_use",
+        "pitch": 1.4,
+        "volume": 0.6
+      }
+    ],
+    "subtitle": "subtitles.strataindustria.anvil.quick"
+  },
   "anvil.weld": {
     "sounds": [
       {

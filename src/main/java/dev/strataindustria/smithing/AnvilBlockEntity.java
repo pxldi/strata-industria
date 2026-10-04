@@ -49,7 +49,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     public static final int MAX_PLANS = 12;
 
     public static final int DATA_POSITION = 0, DATA_TARGET = 1, DATA_RECENT = 2, DATA_RULES = 5, DATA_SELECTED = 8,
-            DATA_STATUS = 9, DATA_HITS = 10, DATA_WORKING = 11, DATA_WELD = 12, DATA_WELD_TEMP = 13, DATA_COUNT = 14;
+            DATA_STATUS = 9, DATA_HITS = 10, DATA_WORKING = 11, DATA_WELD = 12, DATA_WELD_TEMP = 13, DATA_QUICK = 14, DATA_COUNT = 15;
 
     /** What the screen shows under the bar. */
     public enum Status { EMPTY, CHOOSE, READY, TOO_COLD, NO_HAMMER, TOO_WEAK, OUTPUT_FULL, NOT_ENOUGH, NO_PLAN;
@@ -192,7 +192,44 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         }
         hammer(player).hurtAndBreak(1, server, player,
                 broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
-        strike(server, type);
+        strike(server, type, player);
+    }
+
+    /** Whether this player has finished the selected plan by hand before, which unlocks the Quick button. */
+    public boolean knowsPlan(@org.jspecify.annotations.Nullable Player player) {
+        if (!(player instanceof ServerPlayer server)) return false;
+        return selected().map(h -> SmithedRecipes.of(server).has(h.id().identifier())).orElse(false);
+    }
+
+    /**
+     * The Quick button: finishes a plan the player has already smithed by hand, at a normal craft quality.
+     * It costs what the shortest run would cost: hammer wear, and for iron the heat of every blow.
+     */
+    public void quick(ServerPlayer player) {
+        if (!(level instanceof ServerLevel server)) return;
+        Status status = status(player);
+        if (status != Status.READY) {
+            if (status != Status.EMPTY) player.sendOverlayMessage(Component.translatable(status.key()));
+            return;
+        }
+        if (!knowsPlan(player)) {
+            player.sendOverlayMessage(Component.translatable(StrataIndustria.MOD_ID + ".anvil.quick.unknown"));
+            return;
+        }
+        RecipeHolder<AnvilRecipe> recipe = selected().orElseThrow();
+        int target = Smithing.target(server, recipe.id(), recipe.value());
+        int blows = Math.max(1, Smithing.minHits(target, recipe.value().rules()));
+        hammer(player).hurtAndBreak(blows, server, player,
+                broken -> server.playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 0.8f, 1.0f));
+        ItemStack input = input();
+        if (metalOf(input).map(m -> m.tier() >= 3).orElse(false)) {
+            Heat.set(input, Heat.get(input, server) - Config.SMITHING_HIT_COOLING.get() * blows, server.getGameTime());
+        }
+        server.playSound(null, worldPosition, ModSounds.SMITH_QUICK.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
+        SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get());
+        finish(server, recipe, progress, target, player, true);
+        dev.strataindustria.journal.Journal.award(player, dev.strataindustria.journal.Journal.QUICK_SMITH);
+        setChanged();
     }
 
     /** What a blow from a machine did (tier 3 spec 8.4). */
@@ -206,7 +243,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         Status status = status(null);
         if (status == Status.TOO_COLD) return MachineHit.TOO_COLD;
         if (status != Status.READY || !inRange(type)) return MachineHit.REFUSED;
-        return strike(server, type) ? MachineHit.DONE : MachineHit.STRUCK;
+        return strike(server, type, null) ? MachineHit.DONE : MachineHit.STRUCK;
     }
 
     /** Puts the workpiece on recipe {@code id}, as if its plan had been picked. Returns whether that plan exists for it. */
@@ -233,7 +270,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
     }
 
     /** Lands one blow on the selected plan. Returns whether it finished the piece. */
-    private boolean strike(ServerLevel server, HitType type) {
+    private boolean strike(ServerLevel server, HitType type, @org.jspecify.annotations.Nullable ServerPlayer player) {
         ItemStack input = input();
         RecipeHolder<AnvilRecipe> recipe = selected().orElseThrow();
         SmithingProgress progress = input.get(ModDataComponents.SMITHING_PROGRESS.get()).hit(type);
@@ -250,7 +287,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
 
         int target = Smithing.target(server, recipe.id(), recipe.value());
         boolean done = Smithing.done(progress.position(), target, recipe.value().rules(), progress.recent(0), progress.recent(1), progress.recent(2));
-        if (done) finish(server, recipe, progress, target);
+        if (done) finish(server, recipe, progress, target, player, false);
         setChanged();
         return done;
     }
@@ -262,23 +299,25 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
         return ModSounds.SMITH_HIT.get();
     }
 
-    private void finish(ServerLevel server, RecipeHolder<AnvilRecipe> recipe, SmithingProgress progress, int target) {
+    private void finish(ServerLevel server, RecipeHolder<AnvilRecipe> recipe, SmithingProgress progress, int target,
+            @org.jspecify.annotations.Nullable ServerPlayer player, boolean quick) {
         ItemStack input = input();
         if (input.has(ModDataComponents.BLOOM_CONTENTS.get())) {
-            for (ServerPlayer player : server.getEntitiesOfClass(ServerPlayer.class, new net.minecraft.world.phys.AABB(worldPosition).inflate(8))) {
-                dev.strataindustria.journal.Journal.award(player, dev.strataindustria.journal.Journal.BLOOM_REFINED);
+            for (ServerPlayer near : server.getEntitiesOfClass(ServerPlayer.class, new net.minecraft.world.phys.AABB(worldPosition).inflate(8))) {
+                dev.strataindustria.journal.Journal.award(near, dev.strataindustria.journal.Journal.BLOOM_REFINED);
             }
         }
         float temperature = Heat.get(input, server);
         int material = MetalContent.of(input.copyWithCount(1)).map(Melt::quality).orElse(0);
-        int craft = Smithing.craftQuality(progress.hits(), Smithing.minHits(target, recipe.value().rules()));
+        int craft = quick ? Smithing.QUICK_CRAFT : Smithing.craftQuality(progress.hits(), Smithing.minHits(target, recipe.value().rules()));
         ItemStack out = recipe.value().assemble(new SingleRecipeInput(input));
         out.set(ModDataComponents.QUALITY.get(), new Quality(material, craft));
         Heat.set(out, temperature, server.getGameTime());
         input.shrink(recipe.value().count());
         if (input.isEmpty()) items.set(INPUT, ItemStack.EMPTY);
         items.set(OUTPUT, out);
-        recordPattern(server, recipe, progress, target, craft, out);
+        if (player != null) SmithedRecipes.of(player).add(recipe.id().identifier());
+        if (!quick) recordPattern(server, recipe, progress, target, craft, out);
         server.playSound(null, worldPosition, ModSounds.SMITH_DONE.get(), SoundSource.BLOCKS, 0.8f, 1.0f);
         server.sendParticles(ParticleTypes.LAVA, worldPosition.getX() + 0.5, worldPosition.getY() + faceHeight() + 0.05, worldPosition.getZ() + 0.5,
                 4, 0.15, 0.0, 0.15, 0.0);
@@ -417,6 +456,7 @@ public class AnvilBlockEntity extends BaseContainerBlockEntity {
                 if (index == DATA_WORKING) return workingTemperature(input);
                 if (index == DATA_WELD) return weldStatus(player).ordinal();
                 if (index == DATA_WELD_TEMP) return weldingTemperature(input, items.get(SECOND));
+                if (index == DATA_QUICK) return knowsPlan(player) ? 1 : 0;
                 return 0;
             }
 

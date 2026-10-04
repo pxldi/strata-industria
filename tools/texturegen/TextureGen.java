@@ -1896,6 +1896,22 @@ public final class TextureGen {
                     ? new int[] {0x5a5a5a, 0x6a6a6a, 0x7a7a7a, 0x8a8a8a, 0x8a8a8a}
                     : new int[] {0x3a3d48, 0x838998, 0xd6dbe2, 0xf0a030, 0xfff0a0});
         }
+        // Quick-smith button faces (normal, hovered, disabled) at v=72: two forward chevrons, like a fast-forward.
+        for (int b = 0; b < 3; b++) {
+            int x0 = 176 + b * 18;
+            im.getGraphics().drawImage(im.getSubimage(176 + b * 18, 0, 18, 18), x0, 72, null);
+            int[] ink = b == 2 ? new int[] {0x5a5a5a, 0x7a7a7a} : new int[] {0x3a3d48, 0xf0a030};
+            for (int c = 0; c < 2; c++) {
+                for (int i = 0; i < 9; i++) {
+                    int dx = i < 5 ? i : 8 - i;
+                    int x = x0 + 4 + c * 5 + dx;
+                    im.setRGB(x, 77 + i, 0xff000000 | ink[0]);
+                    im.setRGB(x + 1, 77 + i, 0xff000000 | ink[1]);
+                    im.setRGB(x + 2, 77 + i, 0xff000000 | ink[1]);
+                    im.setRGB(x + 3, 77 + i, 0xff000000 | ink[0]);
+                }
+            }
+        }
         return im;
     }
 

@@ -1,0 +1,30 @@
+{
+  "parent": "strataindustria:journal/t2/smith",
+  "criteria": {
+    "done": {
+      "conditions": {
+        "event": "quick_smith"
+      },
+      "trigger": "strataindustria:journal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": "journal.strataindustria.t2.quick_smith.hint"
+    },
+    "icon": {
+      "id": "strataindustria:bronze_hammer"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": "journal.strataindustria.t2.quick_smith"
+    }
+  },
+  "requirements": [
+    [
+      "done"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

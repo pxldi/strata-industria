@@ -90,6 +90,10 @@ final class ModSoundsProvider extends SoundDefinitionsProvider {
                 .with(sound("minecraft:random/anvil_use").pitch(1.3f).volume(0.5f)));
         add(ModSounds.SMITH_DONE, definition().subtitle(subtitle("anvil.done"))
                 .with(sound("minecraft:random/anvil_land").pitch(1.4f).volume(0.5f)));
+        add(ModSounds.SMITH_QUICK, definition().subtitle(subtitle("anvil.quick"))
+                .with(sound("minecraft:random/anvil_use").pitch(1.5f).volume(0.6f))
+                .with(sound("minecraft:random/anvil_use").pitch(1.7f).volume(0.6f))
+                .with(sound("minecraft:random/anvil_use").pitch(1.4f).volume(0.6f)));
         SoundDefinition dress = definition().subtitle(subtitle("anvil.dress"));
         for (int i = 1; i <= 4; i++) dress.with(sound("minecraft:dig/stone" + i).pitch(0.7f));
         add(ModSounds.ANVIL_DRESS, dress);
