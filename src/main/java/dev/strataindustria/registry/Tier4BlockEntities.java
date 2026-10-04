@@ -1,8 +1,11 @@
 package dev.strataindustria.registry;
 
 import dev.strataindustria.coking.CokeOvenBlockEntity;
+import dev.strataindustria.fluid.PressureGaugeBlockEntity;
 import dev.strataindustria.metal.CrucibleBlockEntity;
 import dev.strataindustria.power.IronTransmission;
+import dev.strataindustria.steam.BoilerBlockEntity;
+import dev.strataindustria.steam.FireboxBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -20,6 +23,15 @@ public final class Tier4BlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<IronTransmission.Entity>> IRON_TRANSMISSION =
             ModBlockEntities.BLOCK_ENTITIES.register("iron_transmission", () -> new BlockEntityType<>(IronTransmission.Entity::new,
                     Tier4Blocks.IRON_AXLE.get(), Tier4Blocks.IRON_GEARBOX.get(), Tier4Blocks.IRON_STEP_UP_GEARBOX.get()));
+
+    // Spec 8.1, 9.3 and 10.2: steam.
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FireboxBlockEntity>> FIREBOX =
+            ModBlockEntities.BLOCK_ENTITIES.register("firebox", () -> new BlockEntityType<>(FireboxBlockEntity::new, Tier4Blocks.FIREBOX.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BoilerBlockEntity>> BRONZE_BOILER =
+            ModBlockEntities.BLOCK_ENTITIES.register("bronze_boiler", () -> new BlockEntityType<>(BoilerBlockEntity::new, Tier4Blocks.BRONZE_BOILER.get()));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PressureGaugeBlockEntity>> PRESSURE_GAUGE =
+            ModBlockEntities.BLOCK_ENTITIES.register("pressure_gauge", () -> new BlockEntityType<>(PressureGaugeBlockEntity::new,
+                    Tier4Blocks.PRESSURE_GAUGE.get()));
 
     public static void init() {}
 
